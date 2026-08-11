@@ -366,7 +366,7 @@ class result_list extends sandbox_list_value
      * create the html code to show the formula results to the user
      * TODO move to result_list_min_display
      */
-    function display_old(string $back = ''): string
+    function display_old(user_message $msg, string $back = ''): string
     {
         $lib = new library();
         $html = new html_base();
@@ -389,7 +389,7 @@ class result_list extends sandbox_list_value
                 $phr_lst = clone $res->grp->phr_lst;
                 if (isset($res->time_phr)) {
                     log_debug("add time " . $res->time_phr->name() . ".");
-                    $phr_lst->add($res->time_phr);
+                    $phr_lst->add($res->time_phr, $msg);
                 }
                 $api_msg = new user_message(); // a legacy display function without a message, see display_old
                 $phr_lst_ui = new phrase_list($phr_lst->api_json([], $api_msg));

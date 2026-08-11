@@ -183,7 +183,7 @@ function run_word_display_test(all_tests $t): void
     $sel = new html_selector;
     $sel->form = 'test_form';
     $sel->name = 'select_company';
-    $phr_lst = $phr_corp->phrases(foaf_direction::DOWN);
+    $phr_lst = $phr_corp->phrases(foaf_direction::DOWN, $msg);
     $sel->lst = $phr_lst->lst_key();
     $sel->selected = $phr_ZH_INS->id();
     $sel->dummy_text = '... please select';

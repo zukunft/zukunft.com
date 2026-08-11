@@ -92,6 +92,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
+include_once paths::MODEL_USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
@@ -145,6 +146,7 @@ use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 
 
@@ -205,8 +207,9 @@ class test_log
 
     private function log_entry_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry();
-        $chg->set_action(change_actions::ADD);
+        $chg->set_action(change_actions::ADD, $msg);
         return $chg;
     }
 
@@ -216,9 +219,10 @@ class test_log
      */
     function log_word_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = word_names::MATH;
         $chg->row_id = word_names::MATH_ID;
         return $chg;
@@ -230,8 +234,9 @@ class test_log
      */
     function log_word_update(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_action(change_actions::UPDATE);
+        $chg->set_action(change_actions::UPDATE, $msg);
         $chg->old_value = word_names::TEST_RENAMED;
         return $chg;
     }
@@ -242,8 +247,9 @@ class test_log
      */
     function log_word_delete(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_update();
-        $chg->set_action(change_actions::DELETE);
+        $chg->set_action(change_actions::DELETE, $msg);
         $chg->new_value = null;
         return $chg;
     }
@@ -254,9 +260,10 @@ class test_log
      */
     function log_word_add_type(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         global $sys;
         $chg = $this->log_word_add();
-        $chg->set_field(change_fields::FLD_PHRASE_TYPE);
+        $chg->set_field(change_fields::FLD_PHRASE_TYPE, $msg);
         $chg->new_value = phrase_types::TIME;
         $chg->new_id = $sys->typ_lst->phr_typ->id(phrase_types::TIME);
         return $chg;
@@ -268,9 +275,10 @@ class test_log
      */
     function log_word_update_type(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         global $sys;
         $chg = $this->log_word_add_type();
-        $chg->set_action(change_actions::UPDATE);
+        $chg->set_action(change_actions::UPDATE, $msg);
         $chg->old_value = phrase_types::MEASURE;
         $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $chg;
@@ -282,8 +290,9 @@ class test_log
      */
     function log_word_delete_type(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_update_type();
-        $chg->set_action(change_actions::DELETE);
+        $chg->set_action(change_actions::DELETE, $msg);
         $chg->new_value = null;
         $chg->new_id = null;
         return $chg;
@@ -295,8 +304,9 @@ class test_log
      */
     function log_word_add_description(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_field(fields::FLD_DESCRIPTION);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
         $chg->new_value = word_names::MATH_COM;
         return $chg;
     }
@@ -309,8 +319,9 @@ class test_log
      */
     function log_word_add_impact(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_field(fields::FLD_IMPACT);
+        $chg->set_field(fields::FLD_IMPACT, $msg);
         $chg->new_value = '0';
         return $chg;
     }
@@ -323,8 +334,9 @@ class test_log
      */
     function log_word_add_usage(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_field(fields::FLD_USAGE);
+        $chg->set_field(fields::FLD_USAGE, $msg);
         $chg->new_value = '0';
         return $chg;
     }
@@ -337,10 +349,11 @@ class test_log
      */
     function log_word_update_protection(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         global $sys;
         $chg = $this->log_word_add();
-        $chg->set_action(change_actions::UPDATE);
-        $chg->set_field(fields::FLD_PROTECT);
+        $chg->set_action(change_actions::UPDATE, $msg);
+        $chg->set_field(fields::FLD_PROTECT, $msg);
         $chg->old_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT);
         $chg->new_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::ADMIN);
         return $chg;
@@ -354,8 +367,9 @@ class test_log
      */
     function log_word_add_user_id(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_field(user_db::FLD_ID);
+        $chg->set_field(user_db::FLD_ID, $msg);
         $chg->new_value = (string)users::SYSTEM_ID;
         return $chg;
     }
@@ -369,9 +383,10 @@ class test_log
      */
     function log_word_add_view(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_table(change_tables::WORD_USR);
-        $chg->set_field(fields::FLD_VIEW);
+        $chg->set_table(change_tables::WORD_USR, $msg);
+        $chg->set_field(fields::FLD_VIEW, $msg);
         $chg->new_value = views::WORD_NAME;
         $chg->new_id = views::WORD_ID;
         return $chg;
@@ -385,8 +400,9 @@ class test_log
      */
     function log_word_add_view_id(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_field(fields::FLD_VIEW);
+        $chg->set_field(fields::FLD_VIEW, $msg);
         $chg->new_value = null;
         $chg->new_id = views::START_ID;
         return $chg;
@@ -401,9 +417,10 @@ class test_log
      */
     function log_word_remove_view(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_table(change_tables::WORD_USR);
-        $chg->set_field(fields::FLD_VIEW);
+        $chg->set_table(change_tables::WORD_USR, $msg);
+        $chg->set_field(fields::FLD_VIEW, $msg);
         $chg->new_value = '';
         return $chg;
     }
@@ -413,9 +430,10 @@ class test_log
      */
     function log_verb_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::VERB);
-        $chg->set_field(change_fields::FLD_VERB_NAME);
+        $chg->set_table(change_tables::VERB, $msg);
+        $chg->set_field(change_fields::FLD_VERB_NAME, $msg);
         $chg->new_value = verbs::IS;
         $chg->row_id = verbs::IS_ID;
         return $chg;
@@ -426,9 +444,10 @@ class test_log
      */
     function log_triple_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::TRIPLE);
-        $chg->set_field(change_fields::FLD_TRIPLE_NAME);
+        $chg->set_table(change_tables::TRIPLE, $msg);
+        $chg->set_field(change_fields::FLD_TRIPLE_NAME, $msg);
         $chg->new_value = triple_names::MATH_CONST;
         $chg->row_id = triple_names::MATH_CONST_ID;
         return $chg;
@@ -439,9 +458,10 @@ class test_log
      */
     function log_source_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::SOURCE);
-        $chg->set_field(change_fields::FLD_SOURCE_NAME);
+        $chg->set_table(change_tables::SOURCE, $msg);
+        $chg->set_field(change_fields::FLD_SOURCE_NAME, $msg);
         $chg->new_value = sources::SIB;
         $chg->row_id = sources::SIB_ID;
         return $chg;
@@ -452,9 +472,10 @@ class test_log
      */
     function log_ref_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::REF);
-        $chg->set_field(change_fields::FLD_REF_KEY);
+        $chg->set_table(change_tables::REF, $msg);
+        $chg->set_field(change_fields::FLD_REF_KEY, $msg);
         $chg->new_value = refs::PI_KEY;
         $chg->row_id = refs::PI_ID;
         return $chg;
@@ -465,9 +486,10 @@ class test_log
      */
     function log_ref_update(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         global $sys;
         $chg = $this->log_ref_add();
-        $chg->set_action(change_actions::UPDATE);
+        $chg->set_action(change_actions::UPDATE, $msg);
         $chg->old_value = phrase_types::MEASURE;
         $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $chg;
@@ -489,12 +511,13 @@ class test_log
      */
     function log_value_add(): change_values_prime
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = new change_values_prime($this->env->usr_system);
         $chg->id = $this->chg_log_seq();
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::VALUE);
-        $chg->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $chg->new_value = values::PI;
         $chg->row_id = values::PI_ID;
         return $chg;
@@ -505,9 +528,10 @@ class test_log
      */
     function log_formula_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::FORMULA);
-        $chg->set_field(change_fields::FLD_FORMULA_NAME);
+        $chg->set_table(change_tables::FORMULA, $msg);
+        $chg->set_field(change_fields::FLD_FORMULA_NAME, $msg);
         $chg->new_value = formula_names::SCALE_TO_SEC;
         $chg->row_id = formula_names::SCALE_TO_SEC_ID;
         return $chg;
@@ -518,9 +542,10 @@ class test_log
      */
     function log_formula_increase_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::FORMULA);
-        $chg->set_field(change_fields::FLD_FORMULA_NAME);
+        $chg->set_table(change_tables::FORMULA, $msg);
+        $chg->set_field(change_fields::FLD_FORMULA_NAME, $msg);
         $chg->new_value = formula_names::INCREASE;
         $chg->row_id = formula_names::INCREASE_ID;
         return $chg;
@@ -531,9 +556,10 @@ class test_log
      */
     function log_formula_increase_exp(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::FORMULA);
-        $chg->set_field(change_fields::FLD_FORMULA_USR_TEXT);
+        $chg->set_table(change_tables::FORMULA, $msg);
+        $chg->set_field(change_fields::FLD_FORMULA_USR_TEXT, $msg);
         $chg->new_value = formula_names::INCREASE_EXP;
         $chg->row_id = formula_names::INCREASE_ID;
         return $chg;
@@ -555,9 +581,10 @@ class test_log
      */
     function log_view_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::VIEW);
-        $chg->set_field(change_fields::FLD_VIEW_NAME);
+        $chg->set_table(change_tables::VIEW, $msg);
+        $chg->set_field(change_fields::FLD_VIEW_NAME, $msg);
         $chg->new_value = views::START;
         $chg->row_id = views::START_ID;
         return $chg;
@@ -568,9 +595,10 @@ class test_log
      */
     function log_component_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::VIEW_COMPONENT);
-        $chg->set_field(change_fields::FLD_COMPONENT_NAME);
+        $chg->set_table(change_tables::VIEW_COMPONENT, $msg);
+        $chg->set_field(change_fields::FLD_COMPONENT_NAME, $msg);
         $chg->new_value = components::MATRIX_NAME;
         $chg->row_id = components::MATRIX_ID;
         return $chg;
@@ -581,11 +609,12 @@ class test_log
      */
     function log_norm(): changes_norm
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = new changes_norm($this->env->usr_system);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = word_names::MATH;
         $chg->row_id = 1;
         return $chg;
@@ -596,11 +625,12 @@ class test_log
      */
     function log_big(): changes_big
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = new changes_big($this->env->usr_system);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = word_names::MATH;
         $chg->row_id = 1;
         return $chg;
@@ -611,6 +641,7 @@ class test_log
      */
     function log_obj_from_class(string $class): object
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $lib = new library();
 
         $t_grp = new test_groups($this->env);
@@ -619,9 +650,9 @@ class test_log
         $val_fld = $this->log_class_to_value_field($class);
         $val = $this->log_class_to_value($class);
         $log->set_time_str(test_const::DUMMY_DATETIME);
-        $log->set_action(change_actions::ADD);
-        $log->set_table($lib->class_to_table($val_class));
-        $log->set_field($val_fld);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table($lib->class_to_table($val_class), $msg);
+        $log->set_field($val_fld, $msg);
         $log->group_id = $t_grp->group()->id();
         $log->new_value = $val;
         $log->row_id = 1;
@@ -759,12 +790,13 @@ class test_log
      */
     function log_value(): change_values_norm
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $t_grp = new test_groups($this->env);
         $chg = new change_values_norm($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::VALUE);
-        $chg->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $chg->group_id = $t_grp->group()->id();
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
@@ -776,11 +808,12 @@ class test_log
      */
     function log_value_prime(): change_values_prime
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = new change_values_prime($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
@@ -791,11 +824,12 @@ class test_log
      */
     function log_value_big(): change_values_big
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = new change_values_big($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
@@ -826,10 +860,11 @@ class test_log
      */
     function log_link(): change_link
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = new change_link($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::TRIPLE);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::TRIPLE, $msg);
         $chg->new_from_id = word_names::CONST_ID;
         $chg->new_link_id = verbs::PART_ID;
         $chg->new_to_id = word_names::MATH_ID;

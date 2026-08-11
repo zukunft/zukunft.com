@@ -1938,9 +1938,9 @@ class word extends sandbox_code_id
         $msk_new->load_by_id($view_id, $msg);
 
         $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        $log->set_class(word::class);
-        $log->set_field(fields::FLD_VIEW);
+        $log->set_action(change_actions::UPDATE, $msg);
+        $log->set_class(word::class, $msg);
+        $log->set_field(fields::FLD_VIEW, $msg);
         if ($this->get_view_id() > 0) {
             $msk_old = new view($this->get_user());
             $msk_old->load_by_id($this->get_view_id(), $msg);

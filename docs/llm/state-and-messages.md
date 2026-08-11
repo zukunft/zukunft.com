@@ -161,6 +161,50 @@ A block of buffers that belong together (the per-level messages of an import
 loop) is declared on consecutive lines and shares one comment above the block —
 the check understands that, so don't repeat the same sentence five times.
 
+### `$msg` is never null — no `?user_message $msg = null` parameter
+
+A `user_message` parameter is **required**. Neither of the two ways to make it
+optional is allowed:
+
+```php
+function f(..., user_message $msg = new user_message())   // wrong - hidden drop
+function f(..., ?user_message $msg = null)                // wrong - explicit drop
+```
+
+The first creates a message nobody reads, so everything the function reports is
+thrown away. The second is the same loss written out honestly: `$msg?->add(...)`
+reads as "report this if somebody is listening", and at exactly the call sites
+that matter nobody is. Making the drop visible in the signature does not stop it
+from being a drop — the second form is not a smaller version of the first, it is
+the identical bug with better documentation.
+
+There is also nothing for a null to mean. A request has **one** message, created
+by the entry point and threaded from there (see above), so at any point below the
+entry point a message exists. A parameter that admits `null` is describing a state
+the architecture does not have.
+
+So when a caller has no message to pass, the answer is never to make the parameter
+optional — it is to give **that caller** a message too:
+
+- the caller takes `user_message $msg` as well and threads it from *its* caller, or
+- the caller *is* an entry point (an http/api script, a cron job, a test builder),
+  and creates the one message there, with the trailing comment the creation rule
+  requires.
+
+The cascade terminates at an entry point every time, which is what makes it safe
+to keep pulling.
+
+Two mechanics come up while doing this:
+
+- **PHP forbids a required parameter after an optional one.** When `$msg` lands
+  behind `bool $allow_duplicates = false`, either move `$msg` in front of the
+  optional parameters or make those required too — do not "solve" it with a
+  default.
+- **An override cannot add a required parameter** its parent does not have. If
+  `child::add()` needs `$msg` and `parent::add()` has no such parameter, the whole
+  override family (the base plus every child) takes the parameter in one commit.
+  A nullable parameter is not the way around this — it just hides the split.
+
 ### "The message is my return value" is not an exception — take `$msg` instead
 
 The most common shape below the entry point is a function that creates a message,

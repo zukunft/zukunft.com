@@ -81,11 +81,17 @@ the done passes are in the git history; only what is still open is listed here.
      returned true. `add_obj()`'s own return could not be used either, because it reports its message
      state and adds nothing at all for an object without an id (which is exactly what this function
      is for), so the added flag now comes from the list count.
-   - `web/sandbox_list_named::add` (1) - the frontend list add, called throughout `web/`.
-     it **overrides** `ListBase::add($to_add)`, which has one parameter, so a required `$msg` here
-     is a php fatal (incompatible signature) - either it goes nullable like the two above, or
-     `ListBase::add` and its five sibling overrides (`sys_log_list`, `value_list`, `figure_list`,
-     `group_list`, `group`) all take the parameter together
+   - `web/sandbox_list_named::add` is **DONE** (1 default), nullable and not required, because it
+     **overrides** `ListBase::add($to_add)`, which has one parameter - a required `$msg` there is a
+     php fatal, not a call-site cascade. no caller passes a message and none reads the return, and
+     the four subclasses (`component_list`, `term_list`, `phrase_list`, `sandbox_list_value`) do not
+     override `add`, so the arity is unchanged for them.
+     the buffer lives in a new private `add_and_report()`, because `add()` calls `add_obj` from two
+     branches and the buffer + merge would otherwise be copy-pasted (`docs/llm/dry.md`). here
+     `add_obj`'s own return is a usable added flag once the message is local, unlike in the backend
+     `add_by_name_direct`, because `ListOfIdObjects::add_obj` has no "do nothing for a missing id"
+     path. the return is now that flag rather than `$msg->is_ok()`, which had claimed "added" for a
+     null object and for an id already in the list.
 
    the `api_json` family (8 defaults) is the trap — read this before retrying. its 53 **production**
    call sites already pass their message, so the drop is fixed there; removing the defaults breaks
@@ -99,7 +105,56 @@ the done passes are in the git history; only what is still open is listed here.
    then the three `__construct` defaults — though the constructors stay cosmetic until their many
    callers pass a real message.
 
-3. **the deferred items of the log/buffer audit** — each needs a test run or a decision, not a quick
+3. **remove the remaining `?user_message $msg = null` parameters** — the rule is in coding.md and
+   `docs/llm/state-and-messages.md` ("$msg is never null"), and
+   `code_user_message_exceptions` now lists every hit in its own report section, so this is
+   measured the same way the defaults were. a nullable message is the same drop as a default,
+   only written out honestly: `$msg?->add(...)` reports nothing at exactly the call sites that
+   pass none. the parameter becomes **required**, and a caller without a message gets one itself,
+   which is why each family is a cascade and not a rename.
+   **DONE: the xbrl converter family** (5 of the original 22) - `build_data`, `convert`,
+   `convert_folder`, `convert_folder_to_file`, `convert_instance` and `convert_to_file`. it was
+   self contained: one file plus one test caller, and `convert_to_file` had no caller at all.
+   note the mechanic that repeats in every remaining family - php deprecates a required parameter
+   after an optional one, so `$msg` moved **in front of** the optional `string $time = ''` rather
+   than staying last, which changes the argument order at the call sites.
+   **DONE: the change_log family** (7 more, so 12 of the original 22). 198 call sites now pass a
+   message, 93 of which did not before. `set_class` and `set_field` took `$msg` in front of their
+   optional parameters, the three protected `add_*` in front of theirs, so the argument order
+   changed at every call site - a positional check over all 198 confirms the message sits where
+   the signature expects it. 13 production functions had no message at all and took one
+   (`component::log_link`/`log_unlink`, the four `sql_creator::sql_func_log_*`, the three
+   `sql_delete_and_log` variants, `sandbox_multi::log_prime`/`log_norm`/`log_big` and
+   `value_base::log_update_parameter`), which pulled in `sandbox_multi::log_object` one level up
+   and then stopped. the test builders in `test_log.php` create their own message per function -
+   allowed, because a test **is** the entry point and the report only scans `src/main`.
+   two real drops fixed on the way: `change_log::load_by_field_row` already carried a `$msg` but
+   passed none to its own `set_class`/`set_field`, and `db_object_seq_id`/`user` called
+   `sql_func_log_update` with `$msg->usr` while dropping the message itself.
+   **DONE: the expression and formula_map families** (4 more, so 16 of the original 22).
+   the expression pair did not become a rename, because the callers split into two kinds that
+   want opposite things: `dsp_id()`, `name()`, `is_valid()`, `res_part()` and the other string
+   splitters have no user to report to, and `dsp_id`/`name` are a codebase wide convention with
+   ~1200 zero argument call sites, so they cannot take a message at all. so `ref_text` and
+   `user_text` are the **converting** accessors with a required `$msg` in front of the optional
+   `$trm_lst`, and `ref_text_dsp()` / `user_text_dsp()` are the display path - same conversion,
+   one named and explained local message each instead of a nullable parameter at 35 call sites.
+   `formula_map::set_user_text` and `get_ref_text` are simply required now; the test builders
+   create their own message, and `test_db_load` was already passing one as the third argument,
+   which the new order made second.
+   watch the namesakes here: `web/formula/formula::ref_text()` takes no argument at all, and
+   `shared/calc/expression::set_user_text()` is a different function from
+   `formula_map::set_user_text()` - a receiver-blind rewrite breaks both.
+   the remaining 6, with the number of call sites whose caller has no message today:
+   - `sandbox_list_named` (2): the backend `add_by_name_direct` 13, and the frontend `add`, which
+     cannot take a required parameter before `ListBase::add` and its five sibling overrides do
+   - the three web `__construct(?string $api_json = null, ?user_message $msg = null)` (28):
+     these need a decision rather than a cascade - building an **empty** list needs no message at
+     all, so the clean shape is a plain constructor plus the existing `set_from_json($json, $msg)`,
+     not a required parameter that every `new verb_list()` has to fill with something
+   - `ListOf::get_by_key` (1): 15
+
+4. **the deferred items of the log/buffer audit** — each needs a test run or a decision, not a quick
    edit:
    - `sandbox_named.php` ~215 and its twin `type_object.php` ~211 guard the missing-name log with
      "no NAME and no NAME_GIVEN and no ID", so the false positives are gone; the remaining step is
@@ -116,7 +171,7 @@ the done passes are in the git history; only what is still open is listed here.
      `cfg/group/group.php` ~1156 "save of group description not yet implemented" and the import
      "not yet implemented" sections — both are dev limitations of the same category
 
-4. **the `$msg->is_ok()` gate defect**, found by the import regression (the trap itself is written
+5. **the `$msg->is_ok()` gate defect**, found by the import regression (the trap itself is written
    up in state-and-messages.md): ~10 places gate a loop or a branch on `db_ready($msg)` /
    `can_be_ready($msg)` with a **passed in** message — `ref_list` ~309, `triple` ~513/541,
    `component_list` ~458, `list_db_write` ~187/217, `formula_map` ~1365, `sandbox_list_named`
@@ -125,7 +180,7 @@ the done passes are in the git history; only what is still open is listed here.
    happen to pass a message that is still ok. the fix makes more objects pass the gate, so it needs
    its own commit with a test run.
 
-5. **migrate the bare `log_err` calls to `log_err_msg`** (the rule is coding.md and
+6. **migrate the bare `log_err` calls to `log_err_msg`** (the rule is coding.md and
    docs/llm/structure.md "log_err alone is the transitional channel"): today ~512 bare `log_err`
    against 59 `log_err_msg`, and 202 `log_warning` against 1 `log_warning_msg` — so an internal
    error is still logged for the admin while the user sees a page that silently did nothing.

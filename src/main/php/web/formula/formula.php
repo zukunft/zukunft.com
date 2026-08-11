@@ -973,7 +973,7 @@ class formula extends sandbox_code_id
         $exp = new expression();
         $exp->set_ref_text($this->ref_text(), $trm_lst);
         $exp->set_user_text($this->get_usr_text(), $trm_lst);
-        log_debug('->expression ' . $exp->ref_text());
+        log_debug('->expression ' . $exp->ref_text_ui());
         return $exp;
     }
 

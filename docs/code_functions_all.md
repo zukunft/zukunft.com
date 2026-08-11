@@ -557,7 +557,7 @@
     \-- get_usr_text
         \-- formula_map - update the expression by setting the human-readable format and try to update the database reference format
     \-- get_ref_text
-        \-- formula_map - update the expression by setting the human-readable format and try to update the database reference format
+        \-- formula_map - @param user_message $msg to report an expression that cannot be converted
     \-- set_latex
         \-- formula_map - @param string|null $latex the formula in latex format
     \-- get_latex
@@ -726,9 +726,9 @@
         \-- component_link - create an array with the export json fields of this component
 \-- log
     \-- log_link
-        \-- component - returns the next free order number for a new view component
+        \-- component - set the log entry parameters to link a display component ($cmp) to a view ($dsp)
     \-- log_unlink
-        \-- component - returns the next free order number for a new view component
+        \-- component - set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
 \-- link
     \-- link
         \-- component - link this component to a view
@@ -4828,9 +4828,9 @@
         \-- sys_log_list - simple add another system log entry to the list
 \-- log
     \-- log_object
-        \-- value_geo - @return change_value_geo the object that is used to log the user changes
-        \-- value_text - @return change_value_text the object that is used to log the user changes
-        \-- value_time - @return change_value_time the object that is used to log the user changes
+        \-- value_geo - @param user_message $msg to report a change log entry that cannot be written
+        \-- value_text - @param user_message $msg to report a change log entry that cannot be written
+        \-- value_time - @param user_message $msg to report a change log entry that cannot be written
 \-- database load functions that reads the object from the database
     \-- row_mapper_sandbox
         \-- value_time_series - map the database fields to the object fields

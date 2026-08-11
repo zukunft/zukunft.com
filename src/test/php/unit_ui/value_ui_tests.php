@@ -221,7 +221,7 @@ class value_ui_tests
         $val_lst = new value_list_dsp();
         // TODO review
         //$val_lst->set_phr($wrd->phrase());
-        $result = $val_lst->dsp_table($wrd_col, $wrd->id());
+        $result = $val_lst->dsp_table($wrd_col, $wrd->id(), $msg_ui);
         $target = values::TV_NESN_SALES_2016_FORMATTED;
         $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         //$result = $val_lst->dsp_table($wrd_col, $wrd->id);

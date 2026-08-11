@@ -78,7 +78,7 @@ class xbrl_write_tests
             test_paths::IMPORT_XBRL,
             ''
         );
-        $json_path = $conv_xbrl->convert_folder_to_file($folder, $conv_xbrl->instance_file_name('2013'), test_base::TEST_TIMESTAMP, $msg);
+        $json_path = $conv_xbrl->convert_folder_to_file($folder, $conv_xbrl->instance_file_name('2013'), $msg, test_base::TEST_TIMESTAMP);
         $t->assert($test_name, $json_path, test_files::IMPORT_XBRL_ABB_2013);
 
         // import the created json file into the database

@@ -851,9 +851,9 @@ class sandbox_named extends sandbox
 
         $log = new change($this->get_user());
         // TODO add the table exceptions from sql_db
-        $log->set_action(change_actions::ADD);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
-        $log->set_field($tbl_name . '_name');
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
+        $log->set_field($tbl_name . '_name', $msg);
         $log->set_user($this->get_user());
         $log->old_value = null;
         $log->new_value = $this->name();
@@ -875,9 +875,9 @@ class sandbox_named extends sandbox
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
-        $log->set_field($tbl_name . '_name');
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
+        $log->set_field($tbl_name . '_name', $msg);
         $log->old_value = $this->name();
         $log->new_value = null;
 

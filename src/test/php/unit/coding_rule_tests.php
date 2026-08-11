@@ -772,8 +772,11 @@ class coding_rule_tests
      *
      * a token parser (not a line grep) is required because a grep cannot tell a parameter shadow
      * ($msg is a user_message parameter) from a legitimate local buffer ($msg is a fresh local);
-     * the guarded null-init of a *nullable* parameter (import_convert_xbrl::build_data does
-     * "if ($msg == null) { $msg = new user_message(); }") is the one allowed reset and is tolerated
+     * the guarded null-init of a *nullable* parameter is still tolerated, but no code relies on it
+     * any more - a message parameter is required now (docs/llm/state-and-messages.md, "$msg is
+     * never null"), and the last such init, import_convert_xbrl::build_data, became dead code when
+     * its parameter stopped being nullable, so the tolerance can go with the last nullable parameter
+     * listed in docs/code_user_message_exceptions.md
      *
      * each violation produces one failing assertion identifying the file and line;
      * a clean tree produces the summary assertion only
@@ -782,7 +785,10 @@ class coding_rule_tests
      *     "user_message $msg" parameter flags the rule violation
      * negative (test tolerates good code): a local buffer "$msg = new user_message();" (not a
      *     parameter), a default value "user_message $msg = new user_message()" in the signature, and
-     *     the guarded null-init of a nullable "?user_message $msg = null" parameter all pass
+     *     the guarded null-init of a nullable "?user_message $msg = null" parameter all pass;
+     *     a nullable parameter that needs a fallback uses a local ("$map_msg = $msg ?? new
+     *     user_message();") instead of reassigning the parameter, as the three web list
+     *     constructors do
      *
      * @param test_cleanup $t the test harness used for the assertion
      * @return void

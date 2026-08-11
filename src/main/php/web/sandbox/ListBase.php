@@ -298,23 +298,26 @@ class ListBase extends ListOfIdObjects
      * modify
      */
 
-    function merge(ListBase $lst): void
+    function merge(ListBase $lst, user_message $msg): void
     {
         foreach ($lst->lst() as $phr) {
-            $this->add($phr);
+            $this->add($phr, $msg);
         }
     }
 
     /**
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
+     * @param user_message $msg to report which entry is double
      * @returns bool true the object has been added
      */
-    function add(IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
         if ($to_add != null) {
-            $this->add_obj($to_add);
+            $add_msg = new user_message(); // add_obj returns is_ok(), so the double check must judge only this add
+            $this->add_obj($to_add, false, $add_msg);
+            $msg->merge($add_msg);
             $result = true;
         }
         return $result;

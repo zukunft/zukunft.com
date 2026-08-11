@@ -797,9 +797,10 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change_log the object that is used to log the user changes
      */
-    function log_object(): change_log
+    function log_object(user_message $msg): change_log
     {
         return new change($this);
     }
@@ -2800,8 +2801,8 @@ class user extends db_id_object_non_sandbox
     {
         log_debug(' user ' . $this->name);
         $log = new change($this);
-        $log->set_action(change_actions::UPDATE);
-        $log->set_table(change_tables::USER);
+        $log->set_action(change_actions::UPDATE, $msg);
+        $log->set_table(change_tables::USER, $msg);
 
         return $log;
     }
@@ -3441,7 +3442,7 @@ class user extends db_id_object_non_sandbox
                         db_object_seq_id::FLD_ID_SQL_TYP);
 
                     // create the query parameters for the log entries for the single fields
-                    $qp_log = $sc->sql_func_log_update($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id);
+                    $qp_log = $sc->sql_func_log_update($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id, $msg);
                     $sql .= ' ' . $qp_log->sql;
                     $par_lst_out->add_list($qp_log->par_fld_lst);
                 } else {

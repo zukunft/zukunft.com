@@ -804,7 +804,7 @@ class formula extends formula_map
         // load the formula element groups e.g. "sales differentiator sector" and "Total sales"
         $exp = $this->expression($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
-        log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
+        log_debug('in ' . $exp->ref_text_ui() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // replace each element group symbol with the matching number(s)
         $all_elm_grp_filled = true;
@@ -1535,7 +1535,7 @@ class formula extends formula_map
             if ($this->ref_text == '' or $this->ref_text_dirty) {
                 $exp = new expression($this);
                 $exp->set_user_text($this->usr_text, $trm_lst);
-                $this->ref_text = $exp->ref_text($trm_lst, $msg);
+                $this->ref_text = $exp->ref_text($msg, $trm_lst);
                 if ($msg->is_ok()) {
                     $this->ref_text_dirty = false;
                 }
@@ -1555,7 +1555,7 @@ class formula extends formula_map
         $result = '';
         $exp = new expression($this);
         $exp->set_user_text($this->usr_text);
-        $this->ref_text = $exp->ref_text($trm_lst);
+        $this->ref_text = $exp->ref_text_ui($trm_lst);
         $this->ref_text_dirty = false;
         return $result;
     }

@@ -138,7 +138,7 @@ class component_exe extends component
         // get the default values
         // TODO call only when needed
         $phr_lst = new phrase_list();
-        $phr_lst->load_fallback();
+        $phr_lst->load_fallback($msg);
         if ($cfg != null) {
             if ($cfg->has_phrases()) {
                 $phr_lst = $cfg->phrase_list();
@@ -375,16 +375,16 @@ class component_exe extends component
             // related
             component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
             component_types::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage, $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
-            component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phrase_list()),
-            component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phrase_list()),
-            component_types::PHRASE_ALIASES => $list->phrase_aliases($dbo, $cfg->phrase_list()),
-            component_types::PHRASE_SYMBOLS => $list->phrase_symbols($dbo, $cfg->phrase_list()),
-            component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $cfg->phrase_list()),
-            component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $cfg->phrase_list()),
+            component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $msg, $cfg->phrase_list()),
+            component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $msg, $cfg->phrase_list()),
+            component_types::PHRASE_ALIASES => $list->phrase_aliases($dbo, $msg, $cfg->phrase_list()),
+            component_types::PHRASE_SYMBOLS => $list->phrase_symbols($dbo, $msg, $cfg->phrase_list()),
+            component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $msg, $cfg->phrase_list()),
+            component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $msg, $cfg),
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $msg, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $msg, $cfg),
-            component_types::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
+            component_types::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $msg, $cfg),
             component_types::LIST_FORMULAS_OF_PARENTS => $list->formulas_of_parents($dbo),
             component_types::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $msg, $cfg, $test_mode),
 
@@ -426,7 +426,7 @@ class component_exe extends component
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
             component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
-            component_types::PHRASES_RELATED => $list->phrases_related($dbo, $cfg),
+            component_types::PHRASES_RELATED => $list->phrases_related($msg, $dbo, $cfg),
             component_types::BUTTON_REQUEST => $form->button_request(),
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $msg, $test_mode),
             component_types::CHANGE_LOG_TABLE_PURE => $log->change_log_table_pure($dbo, $log_lst, $msg, $test_mode),

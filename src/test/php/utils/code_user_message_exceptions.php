@@ -66,6 +66,9 @@ class code_user_message_exceptions
     private const string NEW_PATTERN = '/new\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
     // a creation used as the default value of a function parameter e.g. 'user_message $msg = new user_message()'
     private const string DEFAULT_PATTERN = '/user_message\s+\$\w+\s*=\s*new\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    // a nullable message parameter e.g. '?user_message $msg = null' or 'user_message|null $msg = null'
+    // which drops the report of every caller that passes none, just like a default creation does
+    private const string NULL_PATTERN = '/(\?\s*(\\\\?[\w\\\\]*\\\\)?user_message|(\\\\?[\w\\\\]*\\\\)?user_message\s*\|\s*null)\s+\$\w+\s*=\s*null/i';
 
     /**
      * build the markdown report of the user_message creations below the entry points
@@ -77,11 +80,13 @@ class code_user_message_exceptions
         $exp_cnt = 0;
         $def_lst = [];
         $open_lst = [];
+        $null_lst = [];
         foreach (self::SCAN_PATHS as $sec => $path) {
-            $this->scan_section($sec, $path, $exp_cnt, $def_lst, $open_lst);
+            $this->scan_section($sec, $path, $exp_cnt, $def_lst, $open_lst, $null_lst);
         }
         $open_cnt = $this->hit_count($open_lst);
         $def_cnt = $this->hit_count($def_lst);
+        $null_cnt = $this->hit_count($null_lst);
         $all_cnt = $exp_cnt + $open_cnt + $def_cnt;
 
         $md_txt = '# User message exceptions' . "\n";
@@ -97,9 +102,14 @@ class code_user_message_exceptions
         $md_txt .= "\n";
         $md_txt .= $all_cnt . ' creations below the entry points: ' . $exp_cnt . ' explained, '
             . $def_cnt . ' parameter defaults and ' . $open_cnt . ' still unexplained' . "\n";
+        $md_txt .= 'and ' . $null_cnt . ' nullable message parameters' . "\n";
         $md_txt .= $this->section_md('parameter defaults', $def_lst,
             'a default value drops the message of a caller that passes none,'
             . ' so each of these is a silent message loss waiting for a threading pass');
+        $md_txt .= $this->section_md('nullable message parameters', $null_lst,
+            'a message parameter is required, because a request has exactly one message and null'
+            . ' describes a state that does not exist; "$msg?->add(...)" reports nothing at the call'
+            . ' sites that pass none, so a caller without a message needs one itself');
         $md_txt .= $this->section_md('unexplained creations', $open_lst,
             'the remaining rule breaks: explain the exception with a comment or thread the $msg of the caller');
         return $md_txt;
@@ -114,6 +124,7 @@ class code_user_message_exceptions
      * @param int $exp_cnt (in/out) number of creations explained by a comment
      * @param array $def_lst (in/out) map of file name to the parameter default hits
      * @param array $open_lst (in/out) map of file name to the unexplained hits
+     * @param array $null_lst (in/out) map of file name to the nullable message parameter hits
      * @return void
      */
     private function scan_section(
@@ -121,7 +132,8 @@ class code_user_message_exceptions
         string $path,
         int    &$exp_cnt,
         array  &$def_lst,
-        array  &$open_lst
+        array  &$open_lst,
+        array  &$null_lst
     ): void
     {
         $lib = new library();
@@ -132,6 +144,9 @@ class code_user_message_exceptions
             $lines = file($path . $code_file);
             $name = $sec . ': ' . str_replace(DIRECTORY_SEPARATOR, '/', $code_file);
             foreach ($lines as $line_idx => $line) {
+                if (preg_match(self::NULL_PATTERN, $line) and !$this->is_comment($line)) {
+                    $null_lst[$name][] = $name . ':' . ($line_idx + 1) . ' - ' . trim($line);
+                }
                 if (!preg_match(self::NEW_PATTERN, $line) or $this->is_comment($line)) {
                     continue;
                 }

@@ -2039,7 +2039,7 @@ class sandbox_multi extends db_object_multi_user
     function log_add(user_message $msg): change|change_value|changes_norm|changes_big
     {
         log_debug($this->dsp_id());
-        $log = $this->log_object();
+        $log = $this->log_object($msg);
         return $this->log_add_common($log, $msg);
     }
 
@@ -2052,9 +2052,9 @@ class sandbox_multi extends db_object_multi_user
     protected function log_add_common(change|change_value $log, user_message $msg): change|change_value
     {
         $lib = new library();
-        $log->set_action(change_actions::ADD);
+        $log->set_action(change_actions::ADD, $msg);
         // a value, result or group is always identified by the group name
-        $log->set_field($lib->class_to_name(group::class) . '_name');
+        $log->set_field($lib->class_to_name(group::class) . '_name', $msg);
         $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
@@ -2091,18 +2091,22 @@ class sandbox_multi extends db_object_multi_user
     function log_upd(user_message $msg): change|change_value|changes_norm|changes_big
     {
         log_debug($this->dsp_id());
-        $log = $this->log_object();
+        $log = $this->log_object($msg);
         return $this->log_upd_common($log, $msg);
     }
 
-    function log_object(): change|change_value|changes_norm|changes_big
+    /**
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return change|change_value|changes_norm|changes_big the log object matching the value type
+     */
+    function log_object(user_message $msg): change|change_value|changes_norm|changes_big
     {
         if ($this->is_prime()) {
-            $log = $this->log_prime();
+            $log = $this->log_prime($msg);
         } elseif ($this->is_big()) {
-            $log = $this->log_big();
+            $log = $this->log_big($msg);
         } else {
-            $log = $this->log_norm();
+            $log = $this->log_norm($msg);
         }
         return $log;
     }
@@ -2124,9 +2128,10 @@ class sandbox_multi extends db_object_multi_user
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      *
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change|change_value the change log object with the basic parameters set
      */
-    private function log_prime(): change|change_value
+    private function log_prime(user_message $msg): change|change_value
     {
         if ($this::class == group::class) {
             $log = new change($this->get_user());
@@ -2144,7 +2149,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
+        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
         return $log;
     }
 
@@ -2152,9 +2157,10 @@ class sandbox_multi extends db_object_multi_user
      * similar to log_prime but ...
      * ... set the log entry parameter for a group object with a 512bit key
      *
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change|change_value the change log object with the basic parameters set
      */
-    private function log_norm(): change|change_value
+    private function log_norm(user_message $msg): change|change_value
     {
         log_debug($this->dsp_id());
 
@@ -2174,7 +2180,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension(), $msg);
         return $log;
     }
 
@@ -2182,9 +2188,10 @@ class sandbox_multi extends db_object_multi_user
      * similar to log_prime but ...
      * * ... set the log entry parameter for a group object with a text key
      *
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big the change log object with the basic parameters set
      */
-    private function log_big(): changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big
+    private function log_big(user_message $msg): changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big
     {
         log_debug($this->dsp_id());
 
@@ -2204,7 +2211,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension(), $msg);
         return $log;
     }
 
@@ -2218,12 +2225,12 @@ class sandbox_multi extends db_object_multi_user
         $class = $lib->class_to_name($this::class);
         log_debug($this->dsp_id());
         $log->set_user($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
-            $log->set_table($class . sql_db::TABLE_EXTENSION);
+            $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
         } else {
-            $log->set_table(sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION);
+            $log->set_table(sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION, $msg);
         }
 
         return $log;
@@ -2255,7 +2262,7 @@ class sandbox_multi extends db_object_multi_user
 
         $log = new change($this->get_user());
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
+        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
         return $this->log_del_common($log, $msg);
     }
 
@@ -2269,7 +2276,7 @@ class sandbox_multi extends db_object_multi_user
     {
         $log = new changes_norm($this->get_user());
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension(), $msg);
         return $this->log_del_common($log, $msg);
     }
 
@@ -2285,7 +2292,7 @@ class sandbox_multi extends db_object_multi_user
 
         $log = new changes_big($this->get_user());
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension(), $msg);
         return $this->log_del_common($log, $msg);
     }
 
@@ -2299,11 +2306,11 @@ class sandbox_multi extends db_object_multi_user
     {
         $lib = new library();
         // a value, result or group is always identified by the group name
-        $log->set_field($lib->class_to_name(group::class) . '_name');
+        $log->set_field($lib->class_to_name(group::class) . '_name', $msg);
         $log->old_value = $this->name();
         $log->new_value = null;
         $log->row_id = 0;
-        $log->set_action(change_actions::DELETE);
+        $log->set_action(change_actions::DELETE, $msg);
         $log->add($msg);
         return $log;
     }
@@ -2431,7 +2438,7 @@ class sandbox_multi extends db_object_multi_user
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $msg, $sc_par_lst_used);
         } else {
             $id_lst = $this->id_or_lst();
             if ($sc_par_lst_used->is_usr_tbl() and !$sc_par_lst_used->exclude_sql()) {
@@ -2458,11 +2465,13 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator   $sc,
         sql_par       $qp,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -2501,9 +2510,9 @@ class sandbox_multi extends db_object_multi_user
 
         // create the insert log statement for the field of the loop
         $log = new change($this->get_user());
-        $log->set_class($this::class);
+        $log->set_class($this::class, $msg);
         if ($this->is_named_obj()) {
-            $log->set_field($name_fld);
+            $log->set_field($name_fld, $msg);
             $log->old_value = $this->name();
             $log->new_value = null;
         }
@@ -2658,7 +2667,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             }
         }
-        $log->set_field(fields::FLD_EXCLUDED);
+        $log->set_field(fields::FLD_EXCLUDED, $msg);
         return $log;
     }
 
@@ -3458,7 +3467,7 @@ class sandbox_multi extends db_object_multi_user
 
         // create the log entry for the value
         if ($fvt_lst_log->has_name($this::FLD_VALUE)) {
-            $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log);
+            $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log, $msg);
             $sql .= ' ' . $qp_log->sql;
         } else {
             // TODO review
@@ -4026,7 +4035,7 @@ class sandbox_multi extends db_object_multi_user
 
         // create the query parameters for the log entries for the single fields
         $qp_log = $sc->sql_func_log_update(
-            $this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id(), $this);
+            $this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id(), $msg, $this);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -4059,8 +4068,8 @@ class sandbox_multi extends db_object_multi_user
             $sc_log = clone $sc;
             if ($this->is_named_obj()) {
                 $log = new change($this->get_user());
-                $log->set_class($this::class);
-                $log->set_field($this->name_field());
+                $log->set_class($this::class, $msg);
+                $log->set_field($this->name_field(), $msg);
                 $log->old_value = $this->name();
                 $log->new_value = null;
                 $qp_log = $log->sql_insert_log(
@@ -4068,7 +4077,7 @@ class sandbox_multi extends db_object_multi_user
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
                 /*
-                $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_log);
+                $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_log, $msg);
                 $par_lst_out->add_list($qp_log->par_fld_lst);
                 // TODO use these functions more often
                 $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));

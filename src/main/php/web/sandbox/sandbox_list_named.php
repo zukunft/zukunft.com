@@ -210,22 +210,42 @@ class sandbox_list_named extends sandbox_list
      */
     function add(
         triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add,
-        bool                                                                                                 $allow_duplicates = false,
-        user_message                                                                                         $msg = new user_message()
+        user_message                                                                                         $msg,
+        bool                                                                                                 $allow_duplicates = false
     ): bool
     {
+        $added = false;
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $this->add_obj($to_add, $allow_duplicates, $msg);
+                $added = $this->add_and_report($to_add, $allow_duplicates, $msg);
             } else {
                 if (!in_array($to_add->id(), $this->ids())) {
                     if ($to_add->id() != 0) {
-                        $this->add_obj($to_add, $allow_duplicates, $msg);
+                        $added = $this->add_and_report($to_add, $allow_duplicates, $msg);
                     }
                 }
             }
         }
-        return $msg->is_ok();
+        return $added;
+    }
+
+    /**
+     * add the object to the list and tell the caller's message if the entry is a double
+     * @param triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject $to_add the named object that should be added
+     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
+     * @param user_message $msg to report which entry is double
+     * @returns bool true if the object has been added
+     */
+    private function add_and_report(
+        triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject $to_add,
+        bool                                                                                           $allow_duplicates,
+        user_message                                                                                   $msg
+    ): bool
+    {
+        $add_msg = new user_message(); // add_obj returns is_ok(), so the double check must judge only this add
+        $added = $this->add_obj($to_add, $allow_duplicates, $add_msg);
+        $msg->merge($add_msg);
+        return $added;
     }
 
     /**
@@ -285,7 +305,7 @@ class sandbox_list_named extends sandbox_list
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {
-                    $this->add($sbx_new);
+                    $this->add($sbx_new, $msg);
                 }
             } else {
                 $msg->add(msg_id::ID_AND_NAME_MISSING, [
@@ -311,7 +331,7 @@ class sandbox_list_named extends sandbox_list
                 $sbx_old = $this->get_by_name($sbx_new->name());
                 // TODO check if and how a sync of the objects can be done
                 if ($sbx_old == null) {
-                    $this->add($sbx_new);
+                    $this->add($sbx_new, $msg);
                 }
             } else {
                 $msg->add(msg_id::ID_AND_NAME_MISSING, [

@@ -970,9 +970,9 @@ class verb extends type_object
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->get_user()->name);
         $log = new change($this->usr);
-        $log->set_action(change_actions::DELETE);
-        $log->set_table(change_tables::VERB);
-        $log->set_field(verb_db::FLD_NAME);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table(change_tables::VERB, $msg);
+        $log->set_field(verb_db::FLD_NAME, $msg);
         $log->old_value = $this->name;
         $log->new_value = null;
         $log->row_id = $this->id();

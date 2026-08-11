@@ -167,9 +167,11 @@ class value_list extends ListBase
 
     /**
      * add a value to the list
+     * @param value|IdObject|TextIdObject|CombineObject|null $to_add the value that should be added
+     * @param user_message $msg to report which entry is double
      * @returns bool true if the value has been added
      */
-    function add(value|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(value|IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
         if (!in_array($to_add->id(), $this->id_lst())) {
@@ -192,14 +194,14 @@ class value_list extends ListBase
         if ($dbo::class == word::class or $dbo::class == triple::class) {
             foreach ($this->lst() as $val) {
                 if ($val->has_phrase($dbo->phrase(), $msg)) {
-                    $val_lst->add($val);
+                    $val_lst->add($val, $msg);
                 }
             }
         }
         if ($dbo::class == source::class) {
             foreach ($this->lst() as $val) {
                 if ($val->source_id() == $dbo->id()) {
-                    $val_lst->add($val);
+                    $val_lst->add($val, $msg);
                 }
             }
         }
@@ -739,7 +741,7 @@ class value_list extends ListBase
     // creates a table of all values related to a word and a related word and all the sub words of the related word
     // e.g. for "ABB" ($this->phr) list all values for the cash flow statement ($phr_row)
     /*
-    function dsp_table($phr_row, $back): string
+    function dsp_table($phr_row, $back, user_message $msg): string
     {
         $usr = $ui_sys->usr;
 
@@ -801,7 +803,7 @@ class value_list extends ListBase
             $time_lst = null;
             if ($time_phr != null) {
                 $time_lst = new phrase_list($time_phr->user());
-                $time_lst->add($time_phr);
+                $time_lst->add($time_phr, $msg);
                 log_debug('times sorted ' . $time_lst->name());
             }
 
@@ -924,13 +926,13 @@ class value_list extends ListBase
                             }
 
                             if ($sub_wrd->id() > 0) {
-                                $add_phr_lst->add($sub_wrd->phrase());
+                                $add_phr_lst->add($sub_wrd->phrase(), $msg);
                                 $add_phr_ids[] = $sub_wrd->id();
                                 $type_ids[] = $sub_wrd->id(); // TODO check if it should not be $type_word_id
                             }
                             // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                             if (!in_array($time_wrd->id(), $add_phr_ids) and $time_wrd->id() > 0) {
-                                $add_phr_lst->add($time_wrd->phrase());
+                                $add_phr_lst->add($time_wrd->phrase(), $msg);
                                 $add_phr_ids[] = $time_wrd->id();
                                 $type_ids[] = 0;
                             }
@@ -1026,18 +1028,18 @@ class value_list extends ListBase
                                     }
 
                                     if ($sub_wrd->id() > 0) {
-                                        $add_phr_lst->add($sub_wrd->phrase());
+                                        $add_phr_lst->add($sub_wrd->phrase(), $msg);
                                         $add_phr_ids[] = $sub_wrd->id();
                                         $type_ids[] = $type_phr->id();
                                     }
                                     if ($diff_phrase->id() <> 0) {
-                                        $add_phr_lst->add($diff_phrase);
+                                        $add_phr_lst->add($diff_phrase, $msg);
                                         $add_phr_ids[] = $diff_phrase->id();
                                         $type_ids[] = 0;
                                     }
                                     // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                                     if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id() > 0) {
-                                        $add_phr_lst->add($time_wrd->phrase());
+                                        $add_phr_lst->add($time_wrd->phrase(), $msg);
                                         $add_phr_ids[] = $time_wrd->id();
                                         $type_ids[] = 0;
                                     }
@@ -1207,7 +1209,7 @@ class value_list extends ListBase
                         $time_phr = new phrase();
                         $time_phr->load_by_id($val->time_phr->id(), $msg);
                         $val->time_phr = $time_phr;
-                        $dsp_phr_lst->add($time_phr);
+                        $dsp_phr_lst->add($time_phr, $msg);
                         log_debug('add time word ' . $val->time_phr->name());
                     }
                 }
@@ -1262,7 +1264,7 @@ class value_list extends ListBase
             $common_phr_lst_new->load_by_ids($common_phr_ids, $msg);
         }
 
-        $common_phr_lst = $common_phr_lst->phrase_list();
+        $common_phr_lst = $common_phr_lst->phrase_list($msg);
 
         // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
         /*
@@ -1272,7 +1274,7 @@ class value_list extends ListBase
         */
         if ($common_phr_lst->is_valid()) {
             if (!empty($common_phr_lst->lst())) {
-                $common_phr_lst->add($this->phr);
+                $common_phr_lst->add($this->phr, $msg);
                 $phr_lst_ui = new phrase_list($common_phr_lst->api_json([], $msg));
                 $result .= $phr_lst_ui->btn_add_value($back);
             }

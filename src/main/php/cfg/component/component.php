@@ -1423,13 +1423,18 @@ class component extends sandbox_code_id
      * log
      */
 
-    // set the log entry parameters for a value update
-    function log_link($dsp): bool
+    /**
+     * set the log entry parameters to link a display component ($cmp) to a view ($dsp)
+     * @param $dsp the view to which this component is linked
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return bool true if the link has been logged
+     */
+    function log_link($dsp, user_message $msg): bool
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_class(component_link::class);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_class(component_link::class, $msg);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id();
@@ -1439,13 +1444,18 @@ class component extends sandbox_code_id
         return $result;
     }
 
-    // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
-    function log_unlink($dsp): bool
+    /**
+     * set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
+     * @param $dsp the view from which this component is unlinked
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return bool true if the unlink has been logged
+     */
+    function log_unlink($dsp, user_message $msg): bool
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_class(component_link::class);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_class(component_link::class, $msg);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id();

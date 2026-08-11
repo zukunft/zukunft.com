@@ -283,11 +283,11 @@ class type_object
     /**
      * @return phrase_list with the phrases that are fixed linked to this type
      */
-    function type_phrases(): phrase_list
+    function type_phrases(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list();
         if ($this->code_id == phrase_types::MATH_CONST) {
-            $phr_lst->add(new word()->math()->phrase());
+            $phr_lst->add(new word()->math()->phrase(), $msg);
         }
         return $phr_lst;
     }

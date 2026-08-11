@@ -1204,10 +1204,10 @@ class sandbox_link extends sandbox
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->set_action(change_actions::ADD);
+        $log->set_action(change_actions::ADD, $msg);
         // TODO add the table exceptions from sql_db
         $tbl_name = $lib->class_to_name($this::class);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
         $log->row_id = 0;
         $log->add($msg);
 
@@ -1225,9 +1225,9 @@ class sandbox_link extends sandbox
         $lib = new library();
 
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
+        $log->set_action(change_actions::DELETE, $msg);
         $tbl_name = $lib->class_to_name($this::class);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
         $log->old_from = $this->fob();
         $log->old_to = $this->tob();
 
@@ -1239,9 +1239,10 @@ class sandbox_link extends sandbox
 
     /**
      * TODO for normal fields use the change log, but for link changes use the link log
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change|change_link the object that is used to log the user changes
      */
-    function log_object(): change|change_link
+    function log_object(user_message $msg): change|change_link
     {
         return new change($this->get_user());
     }

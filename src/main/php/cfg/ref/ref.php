@@ -1144,8 +1144,8 @@ class ref extends sandbox_link
         }
 
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_table(change_tables::REF);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table(change_tables::REF, $msg);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
         $log->new_from = $this->phrase();
@@ -1165,8 +1165,8 @@ class ref extends sandbox_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        $log->set_table(change_tables::REF);
+        $log->set_action(change_actions::UPDATE, $msg);
+        $log->set_table(change_tables::REF, $msg);
         $log->old_from = $db_rec->phrase();
         $log->old_link = $db_rec->type();
         $log->old_to = $db_rec;
@@ -1196,8 +1196,8 @@ class ref extends sandbox_link
         }
 
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_table(change_tables::REF);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table(change_tables::REF, $msg);
         $log->old_from = $this->phrase();
         $log->old_link = $this->type();
         $log->old_to = $this;

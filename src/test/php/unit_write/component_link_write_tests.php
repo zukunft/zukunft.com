@@ -53,6 +53,7 @@ class component_link_write_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message(); // a test is an entry point, so it creates the message the log setters report into
         // init
         $t_db = new test_db_load($t);
         $msg = new user_message($t->usr1);
@@ -77,7 +78,7 @@ class component_link_write_tests
 
         $test_name = 'check log of linking the component "' . $cmp->name() . '" to the view "' . $msk->name() . '"';
         $log = new change_link($t->usr1);
-        $log->set_table(change_tables::VIEW_LINK);
+        $log->set_table(change_tables::VIEW_LINK, $msg);
         $log->new_from_id = $msk->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last($msg, true);
@@ -108,7 +109,7 @@ class component_link_write_tests
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
-        $log->set_table(change_tables::VIEW_LINK);
+        $log->set_table(change_tables::VIEW_LINK, $msg);
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last($msg, true);
@@ -144,7 +145,7 @@ class component_link_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_tables::VIEW_LINK);
+        $log->set_table(change_tables::VIEW_LINK, $msg);
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last($msg, true);

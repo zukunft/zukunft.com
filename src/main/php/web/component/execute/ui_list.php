@@ -111,9 +111,9 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
-    function parents_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    function parents_of_word(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases($wrd->phrase(), foaf_direction::UP, $this->related_list($wrd, $phr_lst));
+        return $this->phrases($wrd->phrase(), foaf_direction::UP, $msg, $this->related_list($wrd, $phr_lst));
     }
 
     /**
@@ -122,7 +122,7 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
-    function children_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    function children_of_word(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
         global $ui_sys;
         $result = '';
@@ -131,7 +131,7 @@ class ui_list extends ui_base
         if ($phr_cac != null and $is_vrb != null) {
             $phr = $wrd->phrase();
             // the children of a word are its subclasses, i.e. the phrases that "are a" this word
-            $children = $phr_cac->parents($phr, $is_vrb);
+            $children = $phr_cac->parents($phr, $msg, $is_vrb);
             if (!$children->is_empty()) {
                 $html = new html_base();
                 if ($children->count() == 1) {
@@ -186,9 +186,9 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code with the alias line or an empty string if there is no alias
      */
-    function phrase_aliases(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    function phrase_aliases(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases_by_verb($wrd, verbs::ALIAS, msg_id::PHRASE_ALIAS, msg_id::PHRASE_ALIASES, $phr_lst);
+        return $this->phrases_by_verb($wrd, verbs::ALIAS, msg_id::PHRASE_ALIAS, msg_id::PHRASE_ALIASES, $phr_lst, $msg);
     }
 
     /**
@@ -200,9 +200,9 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code with the symbol line or an empty string if there is no symbol
      */
-    function phrase_symbols(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    function phrase_symbols(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases_by_verb($wrd, verbs::SYMBOL, msg_id::PHRASE_SYMBOL, msg_id::PHRASE_SYMBOLS, $phr_lst);
+        return $this->phrases_by_verb($wrd, verbs::SYMBOL, msg_id::PHRASE_SYMBOL, msg_id::PHRASE_SYMBOLS, $phr_lst, $msg);
     }
 
     /**
@@ -213,9 +213,9 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code with the remaining related phrases
      */
-    function phrases_related_ex_symbols(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    function phrases_related_ex_symbols(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS]);
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS], $msg);
     }
 
     /**
@@ -227,9 +227,9 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code with the remaining related phrases
      */
-    function phrases_related_ex_subtitle(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    function phrases_related_ex_subtitle(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS], true);
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS], $msg, true);
     }
 
     /**
@@ -248,6 +248,7 @@ class ui_list extends ui_base
         word|phrase|db_object $wrd,
         ?phrase_list          $phr_lst,
         array                 $ex_vrb_lst,
+        user_message          $msg,
         bool                  $grouped = false
     ): string
     {
@@ -269,9 +270,9 @@ class ui_list extends ui_base
                 $vrb_ids[] = $vrb_cac->id($vrb_code_id);
             }
             if ($grouped) {
-                $result = $phr_cac->name_link_grouped_by_verb($phr, $vrb_ids);
+                $result = $phr_cac->name_link_grouped_by_verb($phr, $vrb_ids, $msg);
             } else {
-                $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids)->name_link_by_impact();
+                $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids, $msg)->name_link_by_impact();
             }
         }
         return $result;
@@ -294,7 +295,8 @@ class ui_list extends ui_base
         string         $vrb_code_id,
         msg_id         $msg_one,
         msg_id         $msg_many,
-        ?phrase_list   $phr_lst
+        ?phrase_list   $phr_lst,
+        user_message   $msg
     ): string
     {
         global $mtr;
@@ -305,7 +307,7 @@ class ui_list extends ui_base
         $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id($vrb_code_id);
         $phr_cac = $this->related_list($wrd, $phr_lst);
         if ($vrb != null and $phr_cac != null) {
-            $lst = $phr_cac->parents($wrd->phrase(), $vrb);
+            $lst = $phr_cac->parents($wrd->phrase(), $msg, $vrb);
             if (!$lst->is_empty()) {
                 $msg = $msg_one;
                 if ($lst->count() > 1) {
@@ -376,7 +378,7 @@ class ui_list extends ui_base
         $result = '';
         $trp_lst = clone $cfg->trp_lst;
         if ($dbo::class == verb::class) {
-            $trp_lst = $trp_lst->get_by_verb($dbo);
+            $trp_lst = $trp_lst->get_by_verb($dbo, $msg);
             $result = $trp_lst->display($msg);
         } else {
             log_err($dbo::class . '  is not expected to be a selection for triples');
@@ -393,14 +395,14 @@ class ui_list extends ui_base
      * @param data_object|null $cfg the cache values used for a backend independent preselection of the formulas
      * @return string the most relevant formulas related to e.g. a verb
      */
-    function formula_list(db_object $dbo, ?data_object $cfg = null): string
+    function formula_list(db_object $dbo, user_message $msg, ?data_object $cfg = null): string
     {
         global $mtr;
 
         $result = '';
         if ($dbo::class == verb::class) {
             $frm_lst = clone $cfg->frm_lst;
-            $frm_lst = $frm_lst->get_by_verb($dbo);
+            $frm_lst = $frm_lst->get_by_verb($dbo, $msg);
             $result = $frm_lst->name_link();
             if ($result == '') {
                 $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
@@ -454,6 +456,7 @@ class ui_list extends ui_base
     private function phrases(
         phrase         $phr,
         foaf_direction $dir,
+        user_message   $msg,
         ?phrase_list   $phr_cac = null
     ): string
     {
@@ -464,9 +467,9 @@ class ui_list extends ui_base
             //$vrb = new verb();
             //$vrb->id = verbs::IS_ID;
             if ($dir == foaf_direction::UP) {
-                $phr_lst = $phr_cac->parent_triples($phr);
+                $phr_lst = $phr_cac->parent_triples($phr, $msg);
             } elseif ($dir == foaf_direction::DOWN) {
-                $phr_lst = $phr_cac->children($phr);
+                $phr_lst = $phr_cac->children($phr, $msg);
             } else {
                 $phr_lst = $phr_cac;
             }
@@ -500,7 +503,7 @@ class ui_list extends ui_base
             if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->ref_lst != null) {
                 $ref_lst = $dbo->ref_lst;
             } else {
-                $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr);
+                $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr, $msg);
             }
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
@@ -963,11 +966,11 @@ class ui_list extends ui_base
      * @param data_object|null $cfg the context used to create the view
      * @return string the html code listing the related phrases with details
      */
-    function phrases_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
+    function phrases_related(user_message $msg, db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
     {
         $result = '';
         if ($dbo != null) {
-            $result = $this->phrases_related_ex_verbs($dbo, $cfg?->phrase_list(), []);
+            $result = $this->phrases_related_ex_verbs($dbo, $cfg?->phrase_list(), [], $msg);
         }
         return $result;
     }

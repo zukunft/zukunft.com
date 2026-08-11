@@ -150,7 +150,7 @@ class expression
             $this->usr_text = $usr_txt;
             $this->usr_text_dirty = false;
             $this->ref_text_dirty = true;
-            $this->ref_text($trm_lst);
+            $this->ref_text_ui($trm_lst);
         }
     }
 
@@ -166,21 +166,22 @@ class expression
             $this->ref_text = $ref_txt;
             $this->ref_text_dirty = false;
             $this->usr_text_dirty = true;
-            $this->user_text($trm_lst);
+            $this->user_text_ui($trm_lst);
         }
     }
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solution
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the human-readable format or null if an error has occurred
      */
-    function user_text(term_list|term_list_ui|null $trm_lst = null, ?user_message $msg = null): ?string
+    function user_text(user_message $msg, term_list|term_list_ui|null $trm_lst = null): ?string
     {
         if ($this->usr_text_dirty) {
-            // a local message like in ref_text, because most callers use this as a getter
+            // a local message like in ref_text, so that the conversion judges only itself
             $conv_msg = new user_message();
             $this->usr_text = $this->get_usr_text($trm_lst, $conv_msg);
-            $msg?->merge($conv_msg);
+            $msg->merge($conv_msg);
         }
         if (!$this->usr_text_dirty) {
             return $this->usr_text;
@@ -191,15 +192,14 @@ class expression
 
     /**
      * get and set the reference text based on the user formula expression
-     * TODO Prio 1 avoid creating the message object
      * TODO Prio 2 do not call it from the frontend
-     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @param user_message $msg to enrich with problems and suggested solution
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the database reference format or null if an error has occurred
      */
     function ref_text(
-        term_list|term_list_ui|null $trm_lst = null,
-        ?user_message               $msg = null
+        user_message                $msg,
+        term_list|term_list_ui|null $trm_lst = null
     ): ?string
     {
         // TODO Prio 0 use the ref text check functions that includes the user message
@@ -213,13 +213,38 @@ class expression
                 $this->ref_text = $new_ref_txt;
                 $this->ref_text_dirty = false;
             }
-            $msg?->merge($conv_msg);
+            $msg->merge($conv_msg);
         }
         if (!$this->ref_text_dirty) {
             return $this->ref_text;
         } else {
             return '';
         }
+    }
+
+    /**
+     * the reference text for the display, debug and string split helpers
+     * dsp_id(), name(), res_part() and their siblings have no caller message and no user to ask,
+     * so a conversion problem here goes to the log only - every caller that can report to a
+     * user calls ref_text() with its own message instead
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string|null the recreated expression in the database reference format
+     */
+    function ref_text_ui(term_list|term_list_ui|null $trm_lst = null): ?string
+    {
+        $dsp_msg = new user_message(); // a display path has no user to report to, see the comment above
+        return $this->ref_text($dsp_msg, $trm_lst);
+    }
+
+    /**
+     * the human-readable text for the display, debug and string split helpers, see ref_text_dsp()
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string|null the recreated expression in the human-readable format
+     */
+    function user_text_ui(term_list|term_list_ui|null $trm_lst = null): ?string
+    {
+        $dsp_msg = new user_message(); // a display path has no user to report to, see ref_text_dsp
+        return $this->user_text($dsp_msg, $trm_lst);
     }
 
 
@@ -275,11 +300,11 @@ class expression
         user_message                $msg
     ): string
     {
-        log_debug($this->ref_text());
+        log_debug($this->ref_text_ui());
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->ref_text($trm_lst), chars::CHAR_CALC);
+        $pos = strpos($this->ref_text($msg, $trm_lst), chars::CHAR_CALC);
         if ($pos > 0) {
             $left_part = $this->res_part();
             $right_part = $this->r_part();
@@ -307,28 +332,28 @@ class expression
     function res_part(): string
     {
         $lib = new library();
-        $result = $lib->str_left_of($this->ref_text(), chars::CHAR_CALC);
+        $result = $lib->str_left_of($this->ref_text_ui(), chars::CHAR_CALC);
         return trim($result);
     }
 
     function res_part_usr(): string
     {
         $lib = new library();
-        $result = $lib->str_left_of($this->user_text(), chars::CHAR_CALC);
+        $result = $lib->str_left_of($this->user_text_ui(), chars::CHAR_CALC);
         return trim($result);
     }
 
     function r_part(): string
     {
         $lib = new library();
-        $result = $lib->str_right_of($this->ref_text(), chars::CHAR_CALC);
+        $result = $lib->str_right_of($this->ref_text_ui(), chars::CHAR_CALC);
         return trim($result);
     }
 
     function r_part_usr(): string
     {
         $lib = new library();
-        $result = $lib->str_right_of($this->user_text(), chars::CHAR_CALC);
+        $result = $lib->str_right_of($this->user_text_ui(), chars::CHAR_CALC);
         return trim($result);
     }
 

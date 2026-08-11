@@ -373,8 +373,8 @@ class expression extends shared_expression
     function is_valid(): bool
     {
         $is_valid = true;
-        if (($this->ref_text() == null or $this->ref_text() == '' or trim($this->ref_text()) == '=')
-            and ($this->user_text() == null or $this->user_text() == '')) {
+        if (($this->ref_text_ui() == null or $this->ref_text_ui() == '' or trim($this->ref_text_ui()) == '=')
+            and ($this->user_text_ui() == null or $this->user_text_ui() == '')) {
             $is_valid = false;
         }
         return $is_valid;
@@ -832,7 +832,7 @@ class expression extends shared_expression
     function get_usr_names(): array
     {
         $result = [];
-        $remaining = $this->user_text();
+        $remaining = $this->user_text_ui();
 
         if ($remaining != '') {
             // find the first word
@@ -973,7 +973,7 @@ class expression extends shared_expression
         ?term_list $trm_lst = null
     ): element_list|element_group_list
     {
-        log_debug('get ' . $type . ' out of "' . $this->ref_text() . '" for user ' . $this->usr->name);
+        log_debug('get ' . $type . ' out of "' . $this->ref_text_ui() . '" for user ' . $this->usr->name);
 
         $lib = new library();
         // a local buffer, because this element split returns a list and its public callers
@@ -1140,12 +1140,12 @@ class expression extends shared_expression
         // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
         // the user is no most cases no extra info
         // $result .= ' for user '.$this->usr->name.'';
-        return '"' . $this->user_text() . '" (' . $this->ref_text() . ')';
+        return '"' . $this->user_text_ui() . '" (' . $this->ref_text_ui() . ')';
     }
 
     function name(): string
     {
-        return $this->user_text();
+        return $this->user_text_ui();
     }
 
 

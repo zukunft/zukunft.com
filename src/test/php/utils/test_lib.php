@@ -221,7 +221,8 @@ class test_lib
         $dto_base_ui->add_id_to_views();
         // add the components to the views
         //$dto_base_ui->add_components_to_views();
-        $dto_ui->merge_view_list($dto_base_ui->view_list());
+        $ui_msg = new user_message(); // the frontend merge needs a frontend message, not the backend one above
+        $dto_ui->merge_view_list($dto_base_ui->view_list(), $ui_msg);
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);

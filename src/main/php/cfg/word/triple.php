@@ -2799,8 +2799,8 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->new_from = $this->get_from();
         $log->new_link = $this->get_verb();
         $log->new_to = $this->get_to();
@@ -2816,11 +2816,11 @@ class triple extends sandbox_link_named
     function log_upd(user_message $msg): change_link
     {
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change($msg)) {
-            $log->set_table(change_tables::TRIPLE);
+            $log->set_table(change_tables::TRIPLE, $msg);
         } else {
-            $log->set_table(change_tables::TRIPLE_USR);
+            $log->set_table(change_tables::TRIPLE_USR, $msg);
         }
 
         return $log;
@@ -2835,8 +2835,8 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->old_from = $this->get_from();
         $log->old_link = $this->get_verb();
         $log->old_to = $this->get_to();
@@ -2852,11 +2852,11 @@ class triple extends sandbox_link_named
     function log_upd_field(user_message $msg): change
     {
         $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change($msg)) {
-            $log->set_table(change_tables::TRIPLE);
+            $log->set_table(change_tables::TRIPLE, $msg);
         } else {
-            $log->set_table(change_tables::TRIPLE_USR);
+            $log->set_table(change_tables::TRIPLE_USR, $msg);
         }
 
         return $log;

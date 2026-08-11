@@ -121,13 +121,13 @@ class formula_list extends ListBase
      * @param verb|null $vrb
      * @return formula_list
      */
-    function get_by_verb(verb|null $vrb): formula_list
+    function get_by_verb(verb|null $vrb, user_message $msg): formula_list
     {
         $frm_lst = new formula_list();
         if ($vrb != null) {
             foreach ($this->lst() as $frm) {
                 if ($frm->has_verb($vrb)) {
-                    $frm_lst->add($frm);
+                    $frm_lst->add($frm, $msg);
                 }
             }
         }

@@ -728,7 +728,7 @@ class triple extends sandbox_code_id
     /**
      * recursive function to include the foaf words for this triple
      */
-    function wrd_lst(): word_list
+    function wrd_lst(user_message $msg): word_list
     {
         log_debug('triple->wrd_lst ' . $this->dsp_id());
         $wrd_lst = new word_list();
@@ -736,11 +736,11 @@ class triple extends sandbox_code_id
         // add the "from" side
         if ($this->get_from() != null) {
             if ($this->get_from()->id() > 0) {
-                $wrd_lst->add($this->get_from()->obj()->word());
+                $wrd_lst->add($this->get_from()->obj()->word(), $msg);
             } elseif ($this->get_from()->id() < 0) {
                 $sub_wrd_lst = $this->get_from()->wrd_lst($msg);
                 foreach ($sub_wrd_lst->lst() as $wrd) {
-                    $wrd_lst->add($wrd);
+                    $wrd_lst->add($wrd, $msg);
                 }
             } else {
                 log_err('The from phrase ' . $this->get_from()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
@@ -750,11 +750,11 @@ class triple extends sandbox_code_id
         // add the "to" side
         if ($this->get_to() != null) {
             if ($this->get_to()->id() > 0) {
-                $wrd_lst->add($this->get_to()->obj()->word());
+                $wrd_lst->add($this->get_to()->obj()->word(), $msg);
             } elseif ($this->get_to()->id() < 0) {
                 $sub_wrd_lst = $this->get_to()->wrd_lst($msg);
                 foreach ($sub_wrd_lst->lst() as $wrd) {
-                    $wrd_lst->add($wrd);
+                    $wrd_lst->add($wrd, $msg);
                 }
             } else {
                 log_err('The to phrase ' . $this->get_to()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');

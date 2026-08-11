@@ -156,8 +156,8 @@ class type_lists
         if ($api_json != null) {
             // only the api mapping needs a message; a caller that passes none loses the mapping
             // problems, so every caller that has one should hand it over
-            $msg = $msg ?? new user_message();
-            $this->set_from_json($api_json, $msg);
+            $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
+            $this->set_from_json($api_json, $map_msg);
         }
     }
 

@@ -1609,8 +1609,8 @@ class sandbox_value extends sandbox_multi
     protected function log_add_common(change|change_value $log, user_message $msg): change|change_value
     {
         log_debug($this->dsp_id());
-        $log->set_action(change_actions::ADD);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $log->group_id = $this->grp_id();
         $log->old_value = null;
         $log->new_value = $this->get_value();
@@ -1641,10 +1641,10 @@ class sandbox_value extends sandbox_multi
         $lib = new library();
 
         $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE);
+        $log->set_action(change_actions::DELETE, $msg);
         $class = $lib->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $log->old_value = $this->get_value();
         $log->new_value = null;
 
@@ -1847,7 +1847,7 @@ class sandbox_value extends sandbox_multi
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $msg, $sc_par_lst_used);
         } else {
             // TODO add test fpr !$sc_par_lst_used->exclude_sql()
             $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
@@ -1864,12 +1864,14 @@ class sandbox_value extends sandbox_multi
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
      * @param sql_type_list $sc_par_lst
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst_id,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1910,7 +1912,7 @@ class sandbox_value extends sandbox_multi
         }
 
         // create the log entry for the value
-        $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log, $msg);
         $sql .= ' ' . $qp_log->sql;
 
         // list of parameters actually used in order of the function usage

@@ -80,6 +80,7 @@ class formula_write_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message(); // a test is an entry point, so it creates the message the conversion reports into
 
         global $sys;
 
@@ -135,7 +136,7 @@ class formula_write_tests
         $t->subheader($ts . 'update elements in database for ' . formula_names::SYSTEM_TEST_ADD);
 
         $test_name = 'remove an element and update the database';
-        $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP);
+        $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP, $msg);
         $trm_lst = $t_trm->term_list_all();
         $frm->element_refresh($msg, $trm_lst);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
@@ -146,7 +147,7 @@ class formula_write_tests
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'add an element and update the database';
-        $frm->set_user_text(formula_names::INCREASE_EXP);
+        $frm->set_user_text(formula_names::INCREASE_EXP, $msg);
         $frm->element_refresh($msg, $trm_lst);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst = $elm_lst->unique();
@@ -154,14 +155,14 @@ class formula_write_tests
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove an element and update the database without term cache';
-        $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP);
+        $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP, $msg);
         $frm->element_refresh($msg);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list($msg);
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'add an element and update the database without term cache';
-        $frm->set_user_text(formula_names::INCREASE_EXP);
+        $frm->set_user_text(formula_names::INCREASE_EXP, $msg);
         $frm->element_refresh($msg, $trm_lst);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list($msg);

@@ -133,7 +133,7 @@ class formula_link_list extends ListBase
                     $to_add->load_by_id($frm_id, $msg);
                 }
                 if ($to_add != null) {
-                    $frm_lst->add($to_add);
+                    $frm_lst->add($to_add, $msg);
                 }
             }
         }

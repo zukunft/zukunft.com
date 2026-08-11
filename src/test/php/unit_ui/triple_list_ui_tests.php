@@ -70,8 +70,8 @@ class triple_list_ui_tests
         $phr_canton = $t_trp->zh_canton();
         $phr_city_ui = new triple($phr_city->api_json());
         $phr_canton_ui = new triple($phr_canton->api_json());
-        $lst->add($phr_city_ui);
-        $lst->add($phr_canton_ui);
+        $lst->add($phr_city_ui, $msg);
+        $lst->add($phr_canton_ui, $msg);
 
         // test the triple list display functions
         $form = 'formula_list_ui_test';
@@ -79,7 +79,7 @@ class triple_list_ui_tests
         /*
         $test_page .= 'names with links: ' . $lst->display() . '<br>';
         $test_page .= 'table cells<br>';
-        $test_page .= $lst->tbl();
+        $test_page .= $lst->tbl($msg);
         */
 
         $from_rows = 'selector: ' . '<br>';

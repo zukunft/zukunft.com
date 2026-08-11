@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -48,10 +49,10 @@ class graph_tests
     function run(test_cleanup $t): void
     {
 
-
         // init
         $t_vrb = new test_verbs($t);
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);  // a test is an entry point, so it creates the message the list add reports into
+        $msg_ui = new user_message_ui();
         $back = 0;
 
         // start the test section (ts)
@@ -130,7 +131,7 @@ class graph_tests
         $api_json = json_decode($zh_types->api_json(), true);
         $trp_lst_ui = new triple_list_ui();
         $trp_lst_ui->api_mapper($api_json, $msg);
-        $result = $trp_lst_ui->tbl($back);
+        $result = $trp_lst_ui->tbl($msg_ui, $back);
         $t->assert_text_contains($test_name . word_names::CITY, $result, word_names::COMPANY);
         $t->assert_text_contains($test_name . word_names::CANTON, $result, word_names::COMPANY);
         $t->assert_text_contains($test_name . word_names::COMPANY, $result, word_names::COMPANY);

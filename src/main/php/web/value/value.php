@@ -966,7 +966,7 @@ class value extends sandbox_value
           if ($phr->is_wrd_id > 0) {
             // prepare the selector for the type phrase
             $phr->is_wrd->usr = $this->user();
-            $phr_lst_sel = $phr->is_wrd->children();
+            $phr_lst_sel = $phr->is_wrd->children($msg);
             zu_debug("value->dsp_edit -> suggested phrases for ".$phr->name().": ".$phr_lst_sel->name().".");
           } else {
             // if no phrase group is found, use the phrase type time if the phrase is a time phrase

@@ -545,6 +545,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
+        $msg = new user_message(); // a legacy display function without a caller message, see dsp_sandbox_wrd_link
+
         // TODO Prio 0 split and move the database part to the backend
         $db_con = new sql_db();
         $result = ''; // reset the html code var
@@ -631,7 +633,7 @@ class user_display_old extends user
                     if ($val_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $val_usr->val_formatted();
+                        $sandbox_usr_txt = $val_usr->val_formatted($msg);
                     }
                     $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'value_edit.php?id=' . $val_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 

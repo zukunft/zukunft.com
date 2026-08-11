@@ -270,10 +270,10 @@ class change_log extends db_object_seq_id_user
     /**
      * set the action of this change log object and to add a new action to the database if needed
      * @param string $action_name the name of the new action
-     * @param user_message|null $msg to report a change log action that cannot be added
+     * @param user_message $msg to report a change log action that cannot be added
      * @return bool true if a new action has been added to the database
      */
-    function set_action(string $action_name, ?user_message $msg = null): bool
+    function set_action(string $action_name, user_message $msg): bool
     {
         global $sys;
 
@@ -305,10 +305,11 @@ class change_log extends db_object_seq_id_user
     /**
      * set the table of this change log object by the class name
      * @param string $class the class name
+     * @param user_message $msg to report a change log table that cannot be added
      * @param bool $usr_only true to use the user table prefix
      * @return bool true if the table/class is part of the log table
      */
-    function set_class(string $class, bool $usr_only = false, ?user_message $msg = null): bool
+    function set_class(string $class, user_message $msg, bool $usr_only = false): bool
     {
         $lib = new library();
         $name = $lib->class_to_table($class);
@@ -323,16 +324,17 @@ class change_log extends db_object_seq_id_user
     /**
      * set the table of this change log object and to add a new table to the database if needed
      * @param string $table_name the name of the new table
+     * @param user_message $msg to report a change log table that cannot be added
      * @return bool true if a new table has been added to the database
      */
-    function set_table(string $table_name, ?user_message $msg = null): bool
+    function set_table(string $table_name, user_message $msg): bool
     {
         global $sys;
 
         $db_changed = false;
         $this->table_id = $sys->typ_lst->cng_tbl->id($table_name);
         if ($this->table_id <= 0) {
-            if ($this->add_table($table_name, $msg)) {
+            if ($this->add_table($msg, $table_name)) {
                 $tbl = new type_object($table_name, $table_name, '', $this->table_id);
                 $sys->typ_lst->cng_tbl->add($tbl);
                 $db_changed = true;
@@ -356,10 +358,11 @@ class change_log extends db_object_seq_id_user
     /**
      * set the field of this change log object and to add a new field to the database if needed
      * @param string $field_name the name of the new field
+     * @param user_message $msg to report a change log field that cannot be added
      * @param sql_db|null $given_db_con the name of the new field
      * @return bool true if a new table has been added to the database
      */
-    function set_field(string $field_name, ?sql_db $given_db_con = null, ?user_message $msg = null): bool
+    function set_field(string $field_name, user_message $msg, ?sql_db $given_db_con = null): bool
     {
         global $sys;
         global $db_con;
@@ -374,7 +377,7 @@ class change_log extends db_object_seq_id_user
             $this->field_id = $sys->typ_lst->cng_fld->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
                 if ($used_db_con->connected()) {
-                    $this->add_field($field_name, $this->table_id, $msg);
+                    $this->add_field($msg, $field_name, $this->table_id);
                     if ($this->field_id <= 0) {
                         log_err("Cannot add field name " . $field_name);
                     } else {
@@ -545,117 +548,117 @@ class change_log extends db_object_seq_id_user
             if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
                 foreach (user_db::FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::WORD) {
                 $db_con->set_class(word::class);
                 foreach (word_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::WORD_USR) {
                 $db_con->set_class(word::class, true);
                 foreach (word_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VERB) {
                 $db_con->set_class(verb::class);
                 foreach (verb_db::FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE) {
                 $db_con->set_class(triple::class);
                 foreach (triple_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE_USR) {
                 $db_con->set_class(triple::class, true);
                 foreach (triple_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE) {
                 $db_con->set_class(value::class);
                 foreach (value_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE_USR) {
                 $db_con->set_class(value::class, true);
                 foreach (value_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA) {
                 $db_con->set_class(formula::class);
                 foreach (formula_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_USR) {
                 $db_con->set_class(formula::class, true);
                 foreach (formula_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_LINK) {
                 $db_con->set_class(formula_link::class);
                 foreach (formula_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_LINK_USR) {
                 $db_con->set_class(formula_link::class, true);
                 foreach (formula_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW) {
                 $db_con->set_class(view::class);
                 foreach (view_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_USR) {
                 $db_con->set_class(view::class, true);
                 foreach (view_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_TERM_LINK) {
                 $db_con->set_class(term_view::class);
                 foreach (term_view::FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_COMPONENT) {
                 $db_con->set_class(component::class);
                 foreach (component_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_COMPONENT_USR) {
                 $db_con->set_class(component::class, true);
                 foreach (component_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_LINK) {
                 $db_con->set_class(component_link::class);
                 foreach (component_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_LINK_USR) {
                 $db_con->set_class(component_link::class, true);
                 foreach (component_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::REF) {
                 $db_con->set_class(ref::class);
                 foreach (ref_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::REF_USR) {
                 $db_con->set_class(ref::class, true);
                 foreach (ref_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE) {
                 $db_con->set_class(source::class);
                 foreach (source_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE_USR) {
                 $db_con->set_class(source::class, true);
                 foreach (source_fields::ALL_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con, $msg);
+                    $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } else {
                 $sys_usr = new user();
@@ -725,8 +728,8 @@ class change_log extends db_object_seq_id_user
 
         $db_con->set_class($class, $usr_only);
         // TODO Prio 1 review: maybe the table for the log should never be the user table because from the user point of view the change is always done on the original table
-        $this->set_class($class, $usr_only);
-        $this->set_field($fld);
+        $this->set_class($class, $msg, $usr_only);
+        $this->set_field($fld, $msg);
         $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);
         $db_row = $db_con->get1($qp, $msg);
 
@@ -734,8 +737,8 @@ class change_log extends db_object_seq_id_user
         // so unless the user table is requested anyway also check the user table and use the
         // newer of the two changes, because the last change of the field can be in either table
         if (!$usr_only and $this->has_user_table($class)) {
-            $this->set_class($class, true);
-            $this->set_field($fld);
+            $this->set_class($class, $msg, true);
+            $this->set_field($fld, $msg);
             $qp_usr = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);
             $db_row = $this->newer_row($db_row, $db_con->get1($qp_usr, $msg));
         }
@@ -812,10 +815,13 @@ class change_log extends db_object_seq_id_user
 
     /**
      * to save database space, the table name is saved as a reference id in the log table
+     * @param user_message $msg to report a reference row that cannot be added
+     * @param string $table_name the name of the table to add
+     * @return bool true if the reference row has been written
      */
     protected function add_table(
-        string        $table_name = '',
-        ?user_message $msg = null
+        user_message $msg,
+        string       $table_name = ''
     ): bool
     {
         // a local message, because the is_ok() verdict below must judge only this insert: with a
@@ -846,17 +852,21 @@ class change_log extends db_object_seq_id_user
                 "user_log->add");
         }
 
-        $msg?->merge($add_msg);
+        $msg->merge($add_msg);
         return $add_msg->is_ok();
     }
 
     /**
      * save the field name as a reference id in the log table
+     * @param user_message $msg to report a reference row that cannot be added
+     * @param string $field_name the name of the field to add
+     * @param int $tbl_id the id of the table the field belongs to
+     * @return bool true if the reference row has been written
      */
     protected function add_field(
-        string        $field_name = '',
-        int           $tbl_id = 0,
-        ?user_message $msg = null
+        user_message $msg,
+        string       $field_name = '',
+        int          $tbl_id = 0
     ): bool
     {
         // a local message, because the is_ok() verdict below must judge only this insert: with a
@@ -886,13 +896,19 @@ class change_log extends db_object_seq_id_user
             log_fatal("Insert to change log failed due to field id failure.", "user_log->add");
         }
 
-        $msg?->merge($add_msg);
+        $msg->merge($add_msg);
         return $add_msg->is_ok();
     }
 
+    /**
+     * save the action name as a reference id in the log table
+     * @param string $action_name the name of the action to add
+     * @param user_message $msg to report a reference row that cannot be added
+     * @return void
+     */
     protected function add_action(
-        string        $action_name,
-        ?user_message $msg = null
+        string       $action_name,
+        user_message $msg
     ): void
     {
         global $sys;
@@ -922,7 +938,7 @@ class change_log extends db_object_seq_id_user
             log_fatal("Insert to change log failed due to action id failure.", "user_log->set_action");
         }
 
-        $msg?->merge($add_msg);
+        $msg->merge($add_msg);
     }
 
 

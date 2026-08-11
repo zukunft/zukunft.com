@@ -141,7 +141,7 @@ class user_write_tests
 
         // word children, so get all children of a parent
         // e.g. Zurich is s children of canton
-        $phr_lst = $wrd_parent->children();
+        $phr_lst = $wrd_parent->children($msg);
         $target = word_names::MATH;
         if ($phr_lst->does_contain($wrd_read)) {
             $result = $wrd_read->name_dsp();
@@ -186,7 +186,7 @@ class user_write_tests
         $t->assert('word->are for "' . word_names::TEST_PARENT . '" including the start word', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // word parents
-        $phr_lst = $wrd_read->parents();
+        $phr_lst = $wrd_read->parents($msg);
         $target = $wrd_parent->name();
         if ($phr_lst->does_contain($wrd_parent)) {
             $result = $wrd_parent->name();

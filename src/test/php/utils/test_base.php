@@ -4602,7 +4602,7 @@ class test_base
         $log = new change_link($lnk->get_user());
         $lib = new library();
         $tbl_name = $lib->class_to_table($lnk::class);
-        $log->set_table($tbl_name);
+        $log->set_table($tbl_name, $msg);
         $log->row_id = $lnk->id();
         $result = $log->dsp_last($msg, true);
         $target = $lnk->get_user()->name() . ' ' . $action . ' ';
@@ -4624,7 +4624,7 @@ class test_base
         $log = new change_link($lnk->get_user());
         $lib = new library();
         $tbl_name = $lib->class_to_table($lnk::class);
-        $log->set_table($tbl_name);
+        $log->set_table($tbl_name, $msg);
         $log->row_id = $lnk->id();
         $result = $log->dsp_last($msg, true);
         $target = $lnk->get_user()->name() . ' ' . $action . ' ';
@@ -5730,7 +5730,7 @@ class test_base
         if ($sbx->is_value_obj()) {
             $log = $sbx->log_value_object();
         } else {
-            $log = $sbx->log_object();
+            $log = $sbx->log_object($msg);
         }
         $log->load_by_field_row($sbx::class, $msg, $fld, $id, $usr_only);
         return new change_log_ui($log->api_json());

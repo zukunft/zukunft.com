@@ -279,9 +279,10 @@ class value_time extends value_base
      */
 
     /**
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change_value_time the object that is used to log the user changes
      */
-    function log_object(): change_value_time
+    function log_object(user_message $msg): change_value_time
     {
         if ($this->is_prime()) {
             return new change_values_time_prime($this->get_user());

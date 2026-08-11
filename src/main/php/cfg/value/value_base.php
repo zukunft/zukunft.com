@@ -1975,11 +1975,11 @@ class value_base extends sandbox_value
                 $log = new change_values_norm($this->get_user());
             }
         }
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change()) {
-            $log->set_table(change_tables::VALUE);
+            $log->set_table(change_tables::VALUE, $msg);
         } else {
-            $log->set_table(change_tables::VALUE_USR);
+            $log->set_table(change_tables::VALUE_USR, $msg);
         }
         $log->group_id = $this->grp_id();
 
@@ -1988,9 +1988,10 @@ class value_base extends sandbox_value
 
     /**
      * set the log entry parameters for value parameter updates
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change actually a child object (prime, norm or big) with the parameters for this change
      */
-    function log_update_parameter(): change
+    function log_update_parameter(user_message $msg): change
     {
         log_debug();
         if ($this->is_prime()) {
@@ -2000,11 +2001,11 @@ class value_base extends sandbox_value
         } else {
             $log = new changes_norm($this->get_user());
         }
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change()) {
-            $log->set_table(change_tables::VALUE);
+            $log->set_table(change_tables::VALUE, $msg);
         } else {
-            $log->set_table(change_tables::VALUE_USR);
+            $log->set_table(change_tables::VALUE_USR, $msg);
         }
         $log->row_id = $this->grp_id();
 

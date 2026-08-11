@@ -356,7 +356,10 @@ class formula_map extends sandbox_code_id
 
         if (array_key_exists(json_fields::USR_TEXT, $api_json)) {
             if ($api_json[json_fields::USR_TEXT] <> '') {
-                $this->set_user_text($api_json[json_fields::USR_TEXT]);
+                // a local message, because api_mapper returns $msg->is_ok() and the terms of the
+                // expression are resolved with a term list that this mapper does not have
+                $exp_msg = new user_message();
+                $this->set_user_text($api_json[json_fields::USR_TEXT], $exp_msg);
             }
         }
 
@@ -413,7 +416,11 @@ class formula_map extends sandbox_code_id
 
         if (key_exists(json_fields::USR_TEXT, $in_ex_json)) {
             if ($in_ex_json[json_fields::USR_TEXT] <> '') {
-                $this->set_user_text($in_ex_json[json_fields::USR_TEXT]);
+                // a local message, because import_mapper returns $msg->is_ok() and a word of the
+                // expression that a later import step still creates is the normal state here,
+                // so it must not stop the import objects after this one
+                $exp_msg = new user_message();
+                $this->set_user_text($in_ex_json[json_fields::USR_TEXT], $exp_msg);
             }
         }
         // TODO Prio 2 decide if either it should be named expression or user text or if expression is used for im and export and user text for api
@@ -558,21 +565,20 @@ class formula_map extends sandbox_code_id
     /**
      * update the expression by setting the human-readable format and try to update the database reference format
      * @param string $usr_txt the formula expression in the human-readable format
+     * @param user_message $msg to report an expression that cannot be converted
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return bool true if also the reference text has been updated
      */
     function set_user_text(
-        string        $usr_txt,
-        ?term_list    $trm_lst = null,
-        ?user_message $msg = null
+        string       $usr_txt,
+        user_message $msg,
+        ?term_list   $trm_lst = null
     ): bool
     {
         $this->usr_text = $usr_txt;
         $this->usr_text_dirty = false;
         $this->ref_text_dirty = true;
-        // generate_ref_text needs a message to report an expression that cannot be converted;
-        // a caller that passes none gets a local one, so its reasons only reach the log
-        return $this->generate_ref_text($trm_lst, $msg ?? new user_message());
+        return $this->generate_ref_text($trm_lst, $msg);
     }
 
     function get_usr_text(?term_list $trm_lst = null): string
@@ -583,14 +589,18 @@ class formula_map extends sandbox_code_id
         return $this->usr_text;
     }
 
+    /**
+     * @param user_message $msg to report an expression that cannot be converted
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string|null the formula expression in the database reference format
+     */
     function get_ref_text(
-        ?term_list    $trm_lst = null,
-        ?user_message $msg = null
+        user_message $msg,
+        ?term_list   $trm_lst = null
     ): ?string
     {
         if ($this->ref_text_dirty) {
-            // generate_ref_text needs a message; a caller that passes none only gets the log
-            $this->generate_ref_text($trm_lst, $msg ?? new user_message());
+            $this->generate_ref_text($trm_lst, $msg);
         }
         return $this->ref_text;
     }
@@ -1077,7 +1087,10 @@ class formula_map extends sandbox_code_id
     function diff_msg(formula|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
         $msg = parent::diff_msg($obj, $ex_def);
-        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->get_ref_text(), $obj->get_ref_text());
+        // a local message, because the diff reports the differences between the two objects and a
+        // term that cannot be resolved without a term list is not one of them
+        $txt_msg = new user_message();
+        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->get_ref_text($txt_msg), $obj->get_ref_text($txt_msg));
         $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_USER_TEXT, $this->get_usr_text(), $obj->get_usr_text());
         $this->diff_field_msg($msg, formula_fields::FLD_LATEX, $this->latex, $obj->latex);
         $this->diff_field_msg($msg, formula_fields::FLD_ALL_NEEDED, $this->need_all_val, $obj->need_all_val);
@@ -1097,8 +1110,11 @@ class formula_map extends sandbox_code_id
     function needs_db_update(formula|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
         $result = parent::needs_db_update($db_obj, $msg);
-        if ($this->get_ref_text() != null) {
-            if ($this->get_ref_text() != $db_obj->get_ref_text()) {
+        // a local message like in diff_msg, because whether the text can be converted right now is
+        // not what this function answers, and a not ok $msg would stop the save steps after it
+        $txt_msg = new user_message();
+        if ($this->get_ref_text($txt_msg) != null) {
+            if ($this->get_ref_text($txt_msg) != $db_obj->get_ref_text($txt_msg)) {
                 $result = true;
             }
         }

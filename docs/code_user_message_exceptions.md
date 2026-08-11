@@ -9,7 +9,8 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-179 creations below the entry points: 170 explained, 9 parameter defaults and 0 still unexplained
+187 creations below the entry points: 179 explained, 8 parameter defaults and 0 still unexplained
+and 5 nullable message parameters
 
 ## parameter defaults
 
@@ -17,7 +18,6 @@ a default value drops the message of a caller that passes none, so each of these
 
 ```
 frontend: /sandbox/ListBase.php:243 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
-frontend: /sandbox/sandbox_list_named.php:214 - user_message                                                                                         $msg = new user_message()
 frontend: /system/sys_log_list.php:160 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/combine_object.php:129 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_multi.php:179 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
@@ -25,4 +25,16 @@ main backend: /helper/db_object_seq_id.php:348 - function api_json(api_type_list
 main backend: /helper/type_list.php:663 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
+```
+
+## nullable message parameters
+
+a message parameter is required, because a request has exactly one message and null describes a state that does not exist; "$msg?->add(...)" reports nothing at the call sites that pass none, so a caller without a message needs one itself
+
+```
+frontend: /system/sys_log_list.php:80 - function __construct(?string $api_json = null, ?user_message $msg = null)
+frontend: /types/type_lists.php:154 - function __construct(?string $api_json = null, ?user_message $msg = null)
+frontend: /verb/verb_list.php:64 - function __construct(?string $api_json = null, ?user_message $msg = null)
+main backend: /sandbox/sandbox_list_named.php:505 - ?user_message                         $msg = null
+shared: /helper/ListOf.php:88 - user_message|null $msg = null
 ```

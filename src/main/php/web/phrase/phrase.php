@@ -324,7 +324,7 @@ class phrase extends combine_named
         if ($typ_id != null) {
             $typ = $ui_sys?->typ_lst_cache?->phr_typ?->get($this->type_id($msg));
             if ($typ != null) {
-                $typ_phr_lst = $typ->type_phrases();
+                $typ_phr_lst = $typ->type_phrases($msg);
                 foreach ($typ_phr_lst->lst() as $typ_phr) {
                     if ($phr->is_same($typ_phr)) {
                         $result = true;
@@ -418,7 +418,7 @@ class phrase extends combine_named
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return phrase_list
      */
-    function is_or_can_be(?phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
+    function is_or_can_be(user_message $msg, ?phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -428,8 +428,8 @@ class phrase extends combine_named
         }
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::IS)));
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::CAN_BE)));
+            $result->merge($phr_lst_cac->parents($this, $msg, $typ_lst->vrb->get_by_code_id(verbs::IS)), $msg);
+            $result->merge($phr_lst_cac->parents($this, $msg, $typ_lst->vrb->get_by_code_id(verbs::CAN_BE)), $msg);
         }
         return $result;
     }
@@ -530,11 +530,11 @@ class phrase extends combine_named
             $trp = $this->obj();
             $sub_wrd_lst = $trp->wrd_lst($msg);
             foreach ($sub_wrd_lst->lst() as $wrd) {
-                $wrd_lst->add($wrd);
+                $wrd_lst->add($wrd, $msg);
             }
         } else {
             $wrd = $this->obj();
-            $wrd_lst->add($wrd);
+            $wrd_lst->add($wrd, $msg);
         }
         return $wrd_lst;
     }

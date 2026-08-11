@@ -1077,8 +1077,8 @@ class db_object_seq_id extends db_object
         // create the insert log statement
         $sc_log = clone $sc;
         $log = new change($msg->usr);
-        $log->set_class($this::class);
-        $log->set_field($name_fld);
+        $log->set_class($this::class, $msg);
+        $log->set_field($name_fld, $msg);
         $log->old_value = $this->name();
         $log->new_value = null;
         $qp_log = $log->sql_insert_log(
@@ -1291,7 +1291,7 @@ class db_object_seq_id extends db_object
         if ($sc_par_lst->is_insert()) {
             $qp_log = $sc->sql_func_log($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $msg, $sc_par_lst_log);
         } else {
-            $qp_log = $sc->sql_func_log_update($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id);
+            $qp_log = $sc->sql_func_log_update($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id, $msg);
         }
         return $qp_log;
     }

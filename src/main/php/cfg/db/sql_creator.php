@@ -1805,13 +1805,13 @@ class sql_creator
                 if (in_array($fld, def::NAMED_ID_FIELDS)) {
                     $log = $val->log_named_id_object();
                 } else {
-                    $log = $val->log_object();
+                    $log = $val->log_object($msg);
                 }
             } else {
                 $log = new change($usr);
             }
-            $log->set_class($class);
-            $log->set_field($fld);
+            $log->set_class($class, $msg);
+            $log->set_field($fld, $msg);
             $log->new_value = $fvt_lst->get_value($fld);
             if ($fvt_lst->get_id($fld) != null) {
                 $log->new_id = $fvt_lst->get_id($fld);
@@ -1934,6 +1934,7 @@ class sql_creator
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param int|string $id the id of the db row that should be updated
      * @param sandbox_multi|null $val the value object e.g. the select the correct log table
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log_update(
@@ -1943,6 +1944,7 @@ class sql_creator
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst,
         int|string         $id,
+        user_message       $msg,
         sandbox_multi|null $val = null
     ): sql_par
     {
@@ -1973,8 +1975,8 @@ class sql_creator
             } else {
                 $log = new change($usr);
             }
-            $log->set_class($class);
-            $log->set_field($fld);
+            $log->set_class($class, $msg);
+            $log->set_field($fld, $msg);
             $log->old_value = $fvt_lst->get_old($fld);
             if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
                 $log->old_id = $fvt_lst->get_old_id($fld);
@@ -2083,6 +2085,7 @@ class sql_creator
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     function sql_func_log_link(
@@ -2090,7 +2093,8 @@ class sql_creator
         sandbox|sandbox_link|sandbox_link_named $dbo,
         user                                    $usr,
         sql_par_field_list                      $fvt_lst,
-        sql_type_list                           $sc_par_lst
+        sql_type_list                           $sc_par_lst,
+        user_message                            $msg
     ): sql_par
     {
         // create the parameter fields for the log entry
@@ -2110,7 +2114,7 @@ class sql_creator
             sql_par_type::INT_SMALL);
 
         $log = new change_link($usr);
-        $log->set_class($sbx::class);
+        $log->set_class($sbx::class, $msg);
         if ($sc_par_lst->is_update_part() or $sc_par_lst->is_delete_part()) {
             $log->old_from_id = $dbo->from_id();
             $log->old_text_from = $dbo->from_name();
@@ -2167,18 +2171,20 @@ class sql_creator
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     function sql_func_log_user_link(
         sandbox|sandbox_link|sandbox_link_named $sbx,
         user                                    $usr,
         sql_par_field_list                      $fvt_lst,
-        sql_type_list                           $sc_par_lst
+        sql_type_list                           $sc_par_lst,
+        user_message                            $msg
     ): sql_par
     {
         // set the vars of the log link object
         $log = new change_link($usr);
-        $log->set_class($sbx::class);
+        $log->set_class($sbx::class, $msg);
         $log->old_from_id = $sbx->from_id();
         $log->new_from_id = 0;
         $log->old_text_from = $sbx->from_name();
@@ -2242,13 +2248,15 @@ class sql_creator
      * @param user $usr the user who has requested the change
      * @param sql_par_field_list $fvt_lst list of fields, values and types to fill the log entry
      * @param sql_type_list $sc_par_lst sql parameters e.g. if the prime table should be used
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par the sql statement with the parameter to add the log entry
      */
     function sql_func_log_value(
         sandbox_multi      $sbx,
         user               $usr,
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst
+        sql_type_list      $sc_par_lst,
+        user_message       $msg
     ): sql_par
     {
         global $sys;
@@ -2266,8 +2274,8 @@ class sql_creator
         $num_fld = $sbx::FLD_VALUE;
         $num_fld_typ = $sbx->sql_field_type();
         $log = $this->log_value_object($sbx, $usr, $sc_par_lst);
-        $log->set_class($sbx::class);
-        $log->set_field($num_fld);
+        $log->set_class($sbx::class, $msg);
+        $log->set_field($num_fld, $msg);
 
         $log->group_id = $fvt_lst->get_value(group_fields::FLD_ID);
         $val_old = null;
