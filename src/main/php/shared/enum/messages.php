@@ -1920,6 +1920,11 @@ enum messages: string
     // if a non admin user tries to set the admin protection (or higher) on an object
     case PROTECTION_RAISE_DENIED = 'protection_raise_denied';
 
+    // if an import step has not been checked, because its errors would only be a consequence
+    // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
+    // always added with ok = true, because it explains a suppression instead of causing one
+    case IMPORT_STEP_SKIPPED = 'import_step_skipped';
+
 
     /*
      * form fields

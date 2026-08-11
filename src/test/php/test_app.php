@@ -201,7 +201,7 @@ class test_app
                 $sys->load_type_lists($db_con, $msg);
 
                 $log = new change_log($usr_sys);
-                $db_changed = $log->create_log_references($db_con);
+                $db_changed = $log->create_log_references($db_con, $msg);
 
                 // reload the type list if needed and trigger an update in the frontend
                 // even tough the update of the preloaded list should already be done by the single adds

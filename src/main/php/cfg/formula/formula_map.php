@@ -562,35 +562,35 @@ class formula_map extends sandbox_code_id
      * @return bool true if also the reference text has been updated
      */
     function set_user_text(
-        string       $usr_txt,
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
+        string        $usr_txt,
+        ?term_list    $trm_lst = null,
+        ?user_message $msg = null
     ): bool
     {
         $this->usr_text = $usr_txt;
         $this->usr_text_dirty = false;
         $this->ref_text_dirty = true;
-        return $this->generate_ref_text($trm_lst, $msg);
+        // generate_ref_text needs a message to report an expression that cannot be converted;
+        // a caller that passes none gets a local one, so its reasons only reach the log
+        return $this->generate_ref_text($trm_lst, $msg ?? new user_message());
     }
 
-    function get_usr_text(
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
-    ): string
+    function get_usr_text(?term_list $trm_lst = null): string
     {
         if ($this->usr_text_dirty) {
-            $this->generate_usr_text($trm_lst, $msg);
+            $this->generate_usr_text($trm_lst);
         }
         return $this->usr_text;
     }
 
     function get_ref_text(
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
+        ?term_list    $trm_lst = null,
+        ?user_message $msg = null
     ): ?string
     {
         if ($this->ref_text_dirty) {
-            $this->generate_ref_text($trm_lst, $msg);
+            // generate_ref_text needs a message; a caller that passes none only gets the log
+            $this->generate_ref_text($trm_lst, $msg ?? new user_message());
         }
         return $this->ref_text;
     }

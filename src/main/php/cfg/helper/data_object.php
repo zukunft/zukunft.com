@@ -895,9 +895,9 @@ class data_object
      * @param ip_range $ip with the range set
      * @return void
      */
-    function add_ip_range(ip_range $ip): void
+    function add_ip_range(ip_range $ip, user_message $msg): void
     {
-        $this->ip_lst->add($ip);
+        $this->ip_lst->add($ip, $msg);
     }
 
     /**

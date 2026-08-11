@@ -496,15 +496,16 @@ class sandbox_list_named extends sandbox_list
      * without repeating the links in the import json message
      * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message $msg to report which entry is double
+     * @param user_message|null $msg to report which entry is double or null if the caller has no message
      * @returns bool true if the object has been added
      */
     function add_by_name_direct(
         sandbox_named|triple|phrase|term|null $obj_to_add,
         bool                                  $allow_duplicates = false,
-        user_message                          $msg = new user_message()
+        ?user_message                         $msg = null
     ): bool
     {
+        $added = false;
         if ($obj_to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             $name = $obj_to_add->name(true);
@@ -512,12 +513,22 @@ class sandbox_list_named extends sandbox_list
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     $this->add_direct($obj_to_add);
                     $this->set_hash_dirty();
+                    $added = true;
                 } else {
-                    parent::add_obj($obj_to_add, $allow_duplicates, $msg);
+                    // a local message, because add_obj also reports the db readiness of the object,
+                    // which is the normal state while an import still fills the ids,
+                    // so it must never reach a caller that skips its next step on a not ok message
+                    $add_msg = new user_message();
+                    $pos_before = $this->count();
+                    parent::add_obj($obj_to_add, $allow_duplicates, $add_msg);
+                    // add_obj returns its message state, not whether it added, and it adds nothing
+                    // at all for an object without an id, so ask the list itself
+                    $added = ($this->count() > $pos_before);
+                    $msg?->merge($add_msg);
                 }
             }
         }
-        return $msg->is_ok();
+        return $added;
     }
 
     /**

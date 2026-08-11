@@ -174,10 +174,13 @@ class expression
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the human-readable format or null if an error has occurred
      */
-    function user_text(term_list|term_list_ui|null $trm_lst = null): ?string
+    function user_text(term_list|term_list_ui|null $trm_lst = null, ?user_message $msg = null): ?string
     {
         if ($this->usr_text_dirty) {
-            $this->usr_text = $this->get_usr_text($trm_lst);
+            // a local message like in ref_text, because most callers use this as a getter
+            $conv_msg = new user_message();
+            $this->usr_text = $this->get_usr_text($trm_lst, $conv_msg);
+            $msg?->merge($conv_msg);
         }
         if (!$this->usr_text_dirty) {
             return $this->usr_text;
@@ -196,16 +199,21 @@ class expression
      */
     function ref_text(
         term_list|term_list_ui|null $trm_lst = null,
-        user_message                $msg = new user_message()
+        ?user_message               $msg = null
     ): ?string
     {
         // TODO Prio 0 use the ref text check functions that includes the user message
         if ($this->ref_text_dirty or $this->ref_text == null or $this->ref_text == '') {
-            $new_ref_txt = $this->get_ref_text($trm_lst, $msg);
-            if ($msg->is_ok()) {
+            // a local message, because the is_ok() gate must judge only this conversion: with a
+            // shared message an error that the caller collected earlier would keep the converted
+            // text from being stored; most callers use this as a getter and pass no message
+            $conv_msg = new user_message();
+            $new_ref_txt = $this->get_ref_text($trm_lst, $conv_msg);
+            if ($conv_msg->is_ok()) {
                 $this->ref_text = $new_ref_txt;
                 $this->ref_text_dirty = false;
             }
+            $msg?->merge($conv_msg);
         }
         if (!$this->ref_text_dirty) {
             return $this->ref_text;
@@ -227,8 +235,8 @@ class expression
      * @return string the expression in the formula reference format
      */
     protected function get_ref_text(
-        term_list|term_list_ui|null $trm_lst = null,
-        user_message                $msg = new user_message()
+        term_list|term_list_ui|null $trm_lst,
+        user_message                $msg
     ): string
     {
         $result = '';
@@ -263,8 +271,8 @@ class expression
      * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'sales' 'differentiator'/'Total sales'"
      */
     protected function get_usr_text(
-        term_list|term_list_ui|null $trm_lst = null,
-        user_message                $msg = new user_message()
+        term_list|term_list_ui|null $trm_lst,
+        user_message                $msg
     ): string
     {
         log_debug($this->ref_text());
@@ -339,8 +347,8 @@ class expression
      */
     private function get_ref_part(
         string                      $frm_part_text,
-        term_list|term_list_ui|null $trm_lst = null,
-        user_message                $msg = new user_message()
+        term_list|term_list_ui|null $trm_lst,
+        user_message                $msg
     ): string
     {
         $result = $frm_part_text;
@@ -451,8 +459,8 @@ class expression
      */
     private function get_next_term_from_ref(
         string $frm_part_ref_text,
-        term_list|term_list_ui|null $trm_lst = null,
-        user_message $msg = new user_message()
+        term_list|term_list_ui|null $trm_lst,
+        user_message $msg
     ): term|term_ui|null
     {
         $trm = null;

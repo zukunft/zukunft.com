@@ -449,7 +449,7 @@ class import
         }
 
         // show the import result
-        $this->end($size, $store_per_sec, $msg);
+        $this->end($msg, $size, $store_per_sec);
 
         return $msg->is_ok();
     }
@@ -1092,9 +1092,9 @@ class import
      * @param float $est_per_sec the expected number of objects that can be processed per second
      */
     function end(
+        user_message $msg,
         int          $nbr = 0,
-        float        $est_per_sec = 0.0,
-        user_message $msg = new user_message()
+        float        $est_per_sec = 0.0
     ): void
     {
         global $mtr;
@@ -1539,7 +1539,7 @@ class import
             $ip = new ip_range();
             $ip->set_user($this->usr);
             if ($ip->import_mapper($ip_json, $msg)) {
-                $dto->add_ip_range($ip);
+                $dto->add_ip_range($ip, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $ip->dsp_id());

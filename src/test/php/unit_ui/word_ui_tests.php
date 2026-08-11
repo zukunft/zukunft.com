@@ -371,15 +371,15 @@ class word_ui_tests
 
         $test_name = 'an admin sees the impact change in the confirm preview';
         $ui_sys->usr = new user_ui($t->usr_admin->api_json());
-        $t->assert_text_contains($test_name, $preview->popup_changes($chg_url, $wrd_chg), $impact_lbl);
+        $t->assert_text_contains($test_name, $preview->popup_changes($msg, $chg_url, $wrd_chg), $impact_lbl);
 
         $test_name = 'a developer sees the impact change in the confirm preview';
         $ui_sys->usr = new user_ui($t->usr_dev->api_json());
-        $t->assert_text_contains($test_name, $preview->popup_changes($chg_url, $wrd_chg), $impact_lbl);
+        $t->assert_text_contains($test_name, $preview->popup_changes($msg, $chg_url, $wrd_chg), $impact_lbl);
 
         $test_name = 'a normal user does not see the impact change in the confirm preview';
         $ui_sys->usr = new user_ui($t->usr_normal->api_json());
-        $chg_html = $preview->popup_changes($chg_url, $wrd_chg);
+        $chg_html = $preview->popup_changes($msg, $chg_url, $wrd_chg);
         $t->assert_text_not_contains($test_name, $chg_html, $impact_lbl);
 
         $test_name = '... but still sees the description change';

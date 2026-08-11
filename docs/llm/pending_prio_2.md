@@ -33,17 +33,59 @@ the done passes are in the git history; only what is still open is listed here.
    too), `update_standard_fields`, `save_fields_func`, `generate_ref_text` and the three
    `web/triple::set_*_by_id` (reordered to `(id, $msg, $dto = null)`, matching `cfg/ref`).
 
-   what is left needs a decision, not just mechanics:
+   also done: `ui_preview::popup_changes`, `import::end` and `ip_range_list::add` (plus
+   `data_object::add_ip_range`, its only indirect caller) - all three moved `$msg` in front of the
+   optional parameters, like `cfg/ref::set_phrase_by_id`.
+
+   **the last 21 all need a cascade or a decision, not mechanics** - each was measured, so do not
+   re-size them by definition count:
    - `api_json` (8) - the documented trap below, 232 test call sites
-   - the `expression` text family `ref_text` / `get_ref_text` / `get_usr_text` / `get_ref_part` /
-     `get_next_term_from_ref` (7) - `ref_text` alone has 25 callers, 24 of them without a message,
-     and it reads like a plain getter used in `log_debug` lines, so making `$msg` mandatory there
-     is a readability trade, not only a mechanical one
-   - `change_log::add_table` / `add_field` / `add_action` (3) - contained on paper, but their only
-     callers are `set_action` / `set_table` / `set_field`, which have no `$msg` and are called all
-     over the change log family, so the cascade is the real size
-   - `set_user_text` (32 callers), `add_by_name_direct` (13), `popup_changes` (5), `add` (2),
-     `import::end` (3 defs) - each small enough for one commit
+   - the `expression` text family is **DONE** (8 defaults), and it split cleanly in two once the
+     receivers were separated: `expression::get_ref_text` / `get_usr_text` / `get_ref_part` /
+     `get_next_term_from_ref` are internals whose every caller already passed a message, so they
+     are simply **required** now - zero call sites touched. the two public getters `ref_text` and
+     `user_text` take `?user_message $msg = null`, because 24 of the 25 `ref_text` callers use it
+     as a getter inside `log_debug` lines; both keep a local message for the `is_ok()` gate (the
+     same trap as the change log setters: with a shared message an earlier error would keep the
+     converted text from being stored) and merge it into the caller's message when one is given.
+     `formula_map::set_user_text` / `get_ref_text` are nullable with a local fallback where
+     `generate_*_text` needs one. also removed: `formula_map::get_usr_text` passed its `$msg` to
+     `generate_usr_text()`, which takes **no** message - the parameter was dead, so it is gone.
+   - `change_log::add_table` / `add_field` / `add_action` are **DONE**, but not by threading the
+     198 call sites: each now keeps a **local** message for its own verdict and takes an
+     `?user_message $msg = null` that receives the merge. that was forced by the code, not chosen
+     for convenience - all three end with `return $msg->is_ok()`, so with a shared message an error
+     the caller collected earlier would make `set_table` log "Cannot add table name" for a
+     reference row that was written fine (the gate defect of item 4). `set_action` / `set_table` /
+     `set_field` / `set_class` pass the optional message down, and `create_log_references` (25 of
+     the calls, 3 callers) threads it for real. what is NOT done is the remaining ~85 call sites
+     opting in; they still pass nothing, which is now visible rather than hidden by a default.
+     also fixed: `add_field` was declared `: int` while returning `$msg->is_ok()`; no caller used
+     the value, so it is now `: bool`.
+     NOTE for the next pass: the deeper cascade (`sql_creator::sql_func_log_*`, `sql_delete_and_log`)
+     reaches the **sql generation** layer, where a user_message does not belong - a change log id
+     that cannot be resolved is a missing `db_code_links` row (coding.md line 139), i.e. an internal
+     inconsistency that belongs in the admin log, not on `$msg`
+   - `sandbox_list_named::add_by_name_direct` is **DONE** (1 default), as `?user_message $msg = null`
+     rather than required, because none of the 13 callers has a message of its own - they are list
+     builders (`missing_ids`, `triples_to_add_to_db`, `phrase_lst_of_names`, the two
+     `add_*_without_ready_check`), so making it mandatory would only move one default into 13 fresh
+     creations. all 13 pass one argument, so `$msg?->merge()` is a no-op today and a caller opts in
+     by passing a message.
+     the local buffer matters more here than elsewhere: the `parent::add_obj()` in the duplicate
+     branch calls `db_ready($msg)`, and "not ready" is the **normal** state while an import still
+     fills the ids - the same message that broke the portfolio import, so it must not reach a
+     caller that gates its next step (see `docs/llm/dependent-errors.md`).
+     also fixed: the return was `$msg->is_ok()` while the docblock promised "true if the object has
+     been added", and the two never agreed - a null object, an empty name and a duplicate name all
+     returned true. `add_obj()`'s own return could not be used either, because it reports its message
+     state and adds nothing at all for an object without an id (which is exactly what this function
+     is for), so the added flag now comes from the list count.
+   - `web/sandbox_list_named::add` (1) - the frontend list add, called throughout `web/`.
+     it **overrides** `ListBase::add($to_add)`, which has one parameter, so a required `$msg` here
+     is a php fatal (incompatible signature) - either it goes nullable like the two above, or
+     `ListBase::add` and its five sibling overrides (`sys_log_list`, `value_list`, `figure_list`,
+     `group_list`, `group`) all take the parameter together
 
    the `api_json` family (8 defaults) is the trap — read this before retrying. its 53 **production**
    call sites already pass their message, so the drop is fixed there; removing the defaults breaks

@@ -223,12 +223,18 @@ Both halves bite at once. `sandbox_link::can_be_ready($msg)` is a real example:
   the **normal** state — it adds `FROM_MISSING` / `TO_MISSING` notices to the
   import message.
 
-The second one is unforgiving, because `import::get_data_object()` starts with
-`if ($msg->is_ok())` and `*::import_mapper()` ends with `return $msg->is_ok()`:
-one premature notice and **every following object of that import is silently
-dropped**. That is exactly how threading `$msg` into
-`sandbox_link_list::add_link_by_key` emptied the portfolio import and broke
-`import_tests`' "distinct impact for each main stock triple".
+The second one is unforgiving, because the import steps deliberately guard
+dependent work with `if ($msg->is_ok())`: one notice added on a normal path and
+**every following object of that import is silently dropped**. That is exactly
+how threading `$msg` into `sandbox_link_list::add_link_by_key` emptied the
+portfolio import and broke `import_tests`' "distinct impact for each main stock
+triple".
+
+Note which half was the defect. The `if ($msg->is_ok())` guard is *wanted* — it
+is how a step avoids reporting errors that are only a consequence of an earlier
+error, see `docs/llm/dependent-errors.md`. What broke the import was feeding that
+guard a message it should never have seen: a condition that is normal at that
+point, added as a certain error.
 
 So before threading a message into a readiness / validity check, ask what it
 reports **on the normal path**. Give the check its own message so its verdict is

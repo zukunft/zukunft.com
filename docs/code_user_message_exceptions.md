@@ -9,35 +9,20 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-186 creations below the entry points: 162 explained, 24 parameter defaults and 0 still unexplained
+179 creations below the entry points: 170 explained, 9 parameter defaults and 0 still unexplained
 
 ## parameter defaults
 
 a default value drops the message of a caller that passes none, so each of these is a silent message loss waiting for a threading pass
 
 ```
-frontend: /component/execute/ui_preview.php:210 - user_message                                          $msg = new user_message()
 frontend: /sandbox/ListBase.php:243 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 frontend: /sandbox/sandbox_list_named.php:214 - user_message                                                                                         $msg = new user_message()
 frontend: /system/sys_log_list.php:160 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
-main backend: /formula/formula_map.php:567 - user_message $msg = new user_message()
-main backend: /formula/formula_map.php:578 - user_message $msg = new user_message()
-main backend: /formula/formula_map.php:589 - user_message $msg = new user_message()
 main backend: /helper/combine_object.php:129 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_multi.php:179 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_seq_id.php:348 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_list.php:663 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
-main backend: /import/import.php:1097 - user_message $msg = new user_message()
-main backend: /log/change_log.php:817 - user_message $msg = new user_message()
-main backend: /log/change_log.php:853 - user_message $msg = new user_message()
-main backend: /log/change_log.php:884 - user_message $msg = new user_message()
-main backend: /sandbox/sandbox_list_named.php:505 - user_message                          $msg = new user_message()
-main backend: /system/ip_range_list.php:76 - user_message $msg = new user_message()
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
-shared: /calc/expression.php:199 - user_message                $msg = new user_message()
-shared: /calc/expression.php:231 - user_message                $msg = new user_message()
-shared: /calc/expression.php:267 - user_message                $msg = new user_message()
-shared: /calc/expression.php:343 - user_message                $msg = new user_message()
-shared: /calc/expression.php:455 - user_message $msg = new user_message()
 ```

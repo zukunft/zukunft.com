@@ -120,6 +120,7 @@ messages:
   phrase_symbols: "symbols"
   protection_reduce_denied: "Only an admin can reduce the protection of z$VarObjName$z from z$VarProtect$z to z$VarProtectCheck$z."
   protection_raise_denied: "Only an admin can set the protection of z$VarObjName$z to z$VarProtectCheck$z, so the protection stays z$VarProtect$z."
+  import_step_skipped: "z$VarObjName$z has not been checked yet, because the errors above would probably cause follow-up errors here. Please fix the errors above and import again."
   system_title_error_log: "Error log"
   system_title_error_update: "Error update"
   system_title_search: "search"

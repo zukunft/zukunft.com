@@ -528,7 +528,7 @@ class frontend
                     // check the change log references only after a fresh type load, because
                     // they can only be incomplete if the types have changed in the database
                     $log = new change_log($usr_sys);
-                    $db_changed = $log->create_log_references($db_con);
+                    $db_changed = $log->create_log_references($db_con, $sys_msg);
 
                     // reload the type list if needed and trigger an update in the frontend
                     // even tough the update of the preloaded list should already be done by the single adds

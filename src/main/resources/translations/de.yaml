@@ -72,6 +72,7 @@ messages:
   phrase_symbols: "Symbole"
   protection_reduce_denied: "Nur ein Admin kann den Schutz von z$VarObjName$z von z$VarProtect$z auf z$VarProtectCheck$z reduzieren."
   protection_raise_denied: "Nur ein Admin kann den Schutz von z$VarObjName$z auf z$VarProtectCheck$z setzen, deshalb bleibt der Schutz z$VarProtect$z."
+  import_step_skipped: "z$VarObjName$z wurde noch nicht geprüft, weil die Fehler oben hier vermutlich Folgefehler verursachen würden. Bitte beheben Sie die Fehler oben und importieren Sie erneut."
   about_sponsored_by: "wird unterstützt von"
   about_main_idea: "Eine der Hauptideen ist die Verwendung von"
   about_once_implemented: "Wenn implementiert, könnte es möglich sein"

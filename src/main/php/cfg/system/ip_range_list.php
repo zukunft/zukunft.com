@@ -72,8 +72,8 @@ class ip_range_list extends list_db_write
      */
     function add(
         ip_range     $range,
-        bool         $allow_duplicates = false,
-        user_message $msg = new user_message()
+        user_message $msg,
+        bool         $allow_duplicates = false
     ): bool
     {
         return parent::add_obj($range, $allow_duplicates, $msg);
@@ -120,7 +120,7 @@ class ip_range_list extends list_db_write
             $ip = new ip_range();
             $ip->row_mapper($db_row, $msg);
             if ($ip->id() > 0) {
-                $this->add($ip);
+                $this->add($ip, $msg);
                 $result = true;
             }
         }
