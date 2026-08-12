@@ -2,6 +2,10 @@
 
 ## start page
 
+create a new component_type 'table_with_related_columns' and a component with the same name and create a new view in base_view with the name 'table' that contains a header that shows the new component / component_type "phrase_title", that calls in component_exe either the title_named as used in the default word view including the subheader or the triple_titel including the subheader and the new created 'table_with_related_columns' that takes the phrase as input parameter.   
+
+The parameter
+
 the basic steps to show the start page are
 
 - table with 'global issues'

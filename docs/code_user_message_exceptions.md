@@ -9,7 +9,7 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-203 creations below the entry points: 179 explained, 24 parameter defaults and 0 still unexplained
+205 creations below the entry points: 179 explained, 24 parameter defaults and 2 still unexplained
 and 4 nullable message parameters and 48 messages that never reach the caller
 
 ## parameter defaults
@@ -107,4 +107,13 @@ frontend: /system/sys_log_list.php:80 - function __construct(?string $api_json =
 frontend: /types/type_lists.php:154 - function __construct(?string $api_json = null, ?user_message $msg = null)
 frontend: /verb/verb_list.php:64 - function __construct(?string $api_json = null, ?user_message $msg = null)
 main backend: /sandbox/sandbox_list_named.php:512 - ?user_message                         $msg = null
+```
+
+## unexplained creations
+
+the remaining rule breaks: explain the exception with a comment or thread the $msg of the caller
+
+```
+main backend: /import/import.php:508 - $import_result = new user_message();
+main backend: /import/import.php:564 - $import_result = new user_message();
 ```
