@@ -14,6 +14,10 @@
     comment directly above it (or trailing on the same line); the report lists the
     still unexplained creations as the remaining rule breaks
 
+    and it checks that a created message is never lost: what it collects must reach
+    the caller (merged, returned, read or kept in an object field), because an error
+    that nobody reports is the silent failure the message parameter exists to prevent
+
 
     This file is part of zukunft.com - calc with words
 
@@ -69,6 +73,24 @@ class code_user_message_exceptions
     // a nullable message parameter e.g. '?user_message $msg = null' or 'user_message|null $msg = null'
     // which drops the report of every caller that passes none, just like a default creation does
     private const string NULL_PATTERN = '/(\?\s*(\\\\?[\w\\\\]*\\\\)?user_message|(\\\\?[\w\\\\]*\\\\)?user_message\s*\|\s*null)\s+\$\w+\s*=\s*null/i';
+    // a creation assigned to a variable e.g. '$add_msg = new user_message()' or the fallback form
+    // '$add_msg = $msg ?? new user_message()' - the variable name is needed to check whether the
+    // collected errors ever reach the caller
+    private const string CREATE_VAR_PATTERN = '/\$(\w+)\s*=[^=]*\bnew\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    // a creation that is the return value e.g. 'return new user_message()', so the caller gets it
+    private const string RETURN_PATTERN = '/\breturn\s[^;]*\bnew\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    // a creation assigned to an object field e.g. '$this->msg = new user_message()' which outlives
+    // the function, so the caller can still read what has been collected
+    private const string CREATE_FIELD_PATTERN = '/\$\w+(->\w+)+\s*=[^=]*\bnew\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    // the start of the next function, which ends the scope in which a local message can be reported
+    private const string FUNCTION_PATTERN = '/^\s{0,4}(?:public |private |protected |static |abstract |final )*function\s+\w+\s*\(/';
+    // the reader functions of a message; calling one of them on a local message means that its
+    // content is used, so the collected errors are not lost
+    private const string READ_FUNCTIONS = 'is_ok|all_message_text|get_message|get_last_message'
+    . '|has_msg_id|is_error|get_all_var_messages';
+    // the words that mark a message which is deliberately not reported, e.g. a display path that
+    // has no caller message at all; without this the creation is listed as a lost message
+    private const string NOT_REPORTED_MARK = 'not reported';
 
     /**
      * build the markdown report of the user_message creations below the entry points
@@ -81,12 +103,14 @@ class code_user_message_exceptions
         $def_lst = [];
         $open_lst = [];
         $null_lst = [];
+        $lost_lst = [];
         foreach (self::SCAN_PATHS as $sec => $path) {
-            $this->scan_section($sec, $path, $exp_cnt, $def_lst, $open_lst, $null_lst);
+            $this->scan_section($sec, $path, $exp_cnt, $def_lst, $open_lst, $null_lst, $lost_lst);
         }
         $open_cnt = $this->hit_count($open_lst);
         $def_cnt = $this->hit_count($def_lst);
         $null_cnt = $this->hit_count($null_lst);
+        $lost_cnt = $this->hit_count($lost_lst);
         $all_cnt = $exp_cnt + $open_cnt + $def_cnt;
 
         $md_txt = '# User message exceptions' . "\n";
@@ -102,10 +126,17 @@ class code_user_message_exceptions
         $md_txt .= "\n";
         $md_txt .= $all_cnt . ' creations below the entry points: ' . $exp_cnt . ' explained, '
             . $def_cnt . ' parameter defaults and ' . $open_cnt . ' still unexplained' . "\n";
-        $md_txt .= 'and ' . $null_cnt . ' nullable message parameters' . "\n";
+        $md_txt .= 'and ' . $null_cnt . ' nullable message parameters and '
+            . $lost_cnt . ' messages that never reach the caller' . "\n";
         $md_txt .= $this->section_md('parameter defaults', $def_lst,
             'a default value drops the message of a caller that passes none,'
             . ' so each of these is a silent message loss waiting for a threading pass');
+        $md_txt .= $this->section_md('messages that never reach the caller', $lost_lst,
+            'a message that is filled and then goes out of scope loses every error it collected -'
+            . ' including an inline "new user_message()" handed to a called function, which no one'
+            . ' can read again; merge it into the caller message, return it or read it - and if the'
+            . ' drop is on purpose, e.g. a display path with no caller message, say "'
+            . self::NOT_REPORTED_MARK . '" in the comment behind the creation');
         $md_txt .= $this->section_md('nullable message parameters', $null_lst,
             'a message parameter is required, because a request has exactly one message and null'
             . ' describes a state that does not exist; "$msg?->add(...)" reports nothing at the call'
@@ -125,6 +156,7 @@ class code_user_message_exceptions
      * @param array $def_lst (in/out) map of file name to the parameter default hits
      * @param array $open_lst (in/out) map of file name to the unexplained hits
      * @param array $null_lst (in/out) map of file name to the nullable message parameter hits
+     * @param array $lost_lst (in/out) map of file name to the messages that never reach the caller
      * @return void
      */
     private function scan_section(
@@ -133,7 +165,8 @@ class code_user_message_exceptions
         int    &$exp_cnt,
         array  &$def_lst,
         array  &$open_lst,
-        array  &$null_lst
+        array  &$null_lst,
+        array  &$lost_lst
     ): void
     {
         $lib = new library();
@@ -151,6 +184,12 @@ class code_user_message_exceptions
                     continue;
                 }
                 $hit = $name . ':' . ($line_idx + 1) . ' - ' . trim($line);
+                // a message that is created, filled and then dropped loses every collected error
+                if (!preg_match(self::DEFAULT_PATTERN, $line)
+                    and !str_contains($line, self::NOT_REPORTED_MARK)
+                    and !$this->is_reported($lines, $line_idx, $line)) {
+                    $lost_lst[$name][] = $hit;
+                }
                 if (preg_match(self::DEFAULT_PATTERN, $line)) {
                     $def_lst[$name][] = $hit;
                 } elseif ($this->is_explained($lines, $line_idx)) {
@@ -196,6 +235,72 @@ class code_user_message_exceptions
         $result = 0;
         foreach ($hit_lst as $file_hits) {
             $result += count($file_hits);
+        }
+        return $result;
+    }
+
+    /**
+     * check that the errors collected in a created message ever reach the caller
+     *
+     * a created message is only useful if its content leaves the function again, so it must be
+     * returned, assigned to an object field, or - when it is a local variable - merged into another
+     * message, returned or read (see is_used); a message that is only filled and then goes out of
+     * scope loses every error it collected, which is the silent failure this check exists for
+     *
+     * a creation that is not named at all, e.g. 'set_type_id($id, new user_message($usr))', is
+     * always a loss: there is no variable left to read what the called function reported
+     *
+     * @param array $lines the code lines of the php file
+     * @param int $line_idx the zero based line index of the creation
+     * @param string $line the code line of the creation
+     * @return bool true if the collected errors reach the caller
+     */
+    private function is_reported(array $lines, int $line_idx, string $line): bool
+    {
+        $result = false;
+        if (preg_match(self::RETURN_PATTERN, $line)
+            or preg_match(self::CREATE_FIELD_PATTERN, $line)) {
+            $result = true;
+        } elseif (preg_match(self::CREATE_VAR_PATTERN, $line, $var_found)) {
+            $result = $this->is_used($lines, $line_idx, $var_found[1]);
+        }
+        return $result;
+    }
+
+    /**
+     * check that a named message is merged into another message ($msg->merge($local)), returned,
+     * or read via one of the READ_FUNCTIONS before it goes out of scope
+     *
+     * the scope ends at the next function declaration, so a use in a later function does not
+     * count as a report of this message
+     *
+     * @param array $lines the code lines of the php file
+     * @param int $line_idx the zero based line index of the creation
+     * @param string $var the variable name of the created message without the $
+     * @return bool true if the collected errors reach the caller
+     */
+    private function is_used(array $lines, int $line_idx, string $var): bool
+    {
+        $result = false;
+        $in_scope = true;
+        $name = preg_quote($var, '/');
+        $merged = '/->merge\s*\(\s*\$' . $name . '\b/';
+        $returned = '/return\s+\$' . $name . '\b/';
+        $read = '/\$' . $name . '\s*->\s*(?:' . self::READ_FUNCTIONS . ')\s*\(/';
+        $i = $line_idx + 1;
+        $last = count($lines);
+        while ($i < $last and $in_scope and !$result) {
+            $line = $lines[$i];
+            if (preg_match(self::FUNCTION_PATTERN, $line)) {
+                $in_scope = false;
+            } else {
+                if (preg_match($merged, $line)
+                    or preg_match($returned, $line)
+                    or preg_match($read, $line)) {
+                    $result = true;
+                }
+            }
+            $i++;
         }
         return $result;
     }

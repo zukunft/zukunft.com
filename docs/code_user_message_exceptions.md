@@ -10,7 +10,7 @@ typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
 188 creations below the entry points: 180 explained, 8 parameter defaults and 0 still unexplained
-and 4 nullable message parameters
+and 4 nullable message parameters and 48 messages that never reach the caller
 
 ## parameter defaults
 
@@ -25,6 +25,61 @@ main backend: /helper/db_object_seq_id.php:348 - function api_json(api_type_list
 main backend: /helper/type_list.php:663 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
+```
+
+## messages that never reach the caller
+
+a message that is filled and then goes out of scope loses every error it collected - including an inline "new user_message()" handed to a called function, which no one can read again; merge it into the caller message, return it or read it - and if the drop is on purpose, e.g. a display path with no caller message, say "not reported" in the comment behind the creation
+
+```
+api objects: /api_message.php:132 - $sys_msg = new user_message(user::system());
+frontend: /formula/formula_list.php:239 - $api_msg = new user_message(); // a legacy display function without a message, see display_old
+frontend: /helper/data_object.php:98 - $cache_msg = new user_message();
+frontend: /helper/data_object.php:120 - $cache_msg = new user_message();
+frontend: /helper/data_object.php:142 - $cache_msg = new user_message();
+frontend: /result/result_list.php:394 - $api_msg = new user_message(); // a legacy display function without a message, see display_old
+frontend: /sandbox/combine_object.php:70 - $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
+frontend: /sandbox/db_object.php:140 - $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
+frontend: /system/sys_log_list.php:85 - $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
+frontend: /types/type_lists.php:159 - $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
+frontend: /user/user_display_old.php:548 - $msg = new user_message(); // a legacy display function without a caller message, see dsp_sandbox_wrd_link
+frontend: /user/user_display_old.php:1230 - $msg = new user_message(); // a deprecated direct db display function without a caller message
+frontend: /verb/verb_list.php:70 - $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
+frontend: /word/triple_list.php:237 - $api_msg = new user_message(); // a legacy display function without a message, see graph
+main backend: /application.php:244 - $msg = new user_message(user::system());
+main backend: /db/sql_db.php:1122 - $sys_msg = new user_message(user::system()); // the setup runs as the system user, before any request
+main backend: /db/sql_db.php:1270 - $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr)); // only for the permission check
+main backend: /db/sql_db.php:3540 - $msg = new user_message(); // an internal db structure read, so a failure only goes to the log
+main backend: /db/sql_db.php:3626 - $msg = new user_message(); // a deprecated read, see the TODO above; a failure only goes to the log
+main backend: /db/sql_db.php:5533 - $msg = new user_message(); // a db upgrade step run by db_check, so a failure only goes to the log
+main backend: /db/sql_db.php:5835 - $sys_msg = new user_message(user::system()); // the system user sets the db version at install time
+main backend: /formula/expression.php:982 - $msg = new user_message($this->usr);
+main backend: /formula/formula.php:197 - $msg = new user_message();
+main backend: /formula/formula.php:636 - $msg = new user_message();
+main backend: /formula/formula_map.php:361 - $exp_msg = new user_message();
+main backend: /formula/formula_map.php:422 - $exp_msg = new user_message();
+main backend: /formula/formula_map.php:1092 - $txt_msg = new user_message();
+main backend: /formula/formula_map.php:1115 - $txt_msg = new user_message();
+main backend: /group/group_id.php:94 - $sort_msg = new user_message();
+main backend: /group/group_list.php:508 - $msg = new user_message(); // TODO Prio 1 deprecate
+main backend: /group/group_list.php:516 - $msg = new user_message(); // a deprecated private helper without a caller message
+main backend: /helper/db_cache_page.php:214 - $msg = new user_message();
+main backend: /helper/type_object.php:824 - $this->set_code_id($obj->get_code_id(), new user_message($usr_req));
+main backend: /import/convert_wikipedia_table.php:196 - $msg = new user_message($usr); // a test only converter (see import_tests), so the errors only steer it here
+main backend: /log/change_link.php:389 - $msg = new user_message(); // only the ok flag is returned, see the TODO above
+main backend: /log/change_link.php:610 - $msg = new user_message(); // a local buffer, because sql creation reports to the log only
+main backend: /log_text/text_log_functions.php:637 - $msg = new user_message(); // the log writer itself, so it cannot report to a request message
+main backend: /ref/ref.php:1370 - $sim_msg = new user_message(); // the duplicate messages only steer the branch below
+main backend: /sandbox/sandbox.php:2289 - $this->set_code_id($norm_obj->get_code_id(), new user_message($this->get_user()));
+main backend: /sandbox/sandbox.php:2296 - $ui_msg = new user_message($this->get_user());
+main backend: /sandbox/sandbox_typed.php:486 - $this->set_type_id($obj->type_id($msg), new user_message($usr_req));
+main backend: /system/job.php:353 - $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req)); // only for the permission check
+main backend: /system/job.php:359 - $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req)); // only for the permission check
+main backend: /value/value_base.php:2118 - $msg = new user_message($usr); // dead code (no caller), so nothing is dropped, see pending_prio_2.md
+main backend: /word/triple.php:400 - $this->set_code_id($db_row[fields::FLD_CODE_ID], new user_message($this->get_user()));
+shared: /calc/expression.php:235 - $dsp_msg = new user_message(); // a display path has no user to report to, see the comment above
+shared: /calc/expression.php:246 - $dsp_msg = new user_message(); // a display path has no user to report to, see ref_text_dsp
+shared: /helper/Translator.php:177 - $msg = new user_message(); // a local buffer only to build the text of the log entry
 ```
 
 ## nullable message parameters

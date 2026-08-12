@@ -161,6 +161,50 @@ A block of buffers that belong together (the per-level messages of an import
 loop) is declared on consecutive lines and shares one comment above the block —
 the check understands that, so don't repeat the same sentence five times.
 
+### A created message must reach the caller — a message is never lost
+
+A comment says *why* a message is created; it does not say that anybody ever
+reads it. So the second half of the rule: whatever a created message collects
+**leaves the function again**. Exactly four endings count.
+
+```php
+$sub_msg = new user_message($msg->usr); // a buffer of the retried level
+$this->save_level($sub_msg);
+$msg->merge($sub_msg);                  // 1. merged into the caller's message
+```
+
+```php
+return $sub_msg;                        // 2. returned to the caller
+if ($sub_msg->is_ok()) { … }            // 3. read here to steer the branch
+$this->msg = new user_message();        // 4. kept in an object field the caller reads
+```
+
+Everything else is a lost message. The worst form has no name at all, because
+then not even a later line could read it:
+
+```php
+$this->set_type_id($id, new user_message($usr));   // wrong - created only to fill a required parameter
+```
+
+The call reports its permission error into a message that dies on the same line.
+Thread the caller's `$msg` in instead — the required parameter is asking for the
+message of the request, not for *a* message.
+
+A drop that is genuinely intended (a property hook that takes no parameter, a
+deprecated display path with no caller message, the log writer itself) says so
+with the words **`not reported`** in the comment behind the creation:
+
+```php
+$dsp_msg = new user_message(); // not reported: a property hook takes no caller message
+```
+
+That marker is the only thing that silences the check, so a drop is always a
+deliberate, reviewable decision instead of an oversight. The same
+`php_user_message_creation_tests` run lists every still-lost message under
+"messages that never reach the caller" in
+`docs/code_user_message_exceptions.md`; like the other sections it is a work
+list that shrinks, and a new lost message fails the test by changing the doc.
+
 ### `$msg` is never null — no `?user_message $msg = null` parameter
 
 A `user_message` parameter is **required**. Neither of the two ways to make it

@@ -1230,6 +1230,11 @@ class coding_rule_tests
      * unexplained ones are listed in docs/code_user_message_exceptions.md as the remaining rule
      * breaks, so a new one changes the generated doc and fails this test
      *
+     * and check that a created message never gets lost: what it collects must reach the caller
+     * (merged, returned, read or kept in an object field), so a message that is only filled and
+     * then goes out of scope - an inline 'new user_message()' handed to a called function above all
+     * - is listed as well, unless the comment behind it says that the drop is on purpose
+     *
      * a list instead of one assertion per hit, because the tree still has ~180 open creations:
      * a per-hit assertion would drown the test output, while the doc keeps the work list reviewable
      * and shrinks with every threading pass (same pattern as docs/code_object_name_exceptions.md)

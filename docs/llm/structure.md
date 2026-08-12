@@ -189,6 +189,10 @@ show and the user sees nothing at all.
 - The failure must reach the user: a backend write that reports "not ok" has to
   propagate into the frontend `$msg` (see `docs/llm/state-and-messages.md`), not
   be swallowed by a conversion or an `if ($msg->is_ok())` gate that hides it.
+  Recording the reason on a message that nobody reads is the same silent failure
+  one level later, so a message created below the entry point is merged, returned,
+  read or kept — see "A created message must reach the caller" in
+  `docs/llm/state-and-messages.md`, which `php_user_message_creation_tests` checks.
 
 This is the `$msg` counterpart of "log the unexpected branch": `log_err` makes an
 *internal* inconsistency visible to developers; a `$msg` entry makes a *user-
