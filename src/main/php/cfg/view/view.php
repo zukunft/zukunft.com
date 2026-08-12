@@ -320,6 +320,10 @@ class view extends sandbox_code_id
                 $trm = new term($this->get_user());
                 $trm->load_by_name($trm_name, $msg);
                 if ($trm->id() == 0) {
+                    // keep the name, because it identifies the link until the ids are known
+                    // (docs/llm/architecture.md); without it every term that a view assigns
+                    // before it exists would look like the same term assigned twice
+                    $trm->set_name($trm_name);
                     log_warning('word "' . $trm_name .
                         '" created to link it to view "' . $this->name() .
                         '" as requested by the import of ');

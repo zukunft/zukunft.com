@@ -40,7 +40,9 @@ include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
@@ -48,10 +50,12 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -242,6 +246,26 @@ class import_tests
         ]];
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
+
+        $t->subheader($ts . 'view term assignment check');
+
+        // the terms of the "assigned" list are added to the database by their own import step, so
+        // at this point they usually have no id yet and are told apart by their name
+        $test_name = 'JSON import accepts a view with two terms that are not yet in the database';
+        $msg = new user_message($t->usr1);
+        $json_array = [json_fields::VIEWS => [[
+            json_fields::NAME => views::TEST_ADD_NAME,
+            json_fields::ASSIGNED => [word_names::PI, word_names::E]
+        ]]];
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_not_contains($test_name, $msg->all_message_text(), 'more than once');
+
+        // the same term twice in the "assigned" list of one view is a real double
+        $test_name = 'JSON import reports a term assigned twice to the same view';
+        $msg = new user_message($t->usr1);
+        $json_array[json_fields::VIEWS][0][json_fields::ASSIGNED] = [word_names::PI, word_names::PI];
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'more than once');
 
         $t->subheader($ts . 'view row balance check');
 

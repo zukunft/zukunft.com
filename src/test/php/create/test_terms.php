@@ -74,6 +74,17 @@ class test_terms
         return $t_wrd->word()->term();
     }
 
+    /**
+     * @param string $name the name of a term that is not yet in the database
+     * @return term as an import creates it before the words have been added to the database
+     */
+    function by_name(string $name): term
+    {
+        $trm = new term($this->env->usr1);
+        $trm->set_name($name);
+        return $trm;
+    }
+
     function term_triple(): term
     {
         $t_trp = new test_triples($this->env);
