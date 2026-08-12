@@ -68,14 +68,22 @@ the done passes are in the git history; only what is still open is listed here.
    `sandbox_list::add_user_check`, `id_used_msg`), while the recursive `diff_msg` and `fill` cores
    stay as they are - their callers do merge the return, so threading them is high risk, low value.
 
-2. **remove the 24 remaining message parameter defaults**: a caller that passes nothing silently
-   loses its messages, so the default is the same drop in disguise. two families:
-   - 16 `Message $msg = new Message()` of the **list add family** (`ListOf*::add_obj`,
-     `sandbox_list*::add_obj` / `add_by_key`, `component_link_list`, `element_list`, `formula_list`,
-     `view_relation_list`, the web `ListBase` / `sandbox_list_named`, plus `web/frontend.php::start`).
-     they became visible when the check learned the shared `Message` class; before that the report
-     only knew `user_message`. mechanical per class, but the callers are many, so one class per
-     commit, and note that most of these functions also end with `return $msg->is_ok()`
+2. **remove the 19 remaining message parameter defaults**: a caller that passes nothing silently
+   loses its messages, so the default is the same drop in disguise. done so far of the list add
+   family: `add_obj_by_name`, `add_obj_by_code_id`, `add_by_link` (incl. the `element_list`
+   override) and `web/frontend.php::start` - each had few call sites and every caller either had a
+   message or is an entry point (`http/setup.php` now creates it before it starts the session).
+   the two remaining families are measured, so do not re-size them by definition count:
+   - `add_by_key` (6 defaults: `ListOfIdObjects`, both `sandbox_list_named`, `component_link_list`,
+     `formula_list`, `view_relation_list`) - 47 call sites, 29 of them in functions **without** a
+     message in scope
+   - `add_obj` incl. `sandbox_list_named::add` (5 defaults: `ListOf`, `ListOfIdObjects`,
+     `sandbox_list`, `sandbox_list_named`) - 70 call sites, 31 without a message in scope
+   the cascade of both runs through the six `data_object` adders (`add_word` 22 call sites,
+   `add_triple` 6, `add_source` 8, `add_formula` 9, `add_view` 8, `add_component` 4), which is the
+   same shape as the `add_verb` chain done here - and every one of those names exists on more than
+   one class (`view::add_component`, `verb_list::add_verb`), so resolve the receiver class per call
+   site, never rename by function name. one class per commit with a test run
    - the 8 `api_json` defaults, and that family is the trap — read this before retrying. its 53
      **production** call sites already pass their message, so the drop is fixed there; removing the
      defaults breaks **232 test call sites**, each needing the right message *kind* (a backend

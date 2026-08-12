@@ -740,12 +740,13 @@ class data_object
     /**
      * add a named verb without db id to the list
      * @param verb $vrb with the name set
+     * @param user_message $msg to report a verb that is already in the cache
      * @return void
      */
-    function add_verb(verb $vrb): void
+    function add_verb(verb $vrb, user_message $msg): void
     {
         $this->trm_lst_dirty = true;
-        $this->vrb_lst->add_by_name($vrb);
+        $this->vrb_lst->add_by_name($vrb, $msg);
     }
 
     /**
@@ -833,20 +834,22 @@ class data_object
     /**
      * add a name term without db id to the list
      * @param term $trm with the name set
+     * @param user_message $msg to report a term that is already in the cache
      * @return void
      */
-    function add_term(term $trm): void
+    function add_term(term $trm, user_message $msg): void
     {
         if ($trm->is_word()) {
             $this->add_word($trm->get_word());
         } elseif ($trm->is_verb()) {
-            $this->add_verb($trm->get_verb());
+            $this->add_verb($trm->get_verb(), $msg);
         } elseif ($trm->is_triple()) {
             $this->add_triple($trm->get_triple());
         } elseif ($trm->is_formula()) {
             $this->add_formula($trm->get_formula());
         } else {
-            log_err('');
+            log_err_msg('term ' . $trm->dsp_id() . ' has no word, verb, triple or formula, '
+                . 'so it is added to the import cache as a word', $msg);
             $this->add_word($trm->get_word());
         }
     }

@@ -296,7 +296,7 @@ class frontend
      * @param array $url_arr the parameters given with the url for the request
      * @return sql_db
      */
-    function start(string $code_name, Message $msg = new Message(), array $url_arr = []): sql_db
+    function start(string $code_name, Message $msg, array $url_arr = []): sql_db
     {
         global $sys;
         $sys->script = $code_name;

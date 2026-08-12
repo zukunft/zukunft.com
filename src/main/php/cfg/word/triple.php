@@ -564,7 +564,7 @@ class triple extends sandbox_link_named
                         // TODO remove this exception
                         $vrb->save($msg);
                     }
-                    $dto?->add_verb($vrb);
+                    $dto?->add_verb($vrb, $msg);
                 } else {
                     $vrb = $sys->verb(verbs::NOT_SET);
                     $msg->add(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);

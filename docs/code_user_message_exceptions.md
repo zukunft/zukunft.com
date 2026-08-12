@@ -9,7 +9,7 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-203 creations below the entry points: 179 explained, 24 parameter defaults and 0 still unexplained
+198 creations below the entry points: 179 explained, 19 parameter defaults and 0 still unexplained
 and 4 nullable message parameters and 48 messages that never reach the caller
 
 ## parameter defaults
@@ -17,12 +17,10 @@ and 4 nullable message parameters and 48 messages that never reach the caller
 a default value drops the message of a caller that passes none, so each of these is a silent message loss waiting for a threading pass
 
 ```
-frontend: /frontend.php:299 - function start(string $code_name, Message $msg = new Message(), array $url_arr = []): sql_db
 frontend: /sandbox/ListBase.php:243 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 frontend: /sandbox/sandbox_list_named.php:261 - Message                                        $msg = new Message()
 frontend: /system/sys_log_list.php:160 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /component/component_link_list.php:275 - Message                              $msg = new Message()
-main backend: /element/element_list.php:257 - Message                       $msg = new Message()
 main backend: /formula/formula_list.php:636 - Message                                       $msg = new Message()
 main backend: /helper/combine_object.php:129 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_multi.php:179 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
@@ -32,15 +30,12 @@ main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array
 main backend: /sandbox/sandbox_list.php:454 - user_message|Message                                         $msg = new Message()
 main backend: /sandbox/sandbox_list_named.php:430 - Message                               $msg = new Message()
 main backend: /sandbox/sandbox_list_named.php:471 - Message                                                $msg = new Message()
-main backend: /sandbox/sandbox_list_named.php:783 - user_message|Message                                         $msg = new Message()
+main backend: /sandbox/sandbox_list_named.php:784 - user_message|Message                                         $msg = new Message()
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /view/view_relation_list.php:203 - Message                             $msg = new Message()
 shared: /helper/ListOf.php:170 - Message                             $msg = new Message()
-shared: /helper/ListOfIdNamedCodeObjects.php:236 - Message                             $msg = new Message()
-shared: /helper/ListOfIdNamedObjects.php:238 - Message                             $msg = new Message()
 shared: /helper/ListOfIdObjects.php:266 - Message                             $msg = new Message()
 shared: /helper/ListOfIdObjects.php:394 - Message               $msg = new Message()
-shared: /helper/ListOfIdObjects.php:417 - Message               $msg = new Message()
 ```
 
 ## messages that never reach the caller

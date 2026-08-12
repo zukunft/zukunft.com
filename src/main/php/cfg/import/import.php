@@ -1191,7 +1191,7 @@ class import
             $vrb = new verb();
             if ($vrb->import_mapper($vrb_json, $msg, $dto)) {
                 $vrb->set_user($this->usr);
-                $dto->add_verb($vrb);
+                $dto->add_verb($vrb, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $vrb->dsp_id());

@@ -743,9 +743,10 @@ class sandbox_list_named extends sandbox_list
      * the result is "2016", "2017"
      *
      * @param array $names with the words that should be removed
+     * @param user_message $msg to report an object that is already in the selection
      * @returns sandbox_list_named with only the remaining words
      */
-    function select_by_name(array $names): sandbox_list_named
+    function select_by_name(array $names, user_message $msg): sandbox_list_named
     {
         log_debug('->filter_by_name ' . $this->dsp_id());
         $result = clone $this;
@@ -758,7 +759,7 @@ class sandbox_list_named extends sandbox_list
 
         foreach ($this->lst() as $wrd) {
             if (in_array($wrd->name(), $names)) {
-                $result->add_by_key($wrd);
+                $result->add_by_key($wrd, false, $msg);
             }
         }
 
@@ -1035,7 +1036,7 @@ class sandbox_list_named extends sandbox_list
             // get the first object that have requested the missing function
             $func_create_obj = clone $this;
             $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
 
             // create the missing sql functions and add the first missing word
             // the sql_message returned by exe carries the name to database id map of the inserted objects
@@ -1138,7 +1139,7 @@ class sandbox_list_named extends sandbox_list
             // get the first object that have requested the missing function
             $func_create_obj = clone $upd_lst;
             $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
 
             // create the missing sql functions and add the first missing object
             $func_to_create = $func_create_obj->sql_update($sc, $db_lst, $msg);
@@ -1204,7 +1205,7 @@ class sandbox_list_named extends sandbox_list
             // get the first object that have requested the missing function
             $func_create_obj = clone $del_lst;
             $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
 
             // create the missing sql functions and add the first missing object
             $func_to_create = $func_create_obj->sql_delete($sc, $db_lst, $msg);

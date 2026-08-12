@@ -230,7 +230,7 @@ class horizontal_tests
             $id = $filled_obj->id();
             // fill up cache to avoid db access in unit tests
             if ($class == user::class) {
-                $dto->add_term($filled_obj->trm);
+                $dto->add_term($filled_obj->trm, $msg);
                 $dto->add_view($filled_obj->msk);
                 $dto->add_source($filled_obj->src);
             } elseif ($class == word::class) {
@@ -249,7 +249,7 @@ class horizontal_tests
                 $dto->add_formula($filled_obj->formula());
                 $dto->add_phrase($filled_obj->phrase());
             } elseif ($class == term_view::class) {
-                $dto->add_term($filled_obj->term());
+                $dto->add_term($filled_obj->term(), $msg);
                 $dto->add_view($filled_obj->get_view());
             } elseif ($class == view_relation::class) {
                 $dto->add_view($filled_obj->parent());

@@ -541,11 +541,12 @@ class verb_list extends type_list
     /**
      * add a verb to the list that does not yet have an id but has a name
      * @param verb $to_add the named verb that should be added
+     * @param user_message $msg to report a verb that is already in this list
      * @returns bool true if the object has been added
      */
-    function add_by_name(verb $to_add): bool
+    function add_by_name(verb $to_add, user_message $msg): bool
     {
-        return parent::add_obj_by_name($to_add);
+        return parent::add_obj_by_name($to_add, $msg);
     }
 
     /**

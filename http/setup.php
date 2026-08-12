@@ -43,11 +43,11 @@ The steps should be
 
 $app = new frontend();
 global $sys;
-$db_con = $app->start("setup");
+$msg = new user_message(); // frontend entry point
+$db_con = $app->start("setup", $msg);
 
 // load the session user parameters
 $usr = new user;
-$msg = new user_message(); // frontend entry point
 $usr->get($msg);
 // store the requesting user on the single message of this request as early as possible,
 // so every function below reads the requesting user from $msg->usr

@@ -305,9 +305,10 @@ class list_db_write extends list_db_read
      * the result is "2016", "2017"
      *
      * @param array $names with the words that should be removed
+     * @param user_message $msg to report an object that is already in the selection
      * @returns list_db_read with only the remaining words
      */
-    function select_by_name(array $names): list_db_write
+    function select_by_name(array $names, user_message $msg): list_db_write
     {
         $result = $this->clone_reset();
 
@@ -320,11 +321,11 @@ class list_db_write extends list_db_read
             // for links the linked objects are the priority to detect duplicates
             if (in_array($obj::class, def::LINK_CLASSES)) {
                 if (in_array($obj->name(), $names)) {
-                    $result->add_by_link($obj);
+                    $result->add_by_link($obj, $msg);
                 }
             } elseif (in_array($obj::class, def::NAME_CLASSES)) {
                 if (in_array($obj->name(), $names)) {
-                    $result->add_by_key($obj);
+                    $result->add_by_key($obj, false, $msg);
                 }
             }
         }

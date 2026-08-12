@@ -95,7 +95,7 @@ class horizontal_write_tests
 
                 // remember the verb to be able to use it for a proper triple
                 if ($obj::class == verb::class) {
-                    $cac->add_verb($obj);
+                    $cac->add_verb($obj, $msg);
                     $sys->add_verb($obj);
                 }
 
