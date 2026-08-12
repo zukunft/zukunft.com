@@ -12,6 +12,8 @@ the basic steps to show the start page are
 
 ## main pages
 
+in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
+
 ### triple
 
 show the missing db fields in the triple default view: the weight, the condition formula

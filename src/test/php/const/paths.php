@@ -108,6 +108,8 @@ class paths
     // path parts
     const string DB = 'db' . DIRECTORY_SEPARATOR;
     const string DB_FORMAT_TEST = self::DB . 'format_test' . DIRECTORY_SEPARATOR;
+    // the json formatter resource dir relative to RESOURCE
+    const string IMPORT_FORMAT_TEST = 'import' . DIRECTORY_SEPARATOR . 'format_test' . DIRECTORY_SEPARATOR;
     // the user db resource dir relative to RESOURCE (for the format test that reuses the count query fixtures)
     const string DB_USER_FORMAT = self::DB . 'user' . DIRECTORY_SEPARATOR;
     // the db cache resource dir relative to RESOURCE (for the format test that reuses the create table fixtures)

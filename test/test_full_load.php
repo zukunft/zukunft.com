@@ -119,6 +119,13 @@ if ($db_con->is_open()) {
 
             // run the workflow tests
             if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
+                // reload the users from the database, because run_unit has replaced them with the
+                // in-memory unit dummies whose profile can differ from the stored user row; the
+                // workflow tests write to the database, and a profile mismatch blocks e.g. the
+                // uses_sandbox user update as an escalation attempt (see user::enforce_profile_privilege),
+                // which leaves half-written test words behind; test.php reloads the users the same
+                // way via the db read tests that run before its workflow tests
+                $t->set_users();
                 $usr_msg_ui = new MapObject()->convertMsgToUi($msg);
                 new all_workflow_tests()->run($t, $t->usr1, $usr_msg_ui);
             }

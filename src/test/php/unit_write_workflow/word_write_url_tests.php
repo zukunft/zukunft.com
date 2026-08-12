@@ -723,6 +723,11 @@ class word_write_url_tests extends word_url_tests
     private function cleanup_test_words(test_cleanup $t): void
     {
         $wrd = new word($t->usr1);
+        // remove the change log entries of the test words before the rows themselves, because a
+        // change log entry must never point to a deleted test row (see docs/llm/testing.md) and
+        // because the change log is shown on the word page: without this the entries of a previous
+        // run stay in the database and the workflow page snapshots grow with every run
+        $t->cleanup_change_log($wrd, word_names::TEST_WORDS);
         foreach (word_names::TEST_WORDS as $wrd_name) {
             // write_named_cleanup removes the usr1 / usr2 sandbox rows including the usr1 owned base
             // word (the workflows add it with the usr1 message user, see url_test_base::init); the

@@ -119,6 +119,12 @@ class convert_wikipedia_table
         // map the table to a json
         $word_list[] = $row_name_in;
         $word_list[] = $col_name_in;
+        // the context phrases are used by every value of the table, so they must be defined in
+        // the same import file, because the import resolves the phrases of a value only from the
+        // file and a value with an unknown phrase gets no group id (see docs/llm/json_structure.md)
+        foreach ($context as $context_name) {
+            $word_list[] = $context_name;
+        }
         foreach ($rows as $row) {
             $word_list[] = $row[$col_of_row_name];
         }

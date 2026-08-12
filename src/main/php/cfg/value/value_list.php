@@ -1638,7 +1638,10 @@ class value_list extends sandbox_value_list
                     $msg->add(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
                 } else {
                     if ($val->id() == 0) {
-                        $msg->add(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
+                        $msg->add(msg_id::CANNOT_SAVE_ZERO_ID, [
+                            msg_id::VAR_ID => $val->dsp_id(),
+                            msg_id::VAR_NAME_LIST => $this->undefined_phrase_names($val)
+                        ]);
                     } else {
                         $val->save($msg);
                     }
@@ -1658,6 +1661,29 @@ class value_list extends sandbox_value_list
         return $msg->is_ok();
     }
 
+
+    /**
+     * the names of the phrases of a value that have no database id, which is why the phrase group
+     * id of the value is zero; used to tell the user which phrase is missing in the import file
+     *
+     * @param value_base $val the value that cannot be saved because its group id is zero
+     * @return string the names of the phrases without a database id or all phrase names if the
+     *                phrase list of the value is empty
+     */
+    private function undefined_phrase_names(value_base $val): string
+    {
+        $names = [];
+        foreach ($val->phrase_list()->lst() as $phr) {
+            if ($phr->id() == 0) {
+                $names[] = $phr->name();
+            }
+        }
+        // a value without any phrase cannot name the missing phrase, so report what it has
+        if ($names == []) {
+            $names = $val->phrase_list()->names();
+        }
+        return implode(', ', $names);
+    }
 
     /**
      * delete all loaded values e.g. to delete all the values linked to a phrase

@@ -7581,46 +7581,36 @@
     {
       "formula": "expected return formula",
       "context": [
-        "coal phase-out"
+        "coal phase-out",
+        "reduction potential",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
       ],
       "words": [
+        "coal phase-out",
         "expected return",
-        "minimum"
+        "minimum",
+        "assumed value"
       ],
       "number": 1.5
     },
     {
       "formula": "expected return formula",
       "context": [
-        "coal phase-out"
+        "coal phase-out",
+        "reduction potential",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
       ],
       "words": [
+        "coal phase-out",
         "expected return",
-        "maximum"
+        "maximum",
+        "assumed value"
       ],
       "number": 6.4
-    },
-    {
-      "formula": "effort return score formula",
-      "context": [
-        "coal phase-out"
-      ],
-      "words": [
-        "effort return score",
-        "minimum"
-      ],
-      "number": 0.3
-    },
-    {
-      "formula": "effort return score formula",
-      "context": [
-        "coal phase-out"
-      ],
-      "words": [
-        "effort return score",
-        "maximum"
-      ],
-      "number": 3.2
     }
   ]
 }

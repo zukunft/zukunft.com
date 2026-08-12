@@ -40,8 +40,10 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SYSTEM . 'list_db_read.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_GROUP . 'group.php';
@@ -71,7 +73,9 @@ use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
@@ -503,8 +507,18 @@ class change_log_list extends list_db_read
         } else {
             $table_field_id = $table_id;
         }
+        // a change of a user sandbox row is logged to the user overlay table (e.g. user_words),
+        // so the all-changes query must select the changes of both tables,
+        // so that the test cleanup can remove the complete change log of a test row
+        // before deleting the row (see test_base::delete_change_log_of_obj); checked without auto-adding the table
+        $usr_table_id = $sys->typ_lst->cng_tbl->id(sql_db::TBL_USER_PREFIX . $table_name, false);
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
+        if ($field_name == '' and $usr_table_id > 0) {
+            // an own prepared query name, because the table filter parameter is a list here
+            // and a shared name with different parameter types is rejected by the database
+            $query_ext .= sql::NAME_SEP . 'with_usr';
+        }
         if ($class == value::class) {
             $grp_id = new group_id();
             $typ = $grp_id->table_type($id);
@@ -537,7 +551,11 @@ class change_log_list extends list_db_read
             $sc->add_where(change::FLD_FIELD_ID, $table_field_id);
         } else {
             // TODO replace 'l2' with a var or const
-            $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
+            if ($usr_table_id > 0) {
+                $sc->add_where(change_field::FLD_TABLE, [$table_field_id, $usr_table_id], sql_par_type::INT_LIST, 'l2');
+            } else {
+                $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
+            }
         }
         if ($class == value::class) {
             $sc->add_where(group_fields::FLD_ID, $id);

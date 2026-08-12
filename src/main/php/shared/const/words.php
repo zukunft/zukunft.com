@@ -193,6 +193,7 @@ class words
     const string MILLISECOND = 'millisecond';
     const string MIN = 'min';
     const string MIN_COM = 'The minimal numeric value.';
+    const string MIO = 'mio';
     const string MONTH = 'month';
     const string MORE = 'more';
     const string NAME = 'name';

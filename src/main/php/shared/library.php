@@ -172,6 +172,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use stdClass;
 
 class library
 {
@@ -185,6 +186,10 @@ class library
     const int DSP_ALL_DEBUG = 10;  // debug level above which all entries are shown
     const int DSP_MAX = 7;         // max entries before truncation kicks in
     const int DSP_HEAD = 3;        // entries shown at the head of a truncated array
+
+    // the compact json format (see json_compact_format)
+    const int JSON_MAX_LINE_LEN = 140; // an object or array is kept on one line up to this length
+    const int JSON_INDENT = 2;         // the added spaces per level for the objects that need more lines
 
     /*
      * internal const
@@ -3144,6 +3149,124 @@ class library
     static function json_for_humans(array $data): string
     {
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * format a json so that it is easy to read and review
+     * e.g. as in the import test resource files of src/test/resources/import/
+     * unlike the standard php pretty print, which puts every single field on its own line,
+     * an object or array that fits into JSON_MAX_LINE_LEN chars is kept on one line, so that
+     * e.g. one word or one triple of an import file is one line and a reviewer sees one
+     * object per line instead of scrolling through one field per line
+     * a text that is not a json is returned unchanged, like sql_format does
+     *
+     * @param string $json_string a json text e.g. created by json_encode with JSON_PRETTY_PRINT
+     * @return string the compact formatted json or the unchanged input if it is not a json
+     */
+    function json_compact_format(string $json_string): string
+    {
+        // decode to objects and not to arrays, because an empty php array cannot tell
+        // an empty json object '{}' from an empty json list '[]'
+        $data = json_decode($json_string);
+        // only a json can be formatted, so e.g. an error text is returned unchanged
+        if ($data === null and trim($json_string) != 'null') {
+            $result = $json_string;
+        } else {
+            $result = $this->json_compact_part($data, 0);
+        }
+        return $result;
+    }
+
+    /**
+     * create the compact json format of one value and all its child values
+     * the recursive part of json_compact_format
+     *
+     * @param mixed $data the php value of a json part e.g. an array, a string or a number
+     * @param int $level the nesting level of the given part used for the indent
+     * @return string the compact formatted json of the given part without the leading indent
+     */
+    private function json_compact_part(mixed $data, int $level): string
+    {
+        $fields = $this->json_compact_fields($data);
+        // a scalar and an empty object or list never need more than one line
+        if ($fields == []) {
+            $result = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } else {
+            $is_list = is_array($data);
+            $one_line = $this->json_compact_one_line($data);
+            // keep the part on one line if it fits including the indent of the level
+            if (strlen($one_line) + $level * self::JSON_INDENT <= self::JSON_MAX_LINE_LEN) {
+                $result = $one_line;
+            } else {
+                $indent = str_repeat(' ', ($level + 1) * self::JSON_INDENT);
+                $rows = [];
+                foreach ($fields as $key => $val) {
+                    $row = $indent;
+                    if (!$is_list) {
+                        $row .= $this->json_compact_key($key) . ': ';
+                    }
+                    $rows[] = $row . $this->json_compact_part($val, $level + 1);
+                }
+                $open = $is_list ? '[' : '{';
+                $close = str_repeat(' ', $level * self::JSON_INDENT) . ($is_list ? ']' : '}');
+                $result = $open . "\n" . implode(",\n", $rows) . "\n" . $close;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create the one line json of an object or list with a space after each separator
+     * so that it is easier to read than the json_encode default
+     *
+     * @param mixed $data the php value of a json object, list or scalar
+     * @return string the one line json of the given part including all child parts
+     */
+    private function json_compact_one_line(mixed $data): string
+    {
+        $fields = $this->json_compact_fields($data);
+        if ($fields == []) {
+            $result = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } else {
+            $is_list = is_array($data);
+            $parts = [];
+            foreach ($fields as $key => $val) {
+                $part = '';
+                if (!$is_list) {
+                    $part = $this->json_compact_key($key) . ': ';
+                }
+                $parts[] = $part . $this->json_compact_one_line($val);
+            }
+            $open = $is_list ? '[' : '{';
+            $close = $is_list ? ']' : '}';
+            $result = $open . implode(', ', $parts) . $close;
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed $data the php value of a json part
+     * @return array the child fields of a json object or list and an empty array for a scalar,
+     *               an empty object or an empty list, which all need no child line
+     */
+    private function json_compact_fields(mixed $data): array
+    {
+        $result = [];
+        if (is_array($data)) {
+            $result = $data;
+        } elseif ($data instanceof stdClass) {
+            $result = get_object_vars($data);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int|string $key the key of a json object field, which php casts to an int if numeric
+     * @return string the json field name of the key
+     */
+    private function json_compact_key(int|string $key): string
+    {
+        return json_encode((string)$key, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     private
