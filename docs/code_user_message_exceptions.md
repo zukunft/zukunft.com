@@ -81,7 +81,7 @@ main backend: /group/group_list.php:508 - $msg = new user_message(); // TODO Pri
 main backend: /group/group_list.php:516 - $msg = new user_message(); // a deprecated private helper without a caller message
 main backend: /helper/db_cache_page.php:214 - $msg = new user_message();
 main backend: /helper/type_object.php:824 - $this->set_code_id($obj->get_code_id(), new user_message($usr_req));
-main backend: /import/convert_wikipedia_table.php:196 - $msg = new user_message($usr); // a test only converter (see import_tests), so the errors only steer it here
+main backend: /import/convert_wikipedia_table.php:202 - $msg = new user_message($usr); // a test only converter (see import_tests), so the errors only steer it here
 main backend: /log/change_link.php:389 - $msg = new user_message(); // only the ok flag is returned, see the TODO above
 main backend: /log/change_link.php:610 - $msg = new user_message(); // a local buffer, because sql creation reports to the log only
 main backend: /log_text/text_log_functions.php:637 - $msg = new user_message(); // the log writer itself, so it cannot report to a request message
