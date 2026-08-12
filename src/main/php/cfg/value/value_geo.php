@@ -281,9 +281,10 @@ class value_geo extends value_base
      */
 
     /**
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change_value_geo the object that is used to log the user changes
      */
-    function log_object(): change_value_geo
+    function log_object(user_message $msg): change_value_geo
     {
         if ($this->is_prime()) {
             return new change_values_geo_prime($this->get_user());

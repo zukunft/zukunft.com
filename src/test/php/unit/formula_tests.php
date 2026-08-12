@@ -48,12 +48,16 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_tests
@@ -67,6 +71,7 @@ class formula_tests
         $msg_ui = new user_message_ui();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
+        $t_trm = new test_terms($t);
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 
@@ -214,6 +219,32 @@ class formula_tests
         $qp = $frm_on->sql_insert_switch($sc, $chg_lst, $frm_on->db_fields_all(), $msg, $par_lst);
         $test_name = 'the change log function declares the all_values_needed old parameter it uses';
         $t->assert_text_contains($test_name, $qp->sql, '_all_values_needed_old smallint');
+
+        $t->subheader($ts . 'import assignment');
+
+        // "assigned" names the input phrases of a formula (docs/llm/json_structure.md) and the
+        // mapper links each of them, so that save_links can write them once they have an id
+        // TODO Prio 2 assert the created links as soon as the in-memory link list has an accessor
+        $test_name = 'a formula import with assigned phrases reports no problem';
+        $msg = new user_message($t->usr1);
+        $frm = new formula($t->usr1);
+        $dto = $t_trm->dto_minute_and_second();
+        $json = [
+            json_fields::NAME => formula_names::SCALE_TO_SEC,
+            json_fields::EXPRESSION => formula_names::SCALE_TO_SEC_EXP,
+            json_fields::ASSIGNED => [word_names::MINUTE, words::SECOND]
+        ];
+        $frm->import_mapper($json, $msg, $dto);
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // the mapper never creates a placeholder, so a phrase that the import does not define
+        // is reported instead of being assigned to a phrase that can never be saved
+        $test_name = 'an assigned phrase that the import does not define is reported';
+        $msg = new user_message($t->usr1);
+        $frm = new formula($t->usr1);
+        $json[json_fields::ASSIGNED] = [word_names::MINUTE, word_names::PI];
+        $frm->import_mapper($json, $msg, $dto);
+        $t->assert_text_contains($test_name, $msg->text(), word_names::PI);
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_frm->formula(), $t->usr_system);

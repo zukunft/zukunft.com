@@ -1784,6 +1784,8 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug($this->dsp_id() . ' und user ' . $this->get_user()->name);
         $lib = new library();
+        // a local buffer, because this function reports a failed delete only to the admin log;
+        // TODO Prio 2 take the user_message of the caller like the sandbox twin del_usr_cfg_exe
         $usr_msg = new user_message();
         $class_name = $lib->class_to_name($this::class);
 
@@ -1813,8 +1815,9 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * remove user adjustment and log it (used by user.php to undo the user changes)
+     * @param user_message $msg to report to the requesting user why the undo has failed
      */
-    function del_usr_cfg(): bool
+    function del_usr_cfg(user_message $msg): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -1824,7 +1827,7 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
 
         if ($this->id() > 0 and $this->get_user()->id() > 0) {
-            $log = $this->log_del();
+            $log = $this->log_del($msg);
             if ($log->id() > 0) {
                 $db_con->usr_id = $this->get_user()->id();
                 $result = $this->del_usr_cfg_exe($db_con);
@@ -2046,27 +2049,28 @@ class sandbox_multi extends db_object_multi_user
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      *
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change|change_value|changes_norm|changes_big the change log object with the basic parameters set
      */
-    function log_add(): change|change_value|changes_norm|changes_big
+    function log_add(user_message $msg): change|change_value|changes_norm|changes_big
     {
         log_debug($this->dsp_id());
-        $log = $this->log_object();
-        return $this->log_add_common($log);
+        $log = $this->log_object($msg);
+        return $this->log_add_common($log, $msg);
     }
 
     /**
      * set the common parameters to log an insert of a value, result or group object and execute it
      * @param change|change_value $log with the target table set
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change|change_value with the log id set
      */
-    protected function log_add_common(change|change_value $log): change|change_value
+    protected function log_add_common(change|change_value $log, user_message $msg): change|change_value
     {
         $lib = new library();
-        $msg = new user_message();
-        $log->set_action(change_actions::ADD);
+        $log->set_action(change_actions::ADD, $msg);
         // a value, result or group is always identified by the group name
-        $log->set_field($lib->class_to_name(group::class) . '_name');
+        $log->set_field($lib->class_to_name(group::class) . '_name', $msg);
         $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
@@ -2076,10 +2080,12 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * set the log entry parameter for a new link object
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
-        log_err('The dummy parent method log_link_add has been called for ' . $this::class . ', which should never happen');
+        log_err_msg('The dummy parent method log_link_add has been called for '
+            . $this::class . ', which should never happen', $msg);
         return new change_link($this->get_user());
     }
 
@@ -2090,7 +2096,7 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug($this->dsp_id());
         $log = new change($this->get_user());
-        return $this->log_upd_common($log);
+        return $this->log_upd_common($log, $msg);
     }
 
     /**
@@ -2101,18 +2107,22 @@ class sandbox_multi extends db_object_multi_user
     function log_upd(user_message $msg): change|change_value|changes_norm|changes_big
     {
         log_debug($this->dsp_id());
-        $log = $this->log_object();
-        return $this->log_upd_common($log);
+        $log = $this->log_object($msg);
+        return $this->log_upd_common($log, $msg);
     }
 
-    function log_object(): change|change_value|changes_norm|changes_big
+    /**
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return change|change_value|changes_norm|changes_big the log object matching the value type
+     */
+    function log_object(user_message $msg): change|change_value|changes_norm|changes_big
     {
         if ($this->is_prime()) {
-            $log = $this->log_prime();
+            $log = $this->log_prime($msg);
         } elseif ($this->is_big()) {
-            $log = $this->log_big();
+            $log = $this->log_big($msg);
         } else {
-            $log = $this->log_norm();
+            $log = $this->log_norm($msg);
         }
         return $log;
     }
@@ -2134,9 +2144,10 @@ class sandbox_multi extends db_object_multi_user
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      *
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change|change_value the change log object with the basic parameters set
      */
-    private function log_prime(): change|change_value
+    private function log_prime(user_message $msg): change|change_value
     {
         if ($this::class == group::class) {
             $log = new change($this->get_user());
@@ -2154,7 +2165,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
+        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
         return $log;
     }
 
@@ -2162,9 +2173,10 @@ class sandbox_multi extends db_object_multi_user
      * similar to log_prime but ...
      * ... set the log entry parameter for a group object with a 512bit key
      *
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change|change_value the change log object with the basic parameters set
      */
-    private function log_norm(): change|change_value
+    private function log_norm(user_message $msg): change|change_value
     {
         log_debug($this->dsp_id());
 
@@ -2184,7 +2196,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension(), $msg);
         return $log;
     }
 
@@ -2192,9 +2204,10 @@ class sandbox_multi extends db_object_multi_user
      * similar to log_prime but ...
      * * ... set the log entry parameter for a group object with a text key
      *
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big the change log object with the basic parameters set
      */
-    private function log_big(): changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big
+    private function log_big(user_message $msg): changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big
     {
         log_debug($this->dsp_id());
 
@@ -2214,25 +2227,26 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension(), $msg);
         return $log;
     }
 
     /**
      * set the main log entry parameters for updating one field
+     * @param user_message $msg to report why the change is logged to the user overlay table
      */
-    private function log_upd_common($log)
+    private function log_upd_common($log, user_message $msg)
     {
         $lib = new library();
         $class = $lib->class_to_name($this::class);
         log_debug($this->dsp_id());
         $log->set_user($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
-            $log->set_table($class . sql_db::TABLE_EXTENSION);
+            $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
         } else {
-            $log->set_table(sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION);
+            $log->set_table(sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION, $msg);
         }
 
         return $log;
@@ -2242,9 +2256,8 @@ class sandbox_multi extends db_object_multi_user
      * dummy function definition that will be overwritten by the child object
      * @return change_link
      */
-    function log_del_link(): change_link
+    function log_del_link(user_message $msg): change_link
     {
-        $msg = new user_message();
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'log_del_link',
             msg_id::VAR_CLASS_NAME => $this::class
@@ -2259,14 +2272,14 @@ class sandbox_multi extends db_object_multi_user
      *
      * @return change the change log object with the basic parameters set
      */
-    function log_del_prime(): change
+    function log_del_prime(user_message $msg): change
     {
         log_debug($this->dsp_id());
 
         $log = new change($this->get_user());
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
-        return $this->log_del_common($log);
+        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
+        return $this->log_del_common($log, $msg);
     }
 
     /**
@@ -2275,12 +2288,12 @@ class sandbox_multi extends db_object_multi_user
      *
      * @return changes_norm the change log object with the basic parameters set
      */
-    function log_del(): change
+    function log_del(user_message $msg): change
     {
         $log = new changes_norm($this->get_user());
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
-        return $this->log_del_common($log);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension(), $msg);
+        return $this->log_del_common($log, $msg);
     }
 
     /**
@@ -2289,31 +2302,31 @@ class sandbox_multi extends db_object_multi_user
      *
      * @return changes_big the change log object with the basic parameters set
      */
-    function log_del_big(): changes_big
+    function log_del_big(user_message $msg): changes_big
     {
         log_debug($this->dsp_id());
 
         $log = new changes_big($this->get_user());
         $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
-        return $this->log_del_common($log);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension(), $msg);
+        return $this->log_del_common($log, $msg);
     }
 
     /**
      * set the common parameters to log the delete or exclude of a value, result or group object and execute it
      * @param change|changes_norm|changes_big $log with the target table set
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change|changes_norm|changes_big with the log id set
      */
-    private function log_del_common(change|changes_norm|changes_big $log): change|changes_norm|changes_big
+    private function log_del_common(change|changes_norm|changes_big $log, user_message $msg): change|changes_norm|changes_big
     {
         $lib = new library();
-        $msg = new user_message();
         // a value, result or group is always identified by the group name
-        $log->set_field($lib->class_to_name(group::class) . '_name');
+        $log->set_field($lib->class_to_name(group::class) . '_name', $msg);
         $log->old_value = $this->name();
         $log->new_value = null;
         $log->row_id = 0;
-        $log->set_action(change_actions::DELETE);
+        $log->set_action(change_actions::DELETE, $msg);
         $log->add($msg);
         return $log;
     }
@@ -2375,12 +2388,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function save_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'save_fields',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('save_fields', $this::class);
     }
 
     /**
@@ -2446,7 +2454,7 @@ class sandbox_multi extends db_object_multi_user
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $msg, $sc_par_lst_used);
         } else {
             $id_lst = $this->id_or_lst();
             if ($sc_par_lst_used->is_usr_tbl() and !$sc_par_lst_used->exclude_sql()) {
@@ -2473,11 +2481,13 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator   $sc,
         sql_par       $qp,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -2516,9 +2526,9 @@ class sandbox_multi extends db_object_multi_user
 
         // create the insert log statement for the field of the loop
         $log = new change($this->get_user());
-        $log->set_class($this::class);
+        $log->set_class($this::class, $msg);
         if ($this->is_named_obj()) {
-            $log->set_field($name_fld);
+            $log->set_field($name_fld, $msg);
             $log->old_value = $this->name();
             $log->new_value = null;
         }
@@ -2647,37 +2657,33 @@ class sandbox_multi extends db_object_multi_user
      */
     function name_field(): string
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'name_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('name_field', $this::class);
     }
 
     /**
      * @param sandbox_multi $db_rec the object as saved in the database before the change
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change_log the log object predefined for excluding
      */
-    function save_field_excluded_log(sandbox_multi $db_rec): change_log
+    function save_field_excluded_log(sandbox_multi $db_rec, user_message $msg): change_log
     {
         $log = new change_log($this->get_user());
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
             if ($this->is_excluded()) {
                 if ($this->is_link_obj()) {
-                    $log = $this->log_del_link();
+                    $log = $this->log_del_link($msg);
                 } else {
-                    $log = $this->log_del();
+                    $log = $this->log_del($msg);
                 }
             } else {
                 if ($this->is_link_obj()) {
-                    $log = $this->log_link_add();
+                    $log = $this->log_link_add($msg);
                 } else {
-                    $log = $this->log_add();
+                    $log = $this->log_add($msg);
                 }
             }
         }
-        $log->set_field(fields::FLD_EXCLUDED);
+        $log->set_field(fields::FLD_EXCLUDED, $msg);
         return $log;
     }
 
@@ -2709,11 +2715,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_id_updated(sandbox_multi $db_rec): bool
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'is_id_updated',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('is_id_updated', $this::class);
         return false;
     }
 
@@ -2756,11 +2758,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_same_std(object $obj_to_check): bool
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'is_same_std',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('is_same_std', $this::class);
         return false;
     }
 
@@ -3090,9 +3088,9 @@ class sandbox_multi extends db_object_multi_user
 
         // log the deletion request
         if ($this->is_link_obj()) {
-            $log = $this->log_del_link();
+            $log = $this->log_del_link($msg);
         } else {
-            $log = $this->log_del();
+            $log = $this->log_del($msg);
         }
         if ($log->id > 0) {
             $db_con->usr_id = $this->get_user()->id;
@@ -3282,7 +3280,7 @@ class sandbox_multi extends db_object_multi_user
         sql_db        $db_con,
         sandbox_multi $db_obj,
         sandbox_multi $norm_obj,
-        user_message  $msg = new user_message()
+        user_message  $msg
     ): bool
     {
         // the sql creator is used more than once, so create it upfront
@@ -3491,7 +3489,7 @@ class sandbox_multi extends db_object_multi_user
 
         // create the log entry for the value
         if ($fvt_lst_log->has_name($this::FLD_VALUE)) {
-            $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log);
+            $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log, $msg);
             $sql .= ' ' . $qp_log->sql;
         } else {
             // TODO review
@@ -3651,11 +3649,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list()): sql_par_field_list
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'id_fvt_lst',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('id_fvt_lst', $this::class);
         return new sql_par_field_list;
     }
 
@@ -4063,7 +4057,7 @@ class sandbox_multi extends db_object_multi_user
 
         // create the query parameters for the log entries for the single fields
         $qp_log = $sc->sql_func_log_update(
-            $this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id(), $this);
+            $this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id(), $msg, $this);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -4096,8 +4090,8 @@ class sandbox_multi extends db_object_multi_user
             $sc_log = clone $sc;
             if ($this->is_named_obj()) {
                 $log = new change($this->get_user());
-                $log->set_class($this::class);
-                $log->set_field($this->name_field());
+                $log->set_class($this::class, $msg);
+                $log->set_field($this->name_field(), $msg);
                 $log->old_value = $this->name();
                 $log->new_value = null;
                 $qp_log = $log->sql_insert_log(
@@ -4105,7 +4099,7 @@ class sandbox_multi extends db_object_multi_user
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
                 /*
-                $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_log);
+                $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_log, $msg);
                 $par_lst_out->add_list($qp_log->par_fld_lst);
                 // TODO use these functions more often
                 $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
@@ -4217,7 +4211,7 @@ class sandbox_multi extends db_object_multi_user
     {
         $lib = new library();
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
             msg_id::VAR_NAME => $obj_to_add->dsp_id(),
@@ -4310,7 +4304,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function del_links(): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'del_links',
             msg_id::VAR_CLASS_NAME => $this::class
@@ -4405,12 +4399,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function type_name(): string
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'type_name',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('type_name', $this::class);
     }
 
 

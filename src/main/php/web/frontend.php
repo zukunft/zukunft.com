@@ -519,7 +519,7 @@ class frontend
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
-                $cfg->load_cfg(null, $usr_sys);
+                $cfg->load_cfg($sys_msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
                 // honor the pod switch for the types cache, which is only known once the config is loaded
@@ -530,7 +530,7 @@ class frontend
                     // check the change log references only after a fresh type load, because
                     // they can only be incomplete if the types have changed in the database
                     $log = new change_log($usr_sys);
-                    $db_changed = $log->create_log_references($db_con);
+                    $db_changed = $log->create_log_references($db_con, $sys_msg);
 
                     // reload the type list if needed and trigger an update in the frontend
                     // even tough the update of the preloaded list should already be done by the single adds
@@ -678,7 +678,7 @@ class frontend
             $size = strlen($json_str);
             $json_array = json_decode($json_str, true);
             $dto = $imp->get_data_object($json_array, $msg, $size);
-            $api_msg = $dto->view_list()->api_json();
+            $api_msg = $dto->view_list()->api_json([], $msg);
             $this->set_view_cache($api_msg);
             $msg_ui->merge($msg);
         }
@@ -1461,7 +1461,7 @@ class frontend
             $logged_in = $db_usr->login($usr_name, $pw, $login_msg);
             if ($logged_in) {
                 $usr_backend = $db_usr;
-                $usr_ui->set_from_json($db_usr->api_json(), $msg_ui);
+                $usr_ui->set_from_json($db_usr->api_json([], $login_msg), $msg_ui);
             } else {
                 $msg_login_ui = new user_message_ui();
                 $msg_login_ui->api_mapper($login_msg->api_array($login_msg), $msg_ui);
@@ -1575,7 +1575,7 @@ class frontend
                         $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
                         $_SESSION[url_var::SESSION_LOGGED] = true;
                         $usr_backend = $usr_by_name;
-                        $usr_ui->set_from_json($usr_by_name->api_json(), $msg_ui);
+                        $usr_ui->set_from_json($usr_by_name->api_json([], $signup_msg), $msg_ui);
                         $signed_up = true;
                     } else {
                         log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
@@ -1672,7 +1672,7 @@ class frontend
                                 // reject at once if a user whitelist is active and this user is not on it
                                 server_guard::enforce_user((string)$usr_id, $usr_by_id->name());
                                 $usr_backend = $usr_by_id;
-                                $usr_ui->set_from_json($usr_by_id->api_json(), $msg_ui);
+                                $usr_ui->set_from_json($usr_by_id->api_json([], $activate_msg), $msg_ui);
                                 $activated = true;
                             } else {
                                 log_err('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');

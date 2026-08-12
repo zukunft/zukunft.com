@@ -199,7 +199,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        $msg = new user_message($usr);
+        $msg = new user_message($usr); // a test only converter (see import_tests), so the errors only steer it here
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked

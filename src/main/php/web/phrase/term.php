@@ -343,7 +343,7 @@ class term extends combine_named
      * use the object id not the term id because the class is included
      * maybe to reduce traffic remove the class but than the term id needs to be used
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $lib = new library();
         $vars = array();

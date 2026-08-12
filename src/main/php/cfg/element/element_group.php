@@ -300,7 +300,7 @@ class element_group extends list_db_write
                 // save the value to the result
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
-                $fig_lst->add($fig);
+                $fig_lst->add($fig, $msg);
                 log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
@@ -323,7 +323,7 @@ class element_group extends list_db_write
                 if ($grp_res->id() > 0) {
                     $fig = $grp_res->figure();
                     $fig->set_symbol($this->symbol);
-                    $fig_lst->add($fig);
+                    $fig_lst->add($fig, $msg);
 
                     log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_res->number());
                 } else {

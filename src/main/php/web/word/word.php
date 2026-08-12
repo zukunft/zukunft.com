@@ -462,7 +462,7 @@ class word extends sandbox_code_id
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = parent::api_array($typ_lst, $msg);
 
@@ -617,7 +617,7 @@ class word extends sandbox_code_id
      * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
      * @return phrase_list the sibling phrases without this word, capped by the user-specific frontend config limit
      */
-    function similar(?phrase_list $phr_lst = null): phrase_list
+    function similar(user_message $msg, ?phrase_list $phr_lst = null): phrase_list
     {
         if ($phr_lst === null) {
             $phr_lst = new phrase_list();
@@ -626,10 +626,10 @@ class word extends sandbox_code_id
         $result = new phrase_list();
         // for each "this is a <parent>" relation collect the other phrases that are also "a <parent>"
         // e.g. for "Swiss franc is a currency" collect all currencies: Swiss franc, Euro and US Dollar
-        foreach ($phr_lst->children($this->phrase())->lst() as $is_a_trp) {
+        foreach ($phr_lst->children($this->phrase(), $msg)->lst() as $is_a_trp) {
             $vrb = $is_a_trp->get_verb();
             if ($vrb?->id() == verbs::IS_ID) {
-                foreach ($phr_lst->parents($is_a_trp->get_to(), $vrb)->lst() as $sibling) {
+                foreach ($phr_lst->parents($is_a_trp->get_to(), $msg, $vrb)->lst() as $sibling) {
                     $result->add_phrase($sibling);
                 }
             }
@@ -653,9 +653,9 @@ class word extends sandbox_code_id
     {
         if ($phr_lst !== null) {
             if ($direction == foaf_direction::UP) {
-                $lst = $phr_lst->parents($this->phrase());
+                $lst = $phr_lst->parents($this->phrase(), $msg);
             } else {
-                $lst = $phr_lst->children($this->phrase());
+                $lst = $phr_lst->children($this->phrase(), $msg);
             }
         } else {
             $lst = new phrase_list();

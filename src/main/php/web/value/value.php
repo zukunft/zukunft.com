@@ -245,7 +245,7 @@ class value extends sandbox_value
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array($typ_lst, $msg);
@@ -628,7 +628,7 @@ class value extends sandbox_value
      */
     private function reload(): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if ($this->is_id_set()) {
             $this->load_by_id($this->id(), $msg);
         }
@@ -642,7 +642,7 @@ class value extends sandbox_value
      */
     private function reload_if_needed(): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the ok default of this function, replaced by the reload result
         if (!$this->is_loaded()) {
             $msg = $this->reload();
         }
@@ -966,7 +966,7 @@ class value extends sandbox_value
           if ($phr->is_wrd_id > 0) {
             // prepare the selector for the type phrase
             $phr->is_wrd->usr = $this->user();
-            $phr_lst_sel = $phr->is_wrd->children();
+            $phr_lst_sel = $phr->is_wrd->children($msg);
             zu_debug("value->dsp_edit -> suggested phrases for ".$phr->name().": ".$phr_lst_sel->name().".");
           } else {
             // if no phrase group is found, use the phrase type time if the phrase is a time phrase
@@ -1118,7 +1118,7 @@ class value extends sandbox_value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $scr_ui = new source($src->api_json());
+            $scr_ui = new source($src->api_json([], $msg));
             // TODO Prio 0 add the source selector to the value mask
             //$result .= $scr_ui->dsp_select($script, $back);
             $result .= '<br><br>';

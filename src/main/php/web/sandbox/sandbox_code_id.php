@@ -116,7 +116,7 @@ class sandbox_code_id extends sandbox_typed
      * @return array the json message array to send the updated data to the backend
      * the code id is included in the message only to fill up backend object but never to change the code_id via ui
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::CODE_ID] = $this->code_id;

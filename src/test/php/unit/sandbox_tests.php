@@ -47,6 +47,7 @@ include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
@@ -81,7 +82,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -197,6 +200,19 @@ class sandbox_tests
         $result = $lst->add(1, $t_msk->view(), $t_cmp->component(), 3);
         $t->assert_false($test_name, $result);
 
+        // an import links the components before their ids are known, so two of them are told
+        // apart by the name and only a real repetition is rejected
+        $test_name = 'add a component without a db id';
+        $lst = new component_link_list($t->usr1);
+        $result = $lst->add(0, $t_msk->view(), $t_cmp->by_name(components::TEST_VALUES_NAME), 1);
+        $t->assert_true($test_name, $result);
+        $test_name = 'add another component without a db id at the same position';
+        $result = $lst->add(0, $t_msk->view(), $t_cmp->by_name(components::TEST_RESULTS_NAME), 1);
+        $t->assert_true($test_name, $result);
+        $test_name = 'add the same component without a db id again is rejected';
+        $result = $lst->add(0, $t_msk->view(), $t_cmp->by_name(components::TEST_VALUES_NAME), 1);
+        $t->assert_false($test_name, $result);
+
         // TODO review the tests below e.g. by using the test section ($ts) and $test_name like above
         $t->subheader($ts . 'functions that does not need a database connection');
 
@@ -205,6 +221,16 @@ class sandbox_tests
         $result = $dbo_ui->verb_selector('test_form', null);
         $target = 'verb_selector function is not overwritten by ' . db_object_ui::class;
         $t->assert($test_name, $result, $target);
+
+        // the shared helper behind the dummy parent functions above; only the warning level is
+        // tested, because the error level would raise the error count and ERROR_LIMIT is zero
+        $test_name = 'the missing overwrite helper names the function and the class';
+        $miss_txt = log_missing_overwrite_warning('test_fnc', word::class);
+        $target = 'test_fnc function is not overwritten by ' . word::class;
+        $t->assert($test_name, $miss_txt, $target);
+
+        $test_name = 'the missing overwrite text has no unresolved message variable left';
+        $t->assert_text_not_contains($test_name, $miss_txt, msg_id::VAR_START);
 
         // test if two sources are supposed to be the same
         $src1 = new source($t->usr1);

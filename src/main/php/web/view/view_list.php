@@ -248,7 +248,7 @@ class view_list extends ListBase
         foreach ($this->lst() as $msk) {
             $code_id = $msk->type_code_id($msg);
             if (!in_array($code_id, $typ_lst)) {
-                $views->add($msk);
+                $views->add($msk, $msg);
             }
         }
         return $views;
@@ -265,7 +265,7 @@ class view_list extends ListBase
         foreach ($this->lst() as $msk) {
             $code_id = $msk->type_code_id($msg);
             if ($code_id == $typ) {
-                $views->add($msk);
+                $views->add($msk, $msg);
             }
         }
         return $views;

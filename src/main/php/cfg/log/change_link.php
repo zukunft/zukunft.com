@@ -386,7 +386,7 @@ class change_link extends change_log
     // TODO Prio 0 this should be dismissed
     function add_link_ref(): bool
     {
-        $msg = new user_message();
+        $msg = new user_message(); // only the ok flag is returned, see the TODO above
         return $this->add($msg);
     }
 
@@ -607,7 +607,7 @@ class change_link extends change_log
     ): sql_par
     {
         $lib = new library();
-        $msg = new user_message();
+        $msg = new user_message(); // a local buffer, because sql creation reports to the log only
 
         $fvt_lst = $this->db_field_values_link_types($sc, $sc_par_lst, $sbx);
         $fld_lst_all = $this->db_fields();

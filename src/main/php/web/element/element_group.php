@@ -81,7 +81,7 @@ class element_group extends ListBase
      */
     function api_mapper(array $json_array): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if (array_key_exists(json_fields::LIST_ELEMENTS, $json_array)) {
             $msg->merge(parent::api_mapper_list($json_array[json_fields::LIST_ELEMENTS], new element()));
         }
@@ -198,7 +198,7 @@ class element_group extends ListBase
             // get the element word to be able to add it later to the value selection (differs for the element type)
             if ($frm_elm->type() == word::class) {
                 if ($frm_elm->id() > 0) {
-                    $val_phr_lst->add($frm_elm->obj->phrase());
+                    $val_phr_lst->add($frm_elm->obj->phrase(), $msg);
                     log_debug('include ' . $frm_elm->dsp_id() . ' in value selection');
                 }
             }
@@ -214,7 +214,7 @@ class element_group extends ListBase
                     }
                 } else {
                     if ($frm_elm->wrd_id > 0) {
-                        $val_phr_lst->add($frm_elm->wrd_obj->phrase());
+                        $val_phr_lst->add($frm_elm->wrd_obj->phrase(), $msg);
                     }
                     log_debug('include formula word "' . $frm_elm->wrd_obj->name . '" (' . $frm_elm->wrd_id . ')');
                 }
@@ -241,7 +241,7 @@ class element_group extends ListBase
                 // save the value to the result
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
-                $fig_lst->add($fig);
+                $fig_lst->add($fig, $msg);
                 log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
@@ -269,7 +269,7 @@ class element_group extends ListBase
                 if ($grp_res->id() > 0) {
                     $fig = $grp_res->figure();
                     $fig->set_symbol($this->symbol);
-                    $fig_lst->add($fig);
+                    $fig_lst->add($fig, $msg);
 
                     log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ') = ' . $grp_res->number());
                 } else {
@@ -353,7 +353,7 @@ class element_group extends ListBase
             // before adding a special time word, remove all other time words from the word list
             // (ex_time returns the filtered list and does not change the given list)
             $val_phr_lst = $val_phr_lst->ex_time($msg);
-            $val_phr_lst->add($val_time_phr);
+            $val_phr_lst->add($val_time_phr, $msg);
             $this->phr_lst = $val_phr_lst;
             log_debug('got the special formula word "' . $val_time_phr->name() . '" (' . $val_time_phr->id() . ')');
         }
@@ -386,7 +386,7 @@ class element_group extends ListBase
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_json([api_types::INCL_PHRASES]);
+            $api_json = $fig->api_json([api_types::INCL_PHRASES], $msg);
             $fig_ui = new figure();
             $fig_ui->set_from_json($api_json, $msg);
             $result .= $fig_ui->display_linked($msg, $back);

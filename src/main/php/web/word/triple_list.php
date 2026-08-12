@@ -87,13 +87,13 @@ class triple_list extends ListBase
      * @param verb|null $vrb
      * @return triple_list
      */
-    function get_by_verb(verb|null $vrb): triple_list
+    function get_by_verb(verb|null $vrb, user_message $msg): triple_list
     {
         $trp_lst = new triple_list();
         if ($vrb != null) {
             foreach ($this->lst() as $trp) {
                 if ($trp->has_verb($vrb)) {
-                    $trp_lst->add($trp);
+                    $trp_lst->add($trp, $msg);
                 }
             }
         }
@@ -136,7 +136,7 @@ class triple_list extends ListBase
      * @param bool $add_btn set to true for eas allow of similar triples
      * @return string the html code with all triples of the list
      */
-    function tbl(string $back = '', bool $add_btn = false): string
+    function tbl(user_message $msg, string $back = '', bool $add_btn = false): string
     {
         $html = new html_base();
         $cols = '';
@@ -149,7 +149,7 @@ class triple_list extends ListBase
             $last_trp = $trp;
         }
         if ($add_btn) {
-            $add_trp = $this->suggested();
+            $add_trp = $this->suggested($msg);
             $add_url = $add_trp->btn_add($back);
             $cols .= $html->td($add_url);
         }
@@ -161,7 +161,7 @@ class triple_list extends ListBase
      * shows all words the link to the given word
      * returns the html code to select a word that can be edited
      */
-    function graph(string $back = ''): string
+    function graph(user_message $msg, string $back = ''): string
     {
         global $ui_sys;
 
@@ -179,11 +179,11 @@ class triple_list extends ListBase
             // reset the vars
             $directional_link_type_id = 0;
 
-            $lnk = $this->get_by_key($lnk_key);
+            $lnk = $this->get_by_key($lnk_key, $msg);
             // get the next link to detect if there is more than one word linked with the same link type
             // TODO check with a unit test if last element is used
             if ($this->count() - 1 > $lnk_key) {
-                $next_lnk = $this->get_by_key($lnk_key + 1);
+                $next_lnk = $this->get_by_key($lnk_key + 1, $msg);
             } else {
                 $next_lnk = $lnk;
             }
@@ -234,7 +234,8 @@ class triple_list extends ListBase
                         $dsp_obj = $lnk->tob()->get_dsp_obj();
                         $result .= $dsp_obj->dsp_tbl_cell(0);
                     }
-                    $lnk_ui = new triple_ui($lnk->api_json());
+                    $api_msg = new user_message(); // a legacy display function without a message, see graph
+                    $lnk_ui = new triple_ui($lnk->api_json([], $api_msg));
                     $result .= $lnk_ui->btn_edit($lnk->fob()->dsp_obj());
                     if ($lnk->fob() != null) {
                         $dsp_obj = $lnk->fob()->get_dsp_obj();
@@ -325,7 +326,7 @@ class triple_list extends ListBase
         $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type, $msg)) {
-                $result->add($wrd);
+                $result->add($wrd, $msg);
             }
         }
         return $result;
@@ -355,7 +356,7 @@ class triple_list extends ListBase
         $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling($msg)) {
-                $result->add($wrd);
+                $result->add($wrd, $msg);
             }
         }
         return $result;
@@ -369,7 +370,7 @@ class triple_list extends ListBase
     {
         $scale_lst = $this->scaling_lst($msg);
         $measure_lst = $this->measure_lst($msg);
-        $measure_lst->merge($scale_lst);
+        $measure_lst->merge($scale_lst, $msg);
         return $measure_lst;
     }
 
@@ -432,11 +433,11 @@ class triple_list extends ListBase
     /**
      * @return phrase_list_ui with all from phrases
      */
-    function phrase_list(): phrase_list_ui
+    function phrase_list(user_message $msg): phrase_list_ui
     {
         $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
-            $lst->add($trp->phrase());
+            $lst->add($trp->phrase(), $msg);
         }
         return $lst;
     }
@@ -444,11 +445,11 @@ class triple_list extends ListBase
     /**
      * @return phrase_list_ui with all from phrases
      */
-    function from_phrase_list(): phrase_list_ui
+    function from_phrase_list(user_message $msg): phrase_list_ui
     {
         $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
-            $lst->add($trp->from);
+            $lst->add($trp->from, $msg);
         }
         return $lst;
     }
@@ -456,25 +457,25 @@ class triple_list extends ListBase
     /**
      * @return phrase_list_ui with all from phrases
      */
-    function to_phrase_list(): phrase_list_ui
+    function to_phrase_list(user_message $msg): phrase_list_ui
     {
         $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
-            $lst->add($trp->to);
+            $lst->add($trp->to, $msg);
         }
         return $lst;
     }
 
-    function suggested(): triple_ui
+    function suggested(user_message $msg): triple_ui
     {
         $trp = new triple_ui();
-        $from_lst = $this->from_phrase_list();
+        $from_lst = $this->from_phrase_list($msg);
         $from_phr = $from_lst->mainly();
         if ($from_phr != null) {
             $trp->set_from($from_phr);
         }
         // TODO preset verb
-        $to_lst = $this->to_phrase_list();
+        $to_lst = $this->to_phrase_list($msg);
         $to_phr = $to_lst->mainly();
         if ($to_phr != null) {
             $trp->set_to($to_phr);

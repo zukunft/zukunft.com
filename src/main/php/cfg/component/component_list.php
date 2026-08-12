@@ -393,7 +393,7 @@ class component_list extends sandbox_list_named
                 $db_lst_all->merge($db_lst);
 
                 // fill up the loaded list with db value to select only the components that really needs to be inserted
-                $load_lst->fill_by_name($db_lst, true, false);
+                $load_lst->fill_by_name($db_lst, $msg, true);
 
                 // select the components that are ready to be added to the database
                 $load_lst = $load_lst->get_ready($msg, $imp->file_name);
@@ -427,7 +427,7 @@ class component_list extends sandbox_list_named
 
 
             // fill up the main list with the components to check if anything is missing
-            $this->fill_by_name($db_lst_all, true);
+            $this->fill_by_name($db_lst_all, $msg, true);
 
 
             // create any missing sql delete functions and delete unused sandbox objects

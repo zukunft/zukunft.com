@@ -74,7 +74,7 @@ if ($db_con->is_open()) {
             }
             $lst = new change_log_link_list();
             $lst->load_by_obj($class, $id, $usr, $msg);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
             $msg->add_message_text('object class missing');
         }

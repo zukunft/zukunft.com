@@ -191,7 +191,7 @@ class expression_tests
         $exp->set_user_text(formula_names::DIAMETER, $trm_lst);
         //$trm_names = $exp->get_usr_names();
         //$trm_lst = $t->term_list_for_tests($trm_names);
-        $exp->ref_text($trm_lst);
+        $exp->ref_text_ui($trm_lst);
         $msg->reset();
         $phr_lst = $exp->terms($msg, $trm_lst)->phrase_list();
         $result = $phr_lst->dsp_id();
@@ -205,7 +205,7 @@ class expression_tests
         $test_name = 'get the result phrases';
         $exp = new expression($frm);
         $exp->set_user_text(formula_names::INCREASE_EXP, $trm_lst);
-        $exp->ref_text($trm_lst);
+        $exp->ref_text_ui($trm_lst);
         $phr_lst = $exp->load_result_phrases($msg, $trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . formula_names::PERCENT
@@ -232,7 +232,7 @@ class expression_tests
         $exp = new expression($frm);
         $exp->set_user_text(formula_names::PARTS_IN_PERCENT_EXP, $trm_lst);
         $trm_names = $exp->get_usr_names();
-        $exp->ref_text($trm_lst);
+        $exp->ref_text_ui($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"parts,' . verbs::OF_NAME . '" (' . word_names::PARTS_ID . ',' . verbs::OF_ID . ') / "total" (' . words::TOTAL_ID
@@ -256,17 +256,17 @@ class expression_tests
         $frm = $t_frm->formula_increase();
         $exp = $frm->expression();
         $exp->set_user_text(formula_names::INCREASE_EXP, $trm_lst);
-        $result = $exp->ref_text($trm_lst);
+        $result = $exp->ref_text_ui($trm_lst);
         $target = formula_names::INCREASE_DB;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test getting the phrase ids';
-        $result = implode(",", $exp->phr_id_lst($exp->ref_text())->lst);
+        $result = implode(",", $exp->phr_id_lst($exp->ref_text_ui())->lst);
         $target = implode(",", array(words::PCT_ID));
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the conversion of the database reference text to the user text';
-        $result = $exp->user_text($trm_lst);
+        $result = $exp->user_text_ui($trm_lst);
         $target = formula_names::INCREASE_EXP;
         $t->assert($test_name, $result, $target);
 
@@ -300,8 +300,8 @@ class expression_tests
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
 
         // create the formulas for testing
-        $frm_this = $trm_lst->get_by_name(formula_names::THIS_NAME);
-        $frm_prior = $trm_lst->get_by_name(formula_names::PRIOR);
+        $frm_this = $trm_lst->get_by_name(formula_names::THIS_NAME, $msg);
+        $frm_prior = $trm_lst->get_by_name(formula_names::PRIOR, $msg);
 
         $result = $elm_grp_lst->dsp_id();
         $target = '"' . formula_names::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id_obj() . ') / "' . word_names::PRIOR_NAME . '" ('
@@ -320,7 +320,7 @@ class expression_tests
         $exp->set_user_text(formula_names::DIAMETER, $t_trm->term_list_all());
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
-        $result = $exp->ref_text($trm_lst_rev);
+        $result = $exp->ref_text_ui($trm_lst_rev);
         $target = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
         $t->assert($test_name, $result, $target);
 
@@ -367,12 +367,12 @@ class expression_tests
         $exp->set_user_text($usr_frm_exp, $in_trm_lst);
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->term_list_for_tests($trm_names);
-        $result = $exp->ref_text($trm_lst);
+        $result = $exp->ref_text_ui($trm_lst);
         $target = $db_ref_frm_exp;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'conversion of the database reference text to the user text ' . $test_name;
-        $result = $exp->user_text($trm_lst);
+        $result = $exp->user_text_ui($trm_lst);
         $target = $usr_frm_exp;
         $t->assert($test_name, $result, $target);
     }

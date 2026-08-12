@@ -69,7 +69,7 @@ if ($db_con->is_open()) {
         if ($lan_typ_id != '') {
             $lan_typ = new language(languages::DEFAULT);
             $lan_typ->load_by_id($lan_typ_id, $msg);
-            $result = $lan_typ->api_json();
+            $result = $lan_typ->api_json([], $msg);
         } else {
             $msg->add_message_text('language id is missing');
         }

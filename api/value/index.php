@@ -80,9 +80,9 @@ if ($db_con->is_open()) {
             if (!$val->is_readable_by($usr)) {
                 $msg->add_message_text('value id is missing');
             } elseif ($with_phr == url_var::TRUE) {
-                $result = $val->api_json([api_types::INCL_PHRASES]);
+                $result = $val->api_json([api_types::INCL_PHRASES], $msg);
             } else {
-                $result = $val->api_json();
+                $result = $val->api_json([], $msg);
             }
         } else {
             $msg->add_message_text('value id is missing');

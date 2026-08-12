@@ -115,7 +115,7 @@ if ($db_con->is_open()) {
         // (see docs/llm/state-and-messages.md); set here and not further down, so that the
         // blocked-request branch and the cached page also know who is asking
         $usr_ui = new user_ui();
-        $usr_ui->set_from_json($usr->api_json(), $msg_ui);
+        $usr_ui->set_from_json($usr->api_json([], $msg), $msg_ui);
         $msg_ui->usr = $usr_ui;
 
         $ui = new frontend('view');

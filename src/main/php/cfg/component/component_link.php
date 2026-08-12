@@ -382,7 +382,7 @@ class component_link extends sandbox_link
                 and array_key_exists(json_fields::STYLE, $in_ex_json))) {
 
             // get component from dto by name
-            $cmp = $dto?->get_component_by_name($in_ex_json[json_fields::NAME]);
+            $cmp = $dto?->get_component_by_name($in_ex_json[json_fields::NAME], $msg);
             if ($cmp == null) {
                 if ($db_con->is_open()) {
                     $msg->add(msg_id::COMPONENT_MISSING, [
@@ -416,7 +416,7 @@ class component_link extends sandbox_link
                     }
                 }
                 if (is_string($msk_json)) {
-                    $msk = $dto?->get_view_by_name($msk_json);
+                    $msk = $dto?->get_view_by_name($msk_json, $msg);
                     if ($msk == null) {
                         $msg->add(msg_id::VIEW_MISSING_IMPORT, [
                             msg_id::VAR_VIEW => $msk_json,
@@ -452,7 +452,7 @@ class component_link extends sandbox_link
                     }
                 }
                 if (is_string($msk_json)) {
-                    $msk = $dto?->get_component_by_name($msk_json);
+                    $msk = $dto?->get_component_by_name($msk_json, $msg);
                     if ($msk == null) {
                         $msg->add(msg_id::COMPONENT_MISSING_IMPORT, [
                             msg_id::VAR_COMPONENT => $msk_json,

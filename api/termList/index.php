@@ -71,13 +71,13 @@ if ($db_con->is_open()) {
             $lst->load_by_ids(new trm_ids(explode(",", $trm_ids)), $msg, true);
             // drop the terms the requester may not read (idor); see term::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } elseif ($pattern != '') {
             $lst = new term_list($usr);
             $lst->load_like($pattern, $msg);
             // drop the terms the requester may not read (idor); see term::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
             $msg->add_message_text('term ids and pattern missing');
         }

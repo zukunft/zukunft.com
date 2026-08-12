@@ -47,7 +47,7 @@ class sql_sync_sequences
         global $sys;
         $log_txt = $sys->log_txt;
 
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         while ($row = pg_fetch_assoc($result)) {
             $sequence = $row['sequence_name'];
             $table = $row['table_name'];
@@ -88,7 +88,7 @@ class sql_sync_sequences
         global $sys;
         $log_txt = $sys->log_txt;
 
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         while ($row = mysqli_fetch_assoc($result)) {
             $table = $row['TABLE_NAME'];
             $column = $row['COLUMN_NAME'];
@@ -125,7 +125,7 @@ class sql_sync_sequences
 
     public function sync(sql_db $db_con): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         switch ($db_con->db_type) {
             case sql_db::POSTGRES:
                 $sql = "

@@ -797,9 +797,10 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change_log the object that is used to log the user changes
      */
-    function log_object(): change_log
+    function log_object(user_message $msg): change_log
     {
         return new change($this);
     }
@@ -1607,7 +1608,7 @@ class user extends db_id_object_non_sandbox
     {
         if ($this->needs_ip_update($req_ip)) {
             $this->ip_addr = $req_ip;
-            $ip_msg = new user_message();
+            $ip_msg = new user_message(); // a failed ip save must not block the login, see above
             $this->save_user($ip_msg);
             if (!$ip_msg->is_ok()) {
                 log_warning('cannot save the last ip of ' . $this->dsp_id() . ': ' . $ip_msg->get_last_message());
@@ -2840,8 +2841,8 @@ class user extends db_id_object_non_sandbox
     {
         log_debug(' user ' . $this->name);
         $log = new change($this);
-        $log->set_action(change_actions::UPDATE);
-        $log->set_table(change_tables::USER);
+        $log->set_action(change_actions::UPDATE, $msg);
+        $log->set_table(change_tables::USER, $msg);
 
         return $log;
     }
@@ -3070,7 +3071,7 @@ class user extends db_id_object_non_sandbox
         // use the already open database connection of the already started process
         global $db_con;
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message(); // the message IS the return value, so the caller merges it
 
         // configure the global database connection object for the select, insert, update and delete queries
         $db_con->set_class($this::class);
@@ -3481,7 +3482,7 @@ class user extends db_id_object_non_sandbox
                         db_object_seq_id::FLD_ID_SQL_TYP);
 
                     // create the query parameters for the log entries for the single fields
-                    $qp_log = $sc->sql_func_log_update($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id);
+                    $qp_log = $sc->sql_func_log_update($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id, $msg);
                     $sql .= ' ' . $qp_log->sql;
                     $par_lst_out->add_list($qp_log->par_fld_lst);
                 } else {

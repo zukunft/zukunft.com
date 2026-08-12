@@ -358,7 +358,7 @@ class ref extends sandbox_link
         // reset of object not needed, because the calling function has just created the object
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = $dto?->get_source_by_name($src_name);
+            $src = $dto?->get_source_by_name($src_name, $msg);
             if ($src == null) {
                 $src = new source($this->get_user());
                 if ($db_con->is_open()) {
@@ -396,7 +396,7 @@ class ref extends sandbox_link
         }
         if (key_exists(json_fields::FROM_PHRASE, $in_ex_json)) {
             $phr_name = $in_ex_json[json_fields::FROM_PHRASE];
-            $phr = $dto?->get_phrase_by_name($phr_name);
+            $phr = $dto?->get_phrase_by_name($phr_name, $msg);
             if ($phr == null) {
                 $phr = new phrase($this->get_user());
                 if ($db_con->is_open()) {
@@ -1129,11 +1129,11 @@ class ref extends sandbox_link
 
     /**
      * set the log entry parameter for a new reference
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
-        $msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {
@@ -1144,8 +1144,8 @@ class ref extends sandbox_link
         }
 
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_table(change_tables::REF);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table(change_tables::REF, $msg);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
         $log->new_from = $this->phrase();
@@ -1159,14 +1159,14 @@ class ref extends sandbox_link
 
     /**
      * set the main log entry parameters for updating one reference field
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_upd($db_rec): change_link
+    function log_link_upd($db_rec, user_message $msg): change_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
-        $msg = new user_message();
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        $log->set_table(change_tables::REF);
+        $log->set_action(change_actions::UPDATE, $msg);
+        $log->set_table(change_tables::REF, $msg);
         $log->old_from = $db_rec->phrase();
         $log->old_link = $db_rec->type();
         $log->old_to = $db_rec;
@@ -1181,11 +1181,11 @@ class ref extends sandbox_link
 
     /**
      * set the log entry parameter to delete a reference
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_del(): change_link
+    function log_link_del(user_message $msg): change_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
-        $msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {
@@ -1196,8 +1196,8 @@ class ref extends sandbox_link
         }
 
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_table(change_tables::REF);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table(change_tables::REF, $msg);
         $log->old_from = $this->phrase();
         $log->old_link = $this->type();
         $log->old_to = $this;
@@ -1367,7 +1367,7 @@ class ref extends sandbox_link
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $sim_msg = new user_message();
+            $sim_msg = new user_message(); // the duplicate messages only steer the branch below
             $similar = $this->get_similar($sim_msg);
             if ($similar != null) {
                 if ($similar->id() != 0) {

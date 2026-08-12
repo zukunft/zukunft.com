@@ -69,7 +69,7 @@ if ($db_con->is_open()) {
         if ($ref_id > 0) {
             $ref = new ref($load_usr);
             $ref->load_by_id($ref_id, $msg);
-            $result = $ref->api_json();
+            $result = $ref->api_json([], $msg);
         } else {
             $msg->add_message_text('Cannot load ref because id is missing');
         }

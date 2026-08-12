@@ -254,7 +254,7 @@ class job_runner
     private function run_sweep(job_exe $handler): bool
     {
         $result = true;
-        $msg = new user_message($this->usr);
+        $msg = new user_message($this->usr); // one message per sweep, because a sweep is its own request
         $type = $handler->type_code_id();
 
         try {
@@ -318,7 +318,7 @@ class job_runner
     private function set_status(job $job, string $status_code_id): void
     {
         global $sys;
-        $msg = new user_message($this->usr);
+        $msg = new user_message($this->usr); // only to log why the status save has failed
         $job->status_id = $sys->typ_lst->job_sta->id($status_code_id);
         $saved = $job->save($msg);
         if (!$saved) {

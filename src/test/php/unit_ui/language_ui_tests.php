@@ -84,10 +84,10 @@ class language_ui_tests
         // the popup change table must also accept a language; without an own db field order the
         // change labels are derived from the url keys
         $test_name = 'the popup change table of a language form shows the changed name';
-        $chg_html = $preview->popup_changes([
+        $chg_html = $preview->popup_changes($msg_ui, [
             url_var::NAME => $src->name,
             url_var::PRE . url_var::NAME => ''
-        ], $src, $msg_ui);
+        ], $src);
         $t->assert_text_contains($test_name, $chg_html, $src->name);
     }
 

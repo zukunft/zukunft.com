@@ -565,11 +565,7 @@ class group extends sandbox_multi
      */
     function name_field(): string
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'name_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite_warning('name_field', $this::class);
         return group_fields::FLD_NAME;
     }
 
@@ -1920,7 +1916,7 @@ class group extends sandbox_multi
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->name = $api_json[json_fields::NAME];

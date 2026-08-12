@@ -281,7 +281,7 @@ class sandbox_named extends sandbox
         // fill up the object if it has only the id of the name
         if ($this->no_id_but_name()) {
             if ($dto != null) {
-                $cac_obj = $dto->get_object_by_name($this);
+                $cac_obj = $dto->get_object_by_name($this, $msg);
                 if ($cac_obj != null) {
                     $this->fill($cac_obj, $this->get_user());
                 }
@@ -841,19 +841,19 @@ class sandbox_named extends sandbox
      * set the log entry parameter for a new named object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_add(): change
+    function log_add(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
         // TODO add the table exceptions from sql_db
-        $log->set_action(change_actions::ADD);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
-        $log->set_field($tbl_name . '_name');
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
+        $log->set_field($tbl_name . '_name', $msg);
         $log->set_user($this->get_user());
         $log->old_value = null;
         $log->new_value = $this->name();
@@ -865,19 +865,19 @@ class sandbox_named extends sandbox
 
     /**
      * set the log entry parameter to delete an object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_del(): change
+    function log_del(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
-        $log->set_field($tbl_name . '_name');
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
+        $log->set_field($tbl_name . '_name', $msg);
         $log->old_value = $this->name();
         $log->new_value = null;
 
@@ -1252,7 +1252,7 @@ class sandbox_named extends sandbox
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $class_name,
             msg_id::VAR_NAME => $obj_to_add->name(),

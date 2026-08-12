@@ -254,7 +254,7 @@ class sql_message extends Message
      * TODO Prio 2 add the solution with the prepared job id
      * @return array with the messages
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         $msg_lst = [];
@@ -592,19 +592,6 @@ class sql_message extends Message
     function get_last_message(): string
     {
         return $this->get_message(count($this->msg_text));
-    }
-
-    /**
-     * TODO should pick the last either from msg_var_lst or msg_id_lst
-     * @return string with the latest added message translated to the user language
-     */
-    function get_last_message_translated(): string
-    {
-        if ($this->has_msg()) {
-            return $this->get_message_translated(count($this->msg_var_lst));
-        } else {
-            return '';
-        }
     }
 
     /**

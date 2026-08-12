@@ -90,12 +90,12 @@ class triple_ui_tests
         $trp_problem = new triple($t_trp->global_problem()->api_json());
         $trp_problem->phr_lst = $t_phr->phrase_list_start_view_ui();
         $test_page .= $html->text_h2('related phrases without subtitles of ' . $trp_problem->name());
-        $test_page .= $list->phrases_related_ex_subtitle($trp_problem) . '<br>';
+        $test_page .= $list->phrases_related_ex_subtitle($trp_problem, $msg) . '<br>';
 
         $t->html_page_test($test_page, 'triple', 'triple', $msg);
 
         $t->subheader($ts . 'related phrases without subtitles');
-        $sub_html = $list->phrases_related_ex_subtitle($trp_problem);
+        $sub_html = $list->phrases_related_ex_subtitle($trp_problem, $msg);
         $test_name = 'the "can be" related phrase is shown grouped under its verb';
         $t->assert_text_contains($test_name, $sub_html, word_names::HEALTH);
         $test_name = 'the is-a parents are excluded from the related phrases without subtitles';

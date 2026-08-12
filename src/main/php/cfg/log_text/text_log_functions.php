@@ -322,6 +322,61 @@ function log_warning_msg(string $msg_txt, user_message $msg): void
 }
 
 /**
+ * report that a child class has not overwritten a function that its parent expects it to overwrite
+ *
+ * a missing overwrite is an internal inconsistency that the user cannot fix, so it goes to the
+ * admin log only (docs/llm/coding.md) - the returned text is the diagnostic that the dummy parent
+ * functions returning a string hand back to their caller
+ *
+ * the text is built without a user_message, because a request creates its message only at the
+ * entry point (docs/llm/state-and-messages.md) and a throwaway one here would be the same
+ * exception repeated in every dummy parent function; log_missing_overwrite_warning is the
+ * variant for a parent function whose missing overwrite must not count as an error
+ *
+ * @param string $fnc_name the name of the function that the child class should overwrite
+ * @param string $class the class that has been asked to do something it cannot do e.g. $this::class
+ * @return string the translated diagnostic text
+ */
+function log_missing_overwrite(string $fnc_name, string $class): string
+{
+    $msg_txt = missing_overwrite_text($fnc_name, $class);
+    log_err($msg_txt);
+    return $msg_txt;
+}
+
+/**
+ * the warning level twin of log_missing_overwrite for the dummy parent functions whose missing
+ * overwrite is expected often enough that it must not stop a test run (see ERROR_LIMIT)
+ *
+ * @param string $fnc_name the name of the function that the child class should overwrite
+ * @param string $class the class that has been asked to do something it cannot do e.g. $this::class
+ * @return string the translated diagnostic text
+ */
+function log_missing_overwrite_warning(string $fnc_name, string $class): string
+{
+    $msg_txt = missing_overwrite_text($fnc_name, $class);
+    log_warning($msg_txt);
+    return $msg_txt;
+}
+
+/**
+ * the shared text of the two log_missing_overwrite functions
+ *
+ * @param string $fnc_name the name of the function that the child class should overwrite
+ * @param string $class the class that has been asked to do something it cannot do e.g. $this::class
+ * @return string the translated diagnostic text
+ */
+function missing_overwrite_text(string $fnc_name, string $class): string
+{
+    global $mtr;
+    $lib = new library();
+    return $lib->msg_var_text([[msg_id::MISSING_FUNCTION_OVERWRITE, [
+        msg_id::VAR_FUNCTION_NAME => $fnc_name,
+        msg_id::VAR_CLASS_NAME => $class
+    ]]], $mtr);
+}
+
+/**
  * log a warning message via api and inform the user about it in one call (the warning parallel of
  * log_err_msg_ui); the user notice is added with ok=true, so it does not fail the request
  * @param string $msg_txt the warning message text for the system log (admin)
@@ -579,7 +634,7 @@ function log_msg(string  $msg_text,
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
         if (!in_array($msg_type_text, $sys->log_msg_lst)) {
-            $msg = new user_message();
+            $msg = new user_message(); // the log writer itself, so it cannot report to a request message
             $sys_log = new sys_log();
 
             $sys->log_msg_lst[] = $msg_type_text;
@@ -621,7 +676,7 @@ function log_msg(string  $msg_text,
                     $usr = new user();
                     $usr->load_by_id($user_id, $msg);
                     $msk = new view($usr);
-                    $msk_ui = new view_ui($msk->api_json());
+                    $msk_ui = new view_ui($msk->api_json([], $msg));
                     $result .= $msk_ui->dsp_navbar_simple();
                     // like the critical path: escape the message and do not disclose the function name
                     $result .= htmlspecialchars($msg_text, ENT_QUOTES) . ".<br><br>";

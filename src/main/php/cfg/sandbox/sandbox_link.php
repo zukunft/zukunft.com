@@ -1192,22 +1192,22 @@ class sandbox_link extends sandbox
      * set the log entry parameter for a new link object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
 
         $log = new change_link($this->get_user());
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->set_action(change_actions::ADD);
+        $log->set_action(change_actions::ADD, $msg);
         // TODO add the table exceptions from sql_db
         $tbl_name = $lib->class_to_name($this::class);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
         $log->row_id = 0;
         $log->add($msg);
 
@@ -1216,18 +1216,18 @@ class sandbox_link extends sandbox
 
     /**
      * set the log entry parameter to delete an object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_del_link(): change_link
+    function log_del_link(user_message $msg): change_link
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
 
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
+        $log->set_action(change_actions::DELETE, $msg);
         $tbl_name = $lib->class_to_name($this::class);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
         $log->old_from = $this->fob();
         $log->old_to = $this->tob();
 
@@ -1239,9 +1239,10 @@ class sandbox_link extends sandbox
 
     /**
      * TODO for normal fields use the change log, but for link changes use the link log
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change|change_link the object that is used to log the user changes
      */
-    function log_object(): change|change_link
+    function log_object(user_message $msg): change|change_link
     {
         return new change($this->get_user());
     }
@@ -1356,7 +1357,7 @@ class sandbox_link extends sandbox
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if ($obj_to_add->fob() == null or $obj_to_add->tob() == null) {
             $lib = new library();
             $msg->add(msg_id::NAME_ALREADY_EXISTS, [

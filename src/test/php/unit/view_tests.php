@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
@@ -43,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -143,6 +145,41 @@ class view_tests
         $msk = $t_msk->view_with_components();
         $t->assert_api($msk, 'view_with_component_details', [api_types::INCL_COMPONENTS, api_types::LINK_DETAILS]);
         $t->assert_api_to_ui($msk, new view_ui());
+
+        $t->subheader($ts . 'term assignment');
+
+        // a term that is assigned twice, e.g. by an import file, is reported to the caller,
+        // because the second assignment is dropped
+        $test_name = 'a term assigned twice to a view is reported';
+        $msg = new user_message($t->usr1);
+        $msk = $t_msk->view();
+        $trm = $t_trm->term();
+        $msk->add_term($trm, $msg);
+        $added = $msk->add_term($trm, $msg);
+        $t->assert_false($test_name, $added);
+
+        $test_name = 'the double assignment message names the term';
+        $t->assert_text_contains($test_name, $msg->text(), $trm->name());
+        $msg->reset();
+
+        // a view can be shown for more than one term, so a second, different term is assigned
+        $test_name = 'a second, different term is assigned to the view';
+        $added = $msk->add_term($t_trm->term_triple(), $msg);
+        $t->assert_true($test_name, $added);
+
+        // an import assigns terms that are not yet in the database, so they are told apart by
+        // their name; without that every unknown term of a view looks like the same term twice
+        $test_name = 'two terms without a db id are assigned to a view';
+        $msk = $t_msk->view();
+        $msk->add_term($t_trm->by_name(word_names::PI), $msg);
+        $added = $msk->add_term($t_trm->by_name(word_names::E), $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'the same term without a db id is reported as double';
+        $added = $msk->add_term($t_trm->by_name(word_names::PI), $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_msk->view(), $t->usr_system);

@@ -74,13 +74,13 @@ if ($db_con->is_open()) {
             if ($cmp_lvl > 0) {
                 $msk->load_components($msg);
             }
-            $result = $msk->api_json();
+            $result = $msk->api_json([], $msg);
         } elseif ($dsp_name != '') {
             $msk->load_by_name($dsp_name, $msg);
             if ($cmp_lvl > 0) {
                 $msk->load_components($msg);
             }
-            $result = $msk->api_json();
+            $result = $msk->api_json([], $msg);
         } else {
             $msg->add_message_text('view id or name is missing');
         }

@@ -94,7 +94,9 @@ class data_object
         get {
             if ($this->wrd_lst_dirty) {
                 if (!$this->phr_lst_dirty) {
-                    $this->wrd_lst->merge($this->phr_lst->word_list());
+                    // a property hook takes no parameter, so this cache refresh has no caller message
+                    $cache_msg = new user_message();
+                    $this->wrd_lst->merge($this->phr_lst->word_list($cache_msg), $cache_msg);
                 }
                 $this->wrd_lst_dirty = false;
             }
@@ -114,7 +116,9 @@ class data_object
         get {
             if ($this->trp_lst_dirty) {
                 if (!$this->phr_lst_dirty) {
-                    $this->trp_lst->merge($this->phr_lst->triple_list());
+                    // a property hook takes no parameter, so this cache refresh has no caller message
+                    $cache_msg = new user_message();
+                    $this->trp_lst->merge($this->phr_lst->triple_list($cache_msg), $cache_msg);
                 }
                 $this->trp_lst_dirty = false;
             }
@@ -134,11 +138,13 @@ class data_object
     public phrase_list $phr_lst {
         get {
             if ($this->phr_lst_dirty) {
+                // a property hook takes no parameter, so this cache refresh has no caller message
+                $cache_msg = new user_message();
                 if (!$this->wrd_lst_dirty) {
-                    $this->phr_lst->merge($this->wrd_lst->phrase_list());
+                    $this->phr_lst->merge($this->wrd_lst->phrase_list($cache_msg), $cache_msg);
                 }
                 if (!$this->trp_lst_dirty) {
-                    $this->phr_lst->merge($this->trp_lst->phrase_list());
+                    $this->phr_lst->merge($this->trp_lst->phrase_list($cache_msg), $cache_msg);
                 }
                 $this->phr_lst_dirty = false;
             }
@@ -209,7 +215,7 @@ class data_object
      */
     function __construct(?string $api_json = null)
     {
-        $this->msg = new user_message();
+        $this->msg = new user_message(); // an object field of this cache, not the message of a request
         if ($api_json != null) {
             $this->val_lst = new value_list();
             $this->res_lst = new result_list();
@@ -415,9 +421,9 @@ class data_object
      * set the view_list of this data object
      * @param view_list $msk_lst
      */
-    function merge_view_list(view_list $msk_lst): void
+    function merge_view_list(view_list $msk_lst, user_message $msg): void
     {
-        $this->msk_lst->merge($msk_lst);
+        $this->msk_lst->merge($msk_lst, $msg);
     }
 
     /**
@@ -487,10 +493,10 @@ class data_object
         }
     }
 
-    function add_phrases(phrase_list $phr_lst): void
+    function add_phrases(phrase_list $phr_lst, user_message $msg): void
     {
         foreach ($phr_lst->lst() as $phr) {
-            $this->phr_lst->add($phr);
+            $this->phr_lst->add($phr, $msg);
         }
         $this->wrd_lst_dirty = true;
         $this->trp_lst_dirty = true;
@@ -514,10 +520,10 @@ class data_object
         return !$this->chg_log->is_empty();
     }
 
-    function add_changes(change_log_list $chg_log): void
+    function add_changes(change_log_list $chg_log, user_message $msg): void
     {
         foreach ($chg_log->lst() as $log) {
-            $this->chg_log->add($log);
+            $this->chg_log->add($log, $msg);
         }
     }
 

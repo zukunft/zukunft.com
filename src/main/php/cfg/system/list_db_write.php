@@ -188,7 +188,7 @@ class list_db_write extends list_db_read
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 $sc_par_lst->add(sql_type::LOG);
-                $ins_usr_msg = new user_message();
+                $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
                 $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
                 if ($ins_usr_msg->is_ok()) {
                     // e.g. an element loaded from the database has no term object and with that no name loaded
@@ -217,7 +217,7 @@ class list_db_write extends list_db_read
             if ($sbx->db_ready($msg)) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list();
-                $ins_usr_msg = new user_message();
+                $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
                 $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
                 if ($ins_usr_msg->is_ok()) {
                     // e.g. an element loaded from the database has no term object and with that no name loaded
@@ -251,7 +251,7 @@ class list_db_write extends list_db_read
             // check always user sandbox and normal name, because reading from database for check would take longer
             $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
             $sc_par_lst->add(sql_type::LOG);
-            $ins_usr_msg = new user_message();
+            $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
             $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
             if ($ins_usr_msg->is_ok()) {
                 // e.g. an element loaded from the database has no term object and with that no name loaded
@@ -283,7 +283,7 @@ class list_db_write extends list_db_read
         foreach ($this->lst() as $sbx) {
             // check always user sandbox and normal name, because reading from database for check would take longer
             $sc_par_lst = new sql_type_list();
-            $ins_usr_msg = new user_message();
+            $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
             $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
             if ($ins_usr_msg->is_ok()) {
                 // e.g. an element loaded from the database has no term object and with that no name loaded

@@ -387,7 +387,7 @@ class word_list_write_tests
         // word sort
         $wrd_ZH = $t_db->load_word($msg, word_names::ZH);
         $wrd_lst = $wrd_ZH->parents($msg);
-        $wrd_lst->name_sort();
+        $wrd_lst->name_sort($msg);
         $target = '"' . word_names::CANTON . '","' . word_names::CITY . '","' . word_names::COMPANY . '"';
         $result = $wrd_lst->dsp_name();
         $t->assert_text_contains('word_list->sort for "' . word_names::ZH . '"', $result, $target);

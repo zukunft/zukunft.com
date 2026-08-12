@@ -116,10 +116,11 @@ class test_formulas extends test_objects
      */
     function formula(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
-        $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $msg, $t_trm->term_list_time());
         $frm->set_description(formula_names::SCALE_TO_SEC_COM);
         $frm->set_latex(formula_names::SCALE_TO_SEC_LATEX);
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
@@ -131,10 +132,11 @@ class test_formulas extends test_objects
      */
     function formula_rename(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::SCALE_HOUR_ID, formula_names::SCALE_HOUR);
-        $frm->set_user_text(formula_names::SCALE_HOUR_EXP, $t_trm->term_list_time());
+        $frm->set_user_text(formula_names::SCALE_HOUR_EXP, $msg, $t_trm->term_list_time());
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
         return $frm;
     }
@@ -167,9 +169,10 @@ class test_formulas extends test_objects
      */
     function formula_incomplete(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $frm = $this->formula();
         $t_trm = new test_terms($this->env);
-        $frm->set_user_text('', $t_trm->term_list_time());
+        $frm->set_user_text('', $msg, $t_trm->term_list_time());
         $frm->ref_text = null;
         return $frm;
     }
@@ -179,13 +182,14 @@ class test_formulas extends test_objects
      */
     function formula_filled(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         global $sys;
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
         // TODO Prio 1 activate
         //$frm->set_code_id(formula_names::SCALE_TO_SEC_CODE_ID, $this->env->usr1);
-        $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $msg, $t_trm->term_list_time());
         // TODO Prio 1 activate
         //$frm->set_owner_id($this->env->usr1->id());
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
@@ -214,10 +218,11 @@ class test_formulas extends test_objects
 
     function formula_add(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set_name(formula_names::SYSTEM_TEST_ADD);
-        $frm->set_user_text(formula_names::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set_user_text(formula_names::INCREASE_EXP, $msg, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
         return $frm;
     }
@@ -315,10 +320,11 @@ class test_formulas extends test_objects
      */
     function formula_increase(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::INCREASE_ID, formula_names::INCREASE);
-        $frm->set_user_text(formula_names::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set_user_text(formula_names::INCREASE_EXP, $msg, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
         return $frm;
     }
@@ -347,10 +353,11 @@ class test_formulas extends test_objects
      */
     function formula_joule(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::JOULE_DEF_ID, formula_names::JOULE_DEF);
-        $frm->set_user_text(formula_names::JOULE_DEF_EXP, $t_trm->term_list_joule());
+        $frm->set_user_text(formula_names::JOULE_DEF_EXP, $msg, $t_trm->term_list_joule());
         $frm->set_latex(formula_names::JOULE_DEF_LATEX);
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
         $frm->description = formula_names::JOULE_DEF_COM;
@@ -375,11 +382,12 @@ class test_formulas extends test_objects
      */
     function formula_this(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         global $sys;
         $t_phr = new test_phrases($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::THIS_ID, formula_names::THIS_NAME);
-        $frm->set_user_text(formula_names::THIS_EXP, $t_phr->phrase_list_increase()->term_list());
+        $frm->set_user_text(formula_names::THIS_EXP, $msg, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::THIS, new user_message($this->env->usr1));
         $frm->description = formula_names::THIS_COM;
         $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -391,10 +399,11 @@ class test_formulas extends test_objects
      */
     function formula_prior(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::PRIOR_ID, formula_names::PRIOR);
-        $frm->set_user_text(formula_names::PRIOR_EXP, $t_phr->phrase_list_increase()->term_list());
+        $frm->set_user_text(formula_names::PRIOR_EXP, $msg, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::PREV, new user_message($this->env->usr1));
         return $frm;
     }
@@ -404,10 +413,11 @@ class test_formulas extends test_objects
      */
     function formula_city_population(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
-        $frm->set_user_text(formula_names::CITY_POPULATION_EXP, $t_trm->term_list_increase());
+        $frm->set_user_text(formula_names::CITY_POPULATION_EXP, $msg, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
         return $frm;
     }
@@ -517,10 +527,11 @@ class test_formulas extends test_objects
      */
     function formula_add_by_func(): formula
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set_name(formula_names::SYSTEM_TEST_ADD_VIA_FUNC);
-        $frm->set_user_text(formula_names::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set_user_text(formula_names::INCREASE_EXP, $msg, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
         return $frm;
     }

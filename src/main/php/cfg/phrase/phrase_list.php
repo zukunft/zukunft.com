@@ -202,7 +202,7 @@ class phrase_list extends sandbox_list_named
                 $msg->add(msg_id::PHRASE_NAME_EMPTY, [msg_id::VAR_VALUE_LIST => implode(',', $json_obj)]);
             } else {
                 if ($msg->is_ok()) {
-                    $phr = $phr_lst->get_by_name($phr_name);
+                    $phr = $phr_lst->get_by_name($phr_name, $msg);
                     if ($phr == null) {
                         // TODO Prio 3 check if in some cases a warning message might be useful
                         // $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
@@ -615,44 +615,48 @@ class phrase_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $msg to report an entry of the json array that names no phrase
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if every entry of the json array names a phrase
      */
-    function import_map_names(array $json_obj, ?data_object $dto = null): user_message
+    function import_map_names(array $json_obj, user_message $msg, ?data_object $dto = null): bool
     {
-        $msg = new user_message();
+        $result = true;
         foreach ($json_obj as $word_name) {
-            $phr = null;
-            $phr = $dto?->get_phrase_by_name($word_name);
+            $phr = $dto?->get_phrase_by_name($word_name, $msg);
             if ($phr == null and $word_name != '') {
                 $wrd = new word($this->get_user());
                 $wrd->set_name($word_name);
                 $phr = $wrd->phrase();
             }
             if ($phr == null) {
-                $msg->add(msg_id::IMPORT_SOURCE_NOT_FOUND, [
-
+                $msg->add(msg_id::IMPORT_PHRASE_NAME_EMPTY, [
+                    msg_id::VAR_JSON_PART => library::dsp_array($json_obj)
                 ]);
+                $result = false;
             } else {
-                $this->add($phr);
+                // by name, because an import assigns phrases before they have an id and the id
+                // keyed add would keep only the first of them (docs/llm/architecture.md)
+                $this->add_by_name_direct($phr, false, $msg);
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
-     * import a word list object from a JSON array object
+     * import a word list object from a JSON array object and save it to the database
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $msg to report an entry that names no phrase or a phrase that cannot be saved
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if every entry of the json array names a phrase and the list has been saved
      */
-    function import_names(array $json_obj, ?data_object $dto = null): user_message
+    function import_names(array $json_obj, user_message $msg, ?data_object $dto = null): bool
     {
-        $msg = $this->import_map_names($json_obj, $dto);
-        $this->save($msg);
+        $mapped = $this->import_map_names($json_obj, $msg, $dto);
+        $saved = $this->save($msg);
 
-        return $msg;
+        return $mapped and $saved;
     }
 
     /**
@@ -1531,14 +1535,14 @@ class phrase_list extends sandbox_list_named
      * del one phrase to the phrase list, but only if it is not yet part of the phrase list
      * @param phrase $phr_to_del the phrase that should be removed from the list
      */
-    function del(phrase $phr_to_del): void
+    function del(phrase $phr_to_del, user_message $msg): void
     {
         log_debug($phr_to_del->dsp_id());
         $phr_ids = $this->id_lst();
         if (count($phr_ids) > 0) {
             if (in_array($phr_to_del->id(), $phr_ids)) {
                 $del_pos = array_search($phr_to_del->id(), $phr_ids);
-                if ($this->get_by_key($del_pos)->id() == $phr_to_del->id()) {
+                if ($this->get_by_key($del_pos, $msg)->id() == $phr_to_del->id()) {
                     unset($this->lst()[$del_pos]);
                 } else {
                     log_err('Remove of ' . $phr_to_del->dsp_id() . ' failed');
@@ -2096,7 +2100,7 @@ class phrase_list extends sandbox_list_named
      * TODO Prio 1 check if a unit test exists
      * @return array list with the phrases (not a phrase list object!) sorted by name
      */
-    function name_sort(): array
+    function name_sort(user_message $msg): array
     {
         log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
         $lib = new library();
@@ -2112,7 +2116,7 @@ class phrase_list extends sandbox_list_named
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_key) {
             log_debug('get ' . $sorted_key);
-            $phr_to_add = $this->get_by_key($sorted_key);
+            $phr_to_add = $this->get_by_key($sorted_key, $msg);
             log_debug('got ' . $phr_to_add->name());
             $result[] = $phr_to_add;
         }
@@ -2132,14 +2136,14 @@ class phrase_list extends sandbox_list_named
      * sort the phrase object list by id
      * @return phrase_list with the phrases (not a phrase list object!) sorted by name
      */
-    function sort_by_id(): phrase_list
+    function sort_by_id(user_message $msg): phrase_list
     {
         $result = clone $this;
         $id_lst = $this->id_lst();
         asort($id_lst);
         $result->set_lst(array());
         foreach (array_keys($id_lst) as $sorted_key) {
-            $phr_to_add = $this->get_by_key($sorted_key);
+            $phr_to_add = $this->get_by_key($sorted_key, $msg);
             $result->add($phr_to_add);
         }
         return $result;
@@ -2150,14 +2154,14 @@ class phrase_list extends sandbox_list_named
      * sort the phrase object list by id in reverse order
      * @return phrase_list with the phrases (not a phrase list object!) sorted by name
      */
-    function sort_rev_by_id(): phrase_list
+    function sort_rev_by_id(user_message $msg): phrase_list
     {
         $result = clone $this;
         $id_lst = $this->id_lst();
         arsort($id_lst);
         $result->set_lst(array());
         foreach (array_keys($id_lst) as $sorted_key) {
-            $phr_to_add = $this->get_by_key($sorted_key);
+            $phr_to_add = $this->get_by_key($sorted_key, $msg);
             $result->add($phr_to_add);
         }
         return $result;
@@ -2331,7 +2335,7 @@ class phrase_list extends sandbox_list_named
         $chg_lst = clone $this;
         $chg_lst->reset();
         foreach ($this->lst() as $phr) {
-            $db_phr = $db_lst->get_by_name($phr->name());
+            $db_phr = $db_lst->get_by_name($phr->name(), $msg);
             if ($db_phr == null) {
                 $add_lst->add_by_key($phr);
             } else {

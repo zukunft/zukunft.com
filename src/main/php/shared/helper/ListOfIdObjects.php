@@ -258,7 +258,7 @@ class ListOfIdObjects extends ListOf
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
      * @param Message $msg to report which entry is double
-     * @returns bool false if the object has not been added
+     * @returns bool true if the object has been added to this list
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject $obj_to_add,
@@ -266,21 +266,25 @@ class ListOfIdObjects extends ListOf
         Message                             $msg = new Message()
     ): bool
     {
+        $added = false;
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
             $this->add_direct($obj_to_add);
             $this->set_hash_dirty();
+            $added = true;
         } else {
             if (!$this->has_id($obj_to_add->id())) {
                 $this->add_direct($obj_to_add);
+                $added = true;
             } else {
                 $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
                     msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                    msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                    // without the namespace, because the user reads this message
+                    msg_id::VAR_CLASS_NAME => library::class_to_name($obj_to_add::class)
                 ]);
             }
         }
-        return $msg->is_ok();
+        return $added;
     }
 
     /**

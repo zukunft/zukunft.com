@@ -354,12 +354,7 @@ class sandbox_typed extends sandbox_named
      */
     function type_name(): string
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'type_name',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('type_name', $this::class);
     }
 
 

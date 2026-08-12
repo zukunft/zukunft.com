@@ -289,7 +289,7 @@ class view extends sandbox_code_id
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
         if (key_exists(json_fields::STYLE, $in_ex_json)) {
-            $msg->merge($this->set_style($in_ex_json[json_fields::STYLE]));
+            $this->set_style($in_ex_json[json_fields::STYLE], $msg);
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg);
@@ -320,11 +320,15 @@ class view extends sandbox_code_id
                 $trm = new term($this->get_user());
                 $trm->load_by_name($trm_name, $msg);
                 if ($trm->id() == 0) {
+                    // keep the name, because it identifies the link until the ids are known
+                    // (docs/llm/architecture.md); without it every term that a view assigns
+                    // before it exists would look like the same term assigned twice
+                    $trm->set_name($trm_name);
                     log_warning('word "' . $trm_name .
                         '" created to link it to view "' . $this->name() .
                         '" as requested by the import of ');
                 }
-                $this->add_term($trm, json_encode($in_ex_json));
+                $this->add_term($trm, $msg, json_encode($in_ex_json));
             }
         }
 
@@ -612,12 +616,12 @@ class view extends sandbox_code_id
      * set the default style for this view by the code id
      *
      * @param string|null $code_id the code id of the display style use for im and export
-     * @return user_message a warning if the style code id is not found
+     * @param user_message $msg to report a style code id that is not found
+     * @return void
      */
-    function set_style(?string $code_id): user_message
+    function set_style(?string $code_id, user_message $msg): void
     {
         global $sys;
-        $msg = new user_message();
         if ($code_id == null) {
             $this->style = null;
         } else {
@@ -630,7 +634,6 @@ class view extends sandbox_code_id
                 $this->style = null;
             }
         }
-        return $msg;
     }
 
     /**
@@ -927,7 +930,7 @@ class view extends sandbox_code_id
      */
     function add_component(component_link $lnk, ?int $pos = null): user_message
     {
-        $result = new user_message();
+        $result = new user_message(); // the message IS the return value, so the caller merges it
 
         // if no position is requested add the component at the end
         if ($lnk->get_pos() == null) {
@@ -944,7 +947,7 @@ class view extends sandbox_code_id
             $this->cmp_lnk_lst = new component_link_list($this->get_user());
         }
         $lnk->set_view($this);
-        $this->cmp_lnk_lst->add_link_by_key($lnk);
+        $this->cmp_lnk_lst->add_link_by_key($lnk, $result);
 
         return $result;
     }
@@ -1011,15 +1014,17 @@ class view extends sandbox_code_id
     /**
      * add the term link to this view object
      * @param term $trm the term that should be linked
+     * @param user_message $msg to report a term that is assigned more than once to this view
      * @param string $json_part the part of a json message which has cause the adding
-     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     * @return bool true if the term has been added to the assigned terms of this view
      */
-    function add_term(term $trm, string $json_part = ''): user_message
+    function add_term(term $trm, user_message $msg, string $json_part = ''): bool
     {
-        $msg = new user_message();
         if ($this->trm_msk_lst == null) {
             $this->trm_msk_lst = new term_view_list($this->get_user());
         }
+        // the list rejects a term that is already assigned by the name of the linked objects,
+        // so the rejection is also a real double while the ids are still missing (an import)
         $added = $this->trm_msk_lst->add(0, $this, $trm);
         if (!$added) {
             $msg->add(msg_id::IMPORT_TERM_VIEW_DOUBLE, [
@@ -1028,7 +1033,7 @@ class view extends sandbox_code_id
                 msg_id::VAR_JSON_PART => $json_part,
             ]);
         }
-        return $msg;
+        return $added;
     }
 
     /**
@@ -1038,7 +1043,7 @@ class view extends sandbox_code_id
      */
     function del_term(term $trm): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the not yet implemented message IS the return value of this stub
         // TODO implement
         $msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
         return $msg;

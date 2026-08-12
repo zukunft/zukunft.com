@@ -121,13 +121,13 @@ class formula_list extends ListBase
      * @param verb|null $vrb
      * @return formula_list
      */
-    function get_by_verb(verb|null $vrb): formula_list
+    function get_by_verb(verb|null $vrb, user_message $msg): formula_list
     {
         $frm_lst = new formula_list();
         if ($vrb != null) {
             foreach ($this->lst() as $frm) {
                 if ($frm->has_verb($vrb)) {
-                    $frm_lst->add($frm);
+                    $frm_lst->add($frm, $msg);
                 }
             }
         }
@@ -236,7 +236,8 @@ class formula_list extends ListBase
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
                     $frm_ui = $frm->dsp_obj_old();
-                    $frm_html = new formula($frm->api_json());
+                    $api_msg = new user_message(); // a legacy display function without a message, see display_old
+                    $frm_html = new formula($frm->api_json([], $api_msg));
                     $result = '';
                     if ($frm->name_wrd != null) {
                         $result = $frm_ui->dsp_result($frm->name_wrd->phrase(), $back);

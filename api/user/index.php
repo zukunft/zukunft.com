@@ -87,7 +87,7 @@ if ($db_con->is_open()) {
         // enumerate users and read the email, ip address and activation key
         if ($found) {
             if ($usr->is_admin() or $db_usr->id() == $usr->id) {
-                $result = $db_usr->api_json();
+                $result = $db_usr->api_json([], $msg);
             } else {
                 $msg->add_message_text('not permitted');
             }

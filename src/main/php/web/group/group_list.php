@@ -39,6 +39,7 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -71,8 +73,11 @@ class group_list extends sandbox_list
 
     /**
      * add a phrase group if it is not yet part of the list
+     * @param group|IdObject|TextIdObject|CombineObject|null $to_add the group that should be added
+     * @param user_message $msg to report which entry is double
+     * @returns bool true if the group has been added
      */
-    function add(group|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(group|IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         log_debug($to_add->id());
         $do_add = false;

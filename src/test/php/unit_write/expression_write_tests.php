@@ -106,15 +106,16 @@ class expression_write_tests
         $result = $lib->dsp_bool($exp->has_ref($msg));
         $t->assert('has_ref for "' . $frm->usr_text . '"', $result, $target);
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
-        $result = $exp->ref_text();
+        $result = $exp->ref_text_ui();
         $t->assert('get_ref_text for "' . $frm->usr_text . '"', $result, $target);
 
         // test the expression processing of the database reference
         $exp_db = new expression($frm);
         $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
         $target = '"' . words::PERCENT . '"=( is.numeric( "' . formula_names::THIS_NAME . '" ) & is.numeric( "' . formula_names::PRIOR . '" ) ) ( "' . formula_names::THIS_NAME . '" - "' . formula_names::PRIOR . '" ) / "' . formula_names::PRIOR . '"';
-        $result = $exp_db->user_text();
-        $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
+        // TODO Prio 0 rename to user_text
+        $result = $exp_db->user_text_ui();
+        $t->assert('get_usr_text for "' . $exp_db->ref_text_ui() . '"', $result, $target);
 
         // test getting phrases that should be added to the result of a formula
         $phr_lst_res = $exp->load_result_phrases($msg);

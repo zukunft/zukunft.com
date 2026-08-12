@@ -469,6 +469,7 @@ class sandbox_code_id extends sandbox_typed
     {
         $msg = parent::fill($obj, $usr_req);
         if ($this->get_code_id() === null and $obj->get_code_id() != null) {
+            // a local buffer for the requesting user of the fill, merged into the returned message
             $code_msg = new user_message($usr_req);
             $this->set_code_id($obj->get_code_id(), $code_msg);
             $msg->merge($code_msg);

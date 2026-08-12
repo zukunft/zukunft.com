@@ -74,6 +74,17 @@ class test_terms
         return $t_wrd->word()->term();
     }
 
+    /**
+     * @param string $name the name of a term that is not yet in the database
+     * @return term as an import creates it before the words have been added to the database
+     */
+    function by_name(string $name): term
+    {
+        $trm = new term($this->env->usr1);
+        $trm->set_name($name);
+        return $trm;
+    }
+
     function term_triple(): term
     {
         $t_trp = new test_triples($this->env);
@@ -289,6 +300,19 @@ class test_terms
         $dto = new data_object($this->env->usr1);
         $dto->add_word($t_wrd->word_one());
         $dto->add_formula($t_frm->formula_scale_mio());
+        return $dto;
+    }
+
+    /**
+     * @return data_object with the minute and the second word as the import cache of a formula
+     *         that names both of them in its assigned phrases
+     */
+    function dto_minute_and_second(): data_object
+    {
+        $t_wrd = new test_words($this->env);
+        $dto = new data_object($this->env->usr1);
+        $dto->add_word($t_wrd->word_minute());
+        $dto->add_word($t_wrd->second());
         return $dto;
     }
 

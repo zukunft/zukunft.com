@@ -216,6 +216,29 @@ class phrase_list_tests
 
 
 
+        $t->subheader($ts . 'import names');
+
+        // an entry of the assigned json array that names no phrase is reported to the caller,
+        // because the import would silently assign one phrase less than the json file asks for
+        $test_name = 'an empty phrase name of an import is reported';
+        $phr_lst = new phrase_list($t->usr1);
+        $mapped = $phr_lst->import_map_names([word_names::MATH, ''], $msg);
+        $t->assert_false($test_name, $mapped);
+        $test_name = 'the empty phrase name message names the json part';
+        $t->assert_text_contains($test_name, $msg->text(), word_names::MATH);
+        $msg->reset();
+
+        // a json array with only real names is mapped without any message
+        $test_name = 'a list of phrase names is mapped';
+        $phr_lst = new phrase_list($t->usr1);
+        $mapped = $phr_lst->import_map_names([word_names::MATH, word_names::CONST_NAME], $msg);
+        $t->assert_true($test_name, $mapped);
+
+        // the phrases of an import have no id yet, so they are added to the list by their name
+        $test_name = 'both names of the import are in the phrase list';
+        $t->assert($test_name, $phr_lst->count(), 2);
+
+
         $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
 
     }

@@ -205,8 +205,7 @@ class view_relation_list extends sandbox_link_list
     {
         $added = false;
         if ($this->can_add($to_add)) {
-            $this->add_link_by_key($to_add);
-            $added = true;
+            $added = $this->add_link_by_key($to_add, $msg, $allow_duplicates);
         }
         return $added;
     }
@@ -306,33 +305,20 @@ class view_relation_list extends sandbox_link_list
       */
 
     /**
-     * test if the link at the same position already exists and if yes return false to prevent duplicates
-     * overwrites the parent because the same component can be used in a view at different positions
-     * but not at the same position
+     * the same view can be related to another view more than once, but not at the same position,
+     * so the position is part of the duplicate check of a view relation
+     *
+     * @param view_relation|sandbox_link $lnk a link that is already in this list
      * @param view_relation|sandbox_link $lnk_to_add the link that should be added to the list
-     * @return bool true if the link can be added
+     * @return bool true if both links relate the same views at the same position
      */
-    protected function can_add(view_relation|sandbox_link $lnk_to_add): bool
+    protected function is_same_link(
+        view_relation|sandbox_link $lnk,
+        view_relation|sandbox_link $lnk_to_add
+    ): bool
     {
-        $can_add = true;
-
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $lnk) {
-                if ($can_add) {
-                    if ($lnk->from_id() == $lnk_to_add->from_id()
-                        and $lnk->to_id() == $lnk_to_add->to_id()
-                        and $lnk->get_pos() == $lnk_to_add->get_pos()) {
-                        $can_add = false;
-                    }
-                    if ($lnk->id() == $lnk_to_add->id()
-                        and $lnk->id() != 0 and $lnk_to_add->id() != 0
-                        and $lnk->id() !== null and $lnk_to_add->id() !== null) {
-                        $can_add = false;
-                    }
-                }
-            }
-        }
-        return $can_add;
+        return parent::is_same_link($lnk, $lnk_to_add)
+            and $lnk->get_pos() == $lnk_to_add->get_pos();
     }
 
 }

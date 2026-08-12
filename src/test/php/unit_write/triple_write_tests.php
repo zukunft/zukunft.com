@@ -65,6 +65,7 @@ class triple_write_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message(); // a test is an entry point, so it creates the message the log setters report into
 
         // init
         $msg = new user_message($t->usr1);
@@ -111,7 +112,7 @@ class triple_write_tests
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
         $test_name = 'check the correct logging of adding a triple  "' . word_names::TEST_RENAMED . '" ' . verbs::IS . ' "' . word_names::TEST_PARENT . '" based on the id of the added test word, verb and the parent test word';
         $log = new change_link($t->usr1);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->new_from_id = $wrd_from->id();
         $log->new_link_id = $vrb_is_id;
         $log->new_to_id = $wrd_to->id();
@@ -154,7 +155,7 @@ class triple_write_tests
         $test_name = 'check if the removal of the link "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" for the second user "' . $t->usr2->name . '" has been logged';
         $msg2->reset();
         $log = new change_link($t->usr2);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
@@ -197,7 +198,7 @@ class triple_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
@@ -229,7 +230,7 @@ class triple_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();

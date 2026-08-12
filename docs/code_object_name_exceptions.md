@@ -29,7 +29,7 @@ component: $cmp2, $cmp_added, $cmp_by_id, $cmp_obj, $cmp_reloaded, $cmp_renamed,
 element: $elm_ui
 figure: $fig_ui
 formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_next, $frm_renamed, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp, $url_arr
-group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_used, $obj, $phr_grp, $phr_grp_reload, $val_grp
+group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_city, $grp_city_pct, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_newer, $job_older, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $rank_phr, $result, $switzerland, $time_phr, $to, $to_add, $to_ui, $trp, $val_phr, $val_time_phr, $wrd, $zurich
@@ -41,8 +41,8 @@ sql_message: $msg
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
 term: $frm, $msk, $term, $trm_back, $trm_by_obj_id, $trp, $vrb, $wrd
 triple: $bare_trp_ui, $base, $db_trp, $dbo, $dbo_ui, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $trp_back, $trp_by_id, $trp_chk, $trp_del, $trp_err, $trp_gone, $trp_in, $trp_ins, $trp_load, $trp_old, $trp_owner, $trp_owner_load, $trp_problem, $trp_sec, $trp_ui, $trp_undo_chk, $trp_usr, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
-user: $adm_usr_ui, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $dev_ui, $existing, $fail_usr, $init_usr, $ip_ui, $json_usr, $local_usr, $new_usr, $obj, $other, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sim, $solver, $sys_test_ui, $sys_ui, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
-user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $anon_msg, $cac_msg, $change_msg, $code_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $ip_msg, $job_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $map_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_chk, $msg_err, $msg_ins, $msg_load, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_usr, $msg_reload, $msg_signup_ui, $msg_sys, $msg_ui, $msg_usr2, $no_usr_msg, $ok_msg, $other_msg, $owner_msg, $p, $pw_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $setup_msg, $signup_msg, $sim_msg, $sim_name_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $undo_msg, $upd_usr_msg, $url_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg
+user: $adm_usr_ui, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $dev_ui, $existing, $fail_usr, $init_usr, $ip_ui, $json_usr, $local_usr, $new_usr, $obj, $other, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sim, $solver, $sys_ui, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
+user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $anon_msg, $api_msg, $cac_msg, $cache_msg, $change_msg, $code_msg, $conv_msg, $db_msg, $dsp_msg, $err_msg, $exp_msg, $fail_msg, $fld_msg, $frm_msg, $frm_usr_msg, $ins_usr_msg, $ip_msg, $job_msg, $lnk_msg, $load_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $lst_msg, $map_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_chk, $msg_del, $msg_err, $msg_ins, $msg_load, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_usr, $msg_reload, $msg_signup_ui, $msg_sys, $msg_ui, $msg_upd, $msg_usr2, $no_usr_msg, $ok_msg, $other_msg, $ovr_msg, $owner_msg, $p, $pw_msg, $rdy_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $setup_msg, $signup_msg, $sim_msg, $sim_name_msg, $sort_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $txt_msg, $ui_msg, $undo_msg, $upd_usr_msg, $url_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
@@ -97,6 +97,7 @@ change_values_time_prime: $chg, $log
 changes_big: $chg, $log, $log_named
 changes_norm: $chg, $log, $log_named
 code_test_coverage: $md_txt
+code_user_message_exceptions: $md_txt
 coding_rule_tests: $t_code
 component_exe: $cmp, $cmp_ui, $dbo_ui
 component_link: $cmp_lnk, $cmp_lnk_ui, $dbo, $dbo_ui, $lnk, $new_lnk, $obj, $usr_ui, $vcl
@@ -244,7 +245,7 @@ user_request: $req
 user_status: $usr_sta
 user_type: $usr_typ
 value_geo: $obj_to_add, $val
-value_list: $db_lst, $empty_keep_lst, $empty_lst, $lst, $num_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
+value_list: $db_lst, $empty_lst, $lst, $num_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
 value_list_dsp: $val_lst
 value_text: $obj_to_add, $val
 value_time: $obj_to_add, $val

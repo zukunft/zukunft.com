@@ -265,7 +265,7 @@ class type_object
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         $vars[json_fields::ID] = $this->id();
@@ -283,11 +283,11 @@ class type_object
     /**
      * @return phrase_list with the phrases that are fixed linked to this type
      */
-    function type_phrases(): phrase_list
+    function type_phrases(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list();
         if ($this->code_id == phrase_types::MATH_CONST) {
-            $phr_lst->add(new word()->math()->phrase());
+            $phr_lst->add(new word()->math()->phrase(), $msg);
         }
         return $phr_lst;
     }

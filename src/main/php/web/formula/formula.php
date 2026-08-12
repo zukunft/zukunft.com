@@ -402,7 +402,7 @@ class formula extends sandbox_code_id
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = parent::api_array($typ_lst, $msg);
 
@@ -973,7 +973,7 @@ class formula extends sandbox_code_id
         $exp = new expression();
         $exp->set_ref_text($this->ref_text(), $trm_lst);
         $exp->set_user_text($this->get_usr_text(), $trm_lst);
-        log_debug('->expression ' . $exp->ref_text());
+        log_debug('->expression ' . $exp->ref_text_ui());
         return $exp;
     }
 

@@ -603,7 +603,7 @@ class sandbox_value_list extends sandbox_list
         msg_id             $msg_additional = msg_id::VALUE_ADDITIONAL,
     ): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($this->lst() as $val) {
             $val_to_chk = $val_lst->get($val->id());
             if ($val_to_chk == null) {

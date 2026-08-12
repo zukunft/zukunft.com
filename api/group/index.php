@@ -72,7 +72,7 @@ if ($db_con->is_open()) {
         if ($grp_id != 0 and $grp_id != '') {
             $grp = new group($load_usr);
             $grp->load_by_id($grp_id, $msg);
-            $result = $grp->api_json();
+            $result = $grp->api_json([], $msg);
         } else {
             $msg->add_message_text('group id is missing');
         }

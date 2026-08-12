@@ -513,7 +513,7 @@ class group_list extends sandbox_list
     private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
     {
         $lib = new library();
-        $msg = new user_message();
+        $msg = new user_message(); // a deprecated private helper without a caller message
 
         // check the parameters
         if ($type == '') {
@@ -548,7 +548,7 @@ class group_list extends sandbox_list
                 $used_phr_lst = clone $val_grp->phrase_list();
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name
-                $used_phr_lst->del($phr_frm);
+                $used_phr_lst->del($phr_frm, $msg);
                 log_debug('removed formula phrase ' . $phr_frm->dsp_id() . ' from used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the result phrases
                 $phr_lst_res_name = '';

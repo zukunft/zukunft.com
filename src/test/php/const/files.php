@@ -72,6 +72,7 @@ class files
     CONST string DOCS_OBJECTS = test_paths::DOCS . 'code_objects_all' . self::MD;
     CONST string DOCS_FUNCTIONS = test_paths::DOCS . 'code_functions_all' . self::MD;
     CONST string DOCS_NAME_EXCEPTIONS = test_paths::DOCS . 'code_object_name_exceptions' . self::MD;
+    CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
 
 

@@ -75,30 +75,30 @@ class list_sort
         $tbl = new table();
 
         // add the main column
-        $tbl->add_column($phr);
+        $tbl->add_column($phr, $msg);
 
         // get the phrases for the rows
         // from "global problem" to e.g. "climate change"
-        $phr_lst = $phr->is_or_can_be($cac?->phr_lst, $cac->typ_lst_cache);
+        $phr_lst = $phr->is_or_can_be($msg, $cac?->phr_lst, $cac->typ_lst_cache);
 
         // TODO remove temp hardcoded solution
         if ($phr_lst->is_empty()) {
             $phr_lst = new phrase_list();
             $trp = new triple();
             $trp->load_by_name('global warming', $msg);
-            $phr_lst->add($trp->phrase());
+            $phr_lst->add($trp->phrase(), $msg);
             $wrd = new word();
             $wrd->load_by_name('populism', $msg);
-            $phr_lst->add($wrd->phrase());
+            $phr_lst->add($wrd->phrase(), $msg);
             $wrd = new word();
             $wrd->load_by_name('health', $msg);
-            $phr_lst->add($wrd->phrase());
+            $phr_lst->add($wrd->phrase(), $msg);
             $wrd = new word();
             $wrd->load_by_name('poverty', $msg);
-            $phr_lst->add($wrd->phrase());
+            $phr_lst->add($wrd->phrase(), $msg);
             $wrd = new word();
             $wrd->load_by_name('education', $msg);
-            $phr_lst->add($wrd->phrase());
+            $phr_lst->add($wrd->phrase(), $msg);
             $trillion = new word();
 
             $trillion->load_by_name('trillion', $msg);
@@ -109,10 +109,10 @@ class list_sort
             $htp = new word();
             $htp->load_by_name('htp', $msg);
         } else {
-            $trillion = $cac?->phr_lst->get_by_name(word_names::TRILLION);
-            $billion = $cac?->phr_lst->get_by_name(word_names::BILLION);
-            $usd = $cac?->phr_lst->get_by_name(word_names::USD);
-            $htp = $cac?->phr_lst->get_by_name(word_names::HTP);
+            $trillion = $cac?->phr_lst->get_by_name(word_names::TRILLION, $msg);
+            $billion = $cac?->phr_lst->get_by_name(word_names::BILLION, $msg);
+            $usd = $cac?->phr_lst->get_by_name(word_names::USD, $msg);
+            $htp = $cac?->phr_lst->get_by_name(word_names::HTP, $msg);
         }
 
         // check if the phrase list has at least the most necessary entries
@@ -142,10 +142,10 @@ class list_sort
 
         foreach ($col_phr_lst as $col_phr)
         {
-            $tbl->add_column($col_phr);
+            $tbl->add_column($col_phr, $msg);
 
             // get the most relevant result
-            $tbl->add_column($col_phr->result_most_relevant());
+            $tbl->add_column($col_phr->result_most_relevant(), $msg);
         }
 
         // if the list is sorted start it with a ranking column

@@ -22,3 +22,4 @@
 # local IDE MCP server config (machine-specific endpoint, see claude code / phpstorm setup)
 /.mcp.json
 /cache/cfg_1.json
+/cache/cfg_2.json

@@ -603,19 +603,6 @@ class user_message extends Message
     }
 
     /**
-     * TODO should pick the last either from msg_var_lst or msg_id_lst
-     * @return string with the latest added message translated to the user language
-     */
-    function get_last_message_translated(): string
-    {
-        if ($this->has_msg()) {
-            return $this->get_message_translated(count($this->msg_var_lst));
-        } else {
-            return '';
-        }
-    }
-
-    /**
      * @return int|string the main database row to which this user message is related
      */
     function get_row_id(): int|string

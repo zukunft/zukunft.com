@@ -168,7 +168,7 @@ class sandbox_named extends sandbox
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = parent::api_array($typ_lst, $msg);
 
@@ -340,7 +340,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      */
     function save_view(): user_message
     {
-        return new user_message();
+        return new user_message(); // the ok message IS the return value of this stub, see the TODO above
     }
 
 

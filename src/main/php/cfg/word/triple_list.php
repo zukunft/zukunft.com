@@ -822,7 +822,7 @@ class triple_list extends sandbox_list_named
             // rename any triple that re-declares an existing from/verb/to link under a different
             // name so the original triple is updated instead of dropping a duplicate-link insert
             // (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
-            $this->fill_by_name($cache, true);
+            $this->fill_by_name($cache, $msg, true, false);
             $this->rename_link_conflicts($msg);
 
             // repeat filling the database id to the triple list
@@ -856,7 +856,7 @@ class triple_list extends sandbox_list_named
                 $chk_lst = $this->triples_to_add_to_db();
 
                 // add the database id to the triple list of words and triples used until now
-                $chk_lst->fill_by_name($cache, true, false);
+                $chk_lst->fill_by_name($cache, $msg_chk, true, false);
 
                 // fill missing verbs
                 $chk_lst->fill_missing_verbs();
@@ -882,7 +882,7 @@ class triple_list extends sandbox_list_named
                 $db_lst_all->merge($db_lst);
 
                 // fill up the loaded list with db value to select only the triples that really needs to be inserted
-                $load_lst->fill_by_name($db_lst, true, false);
+                $load_lst->fill_by_name($db_lst, $msg_chk, true, false);
 
                 // select the triples that are ready to be added to the database
                 // pass the buffer (merged into $msg below) and file name so a triple that cannot be
@@ -936,9 +936,9 @@ class triple_list extends sandbox_list_named
 
 
             // fill up the main list with the words
-            $this->fill_by_name($cache, true);
+            $this->fill_by_name($cache, $msg, true, false);
             // fill up the main list with the triples to check if anything is missing
-            $this->fill_by_name($db_lst_all, true);
+            $this->fill_by_name($db_lst_all, $msg, true, false);
 
             // report missing triples
             $this->report_missing($msg);
@@ -957,19 +957,19 @@ class triple_list extends sandbox_list_named
      * select the related object by the name
      *
      * @param triple_list|sandbox_list_named $db_lst a list of sandbox objects that might have more vars set e.g. the db id
+     * @param user_message $msg to report a triple of this list that is missing in the given list
      * @param bool $fill_all force to include also the excluded names e.g. for import
      * @param bool $report_missing if true it is expected that all triples are in the given $db_lst
-     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     * @return bool true if every triple of this list could be filled
      */
     function fill_by_name(
         triple_list|sandbox_list_named $db_lst,
+        user_message                   $msg,
         bool                           $fill_all = false,
         bool                           $report_missing = true
-    ): user_message
+    ): bool
     {
-        $msg = new user_message();
-
-        // loop over the objects of theis list because it is expected to be smaller than tha cache list
+        // loop over the objects of this list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $trp) {
             $this->fill_triple_by_name($db_lst, $trp, $msg, $fill_all, $report_missing);
             if ($trp->needs_from()) {
@@ -977,7 +977,7 @@ class triple_list extends sandbox_list_named
             }
             $this->fill_triple_by_name($db_lst, $trp->get_to(), $msg, $fill_all, $report_missing);
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
     private function report_missing(user_message $msg): void
@@ -1014,7 +1014,7 @@ class triple_list extends sandbox_list_named
     {
         $usr = $this->get_user();
         if ($phr->id() == 0 and $phr->name($fill_all) != '') {
-            $db_obj = $db_lst->get_by_name($phr->name($fill_all), $fill_all);
+            $db_obj = $db_lst->get_by_name($phr->name($fill_all), $msg, $fill_all);
             if ($db_obj != null) {
                 $phr->fill($db_obj, $usr);
             } else {
@@ -1033,7 +1033,7 @@ class triple_list extends sandbox_list_named
     {
         global $sys;
 
-        $msg = new user_message();
+        $msg = new user_message(); // the message built here IS the return value of this function, so the caller merges it
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
                 if ($phr->get_verb() == null) {
@@ -1056,7 +1056,7 @@ class triple_list extends sandbox_list_named
     {
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
-            $msg_chk = new user_message($msg->usr);
+            $msg_chk = new user_message($msg->usr); // a per item buffer, because one triple that is not ready must not stop the list; it is merged into the request message at the end of the loop
             if ($trp->db_ready($msg_chk)) {
                 $trp_lst->add_by_key($trp);
             } else {

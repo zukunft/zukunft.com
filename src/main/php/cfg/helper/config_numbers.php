@@ -349,16 +349,22 @@ class config_numbers extends value_list
     /**
      * load the system configuration from the database to this object
      *
+     * the load uses an own message, because the cache write and the return value must judge only
+     * this load: import_file validates the config inside "if (!$msg->is_ok() or $validate)", so on
+     * that path the message of the caller is already not ok and the cache must still be written
+     *
+     * @param user_message $msg to report why the configuration could not be loaded
      * @param db_cache_type|type_object|null $typ the configaration type that should be loaded
      * @param user|null $usr for whom the configuration should be loaded
      * @param phrase|null $phr to select either the user or frontend configuration values
-     * @return user_message if something strange happened the message code ids and the parameters for humans
+     * @return bool true if the configuration has been loaded
      */
     function load_cfg(
+        user_message                   $msg,
         db_cache_type|type_object|null $typ = null,
         user|null                      $usr = null,
         ?phrase                        $phr = null
-    ): user_message
+    ): bool
     {
         global $sys;
 
@@ -377,33 +383,34 @@ class config_numbers extends value_list
             $typ->code_id = db_cache_types::SYSTEM_CONFIG;
             $typ->name = db_cache_types::SYSTEM_CONFIG_NAME;
         }
-        $msg = new user_message($usr);
+        $load_msg = new user_message($usr); // judges only this load, see above; merged into $msg below
         $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
-        if (!$this->read_cache($typ, $usr, $msg, $phr)) {
+        if (!$this->read_cache($typ, $usr, $load_msg, $phr)) {
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
-            $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG, $msg);
+            $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG, $load_msg);
             // the snap time is taken before the read, so that a change during the read is never cached as included
             $snap_time = new DateTime();
             // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
-            $this->load_by_phr($phr_sys_cfg, $msg);
+            $this->load_by_phr($phr_sys_cfg, $load_msg);
             // all config values are sent to the frontend, also the values of the other config parts
             // and their phrases, because the additional context is expected to be useful
             // and the complete config is expected to stay small
             // (see docs/llm/architecture.md if the config gets too big)
             if (!$this->is_empty()) {
                 log_debug($this->count() . ' config values loaded');
-                $this->load_phrases($msg);
+                $this->load_phrases($load_msg);
             } else {
                 log_warning('no config values loaded');
-                $msg->add_id(msg_id::CONFIG_EMPTY);
+                $load_msg->add_id(msg_id::CONFIG_EMPTY);
             }
-            if ($msg->is_ok()) {
+            if ($load_msg->is_ok()) {
                 $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
-                $this->write_cache($typ, $usr, $snap_time, $msg, $phr);
+                $this->write_cache($typ, $usr, $snap_time, $load_msg, $phr);
             }
         }
-        return $msg;
+        $msg->merge($load_msg);
+        return $load_msg->is_ok();
     }
 
     /**
@@ -565,7 +572,7 @@ class config_numbers extends value_list
             $cac->usr = $usr;
             $cac->status_id = db_cache_statuum::CLEAN_ID;
             $cac->last_update = $snap_time;
-            $save_msg = new user_message(user::system());
+            $save_msg = new user_message(user::system()); // the system user writes the row, see above
             if (!$cac->save($save_msg)) {
                 // a failure is only logged because the user already has the config values
                 log_warning('caching the config for ' . $usr->dsp_id()
@@ -638,30 +645,32 @@ class config_numbers extends value_list
      * load the system configuration values relevant for the frontend
      *
      * @param user $usr for whom the configuration should be loaded
-     * @return user_message if something strange happened the message code ids and the parameters for humans
+     * @param user_message $msg to report why the configuration could not be loaded
+     * @return bool true if the configuration has been loaded
      */
-    function load_frontend_cfg(user $usr, user_message $msg): user_message
+    function load_frontend_cfg(user $usr, user_message $msg): bool
     {
         global $sys;
         $phr = new phrase($usr);
         $phr->load_by_name(api::CONFIG_FRONTEND, $msg);
         $typ = $sys->typ_lst->cac_typ->get_by_code_id(db_cache_types::FRONTEND_CONFIG);
-        return $this->load_cfg($typ, $usr, $phr);
+        return $this->load_cfg($msg, $typ, $usr, $phr);
     }
 
     /**
      * load the system configuration values that the user can change
      *
      * @param user $usr for whom the configuration should be loaded
-     * @return user_message if something strange happened the message code ids and the parameters for humans
+     * @param user_message $msg to report why the configuration could not be loaded
+     * @return bool true if the configuration has been loaded
      */
-    function load_usr_cfg(user $usr, user_message $msg): user_message
+    function load_usr_cfg(user $usr, user_message $msg): bool
     {
         global $sys;
         $phr = new phrase($usr);
         $phr->load_by_name(api::CONFIG_USER, $msg);
         $typ = $sys->typ_lst->cac_typ->get_by_code_id(db_cache_types::USER_CONFIG);
-        return $this->load_cfg($typ, $usr, $phr);
+        return $this->load_cfg($msg, $typ, $usr, $phr);
     }
 
 

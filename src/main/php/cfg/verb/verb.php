@@ -960,15 +960,19 @@ class verb extends type_object
      * log
      */
 
-    // set the log entry parameter to delete a verb
-    private function log_del(): change
+    /**
+     * set the log entry parameter to delete a verb
+     * TODO Prio 2 this function has no caller yet; it takes the message like its sandbox siblings
+     *      so a failed change log write is reported once it is wired up
+     * @param user_message $msg to report a failed change log write to the requesting user
+     */
+    private function log_del(user_message $msg): change
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->get_user()->name);
-        $msg = new user_message();
         $log = new change($this->usr);
-        $log->set_action(change_actions::DELETE);
-        $log->set_table(change_tables::VERB);
-        $log->set_field(verb_db::FLD_NAME);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table(change_tables::VERB, $msg);
+        $log->set_field(verb_db::FLD_NAME, $msg);
         $log->old_value = $this->name;
         $log->new_value = null;
         $log->row_id = $this->id();
@@ -1100,7 +1104,7 @@ class verb extends type_object
 
         // check possible duplicates
         $sim = null;
-        $sim_msg = new user_message();
+        $sim_msg = new user_message(); // the duplicate messages only steer the branch below
         if ($msg->is_ok()) {
             if (!$this->has_id() or $this->is_key_updated($db_rec)) {
                 // get similar database row but ignore the duplicate messages for the moment

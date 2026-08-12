@@ -73,7 +73,7 @@ class start_ui_read_tests
         */
         $dto_ui = new data_object();
         $dto_ui->online = false;
-        $dto_ui->add_phrases($t_phr->phrase_list_start_view_ui());
+        $dto_ui->add_phrases($t_phr->phrase_list_start_view_ui(), $msg);
         $dto_ui->typ_lst_cache = $ui->dto->typ_lst_cache;
 
 

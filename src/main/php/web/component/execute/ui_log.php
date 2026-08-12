@@ -112,7 +112,12 @@ class ui_log
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function user_overwrites_table_pure(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
+    function user_overwrites_table_pure(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode = false
+    ): string
     {
         // the max number of chars of the what column and the max number of rows both come from the
         // frontend config (config.yaml > ... > change log > what limit / row limit)
@@ -120,9 +125,9 @@ class ui_log
         $result = '';
         $usr = $ui_sys->usr ?? null;
         if ($usr != null and ($usr->id() ?? 0) > 0) {
-            $my_lst = $this->prepared_change_log($dbo, $log_lst, $test_mode, $usr);
+            $my_lst = $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode, $usr);
             if (!$my_lst->is_empty()) {
-                $result = $this->table_pure($my_lst, $test_mode);
+                $result = $this->table_pure($my_lst, $msg, $test_mode);
             }
         }
         return $result;
@@ -225,7 +230,7 @@ class ui_log
     function user_system_errors(
         sys_log_list $err_lst,
         user_message $msg,
-        ?msg_id $ui_msg_code_id = null
+        ?msg_id      $ui_msg_code_id = null
     ): string
     {
         global $mtr;

@@ -195,7 +195,7 @@ class test_lib
 
         // load type lists from resource json file
         $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
-        $dto_ui->typ_lst_cache = new type_lists($api_msg);
+        $dto_ui->typ_lst_cache = new type_lists($api_msg, new user_message());
 
         // import system views from resource json file so that not all details need to be repeated in the test data creation class
         $imp = new import();
@@ -221,7 +221,8 @@ class test_lib
         $dto_base_ui->add_id_to_views();
         // add the components to the views
         //$dto_base_ui->add_components_to_views();
-        $dto_ui->merge_view_list($dto_base_ui->view_list());
+        $ui_msg = new user_message(); // the frontend merge needs a frontend message, not the backend one above
+        $dto_ui->merge_view_list($dto_base_ui->view_list(), $ui_msg);
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);

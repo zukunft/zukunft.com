@@ -126,7 +126,7 @@ class test_api extends test_base
         $api_types[] = api_types::TEST_MODE;
         $msg_to_frontend = $usr_obj->api_json($api_types);
         $dsp_obj->set_from_json($msg_to_frontend, $usr_msg_ui);
-        $array_to_backend = $dsp_obj->api_array($api_types);
+        $array_to_backend = $dsp_obj->api_array($api_types, $usr_msg_ui);
         // remove the empty fields to compare the "api save" message with the "api show" message
         // the "api show" message ($msg_to_frontend) should not contain empty fields
         // because they are irrelevant for the user and this reduces traffic

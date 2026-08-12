@@ -329,7 +329,7 @@ class formula_link extends sandbox_link
                 }
             }
             if (is_string($frm_json)) {
-                $frm = $dto?->get_formula_by_name($frm_json);
+                $frm = $dto?->get_formula_by_name($frm_json, $msg);
                 if ($frm == null) {
                     $msg->add(msg_id::FORMULA_MISSING_IMPORT, [
                         msg_id::VAR_FORMULA => $frm_json,
@@ -364,7 +364,7 @@ class formula_link extends sandbox_link
                 }
             }
             if (is_string($phr_json)) {
-                $phr = $dto?->get_phrase_by_name($phr_json);
+                $phr = $dto?->get_phrase_by_name($phr_json, $msg);
                 if ($phr == null) {
                     $msg->add(msg_id::PHRASE_MISSING_IMPORT, [
                         msg_id::VAR_PHRASE => $phr_json,
@@ -974,11 +974,11 @@ class formula_link extends sandbox_link
     function log_upd_field(user_message $msg): change
     {
         $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change($msg)) {
-            $log->set_class(formula_link::class);
+            $log->set_class(formula_link::class, $msg);
         } else {
-            $log->set_table(change_tables::FORMULA_LINK_USR);
+            $log->set_table(change_tables::FORMULA_LINK_USR, $msg);
         }
 
         return $log;

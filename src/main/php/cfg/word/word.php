@@ -476,7 +476,7 @@ class word extends sandbox_code_id
                     $this->set_view_id($wrd_view->id());
                 }
             } else {
-                $cac_msk = $dto->get_view_by_name($msk_name);
+                $cac_msk = $dto->get_view_by_name($msk_name, $msg);
                 if ($cac_msk != null) {
                     $wrd_view = $cac_msk;
                 } else {
@@ -614,14 +614,19 @@ class word extends sandbox_code_id
                     // and the standard value, so the 'my' tab can show the user overwrites, and
                     // the shared overwrites of the other users for the 'others' tab
                     if (!$typ_lst->test_mode()) {
-                        $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
+                        // a sub message for the user of this api call, which can differ from the
+                        // user of the request message; merged back so a failed overlay read is
+                        // reported instead of silently dropping the tab
+                        $ovr_msg = new user_message($usr);
+                        $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
                         if ($usr_ovr != []) {
                             $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
                         }
-                        $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
+                        $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
                         if ($oth_ovr != []) {
                             $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
                         }
+                        $msg->merge($ovr_msg);
                     }
                 }
             }
@@ -1954,9 +1959,9 @@ class word extends sandbox_code_id
         $msk_new->load_by_id($view_id, $msg);
 
         $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        $log->set_class(word::class);
-        $log->set_field(fields::FLD_VIEW);
+        $log->set_action(change_actions::UPDATE, $msg);
+        $log->set_class(word::class, $msg);
+        $log->set_field(fields::FLD_VIEW, $msg);
         if ($this->get_view_id() > 0) {
             $msk_old = new view($this->get_user());
             $msk_old->load_by_id($this->get_view_id(), $msg);
@@ -1997,7 +2002,7 @@ class word extends sandbox_code_id
                     $this->update('view of word', $msg);
                 } else {
                     if (!$this->has_usr_cfg()) {
-                        if (!$this->add_usr_cfg()) {
+                        if (!$this->add_usr_cfg($msg)) {
                             $msg->add_id(msg_id::ADD_USER_CONFIG_FAILED);
                         }
                     }

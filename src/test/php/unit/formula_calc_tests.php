@@ -69,6 +69,7 @@ class formula_calc_tests
 {
     function run(test_cleanup $t): void
     {
+        $msg = new user_message(); // a test is an entry point, so it creates the message the conversion reports into
 
         // init
         $lib = new library();
@@ -228,7 +229,7 @@ class formula_calc_tests
         // TODO Prio 2 add calculation test
         $test_name = 'formula city population reference text';
         $frm = $t_frm->formula_city_population();
-        $result = $frm->get_ref_text();
+        $result = $frm->get_ref_text($msg);
         $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . word_names::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . word_names::CITY_ID . '})';
         // building the reference text resolves the phrases, so a page timeout is used to avoid a false timeout
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);

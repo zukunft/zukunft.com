@@ -579,19 +579,19 @@ class import_convert_xbrl
      * @param array  $calc_arcs the calculation linkbase arcs with the child concept as key and the weight as value
      * @param array  $concepts the concept names used in the calculation linkbase
      * @param array  $facts all facts of the instance as extracted with extract_facts
-     * @param user_message|null $msg to report the inconsistencies of the facts
+     * @param user_message $msg to report the inconsistencies of the facts
      * @return array the data structure ready to be encoded as JSON
      */
     function build_data(
         array         $segments,
         string        $file_name,
+        user_message  $msg,
         string        $time = '',
         array         $statement = [],
         string        $currency = '',
         array         $calc_arcs = [],
         array         $concepts = [],
-        array         $facts = [],
-        ?user_message $msg = null
+        array         $facts = []
     ): array
     {
         $year = $this->year_of_file_name($file_name);
@@ -701,9 +701,6 @@ class import_convert_xbrl
         // add the values of all full year facts of the instance
         // e.g. the fair value disclosures with the dimension members as words
         if (count($facts) > 0) {
-            if ($msg == null) {
-                $msg = new user_message();
-            }
             foreach ($this->facts_json($facts, $source_name, $words, $triples, $msg) as $fact_value) {
                 $values[] = $fact_value;
             }
@@ -1130,10 +1127,11 @@ class import_convert_xbrl
      *
      * @param string $zip_path path to the XBRL fileset zip
      * @param string $file_name the name of the instance file e.g. "abb-20131231.xml"
+     * @param user_message $msg to report the inconsistencies of the instance facts
      * @param string $time     the creation timestamp or empty to use the current time
      * @return string a pretty-printed JSON string
      */
-    function convert(string $zip_path, string $file_name, string $time = '', ?user_message $msg = null): string
+    function convert(string $zip_path, string $file_name, user_message $msg, string $time = ''): string
     {
         // guard clauses for the two failure modes the CLI script handled
         if (!is_file($zip_path)) {
@@ -1157,10 +1155,10 @@ class import_convert_xbrl
      * @param string $folder path of the folder with the unpacked XBRL fileset
      * @param string $file_name the name of the instance file e.g. "abb-20131231.xml"
      * @param string $time   the creation timestamp or empty to use the current time
-     * @param user_message|null $msg to report the inconsistencies of the instance facts
+     * @param user_message $msg to report the inconsistencies of the instance facts
      * @return string a pretty-printed JSON string
      */
-    function convert_folder(string $folder, string $file_name, string $time = '', ?user_message $msg = null): string
+    function convert_folder(string $folder, string $file_name, user_message $msg, string $time = ''): string
     {
         if (!is_dir($folder)) {
             throw new RuntimeException("XBRL fileset folder not found: $folder");
@@ -1184,7 +1182,7 @@ class import_convert_xbrl
      * @param string $file_name the name of the instance file e.g. "abb-20131231.xml"
      * @param string $time         the creation timestamp or empty to use the current time
      * @param string $source_path  the zip or folder used to read the instance for the error message
-     * @param user_message|null $msg to report the inconsistencies of the instance facts
+     * @param user_message $msg to report the inconsistencies of the instance facts
      * @return string a pretty-printed JSON string
      */
     private function convert_instance(
@@ -1193,7 +1191,7 @@ class import_convert_xbrl
         string        $file_name,
         string        $time,
         string        $source_path,
-        ?user_message $msg = null
+        user_message  $msg
     ): string
     {
         $segments = $this->extract_segment_sales($instance_xml, $file_name);
@@ -1225,7 +1223,7 @@ class import_convert_xbrl
         // get all facts of the instance to convert e.g. the fair value disclosures
         $facts = $this->extract_facts($instance_xml);
 
-        $data = $this->build_data($segments, $file_name, $time, $statement, $currency, $calc_arcs, $concepts, $facts, $msg);
+        $data = $this->build_data($segments, $file_name, $msg, $time, $statement, $currency, $calc_arcs, $concepts, $facts);
         return library::json_for_humans($data);
     }
 
@@ -1237,12 +1235,13 @@ class import_convert_xbrl
      *
      * @param string $zip_path path to the XBRL fileset zip
      * @param string $file_name the name of the instance file e.g. "abb-20131231.xml"
+     * @param user_message $msg to report the inconsistencies of the instance facts
      * @param string $out_path output JSON path; empty => "ABB_<year>.json" in cwd
      * @return string the absolute or relative path of the written JSON file
      */
-    function convert_to_file(string $zip_path, string $file_name, string $out_path = ''): string
+    function convert_to_file(string $zip_path, string $file_name, user_message $msg, string $out_path = ''): string
     {
-        $json = $this->convert($zip_path, $file_name);
+        $json = $this->convert($zip_path, $file_name, $msg);
         $target = $out_path;
         if ($target === '') {
             $target = self::ISSUER_ABB . '_' . $this->year_of_file_name($file_name) . files::JSON;
@@ -1262,12 +1261,12 @@ class import_convert_xbrl
      * @param string $folder path of the folder with the unpacked XBRL fileset
      * @param string $file_name the name of the instance file e.g. "abb-20131231.xml"
      * @param string $time   the creation timestamp or empty to use the current time
-     * @param user_message|null $msg to report the inconsistencies of the instance facts
+     * @param user_message $msg to report the inconsistencies of the instance facts
      * @return string the path of the written JSON file
      */
-    function convert_folder_to_file(string $folder, string $file_name, string $time = '', ?user_message $msg = null): string
+    function convert_folder_to_file(string $folder, string $file_name, user_message $msg, string $time = ''): string
     {
-        $json = $this->convert_folder($folder, $file_name, $time, $msg);
+        $json = $this->convert_folder($folder, $file_name, $msg, $time);
         $folder_path = rtrim($folder, DIRECTORY_SEPARATOR);
         $target = $folder_path . DIRECTORY_SEPARATOR . basename($folder_path) . files::JSON;
         $written = file_put_contents($target, $json . "\n");

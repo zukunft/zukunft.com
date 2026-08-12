@@ -517,7 +517,7 @@ class value_base extends sandbox_value
 
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = $dto->source_list()?->get_by_name($src_name);
+            $src = $dto->source_list()?->get_by_name($src_name, $msg);
             if ($src == null) {
                 if ($db_con->is_open()) {
                     $msg->add(msg_id::SOURCE_MISSING_IMPORT,
@@ -657,11 +657,11 @@ class value_base extends sandbox_value
 
     function set_group_id_by_phrase_list(phrase_list $phr_lst): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the is_ok() gate below must judge only this value; caller merges it
         $db_phr_lst = new phrase_list($this->get_user());
         foreach ($this->phrase_list()->lst() as $phr) {
             if ($phr->id() == 0) {
-                $db_phr = $phr_lst->get_by_name($phr->name());
+                $db_phr = $phr_lst->get_by_name($phr->name(), $msg);
                 if ($db_phr == null) {
                     $msg->add(msg_id::PHRASE_MISSING_MSG,
                         [msg_id::VAR_NAME => $phr->name()]);
@@ -1517,7 +1517,7 @@ class value_base extends sandbox_value
      */
     function import_phrase_value(string $phr_name, float $value, ?object $test_obj = null): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // a per value message, because the import counts ok and failed separately
         log_debug();
 
         if ($test_obj) {
@@ -1975,11 +1975,11 @@ class value_base extends sandbox_value
                 $log = new change_values_norm($this->get_user());
             }
         }
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change()) {
-            $log->set_table(change_tables::VALUE);
+            $log->set_table(change_tables::VALUE, $msg);
         } else {
-            $log->set_table(change_tables::VALUE_USR);
+            $log->set_table(change_tables::VALUE_USR, $msg);
         }
         $log->group_id = $this->grp_id();
 
@@ -1988,9 +1988,10 @@ class value_base extends sandbox_value
 
     /**
      * set the log entry parameters for value parameter updates
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change actually a child object (prime, norm or big) with the parameters for this change
      */
-    function log_update_parameter(): change
+    function log_update_parameter(user_message $msg): change
     {
         log_debug();
         if ($this->is_prime()) {
@@ -2000,11 +2001,11 @@ class value_base extends sandbox_value
         } else {
             $log = new changes_norm($this->get_user());
         }
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change()) {
-            $log->set_table(change_tables::VALUE);
+            $log->set_table(change_tables::VALUE, $msg);
         } else {
-            $log->set_table(change_tables::VALUE_USR);
+            $log->set_table(change_tables::VALUE_USR, $msg);
         }
         $log->row_id = $this->grp_id();
 
@@ -2114,7 +2115,7 @@ class value_base extends sandbox_value
         $usr = $this->get_user();
 
         $result = '';
-        $msg = new user_message($usr);
+        $msg = new user_message($usr); // dead code (no caller), so nothing is dropped, see pending_prio_2.md
 
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();

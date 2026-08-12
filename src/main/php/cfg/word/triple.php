@@ -505,7 +505,7 @@ class triple extends sandbox_link_named
                     if ($dto == null) {
                         $this->set_from($this->import_phrase($value, $msg));
                     } else {
-                        $phr = $dto->get_phrase_by_name($value);
+                        $phr = $dto->get_phrase_by_name($value, $msg);
                         if ($phr == null) {
                             // create a phrase without saving to the database
                             $phr = new phrase($this->get_user());
@@ -533,7 +533,7 @@ class triple extends sandbox_link_named
                 if ($dto == null) {
                     $this->set_to($this->import_phrase($value, $msg));
                 } else {
-                    $phr = $dto->get_phrase_by_name($value);
+                    $phr = $dto->get_phrase_by_name($value, $msg);
                     if ($phr == null) {
                         // create a phrase without saving to the database
                         $phr = new phrase($this->get_user());
@@ -603,7 +603,7 @@ class triple extends sandbox_link_named
                     $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
-                $cac_msk = $dto->get_view_by_name($value);
+                $cac_msk = $dto->get_view_by_name($value, $msg);
                 if ($cac_msk != null) {
                     $trp_view = $cac_msk;
                 } else {
@@ -856,14 +856,19 @@ class triple extends sandbox_link_named
                     // and the standard value, so the 'my' tab can show the user overwrites, and
                     // the shared overwrites of the other users for the 'others' tab
                     if (!$typ_lst->test_mode()) {
-                        $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
+                        // a sub message for the user of this api call, which can differ from the
+                        // user of the request message; merged back so a failed overlay read is
+                        // reported instead of silently dropping the tab
+                        $ovr_msg = new user_message($usr);
+                        $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
                         if ($usr_ovr != []) {
                             $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
                         }
-                        $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
+                        $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
                         if ($oth_ovr != []) {
                             $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
                         }
+                        $msg->merge($ovr_msg);
                     }
                 }
             }
@@ -2788,14 +2793,14 @@ class triple extends sandbox_link_named
     /**
      * set the log entry parameter for a new value
      * e.g. that the user can see "added ABB is a company"
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
-        $msg = new user_message();
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->new_from = $this->get_from();
         $log->new_link = $this->get_verb();
         $log->new_to = $this->get_to();
@@ -2811,11 +2816,11 @@ class triple extends sandbox_link_named
     function log_upd(user_message $msg): change_link
     {
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change($msg)) {
-            $log->set_table(change_tables::TRIPLE);
+            $log->set_table(change_tables::TRIPLE, $msg);
         } else {
-            $log->set_table(change_tables::TRIPLE_USR);
+            $log->set_table(change_tables::TRIPLE_USR, $msg);
         }
 
         return $log;
@@ -2824,14 +2829,14 @@ class triple extends sandbox_link_named
     /**
      * set the log entry parameter to delete a triple
      * e.g. that the user can see "ABB is a company not anymore"
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_del_link(): change_link
+    function log_del_link(user_message $msg): change_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
-        $msg = new user_message();
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_table(change_tables::TRIPLE);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_table(change_tables::TRIPLE, $msg);
         $log->old_from = $this->get_from();
         $log->old_link = $this->get_verb();
         $log->old_to = $this->get_to();
@@ -2847,11 +2852,11 @@ class triple extends sandbox_link_named
     function log_upd_field(user_message $msg): change
     {
         $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change($msg)) {
-            $log->set_table(change_tables::TRIPLE);
+            $log->set_table(change_tables::TRIPLE, $msg);
         } else {
-            $log->set_table(change_tables::TRIPLE_USR);
+            $log->set_table(change_tables::TRIPLE_USR, $msg);
         }
 
         return $log;

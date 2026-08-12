@@ -422,7 +422,6 @@ class word_write_tests
         $result = $usr_msg->text();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.';
-        $target = 'user message translation for position -1 not found';
         $t->assert('triple cannot by renamed to an already used word name', $result, $target);
 
         // ... or formula any more

@@ -342,7 +342,7 @@ class type_lists
         if (!$cac->is_outdated()) {
             if (is_array($cac->data)) {
                 $api_json = $cac->data[json_fields::BODY] ?? $cac->data;
-                $msg_sys = new user_message(user::system());
+                $msg_sys = new user_message(user::system()); // a message for the system user, because the cached types are read as the system user; merged into the request message if the cached json is rejected
                 $result = $this->fill_from_api_json($api_json, $msg_sys);
                 if (!$msg_sys->is_ok()) {
                     log_warning('cached types json rejected: ' . $msg_sys->all_message_text());

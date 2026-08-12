@@ -70,7 +70,7 @@ if ($db_con->is_open()) {
         if ($phr_typ_id != 0) {
             $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
             $phr_typ->load_by_id($phr_typ_id, $msg);
-            $result = $phr_typ->api_json();
+            $result = $phr_typ->api_json([], $msg);
         } else {
             $msg->add_message_text('phrase type id is missing');
         }

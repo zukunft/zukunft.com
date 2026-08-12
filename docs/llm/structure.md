@@ -189,6 +189,10 @@ show and the user sees nothing at all.
 - The failure must reach the user: a backend write that reports "not ok" has to
   propagate into the frontend `$msg` (see `docs/llm/state-and-messages.md`), not
   be swallowed by a conversion or an `if ($msg->is_ok())` gate that hides it.
+  Recording the reason on a message that nobody reads is the same silent failure
+  one level later, so a message created below the entry point is merged, returned,
+  read or kept — see "A created message must reach the caller" in
+  `docs/llm/state-and-messages.md`, which `php_user_message_creation_tests` checks.
 
 This is the `$msg` counterpart of "log the unexpected branch": `log_err` makes an
 *internal* inconsistency visible to developers; a `$msg` entry makes a *user-
@@ -220,6 +224,41 @@ a "verb missing — please pick a verb" message, not just `log_err` and return a
 empty verb. And it must do so on *every* branch that falls back to `new verb()`
 (the missing id, the id `0`, and the null value) — each of those empty verbs is
 the same user-relevant problem, so none may be left silent.
+
+### `log_err` alone is the transitional channel — the target is `log_err_msg`
+
+Even the first channel above is only half the answer. A bare `log_err` tells the
+**admin** what broke and leaves the **user** staring at a page that silently did
+nothing. `log_err_msg($txt, $msg)` does both in one call: the technical text goes
+to `sys_log` exactly as before, and the user gets `msg_id::INTERNAL` with the log
+link — a generic "something internal failed, reference X", never the internals
+themselves. `log_warning_msg($txt, $msg)` is the same for the warning level
+(`msg_id::INTERNAL_WARNING`, added with `ok = true` so it does not abort).
+
+So the long-term target is that **almost every `log_err` becomes `log_err_msg`**.
+The table above still decides *which message the user sees* — a specific `msg_id`
+when the user can fix it, the generic internal notice when they cannot — but
+"nobody tells the user at all" stops being an option.
+
+This is a migration, not a rewrite: the bare `log_err` calls still outnumber the
+`log_err_msg` ones by roughly ten to one, and converting them in one sweep would
+be untestable. Do it opportunistically instead:
+
+> **When you change anything in a function that contains a `log_err`, give that
+> function a `user_message $msg` parameter (threaded from its callers) and switch
+> its `log_err` calls to `log_err_msg`.** Adding the parameter is the point — once
+> `$msg` is in the signature, the switch is one word per call.
+
+Two cases stay on the bare `log_err`, and both are recognisable:
+
+- the function has **no caller that could hold a `$msg`** — an entry point, a
+  bootstrap step, a cron job, or a display function that only returns HTML;
+- the message would fire on a **normal** path, where a notice is noise rather
+  than information (a not-yet-filled id during an import, see
+  `docs/llm/state-and-messages.md` on which message belongs where).
+
+Before threading, check what the function reports on the happy path — turning a
+silent drop into user-visible noise is the failure mode this rule can cause.
 
 ## Whatever happens, avoid an uncaught PHP fatal
 

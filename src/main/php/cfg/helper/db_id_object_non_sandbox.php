@@ -274,7 +274,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
             if ($sc_par_lst_used->incl_log()) {
                 // log functions must always use named parameters
                 $sc_par_lst_used->add(sql_type::NAMED_PAR);
-                $qp = $this->sql_delete_and_log($sc, $qp, $msg->usr, $sc_par_lst_used);
+                $qp = $this->sql_delete_and_log($sc, $qp, $msg->usr, $msg, $sc_par_lst_used);
             } else {
                 $par_lst = [$this->id()];
                 $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
@@ -291,12 +291,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param sql_par $qp the query parameter with the name already set
      * @param user $usr_req the user who has requested the deletion
      * @param sql_type_list $sc_par_lst
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator   $sc,
         sql_par       $qp,
         user          $usr_req,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -357,8 +359,8 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $sc_log = clone $sc;
         if ($key_fld != '') {
             $log = new change($usr_req);
-            $log->set_class($this::class);
-            $log->set_field($key_fld);
+            $log->set_class($this::class, $msg);
+            $log->set_field($key_fld, $msg);
             $log->old_value = $this->unique_value();
             $log->new_value = null;
             $qp_log = $log->sql_insert_log(

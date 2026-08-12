@@ -329,7 +329,7 @@ class component extends sandbox_code_id
                 $this->link_type_id = $db_row[component_fields::FLD_LINK_TYPE];
             }
             if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
-                $this->set_formula_by_id($db_row[formula_fields::FLD_ID]);
+                $this->set_formula_by_id($db_row[formula_fields::FLD_ID], $msg);
             }
             if (array_key_exists(component_fields::FLD_COL_PHRASE, $db_row)) {
                 $this->reload_col_phrase($msg, $db_row[component_fields::FLD_COL_PHRASE]);
@@ -709,13 +709,14 @@ class component extends sandbox_code_id
 
     /**
      * define or remove the phrase that is used as the second selection for table columns
+     * TODO Prio 2 suggest the possible sub phrases if the given phrase has no relation to the
+     *      column phrase; that check would need a user_message parameter, today nothing is reported
      * @param phrase|null $phr e.g. if "city" and "canton" is the col_phrase the cities of each canton are used
-     * @return user_message if the sub phrase has no relation to the column phrase a suggestion of the possible sub phrases
+     * @return void
      */
-    function set_col_sub_phrase(?phrase $phr): user_message
+    function set_col_sub_phrase(?phrase $phr): void
     {
         $this->col_sub_phrase = $phr;
-        return new user_message();
     }
 
     function get_col_sub_phrase_id(): int
@@ -877,11 +878,11 @@ class component extends sandbox_code_id
      * TODO use cache to reduce the db loads
      * TODO use this as a sample for all row_mappers
      * @param int|null $id the id for the formula
-     * @return user_message message for the user if the id is strange
+     * @param user_message $msg to report an id that is neither null nor a valid formula id
+     * @return void
      */
-    function set_formula_by_id(?int $id): user_message
+    function set_formula_by_id(?int $id, user_message $msg): void
     {
-        $msg = new user_message();
         $frm = null;
         if ($id != null) {
             if ($id > 0) {
@@ -897,18 +898,17 @@ class component extends sandbox_code_id
             }
         }
         $this->frm = $frm;
-        return $msg;
     }
 
     /**
      * set the formula used for the component
-     * @param formula $frm
-     * @return user_message if setting the formula does not make sense with a suggested solution
+     * like the set_formula of formula_link and result this reports nothing
+     * @param formula $frm the formula that the component shows
+     * @return void
      */
-    function set_formula(formula $frm): user_message
+    function set_formula(formula $frm): void
     {
         $this->frm = $frm;
-        return new user_message();
     }
 
     function get_formula(): ?formula
@@ -1423,13 +1423,18 @@ class component extends sandbox_code_id
      * log
      */
 
-    // set the log entry parameters for a value update
-    function log_link($dsp): bool
+    /**
+     * set the log entry parameters to link a display component ($cmp) to a view ($dsp)
+     * @param $dsp the view to which this component is linked
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return bool true if the link has been logged
+     */
+    function log_link($dsp, user_message $msg): bool
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_class(component_link::class);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_class(component_link::class, $msg);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id();
@@ -1439,13 +1444,18 @@ class component extends sandbox_code_id
         return $result;
     }
 
-    // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
-    function log_unlink($dsp): bool
+    /**
+     * set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
+     * @param $dsp the view from which this component is unlinked
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return bool true if the unlink has been logged
+     */
+    function log_unlink($dsp, user_message $msg): bool
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_class(component_link::class);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_class(component_link::class, $msg);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id();

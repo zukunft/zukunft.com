@@ -205,9 +205,9 @@ class ui_preview extends ui_base
      * @return string the html code of the centered change table, or an empty string if nothing changed
      */
     function popup_changes(
+        user_message                                          $msg,
         array                                                 $url_array = [],
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
-        user_message                                          $msg = new user_message()
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null
     ): string
     {
         global $mtr;

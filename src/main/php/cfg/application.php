@@ -141,7 +141,7 @@ class application
         // or with one select per type list if the cache is missing or outdated
         $sys->typ_lst->load_cached($db_con, $msg);
 
-        $this->load_system_config();
+        $this->load_system_config($msg);
 
         // honor the pod switch for the types cache, which is only known once the config is loaded
         global $cfg;
@@ -203,7 +203,7 @@ class application
         // or with one select per type list if the cache is missing or outdated
         $sys->load_type_lists_cached($db_con, $msg);
 
-        $this->load_system_config();
+        $this->load_system_config($msg);
 
         // honor the pod switch for the types cache, which is only known once the config is loaded
         global $cfg;
@@ -218,9 +218,10 @@ class application
      * e.g. the permission check of a user without login (user->is_blocked) cannot be done
      * and would allow the database changes that this pod does not permit
      *
+     * @param user_message $msg to report why the system configuration could not be loaded
      * @return void
      */
-    private function load_system_config(): void
+    private function load_system_config(user_message $msg): void
     {
         global $cfg;
 
@@ -232,7 +233,7 @@ class application
         $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
 
         $cfg = new config_numbers($usr_sys);
-        $cfg->load_cfg(null, $usr_sys);
+        $cfg->load_cfg($msg, null, $usr_sys);
     }
 
     function end_api(sql_db $db_con): void
@@ -353,7 +354,7 @@ class application
             // check the system setup as the virtual system user, because this is a system call
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
-            $msg = new user_message(user::system());
+            $msg = new user_message(user::system()); // the db check is a system call, see above
             if (!$db_chk->db_check($db_con, $msg)) {
                 echo '\n';
                 echo $msg->all_message_text();
@@ -375,7 +376,7 @@ class application
                 $sys->load_cache_type($db_con, $msg);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
-                $cfg->load_cfg(null, $usr_sys);
+                $cfg->load_cfg($msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
                 // preload all types from the database
@@ -385,7 +386,7 @@ class application
                 $sys->load_type_lists($db_con, $msg);
 
                 $log = new change_log($usr_sys);
-                $db_changed = $log->create_log_references($db_con);
+                $db_changed = $log->create_log_references($db_con, $msg);
 
                 // reload the type list if needed and trigger an update in the frontend
                 // even tough the update of the preloaded list should already be done by the single adds
@@ -434,7 +435,7 @@ class application
                 $sys_script->code_id = $sys->script;
                 $sys_usr = new user();
                 $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
-                $msg_sys = new user_message($sys_usr);
+                $msg_sys = new user_message($sys_usr); // the system user saves the script type, merged below
                 $sys_script->save($msg_sys);
                 if ($msg_sys->is_ok()) {
                     $sys_script_id = $sys_script->id();

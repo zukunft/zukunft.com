@@ -200,7 +200,7 @@ class view_base extends sandbox_code_id
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
@@ -208,7 +208,7 @@ class view_base extends sandbox_code_id
 
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::STYLE] = $this->get_style_id();
-        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst);
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst, $msg);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

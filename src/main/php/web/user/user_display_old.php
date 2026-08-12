@@ -115,7 +115,7 @@ class user_display_old extends user
     /**
      * display word changes by the user which are not (yet) standard
      */
-    function dsp_sandbox_wrd($back): string
+    function dsp_sandbox_wrd(user_message $msg, string $back): string
     {
         log_debug($this->id());
 
@@ -133,7 +133,7 @@ class user_display_old extends user
              WHERE u.user_id = " . $this->id() . "
                AND u.word_id = t.word_id;";
         $db_con->usr_id = $this->id();
-        $wrd_lst = $db_con->get_old($sql);
+        $wrd_lst = $db_con->get_old($sql, $msg);
 
         // prepare to show the word link
         $row_nbr = 0;
@@ -201,7 +201,7 @@ class user_display_old extends user
              WHERE u.user_id = " . $this->id() . "
                AND u.triple_id = l.triple_id;";
         }
-        $sbx_lst = $db_con->get_old($sql);
+        $sbx_lst = $db_con->get_old($sql, $msg);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different word_entry_link than a normal viewer
@@ -238,7 +238,7 @@ class user_display_old extends user
                 // check database consistency and correct it if needed
                 if ($trp_usr->name() == $wrd_std->name()
                     and $trp_usr->is_excluded() == $wrd_std->is_excluded()) {
-                    $trp_usr->del_usr_cfg();
+                    $trp_usr->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row triples
@@ -271,17 +271,17 @@ class user_display_old extends user
                            AND u.triple_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get_old($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other, $msg);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->load_by_id($wrd_lnk_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user triples with one query
                         $wrd_lnk_other = clone $trp_usr;
-                        $wrd_lnk_other->set_user($usr_other);
+                        $wrd_lnk_other->set_user($usr_other, $msg);
                         $wrd_lnk_other->load_by_id($trp_usr->id(), $msg);
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
-                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[fields::FLD_EXCLUDED]);
+                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[fields::FLD_EXCLUDED], $msg);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -446,11 +446,11 @@ class user_display_old extends user
                 // check database consistency and correct it if needed
                 if ($frm_usr->predicate_id == $frm_std->predicate_id
                     and $frm_usr->is_excluded() == $frm_std->is_excluded()) {
-                    $frm_usr->del_usr_cfg();
+                    $frm_usr->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row formula_links
-                    $frm_ui = new formula($frm_usr->formula()->api_json());
+                    $frm_ui = new formula($frm_usr->formula()->api_json([], $msg));
                     $sandbox_item_name = $frm_ui->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
@@ -458,7 +458,7 @@ class user_display_old extends user
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json([], $msg));
                         $sandbox_usr_txt = $phr_ui->name_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
@@ -467,7 +467,7 @@ class user_display_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json([], $msg));
                         $sandbox_std_txt = $phr_ui->name_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
@@ -499,7 +499,7 @@ class user_display_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $to_ui = new phrase($frm_lnk_other->tob()->api_json());
+                        $to_ui = new phrase($frm_lnk_other->tob()->api_json([], $msg));
                         $sandbox_other .= $to_ui->name_linked();
                     }
                     $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
@@ -544,6 +544,8 @@ class user_display_old extends user
     function dsp_sandbox_val($back): string
     {
         log_debug($this->id());
+
+        $msg = new user_message(); // a legacy display function without a caller message, see dsp_sandbox_wrd_link
 
         // TODO Prio 0 split and move the database part to the backend
         $db_con = new sql_db();
@@ -617,13 +619,13 @@ class user_display_old extends user
                 if ($val_usr->number() == $val_std->number()
                     and $val_usr->source === $val_std->source
                     and $val_usr->is_excluded() == $val_std->is_excluded()) {
-                    $val_usr->del_usr_cfg();
+                    $val_usr->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_ui = new phrase_list($val_usr->grp->phrase_list()->api_json());
+                        $phr_lst_ui = new phrase_list($val_usr->grp->phrase_list()->api_json([], $msg));
                         $sandbox_item_name = $phr_lst_ui->name_linked();
                     }
 
@@ -631,7 +633,7 @@ class user_display_old extends user
                     if ($val_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $val_usr->val_formatted();
+                        $sandbox_usr_txt = $val_usr->val_formatted($msg);
                     }
                     $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'value_edit.php?id=' . $val_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 
@@ -790,7 +792,7 @@ class user_display_old extends user
                     and $usr_ui->description == $dsp_std->description
                     and $usr_ui->type_id($msg) == $dsp_std->type_id($msg)
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
-                    $usr_ui->del_usr_cfg();
+                    $usr_ui->del_usr_cfg($msg);
                 } else {
 
                     // format the user view
@@ -956,7 +958,7 @@ class user_display_old extends user
                     and $usr_ui->description == $dsp_std->description
                     and $usr_ui->type_id($msg) == $dsp_std->type_id($msg)
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
-                    $usr_ui->del_usr_cfg();
+                    $usr_ui->del_usr_cfg($msg);
                 } else {
 
                     // format the user component
@@ -1125,7 +1127,7 @@ class user_display_old extends user
                 if ($usr_ui->order_nbr == $dsp_std->order_nbr
                     and $usr_ui->position_type == $dsp_std->position_type
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
-                    $usr_ui->del_usr_cfg();
+                    $usr_ui->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row component_links
@@ -1225,7 +1227,7 @@ class user_display_old extends user
         $usr = $ui_sys->usr;
         $result = ''; // reset the html code var
         $html = new html_base();
-        $msg = new user_message();
+        $msg = new user_message(); // a deprecated direct db display function without a caller message
 
         // create the databased link
         $db_con->usr_id = $this->id();
@@ -1305,7 +1307,7 @@ class user_display_old extends user
                     and $usr_ui->type_id == $dsp_std->type_id
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
-                    //$usr_ui->del_usr_cfg();
+                    //$usr_ui->del_usr_cfg($msg);
                     $usr_ui->del($msg);
                 } else {
 

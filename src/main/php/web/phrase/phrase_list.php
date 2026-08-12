@@ -123,7 +123,7 @@ class phrase_list extends sandbox_list_named
                         $phr->set_obj(new triple());
                     }
                     $phr->set_id($id_int);
-                    $this->add($phr);
+                    $this->add($phr, $msg);
                 }
             }
         }
@@ -196,12 +196,12 @@ class phrase_list extends sandbox_list_named
      * to offer to the user at least a basic selection even if the backend connection is temporary lost
      * @return bool
      */
-    function load_fallback(): bool
+    function load_fallback(user_message $msg): bool
     {
         $result = false;
         if ($this->is_empty()) {
             // TODO Prio 3 replace with an frequently generated preloaded list
-            $this->set_lst($this->phrases_often_used()->lst());
+            $this->set_lst($this->phrases_often_used($msg)->lst());
             $result = true;
         }
         return $result;
@@ -210,20 +210,20 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list with the most often used phrases as a frontend fallback list
      */
-    private function phrases_often_used(): phrase_list
+    private function phrases_often_used(user_message $msg): phrase_list
     {
         $lst = new phrase_list();
         foreach (words::BASE_WORDS as $wrd_array) {
             $wrd = new word();
             $wrd->set_name($wrd_array[0]);
             $wrd->set_id($wrd_array[1]);
-            $lst->add($wrd->phrase());
+            $lst->add($wrd->phrase(), $msg);
         }
         foreach (triples::BASE_TRIPLES as $trp_array) {
             $trp = new triple();
             $trp->set_name($trp_array[0]);
             $trp->set_id($trp_array[1]);
-            $lst->add($trp->phrase());
+            $lst->add($trp->phrase(), $msg);
         }
         return $lst;
     }
@@ -361,14 +361,14 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb the verb to filter the child phrases
      * @return phrase_list the filtered children
      */
-    function children(phrase $phr, verb|null $vrb = null): phrase_list
+    function children(phrase $phr, user_message $msg, verb|null $vrb = null): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->get_from()->id() == $phr->id()) {
-                        $result->add($trp);
+                        $result->add($trp, $msg);
                     }
                 }
             }
@@ -383,14 +383,14 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb the verb to filter the child phrases
      * @return phrase_list the filtered parents
      */
-    function parents(phrase $phr, verb|null $vrb = null): phrase_list
+    function parents(phrase $phr, user_message $msg, verb|null $vrb = null): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->get_to()->id() == $phr->id()) {
-                        $result->add($trp->get_from());
+                        $result->add($trp->get_from(), $msg);
                     }
                 }
             }
@@ -405,14 +405,14 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb the verb to filter the child phrases
      * @return phrase_list the filtered parents
      */
-    function parent_triples(phrase $phr, verb|null $vrb = null): phrase_list
+    function parent_triples(phrase $phr, user_message $msg, verb|null $vrb = null): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->get_to()->id() == $phr->id()) {
-                        $result->add($trp);
+                        $result->add($trp, $msg);
                     }
                 }
             }
@@ -427,14 +427,14 @@ class phrase_list extends sandbox_list_named
      * @param array $vrb_ids the database ids of the verbs to exclude
      * @return phrase_list the triples to the given phrase without the excluded verbs
      */
-    function parent_triples_ex_verbs(phrase $phr, array $vrb_ids): phrase_list
+    function parent_triples_ex_verbs(phrase $phr, array $vrb_ids, user_message $msg): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if (!in_array($trp->get_verb()?->id(), $vrb_ids)) {
                     if ($trp->get_to()->id() == $phr->id()) {
-                        $result->add($trp);
+                        $result->add($trp, $msg);
                     }
                 }
             }
@@ -546,16 +546,16 @@ class phrase_list extends sandbox_list_named
                     }
                     // TODO check if old can ge removed: if ($phr->id() > 0) {
                     if (get_class($phr->obj()) == word::class) {
-                        $wrd_lst->add($phr->obj());
+                        $wrd_lst->add($phr->obj(), $msg);
                     } elseif (get_class($phr->obj()) == triple::class) {
                         // use the recursive triple function to include the foaf words
-                        $sub_wrd_lst = $phr->obj()->wrd_lst();
+                        $sub_wrd_lst = $phr->obj()->wrd_lst($msg);
                         foreach ($sub_wrd_lst->lst() as $wrd) {
                             if ($wrd->name() == '') {
                                 $wrd->load_by_id($wrd->id(), $msg);
                                 log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                             }
-                            $wrd_lst->add($wrd);
+                            $wrd_lst->add($wrd, $msg);
                         }
                     } else {
                         log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj()->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
@@ -572,7 +572,7 @@ class phrase_list extends sandbox_list_named
      * get the words from the phrase list
      * @return word_list with the direct words of the phrase list
      */
-    function word_list(): word_list
+    function word_list(user_message $msg): word_list
     {
         $wrd_lst = new word_list();
 
@@ -586,7 +586,7 @@ class phrase_list extends sandbox_list_named
             } elseif ($wrd->name() == '') {
                 log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
             } elseif ($wrd::class == word::class) {
-                $wrd_lst->add($wrd);
+                $wrd_lst->add($wrd, $msg);
             }
         }
 
@@ -597,7 +597,7 @@ class phrase_list extends sandbox_list_named
      * get the triples from the phrase list
      * @return triple_list with the direct triples of the phrase list
      */
-    function triple_list(): triple_list
+    function triple_list(user_message $msg): triple_list
     {
         $trp_lst = new triple_list();
 
@@ -611,7 +611,7 @@ class phrase_list extends sandbox_list_named
             } elseif ($trp->name() == '') {
                 log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
             } elseif ($trp::class == triple::class) {
-                $trp_lst->add($trp);
+                $trp_lst->add($trp, $msg);
             }
         }
 
@@ -683,14 +683,14 @@ class phrase_list extends sandbox_list_named
      * @param array $vrb_ids the database ids of the verbs to exclude (e.g. symbol, alias, is a)
      * @return string the html code of the grouped related phrases
      */
-    function name_link_grouped_by_verb(phrase $phr, array $vrb_ids): string
+    function name_link_grouped_by_verb(phrase $phr, array $vrb_ids, user_message $msg): string
     {
         $html = new html_base();
         $result = '';
 
         // collect the linked (from) phrases per verb of the parent triples
         $grp_lst = [];
-        foreach ($this->parent_triples_ex_verbs($phr, $vrb_ids)->lst() as $trp) {
+        foreach ($this->parent_triples_ex_verbs($phr, $vrb_ids, $msg)->lst() as $trp) {
             $vrb = $trp->get_verb();
             $from = $trp->get_from();
             if ($vrb != null and $from != null) {
@@ -698,7 +698,7 @@ class phrase_list extends sandbox_list_named
                 if (!array_key_exists($vrb_id, $grp_lst)) {
                     $grp_lst[$vrb_id] = ['verb' => $vrb, 'phrases' => new phrase_list()];
                 }
-                $grp_lst[$vrb_id]['phrases']->add($from);
+                $grp_lst[$vrb_id]['phrases']->add($from, $msg);
             }
         }
 
@@ -781,7 +781,7 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
             if ($phr->is_measure($msg)) {
-                $result->add($phr);
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -795,7 +795,7 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
             if (!$phr->is_measure($msg)) {
-                $result->add($phr);
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -809,7 +809,7 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
             if (!$phr->is_time($msg)) {
-                $result->add($phr);
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -823,7 +823,7 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
             if ($phr->is_info($msg)) {
-                $result->add($phr);
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -837,7 +837,7 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
             if (!$phr->is_info($msg)) {
-                $result->add($phr);
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -1082,7 +1082,7 @@ class phrase_list extends sandbox_list_named
             $result .= 'Nothing linked to ' . $root_phr->name() . ' until now. Click here to link it.';
         } else {
             $phr_lst = new phrase_list();
-            $phr_lst->set_from_json($this->api_json());
+            $phr_lst->set_from_json($this->api_json([], $msg));
             $wrd_lst = $phr_lst->wrd_lst_all($msg);
             $result .= $wrd_lst->tbl($back);
             foreach ($this->lst() as $phr) {

@@ -118,6 +118,218 @@ the next section), to every function that needs to know who is asking.
 - **Right**: `function url_to_action(array $url_array, user_message $msg, ...): array`
 - **Wrong**: creating `new user_message()` inside a helper and returning/echoing the message directly
 
+### Created once at the entry point — every other creation is a commented exception
+
+Outside tests, a `user_message` is created **once per request** and only by the
+entry point that answers it: `http/view.php` and the other `http/` scripts for
+the frontend, `api/*/index.php` for the backend. Everything below receives that
+one instance as `$msg`.
+
+A creation below an entry point is therefore an **exception**, and every
+exception carries a comment **behind the creation on the same line** saying why a
+local message is needed — not on the line above, where it reads as a comment on
+the block that follows instead of on the creation itself:
+
+```php
+$lvl_msg = new user_message($msg->usr); // a buffer, because a failed level is retried
+…
+$msg->merge($lvl_msg);
+```
+
+Keep it to one short line. Longer rationale (which caller, which gate, why the
+threading would break) belongs in the function's docblock, not stacked above the
+creation. The only creations that still carry a comment *above* them are blocks
+of sibling buffers declared on consecutive lines, which share one comment.
+
+The legitimate reasons are narrow: a **buffer that is merged back**, a message
+for a **different user** (a system-user bootstrap), or a **sub-result the caller
+inspects** with `is_ok()`. A fresh message that is neither merged nor inspected
+silently drops every error it collects — that is the bug this rule prevents.
+
+A `user_message $msg = new user_message()` **default parameter value** is the
+same drop in disguise: a caller that passes nothing loses its messages. Treat it
+as a threading gap, not as a solution.
+
+The coded check is `coding_rule_tests::php_user_message_creation_tests`, which
+scans the library trees (backend model, api objects, frontend, shared — the
+entry points sit outside them) and regenerates
+`docs/code_user_message_exceptions.md` with every still-unexplained creation and
+every parameter default. The doc is the work list: it must shrink with each
+threading pass and a new unexplained creation fails the test by changing it.
+
+A block of buffers that belong together (the per-level messages of an import
+loop) is declared on consecutive lines and shares one comment above the block —
+the check understands that, so don't repeat the same sentence five times.
+
+### A created message must reach the caller — a message is never lost
+
+A comment says *why* a message is created; it does not say that anybody ever
+reads it. So the second half of the rule: whatever a created message collects
+**leaves the function again**. Exactly four endings count.
+
+```php
+$sub_msg = new user_message($msg->usr); // a buffer of the retried level
+$this->save_level($sub_msg);
+$msg->merge($sub_msg);                  // 1. merged into the caller's message
+```
+
+```php
+return $sub_msg;                        // 2. returned to the caller
+if ($sub_msg->is_ok()) { … }            // 3. read here to steer the branch
+$this->msg = new user_message();        // 4. kept in an object field the caller reads
+```
+
+Everything else is a lost message. The worst form has no name at all, because
+then not even a later line could read it:
+
+```php
+$this->set_type_id($id, new user_message($usr));   // wrong - created only to fill a required parameter
+```
+
+The call reports its permission error into a message that dies on the same line.
+Thread the caller's `$msg` in instead — the required parameter is asking for the
+message of the request, not for *a* message.
+
+A drop that is genuinely intended (a property hook that takes no parameter, a
+deprecated display path with no caller message, the log writer itself) says so
+with the words **`not reported`** in the comment behind the creation:
+
+```php
+$dsp_msg = new user_message(); // not reported: a property hook takes no caller message
+```
+
+That marker is the only thing that silences the check, so a drop is always a
+deliberate, reviewable decision instead of an oversight. The same
+`php_user_message_creation_tests` run lists every still-lost message under
+"messages that never reach the caller" in
+`docs/code_user_message_exceptions.md`; like the other sections it is a work
+list that shrinks, and a new lost message fails the test by changing the doc.
+
+### `$msg` is never null — no `?user_message $msg = null` parameter
+
+A `user_message` parameter is **required**. Neither of the two ways to make it
+optional is allowed:
+
+```php
+function f(..., user_message $msg = new user_message())   // wrong - hidden drop
+function f(..., ?user_message $msg = null)                // wrong - explicit drop
+```
+
+The first creates a message nobody reads, so everything the function reports is
+thrown away. The second is the same loss written out honestly: `$msg?->add(...)`
+reads as "report this if somebody is listening", and at exactly the call sites
+that matter nobody is. Making the drop visible in the signature does not stop it
+from being a drop — the second form is not a smaller version of the first, it is
+the identical bug with better documentation.
+
+There is also nothing for a null to mean. A request has **one** message, created
+by the entry point and threaded from there (see above), so at any point below the
+entry point a message exists. A parameter that admits `null` is describing a state
+the architecture does not have.
+
+So when a caller has no message to pass, the answer is never to make the parameter
+optional — it is to give **that caller** a message too:
+
+- the caller takes `user_message $msg` as well and threads it from *its* caller, or
+- the caller *is* an entry point (an http/api script, a cron job, a test builder),
+  and creates the one message there, with the trailing comment the creation rule
+  requires.
+
+The cascade terminates at an entry point every time, which is what makes it safe
+to keep pulling.
+
+Two mechanics come up while doing this:
+
+- **PHP forbids a required parameter after an optional one.** When `$msg` lands
+  behind `bool $allow_duplicates = false`, either move `$msg` in front of the
+  optional parameters or make those required too — do not "solve" it with a
+  default.
+- **An override cannot add a required parameter** its parent does not have. If
+  `child::add()` needs `$msg` and `parent::add()` has no such parameter, the whole
+  override family (the base plus every child) takes the parameter in one commit.
+  A nullable parameter is not the way around this — it just hides the split.
+
+### "The message is my return value" is not an exception — take `$msg` instead
+
+The most common shape below the entry point is a function that creates a message,
+fills it and returns it:
+
+```php
+function fill_by_name(triple_list $db_lst, bool $fill_all = false): user_message
+{
+    $msg = new user_message();      // <- the exception
+    …
+    return $msg;
+}
+```
+
+This looks legitimate — the message *is* the result — but it moves the decision
+to every caller, and a caller that ignores the return silently drops every error
+in it. Take the message as a parameter and return `bool` instead:
+
+```php
+function fill_by_name(
+    triple_list  $db_lst,
+    user_message $msg,
+    bool         $fill_all = false
+): bool
+{
+    …
+    return $msg->is_ok();
+}
+```
+
+**Two checks before threading such a family**, both of which decide per call
+site, not once for the function:
+
+1. **Which message belongs here?** Inside an import level loop the right target
+   is the per-level buffer (`$msg_chk`), not the request message — a problem that
+   a later level resolves must not survive in the request message.
+2. **Is the callee's reporting wanted at this call site at all?** If the caller
+   already reports the same thing afterwards (`$this->report_missing($msg)`), or
+   the call is a pure cache fill, pass the existing `report_missing`-style flag as
+   `false` rather than letting a premature diagnostic reach the user. Threading
+   `$msg` into a function whose message fires on a *normal* path turns a silent
+   drop into user-visible noise — check what the callee adds and when.
+
+Because the signature is shared, the whole override family changes together (the
+base class plus every child), so this is one commit per family, callers included.
+
+#### The `return $msg->is_ok()` trap
+
+Nearly 400 functions end with `return $msg->is_ok();`. That is correct when the
+message is the function's own, but it means **the verdict is about the message,
+not about the object** — so passing a shared `$msg` into such a function makes it
+answer the wrong question, and it also dumps its findings into the caller's
+message.
+
+Both halves bite at once. `sandbox_link::can_be_ready($msg)` is a real example:
+
+- with a shared `$msg` that already carries an unrelated error it returns
+  `false` for a perfectly valid link, and
+- during an import — where ids are filled in a later step, so "not ready yet" is
+  the **normal** state — it adds `FROM_MISSING` / `TO_MISSING` notices to the
+  import message.
+
+The second one is unforgiving, because the import steps deliberately guard
+dependent work with `if ($msg->is_ok())`: one notice added on a normal path and
+**every following object of that import is silently dropped**. That is exactly
+how threading `$msg` into `sandbox_link_list::add_link_by_key` emptied the
+portfolio import and broke `import_tests`' "distinct impact for each main stock
+triple".
+
+Note which half was the defect. The `if ($msg->is_ok())` guard is *wanted* — it
+is how a step avoids reporting errors that are only a consequence of an earlier
+error, see `docs/llm/dependent-errors.md`. What broke the import was feeding that
+guard a message it should never have seen: a condition that is normal at that
+point, added as a certain error.
+
+So before threading a message into a readiness / validity check, ask what it
+reports **on the normal path**. Give the check its own message so its verdict is
+about the object, and merge that message into the caller's only when the outcome
+is a real rejection the user must see — an import caller passes its own buffer
+even then.
+
 ### The requesting user is set on `$msg` by the http entry point
 
 The **http entry point** (`http/view.php`, and every other script under `http/`

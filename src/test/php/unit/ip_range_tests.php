@@ -66,6 +66,7 @@ class ip_range_tests
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_ip_range = new test_ip_ranges($t);
+        $msg = new user_message();
         $t->name = 'ip_range->';
         $t->resource_path = 'db/system/';
 
@@ -100,7 +101,7 @@ class ip_range_tests
         $ip_range = $t_ip_range->ip_range();
         $t->assert_api($ip_range);
 
-        $ip_range_lst = $t_ip_range->ip_range_list();
+        $ip_range_lst = $t_ip_range->ip_range_list($msg);
         $t->assert_api($ip_range_lst);
 
 

@@ -356,7 +356,10 @@ class formula_map extends sandbox_code_id
 
         if (array_key_exists(json_fields::USR_TEXT, $api_json)) {
             if ($api_json[json_fields::USR_TEXT] <> '') {
-                $this->set_user_text($api_json[json_fields::USR_TEXT]);
+                // a local message, because api_mapper returns $msg->is_ok() and the terms of the
+                // expression are resolved with a term list that this mapper does not have
+                $exp_msg = new user_message();
+                $this->set_user_text($api_json[json_fields::USR_TEXT], $exp_msg);
             }
         }
 
@@ -413,7 +416,11 @@ class formula_map extends sandbox_code_id
 
         if (key_exists(json_fields::USR_TEXT, $in_ex_json)) {
             if ($in_ex_json[json_fields::USR_TEXT] <> '') {
-                $this->set_user_text($in_ex_json[json_fields::USR_TEXT]);
+                // a local message, because import_mapper returns $msg->is_ok() and a word of the
+                // expression that a later import step still creates is the normal state here,
+                // so it must not stop the import objects after this one
+                $exp_msg = new user_message();
+                $this->set_user_text($in_ex_json[json_fields::USR_TEXT], $exp_msg);
             }
         }
         // TODO Prio 2 decide if either it should be named expression or user text or if expression is used for im and export and user text for api
@@ -436,8 +443,9 @@ class formula_map extends sandbox_code_id
         // TODO Prio 2 allow only one way to assign phrases on import
         // assign the phrases to the formula
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
-            $phr_lst = new phrase_list($this->get_user());
-            $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
+            foreach ($in_ex_json[json_fields::ASSIGNED] as $phr_name) {
+                $this->link_assigned_phrase($phr_name, $in_ex_json, $msg, $dto);
+            }
         }
 
         // assigned_word assigns exactly one phrase to the formula;
@@ -450,18 +458,8 @@ class formula_map extends sandbox_code_id
                     msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
                     msg_id::VAR_FORMULA => $this->name(),
                 ]);
-            } elseif ($dto != null) {
-                $name = $phr_names[0] ?? '';
-                $phr = $dto->phrase_list()->get_by_name($name);
-                if ($phr == null) {
-                    $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
-                        msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
-                        msg_id::VAR_NAME => $name,
-                        msg_id::VAR_FORMULA => $this->name(),
-                    ]);
-                } else {
-                    $this->link_phrase($phr, $msg);
-                }
+            } else {
+                $this->link_assigned_phrase($phr_names[0] ?? '', $in_ex_json, $msg, $dto);
             }
         }
 
@@ -558,13 +556,14 @@ class formula_map extends sandbox_code_id
     /**
      * update the expression by setting the human-readable format and try to update the database reference format
      * @param string $usr_txt the formula expression in the human-readable format
+     * @param user_message $msg to report an expression that cannot be converted
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return bool true if also the reference text has been updated
      */
     function set_user_text(
         string       $usr_txt,
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
+        user_message $msg,
+        ?term_list   $trm_lst = null
     ): bool
     {
         $this->usr_text = $usr_txt;
@@ -573,20 +572,22 @@ class formula_map extends sandbox_code_id
         return $this->generate_ref_text($trm_lst, $msg);
     }
 
-    function get_usr_text(
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
-    ): string
+    function get_usr_text(?term_list $trm_lst = null): string
     {
         if ($this->usr_text_dirty) {
-            $this->generate_usr_text($trm_lst, $msg);
+            $this->generate_usr_text($trm_lst);
         }
         return $this->usr_text;
     }
 
+    /**
+     * @param user_message $msg to report an expression that cannot be converted
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string|null the formula expression in the database reference format
+     */
     function get_ref_text(
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
+        user_message $msg,
+        ?term_list   $trm_lst = null
     ): ?string
     {
         if ($this->ref_text_dirty) {
@@ -776,7 +777,7 @@ class formula_map extends sandbox_code_id
         if ($exp->is_valid() or $this->is_predefined()) {
             $frm_trm_lst = $exp->terms($msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
-                $frm_trm = $trm_lst->get_by_name($trm->name());
+                $frm_trm = $trm_lst->get_by_name($trm->name(), $msg);
                 if ($frm_trm != null and $frm_lst != null) {
                     if ($frm_trm->is_formula()) {
                         $frm_lst->add_by_key($frm_trm->get_formula());
@@ -1077,7 +1078,10 @@ class formula_map extends sandbox_code_id
     function diff_msg(formula|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
         $msg = parent::diff_msg($obj, $ex_def);
-        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->get_ref_text(), $obj->get_ref_text());
+        // a local message, because the diff reports the differences between the two objects and a
+        // term that cannot be resolved without a term list is not one of them
+        $txt_msg = new user_message();
+        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->get_ref_text($txt_msg), $obj->get_ref_text($txt_msg));
         $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_USER_TEXT, $this->get_usr_text(), $obj->get_usr_text());
         $this->diff_field_msg($msg, formula_fields::FLD_LATEX, $this->latex, $obj->latex);
         $this->diff_field_msg($msg, formula_fields::FLD_ALL_NEEDED, $this->need_all_val, $obj->need_all_val);
@@ -1097,8 +1101,11 @@ class formula_map extends sandbox_code_id
     function needs_db_update(formula|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
         $result = parent::needs_db_update($db_obj, $msg);
-        if ($this->get_ref_text() != null) {
-            if ($this->get_ref_text() != $db_obj->get_ref_text()) {
+        // a local message like in diff_msg, because whether the text can be converted right now is
+        // not what this function answers, and a not ok $msg would stop the save steps after it
+        $txt_msg = new user_message();
+        if ($this->get_ref_text($txt_msg) != null) {
+            if ($this->get_ref_text($txt_msg) != $db_obj->get_ref_text($txt_msg)) {
                 $result = true;
             }
         }
@@ -1260,7 +1267,7 @@ class formula_map extends sandbox_code_id
     function link_phrase(phrase $phr, user_message $msg): bool
     {
         if ($this->get_user() != null) {
-            $this->link_phrase_object($phr);
+            $this->link_phrase_object($phr, $msg);
         } else {
             $msg->add_message_text('user missing');
         }
@@ -1275,7 +1282,7 @@ class formula_map extends sandbox_code_id
      */
     function link_phrase_and_save(phrase $phr, user_message $msg): bool
     {
-        $frm_lnk = $this->link_phrase_object($phr);
+        $frm_lnk = $this->link_phrase_object($phr, $msg);
         $frm_lnk->save($msg);
         return $msg->is_ok();
     }
@@ -1292,11 +1299,46 @@ class formula_map extends sandbox_code_id
     }
 
     /**
+     * link this formula to the phrase named in the import json
+     * the phrase is taken from the import cache, because the mapper never reads the database and
+     * never creates a placeholder: a name that the import does not define is reported instead
+     *
+     * @param string $name the name of the phrase that should be assigned to this formula
+     * @param array $in_ex_json the json part of the formula to name it in a message
+     * @param user_message $msg to report a phrase name that the import does not define
+     * @param data_object|null $dto cache of the objects imported until now
+     * @return bool true if the phrase has been linked to this formula
+     */
+    private function link_assigned_phrase(
+        string       $name,
+        array        $in_ex_json,
+        user_message $msg,
+        ?data_object $dto
+    ): bool
+    {
+        $linked = false;
+        if ($dto != null) {
+            $phr = $dto->phrase_list()->get_by_name($name, $msg);
+            if ($phr == null) {
+                $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
+                    msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                    msg_id::VAR_NAME => $name,
+                    msg_id::VAR_FORMULA => $this->name(),
+                ]);
+            } else {
+                $linked = $this->link_phrase($phr, $msg);
+            }
+        }
+        return $linked;
+    }
+
+    /**
      * create a phrase link to this formula object
      * @param phrase $phr with at least the id of a phrase that exists already in the database
+     * @param user_message $msg to report why the link has not been added to the list
      * @return formula_link with the vars set
      */
-    private function link_phrase_object(phrase $phr): formula_link
+    private function link_phrase_object(phrase $phr, user_message $msg): formula_link
     {
         if ($this->lnk_lst == null) {
             $this->lnk_lst = new formula_link_list($this->get_user());
@@ -1304,7 +1346,11 @@ class formula_map extends sandbox_code_id
         $frm_lnk = new formula_link($this->get_user());
         $frm_lnk->set_formula($this);
         $frm_lnk->set_phrase($phr);
-        $this->lnk_lst->add_link_by_key($frm_lnk);
+        $lnk_msg = new user_message($msg->usr); // a link without the db ids is normal while importing
+        if (!$this->lnk_lst->add_link_by_key($frm_lnk, $lnk_msg)) {
+            log_warning('formula link ' . $frm_lnk->dsp_id() . ' not added to the list of '
+                . $this->dsp_id() . ' because ' . $lnk_msg->all_message_text());
+        }
         return $frm_lnk;
     }
 
@@ -1610,8 +1656,8 @@ class formula_map extends sandbox_code_id
      * @return bool true if the update of the reference text was successful and otherwise the error message is added to the user_message object
      */
     function generate_ref_text(
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
+        ?term_list   $trm_lst,
+        user_message $msg
     ): bool
     {
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
@@ -1895,6 +1941,8 @@ class formula_map extends sandbox_code_id
      */
     function del_links(user_message $msg): bool
     {
+        // a local buffer, because each delete step below is only started if the previous one
+        // worked; it is merged into the request message at the end of this function
         $usr_msg_del = new user_message($msg->usr);
 
         $frm_lnk_lst = new formula_link_list($this->get_user());

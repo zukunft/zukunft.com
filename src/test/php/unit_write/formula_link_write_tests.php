@@ -59,6 +59,7 @@ class formula_link_write_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message(); // a test is an entry point, so it creates the message the log setters report into
         // init
         $t_db = new test_db_load($t);
         $t_frm = new test_formulas($t);
@@ -86,7 +87,7 @@ class formula_link_write_tests
         $phr = new phrase($t->usr1);
         $phr->load_by_name(word_names::TEST_ADD, $msg);
         $log = new change_link($t->usr1);
-        $log->set_table(change_tables::FORMULA_LINK);
+        $log->set_table(change_tables::FORMULA_LINK, $msg);
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last($msg, true);
@@ -154,7 +155,7 @@ class formula_link_write_tests
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
-        $log->set_table(change_tables::FORMULA_LINK);
+        $log->set_table(change_tables::FORMULA_LINK, $msg);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last($msg, true);
@@ -191,7 +192,7 @@ class formula_link_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_tables::FORMULA_LINK);
+        $log->set_table(change_tables::FORMULA_LINK, $msg);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last($msg, true);

@@ -125,7 +125,7 @@ class ListBase extends ListOfIdObjects
     {
         $msg = 'set_from_json_array not overwritten by child object ' . $this::class;
         log_err($msg);
-        return new user_message(new user(), $msg);
+        return new user_message(new user(), $msg); // the message IS the return value of this stub
     }
 
     /**
@@ -137,7 +137,7 @@ class ListBase extends ListOfIdObjects
      */
     function api_mapper_list(array $json_array, db_object|IdObject|TextIdObject|CombineObject $dbo): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($json_array as $value) {
             if (is_array($value)) {
                 $new = clone $dbo;
@@ -247,7 +247,7 @@ class ListBase extends ListOfIdObjects
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_array($typ_lst);
+        $vars = $this->api_array($typ_lst, $msg);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
@@ -257,12 +257,12 @@ class ListBase extends ListOfIdObjects
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $result = array();
         foreach ($this->lst() as $obj) {
             if ($obj != null) {
-                $result[] = $obj->api_array($typ_lst);
+                $result[] = $obj->api_array($typ_lst, $msg);
             }
         }
         return $result;
@@ -298,23 +298,26 @@ class ListBase extends ListOfIdObjects
      * modify
      */
 
-    function merge(ListBase $lst): void
+    function merge(ListBase $lst, user_message $msg): void
     {
         foreach ($lst->lst() as $phr) {
-            $this->add($phr);
+            $this->add($phr, $msg);
         }
     }
 
     /**
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
+     * @param user_message $msg to report which entry is double
      * @returns bool true the object has been added
      */
-    function add(IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
         if ($to_add != null) {
-            $this->add_obj($to_add);
+            $add_msg = new user_message(); // add_obj returns is_ok(), so the double check must judge only this add
+            $this->add_obj($to_add, false, $add_msg);
+            $msg->merge($add_msg);
             $result = true;
         }
         return $result;

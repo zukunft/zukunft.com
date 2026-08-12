@@ -67,13 +67,13 @@ class ref_list extends ListBase
      * @param phrase|null $phr
      * @return ref_list
      */
-    function get_by_phrase(phrase|null $phr): ref_list
+    function get_by_phrase(phrase|null $phr, user_message $msg): ref_list
     {
         $ref_lst = new ref_list();
         if ($phr != null) {
             foreach ($this->lst() as $ref) {
                 if ($ref->has_phrase($phr)) {
-                    $ref_lst->add($ref);
+                    $ref_lst->add($ref, $msg);
                 }
             }
         }

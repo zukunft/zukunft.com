@@ -73,10 +73,17 @@ class sys_log_list
      * construct and map
      */
 
-    function __construct(?string $api_json = null, user_message $msg = new user_message())
+    /**
+     * @param string|null $api_json the api message to fill this system log list
+     * @param user_message|null $msg to report the api mapping problems; null loses them
+     */
+    function __construct(?string $api_json = null, ?user_message $msg = null)
     {
         if ($api_json != null) {
-            $this->set_from_json($api_json, $msg);
+            // only the api mapping needs a message; a caller that passes none loses the mapping
+            // problems, so every caller that has one should hand it over
+            $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
+            $this->set_from_json($api_json, $map_msg);
         }
     }
 
@@ -157,7 +164,7 @@ class sys_log_list
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_array($typ_lst);
+        $vars = $this->api_array($typ_lst, $msg);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
@@ -165,12 +172,12 @@ class sys_log_list
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $result = array();
         foreach ($this->lst as $obj) {
             if ($obj != null) {
-                $result[] = $obj->api_array($typ_lst);
+                $result[] = $obj->api_array($typ_lst, $msg);
             }
         }
         return $result;

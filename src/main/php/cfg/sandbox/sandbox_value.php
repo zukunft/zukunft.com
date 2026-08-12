@@ -1498,7 +1498,7 @@ class sandbox_value extends sandbox_multi
             $load_lst->load_by_names($names, $msg);
         } else {
             foreach ($names as $name) {
-                $phr = $phr_lst->get_by_name($name);
+                $phr = $phr_lst->get_by_name($name, $msg);
                 if ($phr == null) {
                     $phr = new phrase($this->get_user());
                     $phr->load_by_name($name, $msg);
@@ -1603,14 +1603,14 @@ class sandbox_value extends sandbox_multi
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      * @param change|change_value $log with the target table set
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change|change_value with the log id set
      */
-    protected function log_add_common(change|change_value $log): change|change_value
+    protected function log_add_common(change|change_value $log, user_message $msg): change|change_value
     {
         log_debug($this->dsp_id());
-        $msg = new user_message();
-        $log->set_action(change_actions::ADD);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $log->group_id = $this->grp_id();
         $log->old_value = null;
         $log->new_value = $this->get_value();
@@ -1632,19 +1632,19 @@ class sandbox_value extends sandbox_multi
 
     /**
      * set the log entry parameter to delete an object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_del(): change
+    function log_del(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
 
         $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE);
+        $log->set_action(change_actions::DELETE, $msg);
         $class = $lib->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $log->old_value = $this->get_value();
         $log->new_value = null;
 
@@ -1847,7 +1847,7 @@ class sandbox_value extends sandbox_multi
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $msg, $sc_par_lst_used);
         } else {
             // TODO add test fpr !$sc_par_lst_used->exclude_sql()
             $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
@@ -1864,12 +1864,14 @@ class sandbox_value extends sandbox_multi
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
      * @param sql_type_list $sc_par_lst
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst_id,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1910,7 +1912,7 @@ class sandbox_value extends sandbox_multi
         }
 
         // create the log entry for the value
-        $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log, $msg);
         $sql .= ' ' . $qp_log->sql;
 
         // list of parameters actually used in order of the function usage
@@ -2220,11 +2222,7 @@ class sandbox_value extends sandbox_multi
      */
     function db_changed(sandbox_value $sbv): array
     {
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'db_changed',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('db_changed', $this::class);
         return [];
     }
 

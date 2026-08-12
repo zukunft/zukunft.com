@@ -68,13 +68,13 @@ if ($db_con->is_open()) {
             $lst->load_by_ids(explode(",", $src_ids), $msg);
             // drop the sources the requester may not read (idor); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } elseif ($pattern != '') {
             $lst = new source_list($usr);
             $lst->load_like($pattern, $msg);
             // drop the sources the requester may not read (idor); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
             $msg->add_message_text('source ids and pattern missing');
         }

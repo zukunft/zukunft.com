@@ -96,7 +96,7 @@ class import_file
     {
         global $cfg;
 
-        $msg = new user_message($usr);
+        $msg = new user_message($usr); // the message IS the return value, so the caller merges it
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -106,7 +106,7 @@ class import_file
         // load the config e.g. after initial setup
         if ($cfg == null) {
             $cfg = new config_numbers($usr);
-            $cfg->load_cfg(null, $usr);
+            $cfg->load_cfg($msg, null, $usr);
         }
 
         // get the relevant config values
@@ -193,7 +193,7 @@ class import_file
      */
     function yaml_file(string $filename, user $usr): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         $yaml_str = file_get_contents($filename);
         if (!$yaml_str) {
@@ -245,7 +245,7 @@ class import_file
                 $sys->load_cache_type($db_con, $msg);
                 // TODO Prio 3 base the validation on the export yaml
                 $cfg = new config_numbers($usr);
-                $cfg->load_cfg(null, $usr);
+                $cfg->load_cfg($msg, null, $usr);
 
                 // check based on the number of values
                 $cfg_nbr = $cfg->count();
@@ -267,12 +267,13 @@ class import_file
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
                     $dto = $imp->get_data_object_yaml($yaml_array);
-                    $load_msg = $dto->load($db_con, $msg);
+                    // the load reports the issues on $msg itself, so only its result is needed here
+                    $load_ok = $dto->load($db_con, $msg);
                     $sys->typ_lst->load($db_con, $msg);
-                    if (!$load_msg->is_ok()) {
+                    if (!$load_ok) {
 
-                        // report the issues on loading the config values
-                        $msg->merge($load_msg);
+                        // the issues on loading the config values are already on $msg
+                        log_warning('loading the config values of ' . files::SYSTEM_CONFIG . ' failed');
                     } else {
                         if ($validate) {
 

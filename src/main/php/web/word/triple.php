@@ -199,7 +199,7 @@ class triple extends sandbox_code_id
         if ($msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
                 if ($url_array[url_var::PHRASE_FROM] != null) {
-                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto, $msg);
+                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $msg, $dto);
                 }
             }
             if (array_key_exists(url_var::VERB, $url_array)) {
@@ -207,7 +207,7 @@ class triple extends sandbox_code_id
             }
             if (array_key_exists(url_var::PHRASE_TO, $url_array)) {
                 if ($url_array[url_var::PHRASE_TO] != null) {
-                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto, $msg);
+                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $msg, $dto);
                 }
             }
             if (array_key_exists(url_var::WEIGHT, $url_array)) {
@@ -349,7 +349,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_from($phr);
             } else {
-                $this->set_from_by_id($value);
+                $this->set_from_by_id($value, $msg);
             }
         } elseif (array_key_exists(json_fields::FROM, $json_array)) {
             $value = $json_array[json_fields::FROM];
@@ -358,7 +358,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_from($phr);
             } else {
-                $this->set_from_by_id($value);
+                $this->set_from_by_id($value, $msg);
             }
         } else {
             $this->set_from(new phrase());
@@ -382,7 +382,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_to($phr);
             } else {
-                $this->set_to_by_id($value);
+                $this->set_to_by_id($value, $msg);
             }
         } elseif (array_key_exists(json_fields::TO, $json_array)) {
             $value = $json_array[json_fields::TO];
@@ -391,7 +391,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_to($phr);
             } else {
-                $this->set_to_by_id($value);
+                $this->set_to_by_id($value, $msg);
             }
         } else {
             $this->set_to(new phrase());
@@ -495,7 +495,7 @@ class triple extends sandbox_code_id
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::FROM] = $this->get_from()?->id();
@@ -548,11 +548,11 @@ class triple extends sandbox_code_id
 
     function set_from_by_id(
         int|string       $id,
-        data_object|null $dto = null,
-        user_message     $msg = new user_message()
+        user_message     $msg,
+        data_object|null $dto = null
     ): void
     {
-        $this->from = $this->set_phrase_by_id($id, $dto, $msg);
+        $this->from = $this->set_phrase_by_id($id, $msg, $dto);
     }
 
     function set_verb(verb $vrb): void
@@ -574,11 +574,11 @@ class triple extends sandbox_code_id
 
     function set_to_by_id(
         int|string       $id,
-        data_object|null $dto = null,
-        user_message     $msg = new user_message()
+        user_message     $msg,
+        data_object|null $dto = null
     ): void
     {
-        $this->to = $this->set_phrase_by_id($id, $dto, $msg);
+        $this->to = $this->set_phrase_by_id($id, $msg, $dto);
     }
 
     /**
@@ -587,21 +587,21 @@ class triple extends sandbox_code_id
      * a non-numeric value is resolved as the phrase name via the request cache or the backend
      *
      * @param int|string $id the phrase id or the phrase name posted by the edit form
-     * @param data_object|null $dto the request cache used to resolve the phrase without a backend call
      * @param user_message $msg to report a phrase name that the user needs to correct
+     * @param data_object|null $dto the request cache used to resolve the phrase without a backend call
      * @return phrase|null the resolved phrase or null if the name is unknown
      */
     private function set_phrase_by_id(
         int|string       $id,
-        data_object|null $dto,
-        user_message     $msg = new user_message()
+        user_message     $msg,
+        data_object|null $dto = null
     ): phrase|null
     {
         $phr = null;
         if (!is_numeric($id)) {
             // resolve the phrase name from the request cache first to avoid a backend call
             if ($dto != null) {
-                $phr = $dto->phr_lst->get_by_name($id);
+                $phr = $dto->phr_lst->get_by_name($id, $msg);
             }
             if ($phr == null) {
                 $phr_loaded = new phrase();
@@ -728,7 +728,7 @@ class triple extends sandbox_code_id
     /**
      * recursive function to include the foaf words for this triple
      */
-    function wrd_lst(): word_list
+    function wrd_lst(user_message $msg): word_list
     {
         log_debug('triple->wrd_lst ' . $this->dsp_id());
         $wrd_lst = new word_list();
@@ -736,11 +736,11 @@ class triple extends sandbox_code_id
         // add the "from" side
         if ($this->get_from() != null) {
             if ($this->get_from()->id() > 0) {
-                $wrd_lst->add($this->get_from()->obj()->word());
+                $wrd_lst->add($this->get_from()->obj()->word(), $msg);
             } elseif ($this->get_from()->id() < 0) {
                 $sub_wrd_lst = $this->get_from()->wrd_lst($msg);
                 foreach ($sub_wrd_lst->lst() as $wrd) {
-                    $wrd_lst->add($wrd);
+                    $wrd_lst->add($wrd, $msg);
                 }
             } else {
                 log_err('The from phrase ' . $this->get_from()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
@@ -750,11 +750,11 @@ class triple extends sandbox_code_id
         // add the "to" side
         if ($this->get_to() != null) {
             if ($this->get_to()->id() > 0) {
-                $wrd_lst->add($this->get_to()->obj()->word());
+                $wrd_lst->add($this->get_to()->obj()->word(), $msg);
             } elseif ($this->get_to()->id() < 0) {
                 $sub_wrd_lst = $this->get_to()->wrd_lst($msg);
                 foreach ($sub_wrd_lst->lst() as $wrd) {
-                    $wrd_lst->add($wrd);
+                    $wrd_lst->add($wrd, $msg);
                 }
             } else {
                 log_err('The to phrase ' . $this->get_to()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');

@@ -192,6 +192,8 @@ class formula extends formula_map
     private function symbol_map(?term_list $trm_lst = null): array
     {
         $map = [];
+        // a local buffer, because a phrase without a symbol falls back to its name below, so the
+        // lookup problems are not user relevant; threading would reach up through update_latex
         $msg = new user_message();
         $phr_lst = $this->expression($trm_lst)->phrases($msg, $trm_lst);
         foreach ($phr_lst->lst() as $phr) {
@@ -629,6 +631,8 @@ class formula extends formula_map
     {
         $phr_lst = new phrase_list($this->get_user());
         $lib = new library();
+        // a local buffer, because the two callers assign_phr_lst / assign_phr_ulst have no message
+        // TODO Prio 2 thread the message from the callers of assign_phr_lst / assign_phr_ulst
         $msg = new user_message();
 
         if ($this->id() > 0 and $this->get_user() != null) {
@@ -757,12 +761,16 @@ class formula extends formula_map
      * this is the data retrieval and calculation replacement for to_num
      *
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
+     * @param user_message $msg to report to the user why the formula cannot be calculated
      * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
      * @return result_list all results of the formula for the given phrase list
      */
-    function calc_num(phrase_list $phr_lst, ?phrase_list $pre_phr_lst = null): result_list
+    function calc_num(
+        phrase_list  $phr_lst,
+        user_message $msg,
+        ?phrase_list $pre_phr_lst = null
+    ): result_list
     {
-        $msg = new user_message($this->get_user());
         $dto = $this->load_data_for_calc($phr_lst, $msg, $pre_phr_lst);
         return $this->to_num_new($phr_lst, $msg, $dto);
     }
@@ -796,7 +804,7 @@ class formula extends formula_map
         // load the formula element groups e.g. "sales differentiator sector" and "Total sales"
         $exp = $this->expression($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
-        log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
+        log_debug('in ' . $exp->ref_text_ui() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // replace each element group symbol with the matching number(s)
         $all_elm_grp_filled = true;
@@ -1224,7 +1232,7 @@ class formula extends formula_map
             log_debug('->calc got result words of ' . $this->ref_text_r);
 
             // get the list of the numeric results saved in the database
-            $res_lst = $this->calc_num($phr_lst);
+            $res_lst = $this->calc_num($phr_lst, $msg);
             if (isset($res_add_phr_lst)) {
                 log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
             }
@@ -1519,15 +1527,15 @@ class formula extends formula_map
      * @return bool true if the update of the reference text was successful and otherwise the error message is added to the user_message object
      */
     function generate_ref_text(
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
+        ?term_list   $trm_lst,
+        user_message $msg
     ): bool
     {
         if ($this->usr_text != null) {
             if ($this->ref_text == '' or $this->ref_text_dirty) {
                 $exp = new expression($this);
                 $exp->set_user_text($this->usr_text, $trm_lst);
-                $this->ref_text = $exp->ref_text($trm_lst, $msg);
+                $this->ref_text = $exp->ref_text($msg, $trm_lst);
                 if ($msg->is_ok()) {
                     $this->ref_text_dirty = false;
                 }
@@ -1547,7 +1555,7 @@ class formula extends formula_map
         $result = '';
         $exp = new expression($this);
         $exp->set_user_text($this->usr_text);
-        $this->ref_text = $exp->ref_text($trm_lst);
+        $this->ref_text = $exp->ref_text_ui($trm_lst);
         $this->ref_text_dirty = false;
         return $result;
     }

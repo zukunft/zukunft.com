@@ -1894,7 +1894,7 @@ class sandbox extends db_object_seq_id_user
         $result = true;
 
         if ($this->id() > 0 and $this->get_user()->id() > 0) {
-            $log = $this->log_del();
+            $log = $this->log_del($msg);
             if ($log->id() > 0) {
                 $db_con->usr_id = $this->get_user()->id;
                 $result = $this->del_usr_cfg_exe($db_con, $msg);
@@ -1911,12 +1911,15 @@ class sandbox extends db_object_seq_id_user
      * create a database record to save user-specific settings for a user sandbox object
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      * TODO create an overwrite for the link log message to be able to remove the placeholder functions fob and tob
+     * @param user_message $msg to report to the requesting user why the overlay row was not created
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
-    protected function add_usr_cfg(): bool
+    protected function add_usr_cfg(user_message $msg): bool
     {
         global $db_con;
-        $usr_msg = new user_message();
+        // a local buffer, because the is_ok() checks below must judge only this insert and not an
+        // error the caller has collected before; the reasons are merged into the request message
+        $usr_msg = new user_message($msg->usr);
 
         $result = true;
 
@@ -1959,6 +1962,7 @@ class sandbox extends db_object_seq_id_user
                 }
             }
         }
+        $msg->merge($usr_msg);
         return $result;
     }
 
@@ -2071,19 +2075,19 @@ class sandbox extends db_object_seq_id_user
      * set the log entry parameter for a new-named object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to the word 'mio'"
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_add(): change
+    function log_add(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
         $class_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
 
-        $log->set_action(change_actions::ADD);
+        $log->set_action(change_actions::ADD, $msg);
         // TODO add the table exceptions from sql_db
-        $log->set_table($class_name . sql_db::TABLE_EXTENSION);
+        $log->set_table($class_name . sql_db::TABLE_EXTENSION, $msg);
         $log->row_id = 0;
         $log->add($msg);
 
@@ -2092,29 +2096,31 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * set the log entry parameter for a new link object
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
-        log_err('The dummy parent method log_link_add has been called for ' . $this::class . ', which should never happen');
+        log_err_msg('The dummy parent method log_link_add has been called for '
+            . $this::class . ', which should never happen', $msg);
         return new change_link($this->get_user());
     }
 
     /**
      * set the main log entry parameters for updating one field
+     * @param user_message $msg to report why the change is logged to the user overlay table
      */
-    private function log_upd_common($log)
+    private function log_upd_common($log, user_message $msg)
     {
         log_debug($this->dsp_id());
-        $msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $log->set_user($this->get_user());
-        $log->set_action(change_actions::UPDATE);
+        $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change($msg)) {
             // TODO add the table exceptions from sql_db
-            $log->set_table($class_name . sql_db::TABLE_EXTENSION);
+            $log->set_table($class_name . sql_db::TABLE_EXTENSION, $msg);
         } else {
-            $log->set_table(sql_db::TBL_USER_PREFIX . $class_name . sql_db::TABLE_EXTENSION);
+            $log->set_table(sql_db::TBL_USER_PREFIX . $class_name . sql_db::TABLE_EXTENSION, $msg);
         }
 
         return $log;
@@ -2127,17 +2133,18 @@ class sandbox extends db_object_seq_id_user
     {
         log_debug($this->dsp_id());
         $log = new change($this->get_user());
-        return $this->log_upd_common($log);
+        return $this->log_upd_common($log, $msg);
     }
 
     /**
      * create a log object for an update of link
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_upd_link(): change_link
+    function log_upd_link(user_message $msg): change_link
     {
         log_debug($this->dsp_id());
         $log = new change_link($this->get_user());
-        return $this->log_upd_common($log);
+        return $this->log_upd_common($log, $msg);
     }
 
     /**
@@ -2150,28 +2157,32 @@ class sandbox extends db_object_seq_id_user
         if ($this->is_named_obj()) {
             $log = $this->log_upd_field($msg);
         } else {
-            $log = $this->log_upd_link();
+            $log = $this->log_upd_link($msg);
         }
-        return $this->log_upd_common($log);
+        return $this->log_upd_common($log, $msg);
     }
 
     /**
      * dummy function definition that will be overwritten by the child object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change_link
      */
-    function log_del_link(): change_link
+    function log_del_link(user_message $msg): change_link
     {
-        log_err('The dummy parent method log_del_link has been called for ' . $this::class . ', which should never happen');
+        log_err_msg('The dummy parent method log_del_link has been called for '
+            . $this::class . ', which should never happen', $msg);
         return new change_link($this->get_user());
     }
 
     /**
      * dummy function definition that will be overwritten by the child object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change
      */
-    function log_del(): change
+    function log_del(user_message $msg): change
     {
-        log_err('The dummy parent method log_del has been called for ' . $this::class . ', which should never happen');
+        log_err_msg('The dummy parent method log_del has been called for '
+            . $this::class . ', which should never happen', $msg);
         return new change($this->get_user());
     }
 
@@ -2190,9 +2201,10 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return change_log the object that is used to log the user changes
      */
-    function log_object(): change_log
+    function log_object(user_message $msg): change_log
     {
         return new change($this->get_user());
     }
@@ -2394,7 +2406,7 @@ class sandbox extends db_object_seq_id_user
     function update_standard_fields(
         sql_db       $db_con,
         sandbox      $norm_obj,
-        user_message $msg = new user_message()
+        user_message $msg
     ): bool
     {
         // the sql creator is used more than once, so create it upfront
@@ -2960,7 +2972,9 @@ class sandbox extends db_object_seq_id_user
 
         // check possible duplicates
         $sim = null;
-        $sim_msg = new user_message();
+        // a local buffer, because the duplicate messages of get_similar are only used to decide
+        // how to continue here; the specific duplicate message for the user is added further down
+        $sim_msg = new user_message($msg->usr);
         if ($msg->is_ok()) {
             if (!$this->has_id() or $this->is_key_updated($db_rec)) {
                 // get similar database row
@@ -3024,7 +3038,9 @@ class sandbox extends db_object_seq_id_user
                             // name updated
                             if ($this::class == triple::class) {
                                 $sim_name = null;
-                                $sim_name_msg = new user_message();
+                                // a local buffer like $sim_msg above: the name lookup messages
+                                // only steer the branch below and are not shown to the user
+                                $sim_name_msg = new user_message($msg->usr);
                                 $trm = $this->get_term_by_name($this->name(), $msg);
                                 if ($trm != null) {
                                     $sim_name = $trm->obj();
@@ -3355,7 +3371,7 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $class_name,
             msg_id::VAR_NAME => $obj_to_add->name(),
@@ -3397,12 +3413,7 @@ class sandbox extends db_object_seq_id_user
      */
     function type_name(): string
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'type_name',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite_warning('type_name', $this::class);
     }
 
 
@@ -3568,7 +3579,7 @@ class sandbox extends db_object_seq_id_user
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $msg, $sc_par_lst_used);
         } else {
             $par_lst = [$this->id()];
             if ($sc_par_lst_used->is_usr_tbl() and !$sc_par_lst_used->exclude_sql()) {
@@ -3589,12 +3600,14 @@ class sandbox extends db_object_seq_id_user
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types for the log entry what has been deleted
      * @param sql_type_list $sc_par_lst
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -3660,14 +3673,14 @@ class sandbox extends db_object_seq_id_user
         $sc_log = clone $sc;
         if ($this->is_named_obj()) {
             $log = new change($this->get_user());
-            $log->set_class($this::class);
-            $log->set_field($name_fld);
+            $log->set_class($this::class, $msg);
+            $log->set_field($name_fld, $msg);
             $log->old_value = $this->name();
             $log->new_value = null;
             $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
         } elseif ($this->is_link_obj()) {
-            $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $fvt_lst_out, $sc_par_lst_log);
+            $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $fvt_lst_out, $sc_par_lst_log, $msg);
             $fvt_lst_out->add_list($qp_log->par_fld_lst);
             // TODO use these functions more often
             $fvt_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
@@ -4034,9 +4047,9 @@ class sandbox extends db_object_seq_id_user
         if ($msg->is_ok()) {
             if ($this->is_link_obj() and (!$usr_tbl or $fvt_lst->has_name(fields::FLD_EXCLUDED))) {
                 if ($usr_tbl) {
-                    $qp_log_lnk = $sc->sql_func_log_user_link($this, $this->get_user(), $fvt_lst, $sc_par_lst_log);
+                    $qp_log_lnk = $sc->sql_func_log_user_link($this, $this->get_user(), $fvt_lst, $sc_par_lst_log, $msg);
                 } else {
-                    $qp_log_lnk = $sc->sql_func_log_link($this, $this, $this->get_user(), $fvt_lst, $sc_par_lst_log);
+                    $qp_log_lnk = $sc->sql_func_log_link($this, $this, $this->get_user(), $fvt_lst, $sc_par_lst_log, $msg);
                 }
                 $sql .= ' ' . $qp_log_lnk->sql . ';';
                 $par_lst_out->add_list($qp_log_lnk->par_fld_lst);
@@ -4310,7 +4323,7 @@ class sandbox extends db_object_seq_id_user
             db_object_seq_id::FLD_ID_SQL_TYP);
 
         // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log_update($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id());
+        $qp_log = $sc->sql_func_log_update($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id(), $msg);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -4343,8 +4356,8 @@ class sandbox extends db_object_seq_id_user
             $sc_log = clone $sc;
             if ($this->is_named_obj()) {
                 $log = new change($this->get_user());
-                $log->set_class($this::class);
-                $log->set_field($this->name_field());
+                $log->set_class($this::class, $msg);
+                $log->set_field($this->name_field(), $msg);
                 $log->old_value = $this->name();
                 $log->new_value = null;
                 $qp_log = $log->sql_insert_log(
@@ -4407,21 +4420,13 @@ class sandbox extends db_object_seq_id_user
      */
     function sql_key_fields_text(sql_par_field_list $fvt_lst): sql_par_field_list
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'sql_par_field_list',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite_warning('sql_key_fields_text', $this::class);
         return new sql_par_field_list();
     }
 
     function sql_key_fields_text_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'sql_key_fields_text_old',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite_warning('sql_key_fields_text_old', $this::class);
         return new sql_par_field_list();
     }
 
@@ -4431,22 +4436,14 @@ class sandbox extends db_object_seq_id_user
      */
     function sql_key_fields_id(sql_par_field_list $fvt_lst): sql_par_field_list
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'sql_key_fields_id',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite_warning('sql_key_fields_id', $this::class);
         return new sql_par_field_list();
     }
 
     // TODO deprecate
     function sql_key_fields_id_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'sql_key_fields_id_old',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite_warning('sql_key_fields_id_old', $this::class);
         return new sql_par_field_list();
     }
 

@@ -83,8 +83,8 @@ class term_list_ui_tests
         $wrd_high->set_name('high impact term');
         $wrd_high->impact = 9.0;
         $search_lst = new term_list();
-        $search_lst->add($wrd_low->term());
-        $search_lst->add($wrd_high->term());
+        $search_lst->add($wrd_low->term(), $msg);
+        $search_lst->add($wrd_high->term(), $msg);
         $test_page .= $html->text_h2('body_search test');
         $test_page .= 'empty pattern shows no terms<br>';
         $test_page .= $page->body_search() . '<br>';

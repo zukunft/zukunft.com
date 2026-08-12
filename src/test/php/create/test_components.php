@@ -198,6 +198,17 @@ class test_components extends test_objects
         return $cmp;
     }
 
+    /**
+     * @param string $name the name of a component that is not yet in the database
+     * @return component as an import creates it before the components have been saved
+     */
+    function by_name(string $name): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set_name($name);
+        return $cmp;
+    }
+
     function component_matrix(): component
     {
         $cmp = new component($this->env->usr1);

@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -64,6 +65,7 @@ class term_list_tests
      */
     function run(test_cleanup $t): void
     {
+        $msg = new user_message(); // a test is an entry point, so it creates the message the list add reports into
 
         // init
         $sc = new sql_creator();
@@ -124,8 +126,8 @@ class term_list_tests
         $wrd_high->set_name('high impact term');
         $wrd_high->impact = 9.0;
         $trm_lst = new term_list_ui();
-        $trm_lst->add($wrd_low->term());
-        $trm_lst->add($wrd_high->term());
+        $trm_lst->add($wrd_low->term(), $msg);
+        $trm_lst->add($wrd_high->term(), $msg);
 
         // positive: term->impact returns the impact of the wrapped word
         $test_name = 'term->impact returns the impact of the wrapped word';
@@ -156,7 +158,7 @@ class term_list_tests
             $wrd->set_id($i);
             $wrd->set_name('term ' . $i);
             $wrd->impact = 6.0 - $i;
-            $col_lst->add($wrd->term());
+            $col_lst->add($wrd->term(), $msg);
         }
         $cols_html = $col_lst->links_with_context();
 

@@ -67,7 +67,7 @@ class combine_object extends CombineObject
      */
     function __construct(?string $api_json = null)
     {
-        $msg = new user_message();
+        $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
         parent::__construct(new word());
         if ($api_json != null) {
             $this->set_from_json($api_json, $msg);

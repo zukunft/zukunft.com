@@ -68,7 +68,7 @@ if ($db_con->is_open()) {
         if ($job_id > 0) {
             $job = new job($usr);
             $job->load_by_id($job_id, $msg);
-            $result = $job->api_json();
+            $result = $job->api_json([], $msg);
         } else {
             $msg->add_message_text('job id is missing');
         }

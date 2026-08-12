@@ -74,9 +74,10 @@ class figure_list extends ListBase
     /**
      * add a figure to the list
      * @param figure|IdObject|TextIdObject|CombineObject|null $to_add the figure frontend object that should be added to the list
+     * @param user_message $msg to report which entry is double
      * @returns bool true if the figure has been added
      */
-    function add(figure|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(figure|IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
         if (!in_array($to_add->id(), $this->id_lst())) {

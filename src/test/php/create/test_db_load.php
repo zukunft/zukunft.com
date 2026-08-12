@@ -625,7 +625,7 @@ class test_db_load
         if ($frm->id() == 0 or $frm->usr_text != $frm_text) {
             // use the setter, because it marks the ref text as dirty, so that the ref text of
             // a loaded formula is regenerated and not kept based on the previous expression
-            $frm->set_user_text($frm_text, null, $msg);
+            $frm->set_user_text($frm_text, $msg);
             $frm->save($msg);
             // TODO add this check to all add functions
             if (!$msg->is_ok()) {

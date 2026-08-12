@@ -91,16 +91,16 @@ class word_list extends list_named
      * convert the word list object into a phrase list object
      * @return phrase_list with all words of this list
      */
-    function phrase_list(): phrase_list
+    function phrase_list(user_message $msg): phrase_list
     {
         log_debug($this->dsp_id());
         $lib = new library();
         $phr_lst = new phrase_list();
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class) {
-                $phr_lst->add($phr->phrase());
+                $phr_lst->add($phr->phrase(), $msg);
             } elseif (get_class($phr) == phrase::class) {
-                $phr_lst->add($phr);
+                $phr_lst->add($phr, $msg);
             } else {
                 log_err('unexpected object type ' . get_class($phr));
             }
@@ -192,7 +192,7 @@ class word_list extends list_named
         $result = new word_list();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type, $msg)) {
-                $result->add($wrd);
+                $result->add($wrd, $msg);
             }
         }
         return $result;
@@ -275,7 +275,7 @@ class word_list extends list_named
         if ($trm_lst == null) {
             // load the list of all value related to the word list
             $val_lst = new value_list();
-            $val_lst->load_by_phr_lst($this->phrase_list(), $msg);
+            $val_lst->load_by_phr_lst($this->phrase_list($msg), $msg);
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
             $time_ids = array();
@@ -301,7 +301,7 @@ class word_list extends list_named
             $time_lst = new word_list();
             foreach ($trm_lst->lst() as $trm) {
                 if ($trm->is_time()) {
-                    $time_lst->add($trm->word());
+                    $time_lst->add($trm->word(), $msg);
                 }
             }
             $wrd = $time_lst->max_time();
@@ -384,7 +384,7 @@ class word_list extends list_named
         $result = new word_list();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling($msg)) {
-                $result->add($wrd);
+                $result->add($wrd, $msg);
             }
         }
         return $result;
@@ -398,7 +398,7 @@ class word_list extends list_named
     {
         $scale_lst = $this->scaling_lst($msg);
         $measure_lst = $this->measure_lst($msg);
-        $measure_lst->merge($scale_lst);
+        $measure_lst->merge($scale_lst, $msg);
         return $measure_lst;
     }
 
