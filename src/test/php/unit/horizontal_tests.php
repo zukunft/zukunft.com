@@ -107,8 +107,7 @@ class horizontal_tests
         // switch usr1 to the system test profile user (needed for the reserved-name imports)
         // and remember the normal usr1 so the end of this run can restore it - otherwise every
         // later test would see a system-tier usr1 instead of the normal email profile user
-        // TODO Prio 1 activate
-        //$usr1_saved = $t->usr1;
+        $usr1_saved = $t->usr1;
         $t->usr1 = $t_usr->user_sys_test();
 
         $t->subheader($ts . 'fill');
@@ -282,8 +281,7 @@ class horizontal_tests
         }
 
         // restore the normal usr1 so the following tests run with the email profile user again
-        // TODO Prio 1 activate
-        //$t->usr1 = $usr1_saved;
+        $t->usr1 = $usr1_saved;
 
     }
 

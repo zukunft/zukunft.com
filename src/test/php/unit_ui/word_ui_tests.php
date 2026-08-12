@@ -479,8 +479,11 @@ class word_ui_tests
         $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
         $usr_tab_keep = $ui_sys->usr ?? null;
 
+        // the user comes from the factory and not from $t->usr_normal, because the my tab is only
+        // shown to a user with an id and $t->usr_normal is the id-less user_filled dummy as long as
+        // the users have not been loaded from the database (see docs/llm/testing.md)
         $test_name = 'the user with overwrites sees the my tab';
-        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         // the current page url with another entry that the undo link must keep and a stale
         // value of the field to undo that the undo link must replace by the standard value
         $tab_url = [
@@ -538,7 +541,7 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $list->view_tab_box($wrd_tab, $msg, true), $mtr->text_db_field(fields::FLD_IMPACT));
 
         $test_name = 'without overwrites no my and no others tab is shown';
-        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         $wrd_plain = new word($t_wrd->word()->api_json());
         $plain_html = $list->view_tab_box($wrd_plain, $msg, true);
         $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);

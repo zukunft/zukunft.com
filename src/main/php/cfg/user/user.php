@@ -1939,6 +1939,10 @@ class user extends db_id_object_non_sandbox
         if ($this->is_system()) {
             $result = true;
         }
+        // ... and system test users
+        if ($this->is_system_test()) {
+            $result = true;
+        }
         // the admin users can change other users ...
         if ($this->is_admin()) {
             // ... but not system users
@@ -1967,6 +1971,10 @@ class user extends db_id_object_non_sandbox
         if ($profile != null) {
             // the system users can assign all profiles
             if ($this->is_system()) {
+                $result = true;
+            }
+            // ... and system test users
+            if ($this->is_system_test()) {
                 $result = true;
             }
             // the admin users can change other users ...
@@ -2036,6 +2044,10 @@ class user extends db_id_object_non_sandbox
         if ($this->is_system()) {
             $result = true;
         }
+        // ... and system test users
+        if ($this->is_system_test()) {
+            $result = true;
+        }
         // ... and developers
         if ($this->is_developer()) {
             $result = true;
@@ -2069,6 +2081,10 @@ class user extends db_id_object_non_sandbox
         if ($this->is_system()) {
             $result = true;
         }
+        // ... and the reserved system test users e.g. to prepare the test cases
+        if ($this->is_system_test()) {
+            $result = true;
+        }
         // the development users can change the code id ...
         if ($this->is_developer()) {
             // TODO review
@@ -2093,6 +2109,10 @@ class user extends db_id_object_non_sandbox
 
         // the system users can always change the message id
         if ($this->is_system()) {
+            $result = true;
+        }
+        // ... and system test users
+        if ($this->is_system_test()) {
             $result = true;
         }
         // ... and developers
@@ -2641,6 +2661,26 @@ class user extends db_id_object_non_sandbox
             if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
                 or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::LOG)
                 or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @returns bool true if the user has the reserved test profile, which keeps the privileges
+     *               of a system user e.g. to set the code id of an object;
+     *               like every permission based on the profile only, because the code id of a
+     *               user is never permission relevant - it only selects a user e.g. to
+     *               distinguish the system test user 1 and 2 (see docs/llm/state-and-messages.md)
+     */
+    function is_system_test(): bool
+    {
+        global $sys;
+
+        $result = false;
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)) {
                 $result = true;
             }
         }

@@ -179,6 +179,37 @@ injected `$this->env` (`new word($this->env->usr1)`). A `static` factory has no
 environment, so it takes the user from `test_users`
 (`new word(test_users::user_sys_test())`) — not from a global either.
 
+When a test needs a *user object itself* as the fixture (a specific profile,
+code id or filled fields), that user also comes from a `test_users` factory
+method (`$t_usr->user_sys_test()`, `$t_usr->user_ip()`, …) — never from an
+inline `new user(); $usr->set(...); $usr->code_id = ...;` block in the test;
+the general test-object-creation rule above applies to users too.
+
+**An import test uses one user for the import object *and* its message.** An
+`import` carries its own `$imp->usr` (the objects it builds get that user) while
+the privilege checks read `$msg->usr`. When the two differ, the import fails in
+two ways that are easy to misread:
+
+- a *privilege* check denies (e.g. `set_code_id` for a fixture with a `code_id`,
+  which needs `$t->usr_dev`), and because `import_mapper` returns
+  `$msg->is_ok()` on the shared append-only message, **every later object of the
+  same import is dropped too**;
+- a *user mismatch* between an object and the list it is added to makes
+  `sandbox_link_list::add_link_by_key` skip the entry **without any message
+  reaching the caller** — e.g. every component link of a view silently
+  disappears, so a view consistency check (row balance, positions) finds an
+  empty list and reports nothing at all.
+
+```php
+// right: the same user drives the import and the permission checks
+$imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
+$imp->usr = $t->usr_dev;
+$msg = new user_message($t->usr_dev);
+```
+
+So when an import assert suddenly sees an *empty* message where it expects a
+consistency warning, suspect the user pairing before the check itself.
+
 - **Right**: `$wrd = new word($t->usr1);` / `$wrd = new word($this->env->usr1);`
 - **Wrong**: `global $usr; $wrd = new word($usr);`
 

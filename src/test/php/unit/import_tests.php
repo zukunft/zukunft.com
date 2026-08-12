@@ -62,8 +62,11 @@ class import_tests
     {
         $sc = new sql_creator();
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
-        $imp->usr = $t->usr1;
-        $msg = new user_message($t->usr1);
+        // use the dev user, because the import files set code ids (e.g. of the sources) and
+        // the virtual dev user is allowed to set a code_id whereas the unit test usr1
+        // acts like a normal user (see docs/llm/testing.md)
+        $imp->usr = $t->usr_dev;
+        $msg = new user_message($t->usr_dev);
 
         // start the test section (ts)
         $ts = 'unit import ';
@@ -118,7 +121,7 @@ class import_tests
         // differ only by one phrase and the number; each of the 1653 "values" entries (across
         // 10 lists) is expanded to one value and added to the 7 plain values of the same file
         $test_name = 'JSON import value-list count';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_TRAVEL_SCORING_VALUE_LIST);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
@@ -128,7 +131,7 @@ class import_tests
         // the compact "phrase-values" map assigns a number directly to a single phrase
         // (here three "<city> inhabitants" triples), expanded to one value per entry
         $test_name = 'JSON import phrase-values count';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_PHRASE_VALUES . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
@@ -218,12 +221,16 @@ class import_tests
         $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
 
         $t->subheader($ts . 'duplicate component check');
+        // the import user must be the same as the user of the message, because a component link
+        // is created with the message user and added to a list of the import user, so a mismatch
+        // silently drops every component link (see docs/llm/testing.md);
+        // the dev user is used because the view fixtures below set component code ids
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
-        $imp->usr = $t->usr1;
+        $imp->usr = $t->usr_dev;
 
         // a component name is the key the views use, so the same name twice in one import is reported
         $test_name = 'JSON import reports a component defined twice';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_array = [json_fields::COMPONENTS => [
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::PHRASES_RELATED]
@@ -235,7 +242,7 @@ class import_tests
 
         // two components with different names are a valid import
         $test_name = 'JSON import accepts components with unique names';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_array = [json_fields::COMPONENTS => [
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
             [json_fields::NAME => components::TEST_RESULTS_NAME, json_fields::TYPE_NAME => component_types::RESULTS_RELATED]
@@ -245,9 +252,11 @@ class import_tests
 
         $t->subheader($ts . 'view row balance check');
 
-        // a view that opens a row with row_right but never closes it with row_end is reported
+        // a view that opens a row with row_right but never closes it with row_end is reported;
+        // the fixture uses system components with a code id, so the import needs the dev user
+        // that is allowed to set a code_id (see docs/llm/testing.md)
         $test_name = 'JSON import reports a view with an unclosed row';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_VIEW_ROW_NOT_CLOSED . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $imp->get_data_object($json_array, $msg);
@@ -256,7 +265,7 @@ class import_tests
 
         // the same view is a valid import once the row is closed with a row_end component
         $test_name = 'JSON import accepts a view with a closed row';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][] = [
             json_fields::POSITION => 3,
             json_fields::NAME => 'system formatter row end'
@@ -266,9 +275,10 @@ class import_tests
 
         $t->subheader($ts . 'view component position check');
 
-        // a view that uses the same component position twice (and so misses one) is reported as an error
+        // a view that uses the same component position twice (and so misses one) is reported as an
+        // error; this fixture also sets component code ids, so the dev user is used again
         $test_name = 'JSON import reports a double component position';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_VIEW_COMPONENT_POS_DOUBLE . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $imp->get_data_object($json_array, $msg);
@@ -277,7 +287,7 @@ class import_tests
 
         // the same view is a valid import once every component has a unique position from 1 to n
         $test_name = 'JSON import accepts a view with complete component positions';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 2;
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
@@ -285,7 +295,7 @@ class import_tests
         // json has no order, so a position that differs from the json order is only a warning
         // that does not block the import but is reported because it could confuse the user
         $test_name = 'JSON import reports a position differing from the json order as a warning only';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][0][json_fields::POSITION] = 2;
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 1;
         $imp->get_data_object($json_array, $msg);
@@ -298,7 +308,7 @@ class import_tests
         // two triples that share the same from/verb/to link but carry different names give an
         // ambiguous link id, so the import reports it (see docs/llm/json_structure.md)
         $test_name = 'JSON import reports two triples with the same link but different names';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_TRIPLE_LINK_AMBIGUOUS . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $imp->get_data_object($json_array, $msg);
@@ -307,7 +317,7 @@ class import_tests
 
         // the same two names are a valid import once their links differ (here the second uses "of")
         $test_name = 'JSON import accepts two triples with different names and different links';
-        $msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::TRIPLES][1][json_fields::EX_VERB] = 'of';
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());

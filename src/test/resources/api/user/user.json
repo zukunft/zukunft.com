@@ -3,5 +3,7 @@
   "name": "zukunft.com system test",
   "email": "test@zukunft.com",
   "profile_id": 17,
+  "code_id": "test",
+  "uses_sandbox": false,
   "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests"
 }

@@ -142,6 +142,7 @@ class files
     // data for the default start page
     const string START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
     const string CONFORMITY_MRI_BERNS_FILE = self::DATA_START_PAGE_PATH . 'conformity_mri_berns' . self::JSON;
+    const string CO2_EQ_REDUCTION_RANKING_FILE = self::DATA_START_PAGE_PATH . 'co2_eq_reduction_ranking' . self::JSON;
 
     // initial data just to add some sample data and for system testing
     const string ZURICH_HTP_IMPACT_FILE = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'zurich_htp_impact' . self::JSON;
@@ -246,6 +247,7 @@ class files
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
+        self::CO2_EQ_REDUCTION_RANKING_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

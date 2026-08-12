@@ -113,6 +113,18 @@ class user_ui_tests
         $test_name = 'the normal test user does not see the admin-only fields';
         $t->assert_false($test_name, $usr1_ui->sees_admin_fields());
 
+        // the test profile keeps the admin mask access (frontend::admin_mask_denied), because the
+        // system view tests render the admin masks as the test user; only the display acts normal;
+        // the user comes from the factory and not from $t->usr1, because $t->usr1 carries the test
+        // profile only when it has been loaded from the database and the email profile when it is
+        // the dummy of the unit tests (see docs/llm/testing.md)
+        $test_name = 'a user with the test profile uses the admin masks like a system user';
+        $sys_test_ui = new user_ui($t_usr->user_sys_test()->api_json());
+        $t->assert_true($test_name, $sys_test_ui->is_system_test());
+
+        $test_name = 'an ip only user is not a system test user';
+        $t->assert_false($test_name, $ip_ui->is_system_test());
+
         $test_name = 'the system user itself keeps the system rights';
         $sys_ui = new user_ui($t_usr->system_user()->api_json());
         $t->assert_true($test_name, $sys_ui->is_system());

@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::WEB . 'frontend.php';
@@ -61,6 +62,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\test\php\create\test_types;
@@ -205,6 +207,12 @@ class all_unit_tests extends test_cleanup
     {
         global $sys;
 
+        // use the profile list of the unit tests (loaded from the csv) already here, so that the
+        // profile ids of the dummy users always match the profile checks of the unit tests
+        // (e.g. user::is_unique) even if the database of the developer has other profile ids
+        $sys->typ_lst->usr_pro = new user_profile_list();
+        $sys->typ_lst->usr_pro->load_dummy();
+
         // system users that might create log entries show to the user
 
         // create a local admin user that can be used script based admin changes
@@ -249,7 +257,10 @@ class all_unit_tests extends test_cleanup
 
         $t_usr = new test_users();
         $this->usr_dev = $t_usr->user_dev($msg);
-        $this->usr_normal = $t_usr->user_filled($this);
+        // like the other dummy users with the id set, because a test user is an acting user and
+        // e.g. the frontend and the save path use the requesting user only if it has an id;
+        // this matches the user that set_users loads from the database (see test_base::set_users)
+        $this->usr_normal = $t_usr->user_sys_normal();
 
     }
 

@@ -1,0 +1,7626 @@
+{
+  "version": "0.0.3",
+  "user": "timon",
+  "description": "Global climate gas emission reduction solutions ranked by effort versus expected return. 46 solutions, each with reduction potential (Gt CO2eq/yr by ~2035), one-time initial effort (billion USD), fulfillment probability, derived expected return and effort return score, and a rank with best effort/return on top. All estimate ranges span about one standard deviation. Potentials overlap between solutions and must not be summed.",
+  "words": [
+    {
+      "name": "2019",
+      "description": "Calendar year 2019, reference year for the emission baseline."
+    },
+    {
+      "name": "afforestation",
+      "description": "Afforestation and reforestation as carbon sinks. Wide IPCC range; permanence, land competition and fire risk limit reliability. Translation of the German keyword 'Aufforstung'."
+    },
+    {
+      "name": "agreements"
+    },
+    {
+      "name": "agriculture"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "aviation"
+    },
+    {
+      "name": "border"
+    },
+    {
+      "name": "building"
+    },
+    {
+      "name": "buildup"
+    },
+    {
+      "name": "capture"
+    },
+    {
+      "name": "carbon"
+    },
+    {
+      "name": "chain"
+    },
+    {
+      "name": "circular"
+    },
+    {
+      "name": "climate"
+    },
+    {
+      "name": "coal"
+    },
+    {
+      "name": "confidence",
+      "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "cycling",
+      "description": "Shift of short trips to bikes and e-bikes via safe infrastructure. Small global potential but very cheap per tonne. Translation of the German keyword 'Radverkehr'."
+    },
+    {
+      "name": "digitalization",
+      "description": "Smart grids, building automation and logistics optimization, net of rebound and data-center growth. Translation of the German keyword 'Digitalisierung'."
+    },
+    {
+      "name": "district"
+    },
+    {
+      "name": "dividend"
+    },
+    {
+      "name": "economy"
+    },
+    {
+      "name": "education",
+      "description": "Climate and general education including girls' education; long-term enabler of low-carbon choices and policy support. Translation of the German keyword 'Bildung'."
+    },
+    {
+      "name": "efficiency"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "electric"
+    },
+    {
+      "name": "electrification",
+      "description": "Switching industrial processes, transport and heat from fossil fuels to clean electricity. Translation of the German keyword 'Elektrifizierung'."
+    },
+    {
+      "name": "emission"
+    },
+    {
+      "name": "energy"
+    },
+    {
+      "name": "expansion"
+    },
+    {
+      "name": "expected"
+    },
+    {
+      "name": "finance"
+    },
+    {
+      "name": "food"
+    },
+    {
+      "name": "fossil"
+    },
+    {
+      "name": "freight"
+    },
+    {
+      "name": "fulfillment"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "geothermal"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "green"
+    },
+    {
+      "name": "greenhouse"
+    },
+    {
+      "name": "grid"
+    },
+    {
+      "name": "heat"
+    },
+    {
+      "name": "heating"
+    },
+    {
+      "name": "hydrogen"
+    },
+    {
+      "name": "hydropower",
+      "description": "Expansion and modernization of hydroelectric generation, limited by sites, ecology and drought risk. Translation of the German keyword 'Wasserkraft'."
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "innovation",
+      "description": "Commercialization, scale-up and learning-curve effects turning research into deployed technology. Overlaps with research. Translation of the German keyword 'Innovation'."
+    },
+    {
+      "name": "international"
+    },
+    {
+      "name": "laws"
+    },
+    {
+      "name": "limit"
+    },
+    {
+      "name": "material"
+    },
+    {
+      "name": "maximum",
+      "description": "Upper bound of the estimate range, about one standard deviation above the central value."
+    },
+    {
+      "name": "measured"
+    },
+    {
+      "name": "meat"
+    },
+    {
+      "name": "methane"
+    },
+    {
+      "name": "minimum",
+      "description": "Lower bound of the estimate range, about one standard deviation below the central value."
+    },
+    {
+      "name": "mobility"
+    },
+    {
+      "name": "nuclear"
+    },
+    {
+      "name": "peatland"
+    },
+    {
+      "name": "phase-out"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "pumps"
+    },
+    {
+      "name": "rank"
+    },
+    {
+      "name": "recycling",
+      "description": "Enhanced collection and recycling of metals, plastics and construction materials. Translation of the German keyword 'Recycling'."
+    },
+    {
+      "name": "reduced"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "removal"
+    },
+    {
+      "name": "renovation"
+    },
+    {
+      "name": "research",
+      "description": "Basic research on energy, materials and carbon removal. Delayed, hard-to-attribute but historically decisive (e.g. photovoltaics cost decline). Translation of the German keyword 'Forschung'."
+    },
+    {
+      "name": "return"
+    },
+    {
+      "name": "rewetting"
+    },
+    {
+      "name": "score"
+    },
+    {
+      "name": "soil"
+    },
+    {
+      "name": "solar"
+    },
+    {
+      "name": "solution"
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "standards"
+    },
+    {
+      "name": "storage"
+    },
+    {
+      "name": "subsidy"
+    },
+    {
+      "name": "sufficiency",
+      "description": "Demand reduction through changed consumption patterns: smaller living space, less driving and flying, longer product use. Cheap in money, hard socially. Translation of the German keyword 'Suffizienz'."
+    },
+    {
+      "name": "supply"
+    },
+    {
+      "name": "sustainable"
+    },
+    {
+      "name": "tariff"
+    },
+    {
+      "name": "trading"
+    },
+    {
+      "name": "transport"
+    },
+    {
+      "name": "utilization"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "waste"
+    },
+    {
+      "name": "wind"
+    }
+  ],
+  "triples": [
+    {
+      "name": "climate gas",
+      "from": "gas",
+      "verb": "of",
+      "to": "climate",
+      "description": "A gas that contributes to the greenhouse effect and thus to climate change."
+    },
+    {
+      "name": "climate gas emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "climate gas",
+      "description": "Release of a climate gas into the atmosphere."
+    },
+    {
+      "name": "climate gas emission reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "climate gas emission",
+      "description": "Topic: options to reduce global greenhouse gas emissions, compared as Fermi estimates. Baseline: global net emissions 2019 of 59 Gt CO2eq (IPCC AR6 WG3 SPM). Potentials of different climate solutions overlap and must not be summed."
+    },
+    {
+      "name": "climate solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "climate",
+      "description": "A mitigation option that reduces global greenhouse gas emissions, ranked here by effort return score."
+    },
+    {
+      "name": "reduction potential",
+      "from": "potential",
+      "verb": "of",
+      "to": "reduction",
+      "description": "Criterion: additional greenhouse gas reduction a solution can deliver globally per year by about 2035 versus a current-policy baseline. Unit: Gt CO2eq per year. Range given as minimum and maximum spans about one standard deviation around the central estimate."
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial",
+      "description": "Criterion: one-time global investment needed to set the solution up at the scale behind its reduction potential. Unit: billion US dollar. Range spans about one standard deviation."
+    },
+    {
+      "name": "fulfillment probability",
+      "from": "probability",
+      "verb": "of",
+      "to": "fulfillment",
+      "description": "Criterion: probability that the reduction potential is actually delivered once the initial setup is done, reflecting political, social and technical execution risk. Dimensionless, 0 to 1. Range spans about one standard deviation."
+    },
+    {
+      "name": "expected return",
+      "from": "return",
+      "verb": "kind of",
+      "to": "expected",
+      "description": "Derived criterion: reduction potential multiplied by fulfillment probability. Unit: Gt CO2eq per year (expected value)."
+    },
+    {
+      "name": "return per effort",
+      "from": "return",
+      "verb": "per",
+      "to": "effort",
+      "description": "The return achieved per unit of effort invested, the building block of the effort return score and rank."
+    },
+    {
+      "name": "effort return score",
+      "from": "score",
+      "verb": "of",
+      "to": "return per effort",
+      "description": "Derived criterion: expected return divided by initial effort in trillion US dollar. Unit: Gt CO2eq per year per trillion US dollar. Higher is better."
+    },
+    {
+      "name": "effort return rank",
+      "from": "rank",
+      "verb": "of",
+      "to": "return per effort",
+      "description": "Derived criterion: rank of the effort return score across all climate solutions, 1 = best effort versus expected return. Minimum and maximum give the rank under optimistic and pessimistic score bounds."
+    },
+    {
+      "name": "greenhouse gas",
+      "from": "gas",
+      "verb": "of",
+      "to": "greenhouse",
+      "description": "A gas that absorbs and emits infrared radiation and thus warms the atmosphere."
+    },
+    {
+      "name": "greenhouse gas emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "greenhouse gas",
+      "description": "Release of a greenhouse gas into the atmosphere."
+    },
+    {
+      "name": "global greenhouse gas emissions",
+      "from": "greenhouse gas emission",
+      "verb": "kind of",
+      "to": "global",
+      "description": "Global net anthropogenic greenhouse gas emissions in Gt CO2eq per year."
+    },
+    {
+      "name": "measured value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "measured",
+      "description": "Value taken from a verifiable published source."
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "assumed",
+      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
+    },
+    {
+      "name": "coal phase-out",
+      "from": "phase-out",
+      "verb": "of",
+      "to": "coal",
+      "description": "Replacing coal-fired power and heat with low-carbon generation. Largest single fossil emission source. Overlaps strongly with solar energy and wind energy; potentials must not be summed. Translation of the German keyword 'Kohleausstieg'."
+    },
+    {
+      "name": "methane reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "methane",
+      "description": "Cutting CH4 from oil, gas, coal, waste and agriculture. UNEP/CCAC: up to 45 percent (180 Mt CH4/yr, about 5 Gt CO2eq at GWP100) by 2030, avoiding about 0.3 degree C by the 2040s; majority of measures at low or negative cost. Translation of the German keyword 'Methanreduktion'."
+    },
+    {
+      "name": "energy efficiency",
+      "from": "efficiency",
+      "verb": "of",
+      "to": "energy",
+      "description": "Cross-sector efficiency in industry, buildings, appliances and processes. IEA calls it the first fuel; most measures have negative lifetime cost. Translation of the German keyword 'Energieeffizienz'."
+    },
+    {
+      "name": "building renovation",
+      "from": "renovation",
+      "verb": "of",
+      "to": "building",
+      "description": "Deep energy retrofits of the existing building stock (insulation, windows, heating systems). High potential but chronically low renovation rates. Translation of the German keyword 'Gebäudesanierung'."
+    },
+    {
+      "name": "heat pumps",
+      "from": "pumps",
+      "verb": "of",
+      "to": "heat",
+      "description": "Replacing fossil heating boilers with electric heat pumps in buildings and low-temperature industry. Translation of the German keyword 'Wärmepumpen'."
+    },
+    {
+      "name": "district heating",
+      "from": "heating",
+      "verb": "of",
+      "to": "district",
+      "description": "Decarbonized heat networks using waste heat, large heat pumps, geothermal and thermal storage in dense areas. Translation of the German keyword 'Fernwärme'."
+    },
+    {
+      "name": "solar energy",
+      "from": "energy",
+      "verb": "kind of",
+      "to": "solar",
+      "description": "Utility-scale and rooftop photovoltaics. Largest and cheapest 2030 potential in IPCC AR6 Figure SPM.7; deployment already on a steep growth track. Translation of the German keyword 'Solarenergie'."
+    },
+    {
+      "name": "wind energy",
+      "from": "energy",
+      "verb": "of",
+      "to": "wind",
+      "description": "Onshore and offshore wind power. Second largest low-cost 2030 potential in IPCC AR6 Figure SPM.7. Translation of the German keyword 'Windenergie'."
+    },
+    {
+      "name": "nuclear energy",
+      "from": "energy",
+      "verb": "kind of",
+      "to": "nuclear",
+      "description": "New nuclear plants and lifetime extensions. Low-carbon but slow to build; near-term potential limited by construction times. Translation of the German keyword 'Kernenergie'."
+    },
+    {
+      "name": "geothermal energy",
+      "from": "energy",
+      "verb": "kind of",
+      "to": "geothermal",
+      "description": "Geothermal electricity and direct heat use, including emerging deep and enhanced systems. Translation of the German keyword 'Geothermie'."
+    },
+    {
+      "name": "energy storage",
+      "from": "storage",
+      "verb": "of",
+      "to": "energy",
+      "description": "Batteries, pumped hydro and long-duration storage. Enabler that unlocks variable renewables rather than a direct emission cut; potential counted as enabled reduction. Translation of the German keyword 'Energiespeicher'."
+    },
+    {
+      "name": "grid expansion",
+      "from": "expansion",
+      "verb": "of",
+      "to": "grid",
+      "description": "Transmission and distribution build-out plus interconnectors. Enabler for renewables integration; potential counted as enabled reduction. Translation of the German keyword 'Netzausbau'."
+    },
+    {
+      "name": "public transport",
+      "from": "transport",
+      "verb": "kind of",
+      "to": "public",
+      "description": "Modal shift from cars to buses, trams, metro and rail through service expansion and pricing. Translation of the German keyword 'ÖPNV'."
+    },
+    {
+      "name": "speed limit",
+      "from": "limit",
+      "verb": "of",
+      "to": "speed",
+      "description": "General motorway speed limits. Tiny global potential (Germany alone below 0.01 Gt/yr) but near-zero setup cost. Translation of the German keyword 'Tempolimit'."
+    },
+    {
+      "name": "carbon price",
+      "from": "price",
+      "verb": "of",
+      "to": "carbon",
+      "description": "Economy-wide carbon pricing (tax or minimum price). Systemic instrument whose potential is the reduction it induces across sectors; overlaps with emissions trading. Translation of the German keyword 'CO₂-Preis'."
+    },
+    {
+      "name": "climate dividend",
+      "from": "dividend",
+      "verb": "of",
+      "to": "climate",
+      "description": "Per-capita refund of carbon price revenue. Direct effect small; main value is raising public acceptance and thus the fulfillment probability of carbon pricing. Translation of the German keyword 'Klimageld'."
+    },
+    {
+      "name": "border tariff",
+      "from": "tariff",
+      "verb": "of",
+      "to": "border",
+      "description": "A duty levied on goods when they cross a customs border."
+    },
+    {
+      "name": "carbon border tariff",
+      "from": "border tariff",
+      "verb": "of",
+      "to": "carbon",
+      "description": "Carbon border adjustment (CBAM-type) extending carbon pricing to imports and reducing leakage; EU CBAM operational since 2026. Translation of the German keyword 'Klimazoll'."
+    },
+    {
+      "name": "emissions trading",
+      "from": "trading",
+      "verb": "of",
+      "to": "emission",
+      "description": "Cap-and-trade systems with declining caps (EU ETS and successors). Overlaps with carbon price; proven instrument. Translation of the German keyword 'Emissionshandel'."
+    },
+    {
+      "name": "electric mobility",
+      "from": "mobility",
+      "verb": "kind of",
+      "to": "electric",
+      "description": "Battery-electric passenger vehicles plus charging infrastructure. Strong market momentum. Translation of the German keyword 'Elektromobilität'."
+    },
+    {
+      "name": "freight transport",
+      "from": "transport",
+      "verb": "of",
+      "to": "freight",
+      "description": "Electric and efficient trucks, rail modal shift and logistics optimization for goods transport. Translation of the German keyword 'Güterverkehr'."
+    },
+    {
+      "name": "circular economy",
+      "from": "economy",
+      "verb": "kind of",
+      "to": "circular",
+      "description": "System-wide reuse, remanufacturing and product life extension reducing primary material demand. Overlaps with recycling and material efficiency. Translation of the German keyword 'Kreislaufwirtschaft'."
+    },
+    {
+      "name": "material efficiency",
+      "from": "efficiency",
+      "verb": "of",
+      "to": "material",
+      "description": "Lightweight design, higher material yields and substitution (e.g. low-clinker cement, timber construction). Translation of the German keyword 'Materialeffizienz'."
+    },
+    {
+      "name": "peatland rewetting",
+      "from": "rewetting",
+      "verb": "of",
+      "to": "peatland",
+      "description": "Rewetting drained peatlands, which currently emit on the order of 1 to 2 Gt CO2eq/yr globally. Translation of the German keyword 'Wiedervernässung'."
+    },
+    {
+      "name": "soil carbon",
+      "from": "carbon",
+      "verb": "of",
+      "to": "soil",
+      "description": "Organic carbon stored in the soil."
+    },
+    {
+      "name": "soil carbon buildup",
+      "from": "buildup",
+      "verb": "of",
+      "to": "soil carbon",
+      "description": "Soil carbon sequestration on cropland and grassland (cover crops, agroforestry, improved grazing). Measurement and permanence remain difficult. Translation of the German keyword 'Humusaufbau'."
+    },
+    {
+      "name": "carbon capture",
+      "from": "capture",
+      "verb": "of",
+      "to": "carbon",
+      "description": "Separating CO2 from a gas stream so that it can be stored or used."
+    },
+    {
+      "name": "carbon capture and storage",
+      "from": "carbon capture",
+      "verb": "and",
+      "to": "storage",
+      "description": "Capturing CO2 at industrial point sources and storing it geologically. Historically weak delivery record; costly per tonne. Translation of the German keyword 'CCS'."
+    },
+    {
+      "name": "carbon capture and utilization",
+      "from": "carbon capture",
+      "verb": "and",
+      "to": "utilization",
+      "description": "Using captured CO2 in fuels and materials. Small net potential because most uses re-release CO2 and demand large clean energy input. Translation of the German keyword 'CCU'."
+    },
+    {
+      "name": "green hydrogen",
+      "from": "hydrogen",
+      "verb": "kind of",
+      "to": "green",
+      "description": "Electrolytic hydrogen for steel, chemicals, shipping and long-term storage. Limited to hard-to-electrify uses; expectations corrected downward since 2023. Translation of the German keyword 'Grüner Wasserstoff'."
+    },
+    {
+      "name": "sustainable agriculture",
+      "from": "agriculture",
+      "verb": "kind of",
+      "to": "sustainable",
+      "description": "Improved nutrient management, rice cultivation, livestock feeding and manure handling reducing N2O and CH4. Translation of the German keyword 'Nachhaltige Landwirtschaft'."
+    },
+    {
+      "name": "meat consumption",
+      "from": "consumption",
+      "verb": "of",
+      "to": "meat",
+      "description": "The amount of meat eaten."
+    },
+    {
+      "name": "reduced meat consumption",
+      "from": "meat consumption",
+      "verb": "kind of",
+      "to": "reduced",
+      "description": "Shift toward plant-rich diets. IPCC sustainable healthy diets potential includes freed agricultural land; very cheap in money, slow in behavior. Translation of the German keyword 'Weniger Fleisch'."
+    },
+    {
+      "name": "food waste",
+      "from": "waste",
+      "verb": "of",
+      "to": "food",
+      "description": "Food that is lost or thrown away along the supply chain."
+    },
+    {
+      "name": "food waste reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "food waste",
+      "description": "Cutting food loss and waste along the whole chain, reducing agricultural production needs. Translation of the German keyword 'Lebensmittelverschwendung'."
+    },
+    {
+      "name": "aviation emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "aviation",
+      "description": "Greenhouse gas released by air traffic."
+    },
+    {
+      "name": "aviation emission reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "aviation emission",
+      "description": "Sustainable aviation fuels, efficiency and demand management for the roughly 1 Gt CO2/yr aviation sector. Translation of the German keyword 'Flugverkehr'."
+    },
+    {
+      "name": "emission standards",
+      "from": "standards",
+      "verb": "of",
+      "to": "emission",
+      "description": "Binding CO2 and efficiency standards for vehicles, appliances and buildings. Regulation is cheap to set up and has a strong track record. Translation of the German keyword 'CO₂-Standards'."
+    },
+    {
+      "name": "climate finance",
+      "from": "finance",
+      "verb": "of",
+      "to": "climate",
+      "description": "Concessional finance and de-risking for mitigation in developing countries; enabler whose potential is the reduction it unlocks. Translation of the German keyword 'Klimafinanzierung'."
+    },
+    {
+      "name": "supply chain",
+      "from": "chain",
+      "verb": "of",
+      "to": "supply",
+      "description": "The chain of suppliers that contribute to a final product."
+    },
+    {
+      "name": "supply chain laws",
+      "from": "laws",
+      "verb": "of",
+      "to": "supply chain",
+      "description": "Due diligence and disclosure duties pushing emission cuts through corporate supply chains. Translation of the German keyword 'Lieferkettengesetze'."
+    },
+    {
+      "name": "fossil subsidy",
+      "from": "subsidy",
+      "verb": "kind of",
+      "to": "fossil",
+      "description": "Public financial support that lowers the price of fossil fuels."
+    },
+    {
+      "name": "fossil subsidy removal",
+      "from": "removal",
+      "verb": "of",
+      "to": "fossil subsidy",
+      "description": "Removing explicit fossil fuel subsidies (IMF: 725 billion USD in 2024; removal cuts CO2 about 6 percent below baseline by 2035). Saves public money; politically explosive. Translation of the German keyword 'Subventionsabbau'."
+    },
+    {
+      "name": "international agreements",
+      "from": "agreements",
+      "verb": "kind of",
+      "to": "international",
+      "description": "Treaties and pledges (Paris Agreement, Global Methane Pledge, CBAM clubs) that coordinate national action; potential counted as enabled reduction. Translation of the German keyword 'Internationale Abkommen'."
+    },
+    {
+      "name": "climate solution (climate gas emission reduction)",
+      "from": "climate solution",
+      "verb": "is part of",
+      "to": "climate gas emission reduction",
+      "description": "Climate solutions are the compared options within the topic."
+    },
+    {
+      "name": "coal phase-out (climate solution)",
+      "from": "coal phase-out",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'coal phase-out' is one of the compared climate solutions."
+    },
+    {
+      "name": "methane reduction (climate solution)",
+      "from": "methane reduction",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'methane reduction' is one of the compared climate solutions."
+    },
+    {
+      "name": "energy efficiency (climate solution)",
+      "from": "energy efficiency",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'energy efficiency' is one of the compared climate solutions."
+    },
+    {
+      "name": "building renovation (climate solution)",
+      "from": "building renovation",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'building renovation' is one of the compared climate solutions."
+    },
+    {
+      "name": "heat pumps (climate solution)",
+      "from": "heat pumps",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'heat pumps' is one of the compared climate solutions."
+    },
+    {
+      "name": "district heating (climate solution)",
+      "from": "district heating",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'district heating' is one of the compared climate solutions."
+    },
+    {
+      "name": "solar energy (climate solution)",
+      "from": "solar energy",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'solar energy' is one of the compared climate solutions."
+    },
+    {
+      "name": "wind energy (climate solution)",
+      "from": "wind energy",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'wind energy' is one of the compared climate solutions."
+    },
+    {
+      "name": "hydropower (climate solution)",
+      "from": "hydropower",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'hydropower' is one of the compared climate solutions."
+    },
+    {
+      "name": "nuclear energy (climate solution)",
+      "from": "nuclear energy",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'nuclear energy' is one of the compared climate solutions."
+    },
+    {
+      "name": "geothermal energy (climate solution)",
+      "from": "geothermal energy",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'geothermal energy' is one of the compared climate solutions."
+    },
+    {
+      "name": "energy storage (climate solution)",
+      "from": "energy storage",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'energy storage' is one of the compared climate solutions."
+    },
+    {
+      "name": "grid expansion (climate solution)",
+      "from": "grid expansion",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'grid expansion' is one of the compared climate solutions."
+    },
+    {
+      "name": "electrification (climate solution)",
+      "from": "electrification",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'electrification' is one of the compared climate solutions."
+    },
+    {
+      "name": "public transport (climate solution)",
+      "from": "public transport",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'public transport' is one of the compared climate solutions."
+    },
+    {
+      "name": "cycling (climate solution)",
+      "from": "cycling",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'cycling' is one of the compared climate solutions."
+    },
+    {
+      "name": "speed limit (climate solution)",
+      "from": "speed limit",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'speed limit' is one of the compared climate solutions."
+    },
+    {
+      "name": "carbon price (climate solution)",
+      "from": "carbon price",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'carbon price' is one of the compared climate solutions."
+    },
+    {
+      "name": "climate dividend (climate solution)",
+      "from": "climate dividend",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'climate dividend' is one of the compared climate solutions."
+    },
+    {
+      "name": "carbon border tariff (climate solution)",
+      "from": "carbon border tariff",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'carbon border tariff' is one of the compared climate solutions."
+    },
+    {
+      "name": "emissions trading (climate solution)",
+      "from": "emissions trading",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'emissions trading' is one of the compared climate solutions."
+    },
+    {
+      "name": "electric mobility (climate solution)",
+      "from": "electric mobility",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'electric mobility' is one of the compared climate solutions."
+    },
+    {
+      "name": "freight transport (climate solution)",
+      "from": "freight transport",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'freight transport' is one of the compared climate solutions."
+    },
+    {
+      "name": "circular economy (climate solution)",
+      "from": "circular economy",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'circular economy' is one of the compared climate solutions."
+    },
+    {
+      "name": "recycling (climate solution)",
+      "from": "recycling",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'recycling' is one of the compared climate solutions."
+    },
+    {
+      "name": "material efficiency (climate solution)",
+      "from": "material efficiency",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'material efficiency' is one of the compared climate solutions."
+    },
+    {
+      "name": "sufficiency (climate solution)",
+      "from": "sufficiency",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'sufficiency' is one of the compared climate solutions."
+    },
+    {
+      "name": "afforestation (climate solution)",
+      "from": "afforestation",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'afforestation' is one of the compared climate solutions."
+    },
+    {
+      "name": "peatland rewetting (climate solution)",
+      "from": "peatland rewetting",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'peatland rewetting' is one of the compared climate solutions."
+    },
+    {
+      "name": "soil carbon buildup (climate solution)",
+      "from": "soil carbon buildup",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'soil carbon buildup' is one of the compared climate solutions."
+    },
+    {
+      "name": "carbon capture and storage (climate solution)",
+      "from": "carbon capture and storage",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'carbon capture and storage' is one of the compared climate solutions."
+    },
+    {
+      "name": "carbon capture and utilization (climate solution)",
+      "from": "carbon capture and utilization",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'carbon capture and utilization' is one of the compared climate solutions."
+    },
+    {
+      "name": "green hydrogen (climate solution)",
+      "from": "green hydrogen",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'green hydrogen' is one of the compared climate solutions."
+    },
+    {
+      "name": "sustainable agriculture (climate solution)",
+      "from": "sustainable agriculture",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'sustainable agriculture' is one of the compared climate solutions."
+    },
+    {
+      "name": "reduced meat consumption (climate solution)",
+      "from": "reduced meat consumption",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'reduced meat consumption' is one of the compared climate solutions."
+    },
+    {
+      "name": "food waste reduction (climate solution)",
+      "from": "food waste reduction",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'food waste reduction' is one of the compared climate solutions."
+    },
+    {
+      "name": "aviation emission reduction (climate solution)",
+      "from": "aviation emission reduction",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'aviation emission reduction' is one of the compared climate solutions."
+    },
+    {
+      "name": "emission standards (climate solution)",
+      "from": "emission standards",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'emission standards' is one of the compared climate solutions."
+    },
+    {
+      "name": "research (climate solution)",
+      "from": "research",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'research' is one of the compared climate solutions."
+    },
+    {
+      "name": "innovation (climate solution)",
+      "from": "innovation",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'innovation' is one of the compared climate solutions."
+    },
+    {
+      "name": "climate finance (climate solution)",
+      "from": "climate finance",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'climate finance' is one of the compared climate solutions."
+    },
+    {
+      "name": "supply chain laws (climate solution)",
+      "from": "supply chain laws",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'supply chain laws' is one of the compared climate solutions."
+    },
+    {
+      "name": "fossil subsidy removal (climate solution)",
+      "from": "fossil subsidy removal",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'fossil subsidy removal' is one of the compared climate solutions."
+    },
+    {
+      "name": "education (climate solution)",
+      "from": "education",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'education' is one of the compared climate solutions."
+    },
+    {
+      "name": "digitalization (climate solution)",
+      "from": "digitalization",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'digitalization' is one of the compared climate solutions."
+    },
+    {
+      "name": "international agreements (climate solution)",
+      "from": "international agreements",
+      "verb": "is a",
+      "to": "climate solution",
+      "description": "'international agreements' is one of the compared climate solutions."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "expected return formula",
+      "expression": "\"expected return\" = \"reduction potential\" * \"fulfillment probability\"",
+      "assigned": [
+        "reduction potential",
+        "fulfillment probability"
+      ],
+      "description": "Probability-weighted annual reduction."
+    },
+    {
+      "name": "effort return score formula",
+      "expression": "\"effort return score\" = \"expected return\" / ( \"initial effort\" / 1000 )",
+      "assigned": [
+        "expected return",
+        "initial effort"
+      ],
+      "description": "Expected annual reduction per trillion US dollar of setup investment; initial effort is given in billion US dollar, hence the division by 1000."
+    }
+  ],
+  "sources": [
+    {
+      "name": "IPCC AR6 WG3 SPM",
+      "description": "IPCC, 2022: Summary for Policymakers. In: Climate Change 2022: Mitigation of Climate Change. Contribution of Working Group III to the Sixth Assessment Report. Figure SPM.7 gives 2030 mitigation potentials per option; stated uncertainty of total potentials is typically 25 to 50 percent.",
+      "url": "https://www.ipcc.ch/report/ar6/wg3/chapter/summary-for-policymakers/",
+      "doi": "10.1017/9781009157926.001"
+    },
+    {
+      "name": "UNEP CCAC Global Methane Assessment 2021",
+      "description": "UNEP and Climate and Clean Air Coalition, 2021: Global Methane Assessment. Available measures can cut anthropogenic methane about 45 percent (about 180 Mt CH4/yr) by 2030, avoiding nearly 0.3 degree C by the 2040s.",
+      "url": "https://www.unep.org/resources/report/global-methane-assessment-benefits-and-costs-mitigating-methane-emissions"
+    },
+    {
+      "name": "IMF fossil fuel subsidies 2025",
+      "description": "Black et al., 2025: Underpriced and Overused: Fossil Fuel Subsidies Data 2025 Update. IMF Working Paper WP/25/270. Explicit subsidies 725 billion USD in 2024; explicit subsidy removal reduces CO2 about 6 percent below baseline in 2035.",
+      "url": "https://www.imf.org/-/media/files/publications/wp/2025/english/wpiea2025270-source-pdf.pdf"
+    },
+    {
+      "name": "IMF fossil fuel subsidies 2023",
+      "description": "Black, Liu, Parry, Vernon, 2023: IMF Fossil Fuel Subsidies Data: 2023 Update. IMF Working Paper WP/23/169. Total subsidies 7 trillion USD in 2022; full price reform would cut global CO2 about 43 percent below baseline by 2030.",
+      "url": "https://www.imf.org/en/publications/wp/issues/2023/08/22/imf-fossil-fuel-subsidies-data-2023-update-537281",
+      "doi": "10.5089/9798400249006.001"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "global greenhouse gas emissions",
+        "2019",
+        "measured value"
+      ],
+      "number": 59.0,
+      "source": "IPCC AR6 WG3 SPM"
+    },
+    {
+      "words": [
+        "global greenhouse gas emissions",
+        "2019",
+        "minimum",
+        "measured value"
+      ],
+      "number": 52.4,
+      "source": "IPCC AR6 WG3 SPM"
+    },
+    {
+      "words": [
+        "global greenhouse gas emissions",
+        "2019",
+        "maximum",
+        "measured value"
+      ],
+      "number": 65.6,
+      "source": "IPCC AR6 WG3 SPM"
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 3.0
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 8.0
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2000
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 5000
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 6.4
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.2
+    },
+    {
+      "words": [
+        "methane reduction",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 3.0
+    },
+    {
+      "words": [
+        "methane reduction",
+        "reduction potential",
+        "maximum",
+        "measured value"
+      ],
+      "number": 5.0,
+      "source": "UNEP CCAC Global Methane Assessment 2021"
+    },
+    {
+      "words": [
+        "methane reduction",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "methane reduction",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "methane reduction",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "methane reduction",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "methane reduction",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "methane reduction",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "methane reduction",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "methane reduction",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.2
+    },
+    {
+      "words": [
+        "methane reduction",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.5
+    },
+    {
+      "words": [
+        "methane reduction",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        "methane reduction",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 35.0
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 5.0
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3000
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.0
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.33
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.0
+    },
+    {
+      "words": [
+        "building renovation",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "building renovation",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "building renovation",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "building renovation",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "building renovation",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4000
+    },
+    {
+      "words": [
+        "building renovation",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "building renovation",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "building renovation",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "building renovation",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "building renovation",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.15
+    },
+    {
+      "words": [
+        "building renovation",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.2
+    },
+    {
+      "words": [
+        "building renovation",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.04
+    },
+    {
+      "words": [
+        "building renovation",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.2
+    },
+    {
+      "words": [
+        "heat pumps",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "heat pumps",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "heat pumps",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "heat pumps",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "heat pumps",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1500
+    },
+    {
+      "words": [
+        "heat pumps",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "heat pumps",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "heat pumps",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "heat pumps",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "heat pumps",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.25
+    },
+    {
+      "words": [
+        "heat pumps",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.2
+    },
+    {
+      "words": [
+        "heat pumps",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.17
+    },
+    {
+      "words": [
+        "heat pumps",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        "district heating",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "district heating",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "district heating",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "district heating",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 300
+    },
+    {
+      "words": [
+        "district heating",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "district heating",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "district heating",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "district heating",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "district heating",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "district heating",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.08
+    },
+    {
+      "words": [
+        "district heating",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.56
+    },
+    {
+      "words": [
+        "district heating",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.08
+    },
+    {
+      "words": [
+        "district heating",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.87
+    },
+    {
+      "words": [
+        "solar energy",
+        "reduction potential",
+        "minimum",
+        "measured value"
+      ],
+      "number": 2.0,
+      "source": "IPCC AR6 WG3 SPM"
+    },
+    {
+      "words": [
+        "solar energy",
+        "reduction potential",
+        "maximum",
+        "measured value"
+      ],
+      "number": 7.0,
+      "source": "IPCC AR6 WG3 SPM"
+    },
+    {
+      "words": [
+        "solar energy",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "solar energy",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "solar energy",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3000
+    },
+    {
+      "words": [
+        "solar energy",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "solar energy",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "solar energy",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.95
+    },
+    {
+      "words": [
+        "solar energy",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "solar energy",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        "solar energy",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 6.65
+    },
+    {
+      "words": [
+        "solar energy",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.53
+    },
+    {
+      "words": [
+        "solar energy",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 6.65
+    },
+    {
+      "words": [
+        "wind energy",
+        "reduction potential",
+        "minimum",
+        "measured value"
+      ],
+      "number": 2.1,
+      "source": "IPCC AR6 WG3 SPM"
+    },
+    {
+      "words": [
+        "wind energy",
+        "reduction potential",
+        "maximum",
+        "measured value"
+      ],
+      "number": 5.6,
+      "source": "IPCC AR6 WG3 SPM"
+    },
+    {
+      "words": [
+        "wind energy",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "wind energy",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1500
+    },
+    {
+      "words": [
+        "wind energy",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3500
+    },
+    {
+      "words": [
+        "wind energy",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "wind energy",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "wind energy",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "wind energy",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "wind energy",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.47
+    },
+    {
+      "words": [
+        "wind energy",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 5.04
+    },
+    {
+      "words": [
+        "wind energy",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.42
+    },
+    {
+      "words": [
+        "wind energy",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.36
+    },
+    {
+      "words": [
+        "hydropower",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "hydropower",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "hydropower",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "hydropower",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "hydropower",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1500
+    },
+    {
+      "words": [
+        "hydropower",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "hydropower",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "hydropower",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "hydropower",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "hydropower",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "hydropower",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "hydropower",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.07
+    },
+    {
+      "words": [
+        "hydropower",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3000
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.03
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.54
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.01
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.54
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 800
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.04
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.49
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.05
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.45
+    },
+    {
+      "words": [
+        "energy storage",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "energy storage",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "energy storage",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "energy storage",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "energy storage",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1500
+    },
+    {
+      "words": [
+        "energy storage",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "energy storage",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "energy storage",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "energy storage",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "energy storage",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.21
+    },
+    {
+      "words": [
+        "energy storage",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.35
+    },
+    {
+      "words": [
+        "energy storage",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.14
+    },
+    {
+      "words": [
+        "energy storage",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.7
+    },
+    {
+      "words": [
+        "grid expansion",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "grid expansion",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "grid expansion",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "grid expansion",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "grid expansion",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3000
+    },
+    {
+      "words": [
+        "grid expansion",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "grid expansion",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "grid expansion",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "grid expansion",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "grid expansion",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.25
+    },
+    {
+      "words": [
+        "grid expansion",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        "grid expansion",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.08
+    },
+    {
+      "words": [
+        "grid expansion",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        "electrification",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "electrification",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.0
+    },
+    {
+      "words": [
+        "electrification",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "electrification",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1500
+    },
+    {
+      "words": [
+        "electrification",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4000
+    },
+    {
+      "words": [
+        "electrification",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "electrification",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "electrification",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "electrification",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "electrification",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "electrification",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        "electrification",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.12
+    },
+    {
+      "words": [
+        "electrification",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        "public transport",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "public transport",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "public transport",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "public transport",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "public transport",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2000
+    },
+    {
+      "words": [
+        "public transport",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "public transport",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "public transport",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "public transport",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "public transport",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.04
+    },
+    {
+      "words": [
+        "public transport",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.35
+    },
+    {
+      "words": [
+        "public transport",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.02
+    },
+    {
+      "words": [
+        "public transport",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "cycling",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "cycling",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "cycling",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "cycling",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "cycling",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "cycling",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "cycling",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "cycling",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "cycling",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "cycling",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.05
+    },
+    {
+      "words": [
+        "cycling",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.24
+    },
+    {
+      "words": [
+        "cycling",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.25
+    },
+    {
+      "words": [
+        "cycling",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.8
+    },
+    {
+      "words": [
+        "speed limit",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.02
+    },
+    {
+      "words": [
+        "speed limit",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "speed limit",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "speed limit",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1
+    },
+    {
+      "words": [
+        "speed limit",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "speed limit",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "speed limit",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "speed limit",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "speed limit",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "speed limit",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.0
+    },
+    {
+      "words": [
+        "speed limit",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.05
+    },
+    {
+      "words": [
+        "speed limit",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "speed limit",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 50.0
+    },
+    {
+      "words": [
+        "carbon price",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "carbon price",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 6.0
+    },
+    {
+      "words": [
+        "carbon price",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon price",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "carbon price",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 300
+    },
+    {
+      "words": [
+        "carbon price",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon price",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "carbon price",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "carbon price",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon price",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "carbon price",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.6
+    },
+    {
+      "words": [
+        "carbon price",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "carbon price",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 72.0
+    },
+    {
+      "words": [
+        "climate dividend",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "climate dividend",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "climate dividend",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "climate dividend",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "climate dividend",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "climate dividend",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "climate dividend",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "climate dividend",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "climate dividend",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "climate dividend",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.08
+    },
+    {
+      "words": [
+        "climate dividend",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "climate dividend",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        "climate dividend",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 70.0
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.4
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 140.0
+    },
+    {
+      "words": [
+        "emissions trading",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "emissions trading",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.0
+    },
+    {
+      "words": [
+        "emissions trading",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "emissions trading",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 20
+    },
+    {
+      "words": [
+        "emissions trading",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "emissions trading",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "emissions trading",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "emissions trading",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "emissions trading",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "emissions trading",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "emissions trading",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.2
+    },
+    {
+      "words": [
+        "emissions trading",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2.5
+    },
+    {
+      "words": [
+        "emissions trading",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 160.0
+    },
+    {
+      "words": [
+        "electric mobility",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "electric mobility",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.0
+    },
+    {
+      "words": [
+        "electric mobility",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "electric mobility",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "electric mobility",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3000
+    },
+    {
+      "words": [
+        "electric mobility",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "electric mobility",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "electric mobility",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "electric mobility",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "electric mobility",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "electric mobility",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.7
+    },
+    {
+      "words": [
+        "electric mobility",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.23
+    },
+    {
+      "words": [
+        "electric mobility",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.7
+    },
+    {
+      "words": [
+        "freight transport",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "freight transport",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.2
+    },
+    {
+      "words": [
+        "freight transport",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "freight transport",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "freight transport",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1500
+    },
+    {
+      "words": [
+        "freight transport",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "freight transport",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "freight transport",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "freight transport",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "freight transport",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.12
+    },
+    {
+      "words": [
+        "freight transport",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.84
+    },
+    {
+      "words": [
+        "freight transport",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.08
+    },
+    {
+      "words": [
+        "freight transport",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.68
+    },
+    {
+      "words": [
+        "circular economy",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "circular economy",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.5
+    },
+    {
+      "words": [
+        "circular economy",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "circular economy",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 300
+    },
+    {
+      "words": [
+        "circular economy",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "circular economy",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "circular economy",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "circular economy",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "circular economy",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "circular economy",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "circular economy",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.75
+    },
+    {
+      "words": [
+        "circular economy",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "circular economy",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 5.83
+    },
+    {
+      "words": [
+        "recycling",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "recycling",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "recycling",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "recycling",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "recycling",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "recycling",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "recycling",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "recycling",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "recycling",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "recycling",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.05
+    },
+    {
+      "words": [
+        "recycling",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "recycling",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "recycling",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.0
+    },
+    {
+      "words": [
+        "material efficiency",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "material efficiency",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "material efficiency",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "material efficiency",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "material efficiency",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "material efficiency",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "material efficiency",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "material efficiency",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "material efficiency",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "material efficiency",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.08
+    },
+    {
+      "words": [
+        "material efficiency",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.63
+    },
+    {
+      "words": [
+        "material efficiency",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.16
+    },
+    {
+      "words": [
+        "material efficiency",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 6.3
+    },
+    {
+      "words": [
+        "sufficiency",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "sufficiency",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "sufficiency",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "sufficiency",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "sufficiency",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "sufficiency",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "sufficiency",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "sufficiency",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "sufficiency",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "sufficiency",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "sufficiency",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "sufficiency",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "sufficiency",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 100.0
+    },
+    {
+      "words": [
+        "afforestation",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "afforestation",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.0
+    },
+    {
+      "words": [
+        "afforestation",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "afforestation",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "afforestation",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "afforestation",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "afforestation",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "afforestation",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "afforestation",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "afforestation",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "afforestation",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.8
+    },
+    {
+      "words": [
+        "afforestation",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "afforestation",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 28.0
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 30
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 150
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.09
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.54
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 18.0
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.5
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 300
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.15
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 30.0
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2000
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.06
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.75
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.03
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.05
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.01
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.15
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.02
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2000
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.09
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.04
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.8
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 800
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.15
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.2
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.19
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 6.0
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.7
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.35
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 135.0
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 300
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.4
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.67
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 28.0
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 800
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.04
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.05
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "emission standards",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "emission standards",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "emission standards",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "emission standards",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        "emission standards",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "emission standards",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "emission standards",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "emission standards",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.85
+    },
+    {
+      "words": [
+        "emission standards",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "emission standards",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "emission standards",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        "emission standards",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 6.0
+    },
+    {
+      "words": [
+        "emission standards",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 340.0
+    },
+    {
+      "words": [
+        "research",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "research",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.0
+    },
+    {
+      "words": [
+        "research",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "research",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "research",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 500
+    },
+    {
+      "words": [
+        "research",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "research",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "research",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "research",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "research",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.25
+    },
+    {
+      "words": [
+        "research",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        "research",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "research",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 24.0
+    },
+    {
+      "words": [
+        "innovation",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "innovation",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.0
+    },
+    {
+      "words": [
+        "innovation",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "innovation",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "innovation",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 800
+    },
+    {
+      "words": [
+        "innovation",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "innovation",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "innovation",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "innovation",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "innovation",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.25
+    },
+    {
+      "words": [
+        "innovation",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        "innovation",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.31
+    },
+    {
+      "words": [
+        "innovation",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 12.0
+    },
+    {
+      "words": [
+        "climate finance",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "climate finance",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.0
+    },
+    {
+      "words": [
+        "climate finance",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "climate finance",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "climate finance",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1000
+    },
+    {
+      "words": [
+        "climate finance",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "climate finance",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "climate finance",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "climate finance",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "climate finance",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "climate finance",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        "climate finance",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "climate finance",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 24.0
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.03
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 60.0
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.0
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "reduction potential",
+        "measured value"
+      ],
+      "number": 2.3,
+      "source": "IMF fossil fuel subsidies 2025"
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.8
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 20
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 15.0
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1500.0
+    },
+    {
+      "words": [
+        "education",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "education",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2.0
+    },
+    {
+      "words": [
+        "education",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "education",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 50
+    },
+    {
+      "words": [
+        "education",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 300
+    },
+    {
+      "words": [
+        "education",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "education",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "education",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "education",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "education",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.12
+    },
+    {
+      "words": [
+        "education",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.4
+    },
+    {
+      "words": [
+        "education",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "education",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 28.0
+    },
+    {
+      "words": [
+        "digitalization",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "digitalization",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1.2
+    },
+    {
+      "words": [
+        "digitalization",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "digitalization",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "digitalization",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 800
+    },
+    {
+      "words": [
+        "digitalization",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "digitalization",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "digitalization",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "digitalization",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "digitalization",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.08
+    },
+    {
+      "words": [
+        "digitalization",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.84
+    },
+    {
+      "words": [
+        "digitalization",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "digitalization",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4.2
+    },
+    {
+      "words": [
+        "international agreements",
+        "reduction potential",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1.0
+    },
+    {
+      "words": [
+        "international agreements",
+        "reduction potential",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 5.0
+    },
+    {
+      "words": [
+        "international agreements",
+        "reduction potential",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "international agreements",
+        "initial effort",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1
+    },
+    {
+      "words": [
+        "international agreements",
+        "initial effort",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "international agreements",
+        "initial effort",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "international agreements",
+        "fulfillment probability",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "international agreements",
+        "fulfillment probability",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "international agreements",
+        "fulfillment probability",
+        "confidence"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "international agreements",
+        "expected return",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "international agreements",
+        "expected return",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3.5
+    },
+    {
+      "words": [
+        "international agreements",
+        "effort return score",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 40.0
+    },
+    {
+      "words": [
+        "international agreements",
+        "effort return score",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3500.0
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 27
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 23
+    },
+    {
+      "words": [
+        "coal phase-out",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 30
+    },
+    {
+      "words": [
+        "methane reduction",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "methane reduction",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        "methane reduction",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 12
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 24
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 21
+    },
+    {
+      "words": [
+        "energy efficiency",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 27
+    },
+    {
+      "words": [
+        "building renovation",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 43
+    },
+    {
+      "words": [
+        "building renovation",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 42
+    },
+    {
+      "words": [
+        "building renovation",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 44
+    },
+    {
+      "words": [
+        "heat pumps",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 32
+    },
+    {
+      "words": [
+        "heat pumps",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 29
+    },
+    {
+      "words": [
+        "heat pumps",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 34
+    },
+    {
+      "words": [
+        "district heating",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 36
+    },
+    {
+      "words": [
+        "district heating",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 35
+    },
+    {
+      "words": [
+        "district heating",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 36
+    },
+    {
+      "words": [
+        "solar energy",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 21
+    },
+    {
+      "words": [
+        "solar energy",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 15
+    },
+    {
+      "words": [
+        "solar energy",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 21
+    },
+    {
+      "words": [
+        "wind energy",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 23
+    },
+    {
+      "words": [
+        "wind energy",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 18
+    },
+    {
+      "words": [
+        "wind energy",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 29
+    },
+    {
+      "words": [
+        "hydropower",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 39
+    },
+    {
+      "words": [
+        "hydropower",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 38
+    },
+    {
+      "words": [
+        "hydropower",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 39
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 46
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 46
+    },
+    {
+      "words": [
+        "nuclear energy",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 46
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 35
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 33
+    },
+    {
+      "words": [
+        "geothermal energy",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 39
+    },
+    {
+      "words": [
+        "energy storage",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 31
+    },
+    {
+      "words": [
+        "energy storage",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 31
+    },
+    {
+      "words": [
+        "energy storage",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 31
+    },
+    {
+      "words": [
+        "grid expansion",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 38
+    },
+    {
+      "words": [
+        "grid expansion",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 35
+    },
+    {
+      "words": [
+        "grid expansion",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 40
+    },
+    {
+      "words": [
+        "electrification",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 34
+    },
+    {
+      "words": [
+        "electrification",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 32
+    },
+    {
+      "words": [
+        "electrification",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 38
+    },
+    {
+      "words": [
+        "public transport",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 45
+    },
+    {
+      "words": [
+        "public transport",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 44
+    },
+    {
+      "words": [
+        "public transport",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 45
+    },
+    {
+      "words": [
+        "cycling",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 26
+    },
+    {
+      "words": [
+        "cycling",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 25
+    },
+    {
+      "words": [
+        "cycling",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 26
+    },
+    {
+      "words": [
+        "speed limit",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 15
+    },
+    {
+      "words": [
+        "speed limit",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 11
+    },
+    {
+      "words": [
+        "speed limit",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 19
+    },
+    {
+      "words": [
+        "carbon price",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 8
+    },
+    {
+      "words": [
+        "carbon price",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 6
+    },
+    {
+      "words": [
+        "carbon price",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 8
+    },
+    {
+      "words": [
+        "climate dividend",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 7
+    },
+    {
+      "words": [
+        "climate dividend",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 7
+    },
+    {
+      "words": [
+        "climate dividend",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 9
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        "carbon border tariff",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 7
+    },
+    {
+      "words": [
+        "emissions trading",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 4
+    },
+    {
+      "words": [
+        "emissions trading",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 4
+    },
+    {
+      "words": [
+        "emissions trading",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 4
+    },
+    {
+      "words": [
+        "electric mobility",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 29
+    },
+    {
+      "words": [
+        "electric mobility",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 26
+    },
+    {
+      "words": [
+        "electric mobility",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 32
+    },
+    {
+      "words": [
+        "freight transport",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 37
+    },
+    {
+      "words": [
+        "freight transport",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 37
+    },
+    {
+      "words": [
+        "freight transport",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 37
+    },
+    {
+      "words": [
+        "circular economy",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 22
+    },
+    {
+      "words": [
+        "circular economy",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 22
+    },
+    {
+      "words": [
+        "circular economy",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 27
+    },
+    {
+      "words": [
+        "recycling",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 33
+    },
+    {
+      "words": [
+        "recycling",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 28
+    },
+    {
+      "words": [
+        "recycling",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 34
+    },
+    {
+      "words": [
+        "material efficiency",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 28
+    },
+    {
+      "words": [
+        "material efficiency",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 22
+    },
+    {
+      "words": [
+        "material efficiency",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 30
+    },
+    {
+      "words": [
+        "sufficiency",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 9
+    },
+    {
+      "words": [
+        "sufficiency",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 7
+    },
+    {
+      "words": [
+        "sufficiency",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "afforestation",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 12
+    },
+    {
+      "words": [
+        "afforestation",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 11
+    },
+    {
+      "words": [
+        "afforestation",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 14
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 18
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 13
+    },
+    {
+      "words": [
+        "peatland rewetting",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 19
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 14
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 13
+    },
+    {
+      "words": [
+        "soil carbon buildup",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 16
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 42
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 41
+    },
+    {
+      "words": [
+        "carbon capture and storage",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 43
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 44
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 42
+    },
+    {
+      "words": [
+        "carbon capture and utilization",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 45
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 40
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 36
+    },
+    {
+      "words": [
+        "green hydrogen",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 41
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 25
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 23
+    },
+    {
+      "words": [
+        "sustainable agriculture",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 28
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 6
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 6
+    },
+    {
+      "words": [
+        "reduced meat consumption",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 8
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 13
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 12
+    },
+    {
+      "words": [
+        "food waste reduction",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 15
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 41
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 40
+    },
+    {
+      "words": [
+        "aviation emission reduction",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 43
+    },
+    {
+      "words": [
+        "emission standards",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 3
+    },
+    {
+      "words": [
+        "emission standards",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 3
+    },
+    {
+      "words": [
+        "emission standards",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 3
+    },
+    {
+      "words": [
+        "research",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 16
+    },
+    {
+      "words": [
+        "research",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 16
+    },
+    {
+      "words": [
+        "research",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 17
+    },
+    {
+      "words": [
+        "innovation",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 19
+    },
+    {
+      "words": [
+        "innovation",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 19
+    },
+    {
+      "words": [
+        "innovation",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 22
+    },
+    {
+      "words": [
+        "climate finance",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 20
+    },
+    {
+      "words": [
+        "climate finance",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 18
+    },
+    {
+      "words": [
+        "climate finance",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 24
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 11
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "supply chain laws",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 14
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 2
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 2
+    },
+    {
+      "words": [
+        "fossil subsidy removal",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 2
+    },
+    {
+      "words": [
+        "education",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 17
+    },
+    {
+      "words": [
+        "education",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 16
+    },
+    {
+      "words": [
+        "education",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 20
+    },
+    {
+      "words": [
+        "digitalization",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 30
+    },
+    {
+      "words": [
+        "digitalization",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 26
+    },
+    {
+      "words": [
+        "digitalization",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 33
+    },
+    {
+      "words": [
+        "international agreements",
+        "effort return rank",
+        "assumed value"
+      ],
+      "number": 1
+    },
+    {
+      "words": [
+        "international agreements",
+        "effort return rank",
+        "minimum",
+        "assumed value"
+      ],
+      "number": 1
+    },
+    {
+      "words": [
+        "international agreements",
+        "effort return rank",
+        "maximum",
+        "assumed value"
+      ],
+      "number": 1
+    }
+  ],
+  "calc-validation": [
+    {
+      "formula": "expected return formula",
+      "context": [
+        "coal phase-out"
+      ],
+      "words": [
+        "expected return",
+        "minimum"
+      ],
+      "number": 1.5
+    },
+    {
+      "formula": "expected return formula",
+      "context": [
+        "coal phase-out"
+      ],
+      "words": [
+        "expected return",
+        "maximum"
+      ],
+      "number": 6.4
+    },
+    {
+      "formula": "effort return score formula",
+      "context": [
+        "coal phase-out"
+      ],
+      "words": [
+        "effort return score",
+        "minimum"
+      ],
+      "number": 0.3
+    },
+    {
+      "formula": "effort return score formula",
+      "context": [
+        "coal phase-out"
+      ],
+      "words": [
+        "effort return score",
+        "maximum"
+      ],
+      "number": 3.2
+    }
+  ]
+}

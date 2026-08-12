@@ -240,7 +240,11 @@ class test_api extends test_base
         // does frontend and backend api json match?
         $test_name = $class_api . ' fill based on api json matches original';
         if ($result) {
-            $clone_obj->api_mapper(json_decode($json_api, true), $msg);
+            // use an admin user to check the filled mapping
+            // TODO Prio 1 check if the mapping with a standard user contains all fields except the admin protected fields
+            $msg_sys = new user_message($this->usr_system);
+            $clone_obj->api_mapper(json_decode($json_api, true), $msg_sys);
+            $msg->merge($msg_sys);
             $json_compare = json_encode($this->json_remove_fields_only_to_ui(json_decode($clone_obj->api_json(), true)));
             $json_api_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($json_api, true)));
             $result = $this->assert_json_string($test_name, $json_compare, $json_api_ex);
