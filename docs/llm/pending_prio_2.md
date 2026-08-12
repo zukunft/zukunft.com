@@ -43,15 +43,21 @@ the done passes are in the git history; only what is still open is listed here.
    - `msg_id::LIST_DOUBLE_ENTRY` is a user message, but most of the places that raise it fill
      `VAR_NAME` with `dsp_id()` (the debug identification, e.g. `"mathematics" (word_id 1) for
      user 1 ()`) and pass the raw `::class` incl. the namespace; `sandbox_list::add_obj` and
-     `sandbox_list_named::add_obj` use the name and `library::class_to_name`, the other raisers at
-     least the readable class name; open is the `dsp_id()` in `VAR_NAME` of the `ListOf*` raisers
-     and the two `add_id` users (`type_list`, `user_list`) that report no name at all.
+     `sandbox_list_named::add_obj`, `ListOfIdNamed*` and the `type_list` / `user_list` raisers name
+     the object and the readable class; only the id keyed `ListOf` and `ListOfIdObjects` still use
+     `dsp_id()`, because an entry of those lists has no name.
+     found on the way: `user_list::add` checked its duplicates with `array_key_exists` against
+     `id_lst()` / `names()` / `emails()`, which are value arrays, so a user could be added twice and
+     nothing was reported; it uses `in_array` now.
      note that `Message::add` drops a text that is already in the message, so two lists reporting
      the same double keep one entry - `base_object_tests` relies on that
-   - `Message::add_id()` only fills `msg_id_lst`, while `text()` reads `msg_var_lst`, so a message
-     added with `add_id` renders as "user message translation for position -1 not found" if it is
-     the only entry; 25 call sites use it, so either `add_id` fills both lists or the callers use
-     `add($msg_id, [])`
+   - `Message::get_last_message_translated()` (behind `text()`) now falls back to the last entry of
+     `msg_id_lst`, so the 25 `add_id` messages are no longer invisible for the preferred reader, and
+     an empty message says nothing instead of "user message translation for position -1 not found";
+     the three copies of the function in `web/user_message`, `cfg/user_message` and `sql_message`
+     are gone. **watch the write test**: `word_write_tests` had the pseudo text as its expected
+     value for "triple cannot by renamed to an already used word name" - the real expectation is
+     restored, so the run now shows whether the triple save reports the name clash at all
    - `data_object::add_term_view` / `term_view_list()` have no caller: decide whether the dto keeps
      the imported term view links or whether the pair is dead code
    still open from the same audit: `component::set_col_sub_phrase` does not check whether the given

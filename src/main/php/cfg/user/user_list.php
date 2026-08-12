@@ -658,26 +658,26 @@ class user_list
             $this->add_direct($usr_to_add);
         } else {
             if ($usr_to_add->id != 0) {
-                if (!array_key_exists($usr_to_add->id, $this->id_lst())) {
-                    if (!array_key_exists($usr_to_add->name(), $this->names())) {
+                if (!in_array($usr_to_add->id, $this->id_lst())) {
+                    if (!in_array($usr_to_add->name(), $this->names())) {
                         $this->add_direct($usr_to_add);
                     } else {
-                        $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                        $this->report_double($usr_to_add, $msg);
                     }
                 } else {
-                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $this->report_double($usr_to_add, $msg);
                 }
             } elseif ($usr_to_add->name() != '') {
-                if (!array_key_exists($usr_to_add->name(), $this->names())) {
+                if (!in_array($usr_to_add->name(), $this->names())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $this->report_double($usr_to_add, $msg);
                 }
             } elseif ($usr_to_add->email != '') {
-                if (!array_key_exists($usr_to_add->email, $this->emails())) {
+                if (!in_array($usr_to_add->email, $this->emails())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $this->report_double($usr_to_add, $msg);
                 }
             } else {
                 $msg->add(msg_id::LIST_USER_INVALID,
@@ -688,6 +688,19 @@ class user_list
             }
         }
         return $msg;
+    }
+
+    /**
+     * @param user $usr_to_add the user that is already an entry of this list
+     * @param user_message $msg to name the double entry for the requesting user
+     * @return void
+     */
+    private function report_double(user $usr_to_add, user_message $msg): void
+    {
+        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
+            msg_id::VAR_NAME => $usr_to_add->name(),
+            msg_id::VAR_CLASS_NAME => library::class_to_name(user::class)
+        ]);
     }
 
     /**

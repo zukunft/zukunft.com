@@ -1280,7 +1280,6 @@
     \-- all_message_text - section for function all_message_text not yet defined that it should be get in /db/sql_message.php
     \-- get_message - section for function get_message is expected to be set and get in /db/sql_message.php
     \-- get_last_message - section for function get_last_message is expected to be set and get in /db/sql_message.php
-    \-- get_last_message_translated - section for function get_last_message_translated is expected to be set and get in /db/sql_message.php
     \-- get_row_id - section for function get_row_id is expected to be set and get in /db/sql_message.php
     \-- has_msg - section for function has_msg not yet defined that it should be get in /db/sql_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /db/sql_message.php
@@ -2826,7 +2825,6 @@
     \-- all_message_text - section for function all_message_text not yet defined that it should be get in /user/user_message.php
     \-- get_message - section for function get_message is expected to be set and get in /user/user_message.php
     \-- get_last_message - section for function get_last_message is expected to be set and get in /user/user_message.php
-    \-- get_last_message_translated - section for function get_last_message_translated is expected to be set and get in /user/user_message.php
     \-- get_row_id - section for function get_row_id is expected to be set and get in /user/user_message.php
     \-- has_msg - section for function has_msg not yet defined that it should be get in /user/user_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /user/user_message.php
@@ -4234,9 +4232,6 @@
     \-- get_last_message
         \-- sql_message - TODO should be deprecated once the msg_id is used for all messages
         \-- user_message - TODO should be deprecated once the msg_id is used for all messages
-    \-- get_last_message_translated
-        \-- sql_message - TODO should pick the last either from msg_var_lst or msg_id_lst
-        \-- user_message - TODO should pick the last either from msg_var_lst or msg_id_lst
     \-- get_row_id
         \-- sql_message - @return int|string the main database row to which this user message is related
         \-- user_message - @return int|string the main database row to which this user message is related
@@ -5934,7 +5929,6 @@
     \-- get_message - section for function get_message is expected to be set and get in /user/user_message.php
     \-- get_last_message - section for function get_last_message is expected to be set and get in /user/user_message.php
     \-- get_row_id - section for function get_row_id is expected to be set and get in /user/user_message.php
-    \-- get_last_message_translated - section for function get_last_message_translated is expected to be set and get in /user/user_message.php
     \-- get_all_messages - section for function get_all_messages is expected to be set and get in /user/user_message.php
     \-- get_all_var_messages - section for function get_all_var_messages is expected to be set and get in /user/user_message.php
     \-- combine_status - section for function combine_status not yet defined that it should be internal in /user/user_message.php

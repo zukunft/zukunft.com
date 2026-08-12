@@ -314,6 +314,21 @@ class system_tests
         $msg->add_id(msg_id::CHECK);
         $t->assert($test_name, $msg->all_message_text(), msg_id::CHECK->value);
 
+        // text() is the preferred reader (docs/llm/testing.md), so it must also show a message
+        // that has been added without vars
+        $test_name = 'a message added by its id only is shown by text';
+        $t->assert($test_name, $msg->text(), msg_id::CHECK->value);
+
+        // a message with vars is the more specific one, so it stays the main message
+        $test_name = 'a message with vars is the main message';
+        $msg->add(msg_id::ID_AND_NAME_MISSING, []);
+        $t->assert($test_name, $msg->text(), msg_id::ID_AND_NAME_MISSING->value);
+
+        // an empty message says nothing instead of an internal position text
+        $test_name = 'an empty message has no text';
+        $empty_msg = new user_message($t->usr1); // a message that has nothing to say
+        $t->assert($test_name, $empty_msg->text(), '');
+
 
         $t->subheader($ts . 'system config sql');
 

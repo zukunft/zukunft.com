@@ -326,7 +326,10 @@ class type_list
             $this->lst[] = $obj;
             $this->hash[$obj->code_id] = $obj->id();
         } else {
-            $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+            $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
+                msg_id::VAR_NAME => $obj->name(),
+                msg_id::VAR_CLASS_NAME => library::class_to_name($obj::class)
+            ]);
         }
         return $msg;
     }
