@@ -519,18 +519,20 @@ class sandbox_list extends list_db_write
 
     /**
      * check if the user of the object to add matches the user of the list
+     * and take the list user for an object that has none
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
-     * @return user_message|Message the warning message if the user of the object does not match with the list user
+     * @return bool true if the object has the user of this list
      */
     function same_user(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
-    ): user_message|Message
+    ): bool
     {
-        $msg = new Message();
+        $same = true;
         if ($obj_to_add->get_user() !== $this->get_user()) {
             if ($obj_to_add->get_user() == null) {
                 $obj_to_add->set_user($this->get_user());
             } else {
+                $same = false;
                 if (!$this->get_user()->is_admin() and !$this->get_user()->is_system()) {
                     log_warning('Trying to add ' . $obj_to_add->dsp_id()
                         . ' of user ' . $obj_to_add->get_user()->name()
@@ -539,7 +541,7 @@ class sandbox_list extends list_db_write
                 }
             }
         }
-        return $msg;
+        return $same;
     }
 
 

@@ -462,7 +462,7 @@ class sandbox_list_named extends sandbox_list
      * add a named object to the list that does not yet have an id but has a name
      * @param sandbox_named|triple|phrase|term|db_object_seq_id|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message $msg to report which entry is double
+     * @param Message $msg to report why an object has not been added e.g. a mandatory value is missing
      * @returns bool true if the object has been added
      */
     function add_by_key(
@@ -471,22 +471,32 @@ class sandbox_list_named extends sandbox_list
         Message                                                $msg = new Message()
     ): bool
     {
+        $added = false;
         if ($to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             $name = $to_add->name();
             if ($name != '') {
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
-                    // add only objects that have all mandatory values
-                    if ($to_add->can_be_ready($msg)) {
+                    // add only objects that have all mandatory values, judged by a local message,
+                    // because can_be_ready returns the state of the given message, so a shared
+                    // message with an earlier error would block an object that is fine
+                    $rdy_msg = new user_message(); // the verdict of this object, merged on rejection
+                    if ($to_add->can_be_ready($rdy_msg)) {
                         $this->add_direct($to_add);
                         $this->set_hash_dirty();
+                        $added = true;
+                    } else {
+                        $msg->merge($rdy_msg);
                     }
                 } else {
+                    // add_obj returns its message state, not whether it added, so ask the list
+                    $pos_before = $this->count();
                     parent::add_obj($to_add, $allow_duplicates, $msg);
+                    $added = ($this->count() > $pos_before);
                 }
             }
         }
-        return $msg->is_ok();
+        return $added;
     }
 
     /**
@@ -787,7 +797,9 @@ class sandbox_list_named extends sandbox_list
         $obj_to_add->db_ready($msg);
 
         // add only object with the same user
-        $msg->merge($this->same_user($obj_to_add));
+        // TODO Prio 2 report a user mismatch to the user as add_user_check does; today it is only
+        //      logged, because a not ok message here would change what this function returns
+        $this->same_user($obj_to_add);
 
         // do not create duplicates if not explicitly allowed
         if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {

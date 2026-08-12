@@ -6,9 +6,9 @@
     -----------------------------------------------
 
     creates the markdown report docs/code_user_message_exceptions.md with every
-    'new user_message(' of the source library, because a user_message is created once
-    per request by the http resp. api entry point and travels from there as the $msg
-    parameter (docs/llm/state-and-messages.md)
+    'new user_message(' resp. 'new Message(' of the source library, because the message
+    of a request is created once by the http resp. api entry point and travels from
+    there as the $msg parameter (docs/llm/state-and-messages.md)
 
     a creation below the entry points is an exception that must be explained by a
     comment directly above it (or trailing on the same line); the report lists the
@@ -66,22 +66,32 @@ class code_user_message_exceptions
     // the user_message classes themselves are the home of the creation (clone, reset, sub message)
     const array HOME_FILES = ['user_message.php', 'sql_message.php', 'Message.php'];
 
-    // a user_message creation e.g. '$msg = new user_message($usr)' incl. the namespaced form
-    private const string NEW_PATTERN = '/new\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    // the message classes: the backend user_message and the shared Message that the frontend and
+    // the lists use; both are the one message of a request, so both are checked the same way
+    private const string MSG_CLASS = '(?:user_message|Message)';
+    // the namespace that a creation may carry e.g. 'new \Zukunft\...\user_message('
+    private const string NAME_SPACE = '(?:\\\\?[\w\\\\]*\\\\)?';
+    // a message creation e.g. '$msg = new user_message($usr)' incl. the namespaced form
+    private const string NEW_PATTERN = '/new\s+' . self::NAME_SPACE . self::MSG_CLASS . '\s*\(/i';
     // a creation used as the default value of a function parameter e.g. 'user_message $msg = new user_message()'
-    private const string DEFAULT_PATTERN = '/user_message\s+\$\w+\s*=\s*new\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    private const string DEFAULT_PATTERN = '/' . self::MSG_CLASS . '\s+\$\w+\s*=\s*new\s+'
+    . self::NAME_SPACE . self::MSG_CLASS . '\s*\(/i';
     // a nullable message parameter e.g. '?user_message $msg = null' or 'user_message|null $msg = null'
     // which drops the report of every caller that passes none, just like a default creation does
-    private const string NULL_PATTERN = '/(\?\s*(\\\\?[\w\\\\]*\\\\)?user_message|(\\\\?[\w\\\\]*\\\\)?user_message\s*\|\s*null)\s+\$\w+\s*=\s*null/i';
+    private const string NULL_PATTERN = '/(\?\s*' . self::NAME_SPACE . self::MSG_CLASS
+    . '|' . self::NAME_SPACE . self::MSG_CLASS . '\s*\|\s*null)\s+\$\w+\s*=\s*null/i';
     // a creation assigned to a variable e.g. '$add_msg = new user_message()' or the fallback form
     // '$add_msg = $msg ?? new user_message()' - the variable name is needed to check whether the
     // collected errors ever reach the caller
-    private const string CREATE_VAR_PATTERN = '/\$(\w+)\s*=[^=]*\bnew\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    private const string CREATE_VAR_PATTERN = '/\$(\w+)\s*=[^=]*\bnew\s+'
+    . self::NAME_SPACE . self::MSG_CLASS . '\s*\(/i';
     // a creation that is the return value e.g. 'return new user_message()', so the caller gets it
-    private const string RETURN_PATTERN = '/\breturn\s[^;]*\bnew\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    private const string RETURN_PATTERN = '/\breturn\s[^;]*\bnew\s+'
+    . self::NAME_SPACE . self::MSG_CLASS . '\s*\(/i';
     // a creation assigned to an object field e.g. '$this->msg = new user_message()' which outlives
     // the function, so the caller can still read what has been collected
-    private const string CREATE_FIELD_PATTERN = '/\$\w+(->\w+)+\s*=[^=]*\bnew\s+(\\\\?[\w\\\\]*\\\\)?user_message\s*\(/i';
+    private const string CREATE_FIELD_PATTERN = '/\$\w+(->\w+)+\s*=[^=]*\bnew\s+'
+    . self::NAME_SPACE . self::MSG_CLASS . '\s*\(/i';
     // the start of the next function, which ends the scope in which a local message can be reported
     private const string FUNCTION_PATTERN = '/^\s{0,4}(?:public |private |protected |static |abstract |final )*function\s+\w+\s*\(/';
     // the reader functions of a message; calling one of them on a local message means that its
@@ -119,10 +129,10 @@ class code_user_message_exceptions
         $md_txt .= "\n";
         $md_txt .= 'the user_message of a request is created once by the http resp. api entry point and' . "\n";
         $md_txt .= 'is passed down as the $msg parameter (docs/llm/state-and-messages.md), so every' . "\n";
-        $md_txt .= '"new user_message(" below the entry points is an exception that needs a comment' . "\n";
-        $md_txt .= 'behind the creation on the same line explaining why a local message is needed -' . "\n";
-        $md_txt .= 'typically a buffer that is merged back or a message of a different user; only a' . "\n";
-        $md_txt .= 'block of sibling buffers shares one comment above the block' . "\n";
+        $md_txt .= '"new user_message(" resp. "new Message(" below the entry points is an exception' . "\n";
+        $md_txt .= 'that needs a comment behind the creation on the same line explaining why a local' . "\n";
+        $md_txt .= 'message is needed - typically a buffer that is merged back or a message of' . "\n";
+        $md_txt .= 'a different user; only a block of sibling buffers shares one comment above it' . "\n";
         $md_txt .= "\n";
         $md_txt .= $all_cnt . ' creations below the entry points: ' . $exp_cnt . ' explained, '
             . $def_cnt . ' parameter defaults and ' . $open_cnt . ' still unexplained' . "\n";

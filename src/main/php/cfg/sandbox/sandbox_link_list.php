@@ -246,7 +246,6 @@ class sandbox_link_list extends sandbox_list
 
     /**
      * test if the link already exists and if yes return false to prevent duplicates
-     * can be overwritten by the child class e.g. if the same link a different positions is allowed
      * @param sandbox_link $lnk_to_add the link that should be added to the list
      * @return bool true if the link can be added
      */
@@ -257,10 +256,7 @@ class sandbox_link_list extends sandbox_list
         if (!$this->is_empty()) {
             foreach ($this->lst() as $lnk) {
                 if ($can_add) {
-                    // by id or name, because the linked objects of an import are identified by
-                    // their name until they have been added to the database
-                    if ($lnk->from_id_or_name() == $lnk_to_add->from_id_or_name()
-                        and $lnk->to_id_or_name() == $lnk_to_add->to_id_or_name()) {
+                    if ($this->is_same_link($lnk, $lnk_to_add)) {
                         $can_add = false;
                     }
                     if ($lnk->id() == $lnk_to_add->id()
@@ -272,6 +268,22 @@ class sandbox_link_list extends sandbox_list
             }
         }
         return $can_add;
+    }
+
+    /**
+     * test if two links connect the same objects, so that only one of them belongs in this list
+     * can be overwritten by the child class e.g. if the same link at another position is allowed
+     *
+     * @param sandbox_link $lnk a link that is already in this list
+     * @param sandbox_link $lnk_to_add the link that should be added to the list
+     * @return bool true if both links connect the same objects
+     */
+    protected function is_same_link(sandbox_link $lnk, sandbox_link $lnk_to_add): bool
+    {
+        // by id or name, because the linked objects of an import are identified by
+        // their name until they have been added to the database
+        return $lnk->from_id_or_name() == $lnk_to_add->from_id_or_name()
+            and $lnk->to_id_or_name() == $lnk_to_add->to_id_or_name();
     }
 
 }

@@ -20,19 +20,21 @@ the done passes are in the git history; only what is still open is listed here.
    was dropped by the `id() <> 0` gate of `sandbox_list::add_obj` while `add_link` still reported
    "added". open on the same defect:
    - `sandbox_list_named::add` still keys on the id, so a caller that adds objects before they are
-     saved must use `add_by_name_direct` (as `phrase_list::import_map_names` now does) resp.
-     `add_by_key`; the plain `add` keeps only the first of several id less objects. note that
-     `add_by_key` ends with `return $msg->is_ok()` **and** gates the add itself with
-     `can_be_ready($msg)`, so with a shared message an earlier unrelated error stops it from adding
-     at all - fix that before recommending it as the general entry point
+     saved uses `add_by_key` or `add_by_name_direct` (as `phrase_list::import_map_names` does); the
+     plain `add` keeps only the first of several id less objects. `add_by_key` is now safe to
+     recommend: it judges `can_be_ready` with a local message (an earlier unrelated error no longer
+     blocks the add) and returns whether it added instead of the message state - all 47 call sites
+     ignore the return and pass no message, so the shape can be tightened further
    - the `assigned` array of a formula import now resolves each name in the `$dto` and links it
      (one helper shared with `assigned_word`), so `save_links` writes the links; two loose ends:
      `formula_map::$lnk_lst` has no accessor, so a unit test cannot assert the created links (only
      that nothing is reported), and `assign_phrases`, which fills `lnk_lst` from `$this->phr_lst`,
      is called by `import_obj` but not by the data_object import - decide which of the two members
      the import fills
-   - `component_link_list::can_add` is an own copy of the check that also compares the position and
-     still uses the raw ids (a DRY candidate: one check with the position as an option)
+   - `sandbox_link_list::can_add` now asks `is_same_link()`, which `component_link_list` and
+     `view_relation_list` override to add the position, so the duplicate check exists once and every
+     link list compares by id or name; what is still open is the same treatment for the *named*
+     lists, where `sandbox_list_named::add_obj` compares the id and the name in two separate branches
    - `msg_id::LIST_DOUBLE_ENTRY` is a user message, but its `VAR_NAME` is filled with `dsp_id()`
      (the debug identification, e.g. `"mathematics" (word_id 1) for user 1 ()`) and 7 of the 8
      places that raise it still pass the raw `::class` incl. the namespace; only
@@ -47,16 +49,22 @@ the done passes are in the git history; only what is still open is listed here.
    `sandbox_list::add_user_check`, `id_used_msg`), while the recursive `diff_msg` and `fill` cores
    stay as they are - their callers do merge the return, so threading them is high risk, low value.
 
-2. **remove the 8 remaining `user_message $msg = new user_message()` parameter defaults**: a caller
-   that passes nothing silently loses its messages, so the default is the same drop in disguise.
-   all 8 are `api_json`, and that family is the trap — read this before retrying. its 53
-   **production** call sites already pass their message, so the drop is fixed there; removing the
-   defaults breaks **232 test call sites**, each needing the right message *kind* (a backend
-   receiver takes the cfg `user_message`, a frontend one the web `user_message`), and the receiver
-   cannot be told apart statically with enough confidence — a receiver-name heuristic mis-reads
-   `new formula_list_ui($t_msk->view_list_word()->api_json())` as a ui receiver. so it needs the
-   test run in the loop, one test folder per commit, or it becomes trivial once the frontend/backend
-   split makes the message kind unambiguous.
+2. **remove the 24 remaining message parameter defaults**: a caller that passes nothing silently
+   loses its messages, so the default is the same drop in disguise. two families:
+   - 16 `Message $msg = new Message()` of the **list add family** (`ListOf*::add_obj`,
+     `sandbox_list*::add_obj` / `add_by_key`, `component_link_list`, `element_list`, `formula_list`,
+     `view_relation_list`, the web `ListBase` / `sandbox_list_named`, plus `web/frontend.php::start`).
+     they became visible when the check learned the shared `Message` class; before that the report
+     only knew `user_message`. mechanical per class, but the callers are many, so one class per
+     commit, and note that most of these functions also end with `return $msg->is_ok()`
+   - the 8 `api_json` defaults, and that family is the trap — read this before retrying. its 53
+     **production** call sites already pass their message, so the drop is fixed there; removing the
+     defaults breaks **232 test call sites**, each needing the right message *kind* (a backend
+     receiver takes the cfg `user_message`, a frontend one the web `user_message`), and the receiver
+     cannot be told apart statically with enough confidence — a receiver-name heuristic mis-reads
+     `new formula_list_ui($t_msk->view_list_word()->api_json())` as a ui receiver. so it needs the
+     test run in the loop, one test folder per commit, or it becomes trivial once the
+     frontend/backend split makes the message kind unambiguous.
 
 3. **remove the remaining `?user_message $msg = null` parameters** — the rule is in coding.md and
    `docs/llm/state-and-messages.md` ("$msg is never null"), and
