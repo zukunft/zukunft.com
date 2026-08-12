@@ -381,7 +381,7 @@ class import
 
             // analyse the import file
             $this->step_main_start(msg_id::COUNT, $this->est_time_create);
-            $dto = $this->get_data_object_yaml($yaml_array);
+            $dto = $this->get_data_object_yaml($yaml_array, $msg);
             $this->step_main_end();
 
             // write to the database
@@ -1164,7 +1164,7 @@ class import
         foreach ($json_array as $wrd_json) {
             $wrd = new word($this->usr);
             if ($wrd->import_mapper($wrd_json, $msg, $dto)) {
-                $dto->add_word($wrd);
+                $dto->add_word($wrd, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $wrd->dsp_id());
@@ -1217,7 +1217,7 @@ class import
         foreach ($json_array as $trp_json) {
             $trp = new triple($this->usr);
             if ($trp->import_mapper($trp_json, $msg, $dto)) {
-                $dto->add_triple_without_ready_check($trp);
+                $dto->add_triple_without_ready_check($trp, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $trp->dsp_id());
@@ -1243,7 +1243,7 @@ class import
         foreach ($json_array as $src_json) {
             $src = new source($this->usr);
             if ($src->import_mapper($src_json, $msg, $dto)) {
-                $dto->add_source($src);
+                $dto->add_source($src, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $src->dsp_id());
@@ -1269,7 +1269,7 @@ class import
         foreach ($json_array as $ref_json) {
             $ref = new ref($this->usr);
             if ($ref->import_mapper($ref_json, $msg, $dto)) {
-                $dto->add_reference($ref);
+                $dto->add_reference($ref, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $ref->dsp_id());
@@ -1435,7 +1435,7 @@ class import
         foreach ($json_array as $frm_json) {
             $frm = new formula($this->usr);
             if ($frm->import_mapper($frm_json, $msg, $dto)) {
-                $dto->add_formula_without_ready_check($frm);
+                $dto->add_formula_without_ready_check($frm, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $frm->dsp_id());
@@ -1493,7 +1493,7 @@ class import
         foreach ($json_array as $msk_json) {
             $msk = new view($this->usr);
             if ($msk->import_mapper($msk_json, $msg, $dto)) {
-                $dto->add_view($msk);
+                $dto->add_view($msk, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $msk->dsp_id());
@@ -1526,7 +1526,7 @@ class import
                     $msg->add(msg_id::COMPONENT_DEFINED_TWICE, [msg_id::VAR_COMPONENT_NAME => $name]);
                 } else {
                     $names[] = $name;
-                    $dto->add_component($cmp);
+                    $dto->add_component($cmp, $msg);
                     $i++;
                 }
             }
@@ -1594,7 +1594,7 @@ class import
      * @param array $yml_arr the array of a zukunft.com yaml
      * @return data_object filled based on the yaml array
      */
-    function get_data_object_yaml(array $yml_arr): data_object
+    function get_data_object_yaml(array $yml_arr, user_message $msg): data_object
     {
         $dto = new data_object($this->usr);
         $wrd = null;
@@ -1602,14 +1602,14 @@ class import
         $val = null;
         $src = null;
         $phr_lst = new phrase_list($this->usr);
-        $dto = $this->get_data_object_yaml_loop($dto, $phr_lst, $yml_arr, $wrd, $trp, $val, $src);
+        $dto = $this->get_data_object_yaml_loop($dto, $phr_lst, $yml_arr, $msg, $wrd, $trp, $val, $src);
         // add the last word, triple, source or value to the lists
         if ($wrd != null) {
-            $dto->add_word($wrd);
+            $dto->add_word($wrd, $msg);
             $phr_lst->add($wrd->phrase());
         }
         if ($trp != null) {
-            $dto->add_triple($trp);
+            $dto->add_triple($trp, $msg);
             $phr_lst->add($trp->phrase());
         }
         if ($val != null) {
@@ -1620,19 +1620,20 @@ class import
             $dto->add_value($val);
         }
         if ($src != null) {
-            $dto->add_source($src);
+            $dto->add_source($src, $msg);
         }
         return $dto;
     }
 
     private function get_data_object_yaml_loop(
-        data_object $dto,
-        phrase_list $phr_lst,
-        array       $yml_arr,
-        ?word       $wrd,
-        ?triple     $trp,
-        ?value_base $val,
-        ?source     $src
+        data_object  $dto,
+        phrase_list  $phr_lst,
+        array        $yml_arr,
+        user_message $msg,
+        ?word        $wrd,
+        ?triple      $trp,
+        ?value_base  $val,
+        ?source      $src
     ): data_object
     {
         foreach ($yml_arr as $key => $value) {
@@ -1643,13 +1644,13 @@ class import
                 } else {
                     if ($wrd != null) {
                         $wrd->set_description($value);
-                        $dto->add_word($wrd);
+                        $dto->add_word($wrd, $msg);
                         $phr_lst->add_by_key($wrd->phrase());
                         $wrd = null;
                     }
                     if ($trp != null) {
                         $trp->set_description($value);
-                        $dto->add_triple($trp);
+                        $dto->add_triple($trp, $msg);
                         $phr_lst->add_by_key($trp->phrase());
                         $trp = null;
                     }
@@ -1662,7 +1663,7 @@ class import
             } elseif ($key == words::SYS_CONF_SOURCE) {
                 // assumes that always first the source name is given
                 if ($src != null) {
-                    $dto->add_source($src);
+                    $dto->add_source($src, $msg);
                 }
                 $src = new source($this->usr);
                 $src->set_name($value);
@@ -1676,12 +1677,12 @@ class import
             } else {
                 // add the previous set word or triple to the lists
                 if ($wrd != null) {
-                    $dto->add_word($wrd);
+                    $dto->add_word($wrd, $msg);
                     $phr_lst->add_by_key($wrd->phrase());
                     $wrd = null;
                 }
                 if ($trp != null) {
-                    $dto->add_triple($trp);
+                    $dto->add_triple($trp, $msg);
                     $phr_lst->add_by_key($trp->phrase());
                     $trp = null;
                 }
@@ -1693,7 +1694,7 @@ class import
                 // add the phrase
                 // if the name has a space create the separate words and use the triple
                 if (str_contains($key, ' ')) {
-                    $trp = $this->yaml_data_object_map_triple($key, $dto);
+                    $trp = $this->yaml_data_object_map_triple($key, $dto, $msg);
                 } else {
                     // set the name for a normal word
                     // but ignore the keyword "sys-conv-value" that is only used as a placeholder for the value
@@ -1705,18 +1706,18 @@ class import
                 // add this word or triple to the lists
                 $sub_phr_lst = clone $phr_lst;
                 if ($wrd != null) {
-                    $dto->add_word($wrd);
+                    $dto->add_word($wrd, $msg);
                     $sub_phr_lst->add_by_key($wrd->phrase());
                     $wrd = null;
                 }
                 if ($trp != null) {
-                    $dto->add_triple($trp);
+                    $dto->add_triple($trp, $msg);
                     $sub_phr_lst->add_by_key($trp->phrase());
                     $trp = null;
                 }
                 // add the sub array
                 if (is_array($value)) {
-                    $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $src);
+                    $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $msg, $wrd, $trp, $val, $src);
                 } else {
                     // remember the value
                     // TODO add percent, geo and time
@@ -1733,7 +1734,7 @@ class import
         }
         // add the previous source to the lists
         if ($src != null) {
-            $dto->add_source($src);
+            $dto->add_source($src, $msg);
         }
         // add the previous value to the lists
         if ($val != null) {
@@ -1744,13 +1745,15 @@ class import
     }
 
     /**
-     * @param string $key
-     * @param data_object $dto
-     * @return triple
+     * @param string $key the yaml key with the words of the triple e.g. "system configuration"
+     * @param data_object $dto the import cache to which the words are added
+     * @param user_message $msg to report a key that names more or less than two words
+     * @return triple with the words of the key as from and to phrase
      */
     function yaml_data_object_map_triple(
-        string      $key,
-        data_object $dto
+        string       $key,
+        data_object  $dto,
+        user_message $msg
     ): triple
     {
         global $sys;
@@ -1761,14 +1764,14 @@ class import
         foreach ($names as $name) {
             $wrd = new word($this->usr);
             $wrd->set_name($name);
-            $dto->add_word($wrd);
+            $dto->add_word($wrd, $msg);
             if ($from == null) {
                 $from = $wrd;
             } else {
                 if ($to == null) {
                     $to = $wrd;
                 } else {
-                    log_err('"' . $key . '" is unexpect number of words for a triple (max 2 words are expected');
+                    log_err_msg('"' . $key . '" has more than the two words expected for a triple', $msg);
                 }
             }
         }
@@ -1782,7 +1785,7 @@ class import
             $trp->set_to($to->phrase());
             $trp->set_name($key);
         } else {
-            log_err('unexpect number of word for a triple');
+            log_err_msg('"' . $key . '" has less than the two words expected for a triple', $msg);
         }
 
         return $trp;

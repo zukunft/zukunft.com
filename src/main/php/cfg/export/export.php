@@ -228,7 +228,7 @@ class export
                 $frm_lst = $phr_lst->frm_lst($msg);
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
-                        $res_lst = $frm->get_res_lst();
+                        $res_lst = $frm->get_res_lst($msg);
                         if ($res_lst->lst() != null) {
                             foreach ($res_lst->lst() as $res) {
                                 $exp_res = $res->export_json($msg, []);

@@ -456,7 +456,7 @@ class word extends sandbox_code_id
                     $ref_obj->set_phrase($this->phrase());
                     $ref_obj->import_mapper($ref_data, $msg, $dto);
                     // TODO $dto should never be null if no direct import is used
-                    $dto?->add_reference($ref_obj);
+                    $dto?->add_reference($ref_obj, $msg);
                     if ($msg->is_ok()) {
                         $this->ref_lst[] = $ref_obj;
                     }

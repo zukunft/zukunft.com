@@ -80,7 +80,7 @@ class import_tests
         $test_name = 'YAML import word count';
         $yaml_str = file_get_contents(test_files::SYSTEM_CONFIG_SAMPLE);
         $json_array = yaml_parse($yaml_str);
-        $dto = $imp->get_data_object_yaml($json_array);
+        $dto = $imp->get_data_object_yaml($json_array, $msg);
         // reading and mapping the yaml sample file takes longer than a normal unit function, so a file timeout is used
         $t->assert($test_name, $dto->word_list()->count(), 79, $t::TIMEOUT_LIMIT_FILE);
         $test_name = 'YAML import triple count';

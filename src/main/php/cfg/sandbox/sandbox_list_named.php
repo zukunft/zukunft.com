@@ -489,6 +489,10 @@ class sandbox_list_named extends sandbox_list
                         $msg->merge($rdy_msg);
                     }
                 } else {
+                    // the parent and not the own add_obj, because an entry with the same name but
+                    // another id is a different object that belongs in the list; only the name
+                    // keyed entries above are deduplicated by the name
+                    // TODO Prio 2 report a double that is dropped here without a message
                     $added = parent::add_obj($to_add, $allow_duplicates, $msg);
                 }
             }

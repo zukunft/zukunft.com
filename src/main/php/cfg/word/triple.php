@@ -643,7 +643,7 @@ class triple extends sandbox_link_named
                     $ref_obj = new ref($this->get_user());
                     $ref_obj->set_phrase($this->phrase());
                     $ref_obj->import_mapper($ref_data, $msg, $dto);
-                    $dto?->add_reference($ref_obj);
+                    $dto?->add_reference($ref_obj, $msg);
                     if ($msg->is_ok()) {
                         $this->ref_lst[] = $ref_obj;
                     }

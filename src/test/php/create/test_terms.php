@@ -39,11 +39,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -297,9 +299,10 @@ class test_terms
     {
         $t_wrd = new test_words($this->env);
         $t_frm = new test_formulas($this->env);
+        $msg = new user_message($this->env->usr1); // a test builder is an entry point
         $dto = new data_object($this->env->usr1);
-        $dto->add_word($t_wrd->word_one());
-        $dto->add_formula($t_frm->formula_scale_mio());
+        $dto->add_word($t_wrd->word_one(), $msg);
+        $dto->add_formula($t_frm->formula_scale_mio(), $msg);
         return $dto;
     }
 
@@ -310,9 +313,10 @@ class test_terms
     function dto_minute_and_second(): data_object
     {
         $t_wrd = new test_words($this->env);
+        $msg = new user_message($this->env->usr1); // a test builder is an entry point
         $dto = new data_object($this->env->usr1);
-        $dto->add_word($t_wrd->word_minute());
-        $dto->add_word($t_wrd->second());
+        $dto->add_word($t_wrd->word_minute(), $msg);
+        $dto->add_word($t_wrd->second(), $msg);
         return $dto;
     }
 
@@ -332,9 +336,10 @@ class test_terms
     {
         $t_wrd = new test_words($this->env);
         $t_frm = new test_formulas($this->env);
+        $msg = new user_message($this->env->usr1); // a test builder is an entry point
         $dto = new data_object($this->env->usr1);
-        $dto->add_word($t_wrd->word_one_unscaled());
-        $dto->add_formula($t_frm->formula_scale_mio());
+        $dto->add_word($t_wrd->word_one_unscaled(), $msg);
+        $dto->add_formula($t_frm->formula_scale_mio(), $msg);
         return $dto;
     }
 

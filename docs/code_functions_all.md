@@ -4701,11 +4701,11 @@
     \-- get_data_object_yaml
         \-- import - create a data object based on a yaml zukunft.com import array
     \-- yaml_data_object_map_triple
-        \-- import - @param string $key
+        \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- status_text
-        \-- import - @param string $key
+        \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- summary
-        \-- import - @param string $key
+        \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- seq_id
         \-- import - @return int the next dummy id for unit testing
 \-- convert

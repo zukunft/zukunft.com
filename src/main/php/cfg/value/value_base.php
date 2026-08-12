@@ -1373,11 +1373,11 @@ class value_base extends sandbox_value
                 $frm = $scale_wrd->formula($msg);
                 if ($frm->ref_text != null and $frm->ref_text != '') {
                     $frm->usr = $this->get_user(); // temp solution until the bug of not setting is found
-                    $dto->add_formula($frm);
+                    $dto->add_formula($frm, $msg);
                     $exp = new expression($frm);
                     $exp->set_ref_text($frm->ref_text);
                     foreach ($exp->load_result_phrases($msg)->lst() as $phr) {
-                        $dto->add_phrase($phr);
+                        $dto->add_phrase($phr, $msg);
                     }
                 }
             }
