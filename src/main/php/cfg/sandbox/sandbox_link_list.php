@@ -166,7 +166,16 @@ class sandbox_link_list extends sandbox_list
     {
         $added = false;
         if ($this->can_add($lnk_to_add)) {
-            $this->add_obj($lnk_to_add, $allow_duplicates);
+            if ($lnk_to_add->id() == 0) {
+                // a link that is not yet in the database has no id, and the list is exactly the
+                // place where it waits for its insert (the readiness ladder of
+                // docs/llm/architecture.md), so it is added directly, because
+                // sandbox_list::add_obj skips an object without an id;
+                // can_add above has already excluded a duplicate
+                $this->add_direct($lnk_to_add);
+            } else {
+                $this->add_obj($lnk_to_add, $allow_duplicates);
+            }
             $added = true;
         }
         return $added;
@@ -248,8 +257,10 @@ class sandbox_link_list extends sandbox_list
         if (!$this->is_empty()) {
             foreach ($this->lst() as $lnk) {
                 if ($can_add) {
-                    if ($lnk->from_id() == $lnk_to_add->from_id()
-                        and $lnk->to_id() == $lnk_to_add->to_id()) {
+                    // by id or name, because the linked objects of an import are identified by
+                    // their name until they have been added to the database
+                    if ($lnk->from_id_or_name() == $lnk_to_add->from_id_or_name()
+                        and $lnk->to_id_or_name() == $lnk_to_add->to_id_or_name()) {
                         $can_add = false;
                     }
                     if ($lnk->id() == $lnk_to_add->id()

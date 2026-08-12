@@ -1016,38 +1016,20 @@ class view extends sandbox_code_id
      */
     function add_term(term $trm, user_message $msg, string $json_part = ''): bool
     {
-        $added = false;
         if ($this->trm_msk_lst == null) {
             $this->trm_msk_lst = new term_view_list($this->get_user());
         }
-        // the double is judged by the name and not by the return of the list add, because
-        // sandbox_list::add_obj skips a link with the id 0 while sandbox_link_list::add_link
-        // reports it as added anyway (TODO Prio 2), so the return is no proof of a double
-        if ($this->is_term_assigned($trm)) {
+        // the list rejects a term that is already assigned by the name of the linked objects,
+        // so the rejection is also a real double while the ids are still missing (an import)
+        $added = $this->trm_msk_lst->add(0, $this, $trm);
+        if (!$added) {
             $msg->add(msg_id::IMPORT_TERM_VIEW_DOUBLE, [
                 msg_id::VAR_TERM_NAME => $trm->name(),
                 msg_id::VAR_VIEW_NAME => $this->name(),
                 msg_id::VAR_JSON_PART => $json_part,
             ]);
-        } else {
-            $added = $this->trm_msk_lst->add(0, $this, $trm);
         }
         return $added;
-    }
-
-    /**
-     * @param term $trm the term that should be checked
-     * @return bool true if the term is already in the list of the assigned terms of this view
-     */
-    private function is_term_assigned(term $trm): bool
-    {
-        $result = false;
-        foreach ($this->trm_msk_lst->lst() as $lnk) {
-            if ($lnk->to_name() == $trm->name()) {
-                $result = true;
-            }
-        }
-        return $result;
     }
 
     /**

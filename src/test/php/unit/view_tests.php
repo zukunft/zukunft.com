@@ -147,20 +147,24 @@ class view_tests
 
         $t->subheader($ts . 'term assignment');
 
-        // TODO Prio 2 add the negative test that a term assigned twice is reported as soon as the
-        //      term view link really reaches the list: sandbox_list::add_obj skips a link with the
-        //      id 0, so the assigned terms of a view stay empty and there is nothing to compare
-        //      the second term with (see docs/llm/pending_prio_2.md)
-        $test_name = 'assigning a term to a view reports nothing';
+        // a term that is assigned twice, e.g. by an import file, is reported to the caller,
+        // because the second assignment is dropped
+        $test_name = 'a term assigned twice to a view is reported';
         $msg = new user_message($t->usr1);
         $msk = $t_msk->view();
-        $msk->add_term($t_trm->term(), $msg);
-        $t->assert_true($test_name, $msg->is_ok());
+        $trm = $t_trm->term();
+        $msk->add_term($trm, $msg);
+        $added = $msk->add_term($trm, $msg);
+        $t->assert_false($test_name, $added);
 
-        // a view can be shown for more than one term, so a second, different term is no double
-        $test_name = 'assigning a second term to a view reports nothing';
-        $msk->add_term($t_trm->term_triple(), $msg);
-        $t->assert_true($test_name, $msg->is_ok());
+        $test_name = 'the double assignment message names the term';
+        $t->assert_text_contains($test_name, $msg->text(), $trm->name());
+        $msg->reset();
+
+        // a view can be shown for more than one term, so a second, different term is assigned
+        $test_name = 'a second, different term is assigned to the view';
+        $added = $msk->add_term($t_trm->term_triple(), $msg);
+        $t->assert_true($test_name, $added);
 
 
         $t->subheader($ts . 'im- and export');

@@ -12,23 +12,20 @@ its "messages that never reach the caller" section (48 today) is the third list 
 parameter defaults and the nullable parameters, and it is worked the same way.
 the done passes are in the git history; only what is still open is listed here.
 
-1. **a link without a db id never reaches its list**, so `view::add_term` assigns nothing and its
-   double message can never fire. found while threading the `$msg` of `add_term`: `sandbox_list::add_obj`
-   adds only `if ($obj_to_add->id() <> 0)`, and `view::add_term` builds the term view link with the
-   id 0 (`$this->trm_msk_lst->add(0, $this, $trm)`), so the assigned terms of an imported view stay
-   empty - while `sandbox_link_list::add_link` returns **true** either way, so the caller is told the
-   link was added. `add_term` now judges the double by the term name over the list (dormant until
-   the list fills) and the negative test in `view_tests` carries the same TODO.
-   the fix is one decision in the link list, not in `view`: let `add_link` store a link with the id 0
-   (`add_direct`, the duplicate check of `can_add` runs before it) and make `can_add` compare
-   `from_id_or_name()` / `to_id_or_name()` instead of the raw ids, so a link is also deduplicated
-   before the ids are known. mind the two existing expectations: `sandbox_tests` "add same component
-   at different position without db id is fine" and `component_link_list::can_add` (an own copy that
-   also compares the position - a DRY candidate), plus `data_object::add_term_view`, whose dto list
-   would then really fill.
-   `phrase_list::import_map_names` has the same shape one level lower: `sandbox_list_named::add`
-   keys on the id, so of several not yet saved phrases only the first is added - use `add_by_key`
-   there (TODO on the line).
+1. **apply the readiness ladder to the named lists as well** (the link list is done): the ladder is
+   written up in `docs/llm/architecture.md` - list membership goes by the key, the write by
+   `db_ready()`. `sandbox_link_list` now follows it (`add_link` stores a link without a db id via
+   `add_direct` and `can_add` compares `from_id_or_name()` / `to_id_or_name()`), which is what makes
+   the double message of `view::add_term` work at all; before that every term view link of an import
+   was dropped by the `id() <> 0` gate of `sandbox_list::add_obj` while `add_link` still reported
+   "added". open on the same defect:
+   - `sandbox_list_named::add` keys on the id, so of several not yet saved phrases only the first is
+     added and the rest is dropped without a message; `phrase_list::import_map_names` carries the
+     TODO on the line - use `add_by_key` there
+   - `component_link_list::can_add` is an own copy of the check that also compares the position and
+     still uses the raw ids (a DRY candidate: one check with the position as an option)
+   - `data_object::add_term_view` / `term_view_list()` have no caller: decide whether the dto keeps
+     the imported term view links or whether the pair is dead code
    still open from the same audit: `component::set_col_sub_phrase` does not check whether the given
    sub phrase has a relation to the column phrase, so it can suggest nothing; that check needs the
    phrase relations and a `$msg` parameter.

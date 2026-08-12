@@ -329,6 +329,45 @@ Why: a stray load during save makes the write depend on database state mid-chang
 hides ordering bugs (an object reaching `save()` half-loaded), and couples the two
 responsibilities so neither can be reasoned about or tested in isolation.
 
+## The readiness ladder — an object without a db id is normal, not invalid
+
+A list can be a place where objects live **before** they are written, so an object
+without its own database id belongs in it. The id of a row is assigned by the
+insert; requiring it earlier would mean nothing could ever be prepared in memory.
+Three different questions are therefore asked with three different functions, and
+mixing them up is the recurring defect:
+
+| Question | Function | True when |
+|---|---|---|
+| may it be held in a list / could it become writable? | `can_be_ready($msg)` | the objects it points to exist (a name is enough); their ids may still be missing |
+| may it be written **now**? | `db_ready($msg)` | every object it points to has a database id; its **own** id is *not* required |
+| has it been written already? | `is_valid()` / `id() != 0` | the row exists in the database |
+
+For a link (`triple`, `term_view`, `component_link`, `formula_link`, `ref`) this
+means precisely:
+
+- **own id missing, linked object ids set** → `db_ready` is **true**: this is a
+  new link, and the insert is what gives it its id.
+- **a linked object id missing** → `db_ready` is **false**: the link cannot be
+  written, because there is nothing to point at. It stays in the list and the
+  reason is recorded on `$msg`.
+- the linked objects are saved by their own save pass; when they come back with
+  ids, the next pass finds the link `db_ready` and writes it. An import therefore
+  runs several passes, and "not ready yet" can be a **normal** intermediate state, not
+  an error — see `docs/llm/dependent-errors.md` for why that notice must not reach
+  a caller's `is_ok()` gate. "not ready yet" is only an error if this message remains after the last try.
+
+`*_list::get_ready()` e.g. `triple_list::get_ready()` is the pattern to copy: it filters by `db_ready()` and
+collects with `add_by_key()` — for named objects a **name based** key, the object's own id only if set already. For non named objects a unique key is generated base on other fields.
+`list_db_write::sql_insert_call_with_par()` re-checks `db_ready()` as the second
+line of defence right before the insert is built.
+
+So list membership and duplicate detection are decided by the object's key (its
+name, or the linked objects of a link), and only the write is decided by
+`db_ready()`. A list that gates membership on the object's own id silently drops
+everything an import prepares — and if the add still reports "added", the caller
+cannot even see it (the open case in `docs/llm/pending_prio_2.md`).
+
 ## Standard function names
 
 | Function | Purpose |
