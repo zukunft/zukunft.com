@@ -1,10 +1,10 @@
 {
     "pod": "zukunft.com",
     "type": "ui_config",
-    "user_id": 10,
+    "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-08-12T11:23:36+00:00",
+    "timestamp": "2026-08-12T15:11:12+00:00",
     "body": {
         "user_profiles": [
             {
