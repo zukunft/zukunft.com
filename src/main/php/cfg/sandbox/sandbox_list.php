@@ -446,7 +446,7 @@ class sandbox_list extends list_db_write
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param user_message|Message $msg to report which entry is double
-     * @returns bool if adding failed or something is strange, the messages for the user with the suggested solutions
+     * @returns bool true if the object has been added to this list
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
@@ -454,32 +454,23 @@ class sandbox_list extends list_db_write
         user_message|Message                                         $msg = new Message()
     ): bool
     {
-        // add only objects that have all mandatory values
-        $obj_to_add->db_ready($msg);
+        $added = false;
 
         // add a missing user to the object
         // or check if the object user matches the list user
         // and allow exceptions only for admin users
         $msg->merge($this->add_user_check($obj_to_add));
 
-        if ($obj_to_add->id() <> 0) {
-            if ($allow_duplicates) {
-                parent::add_obj($obj_to_add, $allow_duplicates, $msg);
-            } else {
-                if ($obj_to_add->id() <> 0) {
-                    if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
-                        parent::add_obj($obj_to_add, $allow_duplicates, $msg);
-                    } else {
-                        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
-                            msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                            // without the namespace, because the user reads this message
-                            msg_id::VAR_CLASS_NAME => library::class_to_name($obj_to_add::class)
-                        ]);
-                    }
-                }
-            }
+        // the db readiness is not checked here, because a list is also the place where an object
+        // waits for its insert (docs/llm/architecture.md); the id is the key of this list, so an
+        // object without an id is added by the name in the named list resp. by the linked objects
+        // in the link list
+        // TODO Prio 2 report an object that has no key at all instead of ignoring it here
+        if ($obj_to_add->id() != 0) {
+            $added = parent::add_obj($obj_to_add, $allow_duplicates, $msg);
         }
-        return $msg->is_ok();
+
+        return $added;
     }
 
     /**

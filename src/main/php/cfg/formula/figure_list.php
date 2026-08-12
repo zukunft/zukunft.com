@@ -88,7 +88,7 @@ class figure_list extends sandbox_list
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->get_user());
             if ($fig->api_mapper($json_phr, $msg)) {
-                $this->add($fig);
+                $this->add($fig, $msg);
             }
         }
 
@@ -209,13 +209,12 @@ class figure_list extends sandbox_list
     /**
      * add one figure to the figure list, but only if it is not yet part of the figure list
      * @param figure|null $fig_to_add the figure that should be added to this list (if it does not yet exist)
+     * @param user_message $msg to collect errors during adding
      * @returns bool true the term has been added
      */
-    function add(?figure $fig_to_add): bool
+    function add(?figure $fig_to_add, user_message $msg): bool
     {
         // a local buffer, because this list add reports only the ok flag as its return value
-        // TODO Prio 2 take the user_message of the caller so the reason of a rejected add survives
-        $msg = new user_message();
         // check parameters
         if ($fig_to_add != null) {
             log_debug($fig_to_add->dsp_id());

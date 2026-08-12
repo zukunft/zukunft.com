@@ -84,7 +84,7 @@ class base_object_tests
         $t->assert($test_name, 4, $lst->count());
         $test_name = 'add same object return message';
         $lst->add_obj($t_wrd->word_2020(), false, $msg);
-        $t->assert($test_name, $msg->text(), 'trying to add ""2020" (word_id 140) for user 3 (zukunft.com system test)" which is already part of the Zukunft\ZukunftCom\main\php\cfg\word\word list');
+        $t->assert($test_name, $msg->text(), 'trying to add ""2020" (word_id 140) for user 3 (zukunft.com system test)" which is already part of the word list');
         $test_name = 'add duplicate object';
         $lst->add_obj($t_wrd->word_2020(), true);
         $t->assert($test_name, 5, $lst->count());
@@ -129,7 +129,7 @@ class base_object_tests
         $t->assert($test_name, 2, $lst->count());
         $test_name = 'add same object return message';
         $lst->add_obj($t_wrd->word_2020(), false, $msg);
-        $t->assert($test_name, $msg->text(), 'trying to add ""2020" (word_id 140) for user 3 (zukunft.com system test)" which is already part of the Zukunft\ZukunftCom\main\php\cfg\word\word list');
+        $t->assert($test_name, $msg->text(), 'trying to add ""2020" (word_id 140) for user 3 (zukunft.com system test)" which is already part of the word list');
         $test_name = 'add duplicate object';
         $lst->add_obj($t_wrd->word_2020(), true);
         $t->assert($test_name, 3, $lst->count());

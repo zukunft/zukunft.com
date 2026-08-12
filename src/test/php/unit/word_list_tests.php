@@ -305,6 +305,42 @@ class word_list_tests
         $t->assert('JSON export word list', $result, true);
 
 
+        $t->subheader($ts . 'add to the list');
+
+        // the key of a list entry is the id of the object if it has one
+        $test_name = 'a word with a db id is added';
+        $wrd_lst = new word_list($t->usr1);
+        $added = $wrd_lst->add_obj($t_wrd->word(), false, $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'the same word again is reported as double';
+        $added = $wrd_lst->add_obj($t_wrd->word(), false, $msg);
+        $t->assert_false($test_name, $added);
+
+        $test_name = 'the double entry message names the word';
+        $t->assert_text_contains($test_name, $msg->text(), word_names::MATH);
+        $msg->reset();
+
+        // an import adds the words before they have an id, so there the name is the key
+        $test_name = 'a word without a db id is added';
+        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::PI), false, $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'a second word without a db id is added';
+        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::E), false, $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'the same word without a db id is reported as double';
+        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::PI), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+        // an object with neither an id nor a name has no key, so it cannot be a list entry
+        $test_name = 'a word without a name is reported';
+        $added = $wrd_lst->add_obj($t_wrd->word_incomplete(), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/word/word_list.json';
         $t->assert_json_file(new word_list($t->usr1), $json_file);

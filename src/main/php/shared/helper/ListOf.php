@@ -179,7 +179,8 @@ class ListOf
             } else {
                 $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
                     msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                    msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                    // without the namespace, because the user reads this message
+                    msg_id::VAR_CLASS_NAME => library::class_to_name($obj_to_add::class)
                 ]);
             }
         }

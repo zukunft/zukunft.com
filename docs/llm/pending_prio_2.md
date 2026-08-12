@@ -33,12 +33,25 @@ the done passes are in the git history; only what is still open is listed here.
      the import fills
    - `sandbox_link_list::can_add` now asks `is_same_link()`, which `component_link_list` and
      `view_relation_list` override to add the position, so the duplicate check exists once and every
-     link list compares by id or name; what is still open is the same treatment for the *named*
-     lists, where `sandbox_list_named::add_obj` compares the id and the name in two separate branches
-   - `msg_id::LIST_DOUBLE_ENTRY` is a user message, but its `VAR_NAME` is filled with `dsp_id()`
-     (the debug identification, e.g. `"mathematics" (word_id 1) for user 1 ()`) and 7 of the 8
-     places that raise it still pass the raw `::class` incl. the namespace; only
-     `sandbox_list::add_obj` uses `library::class_to_name` so far
+     link list compares by id or name; `sandbox_list_named::add_obj` asks one `has_key()` (the id if
+     the object has one, the name otherwise), reports an object that names nothing instead of
+     skipping it silently, and `sandbox_list::add_obj` (now only the user check plus the parent) and
+     `ListOfIdObjects::add_obj` return whether they added instead of the message state, which is
+     what their callers `ip_range_list::add`, `formula_list::add`, `phrase_list::add_phrase` and
+     `update_object` promise in their docblocks. still open: an object that has no key at all is
+     ignored by `sandbox_list::add_obj` without a message (TODO on the line)
+   - `msg_id::LIST_DOUBLE_ENTRY` is a user message, but most of the places that raise it fill
+     `VAR_NAME` with `dsp_id()` (the debug identification, e.g. `"mathematics" (word_id 1) for
+     user 1 ()`) and pass the raw `::class` incl. the namespace; `sandbox_list::add_obj` and
+     `sandbox_list_named::add_obj` use the name and `library::class_to_name`, the other raisers at
+     least the readable class name; open is the `dsp_id()` in `VAR_NAME` of the `ListOf*` raisers
+     and the two `add_id` users (`type_list`, `user_list`) that report no name at all.
+     note that `Message::add` drops a text that is already in the message, so two lists reporting
+     the same double keep one entry - `base_object_tests` relies on that
+   - `Message::add_id()` only fills `msg_id_lst`, while `text()` reads `msg_var_lst`, so a message
+     added with `add_id` renders as "user message translation for position -1 not found" if it is
+     the only entry; 25 call sites use it, so either `add_id` fills both lists or the callers use
+     `add($msg_id, [])`
    - `data_object::add_term_view` / `term_view_list()` have no caller: decide whether the dto keeps
      the imported term view links or whether the pair is dead code
    still open from the same audit: `component::set_col_sub_phrase` does not check whether the given

@@ -125,6 +125,17 @@ class test_words extends test_objects
     /**
      * @return word object where the most specific mandatory var is not set which is in case of a word the id and the name
      */
+    /**
+     * @param string $name the name of a word that is not yet in the database
+     * @return word as an import creates it before the words have been saved
+     */
+    function by_name(string $name): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name($name);
+        return $wrd;
+    }
+
     function word_incomplete(): word
     {
         $wrd = $this->word();

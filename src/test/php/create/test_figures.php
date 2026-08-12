@@ -91,8 +91,8 @@ class test_figures
     function figure_list(user_message $msg): figure_list
     {
         $lst = new figure_list($this->env->usr1);
-        $lst->add($this->figure_value($msg));
-        $lst->add($this->figure_result());
+        $lst->add($this->figure_value($msg), $msg);
+        $lst->add($this->figure_result(), $msg);
         return $lst;
     }
 

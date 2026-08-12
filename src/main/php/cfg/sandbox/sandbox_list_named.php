@@ -489,10 +489,7 @@ class sandbox_list_named extends sandbox_list
                         $msg->merge($rdy_msg);
                     }
                 } else {
-                    // add_obj returns its message state, not whether it added, so ask the list
-                    $pos_before = $this->count();
-                    parent::add_obj($to_add, $allow_duplicates, $msg);
-                    $added = ($this->count() > $pos_before);
+                    $added = parent::add_obj($to_add, $allow_duplicates, $msg);
                 }
             }
         }
@@ -525,15 +522,8 @@ class sandbox_list_named extends sandbox_list
                     $this->set_hash_dirty();
                     $added = true;
                 } else {
-                    // a local message, because add_obj also reports the db readiness of the object,
-                    // which is the normal state while an import still fills the ids,
-                    // so it must never reach a caller that skips its next step on a not ok message
-                    $add_msg = new user_message();
-                    $pos_before = $this->count();
-                    parent::add_obj($obj_to_add, $allow_duplicates, $add_msg);
-                    // add_obj returns its message state, not whether it added, and it adds nothing
-                    // at all for an object without an id, so ask the list itself
-                    $added = ($this->count() > $pos_before);
+                    $add_msg = new user_message(); // a buffer, because the caller may have no message
+                    $added = parent::add_obj($obj_to_add, $allow_duplicates, $add_msg);
                     $msg?->merge($add_msg);
                 }
             }
@@ -784,8 +774,8 @@ class sandbox_list_named extends sandbox_list
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message|Message $msg to report which entry is double
-     * @returns bool false if the object has not been added
+     * @param user_message|Message $msg to report which entry is double or names nothing
+     * @returns bool true if the object has been added to this list
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
@@ -793,42 +783,50 @@ class sandbox_list_named extends sandbox_list
         user_message|Message                                         $msg = new Message()
     ): bool
     {
-        // add only objects that have all mandatory values
-        $obj_to_add->db_ready($msg);
+        $added = false;
 
         // add only object with the same user
         // TODO Prio 2 report a user mismatch to the user as add_user_check does; today it is only
         //      logged, because a not ok message here would change what this function returns
         $this->same_user($obj_to_add);
 
-        // do not create duplicates if not explicitly allowed
-        if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
-            if ($allow_duplicates) {
-                parent::add_obj($obj_to_add, $allow_duplicates, $msg);
-            } else {
-                if ($obj_to_add->id() <> 0) {
-                    if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
-                        parent::add_obj($obj_to_add, $allow_duplicates, $msg);
-                    } else {
-                        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
-                            msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                            msg_id::VAR_CLASS_NAME => $obj_to_add::class
-                        ]);
-                    }
-                } elseif ($obj_to_add->name() != '') {
-                    if (!in_array($obj_to_add->name(), $this->names())) {
-                        $msg->merge($this->add_user_check($obj_to_add));
-                        parent::add_direct($obj_to_add);
-                    } else {
-                        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
-                            msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                            msg_id::VAR_CLASS_NAME => $obj_to_add::class
-                        ]);
-                    }
-                }
-            }
+        // the db readiness is not checked here, because the list is also the place where an object
+        // waits for its insert (docs/llm/architecture.md); only an object that names nothing at all
+        // cannot be an entry of this list
+        if ($obj_to_add->id() == 0 and $obj_to_add->name() == '') {
+            $msg->add(msg_id::ID_AND_NAME_MISSING, []);
+        } elseif (!$allow_duplicates and $this->has_key($obj_to_add)) {
+            $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
+                msg_id::VAR_NAME => $obj_to_add->name(),
+                msg_id::VAR_CLASS_NAME => library::class_to_name($obj_to_add::class)
+            ]);
+        } elseif ($obj_to_add->id() != 0) {
+            // the parent adds by the id and reports its own findings e.g. a missing user
+            $added = parent::add_obj($obj_to_add, $allow_duplicates, $msg);
+        } else {
+            $msg->merge($this->add_user_check($obj_to_add));
+            parent::add_direct($obj_to_add);
+            $added = true;
         }
-        return $msg->is_ok();
+
+        return $added;
+    }
+
+    /**
+     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the object to check
+     * @return bool true if this list has already an entry with the key of the given object,
+     *              which is the id if the object has one and the name otherwise
+     */
+    private function has_key(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
+    ): bool
+    {
+        if ($obj_to_add->id() != 0) {
+            $result = array_key_exists($obj_to_add->id(), $this->id_pos_lst());
+        } else {
+            $result = in_array($obj_to_add->name(), $this->names());
+        }
+        return $result;
     }
 
     /**
