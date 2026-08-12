@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -82,6 +83,12 @@ class triple_ui_tests
         $test_page .= $html->tbl($html->tr($trp->tr()));
         $test_page .= $t->dsp_title_named_edit($trp, $msg);
 
+        // the table view uses one title component for a word and a triple, so for a triple it
+        // must show the same title as the default triple view
+        $form = new system_form();
+        $test_page .= $html->text_h2('phrase title of ' . $trp->name());
+        $test_page .= $form->title_phrase($trp, $msg) . '<br>';
+
         // show the related phrases grouped by verb as on the default triple page
         // ("related phrases without subtitles": the verb linked to its page, then the linked
         // phrases); the "global problem" parents are health/education (via "can be", shown)
@@ -100,6 +107,18 @@ class triple_ui_tests
         $t->assert_text_contains($test_name, $sub_html, word_names::HEALTH);
         $test_name = 'the is-a parents are excluded from the related phrases without subtitles';
         $t->assert_text_not_contains($test_name, $sub_html, word_names::POVERTY);
+
+        $t->subheader($ts . 'phrase title');
+        $test_name = 'the phrase title of a triple is the triple title';
+        $t->assert($test_name, $form->title_phrase($trp, $msg), $form->title_triple($trp, $msg));
+        $ttl_html = $form->title_phrase($trp, $msg);
+        $test_name = 'the phrase title names the triple';
+        $t->assert_text_contains($test_name, $ttl_html, $trp->name());
+        // the subheader of a triple names the from phrase, the verb and the to phrase
+        $test_name = 'the phrase title subheader names the from phrase of the triple';
+        $t->assert_text_contains($test_name, $ttl_html, $trp->get_from()->name());
+        $test_name = 'the phrase title subheader names the to phrase of the triple';
+        $t->assert_text_contains($test_name, $ttl_html, $trp->get_to()->name());
     }
 
 }

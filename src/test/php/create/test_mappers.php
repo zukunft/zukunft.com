@@ -832,6 +832,7 @@ class test_mappers
                 $obj = $t_frm->formula_filled();
                 break;
             case component_types::PHRASE_NAME:
+            case component_types::PHRASE_TITLE:
             case component_types::SELECT_PHRASE:
             case component_types::PHRASE:
             case component_types::FORM_TITLE:
@@ -955,6 +956,7 @@ class test_mappers
             case component_types::VALUES_RELATED:
             case component_types::VALUES_MOST_RELEVANT:
             case component_types::VALUES_IN_COLUMNS:
+            case component_types::TABLE_WITH_RELATED_COLUMNS:
             case component_types::NUMERIC_VALUE:
             case component_types::VALUES_ALL:
             case component_types::SYSTEM_BODY_VALUE_DETAIL:

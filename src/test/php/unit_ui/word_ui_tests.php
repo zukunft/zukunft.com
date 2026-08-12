@@ -197,6 +197,12 @@ class word_ui_tests
         $test_page .= 'most relevant: ' . $list->values_most_relevant($wrd_zh, $msg, $dto) . '<br>';
         // the phrase values view shows the same values in up to four wrapping columns
         $test_page .= 'in columns: ' . $list->values_in_columns($wrd_zh, $msg, $dto) . '<br>';
+        // the table view shows the same values with one column per related phrase
+        $test_page .= 'as table: ' . $list->table_with_related_columns($wrd_zh, $msg, $dto) . '<br>';
+
+        // the phrase title of the table view: for a word the same title as the default word view
+        $test_page .= $html->text_h2('phrase title of ' . $wrd_zh->name());
+        $test_page .= $form->title_phrase($wrd_zh, $msg) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $msg);
 
         $t->subheader($ts . 'values in columns');
@@ -207,6 +213,32 @@ class word_ui_tests
         $t->assert_text_not_contains($test_name, $col_html, styles::VALUE_GROUP_TITLE . '">' . word_names::ZH);
         $test_name = 'without a word no column is shown';
         $t->assert($test_name, $list->values_in_columns(null, $msg, $dto), '');
+
+        $t->subheader($ts . 'table with related columns');
+        $tbl_html = $list->table_with_related_columns($wrd_zh, $msg, $dto);
+        $test_name = 'the values are shown as a table';
+        $t->assert_text_contains($test_name, $tbl_html, '<table');
+        $test_name = 'the top left header cell is empty, because the row phrases differ per row';
+        $t->assert_text_contains($test_name, $tbl_html, '<th></th>');
+        // both values of the page word are related to a different triple, so no triple is used by
+        // enough values to head a column and both values are shown in the "Values" column
+        $test_name = 'the high impact triple of a value is shown as a row name';
+        $t->assert_text_contains($test_name, $tbl_html, triple_names::COMPANY_ZURICH);
+        $test_name = 'the low impact triple of a value is shown as a row name';
+        $t->assert_text_contains($test_name, $tbl_html, triple_names::CITY_ZH_NAME);
+        $test_name = 'the high impact row is shown before the low impact row';
+        $t->assert_text_order($test_name, $tbl_html,
+            triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
+        $test_name = 'without a word no table is shown';
+        $t->assert($test_name, $list->table_with_related_columns(null, $msg, $dto), '');
+
+        $t->subheader($ts . 'phrase title');
+        // the table view uses one title component for a word and a triple, so for a word it must
+        // show the same title as the default word view
+        $test_name = 'the phrase title of a word is the named title';
+        $t->assert($test_name, $form->title_phrase($wrd_zh, $msg), $form->title_named($wrd_zh, $msg));
+        $test_name = 'the phrase title names the word';
+        $t->assert_text_contains($test_name, $form->title_phrase($wrd_zh, $msg), word_names::ZH);
 
         $t->subheader($ts . 'related phrases');
         $test_name = 'the symbol triple of the word is shown';

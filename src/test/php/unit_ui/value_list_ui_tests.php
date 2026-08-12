@@ -164,6 +164,33 @@ class value_list_ui_tests
         $test_name = 'the columns of an empty value list render nothing';
         $t->assert($test_name, new value_list_ui()->columns_by_phrase($msg_ui), '');
 
+        $t->subheader($ts . 'table with related columns');
+        $tbl_html = $t_val->value_list_most_relevant_ui()->table_by_related_columns($msg_ui);
+        $test_name = 'the values are shown as a table';
+        $t->assert_text_contains($test_name, $tbl_html, '<table');
+        $test_name = 'the top left header cell is empty, because the row phrases differ per row';
+        $t->assert_text_contains($test_name, $tbl_html, '<th></th>');
+        $test_name = 'the phrase used by most values heads a column';
+        $t->assert_text_contains($test_name, $tbl_html, word_names::INHABITANTS);
+        $test_name = 'a second phrase used by several values heads a further column';
+        $t->assert_text_contains($test_name, $tbl_html, word_names::ABB);
+        $test_name = 'the value that shares no column phrase is still shown';
+        $t->assert_text_contains($test_name, $tbl_html, word_names::PI);
+        // one header cell per column phrase, plus the empty top left cell and the "Values" cell
+        // of the values that share no column phrase
+        $test_name = 'never more phrase columns than fit on the widest screen';
+        $t->assert_true($test_name,
+            substr_count($tbl_html, '<th') <= position_types::MAX_SIDE_COLUMNS + 2);
+        $test_name = 'the header is shown before the first row';
+        $t->assert_text_order($test_name, $tbl_html, '<th', '<td');
+        $test_name = 'the table of an empty value list renders nothing';
+        $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');
+        // with the page phrase as context the phrase of the page is not repeated in the table
+        $tbl_ctx = $t_val->value_list_most_relevant_ui()
+            ->table_by_related_columns($msg_ui, $phr_lst_context_ui);
+        $test_name = 'the context phrase is not used as a column headline';
+        $t->assert_text_not_contains($test_name, $tbl_ctx, word_names::INHABITANTS);
+
         $t->subheader($ts . 'more tail');
         $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, '', '', 1);
         $test_name = 'the more tail is a link to the phrase values view';

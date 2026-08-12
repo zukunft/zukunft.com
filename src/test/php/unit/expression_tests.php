@@ -247,7 +247,7 @@ class expression_tests
         $target = '"parts","of","total" (element_id '
             . word_names::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
-        $target = '"parts","of","total" (element_id 1/469,1/5,1/275) for user 3 (zukunft.com system test)';
+        $target = '"parts","of","total" (element_id 1/474,1/5,1/280) for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 

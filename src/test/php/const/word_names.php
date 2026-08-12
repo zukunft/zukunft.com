@@ -134,27 +134,27 @@ class word_names
     const int EDUCATION_ID = 247;
     const string EDUCATION_COM = 'process of teaching and learning';
     const string HTP = 'htp';
-    const int HTP_ID = 255;
+    const int HTP_ID = 260;
     const string TRILLION = 'trillion';
-    const int TRILLION_ID = 256;
+    const int TRILLION_ID = 261;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 329;
+    const int SWISS_FRANC_ID = 334;
     const string USD = 'USD';
-    const int USD_ID = 347;
+    const int USD_ID = 352;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 465;
+    const int SALES_ID = 470;
     const string CASH = 'cash';
-    const int CASH_ID = 466;
+    const int CASH_ID = 471;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 467;
+    const int STATEMENT_ID = 472;
     const string PARTS = 'parts';
-    const int PARTS_ID = 469;
+    const int PARTS_ID = 474;
     const string INCOME = 'income';
-    const int INCOME_ID = 470;
+    const int INCOME_ID = 475;
     const string TAX = 'tax';
-    const int TAX_ID = 471;
+    const int TAX_ID = 476;
 
     // words from import file country.json used for the start page in order of appearance
     const string GERMANY = 'Germany';
@@ -172,26 +172,26 @@ class word_names
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 267;
+    const int YEAR_2013_ID = 272;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 268;
+    const int YEAR_2014_ID = 273;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 269;
+    const int YEAR_2015_ID = 274;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 270;
+    const int YEAR_2016_ID = 275;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 271;
+    const int YEAR_2017_ID = 276;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 272;
+    const int YEAR_2018_ID = 277;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
     const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
     const int COMPANY_ID = 190;
     const string ABB = 'ABB';
-    const int ABB_ID = 463;
+    const int ABB_ID = 468;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 464;
+    const int VESTAS_ID = 469;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -224,25 +224,25 @@ class word_names
     const int HOUR_ID = 105;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 535;
+    const int YEAR_2021_ID = 540;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 338;
+    const int YEAR_2022_ID = 343;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 534;
+    const int YEAR_2023_ID = 539;
     const string YEAR_2024 = '2024';
-    const int YEAR_2024_ID = 262;
+    const int YEAR_2024_ID = 267;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 533;
+    const int YEAR_2025_ID = 538;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 532;
+    const int YEAR_2026_ID = 537;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 531;
+    const int YEAR_2027_ID = 536;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 530;
+    const int YEAR_2028_ID = 535;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 529;
+    const int YEAR_2029_ID = 534;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 528;
+    const int YEAR_2030_ID = 533;
     const string LIGHT = 'light';
     const int LIGHT_ID = 86;
     const string SPEED = 'speed';
@@ -278,18 +278,18 @@ class word_names
     const string EUR = 'EUR';
     const int EUR_ID = 2427;
     const string EURO = 'Euro';
-    const int EURO_ID = 267;
+    const int EURO_ID = 328;
     const string US_DOLLAR = 'US dollar';
-    const int US_DOLLAR_ID = 268;
+    const int US_DOLLAR_ID = 327;
     const string U_S_DOLLAR = 'U.S. dollar';
-    const int U_S_DOLLAR_ID = 2427;
+    const int U_S_DOLLAR_ID = 351;
     const string DOLLAR = '$';
-    const int DOLLAR_ID = 274;
+    const int DOLLAR_ID = 354;
     const string EURO_SIGN = '€';
-    const int EURO_SIGN_ID = 275;
-    const int CURRENCY_ID = 2397;
+    const int EURO_SIGN_ID = 356;
+    const int CURRENCY_ID = 289;
     const string US = 'US';
-    const string GAAP = 'GAAP';
+
 
     const array WORDS_SCALING = array(self::MIO, self::MIO_SHORT);
     const array WORDS_SCALING_HIDDEN = array(self::ONE);

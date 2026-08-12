@@ -52,7 +52,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 112;
+    const int MAX_TEST_ID = 113;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -349,6 +349,14 @@ class views
     const string PHRASE_VALUES_NAME = 'Values of a phrase';
     const string PHRASE_VALUES_COM = 'All values related to a word or triple, grouped into up to four columns by the phrases used most often within the values';
 
+    // the values of a word/triple as a table: one column per phrase used most often within the
+    // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
+    // (e.g. per year), headed by the phrase title of a word or of a triple
+    const string TABLE = 'table';
+    const int TABLE_ID = 113;
+    const string TABLE_NAME = 'Table';
+    const string TABLE_COM = 'The values related to a word or triple as a table with one column per phrase used most often within the values';
+
 
     /*
      * const string for system testing
@@ -499,6 +507,7 @@ class views
         self::WORD_LOG_ID,
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
+        self::TABLE_ID,
     ];
 
     // system masks that have a verb as the main object
@@ -738,6 +747,7 @@ class views
         self::PHRASE_ID,
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
+        self::TABLE_ID,
     ];
 
     // system masks that add a sandbox object
@@ -999,6 +1009,7 @@ class views
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
         self::PHRASE_ID => self::PHRASE,
         self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
+        self::TABLE_ID => self::TABLE,
         self::CURRENCY_ID => self::CURRENCY,
     ];
 

@@ -247,6 +247,30 @@
       "name": "spending"
     },
     {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "prime"
+    },
+    {
+      "name": "second"
+    },
+    {
+      "name": "third"
+    },
+    {
+      "name": "before"
+    },
+    {
+      "name": "after"
+    },
+    {
       "name": "pension",
       "refs": [
         {
@@ -524,6 +548,14 @@
       "from": "populism",
       "verb": "can cause",
       "to": "GDP decline"
+    },
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
     }
   ],
   "sources": [
