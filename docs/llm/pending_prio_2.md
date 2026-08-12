@@ -19,11 +19,24 @@ the done passes are in the git history; only what is still open is listed here.
    the double message of `view::add_term` work at all; before that every term view link of an import
    was dropped by the `id() <> 0` gate of `sandbox_list::add_obj` while `add_link` still reported
    "added". open on the same defect:
-   - `sandbox_list_named::add` keys on the id, so of several not yet saved phrases only the first is
-     added and the rest is dropped without a message; `phrase_list::import_map_names` carries the
-     TODO on the line - use `add_by_key` there
+   - `sandbox_list_named::add` still keys on the id, so a caller that adds objects before they are
+     saved must use `add_by_name_direct` (as `phrase_list::import_map_names` now does) resp.
+     `add_by_key`; the plain `add` keeps only the first of several id less objects. note that
+     `add_by_key` ends with `return $msg->is_ok()` **and** gates the add itself with
+     `can_be_ready($msg)`, so with a shared message an earlier unrelated error stops it from adding
+     at all - fix that before recommending it as the general entry point
+   - the `assigned` array of a formula import now resolves each name in the `$dto` and links it
+     (one helper shared with `assigned_word`), so `save_links` writes the links; two loose ends:
+     `formula_map::$lnk_lst` has no accessor, so a unit test cannot assert the created links (only
+     that nothing is reported), and `assign_phrases`, which fills `lnk_lst` from `$this->phr_lst`,
+     is called by `import_obj` but not by the data_object import - decide which of the two members
+     the import fills
    - `component_link_list::can_add` is an own copy of the check that also compares the position and
      still uses the raw ids (a DRY candidate: one check with the position as an option)
+   - `msg_id::LIST_DOUBLE_ENTRY` is a user message, but its `VAR_NAME` is filled with `dsp_id()`
+     (the debug identification, e.g. `"mathematics" (word_id 1) for user 1 ()`) and 7 of the 8
+     places that raise it still pass the raw `::class` incl. the namespace; only
+     `sandbox_list::add_obj` uses `library::class_to_name` so far
    - `data_object::add_term_view` / `term_view_list()` have no caller: decide whether the dto keeps
      the imported term view links or whether the pair is dead code
    still open from the same audit: `component::set_col_sub_phrase` does not check whether the given

@@ -443,8 +443,9 @@ class formula_map extends sandbox_code_id
         // TODO Prio 2 allow only one way to assign phrases on import
         // assign the phrases to the formula
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
-            $phr_lst = new phrase_list($this->get_user());
-            $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $msg, $dto);
+            foreach ($in_ex_json[json_fields::ASSIGNED] as $phr_name) {
+                $this->link_assigned_phrase($phr_name, $in_ex_json, $msg, $dto);
+            }
         }
 
         // assigned_word assigns exactly one phrase to the formula;
@@ -457,18 +458,8 @@ class formula_map extends sandbox_code_id
                     msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
                     msg_id::VAR_FORMULA => $this->name(),
                 ]);
-            } elseif ($dto != null) {
-                $name = $phr_names[0] ?? '';
-                $phr = $dto->phrase_list()->get_by_name($name, $msg);
-                if ($phr == null) {
-                    $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
-                        msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
-                        msg_id::VAR_NAME => $name,
-                        msg_id::VAR_FORMULA => $this->name(),
-                    ]);
-                } else {
-                    $this->link_phrase($phr, $msg);
-                }
+            } else {
+                $this->link_assigned_phrase($phr_names[0] ?? '', $in_ex_json, $msg, $dto);
             }
         }
 
@@ -1305,6 +1296,40 @@ class formula_map extends sandbox_code_id
     function assign_phrase(phrase $phr, user_message $msg): bool
     {
         return $this->link_phrase_and_save($phr, $msg);
+    }
+
+    /**
+     * link this formula to the phrase named in the import json
+     * the phrase is taken from the import cache, because the mapper never reads the database and
+     * never creates a placeholder: a name that the import does not define is reported instead
+     *
+     * @param string $name the name of the phrase that should be assigned to this formula
+     * @param array $in_ex_json the json part of the formula to name it in a message
+     * @param user_message $msg to report a phrase name that the import does not define
+     * @param data_object|null $dto cache of the objects imported until now
+     * @return bool true if the phrase has been linked to this formula
+     */
+    private function link_assigned_phrase(
+        string       $name,
+        array        $in_ex_json,
+        user_message $msg,
+        ?data_object $dto
+    ): bool
+    {
+        $linked = false;
+        if ($dto != null) {
+            $phr = $dto->phrase_list()->get_by_name($name, $msg);
+            if ($phr == null) {
+                $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
+                    msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                    msg_id::VAR_NAME => $name,
+                    msg_id::VAR_FORMULA => $this->name(),
+                ]);
+            } else {
+                $linked = $this->link_phrase($phr, $msg);
+            }
+        }
+        return $linked;
     }
 
     /**

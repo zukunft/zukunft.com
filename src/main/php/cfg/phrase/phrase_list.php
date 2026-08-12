@@ -635,10 +635,9 @@ class phrase_list extends sandbox_list_named
                 ]);
                 $result = false;
             } else {
-                // TODO Prio 2 use add_by_key here: sandbox_list_named::add keys on the id, so of
-                //      several phrases that are not yet in the database (all id 0) only the first
-                //      is added and the rest is dropped without a message
-                $this->add($phr);
+                // by name, because an import assigns phrases before they have an id and the id
+                // keyed add would keep only the first of them (docs/llm/architecture.md)
+                $this->add_by_name_direct($phr, false, $msg);
             }
         }
         return $result;

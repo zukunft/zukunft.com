@@ -304,6 +304,19 @@ class test_terms
     }
 
     /**
+     * @return data_object with the minute and the second word as the import cache of a formula
+     *         that names both of them in its assigned phrases
+     */
+    function dto_minute_and_second(): data_object
+    {
+        $t_wrd = new test_words($this->env);
+        $dto = new data_object($this->env->usr1);
+        $dto->add_word($t_wrd->word_minute());
+        $dto->add_word($t_wrd->second());
+        return $dto;
+    }
+
+    /**
      * @return data_object without any scaling formula to test the missing formula warning
      */
     function dto_scale_none(): data_object
