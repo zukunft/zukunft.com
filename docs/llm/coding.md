@@ -97,6 +97,7 @@ detail file. Order is by how often they fire, not importance.
 - A json field name shown to the user is translated via `$mtr->text_json_field` (which maps the json field to its db field translation), called as late as possible (at display, not when storing/passing the raw field name). → `docs/llm/state-and-messages.md`
 - Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/state-and-messages.md`
 - Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
+- A user's permissions derive from the `profile_id` only (`is_admin`, `is_system`, `can_set_*`, …); the user `code_id` merely *selects* a specific user (e.g. system test user 1 vs 2) and never grants or removes a right. → `docs/llm/state-and-messages.md`
 
 ### Frontend (`web/`)
 - `web/` renders pure HTML + CSS, **no JavaScript**: interactivity uses native form posts, links and CSS state selectors (`:target`, `:checked`); never emit a `<script>` or inline handler. A separate JS frontend (Vue/React) may come later as its own app. → `docs/llm/frontend.md`

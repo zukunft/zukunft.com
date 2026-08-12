@@ -392,6 +392,22 @@ class user_tests
             $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json($msg)));
 
 
+        $t->subheader($ts . 'code id privilege');
+
+        // a permission of a user is always based on the profile and never on the code id,
+        // because the code id only selects a user e.g. the system test user 1 or 2
+        // (see docs/llm/state-and-messages.md)
+        $test_name = 'a user with the test profile is a system test user';
+        $usr_sys_test = $t_usr->user_sys_test();
+        $t->assert_true($test_name, $usr_sys_test->is_system_test());
+        $test_name = 'a system test user can set the code id of an object';
+        $t->assert_true($test_name, $usr_sys_test->can_set_code_id());
+        $test_name = 'a user with the normal profile is not a system test user';
+        $t->assert_false($test_name, $t->usr_normal->is_system_test());
+        $test_name = 'a normal user cannot set the code id of an object';
+        $t->assert_false($test_name, $t->usr_normal->can_set_code_id());
+
+
         $t->subheader($ts . 'activation key at rest');
 
         // a password reset / activation key is stored only as a sha256 hash with a short validity,

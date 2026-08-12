@@ -434,9 +434,10 @@ class frontend
 
     /**
      * central authorization for the admin only masks (views::ADMIN_MASK_IDS, e.g. the admin main and
-     * the complete system view): only an admin (or the higher system user) may render or act on them,
-     * so the dispatch refuses the request once here instead of relying on scattered per renderer
-     * is_admin checks that each admin mask would otherwise have to repeat (see url_to_html / url_to_action)
+     * the complete system view): only an admin (or the higher system user, or the reserved system
+     * test user that keeps the system privileges but displays like a normal user) may render or act
+     * on them, so the dispatch refuses the request once here instead of relying on scattered per
+     * renderer is_admin checks that each admin mask would otherwise have to repeat (see url_to_html / url_to_action)
      *
      * @param int|string $view_id the resolved view id (or code id) of the request
      * @param user_message_ui $msg_ui carries the requesting user (null for an anonymous request) and tells the user why the admin mask is not shown
@@ -447,7 +448,8 @@ class frontend
         $usr = $msg_ui->usr;
         $denied = false;
         if (in_array($view_id, views::ADMIN_MASK_IDS)) {
-            if ($usr == null or (!$usr->is_admin() and !$usr->is_system())) {
+            if ($usr == null
+                or (!$usr->is_admin() and !$usr->is_system() and !$usr->is_system_test())) {
                 $msg_ui->add(msg_id::ADMIN_MASK_DENIED, []);
                 $denied = true;
             }

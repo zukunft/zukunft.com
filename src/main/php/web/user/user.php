@@ -496,6 +496,24 @@ class user extends db_object
     }
 
     /**
+     * @returns bool true if the user has the reserved test profile, which keeps the privileges
+     *               of a system user e.g. to use the admin masks (frontend::admin_mask_denied)
+     *               even though the pages are displayed to it like for a normal user (see is_system)
+     */
+    function is_system_test(): bool
+    {
+        global $ui_sys;
+        $result = false;
+
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::TEST)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @returns bool true if the user is allowed to see the admin-only fields (the cached usage and
      *               impact numbers, see fields::LOG_ADMIN_ONLY) in the change log and the confirm
      *               change preview, because the cached numbers are system internals that would

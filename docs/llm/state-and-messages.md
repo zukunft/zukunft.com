@@ -181,6 +181,43 @@ $msg)`, `user_list::save(...)` — that user is normal payload and keeps its own
 parameter; `$msg->usr` stays the one who triggered the operation. If a signature
 has both, check which is which before removing one.
 
+### Permissions come from the profile — the user `code_id` only selects a user
+
+Every permission decision on a user derives from the **`profile_id`** and the
+profile hierarchy behind it: `is_admin()`, `is_system()`, `is_system_test()`,
+`is_developer()`, `is_unique()`, and every `can_set_*` build on the profile
+only. The user **`code_id`** is a *selector*: it identifies one specific
+reserved user (`system`, `admin`, `test` vs `test_partner`, …) so code can pick
+"system test user 1" over "user 2" — it never grants or removes a right.
+
+- **Right** — the privilege check reads the profile:
+
+```php
+function is_system_test(): bool
+{
+    ...
+    if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)) {
+        $result = true;
+    }
+    ...
+}
+```
+
+- **Wrong** — deriving the privilege from the selector:
+
+```php
+if ($this->code_id == users::SYSTEM_TEST_CODE_ID) {
+    $result = true;   // a code id must never widen a permission
+}
+```
+
+**Why**: the profile is the single, auditable permission model (each profile has
+a right level, and `can_set_profile` guards escalation); a second, code_id-based
+path would bypass those guards — any code that can set a code id could then mint
+privileges. If a check needs "the test users", express it as the TEST *profile*;
+the code_id stays what it is everywhere else in the system: the stable key to
+*find* a row, not a property of it.
+
 ### Never overwrite or reset the accumulated messages
 
 A function receiving `$msg` may only **add** to it — never replace, clear, reset,
