@@ -9,7 +9,7 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-188 creations below the entry points: 180 explained, 8 parameter defaults and 0 still unexplained
+187 creations below the entry points: 179 explained, 8 parameter defaults and 0 still unexplained
 and 4 nullable message parameters and 48 messages that never reach the caller
 
 ## parameter defaults

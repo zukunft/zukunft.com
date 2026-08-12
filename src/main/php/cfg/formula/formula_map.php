@@ -444,7 +444,7 @@ class formula_map extends sandbox_code_id
         // assign the phrases to the formula
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
             $phr_lst = new phrase_list($this->get_user());
-            $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
+            $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $msg, $dto);
         }
 
         // assigned_word assigns exactly one phrase to the formula;

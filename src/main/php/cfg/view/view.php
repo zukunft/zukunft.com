@@ -324,7 +324,7 @@ class view extends sandbox_code_id
                         '" created to link it to view "' . $this->name() .
                         '" as requested by the import of ');
                 }
-                $this->add_term($trm, json_encode($in_ex_json));
+                $this->add_term($trm, $msg, json_encode($in_ex_json));
             }
         }
 
@@ -1010,26 +1010,44 @@ class view extends sandbox_code_id
     /**
      * add the term link to this view object
      * @param term $trm the term that should be linked
+     * @param user_message $msg to report a term that is assigned more than once to this view
      * @param string $json_part the part of a json message which has cause the adding
-     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     * @return bool true if the term has been added to the assigned terms of this view
      */
-    function add_term(term $trm, string $json_part = ''): user_message
+    function add_term(term $trm, user_message $msg, string $json_part = ''): bool
     {
-        // TODO Prio 2 the only caller (import_mapper) drops this message, so a double term view
-        //      link of an import file is reported to nobody; surfacing it needs a test run
-        $msg = new user_message(); // the message IS the return value
+        $added = false;
         if ($this->trm_msk_lst == null) {
             $this->trm_msk_lst = new term_view_list($this->get_user());
         }
-        $added = $this->trm_msk_lst->add(0, $this, $trm);
-        if (!$added) {
+        // the double is judged by the name and not by the return of the list add, because
+        // sandbox_list::add_obj skips a link with the id 0 while sandbox_link_list::add_link
+        // reports it as added anyway (TODO Prio 2), so the return is no proof of a double
+        if ($this->is_term_assigned($trm)) {
             $msg->add(msg_id::IMPORT_TERM_VIEW_DOUBLE, [
                 msg_id::VAR_TERM_NAME => $trm->name(),
                 msg_id::VAR_VIEW_NAME => $this->name(),
                 msg_id::VAR_JSON_PART => $json_part,
             ]);
+        } else {
+            $added = $this->trm_msk_lst->add(0, $this, $trm);
         }
-        return $msg;
+        return $added;
+    }
+
+    /**
+     * @param term $trm the term that should be checked
+     * @return bool true if the term is already in the list of the assigned terms of this view
+     */
+    private function is_term_assigned(term $trm): bool
+    {
+        $result = false;
+        foreach ($this->trm_msk_lst->lst() as $lnk) {
+            if ($lnk->to_name() == $trm->name()) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

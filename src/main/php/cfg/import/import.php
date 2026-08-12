@@ -589,13 +589,16 @@ class import
                 // a list of just the word names without further parameter
                 // phrase list because a word might also be a triple
                 $phr_lst = new phrase_list($this->usr);
-                $import_result = $phr_lst->import_names($json_obj);
-                if ($import_result->is_ok()) {
+                // a buffer for the verdict of this step, because phrase_list::save returns
+                // $msg->is_ok(), so a shared message would count an earlier error of the
+                // request as a failure of this word list
+                $lst_msg = new user_message($this->usr);
+                if ($phr_lst->import_names($json_obj, $lst_msg)) {
                     $this->words_done++;
                 } else {
                     $this->words_failed++;
                 }
-                $msg->merge($import_result);
+                $msg->merge($lst_msg);
                 $this->display_progress($this->words_done);
                 $pos++;
             } elseif ($key == json_fields::TRIPLES) {

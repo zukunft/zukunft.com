@@ -615,16 +615,14 @@ class phrase_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $msg to report an entry of the json array that names no phrase
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if every entry of the json array names a phrase
      */
-    function import_map_names(array $json_obj, ?data_object $dto = null): user_message
+    function import_map_names(array $json_obj, user_message $msg, ?data_object $dto = null): bool
     {
-        // TODO Prio 2 formula_map::import_mapper ~440 drops this message, so an empty entry in the
-        //      "assigned" array of an import file is reported to nobody; surfacing needs a test run
-        $msg = new user_message(); // the message IS the return value
+        $result = true;
         foreach ($json_obj as $word_name) {
-            $phr = null;
             $phr = $dto?->get_phrase_by_name($word_name, $msg);
             if ($phr == null and $word_name != '') {
                 $wrd = new word($this->get_user());
@@ -632,29 +630,34 @@ class phrase_list extends sandbox_list_named
                 $phr = $wrd->phrase();
             }
             if ($phr == null) {
-                $msg->add(msg_id::IMPORT_SOURCE_NOT_FOUND, [
-
+                $msg->add(msg_id::IMPORT_PHRASE_NAME_EMPTY, [
+                    msg_id::VAR_JSON_PART => library::dsp_array($json_obj)
                 ]);
+                $result = false;
             } else {
+                // TODO Prio 2 use add_by_key here: sandbox_list_named::add keys on the id, so of
+                //      several phrases that are not yet in the database (all id 0) only the first
+                //      is added and the rest is dropped without a message
                 $this->add($phr);
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
-     * import a word list object from a JSON array object
+     * import a word list object from a JSON array object and save it to the database
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $msg to report an entry that names no phrase or a phrase that cannot be saved
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if every entry of the json array names a phrase and the list has been saved
      */
-    function import_names(array $json_obj, ?data_object $dto = null): user_message
+    function import_names(array $json_obj, user_message $msg, ?data_object $dto = null): bool
     {
-        $msg = $this->import_map_names($json_obj, $dto);
-        $this->save($msg);
+        $mapped = $this->import_map_names($json_obj, $msg, $dto);
+        $saved = $this->save($msg);
 
-        return $msg;
+        return $mapped and $saved;
     }
 
     /**

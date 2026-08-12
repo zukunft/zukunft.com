@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
@@ -143,6 +144,24 @@ class view_tests
         $msk = $t_msk->view_with_components();
         $t->assert_api($msk, 'view_with_component_details', [api_types::INCL_COMPONENTS, api_types::LINK_DETAILS]);
         $t->assert_api_to_ui($msk, new view_ui());
+
+        $t->subheader($ts . 'term assignment');
+
+        // TODO Prio 2 add the negative test that a term assigned twice is reported as soon as the
+        //      term view link really reaches the list: sandbox_list::add_obj skips a link with the
+        //      id 0, so the assigned terms of a view stay empty and there is nothing to compare
+        //      the second term with (see docs/llm/pending_prio_2.md)
+        $test_name = 'assigning a term to a view reports nothing';
+        $msg = new user_message($t->usr1);
+        $msk = $t_msk->view();
+        $msk->add_term($t_trm->term(), $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // a view can be shown for more than one term, so a second, different term is no double
+        $test_name = 'assigning a second term to a view reports nothing';
+        $msk->add_term($t_trm->term_triple(), $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_msk->view(), $t->usr_system);

@@ -8,102 +8,45 @@ parameter and carries the requesting user on `$msg->usr`; every creation below a
 exception that needs a comment behind it saying why. the coded check is
 `coding_rule_tests::php_user_message_creation_tests`, which regenerates
 `docs/code_user_message_exceptions.md` — that doc is the work list and must shrink, never grow.
+its "messages that never reach the caller" section (48 today) is the third list next to the
+parameter defaults and the nullable parameters, and it is worked the same way.
 the done passes are in the git history; only what is still open is listed here.
 
-1. **DONE — the report shows 0 unexplained creations.** all 216 creations below the entry points now
-   say why they exist, so the check only has to keep it that way: a new one without a comment
-   changes the generated doc and fails `php_user_message_creation_tests`.
-   the two big families stay as evaluated: `diff_msg` (28 defs / 73 calls) and `fill` (35 defs /
-   47 calls) are recursive cores whose callers do merge the return, so threading them is high risk
-   for low value. the `fill_by_name` treatment (take `$msg`, return `bool`) is still the right shape
-   for the *small* leaf families if one is touched anyway: `fill_by_id`, `add_id_by_name`,
-   `sandbox_list::add_user_check`, `id_used_msg`.
-   three real drops were found but deliberately **not** surfaced, each with a TODO Prio 2 on the
-   line, because they all report into an import message and `import_mapper` ends with
-   `return $msg->is_ok()` — surfacing one drops the whole object, which needs a test run:
-   `view::add_term` (a double term view link), `phrase_list::import_map_names` (an empty entry in
-   the "assigned" array) and `component::set_col_sub_phrase` (the never implemented sub phrase
-   suggestion).
+1. **a link without a db id never reaches its list**, so `view::add_term` assigns nothing and its
+   double message can never fire. found while threading the `$msg` of `add_term`: `sandbox_list::add_obj`
+   adds only `if ($obj_to_add->id() <> 0)`, and `view::add_term` builds the term view link with the
+   id 0 (`$this->trm_msk_lst->add(0, $this, $trm)`), so the assigned terms of an imported view stay
+   empty - while `sandbox_link_list::add_link` returns **true** either way, so the caller is told the
+   link was added. `add_term` now judges the double by the term name over the list (dormant until
+   the list fills) and the negative test in `view_tests` carries the same TODO.
+   the fix is one decision in the link list, not in `view`: let `add_link` store a link with the id 0
+   (`add_direct`, the duplicate check of `can_add` runs before it) and make `can_add` compare
+   `from_id_or_name()` / `to_id_or_name()` instead of the raw ids, so a link is also deduplicated
+   before the ids are known. mind the two existing expectations: `sandbox_tests` "add same component
+   at different position without db id is fine" and `component_link_list::can_add` (an own copy that
+   also compares the position - a DRY candidate), plus `data_object::add_term_view`, whose dto list
+   would then really fill.
+   `phrase_list::import_map_names` has the same shape one level lower: `sandbox_list_named::add`
+   keys on the id, so of several not yet saved phrases only the first is added - use `add_by_key`
+   there (TODO on the line).
+   still open from the same audit: `component::set_col_sub_phrase` does not check whether the given
+   sub phrase has a relation to the column phrase, so it can suggest nothing; that check needs the
+   phrase relations and a `$msg` parameter.
+   opportunistic only: the `fill_by_name` treatment (take `$msg`, return `bool`) is the right shape
+   for the *small* leaf families if one is touched anyway (`fill_by_id`, `add_id_by_name`,
+   `sandbox_list::add_user_check`, `id_used_msg`), while the recursive `diff_msg` and `fill` cores
+   stay as they are - their callers do merge the return, so threading them is high risk, low value.
 
-2. **remove the 24 remaining `user_message $msg = new user_message()` parameter defaults**: a caller
+2. **remove the 8 remaining `user_message $msg = new user_message()` parameter defaults**: a caller
    that passes nothing silently loses its messages, so the default is the same drop in disguise.
-   one family per commit with its callers. done so far: `api_array` (33), the 21 `type_lists::set_*`
-   plus the three list `__construct` (whose `$msg` is now `?user_message $msg = null` with the
-   fallback created in the body, and the five test callers that pass an api json now pass a message
-   too), `update_standard_fields`, `save_fields_func`, `generate_ref_text` and the three
-   `web/triple::set_*_by_id` (reordered to `(id, $msg, $dto = null)`, matching `cfg/ref`).
-
-   also done: `ui_preview::popup_changes`, `import::end` and `ip_range_list::add` (plus
-   `data_object::add_ip_range`, its only indirect caller) - all three moved `$msg` in front of the
-   optional parameters, like `cfg/ref::set_phrase_by_id`.
-
-   **the last 21 all need a cascade or a decision, not mechanics** - each was measured, so do not
-   re-size them by definition count:
-   - `api_json` (8) - the documented trap below, 232 test call sites
-   - the `expression` text family is **DONE** (8 defaults), and it split cleanly in two once the
-     receivers were separated: `expression::get_ref_text` / `get_usr_text` / `get_ref_part` /
-     `get_next_term_from_ref` are internals whose every caller already passed a message, so they
-     are simply **required** now - zero call sites touched. the two public getters `ref_text` and
-     `user_text` take `?user_message $msg = null`, because 24 of the 25 `ref_text` callers use it
-     as a getter inside `log_debug` lines; both keep a local message for the `is_ok()` gate (the
-     same trap as the change log setters: with a shared message an earlier error would keep the
-     converted text from being stored) and merge it into the caller's message when one is given.
-     `formula_map::set_user_text` / `get_ref_text` are nullable with a local fallback where
-     `generate_*_text` needs one. also removed: `formula_map::get_usr_text` passed its `$msg` to
-     `generate_usr_text()`, which takes **no** message - the parameter was dead, so it is gone.
-   - `change_log::add_table` / `add_field` / `add_action` are **DONE**, but not by threading the
-     198 call sites: each now keeps a **local** message for its own verdict and takes an
-     `?user_message $msg = null` that receives the merge. that was forced by the code, not chosen
-     for convenience - all three end with `return $msg->is_ok()`, so with a shared message an error
-     the caller collected earlier would make `set_table` log "Cannot add table name" for a
-     reference row that was written fine (the gate defect of item 4). `set_action` / `set_table` /
-     `set_field` / `set_class` pass the optional message down, and `create_log_references` (25 of
-     the calls, 3 callers) threads it for real. what is NOT done is the remaining ~85 call sites
-     opting in; they still pass nothing, which is now visible rather than hidden by a default.
-     also fixed: `add_field` was declared `: int` while returning `$msg->is_ok()`; no caller used
-     the value, so it is now `: bool`.
-     NOTE for the next pass: the deeper cascade (`sql_creator::sql_func_log_*`, `sql_delete_and_log`)
-     reaches the **sql generation** layer, where a user_message does not belong - a change log id
-     that cannot be resolved is a missing `db_code_links` row (coding.md line 139), i.e. an internal
-     inconsistency that belongs in the admin log, not on `$msg`
-   - `sandbox_list_named::add_by_name_direct` is **DONE** (1 default), as `?user_message $msg = null`
-     rather than required, because none of the 13 callers has a message of its own - they are list
-     builders (`missing_ids`, `triples_to_add_to_db`, `phrase_lst_of_names`, the two
-     `add_*_without_ready_check`), so making it mandatory would only move one default into 13 fresh
-     creations. all 13 pass one argument, so `$msg?->merge()` is a no-op today and a caller opts in
-     by passing a message.
-     the local buffer matters more here than elsewhere: the `parent::add_obj()` in the duplicate
-     branch calls `db_ready($msg)`, and "not ready" is the **normal** state while an import still
-     fills the ids - the same message that broke the portfolio import, so it must not reach a
-     caller that gates its next step (see `docs/llm/dependent-errors.md`).
-     also fixed: the return was `$msg->is_ok()` while the docblock promised "true if the object has
-     been added", and the two never agreed - a null object, an empty name and a duplicate name all
-     returned true. `add_obj()`'s own return could not be used either, because it reports its message
-     state and adds nothing at all for an object without an id (which is exactly what this function
-     is for), so the added flag now comes from the list count.
-   - `web/sandbox_list_named::add` is **DONE** (1 default), nullable and not required, because it
-     **overrides** `ListBase::add($to_add)`, which has one parameter - a required `$msg` there is a
-     php fatal, not a call-site cascade. no caller passes a message and none reads the return, and
-     the four subclasses (`component_list`, `term_list`, `phrase_list`, `sandbox_list_value`) do not
-     override `add`, so the arity is unchanged for them.
-     the buffer lives in a new private `add_and_report()`, because `add()` calls `add_obj` from two
-     branches and the buffer + merge would otherwise be copy-pasted (`docs/llm/dry.md`). here
-     `add_obj`'s own return is a usable added flag once the message is local, unlike in the backend
-     `add_by_name_direct`, because `ListOfIdObjects::add_obj` has no "do nothing for a missing id"
-     path. the return is now that flag rather than `$msg->is_ok()`, which had claimed "added" for a
-     null object and for an id already in the list.
-
-   the `api_json` family (8 defaults) is the trap — read this before retrying. its 53 **production**
-   call sites already pass their message, so the drop is fixed there; removing the defaults breaks
-   **232 test call sites**, each needing the right message *kind* (a backend receiver takes the cfg
-   `user_message`, a frontend one the web `user_message`), and the receiver cannot be told apart
-   statically with enough confidence — a receiver-name heuristic mis-reads
+   all 8 are `api_json`, and that family is the trap — read this before retrying. its 53
+   **production** call sites already pass their message, so the drop is fixed there; removing the
+   defaults breaks **232 test call sites**, each needing the right message *kind* (a backend
+   receiver takes the cfg `user_message`, a frontend one the web `user_message`), and the receiver
+   cannot be told apart statically with enough confidence — a receiver-name heuristic mis-reads
    `new formula_list_ui($t_msk->view_list_word()->api_json())` as a ui receiver. so it needs the
    test run in the loop, one test folder per commit, or it becomes trivial once the frontend/backend
    split makes the message kind unambiguous.
-   better next targets: the 21 `type_lists::set_*` setters (one mechanical family, few callers),
-   then the three `__construct` defaults — though the constructors stay cosmetic until their many
-   callers pass a real message.
 
 3. **remove the remaining `?user_message $msg = null` parameters** — the rule is in coding.md and
    `docs/llm/state-and-messages.md` ("$msg is never null"), and
@@ -112,68 +55,9 @@ the done passes are in the git history; only what is still open is listed here.
    only written out honestly: `$msg?->add(...)` reports nothing at exactly the call sites that
    pass none. the parameter becomes **required**, and a caller without a message gets one itself,
    which is why each family is a cascade and not a rename.
-   **DONE: the xbrl converter family** (5 of the original 22) - `build_data`, `convert`,
-   `convert_folder`, `convert_folder_to_file`, `convert_instance` and `convert_to_file`. it was
-   self contained: one file plus one test caller, and `convert_to_file` had no caller at all.
-   note the mechanic that repeats in every remaining family - php deprecates a required parameter
-   after an optional one, so `$msg` moved **in front of** the optional `string $time = ''` rather
-   than staying last, which changes the argument order at the call sites.
-   **DONE: the change_log family** (7 more, so 12 of the original 22). 198 call sites now pass a
-   message, 93 of which did not before. `set_class` and `set_field` took `$msg` in front of their
-   optional parameters, the three protected `add_*` in front of theirs, so the argument order
-   changed at every call site - a positional check over all 198 confirms the message sits where
-   the signature expects it. 13 production functions had no message at all and took one
-   (`component::log_link`/`log_unlink`, the four `sql_creator::sql_func_log_*`, the three
-   `sql_delete_and_log` variants, `sandbox_multi::log_prime`/`log_norm`/`log_big` and
-   `value_base::log_update_parameter`), which pulled in `sandbox_multi::log_object` one level up
-   and then stopped. the test builders in `test_log.php` create their own message per function -
-   allowed, because a test **is** the entry point and the report only scans `src/main`.
-   two real drops fixed on the way: `change_log::load_by_field_row` already carried a `$msg` but
-   passed none to its own `set_class`/`set_field`, and `db_object_seq_id`/`user` called
-   `sql_func_log_update` with `$msg->usr` while dropping the message itself.
-   **DONE: the expression and formula_map families** (4 more, so 16 of the original 22).
-   the expression pair did not become a rename, because the callers split into two kinds that
-   want opposite things: `dsp_id()`, `name()`, `is_valid()`, `res_part()` and the other string
-   splitters have no user to report to, and `dsp_id`/`name` are a codebase wide convention with
-   ~1200 zero argument call sites, so they cannot take a message at all. so `ref_text` and
-   `user_text` are the **converting** accessors with a required `$msg` in front of the optional
-   `$trm_lst`, and `ref_text_dsp()` / `user_text_dsp()` are the display path - same conversion,
-   one named and explained local message each instead of a nullable parameter at 35 call sites.
-   `formula_map::set_user_text` and `get_ref_text` are simply required now; the test builders
-   create their own message, and `test_db_load` was already passing one as the third argument,
-   which the new order made second.
-   watch the namesakes here: `web/formula/formula::ref_text()` takes no argument at all, and
-   `shared/calc/expression::set_user_text()` is a different function from
-   `formula_map::set_user_text()` - a receiver-blind rewrite breaks both.
-   **DONE: the frontend `add` family** (1 more, so 17 of the original 22) - `ListBase::add` plus
-   `value_list`, `figure_list`, `group_list` and `sandbox_list_named` all take a required `$msg`,
-   because an override cannot add a required parameter its parent lacks. 66 call sites in `web/`,
-   22 functions that had none took one, then 13 more one level up, and it stopped there.
-   two shapes broke every receiver-based scan and each cost a test run: an **array element**
-   receiver (`$grp_lst[$vrb_id]['phrases']->add(...)`) and a receiver returned from a call
-   (`$measure_lst = $this->measure_lst($msg); $measure_lst->merge(...)`). the sound check is
-   shape-agnostic: match `->method(`, then resolve the receiver class from the file's own `use`
-   imports and look up **that class's** requirement walking the parent chain - never a global
-   per-name minimum, which silently hid `load_fallback` (three `load_fallback` exist, two need
-   no argument). php property hooks (`public phrase_list $phr_lst { get {...} }`) cannot take a
-   parameter at all, so the `data_object` cache refresh uses a named local message.
-
-   **DONE: `ListOf::get_by_key`** (1 more, so 18 of the original 22) - the message is **required**
-   now and threaded, and `msg_id::MISSING_KEY` stays a translatable message id.
-   the type is the **shared** `Message`, not `user_message`: `ListOf` is the parent of both the
-   backend and the frontend lists and had been importing `cfg\user\user_message`, so a web caller
-   could not have passed its own message at all.
-   the threading went three levels: the 14 call sites, then the 11 functions that hold them
-   (`graph`, both `get_by_name`, `diff_by_ids`, `wlsort`, `del`, `name_sort`, `sort_by_id`,
-   `sort_rev_by_id`, `get_first`, `get_first_id`), then their callers - where most already had a
-   message or already build one as their return value (`diff_msg`, `add_id_by_name`,
-   `set_group_id_by_phrase_list`, `fill_by_name`), so only `sql_update`, `sql_delete` and
-   `group_id::get_id` had to take one.
-   the cascade is **stopped at `group_id::get_id`** with a local `$sort_msg`: above it are
-   `is_prime` (45 callers), `is_big` (27) and `get_grp_id` (82), and a `user_message` parameter on
-   a boolean predicate like `group::is_prime()` is the wrong boundary. the message stays a
-   translatable msg_id, it just does not propagate past the key computation.
-   two lessons from getting this wrong twice:
+   three lessons from the done families, they repeat in every remaining one:
+   - php deprecates a required parameter after an optional one, so `$msg` moves **in front of** the
+     optional parameters, which changes the argument order at every call site.
    - a message parameter with no caller that can use it is **not** a reason to delete the
      parameter and fall back to a plain `log_err` string - that trades a translatable msg_id for a
      hardcoded english one and moves the campaign backwards. thread it, or stop the cascade with a
@@ -548,10 +432,6 @@ fill in all placeholder
 
 add all missing
 
-add a '8' url prefix that is used to include the database values in the url for the url_to_html function to confirm the changes
-
-Add a hidden json to the get request to detect the value changed or use 0 prefix for url vars
-
 use the '8' prefixed values (urlVar::PRE) to create a complex parallel change workflow. To detect the real user change requests and prevent overwriting other user change during the edit view is shown
 -> test wordflow
 1. user_a opens the edit view
@@ -835,8 +715,6 @@ in the footer add dynamically other licences if used
 
 in src/main/php/shared/json_fields.php rename 'view-validation' to 'view_validations' and 'calc-validation' to 'calc_validations' and 'value-list' to 'value_list' and 'ip-blacklist' to 'ip_blacklist' to always use '_" instead of '-' for json field names
 
-create a list CONST array "SAMPLE_VIEW_DATA_FILES" that contains test data for the unit tests of the views. These test data is used for unit tests without using the database id, so these files can be imported in setup_db after the import of the system config. At the moment this const array contains only this file: src/main/resources/messages/base_data/zurich.json . create a function for the import and call it after the config loading
-
 add a config section to the json import format that can be used to overwrite the system and user config for the import and add positive and negative unit tests for the overwrite of the number of decimals
 
 add in the float value object the var 'precision' which defines how accurate the value is. include this field not only in the database (but not for standard values), the api, the frontend and also in the im- end export json
@@ -888,19 +766,18 @@ in json import a calc_validation list is created. Use this list to reproduce the
 in json import add a view_validation part that contains the views in the pure text format created by the html_to_text function. use this to check if after the import the expected views for the user can be reproduced
 
 fix the '// TODO add json_fields::VIEW_VALIDATION' in src/main/php/cfg/import/import.php (view-validation as the rendering twin of calc-validation). suggested steps (adjust as needed):
-1. (done) add library::html_to_markdown() as the richer sibling of html_to_text (keeps headings, tables and lists) with a positive and a negative unit test in lib_tests.php; markdown is preferred over plain text because a table/heading structure makes the expected ".md" screenshot human readable and a mismatch easy to read
-2. decide the format of one "view-validation" entry: the view selection (view name, or the human-readable url of pending line 93/95) plus the expected ".md" output; document it in docs/llm/json_structure.md next to calc-validation
-3. add a view-check list to data_object (view_check_list + add_view_validation), filled at the TODO via a new dto_get_view_validation() that maps each entry to a view and stores its expected markdown (mirror dto_get_results(..., use_to_check=true) and result_check_list)
-4. add data_object::validate_views(user_message) (mirror validate_results): render each imported view to HTML via its *_ui display function, normalise it with html_to_markdown, compare to the expected markdown and on a difference add a translatable msg_id error (new VIEW_VALIDATION_MISMATCH / VIEW_VALIDATION_VIEW_MISSING cases with en/de)
-5. call validate_views at the end of get_data_object next to the validate_results block and count view_validations_done / view_validations_failed
-6. add a small sample import file with a view-validation section and a $dto unit test in import_tests.php: one positive (the rendered view matches) and one negative (a wrong expected ".md" reports the mismatch via $msg)
+1. decide the format of one "view-validation" entry: the view selection (view name, or the human-readable url of pending line 93/95) plus the expected ".md" output; document it in docs/llm/json_structure.md next to calc-validation
+2. add a view-check list to data_object (view_check_list + add_view_validation), filled at the TODO via a new dto_get_view_validation() that maps each entry to a view and stores its expected markdown (mirror dto_get_results(..., use_to_check=true) and result_check_list)
+3. add data_object::validate_views(user_message) (mirror validate_results): render each imported view to HTML via its *_ui display function, normalise it with html_to_markdown, compare to the expected markdown and on a difference add a translatable msg_id error (new VIEW_VALIDATION_MISMATCH / VIEW_VALIDATION_VIEW_MISSING cases with en/de)
+4. call validate_views at the end of get_data_object next to the validate_results block and count view_validations_done / view_validations_failed
+5. add a small sample import file with a view-validation section and a $dto unit test in import_tests.php: one positive (the rendered view matches) and one negative (a wrong expected ".md" reports the mismatch via $msg)
    open questions for review: render the view against the imported $dto only or the database; which user context; is html_to_markdown the right normalisation or should both text and markdown be supported
 
 ### user frontend
 
 fill the placeholders
 
-Add to src/test/php/unit_ui/user_ui_tests.php a test of a list of sys_log entries related to the user. This implies a new frontend component user_system_errors (new component_types const with code_id and a globally unique ui_msg_code_id, rendered via a new arm in component_exe.php) that shows the x most relevant open system errors linked to the user, where x comes from a new pod config value read via $ui_sys->cfg (never new config()). Reuse web/system/sys_log_list.php::get_html() for the rendering — do not duplicate its table code. Write the test first: build the list from a create/test_*.php factory (e.g. test_sys_log::list_for_user_ui()), positive test asserts the snapshot fragment in object_pages/user.html, negative test asserts that an empty list reports the documented empty result (not just "no exception"). Paging ($size, $page) and status filter ($dsp_type) are passed as explicit parameters to the backend API call, never read from superglobals.
+add a page with the sys_log entries to the admin menu
 
 dsp_sandbox_* family → one generic "user changes vs. standard" component
 
@@ -927,15 +804,13 @@ or smaller tasks like:
 
 scan of 2026-06-13: the frontend must never open or query the database (see docs/llm/frontend.md "The frontend never accesses the database — load via the API"). The markers are `new sql_db` / `new sql_creator` / `global $db_con`; the coded check is coding_rule_tests::php_web_only_allowed_globals_tests. Remaining cases, solve step by step:
 
-1. (live) web/log/user_log_display.php::dsp_hist_links() and its helper dsp_hist_links_sql() build raw SQL via `new sql_db()` to show the link/relation change history. Called live from the dsp_hist_links() wrappers of component, view, view_exe, formula and word. Replace with an API-based load like the already-migrated dsp_hist() (which uses change_log_list::load_by_object_field + change_log_list::tbl); extend the change-log list api loader for the link case if needed, then delete dsp_hist_links_sql().
+1. (live) web/frontend.php open_db()/start() bootstrap opens the database connection directly (already marked "TODO Prio 1 to be deprecated and use the api only for the frontend"); it is the only file excluded from coding_rule_tests::php_web_only_allowed_globals_tests. Move the bootstrap behind the API so web/ no longer needs $sys/$db_con/$cac/$cfg, then remove the 'frontend.php' exception from that coded check.
 
-2. (live) web/frontend.php open_db()/start() bootstrap opens the database connection directly (already marked "TODO Prio 1 to be deprecated and use the api only for the frontend"); it is the only file excluded from coding_rule_tests::php_web_only_allowed_globals_tests. Move the bootstrap behind the API so web/ no longer needs $sys/$db_con/$cac/$cfg, then remove the 'frontend.php' exception from that coded check.
+2. (dead) web/value/value.php::dsp_samples() uses `new sql_db()` + raw SQL but sits entirely inside a /* ... */ block comment (from line ~763). Remove it, or rebuild via the group/value API if the sample display is still wanted.
 
-3. (dead) web/log/user_log_display.php::dsp_hist_old() uses `new sql_db()` + raw SQL but is only referenced from commented-out callers and is superseded by dsp_hist(). Remove it. (side note: the live dsp_hist() builds $result but then `return '';` — fix while there.)
+3. (dead) web/user/user_display_old.php contains 9 `new sql_db()` direct-DB display functions and is not referenced anywhere in src/main/php. Delete the file. This also removes the last '&back=' url parameters of the source (see the general cleanup section above).
 
-4. (dead) web/value/value.php::dsp_samples() uses `new sql_db()` + raw SQL but sits entirely inside a /* ... */ block comment (lines ~695-776). Remove it, or rebuild via the group/value API if the sample display is still wanted.
-
-5. (dead) web/user/user_display_old.php contains 9 `new sql_db()` direct-DB display functions and is not referenced anywhere in src/main/php. Delete the file.
+4. fix web/log/user_log_display.php::dsp_hist(): it builds $result from change_log_list::tbl() and then returns '' (left over from the api migration of dsp_hist / dsp_hist_links), so the change history is loaded and thrown away.
 
 after each step src/main/php/web must stay free of `new sql_db` / `new sql_creator` / `global $db_con`.
 
@@ -951,35 +826,15 @@ create a script that updates all caches e.g. src/test/resources/api/type_lists/t
 
 add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
 
-the security findings from the 2026-07-17, 2026-07-20 and 2026-07-21 reviews are all fixed (fix #334
-parts 1-23, incl. the read-access gate on every object / list / embedded related list, and the enabled
-+ csrf-hardened api write path). the reusable rules distilled from them - output encoding, the api
-  read-access gate, privileged fields via a checked setter, the write-path csrf + method-detection, never
-  build a filesystem path from a user name, env-gated debug, gitignored runtime files - live in
-  docs/code_guidelines.md ("security" section); the concrete once-off fixes stay in the git history.
+status of the security check re-run on 2026-07-22, ordered by exploitability; only issues that are
+NOT yet solved are listed here - the fixed ones (the 2026-07-17, 2026-07-20 and 2026-07-21 findings,
+fix #334 parts 1-23, and the stored xss of the condensed change-log render) live in the git history,
+and the reusable rules distilled from them - output encoding, the api read-access gate, privileged
+fields via a checked setter, the write-path csrf + method-detection, never build a filesystem path
+from a user name, env-gated debug, gitignored runtime files - live in docs/code_guidelines.md
+("security" section). each open item below was verified against the code with file:line evidence.
 
-findings of the re-run security check on 2026-07-22, ordered by exploitability; only critical / high
-issues that are NOT yet solved are listed here (the fixed ones live in code_guidelines.md / git). each
-was verified against the code with file:line evidence.
-
-[FIXED 2026-07-22] stored xss in the condensed change-log render (high, admin compromise; same class
-as the fixed sys_log display xss, on a different code path): change_log_named::entry()
-(web/log/change_log_named.php ~320-337) concatenates the user-controlled usr->name(), old_value and
-new_value into its text with NO escaping; dsp() (:311) is date + entry(), change_log_list::dsp()
-(change_log_list.php:242) concatenates each dsp() raw, and both live render paths emit the result into
-the html body unescaped: the SYSTEM_CHANGE_LOG component (ui_log.php:101 -> component_exe.php:425) and
-the word/triple page "changes" tab (ui_list.php:561 -> tab_box). old_value/new_value are the object
-name field (a word/triple/formula name on add or rename), so creating or renaming a word to
-`<img src=x onerror=...>` stores that string as new_value; when any user - including an admin - opens
-that object's changes tab or the system change-log, the payload executes = persistent xss / session
-theft. the table renderers change_log_named::tr() (:196-197) and change_log_link::tr() (:84-85) were
-correctly esc()'d in the earlier round, but the condensed one-line entry()/dsp() path was missed.
-fixed: change_log_named::entry() now esc()s usr->name(), old_value and new_value (branching still on
-the raw value emptiness, emitting the escaped values), matching tr(); the sort comparator escapes both
-operands so it stays deterministic, and the change_log.html snapshot is unchanged because its test
-values are plain names.
-
-the rest of the surface is clean at critical/high. write path (now enabled for api/word only): all
+no open finding at critical / high: the rest of the surface is clean. write path (now enabled for api/word only): all
 three write methods (post/put/delete) go through controller::change_permitted (same-origin +
 X-CSRF-Token + not-blocked) before any db access; put_json trusting the client id is safe because
 sandbox::save routes a non-owner change to a user overlay (never the shared row); the checked
@@ -992,20 +847,14 @@ unserialize / dynamic-include / xxe, mail recipient is a loaded address. secrets
 real secret, docker uses env refs, .htaccess default-deny holds.
 
 lower / latent (below the critical bar today, recorded for completeness, NOT counted as unsolved
-critical): (1) [FIXED 2026-07-22] controller::put_json and delete executed the write twice (once in
-the method, once again inside curl_response via put()/$obj->del()); curl_response is now a pure
-response formatter (the put_json / post_json / delete methods already run change_permitted + save/del
-and set $msg/$obj, so curl_response only echoes the row id on success or the message on failure - no
-second map+save or delete). the redundant per-method body re-read and the dead controller::put() /
-post() stubs were removed; the broken POST branch (which returned an empty id via the no-op post())
-now returns the saved object's id like PUT. (2) button::html() (web/html/button.php:113) emits $this->title
+critical): (1) button::html() (web/html/button.php:113) emits $this->title
 raw into alt="..."; all current callers pass constant/translated titles so it is not reachable with
 user data today (the html_fa() add/edit/del path escapes via ref()); escape the alt as defense in
-depth. (3) formula::dsp_text() (web/formula/formula.php:686) emits usr_text raw, reachable only from
+depth. (2) formula::dsp_text() (web/formula/formula.php:686) emits usr_text raw, reachable only from
 legacy display()/result-explain paths that are effectively dead (the live render uses name_link());
-latent stored xss if revived. (4) legacy web-side raw-sql builders (user_display_old.php,
-view_list::selector_page, value::dsp_hist_old/dsp_samples) are all dead/commented - recommend deleting.
-(5) object-level admin/no-change protection is enforced only for changes to the protection field
+latent stored xss if revived. (3) legacy web-side raw-sql builders (user_display_old.php,
+view_list::selector_page, value::dsp_samples) are all dead/commented - recommend deleting.
+(4) object-level admin/no-change protection is enforced only for changes to the protection field
 itself (check_protection_change), not consulted in the general edit/delete authz - not exploitable
 today (a normal user's edit of an admin-protected system-owned object is routed to their own overlay),
 becomes relevant only when a pod-level config must be read from the system value not the user overlay

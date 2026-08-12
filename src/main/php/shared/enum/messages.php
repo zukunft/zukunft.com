@@ -1188,6 +1188,9 @@ enum messages: string
         . ' ip of range missing in import json part "'
         . self::VAR_START . self::VAR_IP_RANGE . self::VAR_END
         . '".';
+    case IMPORT_PHRASE_NAME_EMPTY = 'an empty phrase name cannot be assigned in the import json part "'
+        . self::VAR_START . self::VAR_JSON_PART . self::VAR_END
+        . '".';
     case IMPORT_TERM_VIEW_DOUBLE = 'the term '
         . self::VAR_START . self::VAR_TERM_NAME . self::VAR_END
         . ' is probable assigned more than once to the view "'
