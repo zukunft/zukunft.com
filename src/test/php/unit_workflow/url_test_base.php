@@ -80,8 +80,8 @@ class url_test_base
     protected user_ui $usr;            // the rendering (frontend) user
     protected user_message $msg;       // the message buffer carried through the steps
     protected user_request $req;       // the bundled request context for the workflow steps
-    protected int $wf_id;              // the dynamic db id of the object the workflow runs on
-    protected int $wf_fixed_id;        // the fixed snapshot id that replaces the dynamic id
+    protected int $wf_id = 0;          // the dynamic db id of the object the workflow runs on (0 for an add workflow that has no object yet)
+    protected int $wf_fixed_id = 0;    // the fixed snapshot id that replaces the dynamic id
     protected array $wf_norm_ids = []; // more volatile db ids replaced in the snapshots by their fixed test id (real id => fixed id) e.g. the from and to words of the test triple
     protected string $step_path;       // the snapshot file path grown by the cumulative spine steps
     protected string $http_method;     // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
@@ -315,12 +315,24 @@ class url_test_base
      */
     private function normalize_ids(string $content, int $id): string
     {
-        $norm_ids = [$id => $this->wf_fixed_id] + $this->wf_norm_ids;
+        // beside the id of the step url also normalize the workflow object id itself, because
+        // e.g. the back step after a delete has no id in the url anymore, but the page can still
+        // name the removed object by its volatile id (e.g. 'the triple with id 809 cannot be found')
+        $norm_ids = [$id => $this->wf_fixed_id, $this->wf_id => $this->wf_fixed_id] + $this->wf_norm_ids;
         foreach ($norm_ids as $db_id => $fixed_id) {
-            if ($db_id > 0 and $db_id != $fixed_id) {
+            // both ids must be known: without a db id there is nothing to replace and without
+            // a fixed id a replacement would erase a real id with a zero
+            if ($db_id > 0 and $fixed_id > 0 and $db_id != $fixed_id) {
                 $content = str_replace(
                     [url_var::EQ . $db_id, '"' . $db_id . '"'],
                     [url_var::EQ . $fixed_id, '"' . $fixed_id . '"'],
+                    $content);
+                // ... and the id in the plain text of a user message e.g. 'the triple with id 809
+                // cannot be found' (msg_id::OBJECT_NOT_FOUND); the word boundary prevents that
+                // e.g. the id 809 corrupts an unrelated 8091 on the page
+                $content = preg_replace(
+                    '/\bid ' . $db_id . '\b/',
+                    'id ' . $fixed_id,
                     $content);
             }
         }

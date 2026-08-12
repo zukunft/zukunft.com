@@ -127,6 +127,29 @@ class lib_tests
         $test_name = 'sql_format create table MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE_MYSQL, $t);
 
+        // json_compact_format recreates the compact layout of the import files (e.g.
+        // travel_scoring_value_list.json) from the standard php json pretty print
+        $test_name = 'json_compact_format short objects';
+        $this->assert_json_compact_format($test_name,
+            test_paths::IMPORT_FORMAT_TEST . test_files::JSON_FORMAT_TEST_WORDS, $t);
+        $test_name = 'json_compact_format nested value list';
+        $this->assert_json_compact_format($test_name,
+            test_paths::IMPORT_FORMAT_TEST . test_files::JSON_FORMAT_TEST_VALUE_LIST, $t);
+        $test_name = 'json_compact_format long line';
+        $this->assert_json_compact_format($test_name,
+            test_paths::IMPORT_FORMAT_TEST . test_files::JSON_FORMAT_TEST_LONG_LINE, $t);
+
+        // the negative cases: an input that is not a json is returned unchanged like sql_format
+        $test_name = 'json_compact_format keeps a text that is not a json';
+        $t->assert($test_name, $lib->json_compact_format('not a json'), 'not a json');
+        $test_name = 'json_compact_format keeps an empty text';
+        $t->assert($test_name, $lib->json_compact_format(''), '');
+        // an empty object or array has no child to place on its own line
+        $test_name = 'json_compact_format of an empty object';
+        $t->assert($test_name, $lib->json_compact_format('{}'), '{}');
+        $test_name = 'json_compact_format of an empty array';
+        $t->assert($test_name, $lib->json_compact_format('[]'), '[]');
+
         // test trim of an JSON string to the relevant part
         // to make two JSON strings more comparable
         $text = ' { "field" :  "value", "array": [ "item" ] } ';
@@ -872,7 +895,7 @@ class lib_tests
         $json_text = file_get_contents(test_files::IMPORT_WIKI_DEMOCRACY);
         $json_array = json_decode($json_text, true);
         $result = $lib->count_recursive($json_array, 3);
-        $t->assert("count_recursive - count level 0", $result, 177);
+        $t->assert("count_recursive - count level 0", $result, 178);
 
         // recursive diff
         $result = json_encode($lib->array_recursive_diff(
@@ -988,6 +1011,32 @@ class lib_tests
         $result = $lib->sql_format($lib->trim($target));
         $t->assert($test_name . ' recreates the formatted update log function', $result, $target);
         $t->assert($test_name . ' is idempotent', $lib->sql_format($target), $target);
+    }
+
+    /**
+     * check that the compact json format of the given resource file can be recreated from the
+     * standard php json format, that reformatting does not change it again and that the data
+     * itself is not changed by the formatting
+     *
+     * @param string $test_name the description of the test
+     * @param string $file_name the resource file with the expected compact format
+     * @param all_tests $t the test environment
+     * @return void
+     */
+    private function assert_json_compact_format(string $test_name, string $file_name, all_tests $t): void
+    {
+        $lib = new library();
+        $target = $t->file($file_name);
+        // the standard php pretty print is the input from which the compact format is created
+        $std = json_encode(json_decode($target, true),
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $t->assert($test_name . ' recreates the compact format',
+            $lib->json_compact_format($std), $target);
+        $t->assert($test_name . ' is idempotent',
+            $lib->json_compact_format($target), $target);
+        $t->assert($test_name . ' does not change the data',
+            json_encode(json_decode($lib->json_compact_format($std), true)),
+            json_encode(json_decode($target, true)));
     }
 
 }

@@ -1,0 +1,18 @@
+{
+  "value-list": [
+    {
+      "context": ["Democracy Index", "2019"],
+      "source": "Democracy Index 2019 (Economist Intelligence Unit)",
+      "values": [
+        {"Norway": 10},
+        {"Iceland": 10},
+        {"Sweden": 9.58},
+        {"New Zealand": 9.26},
+        {"Finland": 9.25},
+        {"Ireland": 9.24},
+        {"Denmark": 9.22},
+        {"Canada": 9.22}
+      ]
+    }
+  ]
+}

@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = true;
+    CONST bool AUTO_UPDATE_TEST_FILES = false;
 
     /*
      * types and extensions
@@ -211,6 +211,11 @@ class files
     CONST string SQL_FORMAT_TEST_COUNT_USER_MYSQL = 'user_list_by_count_user_rows_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE = 'db_cache_page_create' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE_MYSQL = 'db_cache_page_create_mysql' . self::SQL;
+
+    // for the JSON formatter
+    CONST string JSON_FORMAT_TEST_WORDS = 'words_compact' . self::JSON;
+    CONST string JSON_FORMAT_TEST_VALUE_LIST = 'value_list_compact' . self::JSON;
+    CONST string JSON_FORMAT_TEST_LONG_LINE = 'long_line_expanded' . self::JSON;
 
     const array TEST_DATA_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,

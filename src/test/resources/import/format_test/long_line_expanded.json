@@ -1,0 +1,9 @@
+{
+  "formulas": [
+    {
+      "name": "remaining travel interest",
+      "expression": "= if ( \"number of visits\" = 0 ; 10 - \"cultural equality\" ; ( 10 - \"cultural equality\" ) / \"number of visits\" )"
+    },
+    {"name": "travel score", "expression": "= \"remaining travel interest\" * 2"}
+  ]
+}

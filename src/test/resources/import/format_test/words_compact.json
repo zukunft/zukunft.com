@@ -1,0 +1,9 @@
+{
+  "version": "0.0.3",
+  "selection": ["short format test"],
+  "words": [
+    {"name": "2021", "type": "time"},
+    {"name": "Travel"},
+    {"name": "US dollar", "refs": [{"name": "United States dollar", "type": "wikipedia"}]}
+  ]
+}

@@ -1326,11 +1326,11 @@ class import
         $i = 0;
         foreach ($json_array as $val_lst_json) {
             $context = $val_lst_json[json_fields::CONTEXT] ?? [];
-            foreach ($val_lst_json[json_fields::VALUES] ?? [] as $val_obj) {
-                $entity = array_key_first($val_obj);
+            $entries = $this->value_list_entries($val_lst_json[json_fields::VALUES] ?? [], $msg);
+            foreach ($entries as [$entity, $number]) {
                 $val_json = [
                     json_fields::WORDS => array_merge($context, [$entity]),
-                    json_fields::NUMBER => $val_obj[$entity]
+                    json_fields::NUMBER => $number
                 ];
                 if (key_exists(json_fields::SOURCE_NAME, $val_lst_json)) {
                     $val_json[json_fields::SOURCE_NAME] = $val_lst_json[json_fields::SOURCE_NAME];
@@ -1344,6 +1344,44 @@ class import
             }
         }
         return $msg;
+    }
+
+    /**
+     * get the entity and the number of every entry of the "values" of one compact value-list,
+     * which may be given in two formats:
+     * as a map of the entity to the number, which convert_wikipedia_table creates
+     * (e.g. "values": { "2023": "8.88" }, so a json object)
+     * or as a list of objects with the entity as the only key
+     * (e.g. "values": [ { "Norway": 10 } ], so a json array)
+     * the format is detected per list and not per entry, because php casts a numeric json object
+     * key such as a year to an int, which would look like the index of a list
+     *
+     * @param array $values the "values" part of one value-list entry
+     * @param user_message $msg to report an entry that has neither of the two expected formats
+     * @return array a list of [string the entity name, mixed the number] pairs
+     */
+    private function value_list_entries(array $values, user_message $msg): array
+    {
+        $result = [];
+        if (array_is_list($values)) {
+            // the list format where each entry is an object with the entity as its only key
+            foreach ($values as $val_obj) {
+                if (is_array($val_obj) and count($val_obj) == 1) {
+                    $entity = array_key_first($val_obj);
+                    $result[] = [(string)$entity, $val_obj[$entity]];
+                } else {
+                    $msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
+                        msg_id::VAR_JSON_TEXT => json_encode($val_obj)
+                    ]);
+                }
+            }
+        } else {
+            // the map format where the key is the entity and the entry the number
+            foreach ($values as $entity => $number) {
+                $result[] = [(string)$entity, $number];
+            }
+        }
+        return $result;
     }
 
     /**

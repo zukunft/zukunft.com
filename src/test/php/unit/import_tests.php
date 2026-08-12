@@ -48,10 +48,12 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -127,6 +129,41 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $msg);
         // expanding the 1653 compact value-list entries to single values is import-heavy, so an import timeout is used
         $t->assert($test_name, $dto->value_list()->count(), 1660, $t::TIMEOUT_LIMIT_IMPORT);
+
+        // beside the list of single entry objects a value-list may give its values as one map of
+        // the entity to the number, which is the format that convert_wikipedia_table creates
+        // (e.g. democracy_index_table.json), so both formats must add the same values
+        // TODO Prio 3 use a value map list from a test/create class
+        $test_name = 'JSON import value-list given as a map';
+        $msg = new user_message($t->usr_dev);
+        $val_lst_map = [json_fields::VALUE_LIST => [[
+            json_fields::CONTEXT => [words::MIO],
+            json_fields::VALUES => [word_names::YEAR_2019 => '8.88', word_names::YEAR_2020 => '8.87']
+        ]]];
+        $dto = $imp->get_data_object($val_lst_map, $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 2);
+        $test_name = '... and the map format reports no error';
+        $t->assert_true($test_name, $msg->is_ok());
+
+        $test_name = 'JSON import value-list given as a list of one entry objects';
+        $msg = new user_message($t->usr_dev);
+        $val_lst_obj = [json_fields::VALUE_LIST => [[
+            json_fields::CONTEXT => [words::MIO],
+            json_fields::VALUES => [[word_names::YEAR_2019 => '8.88'], [word_names::YEAR_2020 => '8.87']]
+        ]]];
+        $dto = $imp->get_data_object($val_lst_obj, $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 2);
+
+        // a value-list entry that is neither a map nor a one entry object must be reported
+        // instead of causing a php error (see docs/llm/structure.md)
+        $test_name = 'JSON import reports an unexpected value-list entry';
+        $msg = new user_message($t->usr_dev);
+        $val_lst_bad = [json_fields::VALUE_LIST => [[
+            json_fields::CONTEXT => [words::MIO],
+            json_fields::VALUES => [['too', 'many', 'entries']]
+        ]]];
+        $imp->get_data_object($val_lst_bad, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'unexpected json value name');
 
         // the compact "phrase-values" map assigns a number directly to a single phrase
         // (here three "<city> inhabitants" triples), expanded to one value per entry
