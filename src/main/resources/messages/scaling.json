@@ -51,12 +51,12 @@
       "name": "m"
     },
     {
-      "name": "b"
+      "name": "b",
+      "description": "the symbol used in formulas for billion"
     }
   ],
   "triples": [
     {
-      "name": "tsd. is alias of thousand",
       "from": "tsd.",
       "verb": "is alias of",
       "to": "thousand"

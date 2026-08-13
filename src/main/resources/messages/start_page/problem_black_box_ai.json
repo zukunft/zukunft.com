@@ -1,0 +1,105 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "black-box AI key figures"
+  ],
+  "description": "The most relevant number of the problem \"black-box AI\" of the start page ranking and the potential solution. The concept paper section 6 documents an AI that called the 99 percent initiative an open distributional question although the initiative had already been rejected in 2021 with 64.9 percent no votes and not a single accepting canton. The solution is to organise AI systems with societal decision relevance as a public good.",
+  "words": [
+    {
+      "name": "artificial"
+    },
+    {
+      "name": "intelligence"
+    },
+    {
+      "name": "AI"
+    },
+    {
+      "name": "black-box"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "initiative"
+    },
+    {
+      "name": "rejection"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "artificial intelligence",
+      "from": "intelligence",
+      "verb": "can be",
+      "to": "artificial"
+    },
+    {
+      "name": null,
+      "from": "AI",
+      "verb": "is symbol for",
+      "to": "artificial intelligence"
+    },
+    {
+      "name": "black-box AI",
+      "description": "proprietary AI systems without disclosed training data, open source code or accountability chain, which reproduce a text in its intended reading instead of exposing its weaknesses (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "black-box"
+    },
+    {
+      "name": "public AI",
+      "description": "AI systems with societal decision relevance organised as a public good with disclosed training data, open source availability and clear liability rules (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "initiative rejection",
+      "from": "rejection",
+      "verb": "of",
+      "to": "initiative"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Zueger & Asghari (2025) public interest AI",
+      "description": "Zueger, T. & Asghari, H. (2025): The landscape of public-interest-oriented AI. Digital Society Blog, Alexander von Humboldt Institute for Internet and Society.",
+      "url": "https://www.hiig.de/en/digital-society-blog/",
+      "type": "api"
+    },
+    {
+      "name": "Swiss Federal Chancellery, popular vote of 26 September 2021",
+      "description": "Official result of the Swiss popular vote of 26 September 2021 on the \"99 percent initiative\": rejected with 64.9 percent no votes and by every canton.",
+      "url": "https://www.bk.admin.ch/",
+      "type": "api"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "initiative rejection",
+        "percent"
+      ],
+      "number": "0.649",
+      "source": "Swiss Federal Chancellery, popular vote of 26 September 2021"
+    },
+    {
+      "words": [
+        "public AI",
+        "black-box AI",
+        "assumed value",
+        "percent"
+      ],
+      "number": "-0.5"
+    }
+  ]
+}

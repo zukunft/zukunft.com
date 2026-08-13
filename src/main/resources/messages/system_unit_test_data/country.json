@@ -7,14 +7,14 @@
   ],
   "description": "preloaded sample data to demonstrate how countries can be handled in zukunft.com",
   "words": [
-    { "name": "country"},
-    { "name": "Switzerland", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
+    { "name": "country", "description": "a distinct part of the world, such as a state, nation, or other political entity."},
+    { "name": "Switzerland", "description": "a landlocked country at the confluence of Western, Central and Southern Europe.", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
     { "name": "canton"},
     { "name": "city"},
     { "name": "Zurich"},
     { "name": "Bern"},
     { "name": "Geneva"},
-    { "name": "Germany", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
+    { "name": "Germany", "description": "a country in Central Europe, between the Baltic and North seas and the Alps.", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
     { "name": "inhabitants"},
     { "name": "company"},
     { "name": "2013", "type": "time"},
@@ -28,7 +28,7 @@
     { "name": "year", "type": "time"},
     { "name": "countryside"},
     { "name": "suburb"},
-    { "name": "total"},
+    { "name": "total", "description": "the whole amount or count, e.g. the total number of possible outcomes"},
     {
       "name": "one"
     },

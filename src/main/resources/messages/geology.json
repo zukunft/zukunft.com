@@ -25,7 +25,8 @@
       "name": "science"
     },
     {
-      "name": "density"
+      "name": "density",
+      "description": "quantity per unit area or volume"
     },
     {
       "name": "mineralogy",
@@ -1281,7 +1282,8 @@
       "name": "conductivity"
     },
     {
-      "name": "head"
+      "name": "head",
+      "description": "anterior portion of the caudate nucleus"
     },
     {
       "name": "radiometric"
@@ -1305,7 +1307,8 @@
       "name": "volume"
     },
     {
-      "name": "total"
+      "name": "total",
+      "description": "the whole amount or count, e.g. the total number of possible outcomes"
     },
     {
       "name": "substance"

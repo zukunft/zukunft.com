@@ -198,6 +198,32 @@ class system_form extends component
     }
 
     /**
+     * the page title for a phrase: a triple gets the triple title (name plus the from, verb and to
+     * links in the subheader), a word or any other named object gets the named title (name plus the
+     * related phrases in the subheader), so that one view can show a word and a triple with the same
+     * title component instead of one title component per phrase type
+     *
+     * @param db_object $dbo the phrase whose name is shown as the page title
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the phrase page title with its subheader
+     */
+    function title_phrase(
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = []
+    ): string
+    {
+        // the class decides, not the phrase id, because the frontend objects of a view are
+        // typed (a word view carries a word), while the phrase id is only known after a load
+        if ($dbo::class == triple::class) {
+            return $this->title_triple($dbo, $msg, $max, $url_array);
+        } else {
+            return $this->title_named($dbo, $msg, $max, $url_array);
+        }
+    }
+
+    /**
      * the page title for a formula: like the named title (formula name big plus the edit link),
      * but the subtitle lists the phrases the formula is assigned to instead of parent phrases
      * (the assigned phrases are rendered by category_subtitle() from the formula's phr_lst)

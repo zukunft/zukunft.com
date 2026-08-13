@@ -218,7 +218,8 @@
       "name": "second"
     },
     {
-      "name": "density"
+      "name": "density",
+      "description": "quantity per unit area or volume"
     },
     {
       "name": "Vestas"
@@ -322,6 +323,7 @@
       "to": "second"
     },
     {
+      "name": "m/s",
       "from": "m/s",
       "verb": "is symbol for",
       "to": "metre per second"
@@ -543,6 +545,12 @@
       "from": "climate gas emissions",
       "verb": "of",
       "to": "production"
+    },
+    {
+      "name": "metre per second",
+      "from": "metre",
+      "verb": "per",
+      "to": "second"
     }
   ],
   "formulas": [

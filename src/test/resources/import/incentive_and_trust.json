@@ -8,7 +8,7 @@
     "long-term orientation",
     "resource curse"
   ],
-  "description": "Knowledge captured from a dialogue on whether incentives can be scaled back without eroding cooperation. Measured/sourced findings are tagged 'measured value'; the conversation's own conjectures are tagged 'assumed value' so the most load-bearing assumptions can later be surfaced for scrutiny.",
+  "description": "Knowledge captured from a dialogue on whether incentives can be scaled back without eroding cooperation. Measured findings carry their source; the conversation's own conjectures are tagged 'assumed value' so the most load-bearing assumptions can later be surfaced for scrutiny.",
   "words": [
     {
       "name": "incentive",
@@ -410,10 +410,6 @@
       "name": "scaling"
     },
     {
-      "name": "measured value",
-      "description": "qualifier marking a value as empirically measured / sourced from a study rather than assumed."
-    },
-    {
       "name": "assumed value",
       "description": "qualifier marking a value as an assumption or conjecture to be verified later, not an established measurement."
     },
@@ -670,8 +666,7 @@
   "values": [
     {
       "words": [
-        "fine is a price",
-        "measured value"
+        "fine is a price"
       ],
       "number": "1",
       "source": "Gneezy Rustichini 2000",
@@ -680,7 +675,6 @@
     {
       "words": [
         "incentive can crowd out intrinsic motivation",
-        "measured value",
         "supported"
       ],
       "number": "1",
@@ -690,7 +684,6 @@
     {
       "words": [
         "commons governance without market or state",
-        "measured value",
         "supported"
       ],
       "number": "1",
@@ -700,7 +693,6 @@
     {
       "words": [
         "agricultural origin of time preference",
-        "measured value",
         "supported"
       ],
       "number": "1",
@@ -710,7 +702,6 @@
     {
       "words": [
         "resource curse conditional on weak institutions",
-        "measured value",
         "supported"
       ],
       "number": "1",

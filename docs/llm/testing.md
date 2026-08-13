@@ -614,6 +614,82 @@ When adding such a test: (1) add a reserved test entry to `words.php` (or the
 matching `*_const` file) if none fits, (2) build the import file's name from that
 const, and (3) use the same const for cleanup and for any regeneration script.
 
+## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
+
+`src/test/php/const/{word,triple,verb}_names.php` pin the **seed database ids**
+of the test phrases. Those ids come from the insert order of the import files, so
+**adding or removing a phrase in a seed import shifts every id after it** — a new
+word in `base_phrases.json`, a split of one multi-word word into a triple, an
+extra file in `files::BASE_DATA_PATH_FILES`, all of them.
+
+The authority for the new ids is `src/test/resources/unit/<class>/list.csv`. That
+file is not hand-maintained: `test_db_load::csv_recreate()` dumps the whole table
+with `sql_db::csv_from_class()` after a database reset. So the sequence is
+**reset → regenerate the csv → read the new ids out of it → update the consts**.
+Never derive an id by counting entries in the JSON or by assuming a shift of one.
+
+Two traps that make the drift look smaller than it is:
+
+- `library::diff_msg` compares the **keys** of two arrays; a const id that still
+  exists in the database under a *different* name is therefore not reported. A
+  reported "5 missing / 5 unexpected" can be seven real drifts — always
+  recompute the full name→id mapping instead of patching only what the message
+  lists.
+- The csv holds only rows created by the seed. A phrase created later by a test
+  write (ids well above the seed range) is legitimately absent, so "not in the
+  csv" does not mean "wrong const".
+
+Appending to `verbs.json` is the one id-safe case: verbs are their own table and
+their id is the insert position of each **distinct** `code_id`, so a new verb at
+the end takes the next free id and moves nothing. (A repeated `code_id` merges
+instead of inserting, which is why the const ids can sit one below their line
+position in the file.)
+
+## A fixture phrase carries the real id, the real class and the real name
+
+Re-baselining the id const is only half of it: the **factory** has to match the
+database row as well, in three more ways. All three fail silently — the test
+renders *something*, just not the right thing.
+
+**The id must be set, not only the name.** `combine_object::api_json_array()`
+writes the `OBJECT_CLASS` field only `if ($obj->id() != 0)`, and the frontend
+`phrase::api_mapper()` needs exactly that field to decide between a word and a
+triple. So a fixture built with `set_name()` alone survives as a top-level
+object but collapses to an empty phrase as soon as it is nested — as a triple's
+`from`/`to`, or in a phrase list. The symptom is an anchor with no text and the
+wrong tooltip (`<a href="…"></a>` instead of `<a … title="…">Swiss franc</a>`),
+because `triple::get_link_by_verb()` falls through to its last-resort title.
+Every phrase used as a side of another phrase therefore needs `set(<id>, <name>)`.
+
+**The class must match the database.** When a multi-word word is split, the
+phrase changes class: `Swiss franc` stops being a word and becomes the triple
+`franc kind of Swiss`. The const then moves from `word_names` to `triple_names`
+and the factory from `test_words` to `test_triples` — a word-typed stand-in that
+merely carries the right *name* re-introduces the id-0 bug above. If the frontend
+class lacks a method the test needs, add the method (see
+"Behaviour shared by word and triple belongs on the phrase" in
+`docs/llm/frontend.md`); do not keep the fixture in the wrong class.
+
+**An unnamed triple's name is the generated one.** Most import triples carry no
+`name`, so the database stores what `triple::generate_name()` produces, and that
+is **not** `<from> <verb> <to>` for the `is` verb — it is `<from> (<to>)`:
+
+```php
+// the import file only has {"from": "Swiss franc", "verb": "is a", "to": "currency"}
+$trp->set(triple_names::SWISS_FRANC_CURRENCY_ID, triple_names::SWISS_FRANC_CURRENCY);
+//                                               // = 'Swiss franc (currency)'
+// not: triple_names::SWISS_FRANC . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY
+```
+
+Only the other verbs use the `<from> <verb> <to>` form. Read the name out of
+`list.csv` together with the id rather than composing it.
+
+**The description is copied verbatim from the owning import file.** A `*_COM`
+const is not a place to write a shorter or nicer text: the same description ends
+up in a rendered tooltip and in a database read, so a hand-written summary makes
+the unit test and the read test disagree. Take the string from the file that owns
+the phrase (the first one importing it) and paste it unchanged.
+
 ## Never edit an existing test resource — only add
 
 Everything under `src/test/resources/` (HTML/SQL snapshots, dummy-cache JSON,

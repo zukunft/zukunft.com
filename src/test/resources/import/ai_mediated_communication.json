@@ -1,7 +1,7 @@
 {
   "zukunft.com": {
     "version": "0.0.3",
-    "description": "Evidence base for the claim that using LLM/AI assistance in interpersonal communication shifts language, perception, and trust. Captures what randomized studies actually measured (measured value) versus the stronger maxim 'never use AI for interpersonal communication' and the 'expectation shift' hypothesis (assumed value). All content in English per project convention.",
+    "description": "Evidence base for the claim that using LLM/AI assistance in interpersonal communication shifts language, perception, and trust. Captures what randomized studies actually measured versus the stronger maxim 'never use AI for interpersonal communication' and the 'expectation shift' hypothesis (assumed value). All content in English per project convention.",
     "pod": "zukunft.com",
     "words": [
       {
@@ -84,7 +84,6 @@
           "smart replies",
           "communication speed"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Hohenstein et al. 2023",
         "predicate": "is increased by",
@@ -100,7 +99,6 @@
           "smart replies",
           "positivity bias"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Hohenstein et al. 2023",
         "predicate": "is increased by",
@@ -116,7 +114,6 @@
           "smart replies",
           "interpersonal closeness rating"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Hohenstein et al. 2023",
         "predicate": "is increased by",
@@ -132,7 +129,6 @@
           "overt AI use",
           "AI-mediated communication"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Hohenstein et al. 2023",
         "predicate": "is decreased by",
@@ -149,7 +145,6 @@
           "positivity bias",
           "AI-mediated communication"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Mieczkowski et al. 2021",
         "predicate": "is confirmed by",
@@ -165,7 +160,6 @@
           "AI-mediated communication",
           "interpersonal closeness rating"
         ],
-        "value_type": "measured value",
         "value": true,
         "confidence": 0.5,
         "source": "Mieczkowski et al. 2021",
@@ -183,7 +177,6 @@
           "self-other discrepancy",
           "AI-mediated communication"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Purcell et al. 2024",
         "predicate": "is demonstrated by",
@@ -199,7 +192,6 @@
           "self-other discrepancy",
           "overt AI use"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Purcell et al. 2024",
         "predicate": "is demonstrated by",
@@ -215,7 +207,6 @@
           "overt AI use",
           "AI-mediated communication"
         ],
-        "value_type": "measured value",
         "value": true,
         "source": "Purcell et al. 2024",
         "predicate": "is demonstrated by",

@@ -1,0 +1,188 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "global warming key figures"
+  ],
+  "description": "The most relevant number of the problem \"global warming\" of the start page ranking and the potential solution: without a border adjustment a large share of the emissions avoided in a regulated region reappears in a region without a carbon price. The carbon leakage rate with and without a border adjustment and the coverage of the global emissions by a direct carbon price are the figures that decide whether a unilateral climate policy is effective at all.",
+  "words": [
+    {
+      "name": "climate"
+    },
+    {
+      "name": "warmer"
+    },
+    {
+      "name": "warming"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "emissions"
+    },
+    {
+      "name": "reduction",
+      "description": "the gain of electrons by a species during a reaction"
+    },
+    {
+      "name": "carbon"
+    },
+    {
+      "name": "leakage"
+    },
+    {
+      "name": "tariff"
+    },
+    {
+      "name": "price",
+      "description": "amount of money required to buy something"
+    },
+    {
+      "name": "coverage"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "tonne"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "global warming",
+      "from": "climate",
+      "verb": "can get",
+      "to": "warmer"
+    },
+    {
+      "name": "climate gas",
+      "from": "gas",
+      "verb": "can cause",
+      "to": "warming"
+    },
+    {
+      "name": "climate gas emissions",
+      "from": "emissions",
+      "verb": "of",
+      "to": "climate gas"
+    },
+    {
+      "name": "reduce climate gas emissions",
+      "description": "a transparent, publicly calculated climate tariff that prices the emissions of imports and exports and thereby stops carbon leakage (concept paper section 3)",
+      "from": "reduction",
+      "verb": "of",
+      "to": "climate gas emissions"
+    },
+    {
+      "name": "carbon leakage",
+      "description": "the share of the emissions avoided in a regulated region that reappears in a region with little or no carbon price",
+      "from": "leakage",
+      "verb": "of",
+      "to": "carbon"
+    },
+    {
+      "name": "carbon tariff",
+      "description": "a carbon border adjustment mechanism that puts imports on the same carbon price footing as domestic production",
+      "from": "tariff",
+      "verb": "of",
+      "to": "carbon"
+    },
+    {
+      "name": "carbon price",
+      "from": "price",
+      "verb": "of",
+      "to": "carbon"
+    },
+    {
+      "name": "carbon leakage rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "carbon leakage"
+    },
+    {
+      "name": "carbon price coverage",
+      "from": "coverage",
+      "verb": "of",
+      "to": "carbon price"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Branger & Quirion (2014b)",
+      "description": "Branger, F. & Quirion, P. (2014): Would Border Carbon Adjustments Prevent Carbon Leakage and Heavy Industry Competitiveness Losses? Insights from a Meta-Analysis of Recent Economic Studies. Ecological Economics, 99, 29-39.",
+      "url": "https://doi.org/10.1016/j.ecolecon.2013.12.010",
+      "type": "pdf"
+    },
+    {
+      "name": "World Bank (2025) State and Trends of Carbon Pricing",
+      "description": "World Bank (2025): State and Trends of Carbon Pricing 2025. Washington, DC.",
+      "url": "https://www.worldbank.org/en/publication/state-and-trends-of-carbon-pricing",
+      "type": "pdf"
+    },
+    {
+      "name": "Nordhaus (2015) Climate Clubs",
+      "description": "Nordhaus, W. (2015): Climate Clubs: Overcoming Free-Riding in International Climate Policy. American Economic Review, 105(4), 1339-1370.",
+      "url": "https://doi.org/10.1257/aer.15000001",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "carbon leakage rate",
+        "global warming",
+        "percent"
+      ],
+      "number": "0.14",
+      "source": "Branger & Quirion (2014b)"
+    },
+    {
+      "words": [
+        "carbon leakage rate",
+        "carbon tariff",
+        "percent"
+      ],
+      "number": "0.06",
+      "source": "Branger & Quirion (2014b)"
+    },
+    {
+      "words": [
+        "carbon price coverage",
+        "percent"
+      ],
+      "number": "0.28",
+      "source": "World Bank (2025) State and Trends of Carbon Pricing"
+    },
+    {
+      "words": [
+        "carbon price",
+        "tonne",
+        "USD"
+      ],
+      "number": "19",
+      "source": "World Bank (2025) State and Trends of Carbon Pricing"
+    },
+    {
+      "words": [
+        "reduce climate gas emissions",
+        "carbon tariff",
+        "carbon leakage rate",
+        "assumed value",
+        "percent"
+      ],
+      "number": "-0.08",
+      "source": "Branger & Quirion (2014b)"
+    }
+  ]
+}

@@ -1095,8 +1095,7 @@
       "words": [
         "United Kingdom electricity CO2 intensity",
         "2018",
-        "gram per kWh",
-        "measured value"
+        "gram per kWh"
       ],
       "number": "217",
       "source": "Electric Insights UK 2018"
@@ -1105,8 +1104,7 @@
       "words": [
         "Germany electricity CO2 intensity",
         "2018",
-        "gram per kWh",
-        "measured value"
+        "gram per kWh"
       ],
       "number": "474",
       "source": "Umweltbundesamt CO2 Strom",
@@ -1116,18 +1114,16 @@
       "words": [
         "Germany",
         "nuclear electricity production share",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "12.5",
+      "number": "0.125",
       "source": "Statista Atomstrom DE",
       "note": "about one eighth of German electricity comes from nuclear power."
     },
     {
       "words": [
         "lifecycle CO2 emission of nuclear power",
-        "gram per kWh",
-        "measured value"
+        "gram per kWh"
       ],
       "number": "12",
       "source": "IPCC AR5 Annex III"
@@ -1135,8 +1131,7 @@
     {
       "words": [
         "lifecycle CO2 emission of photovoltaic",
-        "gram per kWh",
-        "measured value"
+        "gram per kWh"
       ],
       "number": "48",
       "source": "IPCC AR5 Annex III"
@@ -1146,8 +1141,7 @@
         "Chooz B2",
         "electricity production",
         "2018",
-        "TWh",
-        "measured value"
+        "TWh"
       ],
       "number": "12",
       "source": "World Nuclear Chooz B-2"
@@ -1158,8 +1152,7 @@
         "wind power",
         "electricity production",
         "2018",
-        "TWh",
-        "measured value"
+        "TWh"
       ],
       "number": "14",
       "source": "State of Green Denmark 2018"
@@ -1169,8 +1162,7 @@
         "Denmark",
         "wind turbine",
         "2018",
-        "count",
-        "measured value"
+        "count"
       ],
       "number": "6000",
       "source": "State of Green Denmark 2018",
@@ -1181,8 +1173,7 @@
         "nuclear reactor",
         "wind turbine",
         "production ratio",
-        "times",
-        "measured value"
+        "times"
       ],
       "number": "5143",
       "source": "Republik Atomkraft 2019",
@@ -1193,10 +1184,9 @@
         "nuclear power",
         "global primary energy share",
         "2000",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "6",
+      "number": "0.06",
       "source": "BP Statistical Review 2019",
       "note": "the peak share of nuclear power in the global primary energy mix, around the turn of the millennium."
     },
@@ -1205,10 +1195,9 @@
         "nuclear power",
         "global primary energy share",
         "2017",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "5",
+      "number": "0.05",
       "source": "BP Statistical Review 2019",
       "note": "two years before the 2019 article the share had fallen below 5 percent."
     },
@@ -1216,8 +1205,7 @@
       "words": [
         "nuclear reactor",
         "2019",
-        "count",
-        "measured value"
+        "count"
       ],
       "number": "449",
       "source": "IAEA PRIS reactor age",
@@ -1227,8 +1215,7 @@
       "words": [
         "Hinkley Point",
         "construction cost",
-        "GBP bn",
-        "measured value"
+        "GBP bn"
       ],
       "number": "20",
       "source": "Guardian Hinkley Point cost",
@@ -1272,8 +1259,7 @@
       "words": [
         "Hinkley Point",
         "construction delay",
-        "year",
-        "measured value"
+        "year"
       ],
       "number": "7",
       "source": "Guardian Hinkley delay",
@@ -1283,8 +1269,7 @@
       "words": [
         "Olkiluoto III",
         "construction time",
-        "year",
-        "measured value"
+        "year"
       ],
       "number": "15",
       "source": "Reuters Olkiluoto"
@@ -1294,8 +1279,7 @@
         "Finland",
         "wind power",
         "installed capacity",
-        "GW",
-        "measured value"
+        "GW"
       ],
       "number": "2",
       "source": "Republik Atomkraft 2019",
@@ -1328,8 +1312,7 @@
       "words": [
         "Gösgen",
         "ramp rate",
-        "percent per minute",
-        "measured value"
+        "percent per minute"
       ],
       "number": "10",
       "source": "Framatome Gösgen flexibility",
@@ -1339,8 +1322,7 @@
       "words": [
         "Chernobyl",
         "death toll",
-        "person",
-        "measured value"
+        "person"
       ],
       "number": "4000",
       "source": "Republik Atomkraft 2019",
@@ -1351,8 +1333,7 @@
         "Banqiao dam",
         "death toll",
         "1975",
-        "person",
-        "measured value"
+        "person"
       ],
       "number": "230000",
       "source": "Republik Atomkraft 2019",
@@ -1362,8 +1343,7 @@
       "words": [
         "coal power",
         "radiation exposure",
-        "times",
-        "measured value"
+        "times"
       ],
       "number": "100",
       "source": "Republik Atomkraft 2019",
@@ -1373,8 +1353,7 @@
       "words": [
         "nuclear waste",
         "2019",
-        "tonne",
-        "measured value"
+        "tonne"
       ],
       "number": "250000",
       "source": "Republik Atomkraft 2019",
@@ -1384,10 +1363,9 @@
       "words": [
         "decommissioning waste",
         "radioactive share",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "90",
+      "number": "0.9",
       "source": "Republik Atomkraft 2019",
       "note": "of the decommissioning material, 90 percent is only weakly radioactive."
     },
@@ -1416,10 +1394,9 @@
       "words": [
         "uranium",
         "fission share",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "4",
+      "number": "0.04",
       "source": "Republik Atomkraft 2019",
       "note": "current reactors fission only about 4 percent of the uranium in the fuel rods."
     },
@@ -1427,10 +1404,9 @@
       "words": [
         "uranium 235",
         "natural uranium share",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "1",
+      "number": "0.01",
       "source": "Republik Atomkraft 2019",
       "note": "uranium 235 makes up less than 1 percent of natural uranium."
     },
@@ -1438,10 +1414,9 @@
       "words": [
         "uranium 235",
         "enriched fuel share",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "5",
+      "number": "0.05",
       "source": "Republik Atomkraft 2019",
       "note": "enriched reactor fuel is about 5 percent uranium 235."
     },
@@ -1449,10 +1424,9 @@
       "words": [
         "uranium 235",
         "weapon uranium share",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "90",
+      "number": "0.9",
       "source": "Republik Atomkraft 2019",
       "note": "weapons need over 90 percent uranium 235."
     },
@@ -1471,8 +1445,7 @@
       "words": [
         "fast reactor",
         "cumulative operation",
-        "year",
-        "measured value"
+        "year"
       ],
       "number": "400",
       "source": "Republik Atomkraft 2019",
@@ -1482,8 +1455,7 @@
       "words": [
         "EBR-II",
         "cumulative operation",
-        "year",
-        "measured value"
+        "year"
       ],
       "number": "30",
       "source": "Republik Atomkraft 2019",
@@ -1572,8 +1544,7 @@
         "Germany electricity CO2 intensity",
         "United Kingdom electricity CO2 intensity",
         "2018",
-        "gram per kWh",
-        "measured value"
+        "gram per kWh"
       ],
       "formula": "Germany to UK CO2 intensity ratio formula",
       "words": [

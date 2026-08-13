@@ -24,10 +24,10 @@ PREPARE word_insert_log_1110000000100_user_call FROM
     'SELECT word_insert_log_1110000000100_user (?,?,?,?,?,?,?)';
 
 SELECT word_insert_log_1110000000100_user
-        (4,
-         1,
-         88,
-         'company',
-         190,
-         91,
-         1);
+       (4,
+        1,
+        88,
+        'company',
+        189,
+        91,
+        1);

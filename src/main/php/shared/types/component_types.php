@@ -83,6 +83,12 @@ class component_types
     const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
     const int TITLE_VALUE_EDIT_ID = 203;
     const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
+    // the page title of a phrase: the same title as TITLE_NAMED_EDIT for a word and the same
+    // title as TITLE_TRIPLE_EDIT for a triple, each including its subheader, so that one view
+    // can be used for a word and for a triple without a title component per phrase type
+    const string PHRASE_TITLE = "phrase_title";
+    const int PHRASE_TITLE_ID = 213;
+    const string PHRASE_TITLE_COM = "show the phrase name as the page title with the subheader of a word or of a triple, plus the edit link";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
@@ -511,6 +517,12 @@ class component_types
     const string VALUES_IN_COLUMNS = "values_in_columns";
     const int VALUES_IN_COLUMNS_ID = 212;
     const string VALUES_IN_COLUMNS_COM = "show the values related to a phrase in up to four columns headed by the phrases used most often within the values";
+    // the values related to a phrase as a table: one column per phrase used most often within the
+    // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
+    // (e.g. per year), so that the values of one row can be compared column by column
+    const string TABLE_WITH_RELATED_COLUMNS = "table_with_related_columns";
+    const int TABLE_WITH_RELATED_COLUMNS_ID = 214;
+    const string TABLE_WITH_RELATED_COLUMNS_COM = "show the values related to a phrase as a table with one column per phrase used most often within the values";
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 93;
 
@@ -748,6 +760,7 @@ class component_types
         self::VALUES_RELATED,
         self::VALUES_MOST_RELEVANT,
         self::VALUES_IN_COLUMNS,
+        self::TABLE_WITH_RELATED_COLUMNS,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -777,6 +790,7 @@ class component_types
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
         [self::TITLE_TRIPLE_EDIT, self::TITLE_TRIPLE_EDIT_ID],
+        [self::PHRASE_TITLE, self::PHRASE_TITLE_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
@@ -939,6 +953,7 @@ class component_types
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
         [self::VALUES_IN_COLUMNS, self::VALUES_IN_COLUMNS_ID],
+        [self::TABLE_WITH_RELATED_COLUMNS, self::TABLE_WITH_RELATED_COLUMNS_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

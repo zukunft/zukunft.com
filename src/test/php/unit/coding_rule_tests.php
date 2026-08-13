@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -50,15 +52,22 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use ReflectionClass;
 
 class coding_rule_tests
 {
+
+    // the value qualifier that must never be used, because every value is assumed to be measured
+    const string MEASURED_VALUE = 'measured value';
 
     // the app areas that can use a global var (shown in docs/code_object_name_exceptions.md)
     private const string AREA_BACKEND = 'backend';
@@ -134,6 +143,14 @@ class coding_rule_tests
         $t->subheader($ts . 'config.yaml consistency');
         $this->config_yaml_word_triple_tests($t);
 
+        $t->subheader($ts . 'import json consistency');
+        // TODO Prio 3 maybe switch it on as a warning
+        //$this->json_no_measured_value_tests($t);
+
+        $t->subheader($ts . 'verb consistency');
+        $this->verb_group_tests($t);
+        $this->json_verb_defined_tests($t);
+
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
 
@@ -184,6 +201,157 @@ class coding_rule_tests
 
         $test_name = 'every config.yaml key has a const in words.php or triples.php';
         $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * verify that no import json of src/main/resources/messages adds a "measured value" qualifier:
+     * every value is assumed to be measured, so the qualifier only repeats the default while it
+     * lengthens the phrase group and needs a word or triple in every file that borrows it;
+     * only the deviation "assumed value" is worth recording (see docs/llm/json_structure.md)
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_no_measured_value_tests(test_cleanup $t): void
+    {
+        // the places where the qualifier can hide: as a value or calc-validation qualifier and
+        // as the word or triple that such a qualifier needs
+        $hits = [];
+        foreach ($this->json_file_list(files::MESSAGE_PATH) as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (!is_array($json_array)) {
+                continue;
+            }
+            $name = basename($path);
+            foreach ($json_array[json_fields::VALUES] ?? [] as $val) {
+                if (in_array(self::MEASURED_VALUE, $val[json_fields::WORDS] ?? [], true)) {
+                    $hits[$name . ' (value)'] = true;
+                }
+            }
+            foreach ($json_array[json_fields::CALC_VALIDATION] ?? [] as $calc) {
+                foreach ([json_fields::CONTEXT, json_fields::WORDS] as $fld) {
+                    if (in_array(self::MEASURED_VALUE, $calc[$fld] ?? [], true)) {
+                        $hits[$name . ' (calc-validation)'] = true;
+                    }
+                }
+            }
+            foreach ($json_array[json_fields::WORDS] ?? [] as $wrd) {
+                if (($wrd[json_fields::NAME] ?? '') == self::MEASURED_VALUE) {
+                    $hits[$name . ' (word)'] = true;
+                }
+            }
+            foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+                foreach ([json_fields::NAME, json_fields::EX_FROM, json_fields::EX_TO] as $fld) {
+                    if (($trp[$fld] ?? '') == self::MEASURED_VALUE) {
+                        $hits[$name . ' (triple)'] = true;
+                    }
+                }
+            }
+        }
+        $names = array_keys($hits);
+        sort($names);
+
+        $test_name = 'no import json adds a "' . self::MEASURED_VALUE . '" qualifier';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that every verb a group array of verbs.php names is defined in verbs.json: the groups
+     * (CATEGORY_VERBS, PROPERTY_VERBS, SYNONYM_VERBS, ARGUMENT_VERBS) are the coded functionality of
+     * a verb, so a group entry without a verb row is a predicate that silently never matches
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function verb_group_tests(test_cleanup $t): void
+    {
+        $known = [];
+        foreach ($this->verbs_json()[json_fields::VERBS] ?? [] as $vrb) {
+            $known[$vrb[json_fields::CODE_ID]] = true;
+        }
+        $groups = [
+            'CATEGORY_VERBS' => verbs::CATEGORY_VERBS,
+            'PROPERTY_VERBS' => verbs::PROPERTY_VERBS,
+            'SYNONYM_VERBS' => verbs::SYNONYM_VERBS,
+            'ARGUMENT_VERBS' => verbs::ARGUMENT_VERBS,
+        ];
+        $missing = [];
+        foreach ($groups as $name => $group) {
+            foreach ($group as [$code_id, $direction]) {
+                if (!array_key_exists($code_id, $known)) {
+                    $missing[] = $name . ': ' . $code_id;
+                }
+            }
+        }
+        sort($missing);
+
+        $test_name = 'every verb of a verbs.php group is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * verify that every verb used by an import json is defined in verbs.json or proposed by the file
+     * itself: the import resolves a verb by an exact name match and creates the verb when the name is
+     * unknown (see triple::import_mapper), so a typo silently grows the shared verb vocabulary
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_verb_defined_tests(test_cleanup $t): void
+    {
+        $known = [];
+        foreach ($this->verbs_json()[json_fields::VERBS] ?? [] as $vrb) {
+            $known[$vrb[json_fields::NAME]] = true;
+        }
+        $unknown = [];
+        foreach ($this->json_file_list(files::MESSAGE_PATH) as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (!is_array($json_array)) {
+                continue;
+            }
+            // a file may propose its own verb, which stays private until an admin confirms it
+            $local = [];
+            foreach ($json_array[json_fields::VERBS] ?? [] as $vrb) {
+                $local[$vrb[json_fields::NAME] ?? ''] = true;
+            }
+            foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+                $name = $trp[json_fields::EX_VERB] ?? '';
+                if ($name != ''
+                    and !array_key_exists($name, $known)
+                    and !array_key_exists($name, $local)) {
+                    $unknown[basename($path) . ': ' . $name] = true;
+                }
+            }
+        }
+        $names = array_keys($unknown);
+        sort($names);
+
+        $test_name = 'every verb used by an import json is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * @return array the decoded src/main/resources/verbs.json
+     */
+    private function verbs_json(): array
+    {
+        return json_decode(file_get_contents(files::VERBS), true) ?? [];
+    }
+
+    /**
+     * @param string $path the folder to scan for json import files
+     * @return array the path of every json file below the given folder
+     */
+    private function json_file_list(string $path): array
+    {
+        $result = [];
+        $dir_iterator = new RecursiveDirectoryIterator($path);
+        foreach (new RecursiveIteratorIterator($dir_iterator) as $file) {
+            if (str_ends_with($file->getFilename(), files::JSON)) {
+                $result[] = $file->getPathname();
+            }
+        }
+        return $result;
     }
 
     /**

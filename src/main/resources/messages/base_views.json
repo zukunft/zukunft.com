@@ -309,6 +309,18 @@
       "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
       "type": "values_in_columns",
       "code_id": "values_in_columns_phrase"
+    },
+    {
+      "name": "phrase title",
+      "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
+      "type": "phrase_title",
+      "code_id": "phrase_title_phrase"
+    },
+    {
+      "name": "table with related columns",
+      "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+      "type": "table_with_related_columns",
+      "code_id": "table_with_related_columns_phrase"
     }
   ],
   "views": [
@@ -804,6 +816,23 @@
         {
           "position": "3",
           "name": "values in columns",
+          "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "Table",
+      "description": "the values related to a word or triple as a table with one column per phrase used most often within the values",
+      "code_id": "table",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase title"
+        },
+        {
+          "position": "2",
+          "name": "table with related columns",
           "position_type": "combine"
         }
       ]

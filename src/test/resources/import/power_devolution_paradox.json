@@ -64,9 +64,9 @@
       "to": "distribution impossibility premise"
     },
     {
-      "from": "self-enforcing equilibrium",
-      "verb": "is consequence of",
-      "to": "distribution impossibility premise"
+      "from": "distribution impossibility premise",
+      "verb": "can cause",
+      "to": "self-enforcing equilibrium"
     },
     {
       "from": "power reconcentration",

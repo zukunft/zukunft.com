@@ -76,9 +76,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const string POD = 'pod';
-    const int POD_ID = 204;
+    const int POD_ID = 203;
     const string MASTER_POD_NAME = 'zukunft.com';
-    const int MASTER_POD_NAME_ID = 213;
+    const int MASTER_POD_NAME_ID = 212;
     const string JOB = 'job';
     const string USER = 'user';
     const string FRONTEND = 'frontend';
@@ -121,12 +121,12 @@ class words
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string CATEGORY = 'category';
     const string CH = 'Switzerland';
-    const int CH_ID = 207;
+    const int CH_ID = 206;
     const string CHANGE = 'change';
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 363;
+    const int CHF_ID = 397;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -141,7 +141,7 @@ class words
     const string DATABASE = 'database';
     const string DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
     const string DAY = 'day';
-    const int DAY_ID = 106;
+    const int DAY_ID = 102;
     const string DAYS = 'days';
     const string DECIMAL = 'decimal';
     const string DECODE = 'decode';
@@ -162,7 +162,7 @@ class words
     const string FREEZE = 'freeze';
     const string FUTURE = 'future';
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 250;
+    const int HAPPY_ID = 264;
     const string HARDWARE = 'hardware';
     const string HTML = 'html';
     const string IMPACT = 'impact';
@@ -173,7 +173,7 @@ class words
     const string IP = 'ip';
     const string IP_RANGES = 'ip-ranges';
     const string LAUNCH = 'launch';
-    const int LAUNCH_ID = 199;
+    const int LAUNCH_ID = 198;
     const string LAYOUT = 'layout';
     const string LAYOUT_COM = 'the settings to position the components on the screen';
     const string LEVEL = 'level';
@@ -199,10 +199,10 @@ class words
     const string NAME = 'name';
     const string NETWORK = 'network';
     const string NUMBER = 'number';
-    const int NUMBER_ID = 201;
+    const int NUMBER_ID = 137;
     const string PAGE = 'page';
     const string PCT = 'percent';
-    const int PCT_ID = 161;
+    const int PCT_ID = 160;
     const string PEERS = 'peers';
     const string PERCENT = 'percent';
     const string PERIOD = 'period';
@@ -210,9 +210,9 @@ class words
     const string PHRASE = 'phrase';
     const string PODS = 'pods';
     const string POINT = 'point';
-    const int POINT_ID = 205;
+    const int POINT_ID = 204;
     const string POINTS = 'points';
-    const int POINTS_ID = 252;
+    const int POINTS_ID = 266;
     const string PREDICTION = 'prediction';
     const string PRELOAD = 'preload';
     const string PRESELECT = 'preselect';
@@ -229,7 +229,7 @@ class words
     const string SAME = 'same';
     const string SEC = 'sec';
     const string SECOND = 'second';
-    const int SECOND_ID = 24;
+    const int SECOND_ID = 22;
     const string SELECT = 'select';
     const string SELECTIONS = 'selections';
     const string SEPARATOR = 'separator';
@@ -246,38 +246,38 @@ class words
     const string THRESHOLD = 'threshold';
     const string TIME = 'time';
     const string TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
-    const int TIME_ID = 102;
+    const int TIME_ID = 99;
     const string TITLE = 'title';
     const string TOLERANCE = 'tolerance';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 275;
+    const int TOTAL_ID = 324;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
     const string UPDATE = 'update';
     const string URL = 'url';
-    const int URL_ID = 208;
+    const int URL_ID = 207;
     const string USAGE = 'usage';
     const string VALIDATE = 'validate';
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 694;
+    const int VERBS_ID = 770;
     const string VERSION = 'version';
     const string VIEW = 'view';
     const string VIEWS = 'views';
     const string WARNING = 'warning';
     const string WEB = 'web';
     const string WEEK = 'week';
-    const int WEEK_ID = 107;
+    const int WEEK_ID = 103;
     const string WEIGHTS = 'weights';
     const string WORD = 'word';
     const string WORDS = 'words';
     const string YEAR = 'year';
     const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const string YEAR_CAP = 'year';
-    const int YEAR_CAP_ID = 108;
+    const int YEAR_CAP_ID = 105;
 
 
     // list of often used words used as a default selection e.g. for the phrase selection
@@ -291,14 +291,12 @@ class words
         [word_names::CASH, word_names::CASH_ID],
         [self::CH, self::CH_ID],
         [self::CHF, self::CHF_ID],
-        [word_names::SWISS_FRANC, word_names::SWISS_FRANC_ID],
         [word_names::CIRCUMFERENCE, word_names::CIRCUMFERENCE_ID],
         [word_names::CITY, word_names::CITY_ID],
         [word_names::CLIMATE, word_names::CLIMATE_ID],
         [word_names::COMPANY, word_names::COMPANY_ID],
         [self::DAY, self::DAY_ID],
         [word_names::DIAMETER, word_names::DIAMETER_ID],
-        [word_names::E, word_names::E_ID],
         [word_names::E_SYMBOL, word_names::E_SYMBOL_ID],
         [word_names::EDUCATION, word_names::EDUCATION_ID],
         [word_names::FACT, word_names::FACT_ID],
@@ -561,14 +559,12 @@ class words
         word_names::STATEMENT_ID => word_names::STATEMENT,
         self::CH_ID => self::CH,
         self::CHF_ID => self::CHF,
-        word_names::SWISS_FRANC_ID => word_names::SWISS_FRANC,
         word_names::CIRCUMFERENCE_ID => word_names::CIRCUMFERENCE,
         word_names::CITY_ID => word_names::CITY,
         word_names::CLIMATE_ID => word_names::CLIMATE,
         word_names::COMPANY_ID => word_names::COMPANY,
         word_names::CONST_ID => word_names::CONST_NAME,
         word_names::DIAMETER_ID => word_names::DIAMETER,
-        word_names::E_ID => word_names::E,
         word_names::EDUCATION_ID => word_names::EDUCATION,
         word_names::GE_ID => word_names::GE,
         word_names::GLOBAL_ID => word_names::GLOBAL,
@@ -619,7 +615,6 @@ class words
         word_names::HYPERFINE_ID => word_names::HYPERFINE,
         word_names::TRANSITION_ID => word_names::TRANSITION,
         word_names::FREQUENCY_ID => word_names::FREQUENCY,
-        word_names::CS_133_ID => word_names::CS_133,
         word_names::HZ_ID => word_names::HZ,
         word_names::DEFINITION_ID => word_names::DEFINITION,
         word_names::YEAR_1983_ID => word_names::YEAR_1983,

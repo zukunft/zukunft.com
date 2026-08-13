@@ -118,10 +118,12 @@
       "name": "sales"
     },
     {
-      "name": "sector"
+      "name": "sector",
+      "description": "a distinct part of a whole"
     },
     {
-      "name": "employee"
+      "name": "employee",
+      "description": "person working for an organisation in return for payment"
     },
     {
       "name": "Energy"
@@ -142,7 +144,18 @@
       "name": "expenses"
     },
     {
-      "name": "expense"
+      "name": "expense",
+      "description": "use or service to be provided to achieve a certain benefit",
+      "refs": [
+        {
+          "name": "Expense",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13516686",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "General"
@@ -193,7 +206,18 @@
       "name": "loss"
     },
     {
-      "name": "equity"
+      "name": "equity",
+      "description": "difference between the value of the assets/interest and the cost of the liabilities of something owned",
+      "refs": [
+        {
+          "name": "Equity (finance)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q827451",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "method"
@@ -211,13 +235,15 @@
       "name": "income"
     },
     {
-      "name": "tax"
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
     },
     {
       "name": "Share"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
       "name": "Number"
@@ -268,7 +294,8 @@
       "name": "Operating"
     },
     {
-      "name": "profit"
+      "name": "profit",
+      "description": "financial gain, revenue minus costs"
     },
     {
       "name": "percent"
@@ -298,10 +325,12 @@
     },
     {
       "name": "2026",
+      "description": "the year 2026",
       "type": "time"
     },
     {
       "name": "2025",
+      "description": "the year 2025",
       "type": "time"
     },
     {
@@ -310,6 +339,7 @@
     },
     {
       "name": "2023",
+      "description": "the year 2023",
       "type": "time"
     },
     {
@@ -356,6 +386,7 @@
   "triples": [
     {
       "name": "balance sheet",
+      "description": "accounting financial summary. see Wikipedia: Balance sheet (Q46834)",
       "from": "sheet",
       "verb": "of",
       "to": "balance"
@@ -763,6 +794,7 @@
     },
     {
       "name": "operating expense",
+      "description": "ongoing cost for running a product, business, or system. see Wikipedia: Operating expense (Q831940)",
       "from": "expense",
       "verb": "kind of",
       "to": "operating"

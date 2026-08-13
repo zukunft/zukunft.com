@@ -29,13 +29,13 @@ PREPARE word_insert_log_1110000500001_user_call FROM
     'SELECT word_insert_log_1110000500001_user (?,?,?,?,?,?,?,?,?,?)';
 
 SELECT word_insert_log_1110000500001_user
-        (3,
-         1,
-         88,
-         'company',
-         190,
-         90,
-         null,
-         101,
-         93,
-         3);
+       (3,
+        1,
+        88,
+        'company',
+        189,
+        90,
+        null,
+        101,
+        93,
+        3);

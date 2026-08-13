@@ -1,0 +1,107 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "proprietary software key figures"
+  ],
+  "description": "The most relevant number of the problem \"proprietary software\" of the start page ranking and the potential solution. The concept paper states that the public sector spends billions annually on software licences without being able to understand or independently develop the systems, but gives no exact figure, so the licence spending is an assumed value. The solution is the principle public money, public code.",
+  "words": [
+    {
+      "name": "proprietary"
+    },
+    {
+      "name": "software"
+    },
+    {
+      "name": "free"
+    },
+    {
+      "name": "licence"
+    },
+    {
+      "name": "spending"
+    },
+    {
+      "name": "sector",
+      "description": "a distinct part of a whole"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "proprietary software",
+      "description": "closed source software in the public sector that causes opacity, missing verifiability, vendor dependency and risks to national security (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "proprietary"
+    },
+    {
+      "name": "free software",
+      "description": "free, secure and transparent software in the public sector following the principle public money, public code (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "free"
+    },
+    {
+      "name": "public sector",
+      "from": "sector",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "licence spending",
+      "from": "spending",
+      "verb": "of",
+      "to": "licence"
+    }
+  ],
+  "sources": [
+    {
+      "name": "FSFE (2017) Public Money, Public Code",
+      "description": "Free Software Foundation Europe (2017): Public Money, Public Code. Demands that software developed with public funds is released as free software.",
+      "url": "https://publiccode.eu",
+      "type": "api"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "licence spending",
+        "proprietary software",
+        "public sector",
+        "annual",
+        "billion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "free software",
+        "licence spending",
+        "assumed value",
+        "percent"
+      ],
+      "number": "-0.5"
+    }
+  ]
+}

@@ -166,8 +166,10 @@ class list_sort
         $th .= $html->th('Costs in ' . $trillion->name_link() . ' ' . $usd->name_link(),
             scopes::COL, styles::TEXT_RIGHT);
         $th .= $html->th('Solution', scopes::COL);
-        $th .= $html->th('Gain in ' . $billion->name_link() . ' ' . $htp->name_link(),
-            scopes::COL, styles::TEXT_RIGHT);
+        if ($billion != null and $htp != null) {
+            $th .= $html->th('Gain in ' . $billion->name_link() . ' ' . $htp->name_link(),
+                scopes::COL, styles::TEXT_RIGHT);
+        }
         $tr = $html->tr($th);
         $thead = $html->thead($tr);
         $result = $thead;

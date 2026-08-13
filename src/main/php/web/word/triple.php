@@ -775,6 +775,44 @@ class triple extends sandbox_code_id
 
 
     /*
+     * related
+     */
+
+    /**
+     * get the parent phrases of this triple e.g. for "Zurich (city)" the city
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @param int $levels the number of parent levels
+     * @return phrase_list capped by the user-specific frontend config limit
+     */
+    function parents(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    {
+        return $this->phrase()->parents($msg, $phr_lst, $levels);
+    }
+
+    /**
+     * get all child phrases of this triple
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @param int $levels the number of child levels
+     * @return phrase_list capped by the user-specific frontend config limit
+     */
+    function children(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    {
+        return $this->phrase()->children($msg, $phr_lst, $levels);
+    }
+
+    /**
+     * get the other phrases that share an "is a" parent with this triple
+     * e.g. for "Swiss franc" (which is a "currency") the Euro and the US dollar
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @return phrase_list the sibling phrases without this triple
+     */
+    function similar(user_message $msg, ?phrase_list $phr_lst = null): phrase_list
+    {
+        return $this->phrase()->similar($msg, $phr_lst);
+    }
+
+
+    /*
      * base
      */
 

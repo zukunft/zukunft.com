@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -96,6 +97,35 @@ class import_tests
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->word_list()->count(), 4);
+
+        // beside the "words" with the parameters a file can name the words in a "word-list",
+        // which is the compact format that convert_wikipedia_table creates for the countries
+        // TODO Prio 3 use a word name list from a test/create class
+        $test_name = 'JSON import word-list count';
+        $msg = new user_message($t->usr_dev);
+        $wrd_lst_json = [json_fields::WORD_LIST => [words::MIO, word_names::YEAR_2019, word_names::YEAR_2020]];
+        $dto = $imp->get_data_object($wrd_lst_json, $msg);
+        $t->assert($test_name, $dto->word_list()->count(), 3);
+        $test_name = '... and the word-list words have the expected name';
+        $t->assert($test_name, $dto->word_list()->names(), [words::MIO, word_names::YEAR_2019, word_names::YEAR_2020]);
+
+        // a word named in the word-list must be usable by a value of the same file, so that
+        // e.g. the countries of the democracy index table get a phrase group (see the
+        // self-consistency rule in docs/llm/json_structure.md)
+        $test_name = 'JSON import value with a word-list phrase';
+        $msg = new user_message($t->usr_dev);
+        $wrd_lst_val_json = [
+            json_fields::WORD_LIST => [words::MIO, word_names::YEAR_2019],
+            json_fields::VALUES => [[
+                json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+                json_fields::NUMBER => 8.88
+            ]]
+        ];
+        $dto = $imp->get_data_object($wrd_lst_val_json, $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 1);
+        $test_name = '... and the value has all its phrases';
+        $val = $dto->value_list()->lst()[0] ?? null;
+        $t->assert($test_name, $val?->phrase_list()->count(), 2);
 
         $test_name = 'JSON import verbs count';
         $json_str = file_get_contents(test_files::IMPORT_VERBS . test_files::JSON);
@@ -298,7 +328,7 @@ class import_tests
         $msg = new user_message($t->usr1);
         $json_array = [json_fields::VIEWS => [[
             json_fields::NAME => views::TEST_ADD_NAME,
-            json_fields::ASSIGNED => [word_names::PI, word_names::E]
+            json_fields::ASSIGNED => [word_names::PI, triple_names::EULER_NUMBER]
         ]]];
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_not_contains($test_name, $msg->all_message_text(), 'more than once');

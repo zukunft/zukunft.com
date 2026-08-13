@@ -51,6 +51,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -71,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -550,17 +552,6 @@ class test_words extends test_objects
         return $wrd;
     }
 
-    /**
-     * @return word "Euler's number" to test the handling of >'<
-     */
-    function word_e(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::E_ID, word_names::E);
-        $wrd->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
-        return $wrd;
-    }
-
     /*
      * si units
      */
@@ -627,13 +618,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::FREQUENCY_ID, word_names::FREQUENCY);
-        return $wrd;
-    }
-
-    function cs_133(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::CS_133_ID, word_names::CS_133);
         return $wrd;
     }
 
@@ -1113,43 +1097,6 @@ class test_words extends test_objects
         return $wrd;
     }
 
-    /**
-     * @return word the currency "Swiss franc" — the target of the "CHF is symbol for
-     *              Swiss franc" triple used as the canonical symbol example
-     */
-    function swiss_franc(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::SWISS_FRANC_ID, word_names::SWISS_FRANC);
-        $wrd->description = word_names::SWISS_FRANC_COM;
-        return $wrd;
-    }
-
-    /**
-     * @return word_ui the "Swiss franc" word for frontend unit testing (e.g. as the
-     *                 symbol target a CHF page-title category subtitle links to);
-     *                 the *_ui suffix marks this as a frontend/UI factory per the
-     *                 naming rule in docs/llm/coding.md
-     */
-    function swiss_franc_ui(): word_ui
-    {
-        $wrd = $this->swiss_franc();
-        return new word_ui($wrd->api_json());
-    }
-
-    /**
-     * @return word_ui "Swiss franc" with the related symbol and category phrases as loaded
-     *                 with the word from the backend e.g. to test the related phrases
-     *                 shown on the default word page
-     */
-    function swiss_franc_related_ui(): word_ui
-    {
-        $t_phr = new test_phrases($this->env);
-        $wrd = $this->swiss_franc_ui();
-        $wrd->phr_lst = $t_phr->list_swiss_franc_related_ui();
-        return $wrd;
-    }
-
     function euro(): word
     {
         $wrd = new word($this->env->usr1);
@@ -1161,13 +1108,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::EUR_ID, word_names::EUR);
-        return $wrd;
-    }
-
-    function us_dollar(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::US_DOLLAR_ID, word_names::US_DOLLAR);
         return $wrd;
     }
 
@@ -1185,29 +1125,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::DOLLAR_ID, word_names::DOLLAR);
-        return $wrd;
-    }
-
-    /**
-     * @return word the spelling variant "U.S. dollar" used as an alias of "US dollar"
-     */
-    function word_u_s_dollar(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::U_S_DOLLAR_ID, word_names::U_S_DOLLAR);
-        return $wrd;
-    }
-
-    /**
-     * @return word_ui "US dollar" with the related alias, symbol and category phrases as loaded
-     *                 with the word from the backend e.g. to test the alias and symbol lines
-     *                 shown on the default word page
-     */
-    function us_dollar_related_ui(): word_ui
-    {
-        $t_phr = new test_phrases($this->env);
-        $wrd = new word_ui($this->us_dollar()->api_json());
-        $wrd->phr_lst = $t_phr->list_us_dollar_related_ui();
         return $wrd;
     }
 
@@ -1352,7 +1269,6 @@ class test_words extends test_objects
         $lst->add($this->word_cf());
         $lst->add($this->word_diameter());
         $lst->add($this->word_e_symbol());
-        $lst->add($this->word_e());
         $lst->add($this->word_year());
         $lst->add($this->word_2019());
         $lst->add($this->word_2020());

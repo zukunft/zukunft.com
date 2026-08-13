@@ -66,6 +66,9 @@ class files
     // the system configuration values that an admin can change without a code update
     const string CONFIG_YAML = self::RESOURCE_PATH . 'config' . self::YAML;
 
+    // the predicates as a zukunft.com user import json; the home of every verb name and code id
+    const string VERBS = self::RESOURCE_PATH . 'verbs' . self::JSON;
+
     // the system views as a zukunft.com user import json
     const string SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;
     const string SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;

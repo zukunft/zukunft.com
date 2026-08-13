@@ -211,3 +211,5 @@ component_type_id, type_name, description, code_id
 210, 'change log table pure', 'a borderless change log table with the three columns when, who and what limited to a config char count', 'invisible_change_log_table'
 211, 'system form field latex', 'the form field for the formula in the latex format', 'system_form_field_formula_latex'
 212, 'values in columns', 'show the values related to a phrase in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values', 'values_in_columns'
+213, 'phrase title', 'show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links), plus the edit link', 'phrase_title'
+214, 'table with related columns', 'show the values related to a phrase as a table with one column per phrase used most often within the values and one row per remaining phrase combination', 'table_with_related_columns'

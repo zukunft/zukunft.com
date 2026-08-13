@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -172,7 +173,7 @@ class view_tests
         $test_name = 'two terms without a db id are assigned to a view';
         $msk = $t_msk->view();
         $msk->add_term($t_trm->by_name(word_names::PI), $msg);
-        $added = $msk->add_term($t_trm->by_name(word_names::E), $msg);
+        $added = $msk->add_term($t_trm->by_name(triple_names::EULER_NUMBER), $msg);
         $t->assert_true($test_name, $added);
 
         $test_name = 'the same term without a db id is reported as double';

@@ -76,7 +76,7 @@
     },
     {
       "name": "education",
-      "description": "Climate and general education including girls' education; long-term enabler of low-carbon choices and policy support. Translation of the German keyword 'Bildung'."
+      "description": "process of teaching and learning"
     },
     {
       "name": "efficiency"
@@ -125,7 +125,8 @@
       "name": "geothermal"
     },
     {
-      "name": "global"
+      "name": "global",
+      "description": "relating to the whole world"
     },
     {
       "name": "green"
@@ -173,9 +174,6 @@
       "description": "Upper bound of the estimate range, about one standard deviation above the central value."
     },
     {
-      "name": "measured"
-    },
-    {
       "name": "meat"
     },
     {
@@ -201,10 +199,12 @@
       "name": "potential"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
-      "name": "probability"
+      "name": "probability",
+      "description": "Probability is the branch of mathematics concerning numerical descriptions of how likely an event is to occur."
     },
     {
       "name": "public"
@@ -223,7 +223,8 @@
       "name": "reduced"
     },
     {
-      "name": "reduction"
+      "name": "reduction",
+      "description": "the gain of electrons by a species during a reaction"
     },
     {
       "name": "removal"
@@ -233,7 +234,7 @@
     },
     {
       "name": "research",
-      "description": "Basic research on energy, materials and carbon removal. Delayed, hard-to-attribute but historically decisive (e.g. photovoltaics cost decline). Translation of the German keyword 'Forschung'."
+      "description": "systematic investigation to discover new knowledge"
     },
     {
       "name": "return"
@@ -251,7 +252,8 @@
       "name": "solar"
     },
     {
-      "name": "solution"
+      "name": "solution",
+      "description": "a homogeneous mixture of a solute dissolved in a solvent"
     },
     {
       "name": "speed"
@@ -395,13 +397,6 @@
       "verb": "kind of",
       "to": "global",
       "description": "Global net anthropogenic greenhouse gas emissions in Gt CO2eq per year."
-    },
-    {
-      "name": "measured value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "measured",
-      "description": "Value taken from a verifiable published source."
     },
     {
       "name": "assumed value",
@@ -1096,8 +1091,7 @@
     {
       "words": [
         "global greenhouse gas emissions",
-        "2019",
-        "measured value"
+        "2019"
       ],
       "number": 59.0,
       "source": "IPCC AR6 WG3 SPM"
@@ -1106,8 +1100,7 @@
       "words": [
         "global greenhouse gas emissions",
         "2019",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": 52.4,
       "source": "IPCC AR6 WG3 SPM"
@@ -1116,8 +1109,7 @@
       "words": [
         "global greenhouse gas emissions",
         "2019",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 65.6,
       "source": "IPCC AR6 WG3 SPM"
@@ -1249,8 +1241,7 @@
       "words": [
         "methane reduction",
         "reduction potential",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 5.0,
       "source": "UNEP CCAC Global Methane Assessment 2021"
@@ -1811,8 +1802,7 @@
       "words": [
         "solar energy",
         "reduction potential",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": 2.0,
       "source": "IPCC AR6 WG3 SPM"
@@ -1821,8 +1811,7 @@
       "words": [
         "solar energy",
         "reduction potential",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 7.0,
       "source": "IPCC AR6 WG3 SPM"
@@ -1927,8 +1916,7 @@
       "words": [
         "wind energy",
         "reduction potential",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": 2.1,
       "source": "IPCC AR6 WG3 SPM"
@@ -1937,8 +1925,7 @@
       "words": [
         "wind energy",
         "reduction potential",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 5.6,
       "source": "IPCC AR6 WG3 SPM"
@@ -5936,8 +5923,7 @@
     {
       "words": [
         "fossil subsidy removal",
-        "reduction potential",
-        "measured value"
+        "reduction potential"
       ],
       "number": 2.3,
       "source": "IMF fossil fuel subsidies 2025"

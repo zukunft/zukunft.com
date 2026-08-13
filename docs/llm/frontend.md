@@ -239,6 +239,40 @@ The matching dropdowns/selectors (share `s`, protection `sp`, phrase type `py`,
 view `d`) already emit the url var as `name` directly — follow that when adding a
 new form element.
 
+## Behaviour shared by word and triple belongs on the phrase
+
+`web/word/word.php` and `web/word/triple.php` are siblings — both extend
+`sandbox_code_id` — so a method written on one is simply missing on the other.
+That is fine for what is genuinely word-specific (a plural, a type selector), but
+relations are not: "the parents of", "the children of", "the other phrases that
+share an `is a` parent with this one" describe a **phrase**, and a triple is as
+much a phrase as a word is.
+
+So the logic lives once on `web/phrase/phrase.php`, and `word` and `triple` each
+keep a thin delegate:
+
+```php
+// web/word/triple.php — same three lines in web/word/word.php
+function similar(user_message $msg, ?phrase_list $phr_lst = null): phrase_list
+{
+    return $this->phrase()->similar($msg, $phr_lst);
+}
+```
+
+The delegates matter: they keep every existing `$wrd->similar(…)` call site
+working and let a caller stay typed on the concrete class. Do **not** push the
+method up into `sandbox_code_id` instead — views, formulas, components and
+sources extend it too and have no `phrase()`. Do **not** reach for a trait
+either; the project uses none, and one file of shared methods would drift out of
+the class it belongs to.
+
+The practical trigger is a fixture that cannot change class: if a page-object
+factory is stuck returning a `word` because "the frontend triple has no
+`similar()`", the missing method is the bug, not the fixture. Renderers are
+already prepared for this — `ui_list::parents_of_word()` and friends take
+`word|db_object`, and `system_form::title_phrase()` dispatches on the class — so
+the only thing to add is the delegate.
+
 ## Always sort lists before rendering them
 
 Every list shown on a frontend page must be sorted by a **deterministic key**

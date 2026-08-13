@@ -96,7 +96,7 @@
     },
     {
       "name": "price",
-      "description": "quantity of payment or compensation given by one party to another in return for goods or services; the proposed value for such a quantity as proposed by the seller",
+      "description": "amount of money required to buy something",
       "refs": [
         {
           "name": "Price",
@@ -418,7 +418,7 @@
     },
     {
       "name": "tax",
-      "description": "mandatory financial charge or other type of levy imposed on a taxpayer (an individual or legal entity) by a governmental organization to collectively fund government spending, public expenditures, or to regulate and reduce negative externalities",
+      "description": "compulsory financial charge to public authority",
       "refs": [
         {
           "name": "Tax",
@@ -530,7 +530,7 @@
     },
     {
       "name": "population",
-      "description": "the number of people living in a given country or region",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Human population",
@@ -565,7 +565,14 @@
       "description": "a book used as a standard work for the study of a subject"
     },
     {
-      "name": "social"
+      "name": "social",
+      "description": "relating to interaction with other people, as opposed to interaction with machines or non-human sources",
+      "refs": [
+        {
+          "name": "Social",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "behavioral"
@@ -649,7 +656,8 @@
       "name": "variable"
     },
     {
-      "name": "total"
+      "name": "total",
+      "description": "the whole amount or count, e.g. the total number of possible outcomes"
     },
     {
       "name": "average"
@@ -766,7 +774,8 @@
       "name": "purchasing"
     },
     {
-      "name": "power"
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "parity"
@@ -781,7 +790,18 @@
       "name": "current"
     },
     {
-      "name": "account"
+      "name": "account",
+      "description": "central data structure in the practice of accounting",
+      "refs": [
+        {
+          "name": "Account (bookkeeping)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q508295",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "propensity"
@@ -808,7 +828,8 @@
       "name": "Gini"
     },
     {
-      "name": "coefficient"
+      "name": "coefficient",
+      "description": "a multiplicative factor or constant"
     },
     {
       "name": "Okun's"
@@ -856,7 +877,8 @@
       "name": "even"
     },
     {
-      "name": "point"
+      "name": "point",
+      "description": "a single unit on a scale"
     }
   ],
   "triples": [

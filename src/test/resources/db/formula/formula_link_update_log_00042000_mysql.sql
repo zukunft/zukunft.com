@@ -34,7 +34,7 @@ SELECT formula_link_update_log_00042000 (
                2,
                702,
                'minute',
-               103,
+               100,
                null,
                0,
                1,

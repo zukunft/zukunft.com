@@ -144,6 +144,24 @@ class files
     const string CONFORMITY_MRI_BERNS_FILE = self::DATA_START_PAGE_PATH . 'conformity_mri_berns' . self::JSON;
     const string CO2_EQ_REDUCTION_RANKING_FILE = self::DATA_START_PAGE_PATH . 'co2_eq_reduction_ranking' . self::JSON;
 
+    // one file per problem of the start page ranking with the most relevant number of the problem
+    // and the potential solutions, each value with the source it is taken from;
+    // imported after solution_prio, because that file is the home of the problem and solution
+    // keywords which these files only re-declare (see docs/llm/json_structure.md)
+    const string PROBLEM_GLOBAL_WARMING_FILE = self::DATA_START_PAGE_PATH . 'problem_global_warming' . self::JSON;
+    const string PROBLEM_POPULISM_FILE = self::DATA_START_PAGE_PATH . 'problem_populism' . self::JSON;
+    const string PROBLEM_POVERTY_FILE = self::DATA_START_PAGE_PATH . 'problem_poverty' . self::JSON;
+    const string PROBLEM_HEALTH_FILE = self::DATA_START_PAGE_PATH . 'problem_health' . self::JSON;
+    const string PROBLEM_EDUCATION_FILE = self::DATA_START_PAGE_PATH . 'problem_education' . self::JSON;
+    const string PROBLEM_WEALTH_CONCENTRATION_FILE = self::DATA_START_PAGE_PATH . 'problem_wealth_concentration' . self::JSON;
+    const string PROBLEM_DISINFORMATION_FILE = self::DATA_START_PAGE_PATH . 'problem_disinformation' . self::JSON;
+    const string PROBLEM_MARKET_POWER_FILE = self::DATA_START_PAGE_PATH . 'problem_market_power' . self::JSON;
+    const string PROBLEM_BIASED_INFORMATION_FILE = self::DATA_START_PAGE_PATH . 'problem_biased_information' . self::JSON;
+    const string PROBLEM_BLACK_BOX_AI_FILE = self::DATA_START_PAGE_PATH . 'problem_black_box_ai' . self::JSON;
+    const string PROBLEM_CITIZEN_PARTICIPATION_FILE = self::DATA_START_PAGE_PATH . 'problem_citizen_participation' . self::JSON;
+    const string PROBLEM_GDP_MISMEASUREMENT_FILE = self::DATA_START_PAGE_PATH . 'problem_gdp_mismeasurement' . self::JSON;
+    const string PROBLEM_PROPRIETARY_SOFTWARE_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software' . self::JSON;
+
     // initial data just to add some sample data and for system testing
     const string ZURICH_HTP_IMPACT_FILE = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'zurich_htp_impact' . self::JSON;
 
@@ -248,6 +266,20 @@ class files
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
         self::CO2_EQ_REDUCTION_RANKING_FILE,
+        // the problems of the start page ranking in the order of the ranking
+        self::PROBLEM_GLOBAL_WARMING_FILE,
+        self::PROBLEM_POPULISM_FILE,
+        self::PROBLEM_POVERTY_FILE,
+        self::PROBLEM_HEALTH_FILE,
+        self::PROBLEM_EDUCATION_FILE,
+        self::PROBLEM_WEALTH_CONCENTRATION_FILE,
+        self::PROBLEM_DISINFORMATION_FILE,
+        self::PROBLEM_MARKET_POWER_FILE,
+        self::PROBLEM_BIASED_INFORMATION_FILE,
+        self::PROBLEM_BLACK_BOX_AI_FILE,
+        self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
+        self::PROBLEM_GDP_MISMEASUREMENT_FILE,
+        self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

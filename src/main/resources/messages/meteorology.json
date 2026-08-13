@@ -797,7 +797,8 @@
       "name": "greenhouse"
     },
     {
-      "name": "effect"
+      "name": "effect",
+      "description": "change attributable to a manipulation"
     },
     {
       "name": "outgoing"
@@ -881,7 +882,8 @@
       "name": "ratio"
     },
     {
-      "name": "point"
+      "name": "point",
+      "description": "a single unit on a scale"
     },
     {
       "name": "vapor"

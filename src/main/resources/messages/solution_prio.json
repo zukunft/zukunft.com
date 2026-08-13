@@ -5,6 +5,7 @@
   "selection": [
     "solution priorities"
   ],
+  "description": "the main data used for start page with the global problems and most effizient solutions. Contains also the words and triples with description and reference used for unit testing to fix the id that are not part of the other files loaded before the config.yaml.",
   "words": [
     {
       "name": "problem",
@@ -18,6 +19,7 @@
     },
     {
       "name": "global",
+      "description": "relating to the whole world",
       "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
@@ -28,9 +30,10 @@
     },
     {
       "name": "solution",
+      "description": "a homogeneous mixture of a solute dissolved in a solvent",
       "refs": [
         {
-          "name": "Problem solving",
+          "name": "Problem_solving",
           "type": "wikipedia"
         },
         {
@@ -41,6 +44,7 @@
     },
     {
       "name": "priority",
+      "description": "the rank that decides which problem is worked on first",
       "refs": [
         {
           "name": "Prioritization",
@@ -53,7 +57,53 @@
       ]
     },
     {
+      "name": "ranking"
+    },
+    {
+      "name": "probability",
+      "description": "Probability is the branch of mathematics concerning numerical descriptions of how likely an event is to occur.",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "expected",
+      "description": "the value weighted by its probability, as opposed to the value of a single outcome"
+    },
+    {
+      "name": "return",
+      "description": "the money made or lost on an investment over a period, as a change in value or a percentage of the amount invested",
+      "refs": [
+        {
+          "name": "Rate_of_return",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "score",
+      "description": "a standardized value derived from data, e.g. a z score"
+    },
+    {
+      "name": "standard",
+      "description": "describes the conventional reference form, e.g. standard deviation"
+    },
+    {
+      "name": "deviation",
+      "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
+      "refs": [
+        {
+          "name": "Deviation_(statistics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "potential",
+      "description": "the size an effect can reach if nothing counteracts it",
       "refs": [
         {
           "name": "Potential",
@@ -67,6 +117,7 @@
     },
     {
       "name": "gain",
+      "description": "the ratio of output to input of a system or amplifier",
       "refs": [
         {
           "name": "Utility",
@@ -79,7 +130,12 @@
       ]
     },
     {
+      "name": "effort",
+      "description": "the work needed to implement a solution, the counterpart of the gain"
+    },
+    {
       "name": "loss",
+      "description": "the part of a value that is destroyed or never created",
       "refs": [
         {
           "name": "Loss",
@@ -92,6 +148,7 @@
     },
     {
       "name": "climate",
+      "description": "long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more",
       "refs": [
         {
           "name": "Climate",
@@ -105,9 +162,10 @@
     },
     {
       "name": "warm",
+      "description": "having or giving off heat",
       "refs": [
         {
-          "name": "heating",
+          "name": "Heating",
           "type": "wikipedia"
         },
         {
@@ -117,19 +175,23 @@
       ]
     },
     {
-      "name": "warming"
+      "name": "warming",
+      "description": "the process of getting warmer"
     },
     {
-      "name": "warmer"
+      "name": "warmer",
+      "description": "having a higher temperature than before"
     },
     {
-      "name": "reduce"
+      "name": "reduce",
+      "description": "to make something smaller in size or amount"
     },
     {
       "name": "gas",
+      "description": "a state of matter that has neither a fixed shape nor a fixed volume",
       "refs": [
         {
-          "name": "gas",
+          "name": "Gas",
           "type": "wikipedia"
         },
         {
@@ -139,20 +201,8 @@
       ]
     },
     {
-      "name": "global",
-      "refs": [
-        {
-          "name": "Globalization",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7181",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "emissions"
+      "name": "emissions",
+      "description": "the substances released into the air by a process"
     },
     {
       "name": "populism",
@@ -170,6 +220,7 @@
     },
     {
       "name": "right",
+      "description": "on the right side or, in answers, matching the correct option",
       "refs": [
         {
           "name": "Right_(direction)",
@@ -179,6 +230,7 @@
     },
     {
       "name": "left",
+      "description": "on the left side of the brain",
       "refs": [
         {
           "name": "Left_(direction)",
@@ -187,67 +239,166 @@
       ]
     },
     {
-      "name": "wing"
+      "name": "wing",
+      "description": "a side of the political spectrum, left or right"
     },
     {
-      "name": "simple"
+      "name": "simple",
+      "description": "built from few parts and therefore easy to understand"
     },
     {
-      "name": "ordinary"
+      "name": "ordinary",
+      "description": "the plain form of a method, without weighting or another refinement"
     },
     {
-      "name": "least"
+      "name": "least",
+      "description": "the smallest of the compared values"
     },
     {
       "name": "square"
     },
     {
-      "name": "OLS"
+      "name": "OLS",
+      "description": "the symbol used in formulas for ordinary least squares"
     },
     {
-      "name": "aftermath"
+      "name": "aftermath",
+      "description": "the period following an event, in which its consequences are measured"
     },
     {
-      "name": "5-year"
+      "name": "5-year",
+      "description": "covering the five years after the event"
     },
     {
-      "name": "15-year"
+      "name": "15-year",
+      "description": "covering the fifteen years after the event"
     },
     {
-      "name": "avoid"
+      "name": "avoid",
+      "description": "to keep something from happening"
     },
     {
-      "name": "wrong"
+      "name": "wrong",
+      "description": "not matching the facts or not reaching the intended goal"
     },
     {
-      "name": "decisions"
+      "name": "decisions",
+      "description": "Decision-making is the process of making choices by identifying a decision, gathering information, and assessing alternative resolutions.",
+      "refs": [
+        {
+          "name": "Decision-making",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "artificial"
+      "name": "artificial",
+      "description": "made by humans rather than occurring in nature"
     },
     {
-      "name": "intelligence"
+      "name": "intelligence",
+      "description": "Intelligence is the ability to perceive or infer information and to retain it as knowledge to be applied to adaptive behaviours within an environment or context.",
+      "refs": [
+        {
+          "name": "Intelligence",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "health"
+      "name": "health",
+      "description": "a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.",
+      "refs": [
+        {
+          "name": "Health",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "research"
+      "name": "research",
+      "description": "systematic investigation to discover new knowledge",
+      "refs": [
+        {
+          "name": "Research",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "poverty"
+      "name": "poverty",
+      "description": "the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.",
+      "refs": [
+        {
+          "name": "Poverty",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "taxes"
+      "name": "taxes",
+      "description": "A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.",
+      "refs": [
+        {
+          "name": "Tax",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "education"
+      "name": "education",
+      "description": "process of teaching and learning",
+      "refs": [
+        {
+          "name": "Education",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "spending"
+      "name": "spending",
+      "description": "an outlay of money for goods or services"
+    },
+    {
+      "name": "zukunft.com",
+      "description": "the name of this system, used to mark its internal keywords"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "column",
+      "description": "a vertical structural element that carries compressive loads"
+    },
+    {
+      "name": "prime",
+      "description": "of the first rank, shown before everything else"
+    },
+    {
+      "name": "third",
+      "description": "the third in an order"
+    },
+    {
+      "name": "mayor"
+    },
+    {
+      "name": "main",
+      "description": "primary, isolated from interactions"
+    },
+    {
+      "name": "minor"
+    },
+    {
+      "name": "before",
+      "description": "placed ahead of another element in an order"
+    },
+    {
+      "name": "after",
+      "description": "placed behind another element in an order"
     },
     {
       "name": "pension",
+      "description": "a regular payment made to a person after retirement",
       "refs": [
         {
           "name": "Pension",
@@ -260,19 +411,23 @@
       ]
     },
     {
-      "name": "happy"
+      "name": "happy",
+      "description": "feeling or showing pleasure or contentment"
     },
     {
-      "name": "unhappy"
+      "name": "unhappy",
+      "description": "feeling worse than the personal normal state"
     },
     {
       "name": "time"
     },
     {
-      "name": "points"
+      "name": "points",
+      "description": "a counted unit on a rating scale"
     },
     {
       "name": "DALY",
+      "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",
       "refs": [
         {
           "name": "Disability-adjusted life year",
@@ -299,6 +454,7 @@
     },
     {
       "name": "population",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Population",
@@ -311,7 +467,8 @@
       ]
     },
     {
-      "name": "htp"
+      "name": "htp",
+      "description": "the symbol used in formulas for happy time points"
     },
     {
       "name": "one"
@@ -323,16 +480,19 @@
       "name": "billion"
     },
     {
-      "name": "trillion"
+      "name": "trillion",
+      "description": "the scaling factor of 10^12"
     },
     {
-      "name": "mio"
+      "name": "mio",
+      "description": "the symbol used in formulas for million"
     },
     {
       "name": "m"
     },
     {
-      "name": "b"
+      "name": "b",
+      "description": "the symbol used in formulas for billion"
     },
     {
       "name": "EUR",
@@ -340,19 +500,245 @@
       "description": "ISO 4217 alphabetic code for the euro."
     },
     {
-      "name": "world"
+      "name": "world",
+      "description": "all countries of the earth taken together"
     },
     {
-      "name": "annual"
+      "name": "annual",
+      "description": "measured over one year"
     },
     {
-      "name": "GDP"
+      "name": "GDP",
+      "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "decline"
+      "name": "decline",
+      "description": "downward change of a quantity over a period"
     },
     {
-      "name": "2024"
+      "name": "2024",
+      "description": "the year 2024"
+    },
+    {
+      "name": "disinformation",
+      "description": "false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.",
+      "refs": [
+        {
+          "name": "Disinformation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wealth",
+      "description": "the total value of the assets owned by a person, community or country, minus liabilities.",
+      "refs": [
+        {
+          "name": "Wealth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "concentration",
+      "description": "the amount of a substance in a defined volume or mass"
+    },
+    {
+      "name": "market",
+      "description": "mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284)",
+      "refs": [
+        {
+          "name": "Market_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.",
+      "refs": [
+        {
+          "name": "Power_(social_and_political)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "biased",
+      "description": "systematically leaning to one side instead of showing the full picture"
+    },
+    {
+      "name": "information",
+      "description": "message provided to the participant about the correct response",
+      "refs": [
+        {
+          "name": "Information",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "description": "the symbol used in formulas for artificial intelligence"
+    },
+    {
+      "name": "black-box",
+      "description": "usable from the outside while the inner working stays hidden"
+    },
+    {
+      "name": "citizen",
+      "description": "Citizenship is a membership and allegiance to a sovereign state.",
+      "refs": [
+        {
+          "name": "Citizenship",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "participation",
+      "description": "taking part in a decision that affects oneself"
+    },
+    {
+      "name": "mismeasurement",
+      "description": "measuring something other than what is meant to be measured"
+    },
+    {
+      "name": "proprietary",
+      "description": "owned by one party, who decides who may use and change it"
+    },
+    {
+      "name": "software",
+      "description": "Software consists of computer programs that instruct the execution of a computer.",
+      "refs": [
+        {
+          "name": "Software",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7397",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reduction",
+      "description": "the gain of electrons by a species during a reaction"
+    },
+    {
+      "name": "avoidance",
+      "description": "the act of keeping something from happening"
+    },
+    {
+      "name": "platform",
+      "description": "a service that hosts and distributes the content of other people"
+    },
+    {
+      "name": "regulation",
+      "description": "Regulation is the management of complex systems according to a set of rules and trends.",
+      "refs": [
+        {
+          "name": "Regulation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Delphi",
+      "description": "the ancient oracle after which the Delphi method is named"
+    },
+    {
+      "name": "method",
+      "description": "a defined procedure for reaching a result"
+    },
+    {
+      "name": "basic",
+      "description": "covering the minimum that is needed"
+    },
+    {
+      "name": "income",
+      "description": "Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.",
+      "refs": [
+        {
+          "name": "Income",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "public",
+      "description": "provided by or open to the general population"
+    },
+    {
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
+    },
+    {
+      "name": "tax",
+      "description": "compulsory financial charge to public authority",
+      "refs": [
+        {
+          "name": "Tax",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "free",
+      "description": "usable, studyable, shareable and improvable by everyone"
+    },
+    {
+      "name": "fluid",
+      "description": "changing continuously instead of only at fixed points in time"
+    },
+    {
+      "name": "democracy",
+      "description": "system of government by the whole population",
+      "refs": [
+        {
+          "name": "Democracy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gross",
+      "description": "counted before any deduction"
+    },
+    {
+      "name": "domestic",
+      "description": "within the borders of one country"
+    },
+    {
+      "name": "usage",
+      "description": "how frequently a word, term, or service is used"
+    },
+    {
+      "name": "assumed value"
+    },
+    {
+      "name": "cost",
+      "description": "value of money that has been used up to produce something",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "source",
+      "description": "The origin or starting point of something. In a currency conversion, the source side refers to the currency being converted from."
+    },
+    {
+      "name": "confidence",
+      "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
     }
   ],
   "triples": [
@@ -401,28 +787,33 @@
     },
     {
       "name": "global warming potential",
+      "description": "see Wikipedia: Global warming potential",
       "from": "warming",
       "verb": "can use",
-      "to": "potential"
+      "to": "potential",
+      "refs": [
+        {
+          "name": "Global_warming_potential",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "climate gas",
+      "description": "A gas that contributes to the greenhouse effect and thus to climate change.",
       "from": "gas",
       "verb": "can cause",
       "to": "warming",
       "refs": [
         {
-          "name": "Climate_change",
+          "name": "Greenhouse_gas",
           "type": "wikipedia"
-        },
-        {
-          "name": "Q7942",
-          "type": "wikidata"
         }
       ]
     },
     {
       "name": "world population",
+      "description": "the number of humans living on earth",
       "from": "population",
       "verb": "of",
       "to": "human",
@@ -483,12 +874,14 @@
     },
     {
       "name": "health can be a global problem",
+      "description": "poor health of many people is one of the problems ranked on the start page",
       "from": "health",
       "verb": "can be",
       "to": "global problem"
     },
     {
       "name": "GDP decline",
+      "description": "a fall of the gross domestic product compared to the period before",
       "from": "GDP",
       "verb": "can",
       "to": "decline"
@@ -505,15 +898,29 @@
     },
     {
       "name": "least squares",
+      "description": "Least squares is a parameter estimation method that minimises the sum of the squares of the residuals between the observed and the predicted values.",
       "from": "square",
       "verb": "can be",
-      "to": "least"
+      "to": "least",
+      "refs": [
+        {
+          "name": "Least_squares",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "ordinary least squares",
+      "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
       "from": "least squares",
       "verb": "can be",
-      "to": "ordinary"
+      "to": "ordinary",
+      "refs": [
+        {
+          "name": "Ordinary_least_squares",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "from": "OLS",
@@ -524,6 +931,488 @@
       "from": "populism",
       "verb": "can cause",
       "to": "GDP decline"
+    },
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "potential loss",
+      "description": "the loss that a problem can cause if it is not solved",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "description": "the gain that a solution can reach if it is implemented",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "column (system)",
+      "description": "keyword for columns used by the system components",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_column"
+    },
+    {
+      "name": "mayor column (system)",
+      "description": "keyword for columns that should be shown in a table even if the screen is small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "mayor",
+      "code_id": "system_column_mayor"
+    },
+    {
+      "name": "main column (system)",
+      "description": "keyword for columns that should always be shown if the screen not small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "main",
+      "code_id": "system_column_main"
+    },
+    {
+      "name": "minor column (system)",
+      "description": "keyword for columns that should always be shown if the screen wide",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "minor",
+      "code_id": "system_column_minor"
+    },
+    {
+      "name": "column problem (high prio)",
+      "description": "the table column 'problem' that should be shown also on small screens",
+      "from": "problem",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column solution (high prio)",
+      "description": "the table column 'solution' that should be shown also on small screens",
+      "from": "solution",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column cost",
+      "description": "the table column 'cost' that should be shown also on small screens",
+      "from": "cost",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column gain",
+      "description": "the table column 'gain' that should be shown also on small screens",
+      "from": "gain",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column priority",
+      "description": "the table column 'priority' that should not be shown on small screens",
+      "from": "priority",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column ranking",
+      "description": "the table column 'ranking' that should not be shown on small screens",
+      "from": "ranking",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column probability",
+      "description": "the table column 'probability' that should not be shown on small screens",
+      "from": "probability",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "standard deviation",
+      "from": "deviation",
+      "verb": "can be",
+      "to": "standard",
+      "refs": [
+        {
+          "name": "Standard_deviation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "expected return",
+      "description": "Derived criterion: reduction potential multiplied by fulfillment probability. Unit: Gt CO2eq per year (expected value).",
+      "from": "return",
+      "verb": "can be",
+      "to": "expected",
+      "refs": [
+        {
+          "name": "Expected_return",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "column standard deviation",
+      "description": "the table column 'standard deviation' that should not be shown on small screens",
+      "from": "standard deviation",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column expected return",
+      "description": "the table column 'expected return' that should not be shown on small screens",
+      "from": "expected return",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column effort",
+      "description": "the table column 'effort' with the effort needed to implement the solution, the counterpart of the gain column",
+      "from": "effort",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column percent",
+      "description": "the table column 'percent' with the loss as a share of the world GDP or of the global happy time points, the relative counterpart of the absolute cost column",
+      "from": "percent",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column source",
+      "description": "the table column 'source' with the origin of the number, so that a measured value can be told apart from an assumed one",
+      "from": "source",
+      "verb": "can be",
+      "to": "minor column (system)"
+    },
+    {
+      "name": "column potential loss",
+      "description": "the table column 'potential loss' with the loss of the problem as a share of the world GDP or of the global happy time points",
+      "from": "potential loss",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column potential gain",
+      "description": "the table column 'potential gain' with the gain of the solution as a share of the global happy time points",
+      "from": "potential gain",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column confidence",
+      "description": "the table column 'confidence' that tells how well the number of the row is backed",
+      "from": "confidence",
+      "verb": "can be",
+      "to": "minor column (system)"
+    },
+    {
+      "name": "wealth concentration",
+      "description": "concentration of money and power that destroys democratic participation (concept paper section 5)",
+      "from": "concentration",
+      "verb": "of",
+      "to": "wealth",
+      "refs": [
+        {
+          "name": "Distribution_of_wealth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "market power",
+      "description": "the ability of a market dominant company to prevent competition, dictate prices and shift profits to low tax jurisdictions (concept paper section 7)",
+      "from": "power",
+      "verb": "of",
+      "to": "market",
+      "refs": [
+        {
+          "name": "Market_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "biased information",
+      "description": "incomplete or one sided information used as the basis for political and social decisions (concept paper section 4)",
+      "from": "information",
+      "verb": "can be",
+      "to": "biased"
+    },
+    {
+      "name": "artificial intelligence",
+      "description": "Artificial intelligence is the capability of computational systems to perform tasks typically associated with human intelligence, such as learning, reasoning and decision-making.",
+      "from": "intelligence",
+      "verb": "can be",
+      "to": "artificial",
+      "refs": [
+        {
+          "name": "Artificial_intelligence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11660",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "AI",
+      "verb": "is symbol for",
+      "to": "artificial intelligence"
+    },
+    {
+      "name": "black-box AI",
+      "description": "proprietary AI systems without disclosed training data, open source code or accountability chain, which reproduce a text in its intended reading instead of exposing its weaknesses (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "black-box"
+    },
+    {
+      "name": "citizen participation",
+      "description": "the missing overview of the solidarity effects of an initiative, which reduces a multifaceted issue to a binary yes or no decision (concept paper section 10)",
+      "from": "participation",
+      "verb": "of",
+      "to": "citizen",
+      "refs": [
+        {
+          "name": "Public_participation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "GDP mismeasurement",
+      "description": "gross domestic product measures the market production and not the benefit, so free goods count as zero and unrepaired damage does not reduce it (concept paper section 11)",
+      "from": "mismeasurement",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "proprietary software",
+      "description": "closed source software in the public sector that causes opacity, missing verifiability, vendor dependency and risks to national security (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "proprietary",
+      "refs": [
+        {
+          "name": "Proprietary_software",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "climate gas emissions",
+      "description": "Greenhouse gas emissions are the release of gases into the atmosphere that trap heat and thereby warm the climate.",
+      "from": "emissions",
+      "verb": "of",
+      "to": "climate gas",
+      "refs": [
+        {
+          "name": "Greenhouse_gas_emissions",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reduce climate gas emissions",
+      "description": "a transparent, publicly calculated climate tariff that prices the emissions of imports and exports and thereby stops carbon leakage (concept paper section 3)",
+      "from": "reduction",
+      "verb": "of",
+      "to": "climate gas emissions",
+      "refs": [
+        {
+          "name": "Climate_change_mitigation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wrong decisions",
+      "description": "decisions that do not reach the intended goal, e.g. because the knowledge was incomplete",
+      "from": "decisions",
+      "verb": "can be",
+      "to": "wrong"
+    },
+    {
+      "name": "avoid wrong decisions",
+      "description": "decisions based on precise and neutral knowledge instead of the emotional impulse of the group (concept paper section 4)",
+      "from": "avoidance",
+      "verb": "of",
+      "to": "wrong decisions"
+    },
+    {
+      "name": "platform regulation",
+      "description": "democratically legitimised, transparent and justiciable rules against disinformation on internet platforms (concept paper section 2)",
+      "from": "regulation",
+      "verb": "of",
+      "to": "platform"
+    },
+    {
+      "name": "Delphi method",
+      "description": "structured, iterative and anonymised consultation of experts, in a real time variant used to let transparent consensus building set the direction instead of the emotional impulse (concept paper section 4)",
+      "from": "method",
+      "verb": "of",
+      "to": "Delphi",
+      "refs": [
+        {
+          "name": "Delphi_method",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "basic income",
+      "description": "a proto unconditional basic income implemented as a negative income tax, started so low that almost nobody feels an effect and raised as long as the net effect stays positive (concept paper section 5)",
+      "from": "income",
+      "verb": "can be",
+      "to": "basic",
+      "refs": [
+        {
+          "name": "Basic_income",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "public AI",
+      "description": "AI systems with societal decision relevance organised as a public good with disclosed training data, open source availability and clear liability rules (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "market share",
+      "description": "Market share is the percentage of the total revenue or sales in a market that a company captures.",
+      "from": "share",
+      "verb": "of",
+      "to": "market",
+      "refs": [
+        {
+          "name": "Market_share",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "market share tax",
+      "description": "supplementary taxation of corporate profits linked to the market share in the smallest relevant market segment and levied where the economic use occurs (concept paper section 7)",
+      "from": "tax",
+      "verb": "of",
+      "to": "market share"
+    },
+    {
+      "name": "free software",
+      "description": "free, secure and transparent software in the public sector following the principle public money, public code (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "free",
+      "refs": [
+        {
+          "name": "Free_software",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q341",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fluid democracy",
+      "description": "a structured, argument based and iterative process in which every citizen can propose, debate and decide binding rules (concept paper section 10)",
+      "from": "democracy",
+      "verb": "can be",
+      "to": "fluid"
+    },
+    {
+      "name": "domestic usage",
+      "description": "the actual usage within one country, the base of the gross domestic usage",
+      "from": "usage",
+      "verb": "can be",
+      "to": "domestic"
+    },
+    {
+      "name": "gross domestic usage",
+      "description": "a measure of the actual usage instead of the market turnover, so that free goods and avoided damage are part of the result (concept paper section 11)",
+      "from": "domestic usage",
+      "verb": "can be",
+      "to": "gross"
+    },
+    {
+      "from": "column priority",
+      "verb": "is before",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column problem (high prio)",
+      "verb": "is before",
+      "to": "column cost"
+    },
+    {
+      "from": "column cost",
+      "verb": "is before",
+      "to": "column solution (high prio)"
+    },
+    {
+      "from": "column solution (high prio)",
+      "verb": "is before",
+      "to": "column gain"
+    },
+    {
+      "from": "column gain",
+      "verb": "is before",
+      "to": "column effort"
+    },
+    {
+      "from": "column effort",
+      "verb": "is before",
+      "to": "column percent"
+    },
+    {
+      "from": "column percent",
+      "verb": "is before",
+      "to": "column potential loss"
+    },
+    {
+      "from": "column potential loss",
+      "verb": "is before",
+      "to": "column potential gain"
+    },
+    {
+      "from": "column potential gain",
+      "verb": "is before",
+      "to": "column expected return"
+    },
+    {
+      "from": "column expected return",
+      "verb": "is before",
+      "to": "column probability"
+    },
+    {
+      "from": "column probability",
+      "verb": "is before",
+      "to": "column standard deviation"
+    },
+    {
+      "from": "column standard deviation",
+      "verb": "is before",
+      "to": "column ranking"
+    },
+    {
+      "from": "column ranking",
+      "verb": "is before",
+      "to": "column source"
     }
   ],
   "sources": [
@@ -562,7 +1451,7 @@
         "percent",
         "htp"
       ],
-      "number": "-37"
+      "number": "-0.37"
     },
     {
       "words": [
@@ -572,7 +1461,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-32"
+      "number": "-0.32"
     },
     {
       "words": [
@@ -582,7 +1471,7 @@
         "percent",
         "htp"
       ],
-      "number": "-28"
+      "number": "-0.28"
     },
     {
       "words": [
@@ -592,7 +1481,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-31"
+      "number": "-0.31"
     },
     {
       "words": [
@@ -602,7 +1491,7 @@
         "percent",
         "htp"
       ],
-      "number": "-24"
+      "number": "-0.24"
     },
     {
       "words": [
@@ -612,7 +1501,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-31"
+      "number": "-0.31"
     },
     {
       "words": [
@@ -622,7 +1511,7 @@
         "percent",
         "htp"
       ],
-      "number": "-16"
+      "number": "-0.16"
     },
     {
       "words": [
@@ -632,7 +1521,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-8"
+      "number": "-0.08"
     },
     {
       "words": [
@@ -642,7 +1531,7 @@
         "percent",
         "htp"
       ],
-      "number": "-11"
+      "number": "-0.11"
     },
     {
       "words": [
@@ -652,7 +1541,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-13"
+      "number": "-0.13"
     },
     {
       "words": [
@@ -665,7 +1554,7 @@
         "aftermath",
         "OLS"
       ],
-      "number": "-0.97",
+      "number": "-0.0097",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)"
     },
     {
@@ -679,8 +1568,297 @@
         "aftermath",
         "OLS"
       ],
-      "number": "-1.04",
+      "number": "-0.0104",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "31.5"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "35.2"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "23.8"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "34.1"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "20.4"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "34.1"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "13.6"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "8.8"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "9.4"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "14.3"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "11.2"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "16"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "7.3"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "6.5"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "9"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "4.5"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "7"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "3.2"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "5.5"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "2.5"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "1.8"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "3"
     }
   ],
   "formulas": [

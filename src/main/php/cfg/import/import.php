@@ -505,6 +505,7 @@ class import
         foreach ($json_array as $key => $json_obj) {
             if ($usr_import == null) {
                 if ($key == json_fields::USERS) {
+                    $import_result = new user_message();
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
                         $usr_import = new user;
@@ -514,6 +515,7 @@ class import
                             $this->users_failed++;
                         }
                     }
+                    $msg->merge($import_result);
                 }
             }
         }
@@ -559,6 +561,7 @@ class import
                 log_warning('import of users not yet implemented');
             } elseif ($key == json_fields::LIST_VERBS) {
                 $this->step_start(msg_id::SAVE_LIST, verb::class);
+                $import_result = new user_message();
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
                     $vrb->set_user($msg->usr);
@@ -570,6 +573,7 @@ class import
                     $this->display_progress($this->verbs_done);
                     $pos++;
                 }
+                $msg->merge($import_result);
                 $this->step_end($this->verbs_done);
             } elseif ($key == json_fields::WORDS) {
                 $this->step_start(msg_id::SAVE_SINGLE, word::class);
@@ -849,7 +853,12 @@ class import
                 $msg->merge($this->dto_get_verbs($vrb_lst_array, $dto, $msg, $vrb_per_sec));
                 $this->step_end($dto->verb_list()->count(), $vrb_per_sec);
             }
-            // TODO add json_fields::WORD_LIST
+            if (key_exists(json_fields::WORD_LIST, $json_array)) {
+                $wrd_name_array = $json_array[json_fields::WORD_LIST];
+                $this->step_start(msg_id::COUNT, word::class, count($wrd_name_array), $step_time);
+                $msg->merge($this->dto_get_word_names($wrd_name_array, $dto, $msg, $wrd_per_sec));
+                $this->step_end($dto->word_list()->count(), $wrd_per_sec);
+            }
             if (key_exists(json_fields::TRIPLES, $json_array)) {
                 $trp_array = $json_array[json_fields::TRIPLES];
                 $this->step_start(msg_id::COUNT, triple::class, count($trp_array), $step_time);
@@ -1164,6 +1173,38 @@ class import
         foreach ($json_array as $wrd_json) {
             $wrd = new word($this->usr);
             if ($wrd->import_mapper($wrd_json, $msg, $dto)) {
+                $dto->add_word($wrd);
+                $i++;
+            }
+            $this->display_progress($i, $per_sec, $wrd->dsp_id());
+        }
+        return $msg;
+    }
+
+    /**
+     * add the words that are given by the name only to the data object
+     * unlike the "words" field, where each entry is an object with the name and more parameters,
+     * a "word-list" entry is just the word name, which is the compact format that
+     * convert_wikipedia_table creates e.g. for the countries of the democracy index table
+     *
+     * @param array $json_array the word-list part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param float $per_sec the expected number of words that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_word_names(
+        array        $json_array,
+        data_object  $dto,
+        user_message $msg,
+        float        $per_sec = 0
+    ): user_message
+    {
+        $i = 0;
+        foreach ($json_array as $wrd_name) {
+            // a word of a word-list has only the name, so the same import mapper can be used
+            $wrd = new word($this->usr);
+            if ($wrd->import_mapper([json_fields::NAME => $wrd_name], $msg, $dto)) {
                 $dto->add_word($wrd);
                 $i++;
             }

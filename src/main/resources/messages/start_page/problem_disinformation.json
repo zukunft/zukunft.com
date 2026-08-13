@@ -1,0 +1,81 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "disinformation key figures"
+  ],
+  "description": "The most relevant number of the problem \"disinformation\" of the start page ranking and the potential solution. The concept paper reports no single measured figure for the size of the problem, so the share of the public discourse that democratically legitimised platform rules could reclaim is an assumed value; the measured evidence it rests on is the reversal of the Flynn effect and the declining share of people living in a democracy.",
+  "words": [
+    {
+      "name": "disinformation"
+    },
+    {
+      "name": "platform"
+    },
+    {
+      "name": "regulation"
+    },
+    {
+      "name": "discourse"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "public discourse",
+      "from": "discourse",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "platform regulation",
+      "description": "democratically legitimised, transparent and justiciable rules against disinformation on internet platforms (concept paper section 2)",
+      "from": "regulation",
+      "verb": "of",
+      "to": "platform"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Our World in Data: Democracy",
+      "description": "Herre, B., Rodes-Guirao, L. & Ortiz-Ospina, E.: Democracy. Our World in Data. Tracks the share of people living in a democracy, which the concept paper section 2 names as the measured evidence for the effect of disinformation.",
+      "url": "https://ourworldindata.org/democracy",
+      "type": "api"
+    },
+    {
+      "name": "Berns et al. (2005)",
+      "description": "Berns, G. S., Chappelow, J., Zink, C. F., Pagnoni, G., Martin-Skurski, M. E. & Richards, J. (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biological Psychiatry, 58(4), 245-253.",
+      "url": "https://doi.org/10.1016/j.biopsych.2005.04.012",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "disinformation",
+        "public discourse",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "platform regulation",
+        "disinformation",
+        "assumed value",
+        "percent"
+      ],
+      "number": "-0.1"
+    }
+  ]
+}

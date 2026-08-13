@@ -1,6 +1,6 @@
 {
   "schema_version": "0.0.4",
-  "description": "CO2-eq burden and cost breakdown for recycling aluminium (remelting scrap) using hydropower electricity, compared against primary production and the current market price. Sourced findings tagged 'measured value'; conjectures tagged 'assumed value' with numeric confidence.",
+  "description": "CO2-eq burden and cost breakdown for recycling aluminium (remelting scrap) using hydropower electricity, compared against primary production and the current market price. Sourced findings carry their source; conjectures are tagged 'assumed value' with numeric confidence.",
   "words": [
     {
       "name": "aluminium recycling",
@@ -90,28 +90,28 @@
   "triples": [
     {
       "from": "aluminium recycling",
-      "verb": "is a kind of",
+      "verb": "kind of",
       "to": "secondary aluminium"
     },
     {
-      "from": "specific electricity demand",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "specific electricity demand"
     },
     {
-      "from": "CO2-eq burden",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "CO2-eq burden"
     },
     {
-      "from": "conversion cost",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "conversion cost"
     },
     {
-      "from": "scrap input cost",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "scrap input cost"
     },
     {
       "from": "regional premium",
@@ -127,7 +127,6 @@
       ],
       "value": 0.05,
       "unit": "fraction",
-      "type": "measured value",
       "source": {
         "name": "metalcharts.org aluminium price reference",
         "url": "https://metalcharts.org/aluminum-price",
@@ -157,7 +156,6 @@
       ],
       "value": 14.0,
       "unit": "MWh/t",
-      "type": "measured value",
       "source": {
         "name": "metalcharts.org aluminium price reference",
         "url": "https://metalcharts.org/aluminum-price",
@@ -231,7 +229,6 @@
       ],
       "value": 16.0,
       "unit": "t CO2-eq/t",
-      "type": "measured value",
       "source": {
         "name": "International Aluminium Institute global average (widely cited industry figure)",
         "accessed": "2026-06-28"
@@ -247,7 +244,6 @@
       ],
       "value": 3164.5,
       "unit": "USD/t",
-      "type": "measured value",
       "source": {
         "name": "London Metal Exchange LME Aluminium",
         "url": "https://www.lme.com/metals/non-ferrous/lme-aluminium",
@@ -265,7 +261,6 @@
       ],
       "value": 3510.0,
       "unit": "USD/t",
-      "type": "measured value",
       "source": {
         "name": "London Metal Exchange LME Aluminium Alloy",
         "url": "https://www.lme.com/metals/non-ferrous/lme-aluminium-alloy",
@@ -282,7 +277,6 @@
       ],
       "value": 180.0,
       "unit": "USD/t",
-      "type": "measured value",
       "source": {
         "name": "Worthwill LME aluminium price analysis",
         "url": "https://www.worthwillaluminium.com/aluminum-price/lme/",

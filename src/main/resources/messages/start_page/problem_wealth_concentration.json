@@ -1,0 +1,131 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "wealth concentration key figures"
+  ],
+  "description": "The most relevant number of the problem \"wealth concentration\" of the start page ranking and the potential solutions: the progressive surcharge on the wealth tax is capped at the rate that halves the largest wealth over 30 years, which follows from (1 - r)^30 = 0.5 and yields about 2.28 percent. The second solution is a proto basic income implemented as a negative income tax, whose labour supply effect was measured in the experiments of the 1970s.",
+  "words": [
+    {
+      "name": "wealth"
+    },
+    {
+      "name": "concentration",
+      "description": "the amount of a substance in a defined volume or mass"
+    },
+    {
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "surcharge"
+    },
+    {
+      "name": "maximum"
+    },
+    {
+      "name": "basic"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "supply"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "wealth concentration",
+      "description": "concentration of money and power that destroys democratic participation (concept paper section 5)",
+      "from": "concentration",
+      "verb": "of",
+      "to": "wealth"
+    },
+    {
+      "name": "wealth tax",
+      "from": "tax",
+      "verb": "of",
+      "to": "wealth"
+    },
+    {
+      "name": "wealth tax rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "wealth tax"
+    },
+    {
+      "name": "maximum wealth tax rate",
+      "description": "the cap of the progressive surcharge: the effective rate that would halve the largest wealth bracket over 30 years, so (1 - r)^30 = 0.5",
+      "from": "wealth tax rate",
+      "verb": "can be",
+      "to": "maximum"
+    },
+    {
+      "name": "wealth surcharge",
+      "description": "a progressive surcharge on the wealth tax for the part of the net wealth that exceeds the value of a statistical life (concept paper section 5)",
+      "from": "surcharge",
+      "verb": "of",
+      "to": "wealth tax"
+    },
+    {
+      "name": "basic income",
+      "description": "a proto unconditional basic income implemented as a negative income tax, started so low that almost nobody feels an effect and raised as long as the net effect stays positive (concept paper section 5)",
+      "from": "income",
+      "verb": "can be",
+      "to": "basic"
+    },
+    {
+      "name": "labour supply",
+      "from": "supply",
+      "verb": "of",
+      "to": "labour"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Robins (1985) negative income tax experiments",
+      "description": "Robins, P. K. (1985): A Comparison of the Labor Supply Findings from the Four Negative Income Tax Experiments. Cited by the concept paper section 5 together with Widerquist (2004) for an average labour supply reduction of about 5 percent."
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "maximum wealth tax rate",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.0228"
+    },
+    {
+      "words": [
+        "wealth surcharge",
+        "wealth tax rate",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "basic income",
+        "labour supply",
+        "percent"
+      ],
+      "number": "-0.05",
+      "source": "Robins (1985) negative income tax experiments"
+    }
+  ]
+}

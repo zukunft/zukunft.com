@@ -41,7 +41,7 @@
     },
     {
       "name": "population",
-      "description": "the number of humans or other organisms living in a given region or area.",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Population",

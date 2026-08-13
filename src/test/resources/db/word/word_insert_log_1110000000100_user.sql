@@ -27,10 +27,10 @@ PREPARE word_insert_log_1110000000100_user_call
         ($1,$2,$3,$4,$5,$6,$7);
 
 SELECT word_insert_log_1110000000100_user
-        (4::bigint,
-         1::smallint,
-         88::smallint,
-         'company'::text,
-         190::bigint,
-         91::smallint,
-         1::smallint);
+       (4::bigint,
+        1::smallint,
+        88::smallint,
+        'company'::text,
+        189::bigint,
+        91::smallint,
+        1::smallint);

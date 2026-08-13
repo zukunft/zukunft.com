@@ -105,9 +105,9 @@
       "to": "w_p_publishers_build"
     },
     {
-      "from": "w_plato_goal",
-      "verb": "is limited by",
-      "to": "w_bus_factor"
+      "from": "w_bus_factor",
+      "verb": "limits",
+      "to": "w_plato_goal"
     }
   ]
 }

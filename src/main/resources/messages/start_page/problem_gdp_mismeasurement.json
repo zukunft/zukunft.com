@@ -1,0 +1,139 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "GDP mismeasurement key figures"
+  ],
+  "description": "The most relevant number of the problem \"GDP mismeasurement\" of the start page ranking and the potential solution: accounting for one single free service (Facebook) alone would have raised the measured US growth by 0.05 to 0.11 percentage points per year under GDP-B, because free goods enter the national accounts at a price and therefore a value of zero. The solution is a measure of the actual usage instead of the market turnover.",
+  "words": [
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "mismeasurement"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "domestic"
+    },
+    {
+      "name": "usage",
+      "description": "how frequently a word, term, or service is used"
+    },
+    {
+      "name": "growth"
+    },
+    {
+      "name": "free"
+    },
+    {
+      "name": "good"
+    },
+    {
+      "name": "month"
+    },
+    {
+      "name": "willingness"
+    },
+    {
+      "name": "acceptance"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "GDP mismeasurement",
+      "description": "gross domestic product measures the market production and not the benefit, so free goods count as zero and unrepaired damage does not reduce it (concept paper section 11)",
+      "from": "mismeasurement",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "domestic usage",
+      "from": "usage",
+      "verb": "can be",
+      "to": "domestic"
+    },
+    {
+      "name": "gross domestic usage",
+      "description": "a measure of the actual usage instead of the market turnover, so that free goods and avoided damage are part of the result (concept paper section 11)",
+      "from": "domestic usage",
+      "verb": "can be",
+      "to": "gross"
+    },
+    {
+      "name": "free good",
+      "from": "good",
+      "verb": "can be",
+      "to": "free"
+    },
+    {
+      "name": "GDP growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "willingness to accept",
+      "description": "the compensation a person demands to give up a free good, measured with incentive compatible choice experiments",
+      "from": "willingness",
+      "verb": "of",
+      "to": "acceptance"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Brynjolfsson et al. (2019) GDP-B",
+      "description": "Brynjolfsson, E., Collis, A., Diewert, W. E., Eggers, F. & Fox, K. J. (2019): GDP-B: Accounting for the Value of New and Free Goods in the Digital Economy. NBER Working Paper 25695.",
+      "url": "https://ssrn.com/abstract=3356697",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "GDP growth",
+        "free good",
+        "annual",
+        "percent"
+      ],
+      "number": "0.0005",
+      "source": "Brynjolfsson et al. (2019) GDP-B"
+    },
+    {
+      "words": [
+        "willingness to accept",
+        "free good",
+        "month",
+        "USD"
+      ],
+      "number": "42",
+      "source": "Brynjolfsson et al. (2019) GDP-B"
+    },
+    {
+      "words": [
+        "gross domestic usage",
+        "GDP mismeasurement",
+        "annual",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.0011",
+      "source": "Brynjolfsson et al. (2019) GDP-B"
+    }
+  ]
+}

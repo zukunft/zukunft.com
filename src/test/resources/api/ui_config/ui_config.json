@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-12T14:50:37+00:00",
+    "timestamp": "2026-08-13T10:31:19+00:00",
     "body": {
         "user_profiles": [
             {
@@ -7038,7 +7038,7 @@
             {
                 "name": "is follower of",
                 "code_id": "follow",
-                "description": "is follower of",
+                "description": "the time order of two phrases e.g. 2025 is follower of 2024; for a position order use 'is before' or 'is after'",
                 "plural": "is follower of",
                 "reverse": "is followed by",
                 "rev_plural": "is followed by",
@@ -7430,6 +7430,210 @@
                 "usage": null,
                 "impact": null,
                 "id": 43
+            },
+            {
+                "name": "is before",
+                "code_id": "before",
+                "description": "to order two phrases by position e.g. to define that one column is shown before another column; for a time order use 'is follower of'",
+                "plural": "are before",
+                "reverse": "is after",
+                "rev_plural": "are after",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 44
+            },
+            {
+                "name": "is after",
+                "code_id": "after",
+                "description": "to order two phrases by position e.g. to define that one column is shown after another column; for a time order use 'is follower of'",
+                "plural": "are after",
+                "reverse": "is before",
+                "rev_plural": "are before",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 45
+            },
+            {
+                "name": "supports",
+                "code_id": "supports",
+                "description": "to state that one argument or finding backs a claim e.g. a premise supports a conclusion",
+                "plural": "support",
+                "reverse": "is supported by",
+                "rev_plural": "are supported by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 46
+            },
+            {
+                "name": "explains",
+                "code_id": "explains",
+                "description": "to state that one phrase gives the reason for another e.g. a mechanism explains an observation",
+                "plural": "explain",
+                "reverse": "is explained by",
+                "rev_plural": "are explained by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 47
+            },
+            {
+                "name": "refines",
+                "code_id": "refines",
+                "description": "to state that one phrase makes another more precise without replacing it e.g. a strategy refines a claim",
+                "plural": "refine",
+                "reverse": "is refined by",
+                "rev_plural": "are refined by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 48
+            },
+            {
+                "name": "is evidence for",
+                "code_id": "evidence",
+                "description": "to state that an observation is empirical evidence for a claim e.g. a historical failure is evidence for a premise",
+                "plural": "are evidence for",
+                "reverse": "is evidenced by",
+                "rev_plural": "are evidenced by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 49
+            },
+            {
+                "name": "is analogous to",
+                "code_id": "analogous",
+                "description": "to state that two phrases share the same structure without one causing the other e.g. one dilemma is analogous to another",
+                "plural": "are analogous to",
+                "reverse": "is analogous to",
+                "rev_plural": "are analogous to",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 50
+            },
+            {
+                "name": "limits",
+                "code_id": "limits",
+                "description": "to state that one phrase bounds how far another can go e.g. a risk limits a reduction claim",
+                "plural": "limit",
+                "reverse": "is limited by",
+                "rev_plural": "are limited by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 51
+            },
+            {
+                "name": "enables",
+                "code_id": "enables",
+                "description": "to state that one phrase makes another possible without causing it e.g. a border adjustment enables a climate club",
+                "plural": "enable",
+                "reverse": "is enabled by",
+                "rev_plural": "are enabled by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 52
+            },
+            {
+                "name": "reduces",
+                "code_id": "reduces",
+                "description": "to state that one phrase lowers the size of another e.g. a border adjustment reduces carbon leakage",
+                "plural": "reduce",
+                "reverse": "is reduced by",
+                "rev_plural": "are reduced by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 53
+            },
+            {
+                "name": "adds to",
+                "code_id": "adds_to",
+                "description": "to state that one amount is added to another to form the total e.g. a regional premium adds to the base price",
+                "plural": "add to",
+                "reverse": "is increased by",
+                "rev_plural": "are increased by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 54
+            },
+            {
+                "name": "competes with",
+                "code_id": "competes",
+                "description": "to state that two options exclude or weaken each other e.g. throttling competes with implementing",
+                "plural": "compete with",
+                "reverse": "competes with",
+                "rev_plural": "compete with",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 55
+            },
+            {
+                "name": "aims to trigger",
+                "code_id": "aims_to_trigger",
+                "description": "to state the intended effect of an action e.g. an annoyance test aims to trigger a one-click hide",
+                "plural": "aim to trigger",
+                "reverse": "is aimed to be triggered by",
+                "rev_plural": "are aimed to be triggered by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 56
+            },
+            {
+                "name": "lowers barrier for",
+                "code_id": "lowers_barrier",
+                "description": "to state that one phrase makes another easier to reach e.g. a low implementation cost lowers the barrier for building it",
+                "plural": "lower barrier for",
+                "reverse": "has a barrier lowered by",
+                "rev_plural": "have a barrier lowered by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 57
+            },
+            {
+                "name": "is single attempt in",
+                "code_id": "single_attempt",
+                "description": "to state that one try is one of the attempts an ensemble rate is computed from",
+                "plural": "are single attempts in",
+                "reverse": "has the single attempt",
+                "rev_plural": "have the single attempts",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 58
+            },
+            {
+                "name": "expected from",
+                "code_id": "expected_from",
+                "description": "to name the expected value of an outcome e.g. the harm expected from a runaway",
+                "plural": "expected from",
+                "reverse": "has the expected",
+                "rev_plural": "have the expected",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 59
+            },
+            {
+                "name": "weighted by",
+                "code_id": "weighted",
+                "description": "to state that a quantity is multiplied by a weight e.g. an expected harm weighted by the confidence",
+                "plural": "weighted by",
+                "reverse": "is weight of",
+                "rev_plural": "are weights of",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 60
             }
         ],
         "phrase_types": [
@@ -9193,6 +9397,18 @@
                 "code_id": "values_in_columns",
                 "description": "show the values related to a phrase in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
                 "id": 212
+            },
+            {
+                "name": "phrase title",
+                "code_id": "phrase_title",
+                "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links), plus the edit link",
+                "id": 213
+            },
+            {
+                "name": "table with related columns",
+                "code_id": "table_with_related_columns",
+                "description": "show the values related to a phrase as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+                "id": 214
             }
         ],
         "component_link_types": [
@@ -21401,6 +21617,35 @@
                         "type_id": 212,
                         "code_id": "values_in_columns_phrase",
                         "position": 3,
+                        "position_type": 3
+                    }
+                ]
+            },
+            {
+                "id": 113,
+                "name": "Table",
+                "description": "the values related to a word or triple as a table with one column per phrase used most often within the values",
+                "type_id": 11,
+                "code_id": "table",
+                "components": [
+                    {
+                        "link_id": 1053,
+                        "id": 318,
+                        "name": "phrase title",
+                        "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
+                        "type_id": 213,
+                        "code_id": "phrase_title_phrase",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1054,
+                        "id": 319,
+                        "name": "table with related columns",
+                        "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+                        "type_id": 214,
+                        "code_id": "table_with_related_columns_phrase",
+                        "position": 2,
                         "position_type": 3
                     }
                 ]

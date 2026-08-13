@@ -99,7 +99,25 @@ class triples
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
-    const int SYSTEM_CONFIG_ID = 97;
+    const int SYSTEM_CONFIG_ID = 103;
+    // the column priority of a table, defined in solution_prio.json: a prime column is shown
+    // on every screen, a second column only if the screen is not small and a third column only
+    // if it is wide; a phrase is assigned to a tier with "<phrase> can be <tier>"
+    const string SYSTEM_COLUMN = 'column (system)';
+    const string SYSTEM_COLUMN_CODE_ID = 'system_column';
+    const string SYSTEM_COLUMN_PRIME = 'prime column (system)';
+    const string SYSTEM_COLUMN_PRIME_CODE_ID = 'system_column_prime';
+    const string SYSTEM_COLUMN_SECOND = 'second column (system)';
+    const string SYSTEM_COLUMN_SECOND_CODE_ID = 'system_column_second';
+    const string SYSTEM_COLUMN_THIRD = 'third column (system)';
+    const string SYSTEM_COLUMN_THIRD_CODE_ID = 'system_column_third';
+
+    // the column tiers in the order they are shown, widest priority first
+    const array SYSTEM_COLUMN_TIERS = [
+        self::SYSTEM_COLUMN_PRIME,
+        self::SYSTEM_COLUMN_SECOND,
+        self::SYSTEM_COLUMN_THIRD,
+    ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';

@@ -83,7 +83,7 @@
     {
       "name": "is follower of",
       "code_id": "follow",
-      "description": "is follower of",
+      "description": "the time order of two phrases e.g. 2025 is follower of 2024; for a position order use 'is before' or 'is after'",
       "formula_name": "follower",
       "name_plural_reverse": "is followed by",
       "name_plural": "is follower of",
@@ -344,6 +344,142 @@
       "name_plural_reverse": "uses",
       "name_plural": "are used for",
       "name_reverse": "uses"
+    },
+    {
+      "name": "is before",
+      "code_id": "before",
+      "description": "to order two phrases by position e.g. to define that one column is shown before another column; for a time order use 'is follower of'",
+      "name_plural_reverse": "are after",
+      "name_plural": "are before",
+      "name_reverse": "is after"
+    },
+    {
+      "name": "is after",
+      "code_id": "after",
+      "description": "to order two phrases by position e.g. to define that one column is shown after another column; for a time order use 'is follower of'",
+      "name_plural_reverse": "are before",
+      "name_plural": "are after",
+      "name_reverse": "is before"
+    },
+    {
+      "name": "supports",
+      "code_id": "supports",
+      "description": "to state that one argument or finding backs a claim e.g. a premise supports a conclusion",
+      "name_plural_reverse": "are supported by",
+      "name_plural": "support",
+      "name_reverse": "is supported by"
+    },
+    {
+      "name": "explains",
+      "code_id": "explains",
+      "description": "to state that one phrase gives the reason for another e.g. a mechanism explains an observation",
+      "name_plural_reverse": "are explained by",
+      "name_plural": "explain",
+      "name_reverse": "is explained by"
+    },
+    {
+      "name": "refines",
+      "code_id": "refines",
+      "description": "to state that one phrase makes another more precise without replacing it e.g. a strategy refines a claim",
+      "name_plural_reverse": "are refined by",
+      "name_plural": "refine",
+      "name_reverse": "is refined by"
+    },
+    {
+      "name": "is evidence for",
+      "code_id": "evidence",
+      "description": "to state that an observation is empirical evidence for a claim e.g. a historical failure is evidence for a premise",
+      "name_plural_reverse": "are evidenced by",
+      "name_plural": "are evidence for",
+      "name_reverse": "is evidenced by"
+    },
+    {
+      "name": "is analogous to",
+      "code_id": "analogous",
+      "description": "to state that two phrases share the same structure without one causing the other e.g. one dilemma is analogous to another",
+      "name_plural_reverse": "are analogous to",
+      "name_plural": "are analogous to",
+      "name_reverse": "is analogous to"
+    },
+    {
+      "name": "limits",
+      "code_id": "limits",
+      "description": "to state that one phrase bounds how far another can go e.g. a risk limits a reduction claim",
+      "name_plural_reverse": "are limited by",
+      "name_plural": "limit",
+      "name_reverse": "is limited by"
+    },
+    {
+      "name": "enables",
+      "code_id": "enables",
+      "description": "to state that one phrase makes another possible without causing it e.g. a border adjustment enables a climate club",
+      "name_plural_reverse": "are enabled by",
+      "name_plural": "enable",
+      "name_reverse": "is enabled by"
+    },
+    {
+      "name": "reduces",
+      "code_id": "reduces",
+      "description": "to state that one phrase lowers the size of another e.g. a border adjustment reduces carbon leakage",
+      "name_plural_reverse": "are reduced by",
+      "name_plural": "reduce",
+      "name_reverse": "is reduced by"
+    },
+    {
+      "name": "adds to",
+      "code_id": "adds_to",
+      "description": "to state that one amount is added to another to form the total e.g. a regional premium adds to the base price",
+      "name_plural_reverse": "are increased by",
+      "name_plural": "add to",
+      "name_reverse": "is increased by"
+    },
+    {
+      "name": "competes with",
+      "code_id": "competes",
+      "description": "to state that two options exclude or weaken each other e.g. throttling competes with implementing",
+      "name_plural_reverse": "compete with",
+      "name_plural": "compete with",
+      "name_reverse": "competes with"
+    },
+    {
+      "name": "aims to trigger",
+      "code_id": "aims_to_trigger",
+      "description": "to state the intended effect of an action e.g. an annoyance test aims to trigger a one-click hide",
+      "name_plural_reverse": "are aimed to be triggered by",
+      "name_plural": "aim to trigger",
+      "name_reverse": "is aimed to be triggered by"
+    },
+    {
+      "name": "lowers barrier for",
+      "code_id": "lowers_barrier",
+      "description": "to state that one phrase makes another easier to reach e.g. a low implementation cost lowers the barrier for building it",
+      "name_plural_reverse": "have a barrier lowered by",
+      "name_plural": "lower barrier for",
+      "name_reverse": "has a barrier lowered by"
+    },
+    {
+      "name": "is single attempt in",
+      "code_id": "single_attempt",
+      "description": "to state that one try is one of the attempts an ensemble rate is computed from",
+      "name_plural_reverse": "have the single attempts",
+      "name_plural": "are single attempts in",
+      "name_reverse": "has the single attempt"
+    },
+    {
+      "name": "expected from",
+      "code_id": "expected_from",
+      "description": "to name the expected value of an outcome e.g. the harm expected from a runaway",
+      "name_plural_reverse": "have the expected",
+      "name_plural": "expected from",
+      "name_reverse": "has the expected"
+    },
+    {
+      "name": "weighted by",
+      "code_id": "weighted",
+      "description": "to state that a quantity is multiplied by a weight e.g. an expected harm weighted by the confidence",
+      "name_plural_reverse": "are weights of",
+      "name_plural": "weighted by",
+      "name_reverse": "is weight of"
     }
   ]
 }

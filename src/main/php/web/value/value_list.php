@@ -461,6 +461,137 @@ class value_list extends ListBase
     }
 
     /**
+     * show the values of this list as a table with one column per phrase used most often within the
+     * values (e.g. inhabitants and area for the city of Zurich) and one row per remaining phrase
+     * combination (e.g. per year), so that the values of one row can be compared column by column;
+     * the column phrases are ranked like the value columns (columns_by_phrase), but here the values
+     * are lined up by their remaining phrases instead of listed below each other per column;
+     * the values that share no column phrase are shown in a last column headed by "Values"
+     *
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
+     * @param string $back the last view to suggest the best follow-up view
+     * @return string the html code of the value table or '' if this list is empty
+     */
+    function table_by_related_columns(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        string       $back = '',
+        array        $col_order = []
+    ): string
+    {
+        $result = '';
+        if (!$this->is_empty()) {
+            $html = new html_base();
+            // the row order follows the impact, so it never depends on the api/db row order
+            $this->sort_by_impact();
+            // a column phrase needs to be used by at least two values, else the column has one entry
+            [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
+                $this->lst(), $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
+            // a phrase that the system column tiers define as a column wins over the impact
+            // ranking and is used even if only one value carries it
+            if ($col_order != []) {
+                [$all_by_id, $val_phr_ids] = $this->phrase_ranking(
+                    $this->lst(), $msg, $context_phr_lst, 0);
+                $phr_by_id = $this->columns_by_definition($all_by_id, $phr_by_id, $col_order);
+            }
+
+            // the column phrases and per value the column it belongs to
+            $col_phr = [];
+            $val_col = [];
+            $remaining = $this->lst();
+            foreach ($phr_by_id as $id => $phr) {
+                // no break in the loop, so the free column count is checked per phrase
+                if (count($col_phr) < position_types::MAX_SIDE_COLUMNS) {
+                    [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
+                    if ($members != []) {
+                        $col_phr[$id] = $phr;
+                        foreach ($members as $val) {
+                            $val_col[$val->id()] = $id;
+                        }
+                        $remaining = $rest;
+                    }
+                }
+            }
+            // the values that share no column phrase get a last column of their own, so that
+            // no value of the list is silently dropped from the table
+            $rest_col = $remaining != [];
+
+            // per row the label and per row and column the value html
+            $row_label = [];
+            $cells = [];
+            foreach ($this->lst() as $val) {
+                $col_id = $val_col[$val->id()] ?? '';
+                $ctx = clone $context_phr_lst;
+                if ($col_id !== '') {
+                    $ctx->add_phrase($col_phr[$col_id]);
+                }
+                // the row is named by the phrases that are left after the context and the column
+                // phrase, e.g. the year if the columns are inhabitants and area
+                $row_key = $val->grp->name($ctx);
+                if (!key_exists($row_key, $row_label)) {
+                    $row_label[$row_key] = $val->grp->name_link_list($ctx);
+                    $cells[$row_key] = [];
+                }
+                // two values with the same row and column are shown in the same cell instead of
+                // the second one replacing the first
+                $cells[$row_key][$col_id][] = $val->value_edit($msg, $back);
+            }
+
+            // the header keeps the top left cell empty, because the row phrases differ per row
+            $header = $html->th('');
+            foreach ($col_phr as $phr) {
+                $header .= $html->th($phr->name_link());
+            }
+            if ($rest_col) {
+                $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
+            }
+            $rows = $html->tr($header);
+            foreach ($row_label as $row_key => $label) {
+                $row = $html->td($label);
+                foreach (array_keys($col_phr) as $col_id) {
+                    $row .= $html->td(implode(', ', $cells[$row_key][$col_id] ?? []));
+                }
+                if ($rest_col) {
+                    $row .= $html->td(implode(', ', $cells[$row_key][''] ?? []));
+                }
+                $rows .= $html->tr($row);
+            }
+            $result = $html->tbl($rows);
+        }
+        return $result;
+    }
+
+    /**
+     * put the phrases the system column tiers define first, in the order of the definition, and
+     * append the impact ranked phrases that have no definition; so a table shows the columns a
+     * user has decided on before the ones the data suggests
+     *
+     * @param array $all every groupable phrase keyed by phrase id, whatever its usage count
+     * @param array $ranked the impact ranked phrases keyed by phrase id
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @return array the column phrases keyed by phrase id in the order they should be shown
+     */
+    private function columns_by_definition(array $all, array $ranked, array $col_order): array
+    {
+        $result = [];
+        // the defined columns first, in the order of the definition
+        foreach ($col_order as $name) {
+            foreach ($all as $id => $phr) {
+                if ($phr->name() == $name and !array_key_exists($id, $result)) {
+                    $result[$id] = $phr;
+                }
+            }
+        }
+        // then the phrases the data suggests, still ordered by the aggregated impact
+        foreach ($ranked as $id => $phr) {
+            if (!array_key_exists($id, $result)) {
+                $result[$id] = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * rank the phrases that can group the given values: per phrase the aggregated impact of the values
      * using it, highest first; the shared base of the grouped value list and of the value columns
      *

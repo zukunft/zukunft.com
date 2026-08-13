@@ -41,7 +41,7 @@ PREPARE formula_link_insert_log_01551000_call FROM
 SELECT formula_link_insert_log_01551000
        (1,
         2,
-        103,
+        100,
         3,
         1,
         12,

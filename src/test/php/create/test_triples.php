@@ -490,7 +490,18 @@ class test_triples extends test_objects
         $trp->set(triple_names::TRANSITION_CS_ID, triple_names::TRANSITION_CS);
         $trp->set_from($t_trp->hyperfine_transition_frequency()->phrase());
         $trp->set_verb($t_vrb->verb_of());
-        $trp->set_to($t_wrd->cs_133()->phrase());
+        $trp->set_to($this->cs_133()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Caesium-133" (Caesium kind of 133) used for unit testing
+     */
+    function cs_133(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CS_133_ID, triple_names::CS_133);
+        $trp->description = triple_names::CS_133_COM;
         return $trp;
     }
 
@@ -675,16 +686,27 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "Euler's number" (Euler name of number) used for unit testing
+     *         and to test the handling of >'< in a triple name
+     */
+    function triple_euler_number(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EULER_NUMBER_ID, triple_names::EULER_NUMBER);
+        $trp->description = triple_names::EULER_NUMBER_COM;
+        return $trp;
+    }
+
+    /**
      * @return triple "e (math const)" used for unit testing
      */
     function triple_e(): triple
     {
-        $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::E_ID, triple_names::E);
         $trp->description = triple_names::E_COM;
-        $trp->set_from($t_wrd->word_e()->phrase());
+        $trp->set_from($this->triple_euler_number()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
         $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
@@ -832,6 +854,86 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "US dollar" (dollar kind of US) used for unit testing;
+     *         the currency is a triple since the split of the multi-word words
+     */
+    function us_dollar(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::US_DOLLAR_ID, triple_names::US_DOLLAR_NAME);
+        $trp->description = triple_names::US_DOLLAR_COM;
+        return $trp;
+    }
+
+    /**
+     * @return triple the spelling variant "U.S. dollar" used as an alias of "US dollar"
+     */
+    function u_s_dollar(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::U_S_DOLLAR_ID, triple_names::U_S_DOLLAR_NAME);
+        $trp->description = triple_names::US_DOLLAR_COM;
+        return $trp;
+    }
+
+    /**
+     * @return triple_ui the "Swiss franc" triple for frontend unit testing (e.g. as the
+     *                   symbol target a CHF page-title category subtitle links to);
+     *                   the *_ui suffix marks this as a frontend/UI factory per the
+     *                   naming rule in docs/llm/coding.md
+     */
+    function swiss_franc_ui(): triple_ui
+    {
+        return new triple_ui($this->swiss_franc()->api_json());
+    }
+
+    /**
+     * @return triple_ui "Swiss franc" with the related symbol and category phrases as loaded
+     *                   with the triple from the backend e.g. to test the related phrases
+     *                   shown on the default phrase page
+     */
+    function swiss_franc_related_ui(): triple_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $trp = $this->swiss_franc_ui();
+        $trp->phr_lst = $t_phr->list_swiss_franc_related_ui();
+        return $trp;
+    }
+
+    /**
+     * @return triple_ui the "US dollar" triple for frontend unit testing
+     */
+    function us_dollar_ui(): triple_ui
+    {
+        return new triple_ui($this->us_dollar()->api_json());
+    }
+
+    /**
+     * @return triple_ui "US dollar" with the related alias, symbol and category phrases as loaded
+     *                   with the triple from the backend e.g. to test the alias and symbol lines
+     *                   shown on the default phrase page
+     */
+    function us_dollar_related_ui(): triple_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $trp = $this->us_dollar_ui();
+        $trp->phr_lst = $t_phr->list_us_dollar_related_ui();
+        return $trp;
+    }
+
+    /**
+     * @return triple "Swiss franc" (franc kind of Swiss) used for unit testing;
+     *         the currency is a triple since the split of the multi-word words
+     */
+    function swiss_franc(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SWISS_FRANC_ID, triple_names::SWISS_FRANC);
+        $trp->description = triple_names::SWISS_FRANC_COM;
+        return $trp;
+    }
+
+    /**
      * @return triple "CHF is symbol for Swiss franc" used for unit testing the
      *         page-title category subtitle for SYMBOL-typed related entries
      */
@@ -843,7 +945,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::CHF_SYMBOL_ID, triple_names::CHF_SYMBOL);
         $trp->set_from($t_wrd->word_chf()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
-        $trp->set_to($t_wrd->swiss_franc()->phrase());
+        $trp->set_to($this->swiss_franc()->phrase());
         $trp->set_impact(impacts::SYMBOL_CHF);
         return $trp;
     }
@@ -856,8 +958,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(2398, word_names::SWISS_FRANC . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
-        $trp->set_from($t_wrd->swiss_franc()->phrase());
+        $trp->set(triple_names::SWISS_FRANC_CURRENCY_ID, triple_names::SWISS_FRANC_CURRENCY);
+        $trp->set_from($this->swiss_franc()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
         $trp->set_impact(impacts::CURRENCY_CHF);
@@ -872,7 +974,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(2399, word_names::EURO . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
+        $trp->set(triple_names::EURO_CURRENCY_ID, triple_names::EURO_CURRENCY);
         $trp->set_from($t_wrd->euro()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
@@ -939,7 +1041,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::DOLLAR_ALIAS_ID, triple_names::DOLLAR_ALIAS);
         $trp->set_from($t_wrd->word_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_alias());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::ALIAS_DOLLAR);
         return $trp;
     }
@@ -953,9 +1055,9 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::U_S_DOLLAR_ALIAS_ID, triple_names::U_S_DOLLAR_ALIAS);
-        $trp->set_from($t_wrd->word_u_s_dollar()->phrase());
+        $trp->set_from($this->u_s_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_alias());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::ALIAS_U_S_DOLLAR);
         return $trp;
     }
@@ -971,7 +1073,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::USD_SYMBOL_ID, triple_names::USD_SYMBOL);
         $trp->set_from($t_wrd->word_usd()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::SYMBOL_USD);
         return $trp;
     }
@@ -987,7 +1089,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::IN_USD_ID, triple_names::IN_USD);
         $trp->set_from($t_wrd->word_usd()->phrase());
         $trp->set_verb($t_vrb->verb_in());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::IN_USD);
         return $trp;
     }
@@ -1000,8 +1102,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triple_names::US_DOLLAR_ID, word_names::US_DOLLAR . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
-        $trp->set_from($t_wrd->us_dollar()->phrase());
+        $trp->set(triple_names::US_DOLLAR_CURRENCY_ID, triple_names::US_DOLLAR_CURRENCY);
+        $trp->set_from($this->us_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
         $trp->set_impact(impacts::CURRENCY_USD);

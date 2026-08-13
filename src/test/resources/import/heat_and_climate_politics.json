@@ -115,7 +115,7 @@
       {
         "name": "heatwave experience raises risk perception",
         "words": ["heatwave", "extreme weather experience", "risk perception"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is increased by",
@@ -124,7 +124,7 @@
       {
         "name": "heatwave experience does not raise climate concern on average",
         "words": ["heatwave", "climate concern"],
-        "value_type": "measured value",
+        
         "value": false,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is not changed by",
@@ -134,7 +134,7 @@
       {
         "name": "heatwave experience does not raise pro-environmental behaviour on average",
         "words": ["heatwave", "pro-environmental behaviour"],
-        "value_type": "measured value",
+        
         "value": false,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is not changed by",
@@ -143,7 +143,7 @@
       {
         "name": "compound flood-and-heatwave exposure does raise concern and behaviour",
         "words": ["compound exposure", "climate concern", "pro-environmental behaviour"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is increased by",
@@ -152,7 +152,7 @@
       {
         "name": "heatwave risk-perception effect is driven by recent salient events",
         "words": ["heatwave", "risk perception", "attenuation over time"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is driven by",
@@ -162,7 +162,7 @@
       {
         "name": "only fire exposure shifts climate belief and policy support",
         "words": ["extreme weather experience", "climate policy support"],
-        "value_type": "measured value",
+        
         "value": true,
         "confidence": 0.9,
         "source": "Visconti et al. 2024",
@@ -173,7 +173,7 @@
       {
         "name": "the fire effect vanishes quickly",
         "words": ["climate policy support", "attenuation over time"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Visconti et al. 2024",
         "predicate": "is attenuated by",
@@ -182,7 +182,7 @@
       {
         "name": "flood, hurricane and severe storm exposure have no effect on opinion",
         "words": ["extreme weather experience", "climate policy support"],
-        "value_type": "measured value",
+        
         "value": false,
         "source": "Visconti et al. 2024",
         "predicate": "is not changed by",
@@ -191,7 +191,7 @@
       {
         "name": "perceived fairness is a top determinant of policy support",
         "words": ["perceived fairness", "climate policy support"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Bergquist et al. 2022",
         "predicate": "is strongly predicted by",
@@ -200,7 +200,7 @@
       {
         "name": "perceived effectiveness is a top determinant of policy support",
         "words": ["perceived effectiveness", "climate policy support"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Bergquist et al. 2022",
         "predicate": "is strongly predicted by",
@@ -209,7 +209,7 @@
       {
         "name": "knowledge and demographics weakly predict policy support",
         "words": ["climate policy support"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Bergquist et al. 2022",
         "predicate": "is weakly predicted by",
@@ -219,7 +219,7 @@
       {
         "name": "warm days transiently increase belief in global warming",
         "words": ["local warming effect", "climate concern", "attenuation over time"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Zaval et al. 2014",
         "predicate": "is transiently increased by",
@@ -229,7 +229,7 @@
       {
         "name": "people see heat risk for others but not themselves",
         "words": ["optimism bias for self", "risk perception"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "Howarth et al. 2025",
         "predicate": "is characterised by",
@@ -238,7 +238,7 @@
       {
         "name": "heatwaves are actively reframed by disinformation",
         "words": ["climate disinformation reframing", "heatwave"],
-        "value_type": "measured value",
+        
         "value": true,
         "source": "EDMO 2025",
         "predicate": "is targeted by",

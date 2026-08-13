@@ -8,6 +8,7 @@
   "words": [
     {
       "name": "child",
+      "description": "a human being between birth and puberty, or between infancy and adulthood.",
       "refs": [
         {
           "name": "Child",
@@ -23,13 +24,15 @@
       "name": "Bern"
     },
     {
-      "name": "canton"
+      "name": "canton",
+      "description": "a member state of the Swiss federation"
     },
     {
       "name": "configuration"
     },
     {
-      "name": "city"
+      "name": "city",
+      "description": "a large permanent human settlement"
     },
     {
       "name": "company",
@@ -59,13 +62,28 @@
       "name": "Geneva"
     },
     {
-      "name": "government"
+      "name": "government",
+      "description": "the system or group of people governing an organized community, generally a state.",
+      "refs": [
+        {
+          "name": "Government",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "global"
+      "name": "global",
+      "description": "relating to the whole world",
+      "refs": [
+        {
+          "name": "Globalization",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "group"
+      "name": "group",
+      "description": "the social source of external information, i.e. the four peer actors"
     },
     {
       "name": "hand"
@@ -89,7 +107,8 @@
       "name": "part"
     },
     {
-      "name": "person"
+      "name": "person",
+      "description": "an individual human being"
     },
     {
       "name": "place"
@@ -98,13 +117,27 @@
       "name": "pod"
     },
     {
-      "name": "point"
+      "name": "point",
+      "description": "a single unit on a scale"
     },
     {
-      "name": "problem"
+      "name": "problem",
+      "refs": [
+        {
+          "name": "Problem_solving",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "Switzerland"
+      "name": "Switzerland",
+      "description": "a landlocked country at the confluence of Western, Central and Southern Europe.",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "system"
@@ -119,22 +152,37 @@
       "name": "way"
     },
     {
-      "name": "woman"
+      "name": "woman",
+      "description": "an adult female human"
     },
     {
-      "name": "work"
+      "name": "work",
+      "description": "In physics, work is the energy transferred to or from an object via the application of force along a displacement.",
+      "refs": [
+        {
+          "name": "Work (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42213",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "world"
+      "name": "world",
+      "description": "all countries of the earth taken together"
     },
     {
       "name": "year"
     },
     {
-      "name": "zukunft.com"
+      "name": "zukunft.com",
+      "description": "the name of this system, used to mark its internal keywords"
     },
     {
-      "name": "Zurich"
+      "name": "Zurich",
+      "description": "the largest city of Switzerland and the capital of its canton"
     }
   ],
   "triples": [
@@ -206,6 +254,20 @@
     },
     {
       "name": "Geneva (city)",
+      "refs": [
+        {
+          "name": "Zürich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q72",
+          "type": "wikidata"
+        },
+        {
+          "name": "zurich",
+          "type": "conceptnet"
+        }
+      ],
       "from": "Geneva",
       "verb": "is a",
       "to": "city"

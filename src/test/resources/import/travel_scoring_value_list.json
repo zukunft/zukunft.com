@@ -7,7 +7,8 @@
     { "name": "Travel"},
     { "name": "Rating"},
     { "name": "country"},
-    { "name": "US dollar", "refs": [ { "name": "United States dollar", "type": "wikipedia" } ] },
+    { "name": "dollar"},
+    { "name": "US"},
     { "name": "Trend"},
     { "name": "Region"},
     { "name": "percent"},
@@ -623,6 +624,7 @@
     {"name": "", "from": "Central African Republic", "verb": "is part of", "to": "Sub-Saharan Africa"},
     {"name": "", "from": "Democratic Republic of the Congo", "verb": "is part of", "to": "Sub-Saharan Africa"},
     {"name": "", "from": "North Korea", "verb": "is part of", "to": "Asia & Australasia"},
+    {"name": "US dollar", "from": "dollar", "verb": "of", "to": "US"},
     {"from": "$", "verb": "is symbol for", "to": "US dollar"},
     {"name": "Political correctness", "from": "correctness", "verb": "kind of", "to": "Political"},
     {"name": "Democracy Index", "from": "Index", "verb": "of", "to": "Democracy"},
@@ -2432,7 +2434,7 @@
     },
     {
       "words": ["Travel","Rating","Global Peace Index","Scoring Scaling Factor","2020","percent"],
-      "number": "159.87",
+      "number": "1.5987",
       "share": "personal",
       "source": "personal agreement"
     }

@@ -1,0 +1,82 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "education key figures"
+  ],
+  "description": "The most relevant number of the problem \"education\" of the start page ranking and the potential solution: learning poverty measures the share of ten year olds who cannot read and understand a simple text. The solution shown on the start page is a higher and better targeted education spending.",
+  "words": [
+    {
+      "name": "education",
+      "description": "process of teaching and learning"
+    },
+    {
+      "name": "learning"
+    },
+    {
+      "name": "poverty"
+    },
+    {
+      "name": "spending"
+    },
+    {
+      "name": "child",
+      "description": "a human being between birth and puberty, or between infancy and adulthood."
+    },
+    {
+      "name": "reading"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "learning poverty",
+      "description": "the share of ten year olds in low and middle income countries who cannot read and understand a simple text",
+      "from": "poverty",
+      "verb": "of",
+      "to": "learning"
+    },
+    {
+      "name": "education spending",
+      "description": "the public spending on education; the solution shown for education on the start page",
+      "from": "spending",
+      "verb": "of",
+      "to": "education"
+    }
+  ],
+  "sources": [
+    {
+      "name": "World Bank / UNESCO (2022) learning poverty",
+      "description": "World Bank, UNESCO, UNICEF, FCDO, USAID, BMGF (2022): The State of Global Learning Poverty - 2022 Update. Learning poverty is the share of 10-year-olds who cannot read and understand a simple text.",
+      "url": "https://www.worldbank.org/en/topic/education",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "learning poverty",
+        "child",
+        "reading",
+        "percent"
+      ],
+      "number": "0.7",
+      "source": "World Bank / UNESCO (2022) learning poverty"
+    },
+    {
+      "words": [
+        "education spending",
+        "learning poverty",
+        "assumed value",
+        "percent"
+      ],
+      "number": "-0.05"
+    }
+  ]
+}

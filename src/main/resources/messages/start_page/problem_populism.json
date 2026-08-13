@@ -1,0 +1,124 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "populism key figures"
+  ],
+  "description": "The most relevant number of the problem \"populism\" of the start page ranking and the potential solution: after a populist leader takes office the gross domestic product declines year after year compared to the counterfactual. The solution is to base the decision on precise and neutral knowledge instead of on the emotional impulse of the group.",
+  "words": [
+    {
+      "name": "populism"
+    },
+    {
+      "name": "avoid"
+    },
+    {
+      "name": "avoidance"
+    },
+    {
+      "name": "wrong"
+    },
+    {
+      "name": "decisions"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "decline"
+    },
+    {
+      "name": "aftermath"
+    },
+    {
+      "name": "OLS"
+    },
+    {
+      "name": "5-year"
+    },
+    {
+      "name": "15-year"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "GDP decline",
+      "from": "GDP",
+      "verb": "can",
+      "to": "decline"
+    },
+    {
+      "name": "wrong decisions",
+      "from": "decisions",
+      "verb": "can be",
+      "to": "wrong"
+    },
+    {
+      "name": "avoid wrong decisions",
+      "description": "decisions based on precise and neutral knowledge instead of the emotional impulse of the group (concept paper section 4)",
+      "from": "avoidance",
+      "verb": "of",
+      "to": "wrong decisions"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "Journal Article\nPopulist Leaders and the Economy\n\nAmerican Economic Review, 113 (2): 3249-3288 ",
+      "url": "https://www.ifw-kiel.de/fileadmin/Dateiverwaltung/IfW-Publications/fis-import/63738460-817f-4a88-837b-794a7c021251-KWP_2169_update_june_2022.pdf",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "15-year",
+        "aftermath",
+        "OLS"
+      ],
+      "number": "-0.0104",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "5-year",
+        "aftermath",
+        "OLS"
+      ],
+      "number": "-0.0097",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    },
+    {
+      "words": [
+        "avoid wrong decisions",
+        "populism",
+        "annual",
+        "GDP",
+        "percent",
+        "assumed value"
+      ],
+      "number": "0.0104",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    }
+  ]
+}

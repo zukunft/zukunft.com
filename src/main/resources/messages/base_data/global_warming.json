@@ -94,7 +94,8 @@
       "name": "percent"
     },
     {
-      "name": "share"
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "year"
@@ -260,7 +261,7 @@
         "excess CO2 share",
         "percent"
       ],
-      "number": "50.35714285714286"
+      "number": "0.5035714285714286"
     }
   ],
   "formulas": [
@@ -273,7 +274,7 @@
     },
     {
       "name": "excess CO2 share (formula)",
-      "expression": "\"excess CO2 share\" = ( \"CO2\" - \"pre-industrial CO2\" ) / \"pre-industrial CO2\" * 100",
+      "expression": "\"excess CO2 share\" = ( \"CO2\" - \"pre-industrial CO2\" ) / \"pre-industrial CO2\"",
       "assigned": [
         "Earth"
       ]
@@ -341,7 +342,7 @@
         "excess CO2 share",
         "percent"
       ],
-      "number": "50.35714285714286",
+      "number": "0.5035714285714286",
       "note": "(421 - 280) / 280 * 100"
     }
   ]

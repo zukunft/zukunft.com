@@ -829,7 +829,14 @@
       "name": "group"
     },
     {
-      "name": "reaction"
+      "name": "reaction",
+      "description": "the act of responding to a stimulus",
+      "refs": [
+        {
+          "name": "Mental_chronometry",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "product"
@@ -841,7 +848,14 @@
       "name": "constant"
     },
     {
-      "name": "activation"
+      "name": "activation",
+      "description": "increase in blood-oxygenation-level-dependent (BOLD) signal",
+      "refs": [
+        {
+          "name": "Blood-oxygen-level-dependent_imaging",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "energy"
@@ -886,7 +900,18 @@
       "name": "redox"
     },
     {
-      "name": "cell"
+      "name": "cell",
+      "description": "the basic structural and functional unit of all living organisms",
+      "refs": [
+        {
+          "name": "Cell (biology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7868",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "potential"
