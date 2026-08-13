@@ -1205,7 +1205,7 @@ class import
             // a word of a word-list has only the name, so the same import mapper can be used
             $wrd = new word($this->usr);
             if ($wrd->import_mapper([json_fields::NAME => $wrd_name], $msg, $dto)) {
-                $dto->add_word($wrd);
+                $dto->add_word($wrd, $msg);
                 $i++;
             }
             $this->display_progress($i, $per_sec, $wrd->dsp_id());
