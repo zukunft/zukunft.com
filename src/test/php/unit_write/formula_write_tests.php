@@ -497,7 +497,7 @@ class formula_write_tests
         $result = $frm_reloaded->ref_text;
         // TODO Prio 1 review
         $target = '={f' . $frm_this->id() . '}';
-        $target = '{w161}=1-({f18}/{f20})';
+        $target = '{w160}=1-({f18}/{f20})';
         $t->assert('formula->load ref_text for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->description;
         $target = formula_names::SYSTEM_TEST_RENAMED . ' description';

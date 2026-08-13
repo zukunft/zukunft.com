@@ -28,4 +28,4 @@ SELECT word_insert_log_1100000300000_user
         101,
         null,
         null,
-        190);
+        189);

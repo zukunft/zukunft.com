@@ -11,13 +11,16 @@
       "name": "market"
     },
     {
-      "name": "power"
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
-      "name": "share"
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
-      "name": "tax"
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
     },
     {
       "name": "rate"

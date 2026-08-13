@@ -600,7 +600,7 @@
     },
     {
       "name": "population",
-      "description": "all the individuals of a species living in a given area",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Population",
@@ -1083,7 +1083,8 @@
       "name": "index"
     },
     {
-      "name": "birth"
+      "name": "birth",
+      "description": "start of life"
     },
     {
       "name": "death"
@@ -1095,7 +1096,8 @@
       "name": "image"
     },
     {
-      "name": "size"
+      "name": "size",
+      "description": "extent or number of constituents of a set"
     },
     {
       "name": "object"

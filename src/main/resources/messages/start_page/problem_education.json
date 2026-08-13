@@ -8,7 +8,8 @@
   "description": "The most relevant number of the problem \"education\" of the start page ranking and the potential solution: learning poverty measures the share of ten year olds who cannot read and understand a simple text. The solution shown on the start page is a higher and better targeted education spending.",
   "words": [
     {
-      "name": "education"
+      "name": "education",
+      "description": "process of teaching and learning"
     },
     {
       "name": "learning"
@@ -20,7 +21,8 @@
       "name": "spending"
     },
     {
-      "name": "child"
+      "name": "child",
+      "description": "a human being between birth and puberty, or between infancy and adulthood."
     },
     {
       "name": "reading"

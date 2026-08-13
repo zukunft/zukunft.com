@@ -11,10 +11,12 @@
       "name": "wealth"
     },
     {
-      "name": "concentration"
+      "name": "concentration",
+      "description": "the amount of a substance in a defined volume or mass"
     },
     {
-      "name": "tax"
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
     },
     {
       "name": "rate"

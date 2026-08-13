@@ -398,8 +398,12 @@ class word_tests
         $txt = $form->title_named($wrd, $msg_ui);
         $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
         $test_name = 'link of "CHF is symbol for Swiss Frank" with the description as tooltip';
+        // the tooltip is an html attribute, so the renderer escapes the quotes of the
+        // description (e.g. the apostrophe of "Campione d'Italia") the same way here
         $lnk = '<a href="/http/view.php?m=' . views::TRIPLE_ID
-            . '&amp;id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE . '="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
+            . '&amp;id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE_HTML
+            . '="' . htmlspecialchars(triple_names::SWISS_FRANC_COM, ENT_QUOTES) . '">'
+            . triple_names::SWISS_FRANC . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = 'name of "CHF is symbol for Swiss Frank';
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
@@ -426,9 +430,9 @@ class word_tests
         $t->assert_text_contains($test_name, $txt, 'fas fa-edit');
 
         $test_name = 'category_html for CHF emits the "is symbol for" verb verbatim';
-        $wrd = $t_wrd->swiss_franc_ui();
-        $wrd->phr_lst = $t_phr->list_ui();
-        $txt = $form->title_named($wrd, $msg_ui);
+        $trp = $t_trp->swiss_franc_ui();
+        $trp->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_phrase($trp, $msg_ui);
         $t->assert_text_not_contains($test_name, $txt, words::CHF);
 
 

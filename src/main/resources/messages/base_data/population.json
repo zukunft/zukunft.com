@@ -83,7 +83,8 @@
       "name": "world"
     },
     {
-      "name": "population"
+      "name": "population",
+      "description": "number of people living in a place"
     },
     {
       "name": "person"

@@ -222,7 +222,7 @@ class test_phrases
         $lst->add($t_wrd->word()->phrase());
         $lst->add($t_wrd->word_const()->phrase());
         $lst->add($t_wrd->word_pi_symbol()->phrase());
-        $lst->add($t_wrd->word_e()->phrase());
+        $lst->add($t_trp->triple_euler_number()->phrase());
         $lst->add($t_wrd->word_2019()->phrase());
         $lst->add($t_wrd->word_one()->phrase());
         $lst->add($t_wrd->word_mio()->phrase());
@@ -1061,11 +1061,11 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_wrd->currency()->phrase());
-        $lst->add($t_wrd->swiss_franc()->phrase());
+        $lst->add($t_trp->swiss_franc()->phrase());
         $lst->add($t_trp->swiss_franc_currency()->phrase());
         $lst->add($t_wrd->euro()->phrase());
         $lst->add($t_trp->euro_currency()->phrase());
-        $lst->add($t_wrd->us_dollar()->phrase());
+        $lst->add($t_trp->us_dollar()->phrase());
         $lst->add($t_trp->usd_currency()->phrase());
         return $lst;
     }

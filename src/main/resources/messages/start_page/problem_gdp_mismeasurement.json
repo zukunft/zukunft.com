@@ -20,7 +20,8 @@
       "name": "domestic"
     },
     {
-      "name": "usage"
+      "name": "usage",
+      "description": "how frequently a word, term, or service is used"
     },
     {
       "name": "growth"

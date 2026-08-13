@@ -327,7 +327,7 @@ class word_list_tests
         $t->assert_true($test_name, $added);
 
         $test_name = 'a second word without a db id is added';
-        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::E), false, $msg);
+        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::E_SYMBOL), false, $msg);
         $t->assert_true($test_name, $added);
 
         $test_name = 'the same word without a db id is reported as double';

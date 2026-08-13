@@ -813,7 +813,18 @@
       "name": "control"
     },
     {
-      "name": "stress"
+      "name": "stress",
+      "description": "psychological feeling of strain and pressure, that could increase the risk of strokes, heart attacks, ulcers, and mental illnesses such as depression and aggravation of a pre-existing condition",
+      "refs": [
+        {
+          "name": "Stress (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3500368",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "yield"
@@ -858,7 +869,8 @@
       "name": "direct"
     },
     {
-      "name": "power"
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "structural"
@@ -912,7 +924,18 @@
       "name": "material"
     },
     {
-      "name": "crystal"
+      "name": "crystal",
+      "description": "solid material whose constituent atoms, molecules, or ions are arranged in an ordered lattice extending in all three spatial dimensions",
+      "refs": [
+        {
+          "name": "Crystal",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43533",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "structure"
@@ -939,7 +962,18 @@
       "name": "gravity"
     },
     {
-      "name": "atmosphere"
+      "name": "atmosphere",
+      "description": "gas layer surrounding Earth",
+      "refs": [
+        {
+          "name": "Atmosphere of Earth",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3230",
+          "type": "wikidata"
+        }
+      ]
     }
   ],
   "triples": [

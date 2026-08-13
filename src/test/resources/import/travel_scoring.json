@@ -24,15 +24,6 @@
       "name": "country"
     },
     {
-      "name": "US dollar",
-      "refs": [
-        {
-          "name": "United States dollar",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "$"
     },
     {
@@ -1971,9 +1962,21 @@
     {
       "name": "The Gambia",
       "description": "official name of Gambia as used in some rankings"
+    },
+    {
+      "name": "dollar"
+    },
+    {
+      "name": "US"
     }
   ],
   "triples": [
+    {
+      "name": "US dollar",
+      "from": "dollar",
+      "verb": "of",
+      "to": "US"
+    },
     {
       "name": "",
       "from": "Asia & Australasia",

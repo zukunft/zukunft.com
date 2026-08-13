@@ -21,7 +21,8 @@
       "name": "canton"
     },
     {
-      "name": "Switzerland"
+      "name": "Switzerland",
+      "description": "a landlocked country at the confluence of Western, Central and Southern Europe."
     },
     {
       "name": "area",
@@ -39,7 +40,8 @@
       "name": "metre"
     },
     {
-      "name": "population"
+      "name": "population",
+      "description": "number of people living in a place"
     },
     {
       "name": "inhabitant",
@@ -102,9 +104,6 @@
           "type": "wikipedia"
         }
       ]
-    },
-    {
-      "name": "Swiss franc"
     },
     {
       "name": "unemployment",
@@ -379,7 +378,7 @@
     },
     {
       "name": "sector",
-      "description": "distinct part of an economy"
+      "description": "a distinct part of a whole"
     },
     {
       "name": "service",
@@ -598,9 +597,25 @@
     {
       "name": "2025-12-31",
       "type": "time"
+    },
+    {
+      "name": "franc"
+    },
+    {
+      "name": "Swiss"
+    },
+    {
+      "name": "economy",
+      "description": "the system by which the goods and services of a region are produced and traded"
     }
   ],
   "triples": [
+    {
+      "name": "Swiss franc",
+      "from": "franc",
+      "verb": "kind of",
+      "to": "Swiss"
+    },
     {
       "name": "Zurich (city)",
       "from": "Zurich",
@@ -639,6 +654,17 @@
     },
     {
       "name": "population density",
+      "description": "measurement of population per unit area or unit volume",
+      "refs": [
+        {
+          "name": "Population density",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22856",
+          "type": "wikidata"
+        }
+      ],
       "from": "density",
       "verb": "of",
       "to": "population"
@@ -1158,6 +1184,13 @@
       "from": "GDP per capita",
       "verb": "of",
       "to": "Zurich (city)"
+    },
+    {
+      "name": "sector (economy)",
+      "description": "a distinct part of an economy, e.g. the service sector",
+      "from": "sector",
+      "verb": "must be one of",
+      "to": "economy"
     }
   ],
   "sources": [

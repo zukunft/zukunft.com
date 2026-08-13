@@ -94,6 +94,7 @@
     },
     {
       "name": "population",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Population",
@@ -120,7 +121,7 @@
     },
     {
       "name": "share",
-      "description": "attributable proportion of an effect"
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "attribution",

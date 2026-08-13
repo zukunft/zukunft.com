@@ -11,7 +11,8 @@
       "name": "biased"
     },
     {
-      "name": "information"
+      "name": "information",
+      "description": "message provided to the participant about the correct response"
     },
     {
       "name": "Delphi"

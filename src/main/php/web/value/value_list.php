@@ -475,7 +475,8 @@ class value_list extends ListBase
     function table_by_related_columns(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        string       $back = ''
+        string       $back = '',
+        array        $col_order = []
     ): string
     {
         $result = '';
@@ -486,6 +487,13 @@ class value_list extends ListBase
             // a column phrase needs to be used by at least two values, else the column has one entry
             [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
                 $this->lst(), $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
+            // a phrase that the system column tiers define as a column wins over the impact
+            // ranking and is used even if only one value carries it
+            if ($col_order != []) {
+                [$all_by_id, $val_phr_ids] = $this->phrase_ranking(
+                    $this->lst(), $msg, $context_phr_lst, 0);
+                $phr_by_id = $this->columns_by_definition($all_by_id, $phr_by_id, $col_order);
+            }
 
             // the column phrases and per value the column it belongs to
             $col_phr = [];
@@ -549,6 +557,36 @@ class value_list extends ListBase
                 $rows .= $html->tr($row);
             }
             $result = $html->tbl($rows);
+        }
+        return $result;
+    }
+
+    /**
+     * put the phrases the system column tiers define first, in the order of the definition, and
+     * append the impact ranked phrases that have no definition; so a table shows the columns a
+     * user has decided on before the ones the data suggests
+     *
+     * @param array $all every groupable phrase keyed by phrase id, whatever its usage count
+     * @param array $ranked the impact ranked phrases keyed by phrase id
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @return array the column phrases keyed by phrase id in the order they should be shown
+     */
+    private function columns_by_definition(array $all, array $ranked, array $col_order): array
+    {
+        $result = [];
+        // the defined columns first, in the order of the definition
+        foreach ($col_order as $name) {
+            foreach ($all as $id => $phr) {
+                if ($phr->name() == $name and !array_key_exists($id, $result)) {
+                    $result[$id] = $phr;
+                }
+            }
+        }
+        // then the phrases the data suggests, still ordered by the aggregated impact
+        foreach ($ranked as $id => $phr) {
+            if (!array_key_exists($id, $result)) {
+                $result[$id] = $phr;
+            }
         }
         return $result;
     }

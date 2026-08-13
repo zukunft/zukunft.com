@@ -23,7 +23,8 @@
       "name": "spending"
     },
     {
-      "name": "sector"
+      "name": "sector",
+      "description": "a distinct part of a whole"
     },
     {
       "name": "public"

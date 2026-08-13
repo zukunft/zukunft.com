@@ -489,6 +489,7 @@
     },
     {
       "name": "degree",
+      "description": "unit of angle equal to 1/360 of a full rotation",
       "refs": [
         {
           "name": "Degree (angle)",
@@ -529,7 +530,8 @@
       ]
     },
     {
-      "name": "intercept"
+      "name": "intercept",
+      "description": "value of the regression line at the origin of the independent variable"
     },
     {
       "name": "distance",
@@ -547,6 +549,7 @@
     },
     {
       "name": "point",
+      "description": "a single unit on a scale",
       "refs": [
         {
           "name": "Point (geometry)",
@@ -631,13 +634,16 @@
       ]
     },
     {
-      "name": "x"
+      "name": "x",
+      "description": "x stereotactic coordinate"
     },
     {
-      "name": "y"
+      "name": "y",
+      "description": "y stereotactic coordinate"
     },
     {
-      "name": "z"
+      "name": "z",
+      "description": "z stereotactic coordinate"
     },
     {
       "name": "a"
@@ -646,7 +652,18 @@
       "name": "b"
     },
     {
-      "name": "c"
+      "name": "c",
+      "description": "c is the speed of light in vacuum, a universal physical constant exactly equal to 299792458 m/s.",
+      "refs": [
+        {
+          "name": "Speed of light",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2111",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "d"
@@ -664,7 +681,18 @@
       "name": "r"
     },
     {
-      "name": "h"
+      "name": "h",
+      "description": "h is the Planck constant, a fundamental physical constant that relates the energy carried by a photon to its frequency.",
+      "refs": [
+        {
+          "name": "Planck constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q122894",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "s"
@@ -860,7 +888,8 @@
       ]
     },
     {
-      "name": "difference"
+      "name": "difference",
+      "description": "arithmetic difference between two values"
     },
     {
       "name": "derivative",
@@ -922,7 +951,8 @@
       "name": "rule"
     },
     {
-      "name": "power"
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "chain"
@@ -1091,7 +1121,7 @@
     },
     {
       "name": "sector",
-      "description": "the portion of a disk enclosed by two radii and the arc between them",
+      "description": "a distinct part of a whole",
       "refs": [
         {
           "name": "Circular sector",
@@ -2513,6 +2543,13 @@
     {
       "from": "golden ratio",
       "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "sector (geometry)",
+      "description": "the portion of a disk enclosed by two radii and the arc between them",
+      "from": "sector",
+      "verb": "must be one of",
       "to": "geometry"
     }
   ],

@@ -3,8 +3,6 @@
 ## start page
 
 
-The parameter
-
 the basic steps to show the start page are
 
 - table with 'global issues'
@@ -96,3 +94,8 @@ show the missing db fields in the word default view the language e.g. as a small
 ### triple
 
 add the missing db fields to the triple add and edit views: a language selection (language_id, preselected with the user language), the given name (name_given) as its own field beside the generated name (name_auto, display-only) so the user sees the difference and can empty the given name to fall back to the generated one, the condition formula selection (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
+
+## later
+
+add the word splitter to convert_wikipedia_table.php
+

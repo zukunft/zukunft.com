@@ -778,7 +778,8 @@
       ]
     },
     {
-      "name": "population"
+      "name": "population",
+      "description": "number of people living in a place"
     },
     {
       "name": "world"
@@ -802,7 +803,8 @@
       "name": "economic"
     },
     {
-      "name": "education"
+      "name": "education",
+      "description": "process of teaching and learning"
     },
     {
       "name": "medical"
@@ -814,7 +816,18 @@
       "name": "industrial"
     },
     {
-      "name": "psychology"
+      "name": "psychology",
+      "description": "study of mental functions and behaviours",
+      "refs": [
+        {
+          "name": "Psychology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9418",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "demographic"
@@ -841,7 +854,8 @@
       "name": "expectancy"
     },
     {
-      "name": "density"
+      "name": "density",
+      "description": "quantity per unit area or volume"
     },
     {
       "name": "infant"
@@ -862,7 +876,8 @@
       "name": "stigma"
     },
     {
-      "name": "power"
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "movement"
@@ -871,7 +886,18 @@
       "name": "collective"
     },
     {
-      "name": "behavior"
+      "name": "behavior",
+      "description": "range of actions by entities, living or not, within a system",
+      "refs": [
+        {
+          "name": "Behavior",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9332",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "class"
@@ -925,7 +951,18 @@
       "name": "conflict"
     },
     {
-      "name": "consciousness"
+      "name": "consciousness",
+      "description": "knowledge that a being has of its external and internal existence and its environment",
+      "refs": [
+        {
+          "name": "Consciousness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7087",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "change"
@@ -1021,7 +1058,8 @@
       "name": "crude"
     },
     {
-      "name": "birth"
+      "name": "birth",
+      "description": "start of life"
     },
     {
       "name": "death"

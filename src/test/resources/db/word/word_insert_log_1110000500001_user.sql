@@ -32,13 +32,13 @@ PREPARE word_insert_log_1110000500001_user_call
         ($1,$2,$3,$4,$5,$6, $7, $8, $9, $10);
 
 SELECT word_insert_log_1110000500001_user
-        (3::bigint,
-         1::smallint,
-         88::smallint,
-         'company'::text,
-         190::bigint,
-         90::smallint,
-         null::text,
-         101::bigint,
-         93::smallint,
-         3::smallint);
+       (3::bigint,
+        1::smallint,
+        88::smallint,
+        'company'::text,
+        189::bigint,
+        90::smallint,
+        null::text,
+        101::bigint,
+        93::smallint,
+        3::smallint);

@@ -28,15 +28,6 @@
       "name": "Euro"
     },
     {
-      "name": "US dollar"
-    },
-    {
-      "name": "Pound (sterling)"
-    },
-    {
-      "name": "Japanese yen"
-    },
-    {
       "name": "Denomination"
     },
     {
@@ -52,7 +43,8 @@
       "name": "£"
     },
     {
-      "name": "p"
+      "name": "p",
+      "description": "probability of obtaining the observed result under the null hypothesis"
     },
     {
       "name": "Equity"
@@ -93,22 +85,61 @@
       "name": "Earnings"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
       "name": "parts"
     },
     {
-      "name": "total"
+      "name": "total",
+      "description": "the whole amount or count, e.g. the total number of possible outcomes"
     },
     {
       "name": "income"
     },
     {
-      "name": "tax"
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
+    },
+    {
+      "name": "dollar"
+    },
+    {
+      "name": "US"
+    },
+    {
+      "name": "yen"
+    },
+    {
+      "name": "Japanese"
+    },
+    {
+      "name": "pound"
+    },
+    {
+      "name": "sterling"
     }
   ],
   "triples": [
+    {
+      "name": "US dollar",
+      "from": "dollar",
+      "verb": "of",
+      "to": "US"
+    },
+    {
+      "name": "Japanese yen",
+      "from": "yen",
+      "verb": "kind of",
+      "to": "Japanese"
+    },
+    {
+      "name": "Pound (sterling)",
+      "from": "pound",
+      "verb": "must be one of",
+      "to": "sterling"
+    },
     {
       "from": "Euro",
       "verb": "is a",
@@ -169,6 +200,7 @@
     },
     {
       "name": "cash flow statement",
+      "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
       "from": "cash flow",
       "verb": "can use",
       "to": "statement"

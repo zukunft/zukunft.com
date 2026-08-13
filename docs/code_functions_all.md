@@ -5521,6 +5521,9 @@
     \-- is_word - section for function is_word is expected to be info in /phrase/phrase.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
     \-- impact - section for function impact not yet defined that it should be info in /phrase/phrase.php
+    \-- parents - section for function parents is expected to be foaf in /phrase/phrase.php
+    \-- children - section for function children is expected to be foaf in /phrase/phrase.php
+    \-- similar - section for function similar not yet defined that it should be related in /phrase/phrase.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /phrase/phrase.php
     \-- name_link - section for function name_link not yet defined that it should be base in /phrase/phrase.php
     \-- dsp_tbl_cell - section for function dsp_tbl_cell not yet defined that it should be base in /phrase/phrase.php
@@ -5540,6 +5543,7 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_list.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should be related in /phrase/phrase_list.php
+    \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_list.php
     \-- category_subtitle - section for function category_subtitle not yet defined that it should be related in /phrase/phrase_list.php
     \-- assigned_subtitle - section for function assigned_subtitle not yet defined that it should be related in /phrase/phrase_list.php
     \-- children - section for function children is expected to be foaf in /phrase/phrase_list.php
@@ -6077,6 +6081,9 @@
     \-- has_verb - section for function has_verb not yet defined that it should be set and get in /word/triple.php
     \-- wrd_lst - section for function wrd_lst not yet defined that it should be cast in /word/triple.php
     \-- is_hidden - section for function is_hidden is expected to be info in /word/triple.php
+    \-- parents - section for function parents is expected to be foaf in /word/triple.php
+    \-- children - section for function children is expected to be foaf in /word/triple.php
+    \-- similar - section for function similar not yet defined that it should be related in /word/triple.php
     \-- name_link - section for function name_link not yet defined that it should be base in /word/triple.php
     \-- phrase_selector - section for function phrase_selector not yet defined that it should be select in /word/triple.php
     \-- is_type - section for function is_type is expected to be info in /word/triple.php
@@ -7395,6 +7402,8 @@
         \-- formula_link_list - get the formulas of this list that are assigned to the given phrase
     \-- result_phrases_most_relevant
         \-- phrase_list - get the phrase of the most relevant result
+    \-- column_names
+        \-- phrase_list - the names of the phrases that this list defines as table columns, ordered by the column
     \-- category_subtitle
         \-- phrase_list - build the category subtitle html for the page-title
     \-- assigned_subtitle

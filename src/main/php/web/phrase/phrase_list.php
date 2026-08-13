@@ -247,6 +247,38 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the names of the phrases that this list defines as table columns, ordered by the column
+     * tier of solution_prio.json: a prime column first (shown on every screen), then a second
+     * column (hidden on a small screen), then a third column (only on a wide screen)
+     *
+     * a column is defined by a triple "<phrase> can be <tier>", so this list must carry those
+     * triples; a phrase without such a triple is not returned and the caller falls back to its
+     * own ranking (see value_list::table_by_related_columns)
+     *
+     * @return array the column phrase names, the most important column first
+     */
+    function column_names(): array
+    {
+        $result = [];
+        foreach (triples::SYSTEM_COLUMN_TIERS as $tier) {
+            foreach ($this->lst() as $phr) {
+                if ($phr->is_triple()) {
+                    $trp = $phr->obj();
+                    // the tier is the "to" side, so the column phrase is the "from" side
+                    if ($trp->get_to()?->name() == $tier) {
+                        $name = $trp->get_from()?->name();
+                        // a phrase assigned to two tiers keeps the more important one
+                        if ($name != null and !in_array($name, $result)) {
+                            $result[] = $name;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * build the category subtitle html for the page-title
      * based on the verbs::CATEGORY_VERBS priority list
      *

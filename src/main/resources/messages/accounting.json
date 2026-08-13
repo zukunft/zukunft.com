@@ -354,7 +354,8 @@
       "name": "debt"
     },
     {
-      "name": "tax"
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
     },
     {
       "name": "month"
@@ -423,7 +424,8 @@
       "name": "earnings"
     },
     {
-      "name": "share"
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "common"
@@ -501,7 +503,8 @@
       "name": "property"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
       "name": "general"
@@ -525,7 +528,8 @@
       "name": "chart"
     },
     {
-      "name": "trial"
+      "name": "trial",
+      "description": "a single presentation and judgment cycle in the task"
     },
     {
       "name": "transaction"

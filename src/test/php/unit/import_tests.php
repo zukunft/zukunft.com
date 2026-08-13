@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -327,7 +328,7 @@ class import_tests
         $msg = new user_message($t->usr1);
         $json_array = [json_fields::VIEWS => [[
             json_fields::NAME => views::TEST_ADD_NAME,
-            json_fields::ASSIGNED => [word_names::PI, word_names::E]
+            json_fields::ASSIGNED => [word_names::PI, triple_names::EULER_NUMBER]
         ]]];
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_not_contains($test_name, $msg->all_message_text(), 'more than once');

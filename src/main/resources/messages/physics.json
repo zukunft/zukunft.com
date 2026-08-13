@@ -302,7 +302,7 @@
     },
     {
       "name": "density",
-      "description": "The density of a substance is its mass per unit volume; the SI unit is the kilogram per cubic metre.",
+      "description": "quantity per unit area or volume",
       "type": "measure",
       "refs": [
         {
@@ -647,7 +647,14 @@
       ]
     },
     {
-      "name": "field"
+      "name": "field",
+      "description": "magnetic field strength of the MRI scanner",
+      "refs": [
+        {
+          "name": "Magnetic_resonance_imaging",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "flux"
@@ -722,7 +729,8 @@
       "name": "amplitude"
     },
     {
-      "name": "phase"
+      "name": "phase",
+      "description": "one distinguishable segment of a procedure"
     },
     {
       "name": "height"

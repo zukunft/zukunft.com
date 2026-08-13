@@ -86,28 +86,28 @@
   "triples": [
     {
       "from": "w_nerv_test",
-      "verb": "ist Einzelversuch in",
+      "verb": "is single attempt in",
       "to": "w_scheiterrate_ensemble"
     },
     {
       "from": "w_nerv_test",
-      "verb": "zielt auf Ausloesung von",
+      "verb": "aims to trigger",
       "to": "w_ein_klick_verbergen"
     },
     {
       "from": "w_implementierungskosten",
-      "verb": "senkt Huerde fuer",
+      "verb": "lowers barrier for",
       "to": "w_p_verleger_bauen"
     },
     {
       "from": "w_p_einbremsen",
-      "verb": "konkurriert mit",
+      "verb": "competes with",
       "to": "w_p_verleger_bauen"
     },
     {
-      "from": "w_platon_ziel",
-      "verb": "wird begrenzt durch",
-      "to": "w_bus_faktor"
+      "from": "w_bus_faktor",
+      "verb": "limits",
+      "to": "w_platon_ziel"
     }
   ]
 }

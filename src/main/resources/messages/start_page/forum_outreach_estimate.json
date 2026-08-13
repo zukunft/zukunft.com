@@ -122,7 +122,7 @@
     },
     {
       "name": "share",
-      "description": "a part or proportion of a whole."
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "probability",

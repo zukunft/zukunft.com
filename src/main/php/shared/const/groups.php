@@ -69,7 +69,7 @@ class groups
     // the big group named TN_CH_2019 with the words 2019, million, inhabitants, Switzerland
     // and country, created with every database reset from TEST_GROUPS_CREATE
     // (see group_write_tests::create_test_groups)
-    const string CH_2019_MIO = '....09+....0T+....14+....1D+....2i+......+......+......+......+......+......+......+......+......+......+......+';
+    const string CH_2019_MIO = '....05+....0S+....13+....1C+....2u+......+......+......+......+......+......+......+......+......+......+......+';
 
     const string TN_TIME_VALUE = 'zukunft.com beta launch date';
     const string TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';

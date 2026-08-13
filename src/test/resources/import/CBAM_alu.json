@@ -90,28 +90,28 @@
   "triples": [
     {
       "from": "aluminium recycling",
-      "verb": "is a kind of",
+      "verb": "kind of",
       "to": "secondary aluminium"
     },
     {
-      "from": "specific electricity demand",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "specific electricity demand"
     },
     {
-      "from": "CO2-eq burden",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "CO2-eq burden"
     },
     {
-      "from": "conversion cost",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "conversion cost"
     },
     {
-      "from": "scrap input cost",
-      "verb": "is a property of",
-      "to": "aluminium recycling"
+      "from": "aluminium recycling",
+      "verb": "has a",
+      "to": "scrap input cost"
     },
     {
       "from": "regional premium",

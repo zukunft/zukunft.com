@@ -218,7 +218,8 @@
       "name": "second"
     },
     {
-      "name": "density"
+      "name": "density",
+      "description": "quantity per unit area or volume"
     },
     {
       "name": "Vestas"

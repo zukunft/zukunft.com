@@ -49,15 +49,19 @@ class values
     CONST float PI = 3.1415926535898; // pi
     CONST float PI_SHORT = 3.1415927; // pi
     // the group id of the pi value keyed by the "π (unit symbol)" triple as used by the unit test fixtures
-    const int PI_ID = 32770;
+    const int PI_ID = 32773;
     // the group id of the pi number value in the seeded database,
     // keyed by the "Pi (math)" triple (see triple_names::PI_ID and the pi value in units.json)
-    const int PI_MATH_ID = 32821;
+    const int PI_MATH_ID = 32825;
     const int PI_SYMBOL_ID = 5;
     CONST float SAMPLE_ZERO = 0.0;
     CONST float E = 2.718281828459045235360; // Euler number
-    const int E_ID = 32771;
+    // the group id of the e value in the seeded database, keyed by the "𝑒 (unit symbol)"
+    // triple (see triple_names::E_ID and the 𝑒 value in units.json)
+    const int E_ID = 32827;
     CONST float E_CONST = 0.57721566490153; // Euler const
+    // the group id of the Euler's constant value in the seeded database, keyed by the
+    // "Euler's constant" triple (Euler 'name of' constant, see the value in units.json)
     const int E_CONST_ID = 32771;
     const int TRANSITION_OF_CS = 9192631770;
     const int SPEED_OF_LIGHT = 299792458;

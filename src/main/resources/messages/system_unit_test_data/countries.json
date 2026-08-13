@@ -7,10 +7,35 @@
   ],
   "words": [
     {
-      "name": "country"
+      "name": "country",
+      "description": "a distinct part of the world, such as a state, nation, or other political entity."
+    },
+    {
+      "name": "purchasing",
+      "description": "the act of buying a good or a service"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "parity",
+      "description": "the state of being equal in value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "purchasing power",
+      "description": "the amount of goods and services that one unit of a currency can buy",
+      "from": "power",
+      "verb": "kind of",
+      "to": "purchasing"
     },
     {
       "name": "purchasing power parity",
+      "description": "the exchange rate at which one unit of a currency buys the same basket of goods in two countries",
+      "from": "parity",
+      "verb": "of",
+      "to": "purchasing power",
       "refs": [
         {
           "name": "Purchasing_power_parity",
@@ -18,8 +43,6 @@
         }
       ]
     }
-  ],
-  "triples": [
   ],
   "formulas": [
   ],

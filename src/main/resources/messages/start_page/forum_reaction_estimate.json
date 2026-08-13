@@ -225,7 +225,7 @@
     {
       "name": "zeit.de zukunftcom",
       "from": "Die Zeit",
-      "verb": "has",
+      "verb": "has a",
       "to": "zukunftcom",
       "description": "A sample online account name at zeit.de.",
       "refs": [
@@ -238,7 +238,7 @@
     {
       "name": "zeit.de zukunftcom post",
       "from": "zeit.de zukunftcom",
-      "verb": "has",
+      "verb": "has a",
       "to": "post",
       "description": "A post of a sample online account name at zeit.de."
     },
@@ -360,13 +360,13 @@
     {
       "name": "zeit.de zukunftcom post 2026-07-25 insurance reply",
       "from": "zeit.de zukunftcom post 2026-07-25",
-      "verb": "has",
+      "verb": "has a",
       "to": "insurance reply"
     },
     {
       "name": "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
       "from": "zeit.de zukunftcom post 2026-07-25",
-      "verb": "has",
+      "verb": "has a",
       "to": "sarcasm reply"
     }
   ],

@@ -55,6 +55,7 @@
     },
     {
       "name": "population",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Population",
@@ -81,6 +82,7 @@
     },
     {
       "name": "density",
+      "description": "quantity per unit area or volume",
       "refs": [
         {
           "name": "Population_density",
@@ -108,6 +110,7 @@
     },
     {
       "name": "GDP per capita",
+      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
       "refs": [
         {
           "name": "GDP_per_capita",
@@ -133,6 +136,7 @@
     },
     {
       "name": "birth",
+      "description": "start of life",
       "refs": [
         {
           "name": "Birth_rate",
@@ -342,6 +346,7 @@
     },
     {
       "name": "assumed value",
+      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value.",
       "from": "value",
       "verb": "must be one of",
       "to": "assumed"

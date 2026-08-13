@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -144,6 +146,10 @@ class coding_rule_tests
         $t->subheader($ts . 'import json consistency');
         // TODO Prio 3 maybe switch it on as a warning
         //$this->json_no_measured_value_tests($t);
+
+        $t->subheader($ts . 'verb consistency');
+        $this->verb_group_tests($t);
+        $this->json_verb_defined_tests($t);
 
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
@@ -247,6 +253,89 @@ class coding_rule_tests
 
         $test_name = 'no import json adds a "' . self::MEASURED_VALUE . '" qualifier';
         $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that every verb a group array of verbs.php names is defined in verbs.json: the groups
+     * (CATEGORY_VERBS, PROPERTY_VERBS, SYNONYM_VERBS, ARGUMENT_VERBS) are the coded functionality of
+     * a verb, so a group entry without a verb row is a predicate that silently never matches
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function verb_group_tests(test_cleanup $t): void
+    {
+        $known = [];
+        foreach ($this->verbs_json()[json_fields::VERBS] ?? [] as $vrb) {
+            $known[$vrb[json_fields::CODE_ID]] = true;
+        }
+        $groups = [
+            'CATEGORY_VERBS' => verbs::CATEGORY_VERBS,
+            'PROPERTY_VERBS' => verbs::PROPERTY_VERBS,
+            'SYNONYM_VERBS' => verbs::SYNONYM_VERBS,
+            'ARGUMENT_VERBS' => verbs::ARGUMENT_VERBS,
+        ];
+        $missing = [];
+        foreach ($groups as $name => $group) {
+            foreach ($group as [$code_id, $direction]) {
+                if (!array_key_exists($code_id, $known)) {
+                    $missing[] = $name . ': ' . $code_id;
+                }
+            }
+        }
+        sort($missing);
+
+        $test_name = 'every verb of a verbs.php group is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * verify that every verb used by an import json is defined in verbs.json or proposed by the file
+     * itself: the import resolves a verb by an exact name match and creates the verb when the name is
+     * unknown (see triple::import_mapper), so a typo silently grows the shared verb vocabulary
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_verb_defined_tests(test_cleanup $t): void
+    {
+        $known = [];
+        foreach ($this->verbs_json()[json_fields::VERBS] ?? [] as $vrb) {
+            $known[$vrb[json_fields::NAME]] = true;
+        }
+        $unknown = [];
+        foreach ($this->json_file_list(files::MESSAGE_PATH) as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (!is_array($json_array)) {
+                continue;
+            }
+            // a file may propose its own verb, which stays private until an admin confirms it
+            $local = [];
+            foreach ($json_array[json_fields::VERBS] ?? [] as $vrb) {
+                $local[$vrb[json_fields::NAME] ?? ''] = true;
+            }
+            foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+                $name = $trp[json_fields::EX_VERB] ?? '';
+                if ($name != ''
+                    and !array_key_exists($name, $known)
+                    and !array_key_exists($name, $local)) {
+                    $unknown[basename($path) . ': ' . $name] = true;
+                }
+            }
+        }
+        $names = array_keys($unknown);
+        sort($names);
+
+        $test_name = 'every verb used by an import json is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * @return array the decoded src/main/resources/verbs.json
+     */
+    private function verbs_json(): array
+    {
+        return json_decode(file_get_contents(files::VERBS), true) ?? [];
     }
 
     /**

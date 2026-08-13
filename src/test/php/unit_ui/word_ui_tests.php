@@ -59,6 +59,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -77,6 +78,7 @@ class word_ui_tests
         $t_wrd = new test_words($t);
         $t_msk = new test_views($t);
         $t_phr = new test_phrases($t);
+        $t_trp = new test_triples($t);
 
         // start the test section (ts)
         $ts = 'unit ui html word ';
@@ -106,7 +108,7 @@ class word_ui_tests
         $wrd_pi = new word($t_wrd->word_pi()->api_json());
         $wrd_zh = new word($t_wrd->word_zh()->api_json());
         $wrd_city = new word($t_wrd->word_city()->api_json());
-        $wrd_chf = $t_wrd->swiss_franc_ui();
+        $trp_chf = $t_trp->swiss_franc_ui();
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
@@ -135,16 +137,16 @@ class word_ui_tests
             . $wrd_zh->parents($msg, null, 2)->name_link_list() . '<br>';
         $test_page .= $html->text_h2('children of ' . $wrd_city->name());
         $test_page .= $wrd_city->children($msg, $t_phr->list_zh_ui())->name_link_list() . '<br>';
-        $test_page .= $html->text_h2('similar to ' . $wrd_chf->name());
-        $test_page .= $wrd_chf->similar($msg, $t_phr->list_currency_ui())->name_link_list() . '<br>';
+        $test_page .= $html->text_h2('similar to ' . $trp_chf->name());
+        $test_page .= $trp_chf->similar($msg, $t_phr->list_currency_ui())->name_link_list() . '<br>';
         $test_page .= $t->dsp_title_named_edit($wrd, $msg);
 
         // show the phrases related to a word as on the default word page
         $list = new ui_list();
-        $wrd_chf_rel = $t_wrd->swiss_franc_related_ui();
-        $test_page .= $html->text_h2('phrases related to ' . $wrd_chf_rel->name());
-        $test_page .= 'symbols and aliases: ' . $list->parents_of_word($wrd_chf_rel, $msg) . '<br>';
-        $test_page .= 'children without categories: ' . $list->children_of_word($wrd_chf_rel, $msg) . '<br>';
+        $trp_chf_rel = $t_trp->swiss_franc_related_ui();
+        $test_page .= $html->text_h2('phrases related to ' . $trp_chf_rel->name());
+        $test_page .= 'symbols and aliases: ' . $list->parents_of_word($trp_chf_rel, $msg) . '<br>';
+        $test_page .= 'children without categories: ' . $list->children_of_word($trp_chf_rel, $msg) . '<br>';
 
         // the children of a word are its subclasses; with several children the component starts
         // with a header of the word plural and the verb plural, e.g. "currencies are", followed
@@ -242,15 +244,15 @@ class word_ui_tests
 
         $t->subheader($ts . 'related phrases');
         $test_name = 'the symbol triple of the word is shown';
-        $t->assert_text_contains($test_name, $list->parents_of_word($wrd_chf_rel, $msg), words::CHF);
+        $t->assert_text_contains($test_name, $list->parents_of_word($trp_chf_rel, $msg), words::CHF);
         $test_name = 'a word category is not shown among its children, which are its subclasses';
-        $t->assert_text_not_contains($test_name, $list->children_of_word($wrd_chf_rel, $msg), word_names::CURRENCY);
+        $t->assert_text_not_contains($test_name, $list->children_of_word($trp_chf_rel, $msg), word_names::CURRENCY);
         // the children of a word are its subclasses (the phrases that "are a" the word)
         $currency_children = $list->children_of_word($wrd_currency_rel, $msg);
         $test_name = 'the subclasses of currency include Euro';
         $t->assert_text_contains($test_name, $currency_children, word_names::EURO);
         $test_name = 'the subclasses of currency include Swiss franc';
-        $t->assert_text_contains($test_name, $currency_children, word_names::SWISS_FRANC);
+        $t->assert_text_contains($test_name, $currency_children, triple_names::SWISS_FRANC);
         $test_name = 'with several children the header uses the word plural "currencies"';
         $t->assert_text_contains($test_name, $currency_children, word_names::CURRENCIES);
         // a single child is shown as the full statement, e.g. "Euro is a currency"
@@ -260,7 +262,7 @@ class word_ui_tests
         $test_name = 'a single child statement names the parent currency';
         $t->assert_text_contains($test_name, $currency_single, word_names::CURRENCY);
         $test_name = 'without related phrases the section stays empty';
-        $t->assert($test_name, $list->parents_of_word($wrd_chf, $msg, new phrase_list()), '');
+        $t->assert($test_name, $list->parents_of_word($trp_chf, $msg, new phrase_list()), '');
 
         $t->subheader($ts . 'aliases and symbols');
         $alias_html = $list->phrase_aliases($wrd_eur_rel, $msg);
@@ -289,7 +291,7 @@ class word_ui_tests
         $test_name = 'the full triple name is replaced by the verb group';
         $t->assert_text_not_contains($test_name, $sub_html, triple_names::IN_EUR);
         $test_name = 'without an alias nothing is shown';
-        $t->assert($test_name, $list->phrase_aliases($wrd_chf_rel, $msg), '');
+        $t->assert($test_name, $list->phrase_aliases($trp_chf_rel, $msg), '');
 
         $t->subheader($ts . 'phrase type');
         $test_name = 'the phrase type name is shown';
@@ -331,12 +333,12 @@ class word_ui_tests
 
         // the similar words of a word are the other words linked to the same parent via the 'is a' verb
         // e.g. "Swiss franc" is a "currency" and the other currencies are "Euro" and "US Dollar" (USD)
-        $test_name = 'word->similar for ' . word_names::SWISS_FRANC;
-        $similar = $t_wrd->swiss_franc_ui()->similar($msg, $t_phr->list_currency_ui());
+        $test_name = 'word->similar for ' . triple_names::SWISS_FRANC;
+        $similar = $t_trp->swiss_franc_ui()->similar($msg, $t_phr->list_currency_ui());
         $names = $similar->names();
         sort($names);
         $result = implode(',', $names);
-        $target = word_names::EURO . ',' . word_names::US_DOLLAR;
+        $target = word_names::EURO . ',' . triple_names::US_DOLLAR_NAME;
         $t->assert($test_name, $result, $target);
 
         // the entered data is checked before the confirm view is shown: a word with a name can be

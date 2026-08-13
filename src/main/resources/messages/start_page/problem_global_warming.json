@@ -23,7 +23,8 @@
       "name": "emissions"
     },
     {
-      "name": "reduction"
+      "name": "reduction",
+      "description": "the gain of electrons by a species during a reaction"
     },
     {
       "name": "carbon"
@@ -35,7 +36,8 @@
       "name": "tariff"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
       "name": "coverage"

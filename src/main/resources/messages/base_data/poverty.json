@@ -140,7 +140,8 @@
       "name": "Gini"
     },
     {
-      "name": "share"
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "ratio"
@@ -155,7 +156,8 @@
       "name": "world"
     },
     {
-      "name": "population"
+      "name": "population",
+      "description": "number of people living in a place"
     },
     {
       "name": "person"

@@ -152,7 +152,8 @@
       "name": "world"
     },
     {
-      "name": "DALY"
+      "name": "DALY",
+      "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life."
     },
     {
       "name": "percent"

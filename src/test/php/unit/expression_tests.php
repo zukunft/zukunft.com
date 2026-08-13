@@ -247,7 +247,7 @@ class expression_tests
         $target = '"parts","of","total" (element_id '
             . word_names::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
-        $target = '"parts","of","total" (element_id 1/506,1/5,1/312) for user 3 (zukunft.com system test)';
+        $target = '"parts","of","total" (element_id 1/544,1/5,1/324) for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
@@ -283,7 +283,7 @@ class expression_tests
         $result = $trm_lst->dsp_id();
         $target = '"' . words::PERCENT . '","'
             . formula_names::PRIOR . '","'
-            . formula_names::THIS_NAME . '" (36,40,321)';
+            . formula_names::THIS_NAME . '" (36,40,319)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following

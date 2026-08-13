@@ -1,10 +1,10 @@
 [
   {
-    "id": 1,
+    "id": 2,
     "protection": 3,
-    "name": "mathematics",
-    "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
-    "type_id": 1,
+    "name": "constant",
+    "description": "fixed and well-defined number",
+    "type_id": 17,
     "class": "word"
   },
   {
@@ -16,11 +16,11 @@
     "class": "triple"
   },
   {
-    "id": 2,
+    "id": 1,
     "protection": 3,
-    "name": "constant",
-    "description": "fixed and well-defined number",
-    "type_id": 17,
+    "name": "mathematics",
+    "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+    "type_id": 1,
     "class": "word"
   },
   {
@@ -32,7 +32,7 @@
     "class": "word"
   },
   {
-    "id": 53,
+    "id": 57,
     "name": "Pi (math)",
     "description": "ratio of the circumference of a circle to its diameter",
     "type_id": 22,

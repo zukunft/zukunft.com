@@ -76,7 +76,7 @@
     },
     {
       "name": "education",
-      "description": "Climate and general education including girls' education; long-term enabler of low-carbon choices and policy support. Translation of the German keyword 'Bildung'."
+      "description": "process of teaching and learning"
     },
     {
       "name": "efficiency"
@@ -125,7 +125,8 @@
       "name": "geothermal"
     },
     {
-      "name": "global"
+      "name": "global",
+      "description": "relating to the whole world"
     },
     {
       "name": "green"
@@ -198,10 +199,12 @@
       "name": "potential"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
-      "name": "probability"
+      "name": "probability",
+      "description": "Probability is the branch of mathematics concerning numerical descriptions of how likely an event is to occur."
     },
     {
       "name": "public"
@@ -220,7 +223,8 @@
       "name": "reduced"
     },
     {
-      "name": "reduction"
+      "name": "reduction",
+      "description": "the gain of electrons by a species during a reaction"
     },
     {
       "name": "removal"
@@ -230,7 +234,7 @@
     },
     {
       "name": "research",
-      "description": "Basic research on energy, materials and carbon removal. Delayed, hard-to-attribute but historically decisive (e.g. photovoltaics cost decline). Translation of the German keyword 'Forschung'."
+      "description": "systematic investigation to discover new knowledge"
     },
     {
       "name": "return"
@@ -248,7 +252,8 @@
       "name": "solar"
     },
     {
-      "name": "solution"
+      "name": "solution",
+      "description": "a homogeneous mixture of a solute dissolved in a solvent"
     },
     {
       "name": "speed"

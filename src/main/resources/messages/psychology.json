@@ -1043,7 +1043,14 @@
       "name": "traits"
     },
     {
-      "name": "mental"
+      "name": "mental",
+      "description": "relating to the mind and cognitive processes",
+      "refs": [
+        {
+          "name": "Mind",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "disorder"
@@ -1181,7 +1188,8 @@
       "name": "compulsive"
     },
     {
-      "name": "post"
+      "name": "post",
+      "description": "after the primary analysis"
     },
     {
       "name": "traumatic"

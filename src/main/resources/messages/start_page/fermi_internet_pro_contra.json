@@ -33,7 +33,8 @@
       "name": "person"
     },
     {
-      "name": "population"
+      "name": "population",
+      "description": "number of people living in a place"
     },
     {
       "name": "exposure"
@@ -404,7 +405,7 @@
     {
       "name": "financial study cost",
       "from": "study cost",
-      "verb": "measured in",
+      "verb": "in",
       "to": "CHF"
     },
     {
@@ -473,7 +474,7 @@
     {
       "name": "audio level",
       "from": "audio",
-      "verb": "measured in",
+      "verb": "in",
       "to": "dB"
     },
     {
@@ -493,14 +494,14 @@
     {
       "name": "direct incentive",
       "from": "direct",
-      "verb": "modifier of",
+      "verb": "of",
       "to": "incentive",
       "description": "lever: ranking / reputation / money reward for rare-but-right"
     },
     {
       "name": "friction reduction",
       "from": "reduction",
-      "verb": "acting on",
+      "verb": "of",
       "to": "friction",
       "description": "lever: remove distraction; acts on opportunity not motivation - the petition's mechanism"
     },
@@ -550,7 +551,7 @@
     {
       "name": "RSI runaway",
       "from": "RSI",
-      "verb": "leads to",
+      "verb": "can cause",
       "to": "runaway"
     },
     {
@@ -675,23 +676,23 @@
     },
     {
       "name": "third-party news platform",
-      "from": "third-party platform",
-      "verb": "includes",
-      "to": "social media",
+      "from": "social media",
+      "verb": "is part of",
+      "to": "third-party platform",
       "description": "DNR 2026 uses third-party platforms to describe social media, video networks and, more recently, AI chatbots."
     },
     {
       "name": "news source decline",
-      "from": "news website",
-      "verb": "changed by",
-      "to": "news",
+      "from": "news",
+      "verb": "influences",
+      "to": "news website",
       "description": "Use of news organisations' websites and apps fell by 12 percentage points since 2020."
     },
     {
       "name": "tv news decline",
-      "from": "news",
-      "verb": "changed by",
-      "to": "third-party platform",
+      "from": "third-party platform",
+      "verb": "influences",
+      "to": "news",
       "description": "TV news use fell by 13 percentage points since 2020 while third-party platform use became more prominent."
     }
   ],

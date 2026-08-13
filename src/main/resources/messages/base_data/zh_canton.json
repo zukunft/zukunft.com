@@ -32,7 +32,8 @@
       "name": "city"
     },
     {
-      "name": "Switzerland"
+      "name": "Switzerland",
+      "description": "a landlocked country at the confluence of Western, Central and Southern Europe."
     },
     {
       "name": "district",
@@ -143,9 +144,6 @@
       ]
     },
     {
-      "name": "Swiss franc"
-    },
-    {
       "name": "billion"
     },
     {
@@ -166,7 +164,7 @@
     },
     {
       "name": "sector",
-      "description": "distinct part of an economy"
+      "description": "a distinct part of a whole"
     },
     {
       "name": "service",
@@ -424,7 +422,7 @@
     },
     {
       "name": "share",
-      "description": "a part of a whole expressed as a fraction"
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "ratio",
@@ -511,9 +509,21 @@
       "name": "2026‑01",
       "type": "time",
       "description": "the month January 2026"
+    },
+    {
+      "name": "franc"
+    },
+    {
+      "name": "Swiss"
     }
   ],
   "triples": [
+    {
+      "name": "Swiss franc",
+      "from": "franc",
+      "verb": "kind of",
+      "to": "Swiss"
+    },
     {
       "name": "Zurich (canton)",
       "from": "Zurich",

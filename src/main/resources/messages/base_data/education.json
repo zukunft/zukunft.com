@@ -193,7 +193,18 @@
       "description": "Bloom level: produce new or original work"
     },
     {
-      "name": "learning"
+      "name": "learning",
+      "description": "process of acquiring new knowledge",
+      "refs": [
+        {
+          "name": "Learning",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q133500",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "score"
@@ -202,13 +213,25 @@
       "name": "transfer"
     },
     {
-      "name": "point"
+      "name": "point",
+      "description": "a single unit on a scale"
     },
     {
       "name": "percent"
     },
     {
-      "name": "efficiency"
+      "name": "efficiency",
+      "description": "the ratio of useful output to total input of a system",
+      "refs": [
+        {
+          "name": "Efficiency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1034411",
+          "type": "wikidata"
+        }
+      ]
     }
   ],
   "triples": [

@@ -107,16 +107,29 @@
       "name": "cross"
     },
     {
-      "name": "interest"
+      "name": "interest",
+      "description": "In finance and economics, interest is payment from a borrower or deposit-taking financial institution to a lender or depositor of an amount above repayment of the principal sum.",
+      "refs": [
+        {
+          "name": "Interest",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179179",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "amount"
     },
     {
-      "name": "old"
+      "name": "old",
+      "description": "the previous or earlier value in a comparison, e.g. in percent change"
     },
     {
-      "name": "new"
+      "name": "new",
+      "description": "the current or later value in a comparison, e.g. in percent change"
     },
     {
       "name": "change"
@@ -125,7 +138,14 @@
       "name": "rate"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "base"
@@ -171,7 +191,8 @@
       "name": "trading"
     },
     {
-      "name": "average"
+      "name": "average",
+      "description": "the mean value of a set of numbers"
     }
   ],
   "triples": [
