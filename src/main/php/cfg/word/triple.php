@@ -564,7 +564,7 @@ class triple extends sandbox_link_named
                         // TODO remove this exception
                         $vrb->save($msg);
                     }
-                    $dto?->add_verb($vrb);
+                    $dto?->add_verb($vrb, $msg);
                 } else {
                     $vrb = $sys->verb(verbs::NOT_SET);
                     $msg->add(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
@@ -643,7 +643,7 @@ class triple extends sandbox_link_named
                     $ref_obj = new ref($this->get_user());
                     $ref_obj->set_phrase($this->phrase());
                     $ref_obj->import_mapper($ref_data, $msg, $dto);
-                    $dto?->add_reference($ref_obj);
+                    $dto?->add_reference($ref_obj, $msg);
                     if ($msg->is_ok()) {
                         $this->ref_lst[] = $ref_obj;
                     }

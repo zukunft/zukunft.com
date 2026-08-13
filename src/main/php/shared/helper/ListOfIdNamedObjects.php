@@ -228,14 +228,14 @@ class ListOfIdNamedObjects extends ListOfIdObjects
      * add an object to the list or fill up the object with the same name
      *
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
-     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
      * @param Message $msg to report which entry is double
+     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
      * @returns bool true if the object has been added to this list
      */
     function add_obj_by_name(
         IdObject|TextIdObject|CombineObject $obj_to_add,
-        bool                                $allow_duplicates = false,
-        Message                             $msg = new Message()
+        Message                             $msg,
+        bool                                $allow_duplicates = false
     ): bool
     {
         $added = false;

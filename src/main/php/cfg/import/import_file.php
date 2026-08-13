@@ -266,7 +266,7 @@ class import_file
                     $imp->usr = $usr;
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
-                    $dto = $imp->get_data_object_yaml($yaml_array);
+                    $dto = $imp->get_data_object_yaml($yaml_array, $msg);
                     // the load reports the issues on $msg itself, so only its result is needed here
                     $load_ok = $dto->load($db_con, $msg);
                     $sys->typ_lst->load($db_con, $msg);

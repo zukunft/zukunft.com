@@ -247,14 +247,14 @@ class element_list extends sandbox_list
      * but has linked objects
      *
      * @param element|db_object_seq_id|null $to_add the object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
     function add_by_link(
         element|db_object_seq_id|null $to_add,
-        bool                          $allow_duplicates = false,
-        Message                       $msg = new Message()
+        Message                       $msg,
+        bool                          $allow_duplicates = false
     ): bool
     {
         $result = false;

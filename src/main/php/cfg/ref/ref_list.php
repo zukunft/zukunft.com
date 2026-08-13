@@ -296,24 +296,27 @@ class ref_list extends type_list
     /**
      * add a reference to the list that does not yet have an id but has the phrase name, the type and the external key set
      * @param ref|null $to_add the named user sandbox object that should be added
+     * @param user_message $msg to report a reference that cannot be added
      * @returns bool true if the object has been added
      */
-    function add_by_name_type_and_key(ref|null $to_add): bool
+    function add_by_name_type_and_key(ref|null $to_add, user_message $msg): bool
     {
-        // TODO Prio 1 add $usr_msg to the parameters
-        $msg = new user_message();
         $result = false;
         if ($to_add != null) {
             if (!in_array($to_add->get_key(), array_keys($this->key_list()))) {
-                // add only objects that have all mandatory values
-                if ($to_add->can_be_ready($msg)) {
+                // add only objects that have all mandatory values, judged by a local message,
+                // because can_be_ready returns the state of the given message, so a shared
+                // message with an earlier error would block a reference that is fine
+                $rdy_msg = new user_message($msg->usr); // the verdict of this reference
+                if ($to_add->can_be_ready($rdy_msg)) {
                     $this->add_direct($to_add);
                     $result = true;
                 } else {
                     // never fail silently: a reference that is dropped here is missing after the
                     // import without any trace, so report which ref is dropped and why
                     log_warning('reference ' . $to_add->dsp_id()
-                        . ' not added to the list because ' . $msg->all_message_text());
+                        . ' not added to the list because ' . $rdy_msg->all_message_text());
+                    $msg->merge($rdy_msg);
                 }
             }
         } else {

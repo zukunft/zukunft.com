@@ -230,33 +230,33 @@ class horizontal_tests
             $id = $filled_obj->id();
             // fill up cache to avoid db access in unit tests
             if ($class == user::class) {
-                $dto->add_term($filled_obj->trm);
-                $dto->add_view($filled_obj->msk);
-                $dto->add_source($filled_obj->src);
+                $dto->add_term($filled_obj->trm, $msg);
+                $dto->add_view($filled_obj->msk, $msg);
+                $dto->add_source($filled_obj->src, $msg);
             } elseif ($class == word::class) {
-                $dto->add_view($filled_obj->get_view($msg));
+                $dto->add_view($filled_obj->get_view($msg), $msg);
             } elseif ($class == triple::class) {
-                $dto->add_phrase($filled_obj->get_from());
-                $dto->add_phrase($filled_obj->get_to());
+                $dto->add_phrase($filled_obj->get_from(), $msg);
+                $dto->add_phrase($filled_obj->get_to(), $msg);
             } elseif ($class == ref::class) {
-                $dto->add_phrase($filled_obj->phrase());
-                $dto->add_source($filled_obj->get_source());
+                $dto->add_phrase($filled_obj->phrase(), $msg);
+                $dto->add_source($filled_obj->get_source(), $msg);
             } elseif ($class == value::class) {
-                $dto->add_source($filled_obj->get_source());
+                $dto->add_source($filled_obj->get_source(), $msg);
             } elseif ($class == result::class) {
-                $dto->add_formula($filled_obj->frm);
+                $dto->add_formula($filled_obj->frm, $msg);
             } elseif ($class == formula_link::class) {
-                $dto->add_formula($filled_obj->formula());
-                $dto->add_phrase($filled_obj->phrase());
+                $dto->add_formula($filled_obj->formula(), $msg);
+                $dto->add_phrase($filled_obj->phrase(), $msg);
             } elseif ($class == term_view::class) {
-                $dto->add_term($filled_obj->term());
-                $dto->add_view($filled_obj->get_view());
+                $dto->add_term($filled_obj->term(), $msg);
+                $dto->add_view($filled_obj->get_view(), $msg);
             } elseif ($class == view_relation::class) {
-                $dto->add_view($filled_obj->parent());
-                $dto->add_view($filled_obj->child());
+                $dto->add_view($filled_obj->parent(), $msg);
+                $dto->add_view($filled_obj->child(), $msg);
             } elseif ($class == component_link::class) {
-                $dto->add_view($filled_obj->get_view());
-                $dto->add_component($filled_obj->get_component());
+                $dto->add_view($filled_obj->get_view(), $msg);
+                $dto->add_component($filled_obj->get_component(), $msg);
             }
             $ex_json = $filled_obj->export_json($msg, [], false);
             $api_json = $filled_obj->api_json([api_types::TEST_MODE]);

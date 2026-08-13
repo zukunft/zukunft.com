@@ -1102,13 +1102,13 @@ class word_list extends sandbox_list_named
      * create a useful list of time phrases
      * @return word_list with the "useful" time words
      */
-    function time_useful(): word_list
+    function time_useful(user_message $msg): word_list
     {
         log_debug('for ' . $this->dsp_id());
 
         //$result = zu_lst_to_flat_lst($word_lst);
         $result = clone $this;
-        $result->wlsort();
+        $result->wlsort($msg);
         //$result = $word_lst;
         //a sort($result);
         // sort

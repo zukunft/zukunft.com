@@ -1425,11 +1425,11 @@ class component extends sandbox_code_id
 
     /**
      * set the log entry parameters to link a display component ($cmp) to a view ($dsp)
-     * @param $dsp the view to which this component is linked
+     * @param view $dsp the view to which this component is linked
      * @param user_message $msg to report a change log entry that cannot be written
      * @return bool true if the link has been logged
      */
-    function log_link($dsp, user_message $msg): bool
+    function log_link(view $dsp, user_message $msg): bool
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());
@@ -1446,11 +1446,11 @@ class component extends sandbox_code_id
 
     /**
      * set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
-     * @param $dsp the view from which this component is unlinked
+     * @param view $dsp the view from which this component is unlinked
      * @param user_message $msg to report a change log entry that cannot be written
      * @return bool true if the unlink has been logged
      */
-    function log_unlink($dsp, user_message $msg): bool
+    function log_unlink(view $dsp, user_message $msg): bool
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());

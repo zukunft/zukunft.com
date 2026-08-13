@@ -90,12 +90,12 @@ class horizontal_write_tests
 
                 // remember the word to be able to use it for a proper triple
                 if ($obj::class == word::class) {
-                    $cac->add_word($obj);
+                    $cac->add_word($obj, $msg);
                 }
 
                 // remember the verb to be able to use it for a proper triple
                 if ($obj::class == verb::class) {
-                    $cac->add_verb($obj);
+                    $cac->add_verb($obj, $msg);
                     $sys->add_verb($obj);
                 }
 
@@ -103,7 +103,7 @@ class horizontal_write_tests
                 if ($class == word::class) {
                     $wrd2 = $t_wrd->word_add_via_api();
                     $wrd2->save($msg);
-                    $cac->add_word($wrd2);
+                    $cac->add_word($wrd2, $msg);
                 }
 
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' and check differences';

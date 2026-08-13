@@ -723,152 +723,165 @@ class data_object
     /**
      * add a named word without db id to the list
      * @param word $wrd with the name set
+     * @param user_message $msg to report a word that is already in the cache
      * @return void
      */
-    function add_word(word $wrd): void
+    function add_word(word $wrd, user_message $msg): void
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->wrd_lst->add_by_key($wrd);
+        $this->wrd_lst->add_by_key($wrd, false, $msg);
 
         // add word references
         foreach ($wrd->ref_lst as $ref) {
-            $this->add_reference($ref);
+            $this->add_reference($ref, $msg);
         }
     }
 
     /**
      * add a named verb without db id to the list
      * @param verb $vrb with the name set
+     * @param user_message $msg to report a verb that is already in the cache
      * @return void
      */
-    function add_verb(verb $vrb): void
+    function add_verb(verb $vrb, user_message $msg): void
     {
         $this->trm_lst_dirty = true;
-        $this->vrb_lst->add_by_name($vrb);
+        $this->vrb_lst->add_by_name($vrb, $msg);
     }
 
     /**
      * add a triple with the names of the linked phrase names but without db id to the list
      * @param triple $trp with the name and word names set
+     * @param user_message $msg to report a triple that is already in the cache
      * @return void
      */
-    function add_triple(triple $trp): void
+    function add_triple(triple $trp, user_message $msg): void
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->trp_lst->add_by_key($trp);
+        $this->trp_lst->add_by_key($trp, false, $msg);
     }
 
     /**
      * add a triple by the triple name without checking the links
      * e.g. to update or delete a triple without repeating the from and to phrases
      * @param triple $trp with the name and word names set
+     * @param user_message $msg to report a triple that is already in the cache
      * @return void
      */
-    function add_triple_without_ready_check(triple $trp): void
+    function add_triple_without_ready_check(triple $trp, user_message $msg): void
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->trp_lst->add_by_name_direct($trp);
+        $this->trp_lst->add_by_name_direct($trp, false, $msg);
     }
 
     /**
      * add a name phrase without db id to the list
      * @param phrase $phr with the name set
+     * @param user_message $msg to report a phrase that is already in the cache
      * @return void
      */
-    function add_phrase(phrase $phr): void
+    function add_phrase(phrase $phr, user_message $msg): void
     {
         if ($phr->is_word()) {
-            $this->add_word($phr->word());
+            $this->add_word($phr->word(), $msg);
         } else {
-            $this->add_triple($phr->triple());
+            $this->add_triple($phr->triple(), $msg);
         }
     }
 
     /**
      * add a source with the names but without db id to the list
      * @param source $src with the name and word names set
+     * @param user_message $msg to report a source that is already in the cache
      * @return void
      */
-    function add_source(source $src): void
+    function add_source(source $src, user_message $msg): void
     {
-        $this->src_lst->add_by_key($src);
+        $this->src_lst->add_by_key($src, false, $msg);
     }
 
     /**
      * add a reference with the names but without db id to the list
      * @param ref $ref with the phrase (or later term) name, reference type and the external key set
+     * @param user_message $msg to report a reference that is already in the cache
      * @return void
      */
-    function add_reference(ref $ref): void
+    function add_reference(ref $ref, user_message $msg): void
     {
-        $this->ref_lst->add_by_name_type_and_key($ref);
+        $this->ref_lst->add_by_name_type_and_key($ref, $msg);
     }
 
     /**
      * add a formula with word and triple names but without db id to the list
      * @param formula $frm with the name and word names set
+     * @param user_message $msg to report a formula that is already in the cache
      * @return void
      */
-    function add_formula(formula $frm): void
+    function add_formula(formula $frm, user_message $msg): void
     {
         $this->trm_lst_dirty = true;
-        $this->frm_lst->add_by_key($frm);
+        $this->frm_lst->add_by_key($frm, false, $msg);
     }
 
     /**
      * add a formula by the formula name without checking the links
      * * e.g. to update or delete a formula without repeating the from and to phrases
      * @param formula $frm with the name and word names set
+     * @param user_message $msg to report a formula that is already in the cache
      * @return void
      */
-    function add_formula_without_ready_check(formula $frm): void
+    function add_formula_without_ready_check(formula $frm, user_message $msg): void
     {
         $this->trm_lst_dirty = true;
-        $this->frm_lst->add_by_name_direct($frm);
+        $this->frm_lst->add_by_name_direct($frm, false, $msg);
     }
 
     /**
      * add a name term without db id to the list
      * @param term $trm with the name set
+     * @param user_message $msg to report a term that is already in the cache
      * @return void
      */
-    function add_term(term $trm): void
+    function add_term(term $trm, user_message $msg): void
     {
         if ($trm->is_word()) {
-            $this->add_word($trm->get_word());
+            $this->add_word($trm->get_word(), $msg);
         } elseif ($trm->is_verb()) {
-            $this->add_verb($trm->get_verb());
+            $this->add_verb($trm->get_verb(), $msg);
         } elseif ($trm->is_triple()) {
-            $this->add_triple($trm->get_triple());
+            $this->add_triple($trm->get_triple(), $msg);
         } elseif ($trm->is_formula()) {
-            $this->add_formula($trm->get_formula());
+            $this->add_formula($trm->get_formula(), $msg);
         } else {
-            log_err('');
-            $this->add_word($trm->get_word());
+            log_err_msg('term ' . $trm->dsp_id() . ' has no word, verb, triple or formula, '
+                . 'so it is added to the import cache as a word', $msg);
+            $this->add_word($trm->get_word(), $msg);
         }
     }
 
     /**
      * add a view with name but without db id to the list
      * @param view|sandbox_named $frm with the name and parameters set
+     * @param user_message $msg to report a view that is already in the cache
      * @return void
      */
-    function add_view(view|sandbox_named $frm): void
+    function add_view(view|sandbox_named $frm, user_message $msg): void
     {
-        $this->msk_lst->add_by_key($frm);
+        $this->msk_lst->add_by_key($frm, false, $msg);
     }
 
     /**
      * add a component with name but without db id to the list
      * @param component $cmp with the name and parameters set
+     * @param user_message $msg to report a component that is already in the cache
      * @return void
      */
-    function add_component(component $cmp): void
+    function add_component(component $cmp, user_message $msg): void
     {
-        $this->cmp_lst->add_by_key($cmp);
+        $this->cmp_lst->add_by_key($cmp, false, $msg);
     }
 
     /**

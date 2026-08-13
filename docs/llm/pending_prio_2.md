@@ -24,7 +24,15 @@ the done passes are in the git history; only what is still open is listed here.
      plain `add` keeps only the first of several id less objects. `add_by_key` is now safe to
      recommend: it judges `can_be_ready` with a local message (an earlier unrelated error no longer
      blocks the add) and returns whether it added instead of the message state - all 47 call sites
-     ignore the return and pass no message, so the shape can be tightened further
+     ignore the return and pass no message, so the shape can be tightened further.
+     careful with its "name already in the list" branch: it must stay on the **parent** `add_obj`,
+     because an entry with the same name but another db id is a different object that belongs in
+     the list (e.g. a renamed word next to its original); routing it to the named `add_obj`, which
+     keys on the name, drops such an entry - that emptied the frontend cache phrase list, so
+     `phrase::is_or_can_be` found nothing, `list_sort` fell into its hardcoded `load_by_name`
+     fallback and rendered empty phrase links plus a "Mandatory field name missing in API JSON"
+     warning on the start page. still open there: the drop is silent (TODO on the line) and the
+     `list_sort` fallback adds objects that could not be loaded
    - the `assigned` array of a formula import now resolves each name in the `$dto` and links it
      (one helper shared with `assigned_word`), so `save_links` writes the links; two loose ends:
      `formula_map::$lnk_lst` has no accessor, so a unit test cannot assert the created links (only
@@ -68,14 +76,28 @@ the done passes are in the git history; only what is still open is listed here.
    `sandbox_list::add_user_check`, `id_used_msg`), while the recursive `diff_msg` and `fill` cores
    stay as they are - their callers do merge the return, so threading them is high risk, low value.
 
-2. **remove the 24 remaining message parameter defaults**: a caller that passes nothing silently
-   loses its messages, so the default is the same drop in disguise. two families:
-   - 16 `Message $msg = new Message()` of the **list add family** (`ListOf*::add_obj`,
-     `sandbox_list*::add_obj` / `add_by_key`, `component_link_list`, `element_list`, `formula_list`,
-     `view_relation_list`, the web `ListBase` / `sandbox_list_named`, plus `web/frontend.php::start`).
-     they became visible when the check learned the shared `Message` class; before that the report
-     only knew `user_message`. mechanical per class, but the callers are many, so one class per
-     commit, and note that most of these functions also end with `return $msg->is_ok()`
+2. **remove the 19 remaining message parameter defaults**: a caller that passes nothing silently
+   loses its messages, so the default is the same drop in disguise. done so far of the list add
+   family: `add_obj_by_name`, `add_obj_by_code_id`, `add_by_link` (incl. the `element_list`
+   override) and `web/frontend.php::start` - each had few call sites and every caller either had a
+   message or is an entry point (`http/setup.php` now creates it before it starts the session).
+   the two remaining families are measured, so do not re-size them by definition count:
+   - `add_by_key` (6 defaults: `ListOfIdObjects`, both `sandbox_list_named`, `component_link_list`,
+     `formula_list`, `view_relation_list`) - 47 call sites, 29 of them in functions **without** a
+     message in scope
+   - `add_obj` incl. `sandbox_list_named::add` (5 defaults: `ListOf`, `ListOfIdObjects`,
+     `sandbox_list`, `sandbox_list_named`) - 70 call sites, 31 without a message in scope
+   the `data_object` adders are done: `add_word`, `add_triple`, `add_phrase`, `add_source`,
+   `add_reference`, `add_formula`, `add_view`, `add_component` and the two `*_without_ready_check`
+   take the message and pass it to `add_by_key` / `add_by_name_direct`, and `ref_list::add_by_name_type_and_key`
+   lost its local message (its TODO Prio 1), and the yaml chain of the config import
+   (`get_data_object_yaml`, its loop and `yaml_data_object_map_triple`) threads the message too, so
+   a config key that does not name exactly two words for a triple is reported and not only logged. every one of those names exists on more than one class
+   (`view::add_component`, `verb_list::add_verb`, `group::add_word`, `test_db_load::add_word`), so
+   the receiver was resolved per call site - never rename by function name.
+   what is left before the defaults can go: the callers of `add_by_key` / `add_obj` in
+   `phrase_list`, `word_list`, `triple_list`, `term_list`, `verb_list`, `formula_list`, `import` and
+   `result_list`, one class per commit with a test run
    - the 8 `api_json` defaults, and that family is the trap — read this before retrying. its 53
      **production** call sites already pass their message, so the drop is fixed there; removing the
      defaults breaks **232 test call sites**, each needing the right message *kind* (a backend
