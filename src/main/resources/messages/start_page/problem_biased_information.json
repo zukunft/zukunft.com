@@ -1,0 +1,76 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "biased information key figures"
+  ],
+  "description": "The most relevant number of the problem \"biased information\" of the start page ranking and the potential solution. The concept paper gives no measured figure for how many decisions rest on incomplete or one sided information, so the share is an assumed value; the solution is the Delphi method, a structured and anonymised consultation over several rounds with aggregated feedback.",
+  "words": [
+    {
+      "name": "biased"
+    },
+    {
+      "name": "information"
+    },
+    {
+      "name": "Delphi"
+    },
+    {
+      "name": "method"
+    },
+    {
+      "name": "decisions"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "biased information",
+      "description": "incomplete or one sided information used as the basis for political and social decisions (concept paper section 4)",
+      "from": "information",
+      "verb": "can be",
+      "to": "biased"
+    },
+    {
+      "name": "Delphi method",
+      "description": "structured, iterative and anonymised consultation of experts, in a real time variant used to let transparent consensus building set the direction instead of the emotional impulse (concept paper section 4)",
+      "from": "method",
+      "verb": "of",
+      "to": "Delphi"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Linstone & Turoff (1975) Delphi method",
+      "description": "Linstone, H. A. & Turoff, M. (Eds.) (1975): The Delphi Method: Techniques and Applications. Addison-Wesley.",
+      "url": "https://web.njit.edu/~turoff/pubs/delphibook/index.html",
+      "type": "api"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "biased information",
+        "decisions",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "Delphi method",
+        "biased information",
+        "assumed value",
+        "percent"
+      ],
+      "number": "-0.15"
+    }
+  ]
+}

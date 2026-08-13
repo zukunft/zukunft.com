@@ -377,6 +377,102 @@
     },
     {
       "name": "2024"
+    },
+    {
+      "name": "disinformation"
+    },
+    {
+      "name": "wealth"
+    },
+    {
+      "name": "concentration"
+    },
+    {
+      "name": "market"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "biased"
+    },
+    {
+      "name": "information"
+    },
+    {
+      "name": "AI"
+    },
+    {
+      "name": "black-box"
+    },
+    {
+      "name": "citizen"
+    },
+    {
+      "name": "participation"
+    },
+    {
+      "name": "mismeasurement"
+    },
+    {
+      "name": "proprietary"
+    },
+    {
+      "name": "software"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "avoidance"
+    },
+    {
+      "name": "platform"
+    },
+    {
+      "name": "regulation"
+    },
+    {
+      "name": "Delphi"
+    },
+    {
+      "name": "method"
+    },
+    {
+      "name": "basic"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "free"
+    },
+    {
+      "name": "fluid"
+    },
+    {
+      "name": "democracy"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "domestic"
+    },
+    {
+      "name": "usage"
+    },
+    {
+      "name": "assumed value"
     }
   ],
   "triples": [
@@ -556,6 +652,192 @@
       "verb": "is a",
       "to": "system",
       "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "column (system)",
+      "description": "keyword for columns used by the system components",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_column"
+    },
+    {
+      "name": "prime column (system)",
+      "description": "keyword for columns that should be shown in a table even if the screen is small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "prime",
+      "code_id": "system_column_prime"
+    },
+    {
+      "name": "second column (system)",
+      "description": "keyword for columns that should always be shown if the screen not small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "second",
+      "code_id": "system_column_second"
+    },
+    {
+      "name": "third column (system)",
+      "description": "keyword for columns that should always be shown if the screen wide",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "third",
+      "code_id": "system_column_third"
+    },
+    {
+      "name": "wealth concentration",
+      "description": "concentration of money and power that destroys democratic participation (concept paper section 5)",
+      "from": "concentration",
+      "verb": "of",
+      "to": "wealth"
+    },
+    {
+      "name": "market power",
+      "description": "the ability of a market dominant company to prevent competition, dictate prices and shift profits to low tax jurisdictions (concept paper section 7)",
+      "from": "power",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "biased information",
+      "description": "incomplete or one sided information used as the basis for political and social decisions (concept paper section 4)",
+      "from": "information",
+      "verb": "can be",
+      "to": "biased"
+    },
+    {
+      "name": "artificial intelligence",
+      "from": "intelligence",
+      "verb": "can be",
+      "to": "artificial"
+    },
+    {
+      "from": "AI",
+      "verb": "is symbol for",
+      "to": "artificial intelligence"
+    },
+    {
+      "name": "black-box AI",
+      "description": "proprietary AI systems without disclosed training data, open source code or accountability chain, which reproduce a text in its intended reading instead of exposing its weaknesses (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "black-box"
+    },
+    {
+      "name": "citizen participation",
+      "description": "the missing overview of the solidarity effects of an initiative, which reduces a multifaceted issue to a binary yes or no decision (concept paper section 10)",
+      "from": "participation",
+      "verb": "of",
+      "to": "citizen"
+    },
+    {
+      "name": "GDP mismeasurement",
+      "description": "gross domestic product measures the market production and not the benefit, so free goods count as zero and unrepaired damage does not reduce it (concept paper section 11)",
+      "from": "mismeasurement",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "proprietary software",
+      "description": "closed source software in the public sector that causes opacity, missing verifiability, vendor dependency and risks to national security (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "proprietary"
+    },
+    {
+      "name": "climate gas emissions",
+      "from": "emissions",
+      "verb": "of",
+      "to": "climate gas"
+    },
+    {
+      "name": "reduce climate gas emissions",
+      "description": "a transparent, publicly calculated climate tariff that prices the emissions of imports and exports and thereby stops carbon leakage (concept paper section 3)",
+      "from": "reduction",
+      "verb": "of",
+      "to": "climate gas emissions"
+    },
+    {
+      "name": "wrong decisions",
+      "from": "decisions",
+      "verb": "can be",
+      "to": "wrong"
+    },
+    {
+      "name": "avoid wrong decisions",
+      "description": "decisions based on precise and neutral knowledge instead of the emotional impulse of the group (concept paper section 4)",
+      "from": "avoidance",
+      "verb": "of",
+      "to": "wrong decisions"
+    },
+    {
+      "name": "platform regulation",
+      "description": "democratically legitimised, transparent and justiciable rules against disinformation on internet platforms (concept paper section 2)",
+      "from": "regulation",
+      "verb": "of",
+      "to": "platform"
+    },
+    {
+      "name": "Delphi method",
+      "description": "structured, iterative and anonymised consultation of experts, in a real time variant used to let transparent consensus building set the direction instead of the emotional impulse (concept paper section 4)",
+      "from": "method",
+      "verb": "of",
+      "to": "Delphi"
+    },
+    {
+      "name": "basic income",
+      "description": "a proto unconditional basic income implemented as a negative income tax, started so low that almost nobody feels an effect and raised as long as the net effect stays positive (concept paper section 5)",
+      "from": "income",
+      "verb": "can be",
+      "to": "basic"
+    },
+    {
+      "name": "public AI",
+      "description": "AI systems with societal decision relevance organised as a public good with disclosed training data, open source availability and clear liability rules (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "market share",
+      "from": "share",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "market share tax",
+      "description": "supplementary taxation of corporate profits linked to the market share in the smallest relevant market segment and levied where the economic use occurs (concept paper section 7)",
+      "from": "tax",
+      "verb": "of",
+      "to": "market share"
+    },
+    {
+      "name": "free software",
+      "description": "free, secure and transparent software in the public sector following the principle public money, public code (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "free"
+    },
+    {
+      "name": "fluid democracy",
+      "description": "a structured, argument based and iterative process in which every citizen can propose, debate and decide binding rules (concept paper section 10)",
+      "from": "democracy",
+      "verb": "can be",
+      "to": "fluid"
+    },
+    {
+      "name": "domestic usage",
+      "from": "usage",
+      "verb": "can be",
+      "to": "domestic"
+    },
+    {
+      "name": "gross domestic usage",
+      "description": "a measure of the actual usage instead of the market turnover, so that free goods and avoided damage are part of the result (concept paper section 11)",
+      "from": "domestic usage",
+      "verb": "can be",
+      "to": "gross"
     }
   ],
   "sources": [
@@ -594,7 +876,7 @@
         "percent",
         "htp"
       ],
-      "number": "-37"
+      "number": "-0.37"
     },
     {
       "words": [
@@ -604,7 +886,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-32"
+      "number": "-0.32"
     },
     {
       "words": [
@@ -614,7 +896,7 @@
         "percent",
         "htp"
       ],
-      "number": "-28"
+      "number": "-0.28"
     },
     {
       "words": [
@@ -624,7 +906,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-31"
+      "number": "-0.31"
     },
     {
       "words": [
@@ -634,7 +916,7 @@
         "percent",
         "htp"
       ],
-      "number": "-24"
+      "number": "-0.24"
     },
     {
       "words": [
@@ -644,7 +926,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-31"
+      "number": "-0.31"
     },
     {
       "words": [
@@ -654,7 +936,7 @@
         "percent",
         "htp"
       ],
-      "number": "-16"
+      "number": "-0.16"
     },
     {
       "words": [
@@ -664,7 +946,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-8"
+      "number": "-0.08"
     },
     {
       "words": [
@@ -674,7 +956,7 @@
         "percent",
         "htp"
       ],
-      "number": "-11"
+      "number": "-0.11"
     },
     {
       "words": [
@@ -684,7 +966,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-13"
+      "number": "-0.13"
     },
     {
       "words": [
@@ -697,7 +979,7 @@
         "aftermath",
         "OLS"
       ],
-      "number": "-0.97",
+      "number": "-0.0097",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)"
     },
     {
@@ -711,8 +993,297 @@
         "aftermath",
         "OLS"
       ],
-      "number": "-1.04",
+      "number": "-0.0104",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "31.5"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "35.2"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "23.8"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "34.1"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "20.4"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "34.1"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "13.6"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "8.8"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR"
+      ],
+      "number": "9.4"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "14.3"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "11.2"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "16"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "7.3"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "6.5"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "9"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "4.5"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "7"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "3.2"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "5.5"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "2.5"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "1.8"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed value"
+      ],
+      "number": "3"
     }
   ],
   "formulas": [

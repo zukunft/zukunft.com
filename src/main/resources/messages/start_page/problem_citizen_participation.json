@@ -1,0 +1,125 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "citizen participation key figures"
+  ],
+  "description": "The most relevant number of the problem \"citizen participation\" of the start page ranking and the potential solutions. A referendum reduces a multifaceted issue to one binary yes or no decision, so the number of positions a voter can express is the size of the problem. The solutions are a solidarity compass for initiatives and the argument level voting of fluid democracy.",
+  "words": [
+    {
+      "name": "citizen"
+    },
+    {
+      "name": "participation"
+    },
+    {
+      "name": "fluid"
+    },
+    {
+      "name": "democracy"
+    },
+    {
+      "name": "solidarity"
+    },
+    {
+      "name": "compass"
+    },
+    {
+      "name": "position"
+    },
+    {
+      "name": "referendum"
+    },
+    {
+      "name": "argument"
+    },
+    {
+      "name": "count"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "citizen participation",
+      "description": "the missing overview of the solidarity effects of an initiative, which reduces a multifaceted issue to a binary yes or no decision (concept paper section 10)",
+      "from": "participation",
+      "verb": "of",
+      "to": "citizen"
+    },
+    {
+      "name": "fluid democracy",
+      "description": "a structured, argument based and iterative process in which every citizen can propose, debate and decide binding rules (concept paper section 10)",
+      "from": "democracy",
+      "verb": "can be",
+      "to": "fluid"
+    },
+    {
+      "name": "solidarity compass",
+      "description": "a voting advice application for initiatives that shows who benefits, who bears the costs and which trade-offs are involved (concept paper section 10)",
+      "from": "compass",
+      "verb": "of",
+      "to": "solidarity"
+    },
+    {
+      "name": "position count",
+      "from": "count",
+      "verb": "of",
+      "to": "position"
+    },
+    {
+      "name": "referendum position count",
+      "from": "position count",
+      "verb": "of",
+      "to": "referendum"
+    },
+    {
+      "name": "argument position count",
+      "from": "position count",
+      "verb": "of",
+      "to": "argument"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Walder, Fivaz & Schwarz (2026)",
+      "description": "Walder, M., Fivaz, J. & Schwarz, D. (2026): Voting Advice Applications and Their Impact on Ideological and Affective Polarization. Politics and Governance, 14.",
+      "url": "https://www.cogitatiopress.com/politicsandgovernance/article/view/11236/4917",
+      "type": "pdf"
+    },
+    {
+      "name": "Referendum (Wikipedia)",
+      "description": "A referendum is a direct vote in which the electorate accepts or rejects one proposal, so a voter can express exactly two positions on it.",
+      "url": "https://en.wikipedia.org/wiki/Referendum",
+      "type": "api"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "referendum position count",
+        "citizen participation"
+      ],
+      "number": "2",
+      "source": "Referendum (Wikipedia)"
+    },
+    {
+      "words": [
+        "argument position count",
+        "fluid democracy",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "solidarity compass",
+        "citizen participation",
+        "assumed value"
+      ],
+      "number": "10"
+    }
+  ]
+}

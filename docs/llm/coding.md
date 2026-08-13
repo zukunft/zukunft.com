@@ -132,7 +132,7 @@ words, triples, formulas, sources, values) and `docs/llm/json_views.md`
 `docs/llm/architecture.md`.
 
 - Use the domain nouns exactly: word, verb, triple, source, ref, value, group, formula, result, view, component. `phrase` = word|triple; `term` = word|verb|triple|formula. Every phrase is a term; a verb/formula is a term but not a phrase.
-- `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`.
+- `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`. A stored `percent` value is the decimal ratio too — 18 % is `"0.18"`, 0.5 % is `"0.005"` — so no `/ 100` in the consumer either; sanity-check the magnitude, a small number can be either form. → `docs/llm/json_structure.md`
 - Symbols/abbreviations may alias several phrases on purpose (`m` = metre = million); only flag genuine unintended collisions, never force-uniquify.
 - Disambiguate an ambiguous *word* with qualifier triples via the `must be one of` verb — define the word once, reference the triples; display the bare word, qualifier in the tooltip.
 - A triple's `from`/`verb`/`to` key is unique within an import; split a clashing key with an intermediate building-block triple.
@@ -142,6 +142,7 @@ words, triples, formulas, sources, values) and `docs/llm/json_views.md`
 - Assign an import formula to its *input* phrase(s) (`assigned_word` / `assigned`), never to its result.
 - Give a formula the most *general* name (`growth rate`, not `canton growth rate`) and assign it to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
 - Qualify a value as specifically as the data allows, globally unique — name the actual entity (`Zurich (canton)`, not bare `canton`); build qualifiers as triples from single words; omit `"share":"public"` (the default).
+- Never add a `measured value` qualifier (to a value, to a calc-validation `context`, or as a word/triple): every value is assumed to be measured. Mark only the deviation, `assumed value`, and name a `source` for the measured ones. → `docs/llm/json_structure.md`
 - `import_mapper` maps from the `$dto` only — never reads the DB; a missing reference adds a `msg_id` error, no DB load, no placeholder.
 - A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`. → `docs/llm/json_views.md`
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`

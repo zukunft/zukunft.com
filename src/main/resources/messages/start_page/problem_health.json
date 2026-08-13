@@ -1,0 +1,89 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "health key figures"
+  ],
+  "description": "The most relevant number of the problem \"health\" of the start page ranking and the potential solution: health is the factor that the population names most often as the most important one for happiness, and it acts as an independent production factor of the economy. The solution shown on the start page is to link the contributions to the economic capacity.",
+  "words": [
+    {
+      "name": "health"
+    },
+    {
+      "name": "happiness"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "taxes"
+    },
+    {
+      "name": "capacity"
+    },
+    {
+      "name": "economic"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "happiness factor",
+      "description": "a factor that people name as important for their happiness",
+      "from": "factor",
+      "verb": "of",
+      "to": "happiness"
+    },
+    {
+      "name": "economic capacity",
+      "from": "capacity",
+      "verb": "can be",
+      "to": "economic"
+    },
+    {
+      "name": "health taxes",
+      "description": "health insurance contributions linked to the economic capacity, so that the healthcare expenditure does not exceed a certain share of the household income (concept paper section 8)",
+      "from": "taxes",
+      "verb": "of",
+      "to": "health"
+    }
+  ],
+  "sources": [
+    {
+      "name": "SINUS/YouGov (2024) happiness survey",
+      "description": "SINUS/YouGov (2024): survey cited by the concept paper section 8, in which regularly around 50 percent of the population name health as the most important factor for happiness."
+    },
+    {
+      "name": "Bloom, Canning & Sevilla (2004)",
+      "description": "Bloom, D. E., Canning, D. & Sevilla, J. (2004): The Effect of Health on Economic Growth: A Production Function Approach. World Development, 32(1), 1-13.",
+      "url": "https://doi.org/10.1016/j.worlddev.2003.07.002",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "health",
+        "happiness factor",
+        "percent"
+      ],
+      "number": "0.5",
+      "source": "SINUS/YouGov (2024) happiness survey"
+    },
+    {
+      "words": [
+        "health taxes",
+        "economic capacity",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.1"
+    }
+  ]
+}

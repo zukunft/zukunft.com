@@ -499,7 +499,7 @@
         "foreign share",
         "percent"
       ],
-      "number": "33.9",
+      "number": "0.339",
       "source": "Statistik Stadt Zuerich 2025"
     },
     {
@@ -508,7 +508,7 @@
         "foreign share",
         "percent"
       ],
-      "number": "29",
+      "number": "0.29",
       "source": "Statistisches Amt Kanton Zuerich 2025"
     },
     {
@@ -572,7 +572,7 @@
         "Zurich (city) share of Zurich (canton)",
         "percent"
       ],
-      "number": "27.7886051123992"
+      "number": "0.277886051123992"
     },
     {
       "words": [
@@ -630,7 +630,7 @@
     },
     {
       "name": "share of canton (formula)",
-      "expression": "\"Zurich (city) share of Zurich (canton)\" = \"Zurich (city)\" / \"Zurich (canton)\" * 100",
+      "expression": "\"Zurich (city) share of Zurich (canton)\" = \"Zurich (city)\" / \"Zurich (canton)\"",
       "assigned": [
         "Zurich (city)",
         "Zurich (canton)"
@@ -681,7 +681,7 @@
     },
     {
       "name": "foreign count (formula)",
-      "expression": "\"foreign count\" = \"population\" * \"foreign share\" / 100",
+      "expression": "\"foreign count\" = \"population\" * \"foreign share\"",
       "assigned": [
         "Zurich (city)",
         "Zurich (canton)"
@@ -744,7 +744,7 @@
         "Zurich (city) share of Zurich (canton)",
         "percent"
       ],
-      "number": "27.7886051123992",
+      "number": "0.277886051123992",
       "note": "452421 / 1628081 * 100"
     },
     {

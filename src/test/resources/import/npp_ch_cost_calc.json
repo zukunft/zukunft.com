@@ -5,7 +5,7 @@
   "selection": [
     "nuclear power plant risk cost per kWh"
   ],
-  "description": "Monte-Carlo estimate of the expected accident (severe core damage) risk cost of a new large light-water reactor, expressed in Rappen per kWh, computed under four widths of the 95% confidence interval on the two dominant uncertain inputs: the core damage frequency per reactor-year and the total accident damage cost. Build cost, lifetime energy production, core damage frequency band and Fukushima-scale damage cost are sourced (measured value); the CI widths and the damage-cost median are modelling assumptions (assumed value with confidence). All derived per-kWh figures are tagged assumed value because they depend on the assumed CI widths.",
+  "description": "Monte-Carlo estimate of the expected accident (severe core damage) risk cost of a new large light-water reactor, expressed in Rappen per kWh, computed under four widths of the 95% confidence interval on the two dominant uncertain inputs: the core damage frequency per reactor-year and the total accident damage cost. Build cost, lifetime energy production, core damage frequency band and Fukushima-scale damage cost are sourced; the CI widths and the damage-cost median are modelling assumptions (assumed value with confidence). All derived per-kWh figures are tagged assumed value because they depend on the assumed CI widths.",
   "words": [
     {
       "name": "nuclear",
@@ -411,10 +411,6 @@
       "description": "division operator forming a quotient unit."
     },
     {
-      "name": "measured value",
-      "description": "a value taken from a cited external source."
-    },
-    {
       "name": "assumed value",
       "description": "a conjectured value not directly measured, carrying a numeric confidence."
     }
@@ -690,8 +686,7 @@
       "words": [
         "Hinkley Point C",
         "build cost",
-        "billion CHF",
-        "measured value"
+        "billion CHF"
       ],
       "number": "27.5",
       "source": "IWR Hinkley Point C cost 2026"
@@ -700,8 +695,7 @@
       "words": [
         "EPR reactor",
         "net capacity",
-        "MW",
-        "measured value"
+        "MW"
       ],
       "number": "1600",
       "source": "IWR Hinkley Point C cost 2026"
@@ -713,7 +707,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "90",
+      "number": "0.9",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
     },
     {
@@ -740,8 +734,7 @@
       "words": [
         "nuclear reactor",
         "core damage frequency",
-        "median value",
-        "measured value"
+        "median value"
       ],
       "number": "0.0001",
       "source": "Sornette 2012 empirical CDF"
@@ -761,8 +754,7 @@
         "Fukushima accident",
         "accident damage cost",
         "billion CHF",
-        "median value",
-        "measured value"
+        "median value"
       ],
       "number": "300",
       "source": "JCER 2019 Fukushima cost"
@@ -950,7 +942,6 @@
         "nuclear reactor",
         "core damage frequency",
         "median value",
-        "measured value",
         "EPR reactor",
         "lifetime",
         "year",

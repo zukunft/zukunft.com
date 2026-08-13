@@ -361,7 +361,7 @@
         "2024",
         "percent"
       ],
-      "number": "8.480392156862745"
+      "number": "0.08480392156862745"
     },
     {
       "words": [
@@ -417,7 +417,7 @@
         "2023",
         "percent"
       ],
-      "number": "40",
+      "number": "0.4",
       "source": "Eurostat Income and Living Conditions 2023"
     },
     {
@@ -427,7 +427,7 @@
         "2023",
         "percent"
       ],
-      "number": "8",
+      "number": "0.08",
       "source": "Eurostat Income and Living Conditions 2023"
     },
     {
@@ -442,7 +442,7 @@
   "formulas": [
     {
       "name": "poverty rate (formula)",
-      "expression": "\"poverty rate\" = \"extreme poverty\" / \"population\" * 100",
+      "expression": "\"poverty rate\" = \"extreme poverty\" / \"population\"",
       "assigned": [
         "world"
       ]
@@ -478,7 +478,7 @@
         "2024",
         "percent"
       ],
-      "number": "8.480392156862745",
+      "number": "0.08480392156862745",
       "note": "692000000 / 8160000000 * 100"
     },
     {

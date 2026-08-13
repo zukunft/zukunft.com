@@ -33,7 +33,7 @@
     {
       "id": "v1",
       "word_id": "w3",
-      "type": "measured value",
+      
       "value": 57.7,
       "unit": "GtCO2eq/year",
       "confidence": 0.9,
@@ -44,7 +44,7 @@
     {
       "id": "v2",
       "word_id": "w4",
-      "type": "measured value",
+      
       "value": 190,
       "unit": "USD/tCO2 (2020 USD, 2% discount rate)",
       "confidence": 0.7,

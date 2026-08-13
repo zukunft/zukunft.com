@@ -389,7 +389,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "90",
+      "number": "0.9",
       "source": "EIA AEO 2013"
     },
     {
@@ -455,7 +455,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "87.8",
+      "number": "0.878",
       "source": "EIA AEO 2013"
     },
     {
@@ -521,7 +521,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "34",
+      "number": "0.34",
       "source": "EIA AEO 2013"
     },
     {
@@ -587,7 +587,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "25",
+      "number": "0.25",
       "source": "EIA AEO 2013"
     },
     {
@@ -653,7 +653,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "52",
+      "number": "0.52",
       "source": "EIA AEO 2013"
     },
     {
@@ -719,7 +719,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "41",
+      "number": "0.41",
       "source": "EIA AEO 2018"
     },
     {
@@ -785,7 +785,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "45",
+      "number": "0.45",
       "source": "EIA AEO 2018"
     },
     {
@@ -851,7 +851,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "29",
+      "number": "0.29",
       "source": "EIA AEO 2018"
     },
     {
@@ -917,7 +917,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "25",
+      "number": "0.25",
       "source": "EIA AEO 2018"
     },
     {
@@ -983,7 +983,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "64",
+      "number": "0.64",
       "source": "EIA AEO 2018"
     },
     {

@@ -158,10 +158,6 @@
       "description": "an individual or collaborative undertaking planned to achieve a particular aim."
     },
     {
-      "name": "measured value",
-      "description": "a value taken from an observation or a cited source."
-    },
-    {
       "name": "assumed value",
       "description": "a value set by reasoned assumption for a Fermi estimate, not measured."
     }
@@ -321,8 +317,7 @@
     {
       "words": [
         "reader per post",
-        "forum outreach",
-        "measured value"
+        "forum outreach"
       ],
       "number": "200",
       "source": "thread engagement observation"
@@ -358,7 +353,6 @@
         "reader per post",
         "substantive reply rate",
         "forum outreach",
-        "measured value",
         "assumed value"
       ],
       "formula": "substantive reply per post (formula)",
@@ -378,7 +372,6 @@
         "collaboration probability",
         "forum outreach",
         "philosophy and informatics competence",
-        "measured value",
         "assumed value"
       ],
       "formula": "hour per qualified collaborator (formula)",

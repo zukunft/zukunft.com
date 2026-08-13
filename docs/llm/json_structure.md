@@ -649,6 +649,32 @@ explicit `* 100`. Do not "fix" such formulas by adding `* 100` — the missing
 factor is intentional; scaling happens via the `percent` measure, not the
 expression.
 
+### A `percent` value is stored as the decimal ratio, never as the ×100 number
+
+The same scaling applies to a stored value: a value qualified with `percent`
+holds the **ratio**, and the `percent` measure turns it into a percentage for
+the user. So a share of 18 % is `"number": "0.18"`, not `"18"`.
+
+- **Right**: `{"words": ["share of population 65+", "Zurich (canton)", "2025", "percent"], "number": "0.18"}`
+- **Wrong** — off by a factor of 100 as soon as the number is calculated with:
+  `{"words": ["share of population 65+", "Zurich (canton)", "2025", "percent"], "number": "18"}`
+
+This is not cosmetic. A ×100 value silently breaks every formula that consumes
+it: `"profit" = "holders" * "switching willingness" * "market share" * "margin"`
+gives the right answer with `0.02` and `0.05`, and a 10 000× too large one with
+`2` and `5`. It also forces a compensating `/ 100` into the consumer and a
+`* 100` into the producer, both of which the `percent` measure already does.
+
+The decimal form covers the whole range: 0.5 % is `"0.005"`, 230 % is `"2.3"`,
+and a `calc-validation` entry whose `words` contain `percent` states its
+expected result the same way.
+
+**Before storing, sanity-check the magnitude** — the two forms are easy to
+confuse when the number is small. A housing vacancy rate of `0.06` is the ×100
+form of 0.06 % (`"0.0006"`), while an investor share of `0.85` is already the
+ratio for 85 %. Decide from the real-world quantity, not from the size of the
+number.
+
 ### Period-over-period change: reuse the system `increase` formula
 
 Do **not** write a bespoke "growth rate" / "year-over-year change" formula. The
@@ -832,6 +858,31 @@ by a bare genus word alone.
 ### `"share": "public"` is the default and must be omitted
 
 Only add `share` when it differs from `public`.
+
+### `measured value` is the default and must never be added
+
+A value is assumed to be measured: it comes from an observation or from the
+source named in its `source` field. So a `measured value` qualifier says nothing
+that is not already implied, while it lengthens every phrase group, creates a
+word or triple that must be re-declared in every file that borrows it, and makes
+two otherwise identical groups look different.
+
+Only the **deviation** from the default is worth recording. Keep `assumed value`
+for a number that is *not* measured — a Fermi input, a policy parameter, an
+order-of-magnitude guess — so a reader can tell at a glance which numbers carry
+evidence and which do not.
+
+- **Right**: `{"words": ["carbon leakage rate", "global warming", "percent"], "number": "14", "source": "Branger & Quirion (2014b)"}`
+- **Right**: `{"words": ["disinformation", "public discourse", "assumed value", "percent"], "number": "20"}`
+- **Wrong** — the qualifier only repeats the default:
+  `{"words": ["carbon leakage rate", "global warming", "measured value", "percent"], "number": "14", "source": "..."}`
+
+The same applies to the `context` of a `calc-validation` entry and to the word
+or triple itself: a file must not define a `measured value` word, nor a
+`value kind of measured` / `value must be one of measured` triple.
+
+A measured number without a `source` is a smell — either name the source or,
+if it really is an assumption, mark it `assumed value`.
 
 ## Calc-validation
 

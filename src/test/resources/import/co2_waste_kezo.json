@@ -1,7 +1,7 @@
 {
   "schema_version": "0.0.4",
   "title": "KEZO Hinwil: waste management capacity, Swiss recycling rates, and CO2 capture",
-  "description": "Claims, sources and values compiled for a public guided tour of the KEZO waste-to-energy plant in Hinwil (organised by Arbeitsgruppe Energie und Umwelt Uetikon am See, 5 September 2026). Covers plant capacity (current vs. new build), Swiss national recycling rates (BAFU 2024), and the history of direct air capture at the site (Climeworks). All sourced figures tagged 'measured value'; forward-looking or uncertain items tagged 'assumed value' with a numeric confidence.",
+  "description": "Claims, sources and values compiled for a public guided tour of the KEZO waste-to-energy plant in Hinwil (organised by Arbeitsgruppe Energie und Umwelt Uetikon am See, 5 September 2026). Covers plant capacity (current vs. new build), Swiss national recycling rates (BAFU 2024), and the history of direct air capture at the site (Climeworks). All sourced figures carry their source; forward-looking or uncertain items are tagged 'assumed value' with a numeric confidence.",
   "language": "en",
   "created": "2026-06-30",
   "words": [
@@ -149,7 +149,6 @@
       "claim": "The existing KEZO incineration plant processes about 190,000 tonnes of waste per year",
       "value": 190000,
       "unit": "t/yr",
-      "tag": "measured value",
       "words": [
         "kva",
         "kezo"
@@ -162,7 +161,6 @@
       "claim": "The new KEZO plant is to be built with a reduced capacity of 120,000 tonnes of waste per year",
       "value": 120000,
       "unit": "t/yr",
-      "tag": "measured value",
       "words": [
         "kva",
         "kezo"
@@ -176,7 +174,6 @@
       "value_min": 40,
       "value_max": 50,
       "unit": "years",
-      "tag": "measured value",
       "words": [
         "kva"
       ],
@@ -188,7 +185,6 @@
       "claim": "Dry slag discharge in the new plant increases the yield of recoverable metals from incineration slag",
       "value": null,
       "unit": "qualitative",
-      "tag": "measured value",
       "words": [
         "dry_slag_discharge",
         "slag",
@@ -216,7 +212,6 @@
       "claim": "In 2024 each person in Switzerland produced about 670 kg of municipal solid waste, roughly three times the per-capita figure of 50 years earlier",
       "value": 670,
       "unit": "kg/person/yr",
-      "tag": "measured value",
       "words": [
         "siedlungsabfall"
       ],
@@ -228,7 +223,6 @@
       "claim": "Switzerland generated about 6 million tonnes of municipal solid waste in 2024",
       "value": 6000000,
       "unit": "t/yr",
-      "tag": "measured value",
       "words": [
         "siedlungsabfall"
       ],
@@ -239,7 +233,6 @@
       "claim": "Of the 2024 municipal solid waste, about 2.9 million tonnes were incinerated",
       "value": 2900000,
       "unit": "t/yr",
-      "tag": "measured value",
       "words": [
         "siedlungsabfall",
         "kva"
@@ -251,7 +244,6 @@
       "claim": "Of the 2024 municipal solid waste, about 3.1 million tonnes were separately collected and recycled",
       "value": 3100000,
       "unit": "t/yr",
-      "tag": "measured value",
       "words": [
         "siedlungsabfall",
         "recycling_rate"
@@ -263,7 +255,6 @@
       "claim": "Switzerland's municipal solid waste recycling rate was 52 percent in 2024",
       "value": 52,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "recycling_rate",
         "siedlungsabfall"
@@ -276,7 +267,6 @@
       "claim": "The recovery rate for glass beverage packaging was at least 100 percent in 2024",
       "value": 100,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "verwertungsquote"
       ],
@@ -288,7 +278,6 @@
       "claim": "The recovery rate for aluminium beverage cans was 90 percent in 2024",
       "value": 90,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "verwertungsquote"
       ],
@@ -299,7 +288,6 @@
       "claim": "The recovery rate for PET beverage bottles was 84 percent in 2024",
       "value": 84,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "verwertungsquote"
       ],
@@ -310,7 +298,6 @@
       "claim": "The legal minimum recovery rate for glass, aluminium and PET beverage packaging is 75 percent",
       "value": 75,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "verwertungsquote"
       ],
@@ -322,7 +309,6 @@
       "claim": "The recycling rate for paper and cardboard was 85 percent in 2024, about 130 kg per person",
       "value": 85,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "recycling_rate"
       ],
@@ -334,7 +320,6 @@
       "claim": "The recycling rate for batteries fell to 35 percent in 2024 (from 38 percent in 2023)",
       "value": 35,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "recycling_rate"
       ],
@@ -346,7 +331,6 @@
       "claim": "About one fifth of the contents of the Swiss residual waste bag could still be recycled, with the largest potential in biogenic waste and plastics",
       "value": 20,
       "unit": "percent (approx)",
-      "tag": "measured value",
       "words": [
         "siedlungsabfall",
         "recycling_rate"
@@ -359,7 +343,6 @@
       "claim": "Climeworks began operating the world's first commercial direct air capture plant on the KEZO roof in 2017",
       "value": 2017,
       "unit": "year",
-      "tag": "measured value",
       "words": [
         "dac",
         "climeworks",
@@ -373,7 +356,6 @@
       "claim": "The Climeworks DAC plant in Hinwil captured about 900 tonnes of CO2 per year from ambient air using 18 collectors",
       "value": 900,
       "unit": "t CO2/yr",
-      "tag": "measured value",
       "words": [
         "dac",
         "climeworks"
@@ -387,7 +369,6 @@
       "value_min": 80,
       "value_max": 90,
       "unit": "percent",
-      "tag": "measured value",
       "words": [
         "dac",
         "climeworks",
@@ -401,7 +382,6 @@
       "claim": "The captured CO2 was fed to neighbouring Gebrueder Meier greenhouses, increasing vegetable yield by up to 20 percent",
       "value": 20,
       "unit": "percent (max)",
-      "tag": "measured value",
       "words": [
         "dac",
         "climeworks"
@@ -415,7 +395,6 @@
       "value_min": 3000000,
       "value_max": 4000000,
       "unit": "EUR",
-      "tag": "measured value",
       "words": [
         "dac",
         "climeworks"
@@ -428,7 +407,6 @@
       "claim": "Climeworks completed the commercial demonstration phase of its first-generation DAC technology in Hinwil in 2022",
       "value": 2022,
       "unit": "year",
-      "tag": "measured value",
       "words": [
         "dac",
         "climeworks"

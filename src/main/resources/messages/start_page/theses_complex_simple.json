@@ -8,7 +8,7 @@
     "trust",
     "decision quality"
   ],
-  "description": "Fermi estimate of the heise-comment causal chain 'world too complex -> loss of trust -> bad collective decisions', global scope ~2005-2025, decomposed into four multiplicative links so each assumption is independently criticisable. Each competing cause of trust decline now carries a causal-direction qualifier triple (cause to effect / bidirectional) and an evidence grade, backed by named longitudinal/experimental studies in sources. The sign-determining link s_komplex is downweighted because complexity is the only channel without causal-identified longitudinal support. Provenance per value via measured value / assumed value triples; numbers reproduced by calc-validation.",
+  "description": "Fermi estimate of the heise-comment causal chain 'world too complex -> loss of trust -> bad collective decisions', global scope ~2005-2025, decomposed into four multiplicative links so each assumption is independently criticisable. Each competing cause of trust decline now carries a causal-direction qualifier triple (cause to effect / bidirectional) and an evidence grade, backed by named longitudinal/experimental studies in sources. The sign-determining link s_komplex is downweighted because complexity is the only channel without causal-identified longitudinal support. Provenance per value via the source of a measured number and the 'assumed value' qualifier of a set one; numbers reproduced by calc-validation.",
   "words": [
     {
       "name": "complexity",
@@ -281,10 +281,6 @@
       ]
     },
     {
-      "name": "measured",
-      "description": "qualifier: value taken from a measurement/observation"
-    },
-    {
       "name": "assumed",
       "description": "qualifier: value is an explicit assumption, not a measurement"
     },
@@ -336,13 +332,6 @@
     }
   ],
   "triples": [
-    {
-      "name": "measured value",
-      "from": "value",
-      "verb": "must be one of",
-      "to": "measured",
-      "description": "provenance qualifier: number comes from a measurement"
-    },
     {
       "name": "assumed value",
       "from": "value",
@@ -547,8 +536,7 @@
     {
       "words": [
         "population",
-        "world",
-        "measured value"
+        "world"
       ],
       "number": "8000000000",
       "source": "UN World Population Prospects 2024"
@@ -1114,7 +1102,7 @@
   "view_validations": [
     {
       "url": "mask=theses/antitheses&words=complexity,trust",
-      "md": "# Fermi: complexity → trust → bad decisions\n \nCompanion overview to `fermi_complexity_trust.json`. Global scope, ~2005–2025.\nAll numbers reproduced by the `calc-validation` block in the JSON. Provenance is\ncarried per value via the `measured value` / `assumed value` qualifier triples;\neach competing cause additionally carries a `cause to effect` / `bidirectional`\ndirection triple and an `evidence grade A/B/C` triple.\n \n## Causal direction and evidence grade per channel\n \nGrade A = longitudinal/experimental with causal identification, B = mixed,\nC = predominantly correlational.\n \n| channel | share (mid) | dominant direction | strength | grade | source |\n| --- | ---: | --- | --- | :---: | --- |\n| incompetence / broken promises | 0.32 | cause → trust, but reciprocal | strong | A–B | Devine 2025; Van de Walle Bouckaert 2003 |\n| economic (inequality) | 0.27 | cause → trust, via efficacy | medium–strong | A | Bienstman 2024; Nieuwenhuis 2017 |\n| media / misinformation | 0.20 | mixed, weaker than assumed | weak–medium | B | Tsfati misinformation review 2023 |\n| polarisation / identity | 0.15 | bidirectional, partly trust → polarisation | medium | B | Van Remoortere Vliegenthart 2025 |\n| complexity | 0.09 | weak, mostly an amplifier | very weak | C | zukunft.com Fermi assumption |\n \nShares sum to ~1.03; causes overlap, so they are not disjoint.\n \nKey finding from the literature review: complexity is the only channel **without**\na causal-identified longitudinal study supporting a complexity → trust arrow,\nwhile inequality → trust (via efficacy) and benevolence/competence → trust are\ncausally identified. Several channels (performance ↔ trust, polarisation ↔ trust)\nare reciprocal, so part of what the comment reads as a directed\n\"complexity → distrust → bad decision\" arrow is in fact a feedback loop.\n \n## Chain links and result (HTP per year)\n \n`chain = R_total * s_komplex * t_misstrauen * q_fehlentscheid`\n \n| link | symbol | low | centre | high | role |\n| --- | --- | ---: | ---: | ---: | --- |\n| welfare lost to bad steering | R_total | 2.4e7 | 7.6e7 | 2.4e8 | scale |\n| complexity attribution share | s_komplex | 0.05 | 0.087 | 0.15 | sign-determining |\n| distrust mediation | t_misstrauen | 0.3 | 0.46 | 0.7 | mechanism |\n| avoidable (causal) fraction | q_fehlentscheid | 0.2 | 0.35 | 0.6 | causality |\n| chain result | HTP/yr | 7.2e4 | 1.0e6 | 1.5e7 | product |\n \n## Sensitivity of the sign-determining assumption\n \n| variant | s_komplex | q | result (centre) | factor vs base |\n| --- | ---: | ---: | ---: | ---: |\n| base | 0.087 | 0.346 | 1.0e6 HTP/yr | 1.00x |\n| evidence-adjusted | 0.066 | 0.263 | 6.0e5 HTP/yr | 0.58x |\n| strong (complexity primary) | 0.30 | 0.346 | 3.6e6 HTP/yr | 3.46x |\n \nThe evidence-adjusted centre lowers the original by factor 0.58, reflecting the\nabsence of causal-identified support for complexity and the reciprocal nature of\nthe distrust channel. Even the strong variant lifts the result only 3.46x without\nmaking the thesis dominant: complexity is a third-order amplifier (5–15 %), not a\nprimary driver of the trust decline.\n"
+      "md": "# Fermi: complexity → trust → bad decisions\n \nCompanion overview to `fermi_complexity_trust.json`. Global scope, ~2005–2025.\nAll numbers reproduced by the `calc-validation` block in the JSON. Provenance is\ncarried by the source of a measured number and by the `assumed value` qualifier\nof a set one;\neach competing cause additionally carries a `cause to effect` / `bidirectional`\ndirection triple and an `evidence grade A/B/C` triple.\n \n## Causal direction and evidence grade per channel\n \nGrade A = longitudinal/experimental with causal identification, B = mixed,\nC = predominantly correlational.\n \n| channel | share (mid) | dominant direction | strength | grade | source |\n| --- | ---: | --- | --- | :---: | --- |\n| incompetence / broken promises | 0.32 | cause → trust, but reciprocal | strong | A–B | Devine 2025; Van de Walle Bouckaert 2003 |\n| economic (inequality) | 0.27 | cause → trust, via efficacy | medium–strong | A | Bienstman 2024; Nieuwenhuis 2017 |\n| media / misinformation | 0.20 | mixed, weaker than assumed | weak–medium | B | Tsfati misinformation review 2023 |\n| polarisation / identity | 0.15 | bidirectional, partly trust → polarisation | medium | B | Van Remoortere Vliegenthart 2025 |\n| complexity | 0.09 | weak, mostly an amplifier | very weak | C | zukunft.com Fermi assumption |\n \nShares sum to ~1.03; causes overlap, so they are not disjoint.\n \nKey finding from the literature review: complexity is the only channel **without**\na causal-identified longitudinal study supporting a complexity → trust arrow,\nwhile inequality → trust (via efficacy) and benevolence/competence → trust are\ncausally identified. Several channels (performance ↔ trust, polarisation ↔ trust)\nare reciprocal, so part of what the comment reads as a directed\n\"complexity → distrust → bad decision\" arrow is in fact a feedback loop.\n \n## Chain links and result (HTP per year)\n \n`chain = R_total * s_komplex * t_misstrauen * q_fehlentscheid`\n \n| link | symbol | low | centre | high | role |\n| --- | --- | ---: | ---: | ---: | --- |\n| welfare lost to bad steering | R_total | 2.4e7 | 7.6e7 | 2.4e8 | scale |\n| complexity attribution share | s_komplex | 0.05 | 0.087 | 0.15 | sign-determining |\n| distrust mediation | t_misstrauen | 0.3 | 0.46 | 0.7 | mechanism |\n| avoidable (causal) fraction | q_fehlentscheid | 0.2 | 0.35 | 0.6 | causality |\n| chain result | HTP/yr | 7.2e4 | 1.0e6 | 1.5e7 | product |\n \n## Sensitivity of the sign-determining assumption\n \n| variant | s_komplex | q | result (centre) | factor vs base |\n| --- | ---: | ---: | ---: | ---: |\n| base | 0.087 | 0.346 | 1.0e6 HTP/yr | 1.00x |\n| evidence-adjusted | 0.066 | 0.263 | 6.0e5 HTP/yr | 0.58x |\n| strong (complexity primary) | 0.30 | 0.346 | 3.6e6 HTP/yr | 3.46x |\n \nThe evidence-adjusted centre lowers the original by factor 0.58, reflecting the\nabsence of causal-identified support for complexity and the reciprocal nature of\nthe distrust channel. Even the strong variant lifts the result only 3.46x without\nmaking the thesis dominant: complexity is a third-order amplifier (5–15 %), not a\nprimary driver of the trust decline.\n"
     }
   ]
 }

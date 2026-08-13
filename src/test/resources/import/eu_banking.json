@@ -256,10 +256,6 @@
       "description": "a stated plan or purpose to act, here captured from a buyer survey."
     },
     {
-      "name": "measured value",
-      "description": "a value taken from a cited source or observation, as opposed to an assumed value."
-    },
-    {
       "name": "assumed value",
       "description": "a value that is a conjecture or interpretation rather than a sourced measurement; in this file it also flags findings whose confidence is intrinsically limited, such as a market-absence claim derived from web search that cannot be proven exhaustively."
     },
@@ -540,26 +536,23 @@
       "words": [
         "share of US payment providers",
         "card payment in the euro area",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "66.7",
+      "number": "0.667",
       "source": "Bundesbank digital euro sovereignty"
     },
     {
       "words": [
         "geopolitical intent to use regional providers",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "61",
+      "number": "0.61",
       "source": "Gartner geopatriation via bancos"
     },
     {
       "words": [
         "digital euro launch",
-        "year",
-        "measured value"
+        "year"
       ],
       "number": "2028",
       "source": "Bundesbank digital euro sovereignty"
@@ -575,16 +568,14 @@
     {
       "words": [
         "privacy concern",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "60",
+      "number": "0.6",
       "source": "ECB SPACE 2024"
     },
     {
       "words": [
-        "privacy-concerned account holder",
-        "measured value"
+        "privacy-concerned account holder"
       ],
       "number": "165000000",
       "source": "ECB SPACE 2024"
@@ -595,7 +586,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "2",
+      "number": "0.02",
       "source": "zukunft.com market-gap analysis"
     },
     {
@@ -604,7 +595,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "5",
+      "number": "0.05",
       "source": "zukunft.com market-gap analysis"
     },
     {
@@ -653,7 +644,6 @@
         "switching willingness",
         "captured market share",
         "contribution margin per customer",
-        "measured value",
         "assumed value",
         "percent",
         "EUR"

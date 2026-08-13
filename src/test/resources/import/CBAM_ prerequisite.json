@@ -66,9 +66,6 @@
       "name": "USD per ton CO2-eq"
     },
     {
-      "name": "measured value"
-    },
-    {
       "name": "assumed value"
     }
   ],
@@ -136,10 +133,9 @@
       "words": [
         "carbon leakage rate",
         "without border adjustment",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "14",
+      "number": "0.14",
       "source": "Branger Quirion 2014b",
       "description": "mean of model estimates; typical range 5-25"
     },
@@ -147,10 +143,9 @@
       "words": [
         "carbon leakage rate",
         "with border adjustment",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "6",
+      "number": "0.06",
       "source": "Branger Quirion 2014b",
       "description": "mean of model estimates; typical range -5 to 15"
     },
@@ -158,18 +153,16 @@
       "words": [
         "carbon price coverage",
         "2025",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "28",
+      "number": "0.28",
       "source": "World Bank 2025"
     },
     {
       "words": [
         "average carbon price",
         "2025",
-        "USD per ton CO2-eq",
-        "measured value"
+        "USD per ton CO2-eq"
       ],
       "number": "19",
       "source": "World Bank 2025"
@@ -178,10 +171,9 @@
       "words": [
         "production gap",
         "2030",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "110",
+      "number": "1.1",
       "source": "SEI et al. 2023",
       "description": "planned fossil fuel production above 1.5 C-consistent level; 69 above 2 C-consistent level"
     }

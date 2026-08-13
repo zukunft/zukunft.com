@@ -1053,8 +1053,7 @@
         "Switzerland",
         "electricity production",
         "2024",
-        "TWh",
-        "measured value"
+        "TWh"
       ],
       "number": "82",
       "source": "GRS Swiss nuclear overview 2024"
@@ -1064,10 +1063,9 @@
         "Switzerland",
         "nuclear electricity production share",
         "2024",
-        "percent",
-        "measured value"
+        "percent"
       ],
-      "number": "29.2",
+      "number": "0.292",
       "source": "GRS Swiss nuclear overview 2024"
     },
     {
@@ -1075,8 +1073,7 @@
         "Switzerland",
         "electricity export",
         "2024",
-        "TWh",
-        "measured value"
+        "TWh"
       ],
       "number": "40.35",
       "source": "GRS Swiss nuclear overview 2024"
@@ -1086,8 +1083,7 @@
         "Switzerland",
         "electricity import",
         "2024",
-        "TWh",
-        "measured value"
+        "TWh"
       ],
       "number": "25.95",
       "source": "GRS Swiss nuclear overview 2024"
@@ -1096,8 +1092,7 @@
       "words": [
         "Swiss nuclear fleet production",
         "2024",
-        "TWh",
-        "measured value"
+        "TWh"
       ],
       "number": "23",
       "source": "FuW Energiezukunft Schweiz 2026"
@@ -1160,8 +1155,7 @@
       "words": [
         "lifecycle greenhouse gas emission of nuclear power",
         "CO2eq per kWh",
-        "gram",
-        "measured value"
+        "gram"
       ],
       "number": "12",
       "source": "IPCC AR5 WG3 Annex III"
@@ -1170,8 +1164,7 @@
       "words": [
         "lifecycle greenhouse gas emission of solar photovoltaic",
         "CO2eq per kWh",
-        "gram",
-        "measured value"
+        "gram"
       ],
       "number": "48",
       "source": "IPCC AR5 WG3 Annex III"
@@ -1182,7 +1175,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "90",
+      "number": "0.9",
       "source": "Lazard LCOE+ 2025"
     },
     {
@@ -1192,15 +1185,14 @@
         "percent",
         "assumed value"
       ],
-      "number": "11",
+      "number": "0.11",
       "source": "Lazard LCOE+ 2025"
     },
     {
       "words": [
         "levelized cost of energy of nuclear power",
         "USD per MWh",
-        "lower bound estimate",
-        "measured value"
+        "lower bound estimate"
       ],
       "number": "141",
       "source": "Lazard LCOE+ 2025"
@@ -1209,8 +1201,7 @@
       "words": [
         "levelized cost of energy of nuclear power",
         "USD per MWh",
-        "upper bound estimate",
-        "measured value"
+        "upper bound estimate"
       ],
       "number": "220",
       "source": "Lazard LCOE+ 2025"
@@ -1219,8 +1210,7 @@
       "words": [
         "levelized cost of energy of solar photovoltaic",
         "USD per MWh",
-        "lower bound estimate",
-        "measured value"
+        "lower bound estimate"
       ],
       "number": "38",
       "source": "Lazard LCOE+ 2025"
@@ -1229,8 +1219,7 @@
       "words": [
         "levelized cost of energy of solar photovoltaic",
         "USD per MWh",
-        "upper bound estimate",
-        "measured value"
+        "upper bound estimate"
       ],
       "number": "217",
       "source": "Lazard LCOE+ 2025"
@@ -1239,8 +1228,7 @@
       "words": [
         "levelized cost of energy of onshore wind",
         "USD per MWh",
-        "lower bound estimate",
-        "measured value"
+        "lower bound estimate"
       ],
       "number": "37",
       "source": "Lazard LCOE+ 2025"
@@ -1249,8 +1237,7 @@
       "words": [
         "levelized cost of energy of onshore wind",
         "USD per MWh",
-        "upper bound estimate",
-        "measured value"
+        "upper bound estimate"
       ],
       "number": "86",
       "source": "Lazard LCOE+ 2025"
@@ -1271,8 +1258,7 @@
         "CO2 tonne",
         "Switzerland",
         "CHF per tonne CO2",
-        "2025",
-        "measured value"
+        "2025"
       ],
       "number": "120",
       "source": "BAFU CO2 levy 2025",

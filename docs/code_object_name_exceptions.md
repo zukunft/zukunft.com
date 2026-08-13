@@ -60,6 +60,7 @@ DateTime: $actual_time, $cut_time, $cutoff, $expired, $fix_now, $new_value, $now
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
+RecursiveDirectoryIterator: $dir_iterator
 RecursiveIteratorIterator: $iter
 ZipArchive: $zip
 a_selected_test: $t_sel

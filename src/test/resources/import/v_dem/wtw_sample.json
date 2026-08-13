@@ -1,7 +1,7 @@
 {
   "version": "0.0.3",
   "pod": "zukunft.com",
-  "description": "Affective political polarization worldwide, encoded from WTW (Willis Towers Watson) Political Risk Index H1 2025, section 'Mapping political polarization around the world'. Figure 3 global time series (1900-2024) included. Narrative findings are tagged 'measured value'; the Figure 3 series is a manual chart digitization and therefore tagged 'assumed value' with per-point confidence.",
+  "description": "Affective political polarization worldwide, encoded from WTW (Willis Towers Watson) Political Risk Index H1 2025, section 'Mapping political polarization around the world'. Figure 3 global time series (1900-2024) included. Narrative findings carry their source; the Figure 3 series is a manual chart digitization and therefore tagged 'assumed value' with per-point confidence.",
   "words": [
     {"name": "affective polarization", "description": "Degree to which people perceive supporters of other political parties as hostile / view them with dislike."},
     {"name": "elite polarization", "description": "Degree to which political leaders are unwilling to accept each other as legitimate."},
@@ -16,7 +16,6 @@
     {"name": "Republicans"},
     {"name": "Democrats"},
     {"name": "year"},
-    {"name": "measured value", "description": "Provenance qualifier: value taken from a stated source."},
     {"name": "assumed value", "description": "Provenance qualifier: value estimated/digitized, not directly published as a number."},
     {"name": "Figure 3", "description": "WTW PRI H1 2025 chart: Global average affective polarization, 1900-2024."}
   ],
@@ -63,7 +62,7 @@
       "number": 5,
       "unit": "percent",
       "context_year": 1960,
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025",
       "comment_disambiguation_in_words": "US share of voters displeased by cross-party marriage, 1960 (~5%)"
     },
@@ -72,7 +71,7 @@
       "number": 40,
       "unit": "percent",
       "context_year": 2010,
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025",
       "comment_disambiguation_in_words": "Republican voters, above 40% by 2010"
     },
@@ -81,7 +80,7 @@
       "number": 30,
       "unit": "percent",
       "context_year": 2010,
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025",
       "comment_disambiguation_in_words": "Democratic voters, ~30% by 2010"
     },
@@ -90,7 +89,7 @@
       "number": 60,
       "unit": "percent",
       "context_year": 2016,
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025",
       "comment_disambiguation_in_words": "Both parties exceeded 60% in 2016"
     }
@@ -141,27 +140,27 @@
   "claims": [
     {
       "statement": "Affective polarization has been rising rapidly worldwide in recent years on a global-average basis.",
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025"
     },
     {
       "statement": "On the V-Dem-based measure, global affective polarization has shot up since around 2000 to levels unprecedented in modern history.",
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025"
     },
     {
       "statement": "Surges in polarization in democracies tend to be accompanied by the rise of populist movements and increased political violence.",
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025"
     },
     {
       "statement": "Truth-and-reconciliation processes (Uruguay, Timor-Leste, Chile) and international war (post-WWII Norway, Luxembourg, Denmark; Ukraine) have historically reduced polarization.",
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025"
     },
     {
       "statement": "The WTW measure relies on expert assessments (V-Dem, Fragile States Index) rather than opinion polls, which the report itself notes is probably less accurate than poll-based measures.",
-      "qualifier": "measured value",
+      
       "source": "WTW Political Risk Index H1 2025"
     }
   ]

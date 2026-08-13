@@ -173,9 +173,6 @@
       "description": "Upper bound of the estimate range, about one standard deviation above the central value."
     },
     {
-      "name": "measured"
-    },
-    {
       "name": "meat"
     },
     {
@@ -395,13 +392,6 @@
       "verb": "kind of",
       "to": "global",
       "description": "Global net anthropogenic greenhouse gas emissions in Gt CO2eq per year."
-    },
-    {
-      "name": "measured value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "measured",
-      "description": "Value taken from a verifiable published source."
     },
     {
       "name": "assumed value",
@@ -1096,8 +1086,7 @@
     {
       "words": [
         "global greenhouse gas emissions",
-        "2019",
-        "measured value"
+        "2019"
       ],
       "number": 59.0,
       "source": "IPCC AR6 WG3 SPM"
@@ -1106,8 +1095,7 @@
       "words": [
         "global greenhouse gas emissions",
         "2019",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": 52.4,
       "source": "IPCC AR6 WG3 SPM"
@@ -1116,8 +1104,7 @@
       "words": [
         "global greenhouse gas emissions",
         "2019",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 65.6,
       "source": "IPCC AR6 WG3 SPM"
@@ -1249,8 +1236,7 @@
       "words": [
         "methane reduction",
         "reduction potential",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 5.0,
       "source": "UNEP CCAC Global Methane Assessment 2021"
@@ -1811,8 +1797,7 @@
       "words": [
         "solar energy",
         "reduction potential",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": 2.0,
       "source": "IPCC AR6 WG3 SPM"
@@ -1821,8 +1806,7 @@
       "words": [
         "solar energy",
         "reduction potential",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 7.0,
       "source": "IPCC AR6 WG3 SPM"
@@ -1927,8 +1911,7 @@
       "words": [
         "wind energy",
         "reduction potential",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": 2.1,
       "source": "IPCC AR6 WG3 SPM"
@@ -1937,8 +1920,7 @@
       "words": [
         "wind energy",
         "reduction potential",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": 5.6,
       "source": "IPCC AR6 WG3 SPM"
@@ -5936,8 +5918,7 @@
     {
       "words": [
         "fossil subsidy removal",
-        "reduction potential",
-        "measured value"
+        "reduction potential"
       ],
       "number": 2.3,
       "source": "IMF fossil fuel subsidies 2025"

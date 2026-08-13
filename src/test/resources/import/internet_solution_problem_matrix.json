@@ -56,7 +56,7 @@
       "title_en": "The solution?",
       "datetime": "2026-06-26T11:57",
       "values": [
-        {"word": "reply count", "value": 0, "type": "measured value", "note": "only thread on the page with no reply counter"},
+        {"word": "reply count", "value": 0, "note": "only thread on the page with no reply counter"},
         {"word": "social valence", "value": 0.7, "type": "assumed value", "confidence": 0.5, "note": "connecting, solution-oriented hook; full text not visible"},
         {"word": "constructive orientation", "value": 0.9, "type": "assumed value", "confidence": 0.5}
       ]
@@ -68,7 +68,7 @@
       "title_en": "I can't stand this German whining anymore ....",
       "datetime": "2026-06-27T15:31",
       "values": [
-        {"word": "reply count", "value": 22, "type": "measured value"},
+        {"word": "reply count", "value": 22},
         {"word": "social valence", "value": -0.7, "type": "assumed value", "confidence": 0.7, "note": "contempt/whining frame, camp-building"},
         {"word": "constructive orientation", "value": -0.6, "type": "assumed value", "confidence": 0.6}
       ]
@@ -80,7 +80,7 @@
       "title_en": "People are making such a fuss over barely above 40 degrees",
       "datetime": "2026-06-27T09:02",
       "values": [
-        {"word": "reply count", "value": 28, "type": "measured value"},
+        {"word": "reply count", "value": 28},
         {"word": "social valence", "value": -0.7, "type": "assumed value", "confidence": 0.7, "note": "contempt, trivialization"},
         {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.6}
       ]
@@ -92,7 +92,7 @@
       "title_en": "On how climate change personally hits your wallet:",
       "datetime": "2026-06-26T16:52",
       "values": [
-        {"word": "reply count", "value": 30, "type": "measured value", "note": "highest reply count on the page"},
+        {"word": "reply count", "value": 30, "note": "highest reply count on the page"},
         {"word": "social valence", "value": 0.1, "type": "assumed value", "confidence": 0.4, "note": "factual, slightly concern-oriented"},
         {"word": "constructive orientation", "value": -0.1, "type": "assumed value", "confidence": 0.4}
       ]
@@ -104,7 +104,7 @@
       "title_en": "starting Monday it'll be much cooler",
       "datetime": "2026-06-26T18:46",
       "values": [
-        {"word": "reply count", "value": 23, "type": "measured value"},
+        {"word": "reply count", "value": 23},
         {"word": "social valence", "value": -0.4, "type": "assumed value", "confidence": 0.45, "note": "presumably ironic downplaying/trollbait"},
         {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.45}
       ]
@@ -116,7 +116,7 @@
       "title_en": "In two months the topic will be off the table again",
       "datetime": "2026-06-26T14:25",
       "values": [
-        {"word": "reply count", "value": 22, "type": "measured value"},
+        {"word": "reply count", "value": 22},
         {"word": "social valence", "value": -0.3, "type": "assumed value", "confidence": 0.5, "note": "resignation/cynicism"},
         {"word": "constructive orientation", "value": -0.7, "type": "assumed value", "confidence": 0.6}
       ]
@@ -128,7 +128,7 @@
       "title_en": "Just adapt",
       "datetime": "2026-06-27T22:08",
       "values": [
-        {"word": "reply count", "value": 21, "type": "measured value"},
+        {"word": "reply count", "value": 21},
         {"word": "social valence", "value": -0.5, "type": "assumed value", "confidence": 0.55, "note": "dismissive, but implicit action reference"},
         {"word": "constructive orientation", "value": 0.0, "type": "assumed value", "confidence": 0.4}
       ]
@@ -140,7 +140,7 @@
       "title_en": "You can come with facts, but",
       "datetime": "2026-06-26T13:27",
       "values": [
-        {"word": "reply count", "value": 16, "type": "measured value"},
+        {"word": "reply count", "value": 16},
         {"word": "social valence", "value": -0.2, "type": "assumed value", "confidence": 0.4},
         {"word": "constructive orientation", "value": -0.2, "type": "assumed value", "confidence": 0.4}
       ]
@@ -152,7 +152,7 @@
       "title_en": "37°...",
       "datetime": "2026-06-26T23:57",
       "values": [
-        {"word": "reply count", "value": 13, "type": "measured value"},
+        {"word": "reply count", "value": 13},
         {"word": "social valence", "value": 0.0, "type": "assumed value", "confidence": 0.3, "note": "minimal hook, hard to code"},
         {"word": "constructive orientation", "value": -0.3, "type": "assumed value", "confidence": 0.3}
       ]
@@ -164,7 +164,7 @@
       "title_en": "Reality or idealism",
       "datetime": "2026-06-27T16:15",
       "values": [
-        {"word": "reply count", "value": 10, "type": "measured value"},
+        {"word": "reply count", "value": 10},
         {"word": "social valence", "value": 0.2, "type": "assumed value", "confidence": 0.35},
         {"word": "constructive orientation", "value": 0.3, "type": "assumed value", "confidence": 0.35}
       ]
@@ -176,7 +176,7 @@
       "title_en": "We just need more technology openness, combustion engines and gas power plants",
       "datetime": "2026-06-26T15:46",
       "values": [
-        {"word": "reply count", "value": 9, "type": "measured value"},
+        {"word": "reply count", "value": 9},
         {"word": "social valence", "value": -0.4, "type": "assumed value", "confidence": 0.45, "note": "presumably ironic/polemic, camp slogan"},
         {"word": "constructive orientation", "value": 0.2, "type": "assumed value", "confidence": 0.35, "note": "apparent solution proposal"}
       ]
@@ -188,7 +188,7 @@
       "title_en": "\"Researchers: air-quality measures accelerate climate change\"",
       "datetime": "2026-06-26T11:44",
       "values": [
-        {"word": "reply count", "value": 6, "type": "measured value"},
+        {"word": "reply count", "value": 6},
         {"word": "social valence", "value": 0.1, "type": "assumed value", "confidence": 0.4, "note": "factual"},
         {"word": "constructive orientation", "value": -0.1, "type": "assumed value", "confidence": 0.4}
       ]
@@ -200,7 +200,7 @@
       "title_en": "Ms. Reiche is in good talks",
       "datetime": "2026-06-26T14:05",
       "values": [
-        {"word": "reply count", "value": 3, "type": "measured value"},
+        {"word": "reply count", "value": 3},
         {"word": "social valence", "value": -0.3, "type": "assumed value", "confidence": 0.4, "note": "sarcastic allusion"},
         {"word": "constructive orientation", "value": -0.4, "type": "assumed value", "confidence": 0.4}
       ]
@@ -212,7 +212,7 @@
       "title_en": "That answers the question 'When will it finally be proper summer again?'",
       "datetime": "2026-06-26T12:56",
       "values": [
-        {"word": "reply count", "value": 1, "type": "measured value"},
+        {"word": "reply count", "value": 1},
         {"word": "social valence", "value": -0.1, "type": "assumed value", "confidence": 0.35, "note": "gallows humor"},
         {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.4}
       ]
@@ -224,7 +224,7 @@
       "title_en": "and the CxU is helping out enthusiastically :-)",
       "datetime": "2026-06-26T13:43",
       "values": [
-        {"word": "reply count", "value": 1, "type": "measured value"},
+        {"word": "reply count", "value": 1},
         {"word": "social valence", "value": -0.5, "type": "assumed value", "confidence": 0.5, "note": "party-political blame assignment -> divisive"},
         {"word": "constructive orientation", "value": -0.7, "type": "assumed value", "confidence": 0.5, "note": "pure blame assignment, no solution/action reference; example of X/Y coupling (lower-left quadrant)"}
       ]
@@ -236,7 +236,7 @@
       "title_en": "No problem at all",
       "datetime": "2026-06-26T12:01",
       "values": [
-        {"word": "reply count", "value": 1, "type": "measured value"},
+        {"word": "reply count", "value": 1},
         {"word": "social valence", "value": -0.2, "type": "assumed value", "confidence": 0.35, "note": "presumably ironic downplaying"},
         {"word": "constructive orientation", "value": -0.4, "type": "assumed value", "confidence": 0.35}
       ]

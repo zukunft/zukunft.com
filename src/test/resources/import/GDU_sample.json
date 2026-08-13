@@ -73,9 +73,6 @@
       "name": "percentage point per year"
     },
     {
-      "name": "measured value"
-    },
-    {
       "name": "assumed value"
     }
   ],
@@ -142,8 +139,7 @@
     {
       "words": [
         "facebook wta",
-        "USD per month",
-        "measured value"
+        "USD per month"
       ],
       "number": "42.17",
       "source": "Brynjolfsson et al. 2019",
@@ -153,8 +149,7 @@
       "words": [
         "gdp-b growth contribution facebook",
         "lower bound",
-        "percentage point per year",
-        "measured value"
+        "percentage point per year"
       ],
       "number": "0.05",
       "source": "Brynjolfsson et al. 2019",
@@ -164,8 +159,7 @@
       "words": [
         "gdp-b growth contribution facebook",
         "upper bound",
-        "percentage point per year",
-        "measured value"
+        "percentage point per year"
       ],
       "number": "0.11",
       "source": "Brynjolfsson et al. 2019",
@@ -174,8 +168,7 @@
     {
       "words": [
         "smartphone camera wta",
-        "EUR per month",
-        "measured value"
+        "EUR per month"
       ],
       "number": "68.13",
       "source": "Brynjolfsson et al. 2019",
@@ -188,7 +181,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "10",
+      "number": "0.1",
       "source": "zukunft.com GDU text",
       "description": "usage rises 10 percent while sector GDP falls 12 percent (10 to 8.8 mio USD); confidence 0.9 as illustrative arithmetic"
     },

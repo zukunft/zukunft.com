@@ -5,14 +5,10 @@
   "selection": [
     "Fermi estimates for every pro/contra argument of the RSI / overstimulation / zukunft.com discussion, with reproducible calc-validation chains"
   ],
-  "description": "Encodes the pro and contra arguments of the thread into the zukunft.com graph. Each value carries a provenance qualifier triple - 'measured value' for figures taken from a source, 'assumed value' for set Fermi inputs - so that a set assumption can never be mistaken for a measurement. v0.0.4 additions: the dominant 'overstimulation gap' is now decomposed into 'intensity gap' x 'vulnerability gap'; the upper-bound (gap 10) sign-flip scenario is encoded as reproducible values and calc chains rather than prose; the previously dead 'confidence' inputs now feed a confidence-discounted RSI expected harm; the empirical/normative split is attached to the normative value entries; and an enforcement false-positive (over-blocking) cost is added to the contra side of the rollback balance. Every calc-validation entry is reproduced by check.py and is order-independent of the input values. DNR 2026 additions: source-derived measured values for global news-consumption patterns across 48 markets were added separately from the existing Fermi assumptions. The DNR measures news-source use, not the share of all internet information that complies with the Press Code; no such compliance rate is inferred.",
+  "description": "Encodes the pro and contra arguments of the thread into the zukunft.com graph. A value taken from a source is marked only by that source, while a set Fermi input carries the 'assumed value' qualifier, so that a set assumption can never be mistaken for a measurement. v0.0.4 additions: the dominant 'overstimulation gap' is now decomposed into 'intensity gap' x 'vulnerability gap'; the upper-bound (gap 10) sign-flip scenario is encoded as reproducible values and calc chains rather than prose; the previously dead 'confidence' inputs now feed a confidence-discounted RSI expected harm; the empirical/normative split is attached to the normative value entries; and an enforcement false-positive (over-blocking) cost is added to the contra side of the rollback balance. Every calc-validation entry is reproduced by check.py and is order-independent of the input values. DNR 2026 additions: source-derived measured values for global news-consumption patterns across 48 markets were added separately from the existing Fermi assumptions. The DNR measures news-source use, not the share of all internet information that complies with the Press Code; no such compliance rate is inferred.",
   "words": [
     {
       "name": "value"
-    },
-    {
-      "name": "measured",
-      "description": "provenance qualifier: the number is taken from a cited source and is in principle verifiable"
     },
     {
       "name": "assumed",
@@ -222,6 +218,9 @@
       "name": "dependency"
     },
     {
+      "name": "formula"
+    },
+    {
       "name": "assumption"
     },
     {
@@ -292,12 +291,6 @@
     }
   ],
   "triples": [
-    {
-      "name": "measured value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "measured"
-    },
     {
       "name": "assumed value",
       "from": "value",
@@ -982,8 +975,7 @@
       "words": [
         "audio level",
         "overstimulated mouse",
-        "dB",
-        "measured value"
+        "dB"
       ],
       "number": "70",
       "source": "Christakis 2012 mouse overstimulation"
@@ -991,8 +983,7 @@
     {
       "words": [
         "exposure hours",
-        "overstimulated mouse",
-        "measured value"
+        "overstimulated mouse"
       ],
       "number": "6",
       "source": "Christakis 2012 mouse overstimulation"
@@ -1000,8 +991,7 @@
     {
       "words": [
         "exposure days",
-        "overstimulated mouse",
-        "measured value"
+        "overstimulated mouse"
       ],
       "number": "42",
       "source": "Christakis 2012 mouse overstimulation"
@@ -1122,18 +1112,20 @@
     {
       "words": [
         "confidence",
-        "Christakis 2012 mouse overstimulation",
+        "model harm weight",
         "assumed value"
       ],
-      "number": "0.7"
+      "number": "0.7",
+      "source": "Christakis 2012 mouse overstimulation"
     },
     {
       "words": [
         "confidence",
-        "Anthropic RSI warning (heise 2026)",
+        "RSI runaway",
         "assumed value"
       ],
-      "number": "0.3"
+      "number": "0.3",
+      "source": "Anthropic RSI warning (heise 2026)"
     },
     {
       "words": [
@@ -1189,8 +1181,7 @@
         "video network",
         "news",
         "weekly",
-        "respondent",
-        "measured value"
+        "respondent"
       ],
       "number": "54%",
       "source": "Digital News Report 2026",
@@ -1202,8 +1193,7 @@
         "news app",
         "news",
         "weekly",
-        "respondent",
-        "measured value"
+        "respondent"
       ],
       "number": "51%",
       "source": "Digital News Report 2026",
@@ -1215,8 +1205,7 @@
         "video network",
         "main source",
         "news",
-        "respondent",
-        "measured value"
+        "respondent"
       ],
       "number": "30%",
       "source": "Digital News Report 2026",
@@ -1228,8 +1217,7 @@
         "video network",
         "news",
         "weekly",
-        "main source",
-        "measured value"
+        "main source"
       ],
       "number": "12%",
       "source": "Digital News Report 2026",
@@ -1240,8 +1228,7 @@
         "AI chatbot",
         "news",
         "weekly",
-        "respondent",
-        "measured value"
+        "respondent"
       ],
       "number": "10%",
       "source": "Digital News Report 2026",
@@ -1253,8 +1240,7 @@
         "social media",
         "video network",
         "main source",
-        "news",
-        "measured value"
+        "news"
       ],
       "number": "52%",
       "source": "Digital News Report 2026",
@@ -1264,8 +1250,7 @@
       "words": [
         "news video",
         "weekly",
-        "respondent",
-        "measured value"
+        "respondent"
       ],
       "number": "77%",
       "source": "Digital News Report 2026",
@@ -1275,8 +1260,7 @@
       "words": [
         "trust",
         "news",
-        "respondent",
-        "measured value"
+        "respondent"
       ],
       "number": "37%",
       "source": "Digital News Report 2026",
@@ -1285,8 +1269,7 @@
     {
       "words": [
         "misinformation",
-        "respondent",
-        "measured value"
+        "respondent"
       ],
       "number": "62%",
       "source": "Digital News Report 2026",
@@ -1626,7 +1609,7 @@
       "context": [
         "RSI expected harm",
         "confidence",
-        "Anthropic RSI warning (heise 2026)",
+        "RSI runaway",
         "HTP"
       ],
       "formula": "confidence discounted RSI harm formula",

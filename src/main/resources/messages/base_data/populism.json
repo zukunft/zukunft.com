@@ -275,7 +275,7 @@
         "internet share",
         "percent"
       ],
-      "number": "66.21287128712871"
+      "number": "0.6621287128712871"
     },
     {
       "words": [
@@ -283,7 +283,7 @@
         "social media share",
         "percent"
       ],
-      "number": "62.37623762376238"
+      "number": "0.6237623762376238"
     },
     {
       "words": [
@@ -291,7 +291,7 @@
         "virality",
         "percent"
       ],
-      "number": "70",
+      "number": "0.7",
       "source": "Vosoughi Roy Aral 2018 Science"
     },
     {
@@ -301,21 +301,21 @@
         "2024",
         "percent"
       ],
-      "number": "230",
+      "number": "2.3",
       "source": "Oxford Word of the Year 2024"
     }
   ],
   "formulas": [
     {
       "name": "internet share (formula)",
-      "expression": "\"internet share\" = \"internet user\" / \"population\" * 100",
+      "expression": "\"internet share\" = \"internet user\" / \"population\"",
       "assigned": [
         "world"
       ]
     },
     {
       "name": "social media share (formula)",
-      "expression": "\"social media share\" = \"social media user\" / \"population\" * 100",
+      "expression": "\"social media share\" = \"social media user\" / \"population\"",
       "assigned": [
         "world"
       ]
@@ -336,7 +336,7 @@
         "internet share",
         "percent"
       ],
-      "number": "66.21287128712871",
+      "number": "0.6621287128712871",
       "note": "5350000000 / 8080000000 * 100"
     },
     {
@@ -353,7 +353,7 @@
         "social media share",
         "percent"
       ],
-      "number": "62.37623762376238",
+      "number": "0.6237623762376238",
       "note": "5040000000 / 8080000000 * 100"
     }
   ]

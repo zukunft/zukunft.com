@@ -1,0 +1,163 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "market power key figures"
+  ],
+  "description": "The most relevant number of the problem \"market power\" of the start page ranking and the potential solution, taken from the two worked examples of the concept paper section 7: a search engine operator with a 91 percent market share in Switzerland would pay about 910 million USD more tax per year under a market share based supplementary tax, while UBS with a 22 percent mortgage market share would move from 11.9 to 13.4 percent. Below a 30 percent market share the ordinary tax legislation applies again.",
+  "words": [
+    {
+      "name": "market"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "threshold"
+    },
+    {
+      "name": "revenue"
+    },
+    {
+      "name": "search"
+    },
+    {
+      "name": "engine"
+    },
+    {
+      "name": "mortgage"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "market power",
+      "description": "the ability of a market dominant company to prevent competition, dictate prices and shift profits to low tax jurisdictions (concept paper section 7)",
+      "from": "power",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "market share",
+      "from": "share",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "market share tax",
+      "description": "supplementary taxation of corporate profits linked to the market share in the smallest relevant market segment and levied where the economic use occurs (concept paper section 7)",
+      "from": "tax",
+      "verb": "of",
+      "to": "market share"
+    },
+    {
+      "name": "market share threshold",
+      "description": "the market share below which the ordinary tax legislation applies again, so that the rule tends to keep at least three competitors in every market segment",
+      "from": "threshold",
+      "verb": "of",
+      "to": "market share"
+    },
+    {
+      "name": "search engine",
+      "from": "engine",
+      "verb": "of",
+      "to": "search"
+    },
+    {
+      "name": "tax revenue",
+      "from": "revenue",
+      "verb": "of",
+      "to": "tax"
+    },
+    {
+      "name": "mortgage market",
+      "from": "market",
+      "verb": "of",
+      "to": "mortgage"
+    },
+    {
+      "name": "mortgage market share",
+      "from": "market share",
+      "verb": "of",
+      "to": "mortgage market"
+    }
+  ],
+  "sources": [
+    {
+      "name": "MoneyPark (2025) Swiss mortgage market study",
+      "description": "MoneyPark (2025): Der Schweizer Hypothekarmarkt 2024 - Hypothekarmarktstudie. MoneyPark AG. Source of the 22 percent mortgage market share of UBS used in the worked example of the concept paper section 7.",
+      "url": "https://www.moneypark.ch/content/dam/os/ch/mp/documents/mortgages/de/MoneyPark_Hypothekarmarktstudie_2024.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Konrad, Mueller & Morath (2010) Taxation and Market Power",
+      "description": "Konrad, K. A., Mueller, W. & Morath, F. (2010): Taxation and Market Power. Discussion Paper SP II 2010-07, WZB Berlin Social Science Center.",
+      "url": "https://www.wzb.eu/en",
+      "type": "api"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "search engine",
+        "market share",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.91"
+    },
+    {
+      "words": [
+        "market share tax",
+        "search engine",
+        "tax revenue",
+        "annual",
+        "million",
+        "USD",
+        "assumed value"
+      ],
+      "number": "910"
+    },
+    {
+      "words": [
+        "market share threshold",
+        "market share tax",
+        "assumed value",
+        "percent"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "mortgage market share",
+        "percent"
+      ],
+      "number": "0.22",
+      "source": "MoneyPark (2025) Swiss mortgage market study"
+    }
+  ]
+}

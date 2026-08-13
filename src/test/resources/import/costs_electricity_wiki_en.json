@@ -313,7 +313,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "3",
+      "number": "0.03",
       "source": "Wikipedia LCOE",
       "note": "comparisons assuming public funding, subsidies and social cost of capital tend to choose a low discount rate of about 3 percent, favouring high-capital nuclear and renewable projects."
     },
@@ -324,7 +324,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "7",
+      "number": "0.07",
       "source": "Wikipedia LCOE",
       "note": "private investment banks tend to assume higher discount rates of 7 to 15 percent for commercial for-profit funding."
     },
@@ -335,7 +335,7 @@
         "percent",
         "assumed value"
       ],
-      "number": "15",
+      "number": "0.15",
       "source": "Wikipedia LCOE"
     },
     {

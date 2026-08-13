@@ -307,7 +307,7 @@
       "number": 0.37,
       "unit": "share",
       "source": "Reuters Institute Digital News Report 2026",
-      "type": "measured value",
+      
       "description": "Lowest level since measurement began in 2015; down 3pp after three years flat at 40%. Trust fell significantly in 29 of 48 markets."
     },
     {
@@ -319,7 +319,7 @@
       "number": 0.42,
       "unit": "share",
       "source": "Reuters Institute Digital News Report 2026",
-      "type": "measured value",
+      
       "description": "Essentially flat year-on-year. Four markets (Bulgaria, Croatia, Greece, Turkey) at 60% or above."
     },
     {
@@ -331,7 +331,7 @@
       "number": 0.29,
       "unit": "share",
       "source": "Reuters Institute Digital News Report 2026",
-      "type": "measured value",
+      
       "description": "Baseline year in which the avoidance question was first asked; the 13pp rise to 2026 is the key trend line."
     },
     {
@@ -343,7 +343,7 @@
       "number": 0.20,
       "unit": "share",
       "source": "Edelman summary of Reuters Institute Digital News Report 2026",
-      "type": "measured value",
+      
       "description": "Lowest of the intermediary types measured: search engines 32%, social media 22%, AI chatbots 20%. The source that always answers is trusted least."
     },
     {
@@ -355,7 +355,7 @@
       "number": 0.10,
       "unit": "share",
       "source": "Reuters Institute Digital News Report 2026",
-      "type": "measured value",
+      
       "description": "Up from 7% the previous year. The report attributes the low absolute level partly to low trust."
     },
     {
@@ -366,7 +366,7 @@
       ],
       "number": 0.62,
       "source": "McMullan et al. 2019",
-      "type": "measured value",
+      
       "description": "Random-effects meta-analysis, 95% CI 0.52-0.71, p < .0001. Participant age partly explains heterogeneity. Limitation stated by the authors: over-reliance on a single instrument (CSS)."
     },
     {
@@ -377,7 +377,7 @@
       ],
       "number": 0.34,
       "source": "McMullan et al. 2019",
-      "type": "measured value",
+      
       "description": "95% CI 0.20-0.48, p < .0001. The gap to 0.62 is the informative part: it is not searching as such that tracks anxiety, but distressing repeated searching."
     },
     {
@@ -388,7 +388,7 @@
       ],
       "number": 0.63,
       "source": "Vismara et al. 2021 JMIR",
-      "type": "measured value",
+      
       "description": "Independent meta-analysis, 7 studies, 3069 individuals. Near-identical to McMullan et al., which raises confidence that the association is robust rather than instrument-specific."
     },
     {
@@ -399,7 +399,7 @@
       "number": 1,
       "unit": "direction",
       "source": "Fisher, Goddu & Keil 2015",
-      "type": "measured value",
+      
       "description": "Qualitative direction rather than a pooled effect size: across nine experiments, prior internet search raised self-rated ability to explain unrelated questions. Effect survived controls for time, content, search autonomy, dependent-measure misreading and general overconfidence; driven specifically by querying search engines."
     },
     {
@@ -432,7 +432,7 @@
       "number": 1,
       "unit": "direction",
       "source": "de Berker et al. 2016",
-      "type": "measured value",
+      
       "description": "Subjective stress, pupil diameter and skin conductance all tracked irreducible uncertainty rather than the probability of the aversive outcome. Certainty of shock was less stressful than a small chance of it. Key consequence for answer design: an answer calms in proportion to the uncertainty it removes, not in proportion to how favourable its content is."
     },
     {
@@ -442,7 +442,7 @@
       "number": 0.27,
       "unit": "cohens d",
       "source": "Tannenbaum et al. 2015",
-      "type": "measured value",
+      
       "description": "Fixed-effects composite across attitudes, intentions and behaviours. Note: at least one secondary summary reports d = 0.29; 0.27 is the figure in the authors' own abstract and is used here. No conditions were identified under which fear appeals backfired."
     },
     {
@@ -453,7 +453,7 @@
       "number": 1,
       "unit": "direction",
       "source": "Tannenbaum et al. 2015",
-      "type": "measured value",
+      
       "description": "Moderation analysis: effectiveness increased when the message included efficacy statements, depicted high susceptibility and severity, and recommended a one-time rather than repeated action. Threat information without an action component is the degenerate case."
     },
     {
@@ -499,7 +499,7 @@
       "number": 1,
       "unit": "direction",
       "source": "Coan et al. 2006",
-      "type": "measured value",
+      
       "description": "Pervasive attenuation of activation in threat-processing systems during spousal hand-holding; a more limited attenuation with a stranger's hand. Attenuation scaled with self-reported marital quality in right anterior insula, superior frontal gyrus and hypothalamus for spousal but not stranger contact. Identity of the toucher therefore matters for acute threat response."
     },
     {
@@ -509,7 +509,7 @@
       "number": 0.5,
       "unit": "hedges g",
       "source": "Packheiser et al. 2024",
-      "type": "measured value",
+      
       "description": "Approximate medium-sized effect, comparable for mental and physical health outcomes. Strongest for cortisol regulation and weight gain in newborns and for reduction of pain, depression and anxiety in adults."
     },
     {
@@ -520,7 +520,7 @@
       "number": 0.02,
       "unit": "hedges g difference",
       "source": "Packheiser et al. 2024",
-      "type": "measured value",
+      
       "description": "Null result in adults: familiar toucher 0.51 (95% CI 0.29-0.73) versus health care professional 0.50 (95% CI 0.38-0.61), t(99)=0.12, p=0.905, CI of the difference -0.27 to 0.24. In newborns parental touch was superior (0.69 versus 0.39, p=0.041). Tension with Coan et al. is real and probably a construct difference: acute neural threat response with a specific person present versus cumulative health outcomes of touch sessions. Unresolved."
     },
     {
@@ -531,7 +531,7 @@
       "number": -1,
       "unit": "direction",
       "source": "Packheiser et al. 2024",
-      "type": "measured value",
+      
       "description": "Touch delivered by objects or robots produced comparable physical but lower mental health benefits than human touch. The mechanical component transfers to a machine; the meaning-bearing component does not."
     },
     {
@@ -543,7 +543,7 @@
       "number": 0.27,
       "unit": "share",
       "source": "Edelman summary of Reuters Institute Digital News Report 2026",
-      "type": "measured value",
+      
       "description": "Creators rank high on ease of understanding, entertainment value and relatability, and markedly lower on trustworthiness and impartiality. Only 3% rely on creators as their sole news source. Read here as the market's revealed answer to the demand for an available human: proximity without accountability."
     },
     {
@@ -672,7 +672,7 @@
       "number": 1,
       "unit": "direction",
       "source": "Cloudflare Radar Q1 2026 disruption summary",
-      "type": "measured value",
+      
       "description": "Uganda: domestic traffic at the national exchange point fell from approximately 72 Gbps to 1 Gbps ahead of the January presidential election. Iran: two nationwide shutdowns, traffic near zero from 8 January, still largely in place in late April, described as among the longest sustained disruptions observed in recent years. Republic of Congo: near-total shutdown for about 60 hours around the March election."
     },
     {
@@ -684,7 +684,7 @@
       "number": 3,
       "unit": "count",
       "source": "Cloudflare Radar Q1 2026 disruption summary",
-      "type": "measured value",
+      
       "description": "Three separate collapses of Cuba's national electric system in March 2026, each cutting traffic (by roughly half, 65% and 77%), with comparable events in 2023, 2024 and 2025. Also Portugal after storm Kristin: traffic down as much as 70% in Leiria, with thousands still without power more than three weeks later. Connectivity failed as a consequence of power, not of the network."
     },
     {
@@ -696,7 +696,7 @@
       "number": 3,
       "unit": "count",
       "source": "Cloudflare Radar Q1 2026 disruption summary",
-      "type": "measured value",
+      
       "description": "Drone strikes directly struck two AWS facilities in the United Arab Emirates (me-central-1) and damaged one in Bahrain (me-south-1) on 1-2 March 2026, with a further Bahrain disruption on 23 March. AWS advised customers to back up or migrate. Cloudflare characterises kinetic damage to hyperscaler infrastructure as an unprecedented escalation."
     },
     {
@@ -752,7 +752,7 @@
       "number": 1,
       "unit": "direction",
       "source": "Vismara et al. 2021 JMIR",
-      "type": "measured value",
+      
       "description": "Cyberchondria is best conceptualised as a safety behaviour, related to health anxiety, obsessive-compulsive symptoms, intolerance of uncertainty and anxiety sensitivity. This places it in the class of behaviours for which exposure with response prevention is the indicated treatment, which is what makes deliberate disconnection a coherent proposal rather than an eccentric one."
     },
     {
@@ -763,7 +763,7 @@
       "number": 1,
       "unit": "direction",
       "source": "Rozenblit & Keil 2002",
-      "type": "measured value",
+      
       "description": "Self-rated understanding drops after producing a step-by-step mechanistic explanation. The illusion is markedly stronger for explanatory knowledge than for facts, procedures or narratives, and strongest where the environment supports real-time explanation with visible mechanisms. Twelve studies."
     },
     {
@@ -774,7 +774,7 @@
       "number": 1,
       "unit": "direction",
       "source": "BABS annual siren test",
-      "type": "measured value",
+      
       "description": "The Swiss national drill tests the sirens for one minute on the first Wednesday of February and explicitly requires no protective measures from the population: the mechanism is tested, not the population's endurance. Noted alongside it: the civil protection office's principal preparedness recommendation on the day is to install and keep current a smartphone alerting app, routing preparedness through the infrastructure whose loss would constitute the emergency."
     },
     {

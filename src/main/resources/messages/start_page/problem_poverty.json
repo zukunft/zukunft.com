@@ -1,0 +1,89 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "poverty key figures"
+  ],
+  "description": "The most relevant number of the problem \"poverty\" of the start page ranking and the potential solution: the international extreme poverty line of the World Bank is the threshold below which the basic needs cannot be met. Research into what actually lifts people above the line is the solution shown on the start page.",
+  "words": [
+    {
+      "name": "poverty"
+    },
+    {
+      "name": "extreme"
+    },
+    {
+      "name": "line"
+    },
+    {
+      "name": "research"
+    },
+    {
+      "name": "day"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "name": "extreme poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "extreme"
+    },
+    {
+      "name": "poverty line",
+      "from": "line",
+      "verb": "of",
+      "to": "poverty"
+    },
+    {
+      "name": "poverty research",
+      "description": "research into which measures actually lift people above the extreme poverty line; the solution shown for poverty on the start page",
+      "from": "research",
+      "verb": "of",
+      "to": "poverty"
+    }
+  ],
+  "sources": [
+    {
+      "name": "World Bank international poverty line",
+      "description": "World Bank: the international extreme poverty line of 2.15 USD per person and day in 2017 purchasing power parity, used to count the people in extreme poverty.",
+      "url": "https://www.worldbank.org/en/topic/poverty",
+      "type": "api"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "poverty line",
+        "extreme poverty",
+        "person",
+        "day",
+        "USD"
+      ],
+      "number": "2.15",
+      "source": "World Bank international poverty line"
+    },
+    {
+      "words": [
+        "poverty research",
+        "extreme poverty",
+        "percent",
+        "assumed value"
+      ],
+      "number": "-0.01"
+    }
+  ]
+}
