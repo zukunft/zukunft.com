@@ -191,6 +191,8 @@ class triple_names
     const string CANTON_ZURICH_COM = 'The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.';
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 193;
+    const string MIO_SYMBOL = 'mio is symbol for million';
+    const int MIO_SYMBOL_ID = 115;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
     const int CHF_SYMBOL_ID = 349;
     // the currency names are built in currencies.json from the genus word and the issuing

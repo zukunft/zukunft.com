@@ -314,6 +314,16 @@ class test_groups extends test_objects
         return $lst->get_grp_id(false);
     }
 
+    /**
+     * @return group of the canton inhabitants but scaled with the symbol word "mio"
+     */
+    function group_canton_mio_symbol(): group
+    {
+        $t_phr = new test_phrases($this->env);
+        $lst = $t_phr->phrase_list_canton_mio_symbol();
+        return $lst->get_grp_id(false);
+    }
+
     function group_canton(): group
     {
         $t_phr = new test_phrases($this->env);

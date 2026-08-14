@@ -109,6 +109,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase as list_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
@@ -272,13 +273,16 @@ class test_lib
     /**
      * TODO add missing frontend objects like
      * TODO Prio 0 easy add missing mapping error log message to all other object mapper
-     * get the frontend object related to the given backend object
+     * get the *empty* frontend object related to the given backend object:
+     * only the class is selected, no vars are filled, so the caller must follow up with
+     * set_from_json($dbo->api_json(...)) - or use a filling helper like ui_value(),
+     * which also includes the phrases of the group via api_types::INCL_PHRASES
      * @param db_object_seq_id|sandbox_multi|list_db_read|type_list $dbo the given backend object
-     * @return false|db_object_ui|list_ui the corresponding frontend object
+     * @return false|db_object_ui|sandbox_value_ui|list_ui the corresponding frontend object without any vars set
      */
     public function obj_to_ui_obj(
         db_object_seq_id|sandbox_multi|list_db_read|type_list $dbo
-    ): false|db_object_ui|list_ui
+    ): false|db_object_ui|sandbox_value_ui|list_ui
     {
         $result =  match ($dbo::class) {
             user::class => new user_ui(),

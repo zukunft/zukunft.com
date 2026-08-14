@@ -934,6 +934,22 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "mio is symbol for million" used to test that a symbol shows the
+     *         description of the word it stands for as its tooltip
+     */
+    function mio_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::MIO_SYMBOL_ID, triple_names::MIO_SYMBOL);
+        $trp->set_from($t_wrd->word_mio_symbol()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->word_million()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "CHF is symbol for Swiss franc" used for unit testing the
      *         page-title category subtitle for SYMBOL-typed related entries
      */

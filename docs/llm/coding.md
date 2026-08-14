@@ -49,6 +49,9 @@ reference issues, e.g. `fix auth flow as part of fix #232`.
 Each rule is one line. When one governs your current edit, open the linked
 detail file. Order is by how often they fire, not importance.
 
+### Understanding the request
+- If the request's target is ambiguous ("here", "this", a name that matches several places), name the candidates and ask which is meant before changing anything; a pasted error trace, file path or line number counts as unambiguous. Investigating to narrow the candidates is fine, but the question comes before the fix — stating the chosen reading in the final report is not a substitute.
+
 ### Structure & style
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`

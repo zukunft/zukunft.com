@@ -32,11 +32,27 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+include_once test_paths::CREATE . 'test_words.php';
+include_once test_paths::CREATE . 'test_phrases.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -47,6 +63,8 @@ class value_ui_tests
     {
         $html = new html_base();
         $t_val = new test_values($t);
+        $t_wrd = new test_words($t);
+        $t_phr = new test_phrases($t);
         $tl = new test_lib();
         $msg = new user_message();
         $msg_ui = new user_message_ui();
@@ -64,6 +82,22 @@ class value_ui_tests
         $test_page .= 'with tooltip: ' . $val->value($msg_ui) . '<br>';
         $test_page .= 'with detail link: ' . $val->value_link($msg_ui) . '<br>';
         $test_page .= 'with edit link: ' . $val->value_edit($msg_ui) . '<br>';
+        // the calling page (e.g. the default word view) is passed as the return path and the
+        // page phrases are excluded from the name, like in a table where the page phrase is
+        // the table context and the measure is shown behind the number
+        $val_zh = $t_val->people_zh_canton_mio_ui();
+        $url_arr = [url_var::MASK => views::WORD_ID];
+        $test_page .= 'with linked names and separate measure: ' . $val_zh->links_and_measure($msg_ui, $url_arr) . '<br>';
+        $wrd_canton = $t_wrd->word_canton();
+        $phr_lst_ex = new phrase_list_ui();
+        $phr_lst_ex->add($wrd_canton->phrase(), $msg_ui);
+        $test_page .= 'with linked names and separate measure (ex ' . $wrd_canton->name() . '): ' . $val_zh->links_and_measure($msg_ui, $url_arr, $phr_lst_ex) . '<br>';
+        // the data object supplies the tooltips: the symbol "mio" has no description of its
+        // own, so the description of the related word "million" is shown instead
+        $dto = new data_object();
+        $dto->phr_lst = $t_phr->list_canton_mio_cache_ui();
+        $val_sym = $t_val->people_zh_canton_mio_symbol_ui();
+        $test_page .= 'with the tooltips from the cache: ' . $val_sym->links_and_measure($msg_ui, $url_arr, null, $dto) . '<br>';
         $test_page .= 'with measure type: ' . $tl->ui_value($t_val->light_speed())->with_unit_and_info($msg_ui) . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $val->btn_add() . '<br>';
@@ -72,6 +106,54 @@ class value_ui_tests
         $val_protected = new value($t_val->value_protected($msg)->api_json([api_types::INCL_PHRASES]));
         $test_page .= $t->dsp_title_value($val_protected, $msg_ui);
         $t->html_page_test($test_page, 'value html components', 'value', $msg_ui);
+
+        $t->subheader($ts . 'links and measure');
+        // the speed of light value: "speed of light" names the value, "m/s" is the measure
+        // shown behind the number and "1983 (year of definition)" explains it as the tooltip
+        $val_ls = $tl->ui_value($t_val->light_speed());
+        $lam_html = $val_ls->links_and_measure($msg_ui, $url_arr);
+        $test_name = 'the name phrase is shown before the number and the measure behind it';
+        $t->assert_text_order($test_name, $lam_html,
+            triple_names::SPEED_OF_LIGHT, values::SPEED_OF_LIGHT_TXT, triple_names::M_PER_S);
+        $test_name = 'the information only phrase explains the number as the tooltip';
+        $t->assert_text_contains($test_name, $lam_html, '"' . triple_names::DEFINITION_YEAR_1983 . '"');
+        $test_name = 'the calling page is kept as the return path of the number link';
+        $t->assert_text_contains($test_name, $lam_html,
+            url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
+        // negative: an excluded phrase (e.g. the column header of a table) is not repeated
+        $test_name = 'an excluded phrase is not part of the name';
+        $ex_lst = $val_ls->grp->phr_lst();
+        $lam_ex_html = $val_ls->links_and_measure($msg_ui, $url_arr, $ex_lst);
+        $t->assert_text_not_contains($test_name, $lam_ex_html, triple_names::SPEED_OF_LIGHT);
+        $test_name = '... but the number is still shown';
+        $t->assert_text_contains($test_name, $lam_ex_html, values::SPEED_OF_LIGHT_TXT);
+        // the three parts are one row, so that the css can keep them side by side
+        $test_name = 'the name, the number and the measure are wrapped in one row';
+        $t->assert_text_contains($test_name, $lam_html, styles::VALUE_ROW);
+        $test_name = '... with the name, the number and the measure as separate parts';
+        $t->assert_text_order($test_name, $lam_html,
+            styles::VALUE_NAME, styles::VALUE_NUM, styles::VALUE_UNIT);
+        $test_name = 'a value without a name part shows no empty name';
+        $t->assert_text_not_contains($test_name, $lam_ex_html, styles::VALUE_NAME);
+        // the phrase links and their separator stay on one line, so that the html snapshot
+        // does not add a line break - and with it a space - in front of the comma;
+        // the canton value is used, because it has more than one phrase in the name part
+        $test_name = 'the separator of the phrase links follows the link without a space';
+        $t->assert_text_contains($test_name,
+            $val_zh->links_and_measure($msg_ui, $url_arr), '</a>, <a ');
+
+        $t->subheader($ts . 'tooltips from the data object');
+        // the scaling symbol "mio" has no description, so without the cache it has no tooltip
+        $test_name = 'without the data object the symbol has no tooltip';
+        $lam_no_dto = $val_sym->links_and_measure($msg_ui, $url_arr);
+        $t->assert_text_not_contains($test_name, $lam_no_dto, word_names::MIO_COM);
+        // with the cache the description of the related word "million" is the symbol tooltip
+        $test_name = 'the description of the related word is the tooltip of the symbol';
+        $lam_dto = $val_sym->links_and_measure($msg_ui, $url_arr, null, $dto);
+        $t->assert_text_contains($test_name, $lam_dto,
+            html_base::TITLE_HTML . '="' . word_names::MIO_COM . '"');
+        $test_name = '... and the symbol itself is still shown and linked';
+        $t->assert_text_contains($test_name, $lam_dto, '>' . word_names::MIO_SHORT . '</a>');
 
 
         // TODO review

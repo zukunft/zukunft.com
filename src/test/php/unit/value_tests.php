@@ -160,7 +160,7 @@ class value_tests
         $test_name = '... and the scaling reports no problem';
         $t->assert_true($test_name, $msg->is_ok());
 
-        $test_name = 'if "mio" of the value is not a scaling word ask the user to set the type';
+        $test_name = 'if "million" of the value is not a scaling word ask the user to set the type';
         $msg = new user_message();
         $val = $t_val->value_ch_unscaled();
         $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $msg, $trm_lst_scale);
@@ -438,10 +438,14 @@ class value_tests
 
         $test_case = 'check the warning message if a value has more than one unit phrase';
         $val = $tl->ui_value($t_val->light_speed_with_two_units());
-        $result = $val->warning_text();
-        // TODO add warning
-        $target = '';
+        $result = $val->warning_text($msg_ui);
+        $target = 'the value has more than one unit: "'
+            . triple_names::M_PER_S . '","' . word_names::HZ . '"';
         $t->assert($test_case, $result, $target);
+        // negative: a value with a single unit is fine and stays without a warning
+        $test_case = 'a value with one unit phrase has no warning';
+        $val = $tl->ui_value($t_val->light_speed());
+        $t->assert($test_case, $val->warning_text($msg_ui), '');
 
         $t->subheader($ts . 'html frontend');
 

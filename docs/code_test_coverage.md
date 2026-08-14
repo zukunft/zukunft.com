@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1177 of 5541 public functions have at least 2 unit test calls; the 4364 functions below do not
+1178 of 5548 public functions have at least 2 unit test calls; the 4370 functions below do not
 
 ## main backend
 
@@ -3835,6 +3835,7 @@ so same-named functions of several classes share their test calls
     \-- is_word - 0 unit test calls
     \-- main_word - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_link_with_tip - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- name_tip - 1 unit test calls
     \-- obj_id - 0 unit test calls
@@ -3848,6 +3849,7 @@ so same-named functions of several classes share their test calls
     \-- assigned_subtitle - 0 unit test calls
     \-- assume_time - 0 unit test calls
     \-- btn_add_value - 0 unit test calls
+    \-- cached_phrase - 0 unit test calls
     \-- category_subtitle - 0 unit test calls
     \-- child_names - 0 unit test calls
     \-- children - 0 unit test calls
@@ -3856,6 +3858,7 @@ so same-named functions of several classes share their test calls
     \-- dsp_graph - 0 unit test calls
     \-- ex_info_list - 0 unit test calls
     \-- ex_measure_list - 0 unit test calls
+    \-- ex_scaling_list - 0 unit test calls
     \-- ex_time - 0 unit test calls
     \-- get_grp_id - 0 unit test calls
     \-- has_percent - 0 unit test calls
@@ -3877,8 +3880,10 @@ so same-named functions of several classes share their test calls
     \-- phrase_selector - 0 unit test calls
     \-- remove - 0 unit test calls
     \-- result_phrases_most_relevant - 0 unit test calls
+    \-- scaling_list - 0 unit test calls
     \-- select_file - 0 unit test calls
     \-- sort_by_impact - 1 unit test calls
+    \-- tooltip - 0 unit test calls
     \-- url_mapper - 1 unit test calls
     \-- view_selector - 0 unit test calls
     \-- wrd_lst_all - 1 unit test calls
@@ -4528,6 +4533,7 @@ so same-named functions of several classes share their test calls
     \-- has_phrase - 0 unit test calls
     \-- impact - 0 unit test calls
     \-- is_id_set - 0 unit test calls
+    \-- links_and_measure - 0 unit test calls
     \-- load_by_id - 0 unit test calls
     \-- match_all - 0 unit test calls
     \-- name_link - 0 unit test calls

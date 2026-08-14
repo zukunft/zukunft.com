@@ -53,6 +53,7 @@ include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -74,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
@@ -406,7 +408,7 @@ class test_values extends test_objects
     /**
      * @return value with the inhabitants of the city of zurich
      */
-    function value_zh(): value
+    function people_zh(): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_zh_2019();
@@ -416,11 +418,34 @@ class test_values extends test_objects
     /**
      * @return value with the inhabitants of the canton of zurich
      */
-    function value_canton(): value
+    /**
+     * @return value the inhabitants of the canton Zurich scaled with the symbol word "mio",
+     *               so that the symbol tooltip of the related word "million" can be tested
+     */
+    function people_zh_canton_mio_symbol(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $grp = $t_grp->group_canton_mio_symbol();
+        return new value($this->env->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
+    }
+
+    function people_zh_canton_mio_symbol_ui(): value_ui
+    {
+        $tl = new test_lib();
+        return $tl->ui_value($this->people_zh_canton_mio_symbol());
+    }
+
+    function people_zh_canton_mio(): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_canton();
         return new value($this->env->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
+    }
+
+    function people_zh_canton_mio_ui(): value_ui
+    {
+        $tl = new test_lib();
+        return $tl->ui_value($this->people_zh_canton_mio());
     }
 
     /**
@@ -435,7 +460,7 @@ class test_values extends test_objects
 
     /**
      * @return value with the inhabitants of Switzerland
-     *               but with "mio" missing the scaling type to test the scaling type check
+     *               but with "million" missing the scaling type to test the scaling type check
      */
     function value_ch_unscaled(): value
     {
@@ -451,7 +476,7 @@ class test_values extends test_objects
     {
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value($msg));
-        $lst->add($this->value_zh());
+        $lst->add($this->people_zh());
         return $lst;
     }
 
@@ -462,7 +487,7 @@ class test_values extends test_objects
     {
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value($msg));
-        $lst->add($this->value_zh());
+        $lst->add($this->people_zh());
         return $lst;
     }
 
@@ -473,8 +498,8 @@ class test_values extends test_objects
     {
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value($msg));
-        $lst->add($this->value_zh());
-        $lst->add($this->value_canton());
+        $lst->add($this->people_zh());
+        $lst->add($this->people_zh_canton_mio());
         $lst->add($this->value_ch());
         $lst->add($this->value_pi());
         $lst->add($this->value_e());
@@ -498,8 +523,8 @@ class test_values extends test_objects
     function value_list_zh(): value_list
     {
         $val_lst = new value_list($this->env->usr1);
-        $val_lst->add($this->value_zh());
-        $val_lst->add($this->value_canton());
+        $val_lst->add($this->people_zh());
+        $val_lst->add($this->people_zh_canton_mio());
         $val_lst->add($this->value_ch());
         return $val_lst;
     }
