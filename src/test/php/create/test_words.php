@@ -957,6 +957,36 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "loss" of the solution_prio cost values e.g. "potential loss"
+     */
+    function word_loss(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LOSS_ID, word_names::LOSS);
+        return $wrd;
+    }
+
+    /**
+     * @return word "gain" of the solution_prio gain values e.g. "potential gain"
+     */
+    function word_gain(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GAIN_ID, word_names::GAIN);
+        return $wrd;
+    }
+
+    /**
+     * @return word "cost" used e.g. as a mayor table column of the global problems
+     */
+    function word_cost(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::COST_ID, word_names::COST);
+        return $wrd;
+    }
+
+    /**
      * @return word with id and name of Geneva
      */
     function word_ge(): word

@@ -192,12 +192,22 @@ class value_list extends ListBase
      * @param word|triple|source|formula|db_object|type_object|null $dbo to filter the values
      * @return value_list with only the direct linked values
      */
-    function filter(user_message $msg, word|triple|source|formula|db_object|type_object|null $dbo = null): value_list
+    function filter(
+        user_message $msg,
+        word|triple|source|formula|db_object|type_object|null $dbo = null,
+        ?phrase_list $ctx_lst = null
+    ): value_list
     {
         $val_lst = new value_list();
         if ($dbo::class == word::class or $dbo::class == triple::class) {
+            // a value of a child phrase belongs to the page phrase too, e.g. a "global warming"
+            // value is shown on the "global problem" page, because the context list contains
+            // the triple "global warming (global problem)"
+            $child_names = $ctx_lst?->child_names($dbo->phrase()) ?? [];
             foreach ($this->lst() as $val) {
                 if ($val->has_phrase($dbo->phrase(), $msg)) {
+                    $val_lst->add($val, $msg);
+                } elseif (array_intersect($child_names, $val->grp->phr_lst()->names()) != []) {
                     $val_lst->add($val, $msg);
                 }
             }

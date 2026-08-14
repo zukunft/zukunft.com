@@ -115,6 +115,10 @@ class word_names
     const int GLOBAL_ID = 194;
     const string POTENTIAL = 'potential';
     const int POTENTIAL_ID = 222;
+    const string LOSS = 'loss';
+    const int LOSS_ID = 225;
+    const string GAIN = 'gain';
+    const int GAIN_ID = 223;
     const string CLIMATE = 'climate';
     const int CLIMATE_ID = 226;
     const string WARMER = 'warmer';
@@ -204,6 +208,7 @@ class word_names
     const string PROFIT = 'profit';
     const string GROSS = 'gross';
     const string COST = 'cost';
+    const int COST_ID = 309;
     const string REVENUE = 'revenue';
 
     const string LAYOUT_COM = 'the settings to position the components on the screen';

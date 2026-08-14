@@ -792,7 +792,7 @@ class ui_list extends ui_base
                 ]);
                 return $result;
             }
-            $val_lst = $this->value_related_list($dbo, $msg, $dto);
+            $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
                 $phr_lst = new phrase_list();
@@ -817,10 +817,11 @@ class ui_list extends ui_base
     private function value_related_list(
         word|triple|db_object|type_object|null $dbo,
         user_message                           $msg,
-        ?data_object                           $dto
+        ?data_object                           $dto,
+        ?phrase_list                           $ctx_lst = null
     ): ?value_list
     {
-        $val_lst = $dto?->val_lst?->filter($msg, $dbo);
+        $val_lst = $dto?->val_lst?->filter($msg, $dbo, $ctx_lst);
         // a word and a triple are both loaded with their values, so both carry them directly
         if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->val_lst != null) {
             $val_lst = $dbo->val_lst;

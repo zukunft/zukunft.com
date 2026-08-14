@@ -148,6 +148,17 @@ class triple_names
     const int POVERTY_PROBLEM_ID = 119;
     const string POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
     const int POTENTIAL_EDUCATION_PROBLEM_ID = 120;
+    // the solution triples and the table column definitions of solution_prio.json
+    const string REDUCE_EMISSIONS = 'reduce climate gas emissions';
+    const int REDUCE_EMISSIONS_ID = 159;
+    const string AVOID_WRONG_DECISIONS = 'avoid wrong decisions';
+    const int AVOID_WRONG_DECISIONS_ID = 150;
+    const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
+    const int SYSTEM_COLUMN_MAYOR_ID = 156;
+    const string COLUMN_COST = 'column cost';
+    const int COLUMN_COST_ID = 162;
+    const string COLUMN_GAIN = 'column gain';
+    const int COLUMN_GAIN_ID = 163;
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 514;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

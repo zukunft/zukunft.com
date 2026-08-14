@@ -1050,6 +1050,34 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list the "global problem" context of solution_prio.json: the problem
+     *         phrases with their link to "global problem" and the table column definitions,
+     *         e.g. to test the start page table of the global issues
+     */
+    function list_global_problems(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->global_problem()->phrase());
+        $lst->add($t_trp->global_warming()->phrase());
+        $lst->add($t_wrd->word_populism()->phrase());
+        $lst->add($t_trp->global_warming_problem()->phrase());
+        $lst->add($t_trp->populism_problem()->phrase());
+        $lst->add($t_trp->column_cost()->phrase());
+        $lst->add($t_trp->column_gain()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the "global problem" context for frontend unit testing
+     */
+    function list_global_problems_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_problems());
+    }
+
+    /**
      * a list of currencies and their common parent "currency" linked via the "is a" verb
      * e.g. to test word::similar where the similar words of "Swiss franc" are "Euro" and "US Dollar"
      *

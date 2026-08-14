@@ -247,6 +247,32 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * get the names of the phrases that this list links to the given phrase by a triple
+     * e.g. for "global problem" the names "global warming" and "populism", because the list
+     * contains the triples "global warming (global problem)" and "populism (global problem)"
+     * the verb does not matter, because e.g. "is a" and "can be" both classify the from side
+     *
+     * @param phrase $phr the phrase whose children should be returned
+     * @return array the names of the phrases that link to the given phrase
+     */
+    function child_names(phrase $phr): array
+    {
+        $result = [];
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple()) {
+                $trp = $lst_phr->obj();
+                if ($trp->get_to()?->name() == $phr->name()) {
+                    $name = $trp->get_from()?->name();
+                    if ($name != null and !in_array($name, $result)) {
+                        $result[] = $name;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the names of the phrases that this list defines as table columns, ordered by the column
      * tier of solution_prio.json: a prime column first (shown on every screen), then a second
      * column (hidden on a small screen), then a third column (only on a wide screen)

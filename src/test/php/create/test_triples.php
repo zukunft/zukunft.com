@@ -1231,6 +1231,66 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "mayor column (system)" - the tier of the columns shown on every screen
+     */
+    function column_mayor(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_MAYOR_ID, triple_names::SYSTEM_COLUMN_MAYOR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "column cost" that defines "cost" as a mayor table column
+     */
+    function column_cost(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_COST_ID, triple_names::COLUMN_COST);
+        $trp->set_from($t_wrd->word_cost()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column gain" that defines "gain" as a mayor table column
+     */
+    function column_gain(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_GAIN_ID, triple_names::COLUMN_GAIN);
+        $trp->set_from($t_wrd->word_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "reduce climate gas emissions" - the solution of the global warming problem
+     */
+    function reduce_emissions(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REDUCE_EMISSIONS_ID, triple_names::REDUCE_EMISSIONS);
+        return $trp;
+    }
+
+    /**
+     * @return triple "avoid wrong decisions" - the solution of the populism problem
+     */
+    function avoid_wrong_decisions(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::AVOID_WRONG_DECISIONS_ID, triple_names::AVOID_WRONG_DECISIONS);
+        return $trp;
+    }
+
+    /**
      * @return triple that defines that "health" "can be a" "global problem" used for start view unit testing
      */
     function potential_health_problem(): triple

@@ -5545,6 +5545,7 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_list.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should be related in /phrase/phrase_list.php
+    \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_list.php
     \-- category_subtitle - section for function category_subtitle not yet defined that it should be related in /phrase/phrase_list.php
     \-- assigned_subtitle - section for function assigned_subtitle not yet defined that it should be related in /phrase/phrase_list.php
@@ -7404,6 +7405,8 @@
         \-- formula_link_list - get the formulas of this list that are assigned to the given phrase
     \-- result_phrases_most_relevant
         \-- phrase_list - get the phrase of the most relevant result
+    \-- child_names
+        \-- phrase_list - get the names of the phrases that this list links to the given phrase by a triple
     \-- column_names
         \-- phrase_list - the names of the phrases that this list defines as table columns, ordered by the column
     \-- category_subtitle

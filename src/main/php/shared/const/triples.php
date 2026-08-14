@@ -100,23 +100,23 @@ class triples
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
     const int SYSTEM_CONFIG_ID = 103;
-    // the column priority of a table, defined in solution_prio.json: a prime column is shown
-    // on every screen, a second column only if the screen is not small and a third column only
+    // the column priority of a table, defined in solution_prio.json: a mayor column is shown
+    // on every screen, a main column only if the screen is not small and a minor column only
     // if it is wide; a phrase is assigned to a tier with "<phrase> can be <tier>"
     const string SYSTEM_COLUMN = 'column (system)';
     const string SYSTEM_COLUMN_CODE_ID = 'system_column';
-    const string SYSTEM_COLUMN_PRIME = 'prime column (system)';
-    const string SYSTEM_COLUMN_PRIME_CODE_ID = 'system_column_prime';
-    const string SYSTEM_COLUMN_SECOND = 'second column (system)';
-    const string SYSTEM_COLUMN_SECOND_CODE_ID = 'system_column_second';
-    const string SYSTEM_COLUMN_THIRD = 'third column (system)';
-    const string SYSTEM_COLUMN_THIRD_CODE_ID = 'system_column_third';
+    const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
+    const string SYSTEM_COLUMN_MAYOR_CODE_ID = 'system_column_mayor';
+    const string SYSTEM_COLUMN_MAIN = 'main column (system)';
+    const string SYSTEM_COLUMN_MAIN_CODE_ID = 'system_column_main';
+    const string SYSTEM_COLUMN_MINOR = 'minor column (system)';
+    const string SYSTEM_COLUMN_MINOR_CODE_ID = 'system_column_minor';
 
     // the column tiers in the order they are shown, widest priority first
     const array SYSTEM_COLUMN_TIERS = [
-        self::SYSTEM_COLUMN_PRIME,
-        self::SYSTEM_COLUMN_SECOND,
-        self::SYSTEM_COLUMN_THIRD,
+        self::SYSTEM_COLUMN_MAYOR,
+        self::SYSTEM_COLUMN_MAIN,
+        self::SYSTEM_COLUMN_MINOR,
     ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';

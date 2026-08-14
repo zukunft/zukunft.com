@@ -518,6 +518,42 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_list the cost and gain values of the global problems as defined in
+     *         solution_prio.json, e.g. to test the start page table of the global issues
+     */
+    function value_list_solution_prio(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $gw = $t_trp->global_warming()->phrase();
+        $pop = $t_wrd->word_populism()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $gain = $t_wrd->word_gain()->phrase();
+        $trillion = $t_wrd->word_trillion()->phrase();
+        $billion = $t_wrd->word_billion()->phrase();
+        $eur = $t_wrd->word_eur()->phrase();
+        $htp = $t_wrd->word_htp()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$gw, $potential, $loss, $trillion, $eur], 31.5));
+        $lst->add($this->value_for_phrases([$pop, $potential, $loss, $trillion, $eur], 23.8));
+        $lst->add($this->value_for_phrases(
+            [$gw, $t_trp->reduce_emissions()->phrase(), $potential, $gain, $billion, $htp], 35.2));
+        $lst->add($this->value_for_phrases(
+            [$pop, $t_trp->avoid_wrong_decisions()->phrase(), $potential, $gain, $billion, $htp], 34.1));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the solution_prio cost and gain values for frontend unit testing
+     */
+    function value_list_solution_prio_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * two values related to the word Zurich but assigned to phrases of a different impact
      * so that the sort by impact and the display on the default word page can be tested
      * @return value_list with values related to Zurich of a low and a high impact
