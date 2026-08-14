@@ -1630,15 +1630,17 @@
     \-- add_value - section for function add_value not yet defined that it should be modify in /helper/data_object.php
     \-- add_result - section for function add_result not yet defined that it should be modify in /helper/data_object.php
     \-- add_calc_validation - section for function add_calc_validation not yet defined that it should be modify in /helper/data_object.php
-    \-- validate_results - section for function validate_results not yet defined that it should be modify in /helper/data_object.php
-    \-- add_message - section for function add_message not yet defined that it should be modify in /helper/data_object.php
+    \-- fill - section for function fill is expected to be modify in /helper/data_object.php
+    \-- export_json - section for function export_json is expected to be im- and export in /helper/data_object.php
+    \-- validate_results - section for function validate_results not yet defined that it should be export in /helper/data_object.php
+    \-- add_message - section for function add_message not yet defined that it should be export in /helper/data_object.php
     \-- get_component_by_name - section for function get_component_by_name is expected to be set and get in /helper/data_object.php
     \-- get_value_by_names - section for function get_value_by_names is expected to be set and get in /helper/data_object.php
-    \-- expected_word_import_time - section for function expected_word_import_time not yet defined that it should be modify in /helper/data_object.php
-    \-- expected_triple_import_time - section for function expected_triple_import_time not yet defined that it should be modify in /helper/data_object.php
-    \-- expected_value_import_time - section for function expected_value_import_time not yet defined that it should be modify in /helper/data_object.php
-    \-- expected_total_import_time - section for function expected_total_import_time not yet defined that it should be modify in /helper/data_object.php
-    \-- count - section for function count not yet defined that it should be modify in /helper/data_object.php
+    \-- expected_word_import_time - section for function expected_word_import_time not yet defined that it should be export in /helper/data_object.php
+    \-- expected_triple_import_time - section for function expected_triple_import_time not yet defined that it should be export in /helper/data_object.php
+    \-- expected_value_import_time - section for function expected_value_import_time not yet defined that it should be export in /helper/data_object.php
+    \-- expected_total_import_time - section for function expected_total_import_time not yet defined that it should be export in /helper/data_object.php
+    \-- count - section for function count not yet defined that it should be export in /helper/data_object.php
     \-- save - section for function save is expected to be save in /helper/data_object.php
     \-- diff_msg - section for function diff_msg is expected to be info in /helper/data_object.php
     \-- order error - order of section api has difference at api_array should be before api_json of api_json,api_array does not match api_array,api_json,api_mapper,api_json_array,order of section api has difference at api_array should be before api_json of api_json,api_array does not match api_array,api_json,api_mapper,api_json_array

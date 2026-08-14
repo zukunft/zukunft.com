@@ -57,6 +57,7 @@ include_once test_paths::UTILS . 'all_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 global $db_con;
@@ -64,13 +65,14 @@ global $cac;
 
 // open database and display header
 $app = new test_app();
-$db_con = $app->start("unit tests", '', false, true);
+$msg = new user_message();
+$db_con = $app->start("unit tests", $msg);
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
-    $result = $start_usr->get();
+    $result = $start_usr->get($msg);
     $cac->set_user($start_usr);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
@@ -87,7 +89,7 @@ if ($db_con->is_open()) {
             // also on a pod that blocks the changes of a user without login
             $t->api_login();
             $ui = new frontend('unit tests');
-            $usr_ui = new user_ui($this->usr1->api_json());
+            $usr_ui = new user_ui($t->usr1->api_json());
             $msg_ui = new user_message_ui($usr_ui);
             $ui->load_dummy_cache_from_test_resources($msg_ui);
 

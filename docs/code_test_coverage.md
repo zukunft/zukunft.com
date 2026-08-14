@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1170 of 5538 public functions have at least 2 unit test calls; the 4368 functions below do not
+1177 of 5540 public functions have at least 2 unit test calls; the 4363 functions below do not
 
 ## main backend
 
@@ -278,7 +278,6 @@ so same-named functions of several classes share their test calls
 \-- config_numbers
     \-- default_json - 0 unit test calls
     \-- fill_from_cache_json - 0 unit test calls
-    \-- get_by_names - 0 unit test calls
     \-- language - 1 unit test calls
     \-- load_cfg - 0 unit test calls
     \-- load_frontend_cfg - 0 unit test calls
@@ -332,7 +331,6 @@ so same-named functions of several classes share their test calls
     \-- set_user - 0 unit test calls
     \-- set_value_list - 0 unit test calls
     \-- set_view_list - 0 unit test calls
-    \-- source_list - 1 unit test calls
     \-- term_view_list - 0 unit test calls
     \-- user_list - 0 unit test calls
     \-- validate_results - 0 unit test calls
@@ -2752,7 +2750,6 @@ so same-named functions of several classes share their test calls
     \-- filter_by_time - 0 unit test calls
     \-- get_by_grp - 0 unit test calls
     \-- get_by_name_and_context - 0 unit test calls
-    \-- get_by_names - 0 unit test calls
     \-- get_from_lst - 0 unit test calls
     \-- grp_ids - 1 unit test calls
     \-- has_values - 0 unit test calls
@@ -3446,7 +3443,6 @@ so same-named functions of several classes share their test calls
     \-- set_source_list - 0 unit test calls
     \-- set_value_list - 0 unit test calls
     \-- set_view_list - 0 unit test calls
-    \-- source_list - 1 unit test calls
     \-- sys_log_list - 0 unit test calls
     \-- value_list_cloned - 0 unit test calls
     \-- view_list - 0 unit test calls
@@ -4551,7 +4547,6 @@ so same-named functions of several classes share their test calls
     \-- common_phrases - 0 unit test calls
     \-- dsp_table - 0 unit test calls
     \-- filter - 0 unit test calls
-    \-- get_by_names - 0 unit test calls
     \-- html - 0 unit test calls
     \-- list - 0 unit test calls
     \-- list_most_relevant - 0 unit test calls

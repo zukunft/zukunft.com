@@ -1,0 +1,59 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-14 12:00:00",
+  "user": "zukunft",
+  "description": "Empirically derived inflection points where the association between daily screen use and adolescent mental well-being turns from positive to negative",
+  "words": [
+    { "name": "smartphone", "refs": [ { "name": "Smartphone", "type": "wikipedia" } ] },
+    { "name": "computer", "refs": [ { "name": "Computer", "type": "wikipedia" } ] },
+    { "name": "video", "refs": [ { "name": "Video", "type": "wikipedia" } ] },
+    { "name": "game" },
+    { "name": "play" },
+    { "name": "watching" },
+    { "name": "use" },
+    { "name": "weekday" },
+    { "name": "weekend" },
+    { "name": "inflection", "refs": [ { "name": "Inflection_point", "type": "wikipedia" } ] },
+    { "name": "point" },
+    { "name": "study" },
+    { "name": "participant" },
+    { "name": "count" },
+    { "name": "Przybylski" },
+    { "name": "Weinstein" },
+    { "name": "minute" },
+    { "name": "measured value" }
+  ],
+  "triples": [
+    { "name": "inflection point", "from": "point", "verb": "of", "to": "inflection" },
+    { "name": "participant count", "from": "count", "verb": "of", "to": "participant" },
+    { "name": "smartphone use", "from": "use", "verb": "of", "to": "smartphone" },
+    { "name": "computer use", "from": "use", "verb": "of", "to": "computer" },
+    { "name": "video game", "from": "game", "verb": "of", "to": "video" },
+    { "name": "video game play", "from": "play", "verb": "of", "to": "video game" },
+    { "name": "video watching", "from": "watching", "verb": "of", "to": "video" },
+    { "name": "weekday smartphone use", "from": "smartphone use", "verb": "on", "to": "weekday" },
+    { "name": "weekday computer use", "from": "computer use", "verb": "on", "to": "weekday" },
+    { "name": "weekday video game play", "from": "video game play", "verb": "on", "to": "weekday" },
+    { "name": "weekday video watching", "from": "video watching", "verb": "on", "to": "weekday" },
+    { "name": "weekend video game play", "from": "video game play", "verb": "on", "to": "weekend" },
+    { "name": "weekend video watching", "from": "video watching", "verb": "on", "to": "weekend" },
+    { "from": "Przybylski", "verb": "and", "to": "Weinstein" },
+    { "name": "Przybylski and Weinstein study", "from": "Przybylski and Weinstein", "verb": "name of", "to": "study" }
+  ],
+  "sources": [
+    {
+      "name": "Przybylski Weinstein 2017",
+      "description": "Przybylski AK, Weinstein N (2017). A Large-Scale Test of the Goldilocks Hypothesis. Psychological Science 28(2):204-215",
+      "url": "https://doi.org/10.1177/0956797616678438"
+    }
+  ],
+  "values": [
+    { "words": [ "weekday video game play", "inflection point", "minute", "measured value" ], "number": "100", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekday smartphone use", "inflection point", "minute", "measured value" ], "number": "117", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekday video watching", "inflection point", "minute", "measured value" ], "number": "221", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekday computer use", "inflection point", "minute", "measured value" ], "number": "257", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekend video game play", "inflection point", "minute", "measured value" ], "number": "215", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekend video watching", "inflection point", "minute", "measured value" ], "number": "290", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "Przybylski and Weinstein study", "participant count", "measured value" ], "number": "120115", "source": "Przybylski Weinstein 2017" }
+  ]
+}

@@ -70,6 +70,7 @@ detail file. Order is by how often they fire, not importance.
 - A nullable typed field stores null when the default applies; the default is resolved at the point of use via the type list's `default_id()` (and filled by `import_mapper`), never fabricated in `row_mapper`/`api_mapper`/`url_mapper` or written by the save path — a partial object must never overwrite fields it does not carry. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
+- Every resource file read or written is a const in the `files.php` of its layer (cfg / shared / test), so the three `files.php` stay the complete overview of all resource files; never inline a file name at the call site. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
 - Loading and saving are separated: every function reached from `save()` (e.g. `db_fields_changed`, `add_user`) works only on in-memory objects + the initial `$db_rec`/`get_similar` reload and never calls a `load_*`; fix an incomplete object at its load, not in the save path. → `docs/llm/architecture.md`

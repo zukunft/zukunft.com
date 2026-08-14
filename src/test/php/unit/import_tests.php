@@ -39,12 +39,15 @@ include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
@@ -535,6 +538,136 @@ class import_tests
         $est = $imp->calc_total_time($base + $elapsed, 100);
         $test_name = 'import time estimate handles a zero original estimate';
         $t->assert_true($test_name, $est > 0);
+
+
+        $t->subheader($ts . 'merge two import json');
+
+        // merging two import files must not lose data: the objects of the second file are
+        // added to the first, and a matching object (same name resp. same value phrase group)
+        // only fills the vars that the first file has left unset, so like on import the first
+        // file wins on a conflict (see the import order rule in docs/llm/json_structure.md)
+        // use an own import object, because the time estimate tests above have replaced $imp
+        // with an import object without a user
+        $imp = new import();
+        $imp->usr = $t->usr_dev;
+        $msg = new user_message($t->usr_dev);
+        $json1 = [
+            json_fields::WORDS => [
+                [json_fields::NAME => words::MIO],
+                [json_fields::NAME => word_names::YEAR_2019, json_fields::DESCRIPTION => 'first file description']
+            ],
+            json_fields::VALUES => [[
+                json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+                json_fields::NUMBER => 1.1
+            ]]
+        ];
+        $json2 = [
+            json_fields::WORDS => [
+                [json_fields::NAME => words::MIO, json_fields::DESCRIPTION => 'second file description'],
+                [json_fields::NAME => word_names::YEAR_2019, json_fields::DESCRIPTION => 'conflicting description'],
+                [json_fields::NAME => word_names::YEAR_2020, json_fields::DESCRIPTION => 'added description']
+            ],
+            json_fields::VALUES => [
+                [
+                    json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+                    json_fields::NUMBER => 2.2
+                ],
+                [
+                    json_fields::WORDS => [words::MIO, word_names::YEAR_2020],
+                    json_fields::NUMBER => 3.3
+                ]
+            ]
+        ];
+        $dto1 = $imp->get_data_object($json1, $msg);
+        $dto2 = $imp->get_data_object($json2, $msg);
+        $msg->merge($dto1->fill($dto2, $t->usr_dev));
+
+        $test_name = 'merge adds the words missing in the first file without duplicating the common ones';
+        $t->assert($test_name, $dto1->word_list()->count(), 3);
+        $test_name = 'merge fills a description gap of the first file from the second file';
+        $wrd_mio = $dto1->word_list()->get_by_name(words::MIO, $msg);
+        $t->assert($test_name, $wrd_mio?->description, 'second file description');
+        $test_name = 'on a description conflict the first file wins';
+        $wrd_2019 = $dto1->word_list()->get_by_name(word_names::YEAR_2019, $msg);
+        $t->assert($test_name, $wrd_2019?->description, 'first file description');
+        $test_name = 'merge adds the values missing in the first file without duplicating the common ones';
+        $t->assert($test_name, $dto1->value_list()->count(), 2);
+        $test_name = 'on a number conflict the value of the first file wins';
+        $val = $dto1->value_list()->get_by_names([words::MIO, word_names::YEAR_2019]);
+        $t->assert($test_name, $val?->number(), 1.1);
+
+        // the merged data object must round-trip through the export json without losing objects
+        $test_name = 'the export json of the merged data object has the merged words';
+        $export_json = $dto1->export_json($msg);
+        $t->assert($test_name, count($export_json[json_fields::WORDS] ?? []), 3);
+        $test_name = 'reading the export json back returns the merged object counts';
+        $dto3 = $imp->get_data_object($export_json, $msg);
+        $t->assert($test_name, $dto3->word_list()->count(), 3);
+        $test_name = '... and the merged value counts';
+        $t->assert($test_name, $dto3->value_list()->count(), 2);
+        $test_name = '... and keeps the filled description';
+        $t->assert($test_name, $dto3->word_list()->get_by_name(words::MIO, $msg)?->description, 'second file description');
+
+        // negative: an empty data object exports only the version header
+        $test_name = 'an empty data object exports only the version header';
+        $dto_empty = new data_object($t->usr_dev);
+        $t->assert($test_name, $dto_empty->export_json($msg), [json_fields::VERSION => def::PRG_VERSION]);
+
+        // merge the three offline_is_better_than_online sample files and compare the result
+        // with the committed merged file (same folder, no number suffix); the comparison is
+        // done data object to data object via diff_msg, so the json formatting, the header
+        // and the section order do not matter, only the merged content does
+        $test_name = 'merging the three offline_is_better_than_online files matches the merged file';
+        $msg = new user_message($t->usr_dev);
+        $dto_merged = null;
+        foreach ([test_files::IMPORT_MERGE_1, test_files::IMPORT_MERGE_2, test_files::IMPORT_MERGE_3] as $part_file) {
+            $json_array = json_decode(file_get_contents($part_file . test_files::JSON), true);
+            $dto_part = $imp->get_data_object($json_array, $msg);
+            if ($dto_merged == null) {
+                $dto_merged = $dto_part;
+            } else {
+                $msg->merge($dto_merged->fill($dto_part, $t->usr_dev));
+            }
+        }
+        $json_array = json_decode(file_get_contents(
+            test_files::IMPORT_MERGE_RESULT . test_files::JSON), true);
+        $dto_expected = $imp->get_data_object($json_array, $msg);
+        // compare by the sorted name lists, because for in-memory data objects all ids are
+        // zero, so the id based diff_msg would match any object to any other object
+        $names_merged = $dto_merged->word_list()->names();
+        $names_expected = $dto_expected->word_list()->names();
+        sort($names_merged);
+        sort($names_expected);
+        $t->assert($test_name, $names_merged, $names_expected);
+        $test_name = '... and the merged triples match the merged file';
+        $names_merged = $dto_merged->triple_list()->names();
+        $names_expected = $dto_expected->triple_list()->names();
+        sort($names_merged);
+        sort($names_expected);
+        $t->assert($test_name, $names_merged, $names_expected);
+        $test_name = '... and the duplicated triples of the three files are merged';
+        $t->assert($test_name, $dto_merged->triple_list()->count(), 61);
+        $test_name = '... and the merged values match the merged file';
+        $t->assert($test_name, $dto_merged->value_list()->count(), $dto_expected->value_list()->count());
+        // one value per input file to prove that no file is lost in the merge
+        $test_name = '... incl. the canvassing effect size of the first file';
+        $val = $dto_merged->value_list()->get_by_names(
+            ['narrative exchange canvassing', 'effect size on exclusionary attitude', 'measured value']);
+        $t->assert($test_name, $val?->number(), 0.08);
+        $test_name = '... incl. the smartphone inflection point of the second file';
+        $val = $dto_merged->value_list()->get_by_names(
+            ['weekday smartphone use', 'inflection point', 'minute', 'measured value']);
+        $t->assert($test_name, $val?->number(), 117.0);
+        $test_name = '... incl. the consumer surplus of the third file';
+        $val = $dto_merged->value_list()->get_by_names(
+            ['Facebook', 'consumer surplus', 'US dollar', 'measured value']);
+        $t->assert($test_name, $val?->number(), 31000000000.0);
+        $test_name = '... and the merged sources match the merged file';
+        $t->assert($test_name, $dto_merged->source_list()->count(), $dto_expected->source_list()->count());
+        $test_name = '... and the merged formulas match the merged file';
+        $t->assert($test_name, $dto_merged->formula_list()->count(), $dto_expected->formula_list()->count());
+        $test_name = '... and the merged calc validations match the merged file';
+        $t->assert($test_name, $dto_merged->result_check_list()->count(), $dto_expected->result_check_list()->count());
 
     }
 

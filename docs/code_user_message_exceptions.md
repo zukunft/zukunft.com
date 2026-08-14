@@ -9,7 +9,7 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-200 creations below the entry points: 179 explained, 19 parameter defaults and 2 still unexplained
+201 creations below the entry points: 179 explained, 19 parameter defaults and 3 still unexplained
 and 4 nullable message parameters and 48 messages that never reach the caller
 
 ## parameter defaults
@@ -109,6 +109,7 @@ main backend: /sandbox/sandbox_list_named.php:516 - ?user_message               
 the remaining rule breaks: explain the exception with a comment or thread the $msg of the caller
 
 ```
+main backend: /helper/data_object.php:966 - $msg = new user_message();
 main backend: /import/import.php:508 - $import_result = new user_message();
 main backend: /import/import.php:564 - $import_result = new user_message();
 ```

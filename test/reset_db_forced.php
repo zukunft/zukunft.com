@@ -48,6 +48,7 @@ include_once 'test_const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 // open a minimal database connection without loading the (possibly incompatible) config
@@ -58,7 +59,8 @@ if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
-    $result = $start_usr->get();
+    $msg = new user_message();
+    $result = $start_usr->get($msg);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($start_usr->id() > 0) {

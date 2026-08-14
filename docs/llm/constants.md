@@ -131,6 +131,36 @@ DIRECTORY_SEPARATOR`) so a moved folder is one edit and every path is greppable.
 Only a leaf file name or a folder segment built from a runtime value (e.g. a
 folder named after a test object) may stay inline at the call site.
 
+## Every resource file read or written has a const in a `files.php`
+
+The sibling rule to `paths.php`: every resource *file* the code reads or writes
+is a constant in the `files.php` of its layer, never an inline file name at the
+call site:
+
+- `src/main/php/cfg/const/files.php` — resource files used by the backend
+  (e.g. the import file lists `SYSTEM_DATA_FILES` → `BASE_DATA_FILES`)
+- `src/main/php/shared/const/files.php` — resource files used by backend and frontend
+- `src/test/php/const/files.php` — all test resource files (fixtures, snapshots,
+  import samples)
+
+The point is not only the single edit on a rename: the three `files.php` are the
+**complete, easy-to-check inventory of every resource file the system uses**. An
+inline file name at a call site is invisible in that overview, so a reviewer can
+no longer see from one place which files exist, which code layer owns them and
+which are orphaned.
+
+A file const is composed from a `paths.php` const plus the base name; a shared
+extension stays a const too, appended by the caller:
+
+- **Wrong**: `file_get_contents(test_paths::IMPORT_UNIT . 'offline_is_better_than_online1.json')`
+- **Right**: add `CONST string IMPORT_MERGE_1 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online1';`
+  then `file_get_contents(test_files::IMPORT_MERGE_1 . test_files::JSON)`
+
+The same applies to writing: a script that creates a file (e.g. a generated
+export or a merged import file) names its target via a const, so the overview
+also covers the files the system produces. Only a file name built from a runtime
+value (e.g. an output name given on the command line) stays at the call site.
+
 ## Link code to DB rows by `code_id` only — `*_NAME` / `*_ID` are test-only
 
 Every record in `src/main/php/shared/types/verbs.php` and
