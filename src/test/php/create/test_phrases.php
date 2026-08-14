@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -45,6 +46,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -869,9 +871,10 @@ class test_phrases
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
-        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase());
-        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase());
-        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase());
+        $msg = new backend_user_message(); // a test builder is an entry point; the fixed names cannot double
+        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase(), $msg);
+        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase(), $msg);
+        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase(), $msg);
         return $lst;
     }
 
@@ -883,9 +886,10 @@ class test_phrases
     {
         $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);
+        $msg = new backend_user_message(); // a test builder is an entry point; the config keys are unique
         $id = test_words::CONFIG_KEY_ID_OFFSET;
         foreach ($names as $name) {
-            $lst->add_by_name_direct($t_wrd->word_config_key($name, $id)->phrase());
+            $lst->add_by_name_direct($t_wrd->word_config_key($name, $id)->phrase(), $msg);
             $id++;
         }
         return $lst;

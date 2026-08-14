@@ -10,7 +10,7 @@ message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
 197 creations below the entry points: 176 explained, 19 parameter defaults and 2 still unexplained
-and 1 nullable message parameters and 45 messages that never reach the caller
+and 0 nullable message parameters and 45 messages that never reach the caller
 
 ## parameter defaults
 
@@ -28,9 +28,9 @@ main backend: /helper/db_object_seq_id.php:348 - function api_json(api_type_list
 main backend: /helper/type_list.php:663 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /sandbox/sandbox_list.php:454 - user_message|Message                                         $msg = new Message()
-main backend: /sandbox/sandbox_list_named.php:430 - Message                               $msg = new Message()
-main backend: /sandbox/sandbox_list_named.php:471 - Message                                                $msg = new Message()
-main backend: /sandbox/sandbox_list_named.php:788 - user_message|Message                                         $msg = new Message()
+main backend: /sandbox/sandbox_list_named.php:431 - Message                               $msg = new Message()
+main backend: /sandbox/sandbox_list_named.php:472 - Message                                                $msg = new Message()
+main backend: /sandbox/sandbox_list_named.php:787 - user_message|Message                                         $msg = new Message()
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /view/view_relation_list.php:203 - Message                             $msg = new Message()
 shared: /helper/ListOf.php:170 - Message                             $msg = new Message()
@@ -88,14 +88,6 @@ main backend: /word/triple.php:400 - $this->set_code_id($db_row[fields::FLD_CODE
 shared: /calc/expression.php:235 - $dsp_msg = new user_message(); // a display path has no user to report to, see the comment above
 shared: /calc/expression.php:246 - $dsp_msg = new user_message(); // a display path has no user to report to, see ref_text_dsp
 shared: /helper/Translator.php:177 - $msg = new user_message(); // a local buffer only to build the text of the log entry
-```
-
-## nullable message parameters
-
-a message parameter is required, because a request has exactly one message and null describes a state that does not exist; "$msg?->add(...)" reports nothing at the call sites that pass none, so a caller without a message needs one itself
-
-```
-main backend: /sandbox/sandbox_list_named.php:516 - ?user_message                         $msg = null
 ```
 
 ## unexplained creations

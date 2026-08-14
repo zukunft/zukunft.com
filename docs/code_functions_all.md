@@ -4869,7 +4869,7 @@
     \-- phrase_parts
         \-- triple_list - get a list of the phrase parts
     \-- missing_ids
-        \-- triple_list - @return triple_list with all phrases that does not yet have a database id
+        \-- triple_list - @param user_message $msg to report a triple that is in the list twice
     \-- get_link_conflict
         \-- triple_list - find a triple in the list that links the same from/verb/to as the given triple but carries
     \-- rename_link_conflicts

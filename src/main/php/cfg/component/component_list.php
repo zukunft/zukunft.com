@@ -379,7 +379,7 @@ class component_list extends sandbox_list_named
                 // get the components that needs to be added
                 // TODO check if other list save function are using the cache instead of this here
                 $chk_lst = clone $this;
-                $load_lst = $chk_lst->missing_ids();
+                $load_lst = $chk_lst->missing_ids($msg);
 
                 // load the components by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
@@ -400,7 +400,7 @@ class component_list extends sandbox_list_named
 
                 // get the components that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here
-                $add_lst = $load_lst->missing_ids();
+                $add_lst = $load_lst->missing_ids($msg);
 
                 // create any missing sql insert functions and insert the missing components
                 if (!$add_lst->is_empty()) {

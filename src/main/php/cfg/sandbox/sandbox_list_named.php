@@ -398,15 +398,16 @@ class sandbox_list_named extends sandbox_list
     /**
      * get the words, formulas, components that needs to be saved to the database
      * TODO review overwrites and e.g. check word list usage
+     * @param user_message $msg to report an object that is in the list twice
      * @return sandbox_list_named with all named sandbox object that does not yet have a database id
      */
-    function missing_ids(): sandbox_list_named
+    function missing_ids(user_message $msg): sandbox_list_named
     {
         $lst = clone $this;
         $lst->reset();
         foreach ($this->lst() as $sbx) {
             if ($sbx->id() == 0) {
-                $lst->add_by_name_direct($sbx);
+                $lst->add_by_name_direct($sbx, $msg);
             }
         }
         return $lst;
@@ -506,14 +507,14 @@ class sandbox_list_named extends sandbox_list
      * used e.g. for the triple import to update triple fields
      * without repeating the links in the import json message
      * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
+     * @param user_message $msg to report which entry is double
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message|null $msg to report which entry is double or null if the caller has no message
      * @returns bool true if the object has been added
      */
     function add_by_name_direct(
         sandbox_named|triple|phrase|term|null $obj_to_add,
-        bool                                  $allow_duplicates = false,
-        ?user_message                         $msg = null
+        user_message                          $msg,
+        bool                                  $allow_duplicates = false
     ): bool
     {
         $added = false;
@@ -526,9 +527,7 @@ class sandbox_list_named extends sandbox_list
                     $this->set_hash_dirty();
                     $added = true;
                 } else {
-                    $add_msg = new user_message(); // a buffer, because the caller may have no message
-                    $added = parent::add_obj($obj_to_add, $allow_duplicates, $add_msg);
-                    $msg?->merge($add_msg);
+                    $added = parent::add_obj($obj_to_add, $allow_duplicates, $msg);
                 }
             }
         }

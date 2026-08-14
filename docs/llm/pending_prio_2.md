@@ -97,8 +97,13 @@ the done passes are in the git history; only what is still open is listed here.
      the receiver class (from the file's `use` imports, the enclosing class for `$this->`, or a
      `new X()` assignment) and look up **that** class's signature.
 
-   the last one is the backend `sandbox_list_named::add_by_name_direct` (13 call sites whose caller
-   has no message today).
+   **the section is empty** - the last one, the backend `sandbox_list_named::add_by_name_direct`,
+   is done: `$msg` is required and second (before `$allow_duplicates`), the internal `$add_msg`
+   buffer is gone, and the `missing_ids` family (all four declarations, for the override
+   compatibility), `triples_to_add_to_db` and `triple_list::phrase_lst_of_names` thread the
+   message from the save-block buffers (`$msg_chk` resp. `$msg`); only the cache getter
+   `data_object::phrase_list()` stops the cascade with a read-and-log buffer, because a cache
+   refresh has no caller message (the frontend hooks have the same shape).
    the three web `__construct(?string $api_json = null, ?user_message $msg = null)` are done: the
    decision was the plain constructor plus the existing `set_from_json($json, $msg)`, because
    building an **empty** list needs no message at all and a required parameter would force every
