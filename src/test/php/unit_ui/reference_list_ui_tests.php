@@ -57,7 +57,8 @@ class reference_list_ui_tests
         $ui = new frontend('unit ui html reference list');
         $t_ref = new test_refs($t);
         $msg = new user_message();
-        $dto = $tl->ui_test_cache($t->usr1, $t);
+        $cac_msg = new user_message();
+        $dto = $tl->ui_test_cache($t->usr1, $t, $cac_msg);
         $ui->set_cache($dto);
 
         // start the test section (ts)

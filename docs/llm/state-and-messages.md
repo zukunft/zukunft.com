@@ -179,6 +179,10 @@ if ($sub_msg->is_ok()) { … }            // 3. read here to steer the branch
 $this->msg = new user_message();        // 4. kept in an object field the caller reads
 ```
 
+In test code an `assert_msg($test_name, $msg)` is ending 3: the assert reads
+the message and a failing run is the report, so an asserted test buffer needs
+no further merge or return (see "the assert is the reader" in `testing.md`).
+
 Everything else is a lost message. The worst form has no name at all, because
 then not even a later line could read it:
 

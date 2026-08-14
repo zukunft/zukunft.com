@@ -698,7 +698,10 @@ class frontend
             if ($this->dto == null) {
                 $this->dto = new data_object();
             }
-            $this->dto->typ_lst_cache = new type_lists($api_msg, $msg_ui);
+            $this->dto->typ_lst_cache = new type_lists();
+            if ($api_msg != null) {
+                $this->dto->typ_lst_cache->set_from_json($api_msg, $msg_ui);
+            }
         }
     }
 

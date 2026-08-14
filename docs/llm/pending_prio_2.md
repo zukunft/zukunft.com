@@ -14,87 +14,53 @@ the done passes are in the git history; only what is still open is listed here.
 
 1. **apply the readiness ladder to the named lists as well** (the link list is done): the ladder is
    written up in `docs/llm/architecture.md` - list membership goes by the key, the write by
-   `db_ready()`. `sandbox_link_list` now follows it (`add_link` stores a link without a db id via
-   `add_direct` and `can_add` compares `from_id_or_name()` / `to_id_or_name()`), which is what makes
-   the double message of `view::add_term` work at all; before that every term view link of an import
-   was dropped by the `id() <> 0` gate of `sandbox_list::add_obj` while `add_link` still reported
-   "added". open on the same defect:
-   - `sandbox_list_named::add` still keys on the id, so a caller that adds objects before they are
-     saved uses `add_by_key` or `add_by_name_direct` (as `phrase_list::import_map_names` does); the
-     plain `add` keeps only the first of several id less objects. `add_by_key` is now safe to
-     recommend: it judges `can_be_ready` with a local message (an earlier unrelated error no longer
-     blocks the add) and returns whether it added instead of the message state - all 47 call sites
-     ignore the return and pass no message, so the shape can be tightened further.
-     careful with its "name already in the list" branch: it must stay on the **parent** `add_obj`,
-     because an entry with the same name but another db id is a different object that belongs in
-     the list (e.g. a renamed word next to its original); routing it to the named `add_obj`, which
-     keys on the name, drops such an entry - that emptied the frontend cache phrase list, so
-     `phrase::is_or_can_be` found nothing, `list_sort` fell into its hardcoded `load_by_name`
-     fallback and rendered empty phrase links plus a "Mandatory field name missing in API JSON"
-     warning on the start page. still open there: the drop is silent (TODO on the line) and the
-     `list_sort` fallback adds objects that could not be loaded
-   - the `assigned` array of a formula import now resolves each name in the `$dto` and links it
-     (one helper shared with `assigned_word`), so `save_links` writes the links; two loose ends:
-     `formula_map::$lnk_lst` has no accessor, so a unit test cannot assert the created links (only
-     that nothing is reported), and `assign_phrases`, which fills `lnk_lst` from `$this->phr_lst`,
-     is called by `import_obj` but not by the data_object import - decide which of the two members
-     the import fills
-   - `sandbox_link_list::can_add` now asks `is_same_link()`, which `component_link_list` and
-     `view_relation_list` override to add the position, so the duplicate check exists once and every
-     link list compares by id or name; `sandbox_list_named::add_obj` asks one `has_key()` (the id if
-     the object has one, the name otherwise), reports an object that names nothing instead of
-     skipping it silently, and `sandbox_list::add_obj` (now only the user check plus the parent) and
-     `ListOfIdObjects::add_obj` return whether they added instead of the message state, which is
-     what their callers `ip_range_list::add`, `formula_list::add`, `phrase_list::add_phrase` and
-     `update_object` promise in their docblocks. still open: an object that has no key at all is
-     ignored by `sandbox_list::add_obj` without a message (TODO on the line)
-   - `msg_id::LIST_DOUBLE_ENTRY` is a user message, but most of the places that raise it fill
-     `VAR_NAME` with `dsp_id()` (the debug identification, e.g. `"mathematics" (word_id 1) for
-     user 1 ()`) and pass the raw `::class` incl. the namespace; `sandbox_list::add_obj` and
-     `sandbox_list_named::add_obj`, `ListOfIdNamed*` and the `type_list` / `user_list` raisers name
-     the object and the readable class; only the id keyed `ListOf` and `ListOfIdObjects` still use
-     `dsp_id()`, because an entry of those lists has no name.
-     found on the way: `user_list::add` checked its duplicates with `array_key_exists` against
-     `id_lst()` / `names()` / `emails()`, which are value arrays, so a user could be added twice and
-     nothing was reported; it uses `in_array` now.
-     note that `Message::add` drops a text that is already in the message, so two lists reporting
-     the same double keep one entry - `base_object_tests` relies on that
-   - `Message::get_last_message_translated()` (behind `text()`) now falls back to the last entry of
-     `msg_id_lst`, so the 25 `add_id` messages are no longer invisible for the preferred reader, and
-     an empty message says nothing instead of "user message translation for position -1 not found";
-     the three copies of the function in `web/user_message`, `cfg/user_message` and `sql_message`
-     are gone. **watch the write test**: `word_write_tests` had the pseudo text as its expected
-     value for "triple cannot by renamed to an already used word name" - the real expectation is
-     restored, so the run now shows whether the triple save reports the name clash at all
-   - `data_object::add_term_view` / `term_view_list()` have no caller: decide whether the dto keeps
-     the imported term view links or whether the pair is dead code
-   still open from the same audit: `component::set_col_sub_phrase` does not check whether the given
-   sub phrase has a relation to the column phrase, so it can suggest nothing; that check needs the
-   phrase relations and a `$msg` parameter.
+   `db_ready()`. `sandbox_list_named::add` still keys on the id, so a caller that adds objects
+   before they are saved needs `add_by_key` or `add_by_name_direct` (as
+   `phrase_list::import_map_names` does); the plain `add` keeps only the first of several id less
+   objects. all 47 `add_by_key` call sites ignore its return and pass no message, so the shape can
+   be tightened further.
+   **careful with its "name already in the list" branch**: it must stay on the **parent**
+   `add_obj`, because an entry with the same name but another db id is a different object that
+   belongs in the list (e.g. a renamed word next to its original); routing it to the named
+   `add_obj`, which keys on the name, drops such an entry - that emptied the frontend cache phrase
+   list, so `phrase::is_or_can_be` found nothing, `list_sort` fell into its hardcoded
+   `load_by_name` fallback and rendered empty phrase links plus a "Mandatory field name missing in
+   API JSON" warning on the start page.
+   the silent drops still open on the same defect:
+   - the double that `add_by_key` drops in that branch is not reported (TODO on the line)
+   - `sandbox_list::add_obj` ignores an object that has no key at all without a message (TODO on
+     the line)
+   - the `list_sort` fallback adds objects that it could not load, so an empty cache renders empty
+     phrase links instead of nothing
+   two loose ends of the formula import: `formula_map::$lnk_lst` has no accessor, so a unit test
+   cannot assert the created links (only that nothing is reported), and `assign_phrases`, which
+   fills `lnk_lst` from `$this->phr_lst`, is called by `import_obj` but not by the data_object
+   import - decide which of the two members the import fills.
+   `data_object::add_term_view` / `term_view_list()` have no caller: decide whether the dto keeps
+   the imported term view links or whether the pair is dead code.
+   `component::set_col_sub_phrase` does not check whether the given sub phrase has a relation to
+   the column phrase, so it can suggest nothing; that check needs the phrase relations and a `$msg`
+   parameter.
+   **watch the write test**: `word_write_tests` had the pseudo text of an untranslated `add_id`
+   message as its expected value for "triple cannot by renamed to an already used word name" - the
+   real expectation is restored, so the run now shows whether the triple save reports the name
+   clash at all.
    opportunistic only: the `fill_by_name` treatment (take `$msg`, return `bool`) is the right shape
    for the *small* leaf families if one is touched anyway (`fill_by_id`, `add_id_by_name`,
    `sandbox_list::add_user_check`, `id_used_msg`), while the recursive `diff_msg` and `fill` cores
    stay as they are - their callers do merge the return, so threading them is high risk, low value.
 
 2. **remove the 19 remaining message parameter defaults**: a caller that passes nothing silently
-   loses its messages, so the default is the same drop in disguise. done so far of the list add
-   family: `add_obj_by_name`, `add_obj_by_code_id`, `add_by_link` (incl. the `element_list`
-   override) and `web/frontend.php::start` - each had few call sites and every caller either had a
-   message or is an entry point (`http/setup.php` now creates it before it starts the session).
+   loses its messages, so the default is the same drop in disguise.
    the two remaining families are measured, so do not re-size them by definition count:
    - `add_by_key` (6 defaults: `ListOfIdObjects`, both `sandbox_list_named`, `component_link_list`,
      `formula_list`, `view_relation_list`) - 47 call sites, 29 of them in functions **without** a
      message in scope
    - `add_obj` incl. `sandbox_list_named::add` (5 defaults: `ListOf`, `ListOfIdObjects`,
-     `sandbox_list`, `sandbox_list_named`) - 70 call sites, 31 without a message in scope
-   the `data_object` adders are done: `add_word`, `add_triple`, `add_phrase`, `add_source`,
-   `add_reference`, `add_formula`, `add_view`, `add_component` and the two `*_without_ready_check`
-   take the message and pass it to `add_by_key` / `add_by_name_direct`, and `ref_list::add_by_name_type_and_key`
-   lost its local message (its TODO Prio 1), and the yaml chain of the config import
-   (`get_data_object_yaml`, its loop and `yaml_data_object_map_triple`) threads the message too, so
-   a config key that does not name exactly two words for a triple is reported and not only logged. every one of those names exists on more than one class
+     `sandbox_list`, both `sandbox_list_named`) - 70 call sites, 31 without a message in scope
+   **never rename by function name**: every one of these names exists on more than one class
    (`view::add_component`, `verb_list::add_verb`, `group::add_word`, `test_db_load::add_word`), so
-   the receiver was resolved per call site - never rename by function name.
+   the receiver has to be resolved per call site.
    what is left before the defaults can go: the callers of `add_by_key` / `add_obj` in
    `phrase_list`, `word_list`, `triple_list`, `term_list`, `verb_list`, `formula_list`, `import` and
    `result_list`, one class per commit with a test run
@@ -106,6 +72,11 @@ the done passes are in the git history; only what is still open is listed here.
      `new formula_list_ui($t_msk->view_list_word()->api_json())` as a ui receiver. so it needs the
      test run in the loop, one test folder per commit, or it becomes trivial once the
      frontend/backend split makes the message kind unambiguous.
+   **19 is a lower bound**: the coded check matches the class name, so a parameter typed with an
+   alias is invisible to it, e.g. `frontend::set_type_cache(?string $api_msg = null,
+   user_message_ui $msg_ui = new user_message_ui())` - `user_message_ui` does not match the
+   `user_message` pattern. before this item is called done, `DEFAULT_PATTERN` (and `NULL_PATTERN`)
+   need the frontend alias names too, and the count has to be measured again.
 
 3. **remove the remaining `?user_message $msg = null` parameters** — the rule is in coding.md and
    `docs/llm/state-and-messages.md` ("$msg is never null"), and
@@ -126,12 +97,20 @@ the done passes are in the git history; only what is still open is listed here.
      the receiver class (from the file's `use` imports, the enclosing class for `$this->`, or a
      `new X()` assignment) and look up **that** class's signature.
 
-   the remaining 4, with the number of call sites whose caller has no message today:
-   - the backend `sandbox_list_named::add_by_name_direct` (13)
-   - the three web `__construct(?string $api_json = null, ?user_message $msg = null)` (28):
-     these need a decision rather than a cascade - building an **empty** list needs no message at
-     all, so the clean shape is a plain constructor plus the existing `set_from_json($json, $msg)`,
-     not a required parameter that every `new verb_list()` has to fill with something
+   the last one is the backend `sandbox_list_named::add_by_name_direct` (13 call sites whose caller
+   has no message today).
+   the three web `__construct(?string $api_json = null, ?user_message $msg = null)` are done: the
+   decision was the plain constructor plus the existing `set_from_json($json, $msg)`, because
+   building an **empty** list needs no message at all and a required parameter would force every
+   `new verb_list()` to fill it with something; the 11 callers that pass an api json now hand over
+   their message.
+   **the same shape one level up is still open**: `web/sandbox/ListBase::__construct(?string
+   $api_json = null)` calls `set_from_json($api_json)` and drops the `user_message` it returns, so
+   every `*_ui` list built from an api json (`word_list`, `phrase_list`, `value_list`, ...) loses
+   its mapping problems. the coded check does not see it, because no `new user_message(` appears
+   there - it is the return value that is thrown away. same treatment: an empty constructor plus an
+   explicit `set_from_json($json, $msg)` at the callers that have json; count the call sites first,
+   it is the biggest family of the three.
 
 4. **the deferred items of the log/buffer audit** — each needs a test run or a decision, not a quick
    edit:
@@ -151,23 +130,24 @@ the done passes are in the git history; only what is still open is listed here.
      "not yet implemented" sections — both are dev limitations of the same category
 
 5. **the `$msg->is_ok()` gate defect**, found by the import regression (the trap itself is written
-   up in state-and-messages.md): ~10 places gate a loop or a branch on `db_ready($msg)` /
-   `can_be_ready($msg)` with a **passed in** message — `ref_list` ~309, `triple` ~513/541,
-   `component_list` ~458, `list_db_write` ~187/217, `formula_map` ~1365, `sandbox_list_named`
-   ~480/1314, `formula_list` ~1068. those functions end with `return $msg->is_ok()`, so once one
+   up in state-and-messages.md): 8 places gate a loop or a branch on `db_ready($msg)` /
+   `can_be_ready($msg)` with a **passed in** message — `triple` ~513/541, `component_list` ~458,
+   `list_db_write` ~187/217, `formula_map` ~1406, `sandbox_list_named` ~1351, `formula_list` ~1068
+   (`ref_list` and `add_by_key` now judge with a local `$rdy_msg` and are the pattern to copy).
+   those functions end with `return $msg->is_ok()`, so once one
    object fails every later one is skipped silently. they work today only because their callers
    happen to pass a message that is still ok. the fix makes more objects pass the gate, so it needs
    its own commit with a test run.
 
 6. **migrate the bare `log_err` calls to `log_err_msg`** (the rule is coding.md and
-   docs/llm/structure.md "log_err alone is the transitional channel"): today ~512 bare `log_err`
-   against 59 `log_err_msg`, and 202 `log_warning` against 1 `log_warning_msg` — so an internal
+   docs/llm/structure.md "log_err alone is the transitional channel"): today 514 bare `log_err`
+   against 63 `log_err_msg`, and 203 `log_warning` against 2 `log_warning_msg` — so an internal
    error is still logged for the admin while the user sees a page that silently did nothing.
    this is explicitly **not** a sweep: it happens whenever a function that contains a `log_err` is
    touched for another reason, by adding the `user_message $msg` parameter and switching that call.
    the two documented carve-outs stay bare: no caller can hold a `$msg` (entry point, bootstrap,
    cron, HTML-only display), or the message fires on a normal path.
-   **the cheap subset is 216 of those 516**: they already sit in a function that HAS a `$msg`
+   **the cheap subset is ~216 of those 514**: they already sit in a function that HAS a `$msg`
    parameter, so they need no signature change and no caller touched - only `log_err($txt)` ->
    `log_err_msg($txt, $msg)`. that subset is also the natural coded check for
    unit/coding_rule_tests.php (a bare `log_err` inside a function with a `user_message` parameter),
@@ -176,17 +156,22 @@ the done passes are in the git history; only what is still open is listed here.
 optional caller-side follow-ups found while evaluating the setter families (no signature change, so
 each is a small standalone commit):
 - `fill` keeps returning a `user_message`, but the few DISCARDING callers that already hold a
-  threaded `$msg` should merge its return — `cfg/sandbox/sandbox.php:2902` and
+  threaded `$msg` should merge its return — `cfg/sandbox/sandbox.php:3029` and
   `cfg/helper/object_mapper.php:137/191`; leave the recursive / row-mapper / test callers as-is
-- `sql_db` setup 1247-1251 discards `import_verbs` / `import_system_data` / `create_internal_words`
-  / `import_config_yaml` although it holds a `$msg` — merging would surface install-time failures
-- `del_exe` is inconsistent: `db_id_object_non_sandbox::del_exe(user)` vs
-  `sandbox::del_exe(user_message)`; aligning both to `user_message` would be tidy but is low value
+- `sql_db` setup ~1249 still calls `import_system_data($usr)` and `import_sample_view_data($usr)`
+  without the `$sys_msg` it holds — passing it would surface install-time failures
 - give `triple` its own `set_code_id_db` so its `row_mapper` (and `test_triples`) can drop the
   buffer, matching word/source/component; likewise a `set_type_id_db` no-check variant would let the
   test factories and the row-sync/fill paths drop their throwaway messages
 - pre-existing bug found in `job::set_status_id`: the allowed branch sets `$this->type_id` instead
   of `$this->status_id` (left as-is so far)
+- `web/user/user.php::dsp_errors` has no caller and would fatal if it got one: `$err_lst` is the
+  **frontend** `sys_log_list`, which has `load_by_user()` but no `load()`; the page it once served
+  is the user view rework further down in this file, so delete it there instead of repairing it
+- in `test_lib::ui_test_cache` the `$base_msg` of the base view import is also handed to
+  `list_all_ui`, so its name no longer says what it collects - split it when that function is
+  touched again; the two test runners also name the same web class differently
+  (`all_unit_tests` must alias it as `user_message_ui`, `all_ui_tests` uses `user_message`)
 
 ## general code cleanup to prevent future issues
 

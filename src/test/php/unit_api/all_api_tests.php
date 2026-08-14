@@ -73,7 +73,7 @@ class all_api_tests
             // load the types from the api message
             $t_typ = new test_types($t);
             $api_msg = $t_typ->type_lists_api($t->usr1);
-            new type_list_ui($api_msg, $msg);
+            new type_list_ui()->set_from_json($api_msg, $msg);
 
         }
         return $msg->is_ok();

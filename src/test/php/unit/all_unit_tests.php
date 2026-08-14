@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -48,6 +49,7 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT . 'base_object_tests.php';
@@ -107,7 +109,8 @@ class all_unit_tests extends test_cleanup
 
         // prepare the unit tests
         $tl = new test_lib();
-        $tl->ui_test_cache($this->usr_dev, $this);
+        $cac_msg = new user_message_ui();
+        $tl->ui_test_cache($this->usr_dev, $this, $cac_msg);
         $u_env = new unit_env();
         $u_env->init_unit_tests($this->usr1);
 

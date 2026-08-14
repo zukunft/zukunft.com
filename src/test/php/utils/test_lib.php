@@ -182,9 +182,11 @@ class test_lib
      * @param user $usr the user for which the sample cache should be created
      *                  for unit tests a user that is allowed to import code-ids should be used
      * @param test_cleanup $t the test environment e.g. the collect the errors
+     * @param user_message $msg to collect the problems of the cache creation, which are asserted
+     *                          here, so that no test uses a silently incomplete cache
      * @return data_object_ui
      */
-    function ui_test_cache(user $usr, test_cleanup $t): data_object_ui
+    function ui_test_cache(user $usr, test_cleanup $t, user_message $msg): data_object_ui
     {
         global $ui_sys;
 
@@ -195,7 +197,8 @@ class test_lib
 
         // load type lists from resource json file
         $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
-        $dto_ui->typ_lst_cache = new type_lists($api_msg, new user_message());
+        $dto_ui->typ_lst_cache = new type_lists();
+        $dto_ui->typ_lst_cache->set_from_json($api_msg, $msg);
 
         // import system views from resource json file so that not all details need to be repeated in the test data creation class
         $imp = new import();
@@ -203,8 +206,10 @@ class test_lib
         $json_str = file_get_contents(files::SYSTEM_VIEWS);
         $size = strlen($json_str);
         $json_array = json_decode($json_str, true);
-        $msg = new backend_user_message($usr);
-        $dto = $imp->get_data_object($json_array, $msg, $size);
+        // a backend buffer, because the import is backend code; it is merged into the frontend
+        // message of the caller below
+        $imp_msg = new backend_user_message($usr);
+        $dto = $imp->get_data_object($json_array, $imp_msg, $size);
         $dto_ui->set_view_list($this->cast_view_list($dto->view_list()));
         // add the view id because the import does not include the database id
         $dto_ui->add_id_to_views();
@@ -214,15 +219,16 @@ class test_lib
         $json_str = file_get_contents(files::BASE_VIEWS);
         $size = strlen($json_str);
         $json_array = json_decode($json_str, true);
-        $msg = new backend_user_message($usr);
-        $dto_base = $imp->get_data_object($json_array, $msg, $size);
+        // an own buffer, because get_data_object returns the state of the given message, so an
+        // error of the system views above would stop the base view import
+        $base_msg = new backend_user_message($usr);
+        $dto_base = $imp->get_data_object($json_array, $base_msg, $size);
         $dto_base_ui->set_view_list($this->cast_view_list($dto_base->view_list()));
         // add the view id because the import does not include the database id
         $dto_base_ui->add_id_to_views();
         // add the components to the views
         //$dto_base_ui->add_components_to_views();
-        $ui_msg = new user_message(); // the frontend merge needs a frontend message, not the backend one above
-        $dto_ui->merge_view_list($dto_base_ui->view_list(), $ui_msg);
+        $dto_ui->merge_view_list($dto_base_ui->view_list(), $msg);
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);
@@ -238,12 +244,21 @@ class test_lib
         $dto_ui->trp_lst = $t_trp->triple_list_ui();
         $dto_ui->src_lst = $t_src->source_list_ui();
         $dto_ui->ref_lst = $t_ref->ref_list_math_ui();
-        $dto_ui->val_lst = $t_val->list_all_ui($msg);
+        $dto_ui->val_lst = $t_val->list_all_ui($base_msg);
         $dto_ui->frm_lst = $t_frm->formula_list_ui();
         $dto_ui->frm_lnk_lst = $t_frm->formula_link_list_ui();
         $dto_ui->chg_log = $t_log->log_list_named_ui();
         // an empty config so that the getters return the shared defaults
         $dto_ui->cfg = new config_ui();
+
+        // the two imports and the value list load report to a backend message,
+        // so both buffers reach the caller with the frontend messages collected above
+        $msg->merge($imp_msg);
+        $msg->merge($base_msg);
+
+        // a cache that is silently incomplete lets every later test fail for the wrong reason,
+        // so the creation problems are reported here and not only handed to the caller
+        $t->assert_msg('the frontend test cache of ' . $usr->name() . ' is created without errors', $msg);
 
         // set the global cache var
         $ui_sys = $dto_ui;

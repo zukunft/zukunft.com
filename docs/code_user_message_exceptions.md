@@ -9,8 +9,8 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-200 creations below the entry points: 179 explained, 19 parameter defaults and 2 still unexplained
-and 4 nullable message parameters and 48 messages that never reach the caller
+197 creations below the entry points: 176 explained, 19 parameter defaults and 2 still unexplained
+and 1 nullable message parameters and 45 messages that never reach the caller
 
 ## parameter defaults
 
@@ -19,7 +19,7 @@ a default value drops the message of a caller that passes none, so each of these
 ```
 frontend: /sandbox/ListBase.php:243 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 frontend: /sandbox/sandbox_list_named.php:261 - Message                                        $msg = new Message()
-frontend: /system/sys_log_list.php:160 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
+frontend: /system/sys_log_list.php:150 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /component/component_link_list.php:275 - Message                              $msg = new Message()
 main backend: /formula/formula_list.php:636 - Message                                       $msg = new Message()
 main backend: /helper/combine_object.php:129 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
@@ -51,11 +51,8 @@ frontend: /helper/data_object.php:142 - $cache_msg = new user_message();
 frontend: /result/result_list.php:394 - $api_msg = new user_message(); // a legacy display function without a message, see display_old
 frontend: /sandbox/combine_object.php:70 - $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
 frontend: /sandbox/db_object.php:140 - $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
-frontend: /system/sys_log_list.php:85 - $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
-frontend: /types/type_lists.php:159 - $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
 frontend: /user/user_display_old.php:548 - $msg = new user_message(); // a legacy display function without a caller message, see dsp_sandbox_wrd_link
 frontend: /user/user_display_old.php:1230 - $msg = new user_message(); // a deprecated direct db display function without a caller message
-frontend: /verb/verb_list.php:70 - $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
 frontend: /word/triple_list.php:237 - $api_msg = new user_message(); // a legacy display function without a message, see graph
 main backend: /application.php:244 - $msg = new user_message(user::system());
 main backend: /db/sql_db.php:1122 - $sys_msg = new user_message(user::system()); // the setup runs as the system user, before any request
@@ -98,9 +95,6 @@ shared: /helper/Translator.php:177 - $msg = new user_message(); // a local buffe
 a message parameter is required, because a request has exactly one message and null describes a state that does not exist; "$msg?->add(...)" reports nothing at the call sites that pass none, so a caller without a message needs one itself
 
 ```
-frontend: /system/sys_log_list.php:80 - function __construct(?string $api_json = null, ?user_message $msg = null)
-frontend: /types/type_lists.php:154 - function __construct(?string $api_json = null, ?user_message $msg = null)
-frontend: /verb/verb_list.php:64 - function __construct(?string $api_json = null, ?user_message $msg = null)
 main backend: /sandbox/sandbox_list_named.php:516 - ?user_message                         $msg = null
 ```
 

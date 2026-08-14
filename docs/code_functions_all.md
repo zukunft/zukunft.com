@@ -6209,9 +6209,7 @@
         \-- frontend - define the settings for this word object
         \-- data_object - init the data object vars and set the lists based on the given api json
         \-- user_request - @param user_backend $usr_backend the backend user, updated in place e.g. on login
-        \-- sys_log_list - @param string|null $api_json the api message to fill this system log list
-        \-- type_lists - fill the global html frontend type vars base on the api message
-        \-- verb_list - the parent constructor is called after the reset of lst_name_dirty to enable setting by adding the list
+        \-- verb_list - create an empty list, which needs no message; a caller with an api json message
     \-- reset
         \-- data_object - init the data object vars and set the lists based on the given api json
     \-- input_valid

@@ -68,7 +68,8 @@ class value_list_ui_tests
         $msg = new user_message();
         $msg_ui = new user_message_ui();
         $ui = new frontend('unit ui html reference list');
-        $dto = $tl->ui_test_cache($t->usr1, $t);
+        $cac_msg = new user_message_ui();
+        $dto = $tl->ui_test_cache($t->usr1, $t, $cac_msg);
         $ui->set_cache($dto);
 
         // start the test section (ts)

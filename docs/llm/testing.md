@@ -493,6 +493,26 @@ Never reset `$msg` after a passing test, and never spin up a fresh
 so a single object carries the block's history. `reset()` keeps the user
 (`reset(keep_usr = true)`), so re-setting `$msg->usr` after it is unnecessary.
 
+### In a test the assert is the reader — an asserted `$msg` is fully handled
+
+The "a message must reach the caller" rule of `state-and-messages.md` asks that
+somebody *reads* what a message collects. In a test that reader is the
+assertion: `$t->assert_msg($test_name, $msg)` reads the state (`is_ok()`) and,
+on failure, the text — and failing the run **is** the report. There is no
+request user above a test, so nothing more has to happen with the buffer:
+
+```php
+$cac_msg = new user_message();
+$tl->ui_test_cache($t->usr1, $t, $cac_msg);   // asserts $cac_msg internally
+// done - no merge, no return, no further read needed
+```
+
+This also holds when the assert sits inside the called helper (as in
+`test_lib::ui_test_cache`): the caller creates the buffer, the helper fills and
+asserts it, and neither side needs to hand the content anywhere else. Judge a
+test-side message by whether an assert consumes it, not by whether the
+immediate caller merges its return.
+
 ### Keep `$test_name` short but unique — don't repeat the subheader
 
 The `$test_name` only has to make the assertion **uniquely identifiable within
