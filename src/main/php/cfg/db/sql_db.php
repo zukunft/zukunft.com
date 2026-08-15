@@ -1121,6 +1121,9 @@ class sql_db
         } else {
             $sys_msg = new user_message(user::system()); // the setup runs as the system user, before any request
             $result = $this->setup_db($sys_msg);
+            if (!$sys_msg->is_ok()) {
+                log_err('db setup: ' . $sys_msg->text());
+            }
         }
         $sys->times->switch();
 
@@ -1267,7 +1270,7 @@ class sql_db
             $wrd = new word($usr);
             $wrd->set(word_names::MATH_ID, word_names::MATH);
             $wrd->description = word_names::MATH_COM;
-            $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr)); // only for the permission check
+            $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr)); // not reported: only for the permission check
             $msk = new view($usr);
             $msk->set(views::START_ID, views::START_NAME);
             $msk->description = views::START_COM;
@@ -3537,7 +3540,7 @@ class sql_db
      */
     function get_internal(string $sql): array
     {
-        $msg = new user_message(); // an internal db structure read, so a failure only goes to the log
+        $msg = new user_message(); // not reported: an internal db structure read, so a failure only goes to the log
         return $this->fetch_all($sql, $msg);
     }
 
@@ -3623,7 +3626,7 @@ class sql_db
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
-        $msg = new user_message(); // a deprecated read, see the TODO above; a failure only goes to the log
+        $msg = new user_message(); // not reported: a deprecated read, see the TODO above; a failure only goes to the log
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -5530,7 +5533,7 @@ class sql_db
         $result = false;
 
         $lib = new library();
-        $msg = new user_message(); // a db upgrade step run by db_check, so a failure only goes to the log
+        $msg = new user_message(); // not reported: a db upgrade step run by db_check, so a failure only goes to the log
 
         // adjust the parameters to the used database name
         $table_name = $this->get_table_name($type_name);
@@ -5832,7 +5835,7 @@ class sql_db
     {
         // the database version is always set by the system user
         $cfg = new config();
-        $sys_msg = new user_message(user::system()); // the system user sets the db version at install time
+        $sys_msg = new user_message(user::system()); // not reported: the system user sets the db version at install time
         // do not log db version setting because the db might not be ready to log changes
         $cfg->set(config::VERSION_DB, def::PRG_VERSION, $this, $sys_msg, '', [sql_type::NO_LOG]);
     }

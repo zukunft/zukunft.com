@@ -390,12 +390,60 @@ distinct and so are the users they carry:
 A frontend function reads the frontend user from its frontend message, a backend
 function the backend user from its backend message; the two are never mixed.
 
+**Crossing the boundary is a `merge()`, and it drops the backend-only parts.**
+There is no mapper from a backend message to a frontend one; the boundary points
+(e.g. `frontend.php` after a direct backend call) simply do
+`$msg_ui->merge($msg)`, which works because both classes extend the shared
+`Message`. `web\user_message::merge()` copies the message texts, the var
+messages and the status — but **not** the `msg_id_lst`, the info and type
+messages, the `checksum`, the `db_row_id_lst` or `added_depending`, which
+`cfg\user_message::merge()` does copy.
+
+**That loss is accepted for the moment** — including that an id-only message
+(`add_id()`) has no text left after the merge, because `text()` falls back to
+the `msg_id_lst` that was not copied. The db-related parts of the loss —
+`db_row_id_lst`, `checksum` and `added_depending` — do not belong on a user
+message at all: they are save/import bookkeeping and are to move to the
+`sql_message` object (`cfg/db/sql_message.php`, which already carries the same
+fields). Once they live there, the frontend message only has to carry what the
+user reads, and the `merge()` at the boundary is complete by construction. So do
+not "fix" the frontend `merge()` by copying the db ids over — the direction is
+to take them off the user message instead.
+
+The full mapping does exist for the real api boundary: `cfg\user_message::api_json($msg)`
+sends `USER_MESSAGES`, `USER_MESSAGES_WITH_VARS`, `USER_MESSAGES_STATUS` and the
+user, and `web\user_message::api_mapper($json_array, $msg)` reads them back.
+
 **A user that is the *subject* of the call stays an explicit parameter.** The
 rule covers the *requesting* user only. When a function operates *on* a user —
 `user::no_diff($usr_to_compare, $msg)`, `sandbox::take_ownership($new_owner,
 $msg)`, `user_list::save(...)` — that user is normal payload and keeps its own
 parameter; `$msg->usr` stays the one who triggered the operation. If a signature
 has both, check which is which before removing one.
+
+### Frontend messages go to the session user and are shown with the next page view
+
+In the frontend the receiver of a message is **always the session user**: every
+frontend object exists only for the user of the request (the one exception is an
+admin who explicitly views the objects of another user, and even then the admin
+is the one reading the report). And the report channel always exists: every
+rendered page carries the placeholder `api::USER_MSG_PLACEHOLDER`
+(`<!--usr_msg-->`), which the page render fills with the messages collected up
+to that point — so a message raised anywhere below is shown with the **next
+page view**, without any extra wiring.
+
+Two consequences for frontend and shared display code:
+
+- **"No user to report to" is never a reason to drop a message.** The caller
+  chain ends at a page render that has the placeholder, so the fix is always to
+  return the message (or take the caller's `$msg`), never to swallow it — e.g.
+  the `shared/calc/expression.php` display helpers should hand their buffer up
+  to the caller; until they are threaded, their `not reported` marker names
+  this section as the reason.
+- **`$msg->usr` does not have to be set for a frontend message to be
+  reportable.** The session user is implicit in the frontend, so a missing
+  `->usr` only limits permission checks, not the reporting — the message still
+  reaches the placeholder of the next page view.
 
 ### Permissions come from the profile — the user `code_id` only selects a user
 
@@ -451,6 +499,11 @@ control flow (the import loop only caches a triple when `import_mapper()` return
 `is_ok()` signal wrong — which previously caused an import to silently drop every
 object after the first failure. When you need a throw-away buffer, create a
 **separate local** `user_message` and `merge()` the relevant part back.
+
+The one exception is a **test**, which owns its message instead of receiving it:
+there `$msg->reset()` after each checked assert is wanted, so that every test
+finds its own issues (`testing.md`, "created once and reset after each checked
+test").
 
 ### All user-facing messages use a translatable msg_id
 

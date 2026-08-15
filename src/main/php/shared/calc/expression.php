@@ -67,8 +67,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -144,13 +145,17 @@ class expression
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    function set_user_text(?string $usr_txt, term_list|term_list_ui|null $trm_lst = null): void
+    function set_user_text(
+        ?string                     $usr_txt,
+        user_message|Message        $msg,
+        term_list|term_list_ui|null $trm_lst = null
+    ): void
     {
         if ($usr_txt != null) {
             $this->usr_text = $usr_txt;
             $this->usr_text_dirty = false;
             $this->ref_text_dirty = true;
-            $this->ref_text_ui($trm_lst);
+            $this->ref_text($msg, $trm_lst);
         }
     }
 
@@ -160,13 +165,17 @@ class expression
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    function set_ref_text(?string $ref_txt, term_list|term_list_ui|null $trm_lst = null): void
+    function set_ref_text(
+        ?string                     $ref_txt,
+        user_message|Message        $msg,
+        term_list|term_list_ui|null $trm_lst = null
+    ): void
     {
         if ($ref_txt != null) {
             $this->ref_text = $ref_txt;
             $this->ref_text_dirty = false;
             $this->usr_text_dirty = true;
-            $this->user_text_ui($trm_lst);
+            $this->user_text($msg, $trm_lst);
         }
     }
 
@@ -175,7 +184,7 @@ class expression
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the human-readable format or null if an error has occurred
      */
-    function user_text(user_message $msg, term_list|term_list_ui|null $trm_lst = null): ?string
+    function user_text(user_message|Message $msg, term_list|term_list_ui|null $trm_lst = null): ?string
     {
         if ($this->usr_text_dirty) {
             // a local message like in ref_text, so that the conversion judges only itself
@@ -193,12 +202,12 @@ class expression
     /**
      * get and set the reference text based on the user formula expression
      * TODO Prio 2 do not call it from the frontend
-     * @param user_message $msg to enrich with problems and suggested solution
+     * @param user_message|Message $msg to enrich with problems and suggested solution
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the database reference format or null if an error has occurred
      */
     function ref_text(
-        user_message                $msg,
+        user_message|Message        $msg,
         term_list|term_list_ui|null $trm_lst = null
     ): ?string
     {
@@ -224,26 +233,24 @@ class expression
 
     /**
      * the reference text for the display, debug and string split helpers
-     * dsp_id(), name(), res_part() and their siblings have no caller message and no user to ask,
-     * so a conversion problem here goes to the log only - every caller that can report to a
-     * user calls ref_text() with its own message instead
+     * only dsp_id(), log_debug and the string split helpers use this variant, because their
+     * output is display-only; every path that can report to the user calls ref_text($msg)
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the database reference format
      */
-    function ref_text_ui(term_list|term_list_ui|null $trm_lst = null): ?string
+    function ref_text_ui(user_message_ui|Message $msg, term_list|term_list_ui|null $trm_lst = null): ?string
     {
-        $dsp_msg = new user_message(); // a display path has no user to report to, see the comment above
-        return $this->ref_text($dsp_msg, $trm_lst);
+        return $this->ref_text($msg, $trm_lst);
     }
 
     /**
-     * the human-readable text for the display, debug and string split helpers, see ref_text_dsp()
+     * the human-readable text for the display, debug and string split helpers, see ref_text_ui()
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the human-readable format
      */
     function user_text_ui(term_list|term_list_ui|null $trm_lst = null): ?string
     {
-        $dsp_msg = new user_message(); // a display path has no user to report to, see ref_text_dsp
+        $dsp_msg = new user_message(); // not reported: a display-only read, see ref_text_ui
         return $this->user_text($dsp_msg, $trm_lst);
     }
 
@@ -300,14 +307,14 @@ class expression
         user_message                $msg
     ): string
     {
-        log_debug($this->ref_text_ui());
+        log_debug($this->ref_text_ui($msg));
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
         $pos = strpos($this->ref_text($msg, $trm_lst), chars::CHAR_CALC);
         if ($pos > 0) {
-            $left_part = $this->res_part();
-            $right_part = $this->r_part();
+            $left_part = $this->res_part($msg);
+            $right_part = $this->r_part($msg);
             $left_part = $this->get_usr_part($left_part, $trm_lst, $msg);
             // continue with the right part of the expression only if the left part has been fine
             if (!$this->usr_text_dirty) {
@@ -329,10 +336,10 @@ class expression
      * find the position of the formula indicator "="
      * use the part left of it to add the words to the result
      */
-    function res_part(): string
+    function res_part(user_message $msg): string
     {
         $lib = new library();
-        $result = $lib->str_left_of($this->ref_text_ui(), chars::CHAR_CALC);
+        $result = $lib->str_left_of($this->ref_text_ui($msg), chars::CHAR_CALC);
         return trim($result);
     }
 
@@ -343,10 +350,10 @@ class expression
         return trim($result);
     }
 
-    function r_part(): string
+    function r_part(user_message|Message $msg): string
     {
         $lib = new library();
-        $result = $lib->str_right_of($this->ref_text_ui(), chars::CHAR_CALC);
+        $result = $lib->str_right_of($this->ref_text_ui($msg), chars::CHAR_CALC);
         return trim($result);
     }
 

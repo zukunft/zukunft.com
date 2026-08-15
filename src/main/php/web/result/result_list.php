@@ -391,7 +391,7 @@ class result_list extends sandbox_list_value
                     log_debug("add time " . $res->time_phr->name() . ".");
                     $phr_lst->add($res->time_phr, $msg);
                 }
-                $api_msg = new user_message(); // a legacy display function without a message, see display_old
+                $api_msg = new user_message(); // not reported: a legacy display function without a message, see display_old
                 $phr_lst_ui = new phrase_list($phr_lst->api_json([], $api_msg));
                 $result .= '</tr><tr>';
                 $result .= '<td>' . $phr_lst_ui->name_link() . '</td>';

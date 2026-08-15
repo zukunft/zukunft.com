@@ -100,5 +100,5 @@ if ($db_con->is_open()) {
         $ctrl->not_permitted($msg);
     }
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

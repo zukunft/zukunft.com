@@ -75,7 +75,7 @@ class expression_tests
 
         $test_name = 'get all terms needed calculating an expression';
         $frm = $t_frm->formula();
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $trm_id_lst = $exp->term_id_list($msg);
         $result = $trm_id_lst->dsp_id();
         $target = word_names::MINUTE_ID * 2 - 1;
@@ -83,7 +83,7 @@ class expression_tests
 
         $test_name = 'reference text is invalid because a symbol is too short';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL;
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $exp->term_id_list($msg);
         $result = $msg->all_message_text();
         $target = 'the formula expression symbol "{w}" is too short';
@@ -92,7 +92,7 @@ class expression_tests
 
         $test_name = 'reference text is invalid because the id is not a number';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $exp->term_id_list($msg);
         $result = $msg->all_message_text();
         $target = 'the formula expression id wO is no a valid integer number';
@@ -101,7 +101,7 @@ class expression_tests
 
         $test_name = 'reference text is invalid because the term type is not supported';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID;
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $exp->term_id_list($msg);
         $result = $msg->all_message_text();
         $target = 'the formula expression symbol "d" is not valid. only word, triple, verb and formula are expected.';
@@ -110,16 +110,20 @@ class expression_tests
 
         $test_name = 'reference text is invalid because it is an empty string';
         $frm->ref_text = '';
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
+        // the factory tries to recreate the reference text from the user text and reports the
+        // terms it cannot resolve without a term list; that conversion fails on purpose here,
+        // so the reports are cleared to test only the empty check below
+        $msg->reset();
         $exp->term_id_list($msg);
         $result = $msg->all_message_text();
-        $target = 'the expression of formula "scale minute to sec" is empty';
+        $target = 'no word, triple, formula or verb found for "second (time)", no word, triple, formula or verb found for "minute", the expression of formula "scale minute to sec" is empty';
         $t->assert($test_name, $result, $target);
         $msg->reset();
 
         $test_name = 'get the phrase id that should be added to the results';
         $frm = $t_frm->formula();
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $trm_id_lst = $exp->phrase_id_list($msg);
         $result = $trm_id_lst->dsp_id();
         $target = 'phrase_id ' . triple_names::SECOND_ID * -1 . ' for user ' . users::SYSTEM_TEST_ID . ' (' . users::SYSTEM_TEST_NAME . ')';
@@ -127,7 +131,7 @@ class expression_tests
 
         $test_name = 'phrase id is invalid because the id is not a number';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID;
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $exp->phrase_id_list($msg);
         $result = $msg->all_message_text();
         $target = 'the formula expression id wO is no a valid integer number';
@@ -136,7 +140,7 @@ class expression_tests
 
         $test_name = 'get all terms including the phrases for the result';
         $frm = $t_frm->formula();
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $trm_id_lst = $exp->term_id_list_all($msg);
         $result = $trm_id_lst->dsp_id();
         $target = '"","" (' . triple_names::SECOND_ID * -2 + 1 . ',' . word_names::MINUTE_ID * 2 - 1 . ')';
@@ -144,7 +148,7 @@ class expression_tests
 
         $test_name = 'id list of missing terms is empty if all terms are given';
         $frm = $t_frm->formula();
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $trm_lst = $t_trm->term_list_all();
         $id_lst = $exp->terms_missing($msg, $trm_lst);
         $t->assert_true($test_name, $id_lst->is_empty());
@@ -165,19 +169,19 @@ class expression_tests
 
         $t->subheader($ts . 'convert user text to database ref text and the other way round');
 
-        $this->frm_exp_convert($t,
+        $this->frm_exp_convert($t, $msg,
             'including a triple',
             formula_names::DIAMETER,
             formula_names::DIAMETER_DB,
             $trm_lst
         );
-        $this->frm_exp_convert($t,
+        $this->frm_exp_convert($t, $msg,
             'including fixed formulas',
             formula_names::INCREASE_EXP,
             formula_names::INCREASE_DB,
             $trm_lst
         );
-        $this->frm_exp_convert($t,
+        $this->frm_exp_convert($t, $msg,
             'including verbs',
             formula_names::PARTS_IN_PERCENT_EXP,
             formula_names::PARTS_IN_PERCENT_DB,
@@ -188,10 +192,10 @@ class expression_tests
         $test_name = 'get the calc phrases';
         $frm = $t_frm->formula();
         $exp = new expression($frm);
-        $exp->set_user_text(formula_names::DIAMETER, $trm_lst);
+        $exp->set_user_text(formula_names::DIAMETER, $msg, $trm_lst);
         //$trm_names = $exp->get_usr_names();
         //$trm_lst = $t->term_list_for_tests($trm_names);
-        $exp->ref_text_ui($trm_lst);
+        $exp->ref_text_ui($msg, $trm_lst);
         $msg->reset();
         $phr_lst = $exp->terms($msg, $trm_lst)->phrase_list();
         $result = $phr_lst->dsp_id();
@@ -204,8 +208,8 @@ class expression_tests
         // test the phrase list of the left side
         $test_name = 'get the result phrases';
         $exp = new expression($frm);
-        $exp->set_user_text(formula_names::INCREASE_EXP, $trm_lst);
-        $exp->ref_text_ui($trm_lst);
+        $exp->set_user_text(formula_names::INCREASE_EXP, $msg, $trm_lst);
+        $exp->ref_text_ui($msg, $trm_lst);
         $phr_lst = $exp->load_result_phrases($msg, $trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . formula_names::PERCENT
@@ -220,6 +224,7 @@ class expression_tests
         $result = $phr_lst->dsp_id();
         $target = '';
         $t->assert($test_name, $result, $target);
+        $msg->reset();
 
         // test the element group list of the right side
         // TODO check with cantons of switzerland
@@ -230,10 +235,10 @@ class expression_tests
         //      because one person can be tax payer in more than one canton
         $test_name = 'get the formula element group list';
         $exp = new expression($frm);
-        $exp->set_user_text(formula_names::PARTS_IN_PERCENT_EXP, $trm_lst);
+        $exp->set_user_text(formula_names::PARTS_IN_PERCENT_EXP, $msg, $trm_lst);
         $trm_names = $exp->get_usr_names();
-        $exp->ref_text_ui($trm_lst);
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $exp->ref_text_ui($msg, $trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"parts,' . verbs::OF_NAME . '" (' . word_names::PARTS_ID . ',' . verbs::OF_ID . ') / "total" (' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
@@ -254,14 +259,14 @@ class expression_tests
         // tests based on the increase formula
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
         $frm = $t_frm->formula_increase();
-        $exp = $frm->expression();
-        $exp->set_user_text(formula_names::INCREASE_EXP, $trm_lst);
-        $result = $exp->ref_text_ui($trm_lst);
+        $exp = $frm->expression($msg);
+        $exp->set_user_text(formula_names::INCREASE_EXP, $msg, $trm_lst);
+        $result = $exp->ref_text_ui($msg, $trm_lst);
         $target = formula_names::INCREASE_DB;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test getting the phrase ids';
-        $result = implode(",", $exp->phr_id_lst($exp->ref_text_ui())->lst);
+        $result = implode(",", $exp->phr_id_lst($exp->ref_text_ui($msg))->lst);
         $target = implode(",", array(words::PCT_ID));
         $t->assert($test_name, $result, $target);
 
@@ -297,7 +302,7 @@ class expression_tests
         //$target = '"time_prior","time_this"';
 
         $test_name = 'test the formula element group creation';
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
 
         // create the formulas for testing
         $frm_this = $trm_lst->get_by_name(formula_names::THIS_NAME, $msg);
@@ -317,17 +322,17 @@ class expression_tests
         // tests based on the pi formula
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($frm);
-        $exp->set_user_text(formula_names::DIAMETER, $t_trm->term_list_all());
+        $exp->set_user_text(formula_names::DIAMETER, $msg, $t_trm->term_list_all());
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
-        $result = $exp->ref_text_ui($trm_lst_rev);
+        $result = $exp->ref_text_ui($msg, $trm_lst_rev);
         $target = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($frm);
-        $exp_sector->set_ref_text(formula_names::PARTS_IN_PERCENT_DB, $trm_lst);
-        $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
+        $exp_sector->set_ref_text(formula_names::PARTS_IN_PERCENT_DB, $msg, $trm_lst);
+        $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part($msg));
         $result = $phr_lst->dsp_id();
         $target = '"","" (phrase_id ' . word_names::PARTS_ID . ',' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
@@ -335,8 +340,8 @@ class expression_tests
 
         $test_name = 'result phrase list with id from the reference text';
         $exp_scale = new expression($frm);
-        $exp_scale->set_ref_text(formula_names::SCALE_MIO_DB, $trm_lst);
-        $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part());
+        $exp_scale->set_ref_text(formula_names::SCALE_MIO_DB, $msg, $trm_lst);
+        $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part($msg));
         $result = $phr_lst->dsp_id();
         $target = 'phrase_id ' . word_names::ONE_ID . ' for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
@@ -345,6 +350,7 @@ class expression_tests
 
     /**
      * @param test_cleanup $t just the testing object to count the number of errors and warnings
+     * @param user_message $msg to report the conversion problems, checked by the block assertions
      * @param string $test_name the part that should be tested e.g. with fixed formulas
      * @param string $usr_frm_exp the formula expression in the human-readable format
      * @param string $db_ref_frm_exp the formula expression in the database reference format
@@ -353,6 +359,7 @@ class expression_tests
      */
     private function frm_exp_convert(
         test_cleanup $t,
+        user_message $msg,
         string       $test_name,
         string       $usr_frm_exp,
         string       $db_ref_frm_exp,
@@ -364,10 +371,10 @@ class expression_tests
 
         $test_name = 'conversion of the user text to the database reference text ' . $test_name;
         $exp = new expression($frm);
-        $exp->set_user_text($usr_frm_exp, $in_trm_lst);
+        $exp->set_user_text($usr_frm_exp, $msg, $in_trm_lst);
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->term_list_for_tests($trm_names);
-        $result = $exp->ref_text_ui($trm_lst);
+        $result = $exp->ref_text_ui($msg, $trm_lst);
         $target = $db_ref_frm_exp;
         $t->assert($test_name, $result, $target);
 

@@ -8,8 +8,10 @@ parameter and carries the requesting user on `$msg->usr`; every creation below a
 exception that needs a comment behind it saying why. the coded check is
 `coding_rule_tests::php_user_message_creation_tests`, which regenerates
 `docs/code_user_message_exceptions.md` — that doc is the work list and must shrink, never grow.
-its "messages that never reach the caller" section (48 today) is the third list next to the
-parameter defaults and the nullable parameters, and it is worked the same way.
+the nullable parameters, the unexplained creations and the "messages that never reach the
+caller" sections are **empty**: every deliberate drop now carries the literal `not reported`
+marker in its comment (a display path, a permission-check fill, a deprecated function, ...), so
+a new lost message fails the coded check. only the 19 parameter defaults are left.
 the done passes are in the git history; only what is still open is listed here.
 
 1. **apply the readiness ladder to the named lists as well** (the link list is done): the ladder is
@@ -26,6 +28,13 @@ the done passes are in the git history; only what is still open is listed here.
    list, so `phrase::is_or_can_be` found nothing, `list_sort` fell into its hardcoded
    `load_by_name` fallback and rendered empty phrase links plus a "Mandatory field name missing in
    API JSON" warning on the start page.
+   **watch the next import run**: `triples_to_add_to_db` offers a linked from/to triple once per
+   referencing triple, so a shared not-yet-saved parent hits the "name already in the list" branch
+   of `add_by_name_direct`, which now reports `LIST_DOUBLE_ENTRY` into `$msg_chk` instead of
+   dropping it - `save_with_cache` ends with `$msg->is_ok()`, so a normal graph shape may fail the
+   triple import save. if the run confirms it, fix the **collector**, not the adder:
+   `triples_to_add_to_db` should skip a name it has already collected (the dedup is its intent)
+   instead of routing the intended skip through the reporting branch.
    the silent drops still open on the same defect:
    - the double that `add_by_key` drops in that branch is not reported (TODO on the line)
    - `sandbox_list::add_obj` ignores an object that has no key at all without a message (TODO on
@@ -63,7 +72,20 @@ the done passes are in the git history; only what is still open is listed here.
    the receiver has to be resolved per call site.
    what is left before the defaults can go: the callers of `add_by_key` / `add_obj` in
    `phrase_list`, `word_list`, `triple_list`, `term_list`, `verb_list`, `formula_list`, `import` and
-   `result_list`, one class per commit with a test run
+   `result_list`, one class per commit with a test run.
+   **the `add_by_key` flip is blocked on the double-report semantics** (measured 2026-08-14): the
+   five declarations are one override family (`ListOfIdObjects` is the base stub), so php forces
+   all signatures and all 47 call sites into one commit, and 38 of the call sites pass no message
+   today. many of those are **intended dedups** (`merge_by_name`, `concat_unique`, the
+   `import_mapper` / `import_obj` re-imports of the same name), and the same-key branch reports
+   `LIST_DOUBLE_ENTRY`, which sets the message to **not ok** - so threading a live `$msg` there
+   would fail imports on normal data, like the `triples_to_add_to_db` case above. before the flip,
+   decide how an intended dedup is reported: e.g. `Message::add(..., ok: true)` for a
+   dropped-double notice, so the record survives without failing the `is_ok()` gates; then the
+   family can switch to `(to_add, Message $msg, bool $allow_duplicates = false)` in one pass.
+   also found: `component_link_list::add_by_key`, `view_relation_list::add_by_key` and the web
+   `sandbox_list_named::add_by_key` have **zero callers** - candidates for deletion instead of
+   threading
    - the 8 `api_json` defaults, and that family is the trap — read this before retrying. its 53
      **production** call sites already pass their message, so the drop is fixed there; removing the
      defaults breaks **232 test call sites**, each needing the right message *kind* (a backend
@@ -135,10 +157,19 @@ the done passes are in the git history; only what is still open is listed here.
      "not yet implemented" sections — both are dev limitations of the same category
 
 5. **the `$msg->is_ok()` gate defect**, found by the import regression (the trap itself is written
-   up in state-and-messages.md): 8 places gate a loop or a branch on `db_ready($msg)` /
+   up in state-and-messages.md): 7 places gate a loop or a branch on `db_ready($msg)` /
    `can_be_ready($msg)` with a **passed in** message — `triple` ~513/541, `component_list` ~458,
-   `list_db_write` ~187/217, `formula_map` ~1406, `sandbox_list_named` ~1351, `formula_list` ~1068
-   (`ref_list` and `add_by_key` now judge with a local `$rdy_msg` and are the pattern to copy).
+   `list_db_write` ~187/217, `formula_map` ~1406, `sandbox_list_named` ~1351
+   (`ref_list`, `add_by_key`, `formula_list::get_ready` and `formula::generate_ref_text` now judge
+   with a local `$rdy_msg` resp. `$conv_msg` and are the pattern to copy; the formula pair was
+   fixed because the country.json import chained formulas across levels and the shared level
+   buffer blocked every formula after the first not-yet-ready one).
+   the trap also sits inside the expression parser: `term_from_symbol`, `phrase_from_symbol` and
+   `element_from_symbol` (cfg/formula/expression.php ~494/539/614) skip the symbol resolution
+   once the **passed in** message is not ok, which is why the `formula_map` term loaders give the
+   speculative pre-load conversion of the factory an own buffer - a report from that expected
+   failure would switch off the very load that resolves it (found by the time_definition.json
+   import: "increase" needs the predefined "this" and "prior" of the same file).
    those functions end with `return $msg->is_ok()`, so once one
    object fails every later one is skipped silently. they work today only because their callers
    happen to pass a message that is still ok. the fix makes more objects pass the gate, so it needs
@@ -170,6 +201,12 @@ each is a small standalone commit):
   test factories and the row-sync/fill paths drop their throwaway messages
 - pre-existing bug found in `job::set_status_id`: the allowed branch sets `$this->type_id` instead
   of `$this->status_id` (left as-is so far)
+- move the save bookkeeping off the user message: `db_row_id_lst`, `checksum` and
+  `added_depending` belong to `sql_message` (cfg/db/sql_message.php already has the same fields),
+  not to the message the user reads. today `$msg_ui->merge($msg)` drops exactly these plus the
+  `msg_id_lst` at the frontend boundary (state-and-messages.md "Crossing the boundary is a
+  merge()"), which is accepted until they have moved - so do not repair the frontend `merge()` by
+  copying the db ids over
 - `web/user/user.php::dsp_errors` has no caller and would fatal if it got one: `$err_lst` is the
   **frontend** `sys_log_list`, which has `load_by_user()` but no `load()`; the page it once served
   is the user view rework further down in this file, so delete it there instead of repairing it
@@ -185,6 +222,10 @@ find all '&back=' url parameters and list here the prompts to fix these issues b
 fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change -> minor version raise and db_check upgrade script per docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)
 
 ### complete the frontend backend split — implementation steps
+
+check if all fields and functionality from the old 'dsp_edit' and 'dsp_del' functions is transfered to the new system_views.json and view.php based views and create prompst to add missing fields or functions and remove the old e.g. 'src/main/php/web/component/component.php::dsp_edit' function
+
+make the ui formatting function unit testable so that they don't reload data from the backend an instead use a preloaded data cache
 
 the goal (docs/llm/frontend.md): frontend (web/ and http/) and backend (cfg/ and api/) are two
 independent apps talking only over the api; code needed by both lives in shared/. the temporary

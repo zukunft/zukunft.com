@@ -1155,8 +1155,8 @@ class result_list extends sandbox_value_list
         // get a list of all words, triples, formulas and verbs used in the formula
         // e.g. for the formula "net profit" the word "sales" & "cost of sales" is used
         // for formulas the formula word is used
-        $exp = $frm->expression();
-        $phr_lst_frm_used = $exp->phr_verb_lst($back);
+        $exp = $frm->expression($msg);
+        $phr_lst_frm_used = $exp->phr_verb_lst($msg, $back);
         log_debug('formula "' . $frm->name() . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $frm->usr_text . ')');
 
         // get the list of predefined "following" phrases/formulas like "prior" or "next"
@@ -1207,7 +1207,7 @@ class result_list extends sandbox_value_list
         log_debug('For ' . $frm->usr_text . ' formula results with the name ' . $phr_frm->name() . ' should not be used for calculation to avoid loops');
 
         // get the phrase name of the formula e.g. "percent"
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $phr_lst_res = $exp->load_result_phrases($msg);
         if (isset($phr_lst_res)) {
             log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');

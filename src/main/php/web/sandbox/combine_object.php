@@ -62,12 +62,12 @@ class combine_object extends CombineObject
 
     /**
      * the html display object are always filled base on the api message
-     * TODO Prio 1 add user_message as parameter
+     * TODO Prio 1 remove $api_json because user_message as parameter might not be returned
      * @param string|null $api_json the api message to set all object vars
      */
     function __construct(?string $api_json = null)
     {
-        $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
+        $msg = new user_message(); // not reported: a buffer of this constructor, see the TODO above to take the caller's
         parent::__construct(new word());
         if ($api_json != null) {
             $this->set_from_json($api_json, $msg);

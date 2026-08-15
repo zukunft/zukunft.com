@@ -69,7 +69,7 @@ class db_cache_page_write_tests
         // checked via assert_true because the assert function reports a null result as an error
         $cac_page = new db_cache_page();
         $test_name = 'an unknown url returns null instead of a cached html page';
-        $html = $cac_page->html_by_url(self::TV_URL_UNKNOWN);
+        $html = $cac_page->html_by_url(self::TV_URL_UNKNOWN, $msg);
         $t->assert_true($test_name, $html === null);
 
         // caching an html page for a new url creates a database row
@@ -80,13 +80,13 @@ class db_cache_page_write_tests
         // the cached html page can be retrieved by the url
         $cac_check = new db_cache_page();
         $test_name = 'the cached html page is returned for the url';
-        $t->assert($test_name, $cac_check->html_by_url(self::TV_URL), self::TV_HTML);
+        $t->assert($test_name, $cac_check->html_by_url(self::TV_URL, $msg), self::TV_HTML);
 
         // caching the same url again replaces the html page instead of adding a row
         $test_name = 'caching the same url again is saved without error';
         $t->assert_true($test_name, $cac_page->save_html(self::TV_URL, self::TV_HTML_RENEWED, $msg));
         $test_name = 'the renewed html page is returned for the url';
-        $t->assert($test_name, $cac_check->html_by_url(self::TV_URL), self::TV_HTML_RENEWED);
+        $t->assert($test_name, $cac_check->html_by_url(self::TV_URL, $msg), self::TV_HTML_RENEWED);
         $test_name = 'the renewed html page has replaced the db row instead of adding one';
         $t->assert($test_name, $cac_check->id(), $page_id);
 
@@ -101,7 +101,7 @@ class db_cache_page_write_tests
         $ui = new frontend('db_cache_page_write_tests');
         $ui->save_html_page(new db_cache_page(), self::TV_URL_IP_USER, self::TV_HTML);
         $test_name = 'the html page cache is filled even if the requesting user cannot change data';
-        $t->assert($test_name, $cac_check->html_by_url(self::TV_URL_IP_USER), self::TV_HTML);
+        $t->assert($test_name, $cac_check->html_by_url(self::TV_URL_IP_USER, $msg), self::TV_HTML);
 
     }
 

@@ -174,7 +174,7 @@ class convert_wikipedia_table
      * TODO add a word splitter to separate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
      *
      * @param string $wiki_json wth the wikipedia table
-     * @param user $usr the user how has initiated the conversion
+     * @param user_message $msg with the user how has initiated the conversion
      * @param string $timestamp the timestamp of the import
      * @param int $table_nbr position of the table that should be converted
      * @param string $context a json string with a phrase list for the import context
@@ -186,26 +186,24 @@ class convert_wikipedia_table
      * @return string
      */
     function convert_wiki_json(
-        string $wiki_json,
-        user   $usr,
-        string $timestamp,
-        string $context = '',
-        array  $context_array = [],
-        array  $exclude_col_names_in = [],
-        int    $table_nbr = 0,
-        string $row_name_wiki = '',
-        string $row_name_out = '',
-        string $col_name_wiki = '',
-        string $col_name_out = ''
+        string       $wiki_json,
+        user_message $msg,
+        string       $timestamp,
+        string       $context = '',
+        array        $context_array = [],
+        array        $exclude_col_names_in = [],
+        int          $table_nbr = 0,
+        string       $row_name_wiki = '',
+        string       $row_name_out = '',
+        string       $col_name_wiki = '',
+        string       $col_name_out = ''
     ): string
     {
-        $msg = new user_message($usr); // a test only converter (see import_tests), so the errors only steer it here
-
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
         $rank_names = []; // list of phrase names that indicate a columns that contains a rank with should not be included in the result
         $ignore_names = []; // list of phrase names that indicate a columns should not be included in the result
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($msg->usr);
         if ($context != '') {
             $phr_lst->import_context(json_decode($context, true), $msg);
             $list_of_symbols = $phr_lst->get_names_by_type(phrase_types::SYMBOL);
@@ -218,7 +216,7 @@ class convert_wikipedia_table
         $wiki_json = json_decode($wiki_json, true);
 
         // prepare the result
-        $json = $this->header($usr, $timestamp);
+        $json = $this->header($msg->usr, $timestamp);
         $word_lst = [];
         $triples = [];
         $values = [];

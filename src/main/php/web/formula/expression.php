@@ -80,7 +80,7 @@ class expression extends shared_expression
         $lib = new library();
 
         $elm_lst = new element_list();
-        $work = $this->r_part();
+        $work = $this->r_part($msg);
 
         $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         while ($obj_sym != '') {

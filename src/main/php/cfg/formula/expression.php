@@ -229,7 +229,7 @@ class expression extends shared_expression
     function term_id_list(user_message $msg): term_list
     {
         $trm_lst = new term_list($this->usr);
-        $exp_part = $this->r_part();
+        $exp_part = $this->r_part($msg);
         $sym_lst = $this->symbol_list($msg, $exp_part);
         foreach ($sym_lst as $sym) {
             $trm = $this->term_from_symbol($sym, $msg);
@@ -250,7 +250,7 @@ class expression extends shared_expression
     function phrase_id_list(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
-        $exp_part = $this->res_part();
+        $exp_part = $this->res_part($msg);
         $sym_lst = $this->symbol_list($msg, $exp_part, true);
         foreach ($sym_lst as $sym) {
             $phr = $this->phrase_from_symbol($sym, $msg);
@@ -293,7 +293,7 @@ class expression extends shared_expression
      */
     function element_list(user_message $msg, ?term_list $trm_lst = null): element_list
     {
-        return $this->element_part_list($this->r_part(), $msg, $trm_lst);
+        return $this->element_part_list($this->r_part($msg), $msg, $trm_lst);
     }
 
     /**
@@ -306,7 +306,7 @@ class expression extends shared_expression
      */
     function elements_incl_result_phrases(
         user_message $msg,
-        ?term_list $trm_lst = null
+        ?term_list   $trm_lst = null
     ): element_list
     {
 
@@ -325,7 +325,7 @@ class expression extends shared_expression
      */
     function result_phrases(user_message $msg, ?term_list $trm_lst = null): element_list
     {
-        return $this->element_part_list($this->res_part(), $msg, $trm_lst, true, true);
+        return $this->element_part_list($this->res_part($msg), $msg, $trm_lst, true, true);
     }
 
     /**
@@ -370,10 +370,10 @@ class expression extends shared_expression
     /**
      * @return bool true if the formula expression is valid
      */
-    function is_valid(): bool
+    function is_valid(user_message $msg): bool
     {
         $is_valid = true;
-        if (($this->ref_text_ui() == null or $this->ref_text_ui() == '' or trim($this->ref_text_ui()) == '=')
+        if (($this->ref_text_ui($msg) == null or $this->ref_text_ui($msg) == '' or trim($this->ref_text_ui($msg)) == '=')
             and ($this->user_text_ui() == null or $this->user_text_ui() == '')) {
             $is_valid = false;
         }
@@ -400,8 +400,8 @@ class expression extends shared_expression
     function symbols(user_message $msg): array
     {
         return array_merge(
-            $this->symbol_list($msg, $this->r_part()),
-            $this->symbol_list($msg, $this->res_part(), true));
+            $this->symbol_list($msg, $this->r_part($msg)),
+            $this->symbol_list($msg, $this->res_part($msg), true));
     }
 
     /**
@@ -716,7 +716,7 @@ class expression extends shared_expression
     function load_result_phrases(user_message $msg, ?term_list $trm_lst = null): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
-        $phr_ids = $this->phr_id_lst($this->res_part());
+        $phr_ids = $this->phr_id_lst($this->res_part($msg));
         if ($trm_lst == null) {
             $phr_lst->load_names_by_ids($phr_ids, $msg);
         } else {
@@ -966,20 +966,16 @@ class expression extends shared_expression
      * if group it is true, element groups instead of single elements are returned
      * the order of the formula elements is relevant because the elements can influence each other
      */
-    private
-    function element_lst_all(
-        string     $type = self::SELECT_ALL,
-        bool       $group_it = false,
-        ?term_list $trm_lst = null
+    private function element_lst_all(
+        user_message $msg,
+        string       $type = self::SELECT_ALL,
+        bool         $group_it = false,
+        ?term_list   $trm_lst = null
     ): element_list|element_group_list
     {
-        log_debug('get ' . $type . ' out of "' . $this->ref_text_ui() . '" for user ' . $this->usr->name);
+        log_debug('get ' . $type . ' out of "' . $this->ref_text_ui($msg) . '" for user ' . $this->usr->name);
 
         $lib = new library();
-        // a local buffer, because this element split returns a list and its public callers
-        // phr_verb_lst / element_grp_lst have no message
-        // TODO Prio 2 thread the message from the callers of phr_verb_lst / element_grp_lst
-        $msg = new user_message($this->usr);
 
         // init result and work vars
         $lst = array();
@@ -991,7 +987,7 @@ class expression extends shared_expression
             $result = new element_list($this->usr);
         }
         $result->set_user($this->usr);
-        $work = $this->r_part();
+        $work = $this->r_part($msg);
         if (is_null($type) or $type == "") {
             $type = self::SELECT_ALL;
         }
@@ -1091,12 +1087,12 @@ class expression extends shared_expression
      * e.g. for "sales" "differentiator" "country" all "country" words should be included
      * TODO should also include the words implied by the verbs
      */
-    function phr_verb_lst(): phrase_list
+    function phr_verb_lst(user_message $msg): phrase_list
     {
         $lib = new library();
 
         log_debug();
-        $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE);
+        $elm_lst = $this->element_lst_all($msg, expression::SELECT_PHRASE);
         log_debug('got ' . $lib->dsp_count($elm_lst->lst()) . ' formula elements');
         $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst() as $elm) {
@@ -1140,7 +1136,8 @@ class expression extends shared_expression
         // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
         // the user is no most cases no extra info
         // $result .= ' for user '.$this->usr->name.'';
-        return '"' . $this->user_text_ui() . '" (' . $this->ref_text_ui() . ')';
+        $msg = new user_message();
+        return '"' . $this->user_text_ui() . '" (' . $this->ref_text_ui($msg) . ')';
     }
 
     function name(): string
@@ -1262,9 +1259,9 @@ class expression extends shared_expression
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return element_list|element_group_list with the formula element groups used in the expression
      */
-    function element_grp_lst(?term_list $trm_lst = null): element_list|element_group_list
+    function element_grp_lst(user_message $msg, ?term_list $trm_lst = null): element_list|element_group_list
     {
-        return $this->element_lst_all(expression::SELECT_ALL, TRUE, $trm_lst);
+        return $this->element_lst_all($msg, expression::SELECT_ALL, TRUE, $trm_lst);
     }
 
 }

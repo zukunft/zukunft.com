@@ -693,7 +693,7 @@ class formula extends sandbox_code_id
         log_debug();
         $result = $this->usr_text;
 
-        $exp = $this->expression($trm_lst);
+        $exp = $this->expression($msg, $trm_lst);
         $elm_lst = $exp->element_list($msg, $trm_lst);
         foreach ($elm_lst->lst() as $elm) {
             log_debug("replace " . $elm->name() . " with " . $elm->link($back) . ".");
@@ -968,12 +968,12 @@ class formula extends sandbox_code_id
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return expression the formula expression as an expression element
      */
-    function expression(?term_list $trm_lst = null): expression
+    function expression(user_message $msg, ?term_list $trm_lst = null): expression
     {
         $exp = new expression();
-        $exp->set_ref_text($this->ref_text(), $trm_lst);
-        $exp->set_user_text($this->get_usr_text(), $trm_lst);
-        log_debug('->expression ' . $exp->ref_text_ui());
+        $exp->set_ref_text($this->ref_text(), $msg, $trm_lst);
+        $exp->set_user_text($this->get_usr_text(), $msg, $trm_lst);
+        log_debug('->expression ' . $exp->ref_text_ui($msg));
         return $exp;
     }
 

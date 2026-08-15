@@ -96,7 +96,7 @@ class formula_calc_tests
         $trm_lst = $t_trm->term_list_increase();
 
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
-        $exp = $frm->expression($trm_lst);
+        $exp = $frm->expression($msg, $trm_lst);
 
         $result = $exp->dsp_id();
         $target = '""' . words::PERCENT . '" = ( "'
@@ -112,7 +112,7 @@ class formula_calc_tests
 
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
         $test_name = 'formula increase: test the element group creation';
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"'
             . formula_names::THIS_NAME . '" ('
@@ -182,7 +182,7 @@ class formula_calc_tests
         $target->add($frm_wrd->phrase());
         $trm_lst->add($frm_wrd->term());
         $exp = new expression($frm);
-        $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $t_trm->term_list_scale());
+        $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $msg, $t_trm->term_list_scale());
         $result = $exp->load_result_phrases($msg, $trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_names::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 

@@ -483,7 +483,7 @@ class sandbox_typed extends sandbox_named
         $msg = parent::fill($obj, $usr_req);
         if ($this->type_id($msg) === null and $obj->type_id($msg) != null) {
             // a local buffer for the permission check; the fill copies a type already stored
-            $this->set_type_id($obj->type_id($msg), new user_message($usr_req));
+            $this->set_type_id($obj->type_id($msg), new user_message($usr_req)); // not reported, see above
         }
         return $msg;
     }

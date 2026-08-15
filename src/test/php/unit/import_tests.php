@@ -432,7 +432,8 @@ class import_tests
         $context_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         // TODO review the parameter context
-        $conv_str = $conv_wiki->convert_wiki_json($in_table, $t->usr1, test_base::TEST_TIMESTAMP, $context_str,
+        $msg->usr = $t->usr1;
+        $conv_str = $conv_wiki->convert_wiki_json($in_table, $msg, test_base::TEST_TIMESTAMP, $context_str,
             ['country', 'ISO 3166'], [], 1,
             'English short name  (using title case)','country',
             'Alpha-3 code',      '');
@@ -446,7 +447,7 @@ class import_tests
         $context_str = file_get_contents(test_files::IMPORT_CURRENCY_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         $conv_str = $conv_wiki->convert_wiki_json(
-            $in_table, $t->usr1, test_base::TEST_TIMESTAMP, $context_str);
+            $in_table, $msg, test_base::TEST_TIMESTAMP, $context_str);
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);

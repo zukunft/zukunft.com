@@ -128,5 +128,5 @@ if ($db_con->is_open()) {
         echo $report;
     }
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

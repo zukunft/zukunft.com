@@ -1460,7 +1460,6 @@
     \-- get_usr_names - section for function get_usr_names is expected to be set and get in /formula/expression.php
     \-- element_part_list_old - section for function element_part_list_old not yet defined that it should be extract helper in /formula/expression.php
     \-- get_ref_id - section for function get_ref_id is expected to be set and get in /formula/expression.php
-    \-- element_lst_all - section for function element_lst_all not yet defined that it should be internal functions in /formula/expression.php
     \-- phr_verb_lst - section for function phr_verb_lst not yet defined that it should be to review in /formula/expression.php
     \-- get_triple_symbol - section for function get_triple_symbol is expected to be set and get in /formula/expression.php
     \-- load_verb - section for function load_verb is expected to be load in /formula/expression.php
@@ -4470,8 +4469,6 @@
 \-- internal functions
     \-- get_ref_id
         \-- expression - returns the next positive reference (word, verb or formula) id
-    \-- element_lst_all
-        \-- expression - Create a list of all formula elements
 \-- to review
     \-- phr_verb_lst
         \-- expression - similar to phr_lst, but
@@ -5926,6 +5923,7 @@
     \-- dsp_sandbox - section for function dsp_sandbox not yet defined that it should be set and get in /user/user_display_old.php
 \-- user_message
     \-- __construct - section for function __construct is expected to be construct and map in /user/user_message.php
+    \-- reset - section for function reset is expected to be construct and map in /user/user_message.php
     \-- api_array - section for function api_array not yet defined that it should be api in /user/user_message.php
     \-- api_json - section for function api_json not yet defined that it should be api in /user/user_message.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /user/user_message.php

@@ -1066,9 +1066,14 @@ class formula_list extends sandbox_list_named
     {
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
-            if ($frm->db_ready($msg)) {
+            // db_ready returns the state of the given message, so each formula is judged by its
+            // own message - with the shared message one formula that waits for a term of a later
+            // import level would block every formula after it in the list
+            $rdy_msg = new user_message($msg->usr); // the verdict of this formula, merged on rejection
+            if ($frm->db_ready($rdy_msg)) {
                 $frm_lst->add_by_key($frm);
             } else {
+                $msg->merge($rdy_msg);
                 $msg->add(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $frm->dsp_id(),
@@ -1147,7 +1152,7 @@ class formula_list extends sandbox_list_named
                     msg_id::VAR_FORMULA => $frm->name(),
                     msg_id::VAR_FILE_NAME => $file_name
                 ]);
-                $exp = $frm->expression($cache);
+                $exp = $frm->expression($msg, $cache);
                 // TODO Prio 3 try to avoid reloading of the terms
                 $trm_lst = $frm->load_terms($msg, $cache, $exp);
                 $frm_trm_lst = $exp->terms($msg, $trm_lst);

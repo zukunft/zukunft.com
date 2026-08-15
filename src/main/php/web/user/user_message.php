@@ -80,6 +80,22 @@ class user_message extends Message
         $this->usr = $usr;
     }
 
+    /**
+     * clear the collected messages and the status, but keep the user, like the backend message
+     *
+     * only a test may call this on the message it owns (testing.md "created once and reset after
+     * each checked test"); a function that has received a message never resets it
+     *
+     * @return void
+     */
+    function reset(): void
+    {
+        parent::reset();
+        $this->txt = [];
+        $this->info = [];
+        $this->db_row_id = 0;
+    }
+
 
     /*
      * api

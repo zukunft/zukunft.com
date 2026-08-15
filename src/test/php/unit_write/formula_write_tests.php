@@ -174,7 +174,7 @@ class formula_write_tests
         $msg->reset();
         $frm = new formula($t->usr1);
         $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg, formula::class);
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $trm_lst = new term_list($t->usr1);
         $trm_ids = $exp->terms_missing($msg, $trm_lst);
         $trm_lst->load_additional_by_id($trm_ids, $msg);
@@ -342,7 +342,7 @@ class formula_write_tests
         // test the formula display functions
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $frm_html = new formula_ui($frm->api_json());
-        $exp = $frm->expression();
+        $exp = $frm->expression($msg);
         $result = $exp->dsp_id();
         $target = '""percent" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"" ({w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '})';
         $t->assert('formula->expression for ' . $frm->dsp_id(), $result, $target);

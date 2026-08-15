@@ -91,9 +91,9 @@ class element_group_write_tests
         // load the terms needed for the formula expression
         $trm_lst = $frm->load_exp_terms($msg);
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
-        $exp = $frm->expression($trm_lst);
+        $exp = $frm->expression($msg, $trm_lst);
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
 
         $result = $elm_grp_lst->dsp_id();
         $target = '"' . formula_names::THIS_NAME . '" (' . $frm_this->id() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id() . ')';

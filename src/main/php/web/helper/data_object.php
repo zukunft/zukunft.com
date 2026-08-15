@@ -90,12 +90,13 @@ class data_object
     // the list of cached words
     // using more memory instead of recreating the list every time
     private bool $wrd_lst_dirty = false;
+
+    // TODO Prio 1 review the user_message as parameter
     public word_list $wrd_lst {
         get {
             if ($this->wrd_lst_dirty) {
                 if (!$this->phr_lst_dirty) {
-                    // a property hook takes no parameter, so this cache refresh has no caller message
-                    $cache_msg = new user_message();
+                    $cache_msg = new user_message(); // not reported: a property hook takes no caller message
                     $this->wrd_lst->merge($this->phr_lst->word_list($cache_msg), $cache_msg);
                 }
                 $this->wrd_lst_dirty = false;
@@ -116,8 +117,7 @@ class data_object
         get {
             if ($this->trp_lst_dirty) {
                 if (!$this->phr_lst_dirty) {
-                    // a property hook takes no parameter, so this cache refresh has no caller message
-                    $cache_msg = new user_message();
+                    $cache_msg = new user_message(); // not reported: a property hook takes no caller message
                     $this->trp_lst->merge($this->phr_lst->triple_list($cache_msg), $cache_msg);
                 }
                 $this->trp_lst_dirty = false;
@@ -138,8 +138,7 @@ class data_object
     public phrase_list $phr_lst {
         get {
             if ($this->phr_lst_dirty) {
-                // a property hook takes no parameter, so this cache refresh has no caller message
-                $cache_msg = new user_message();
+                $cache_msg = new user_message(); // not reported: a property hook takes no caller message
                 if (!$this->wrd_lst_dirty) {
                     $this->phr_lst->merge($this->wrd_lst->phrase_list($cache_msg), $cache_msg);
                 }

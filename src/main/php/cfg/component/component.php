@@ -1438,7 +1438,7 @@ class component extends sandbox_code_id
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id();
-        $result = $log->add_link_ref();
+        $result = $log->add_link_ref($msg);
 
         log_debug('logged ' . $log->id());
         return $result;
@@ -1459,7 +1459,7 @@ class component extends sandbox_code_id
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id();
-        $result = $log->add_link_ref();
+        $result = $log->add_link_ref($msg);
 
         log_debug('logged ' . $log->id());
         return $result;

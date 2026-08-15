@@ -397,7 +397,7 @@ class triple extends sandbox_link_named
             }
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 // a local buffer for the permission check; on a db load the row user is trusted
-                $this->set_code_id($db_row[fields::FLD_CODE_ID], new user_message($this->get_user()));
+                $this->set_code_id($db_row[fields::FLD_CODE_ID], new user_message($this->get_user())); // not reported, see above
             }
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];

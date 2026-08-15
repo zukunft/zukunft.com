@@ -131,13 +131,13 @@ class db_object extends TextIdObject
      */
 
     /**
-     * TODO Prio 1 add user_message parameter
+     * TODO Prio 1 remove $api_json because the user_message parameter cannot be returned
      * the html display object are always filled base on the api message
      * @param string|null $api_json the api message to set all object vars
      */
     function __construct(?string $api_json = null)
     {
-        $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
+        $msg = new user_message(); // not reported: a buffer of this constructor, see the TODO above to take the caller's
         parent::__construct();
         if ($api_json != null) {
             $this->set_from_json($api_json, $msg);

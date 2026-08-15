@@ -194,8 +194,8 @@ class formula extends formula_map
         $map = [];
         // a local buffer, because a phrase without a symbol falls back to its name below, so the
         // lookup problems are not user relevant; threading would reach up through update_latex
-        $msg = new user_message();
-        $phr_lst = $this->expression($trm_lst)->phrases($msg, $trm_lst);
+        $msg = new user_message(); // not reported, see above
+        $phr_lst = $this->expression($msg, $trm_lst)->phrases($msg, $trm_lst);
         foreach ($phr_lst->lst() as $phr) {
             $map[$phr->name()] = $this->phrase_symbol($phr, $msg) ?? $phr->name();
         }
@@ -633,7 +633,7 @@ class formula extends formula_map
         $lib = new library();
         // a local buffer, because the two callers assign_phr_lst / assign_phr_ulst have no message
         // TODO Prio 2 thread the message from the callers of assign_phr_lst / assign_phr_ulst
-        $msg = new user_message();
+        $msg = new user_message(); // not reported, see the TODO above
 
         if ($this->id() > 0 and $this->get_user() != null) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx, $msg);
@@ -746,8 +746,8 @@ class formula extends formula_map
         // build the reference expression that defines which terms are needed
         $pre_trm_lst = $pre_phr_lst?->term_list();
         $exp = new expression($this);
-        $exp->set_ref_text($this->ref_text, $pre_trm_lst);
-        $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+        $exp->set_ref_text($this->ref_text, $msg, $pre_trm_lst);
+        $this->ref_text_r = chars::CHAR_CALC . $exp->r_part($msg);
 
         // reload missing terms from the database (the data retrieval part of to_num)
         $trm_lst = $this->load_exp_terms($msg, $pre_trm_lst, $exp);
@@ -802,9 +802,9 @@ class formula extends formula_map
         $res_init = $this->create_result($phr_lst);
 
         // load the formula element groups e.g. "sales differentiator sector" and "Total sales"
-        $exp = $this->expression($trm_lst);
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
-        log_debug('in ' . $exp->ref_text_ui() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
+        $exp = $this->expression($msg, $trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
+        log_debug('in ' . $exp->ref_text_ui($msg) . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // replace each element group symbol with the matching number(s)
         $all_elm_grp_filled = true;
@@ -1216,19 +1216,19 @@ class formula extends formula_map
 
         // build the formula expression for calculating the result
         $exp = new expression($this);
-        $exp->set_ref_text($this->ref_text);
+        $exp->set_ref_text($this->ref_text, $msg);
 
         // the phrase left of the equation sign is added to the result e.g. percent for the increase formula
         $has_result_phrases = false;
         $res_lst = new result_list($this->get_user());
-        if ($exp->is_valid()) {
+        if ($exp->is_valid($msg)) {
             $res_add_phr_lst = $exp->load_result_phrases($msg);
             if (isset($res_add_phr_lst)) {
                 log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
                 $has_result_phrases = true;
             }
             // use only the part right of the equation sign for the result calculation
-            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part($msg);
             log_debug('->calc got result words of ' . $this->ref_text_r);
 
             // get the list of the numeric results saved in the database
@@ -1360,8 +1360,8 @@ class formula extends formula_map
             and $this->expression_may_match($msg)) {
             $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
         } else {
-            $exp->set_ref_text($this->ref_text, $trm_lst);
-            $exp->set_user_text($this->usr_text, $trm_lst);
+            $exp->set_ref_text($this->ref_text, $msg, $trm_lst);
+            $exp->set_user_text($this->usr_text, $msg, $trm_lst);
         }
         return $exp;
     }
@@ -1418,7 +1418,7 @@ class formula extends formula_map
     function term_list(term_list $cache, user_message $msg): term_list
     {
         $trm_lst = new term_list($this->get_user());
-        $exp = $this->expression($cache);
+        $exp = $this->expression($msg, $cache);
         $elm_lst = $exp->element_list($msg, $cache);
         foreach ($elm_lst->lst() as $elm) {
             $trm_lst->add($elm->term());
@@ -1534,11 +1534,16 @@ class formula extends formula_map
         if ($this->usr_text != null) {
             if ($this->ref_text == '' or $this->ref_text_dirty) {
                 $exp = new expression($this);
-                $exp->set_user_text($this->usr_text, $trm_lst);
-                $this->ref_text = $exp->ref_text($msg, $trm_lst);
-                if ($msg->is_ok()) {
+                // a local message, because the dirty flag must judge only this conversion: with
+                // the shared message of the import level a formula that failed earlier in the
+                // round would keep the flag of every later formula dirty
+                $conv_msg = new user_message($msg->usr); // the verdict of this conversion, merged below
+                $exp->set_user_text($this->usr_text, $conv_msg, $trm_lst);
+                $this->ref_text = $exp->ref_text($conv_msg, $trm_lst);
+                if ($conv_msg->is_ok()) {
                     $this->ref_text_dirty = false;
                 }
+                $msg->merge($conv_msg);
             }
         }
         return $msg->is_ok();
@@ -1553,9 +1558,12 @@ class formula extends formula_map
     function generate_usr_text(?term_list $trm_lst = null): string
     {
         $result = '';
+        // a buffer, because the get_usr_text getter chain has no caller message
+        // TODO Prio 2 thread the message from the callers of get_usr_text
+        $conv_msg = new user_message($this->get_user()); // not reported, see the TODO above
         $exp = new expression($this);
-        $exp->set_user_text($this->usr_text);
-        $this->ref_text = $exp->ref_text_ui($trm_lst);
+        $exp->set_user_text($this->usr_text, $conv_msg);
+        $this->ref_text = $exp->ref_text($conv_msg, $trm_lst);
         $this->ref_text_dirty = false;
         return $result;
     }

@@ -384,9 +384,8 @@ class change_link extends change_log
 
 
     // TODO Prio 0 this should be dismissed
-    function add_link_ref(): bool
+    function add_link_ref(user_message $msg): bool
     {
-        $msg = new user_message(); // only the ok flag is returned, see the TODO above
         return $this->add($msg);
     }
 
@@ -524,7 +523,7 @@ class change_link extends change_log
         $db_con->set_class(change_link::class);
         $db_con->set_usr($this->get_user()->id);
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert_log($sc);
+        $qp = $this->sql_insert_log($sc, $msg);
         $db_con->insert($qp, 'insert log link ' . $this->dsp_id(), $msg);
         $log_id = $this->id();
 
@@ -603,11 +602,11 @@ class change_link extends change_log
     function sql_insert_link(
         sql_creator   $sc,
         sql_type_list $sc_par_lst,
+        user_message  $msg,
         ?sandbox_link $sbx = null
     ): sql_par
     {
         $lib = new library();
-        $msg = new user_message(); // a local buffer, because sql creation reports to the log only
 
         $fvt_lst = $this->db_field_values_link_types($sc, $sc_par_lst, $sbx);
         $fld_lst_all = $this->db_fields();

@@ -52,5 +52,5 @@ if ($db_con->is_open()) {
     http_response_code(501);
     echo 'Not implemented';
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

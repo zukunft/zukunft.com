@@ -203,15 +203,12 @@ class db_cache_page extends db_object_seq_id
      * @param string $url the request url of the cached html page
      * @return string|null the cached html page or null if the url is not (yet) cached
      */
-    function html_by_url(string $url): ?string
+    function html_by_url(string $url, user_message $msg): ?string
     {
         // show the cache read from '&debug=7' upward (url_var::DEBUG_LEVEL_DB_READ) to trace what a request reads
         log_debug('read page from cache', url_var::DEBUG_LEVEL_DB_READ);
         $result = null;
-        // a local buffer, because this backend cache read is called by the frontend page cache,
-        // which holds a frontend user_message that cannot be passed to a backend load
         // TODO Prio 1 report a failed cache read to the user once the frontend calls the api
-        $msg = new user_message();
         $id = $this->load_by_url($url, $msg);
         if ($id > 0) {
             $result = $this->html_page;

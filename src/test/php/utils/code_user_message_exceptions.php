@@ -97,7 +97,7 @@ class code_user_message_exceptions
     // the reader functions of a message; calling one of them on a local message means that its
     // content is used, so the collected errors are not lost
     private const string READ_FUNCTIONS = 'is_ok|all_message_text|get_message|get_last_message'
-    . '|has_msg_id|is_error|get_all_var_messages';
+    . '|has_msg_id|is_error|get_all_var_messages|text|var_message_text';
     // the words that mark a message which is deliberately not reported, e.g. a display path that
     // has no caller message at all; without this the creation is listed as a lost message
     private const string NOT_REPORTED_MARK = 'not reported';

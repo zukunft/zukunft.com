@@ -505,7 +505,7 @@ class group_list extends sandbox_list
         log_debug('sql "' . $sql . '"');
         //$db_con = New mysql;
         $db_con->usr_id = $this->get_user()->id;
-        $msg = new user_message(); // TODO Prio 1 deprecate
+        $msg = new user_message(); // not reported, TODO Prio 1 deprecate
         return $db_con->get_old($sql, $msg);
     }
 
@@ -513,7 +513,7 @@ class group_list extends sandbox_list
     private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
     {
         $lib = new library();
-        $msg = new user_message(); // a deprecated private helper without a caller message
+        $msg = new user_message(); // not reported: a deprecated private helper without a caller message
 
         // check the parameters
         if ($type == '') {
