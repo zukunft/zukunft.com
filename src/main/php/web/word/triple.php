@@ -1091,7 +1091,7 @@ class triple extends sandbox_code_id
         // linked phrase description when the triple has none (e.g. the "Swiss franc"
         // description for "CHF is symbol for Swiss franc")
         if ($lnk_phr != null) {
-            $url = $html->url_new(views::TRIPLE_ID, $this->id());
+            $url = $html->url_back(views::TRIPLE_ID, $this->id());
             $title = $this->get_description();
             if ($title == '') {
                 $title = $lnk_phr->get_description() ?? '';

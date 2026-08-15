@@ -283,10 +283,10 @@ class html_base
      * @return string the HTML header and opening body tag
      */
     function header(
-        string $title,
+        string               $title,
         user_message|Message $msg,
-        string $style = "",
-        string $lan = languages::DEFAULT,
+        string               $style = "",
+        string               $lan = languages::DEFAULT,
     ): string
     {
         $result = $this->doctype() . "\n";
@@ -361,7 +361,7 @@ class html_base
 
         $lan_lst = $ui_sys?->typ_lst_cache?->lan ?? new language_list();
         $html = new html_base();
-        $url = $html->url_new($msk_id);
+        $url = $html->url_back($msk_id);
         $lan_txt = $lan_lst->select_list_item($url);
 
         global $mtr;
@@ -497,7 +497,7 @@ class html_base
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
         if (!$no_about) {
-            $url = $this->url(rest_ctrl::URL_ABOUT);
+            $url = $this->url_old(rest_ctrl::URL_ABOUT);
             $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
             $result .= $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
@@ -700,11 +700,13 @@ class html_base
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
-    function url(string       $obj_name,
-                 int|string   $id = 0,
-                 ?string      $back = '',
-                 string|array $par = '',
-                 string       $id_ext = ''): string
+    function url_old(
+        string       $obj_name,
+        int|string   $id = 0,
+        ?string      $back = '',
+        string|array $par = '',
+        string       $id_ext = ''
+    ): string
     {
         $result = rest_ctrl::PATH_FIXED . $obj_name . rest_ctrl::EXT;
         if ($id <> 0) {
@@ -724,6 +726,7 @@ class html_base
     }
 
     /**
+     * TODO Prio 1 deprecate and replace if the the url_arr based back var
      * build a zukunft.com internal url based on the html one-page setup
      * o for the main object that should be shown to the user
      * v for view which contains the main object type
@@ -740,28 +743,69 @@ class html_base
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
-    function url_new(int|string   $view,
-                     int|string   $id = 0,
-                     string       $obj_name = '',
-                     ?string      $back = '',
-                     string|array $par = '',
-                     string       $id_ext = ''
+    function url_back(
+        int|string   $view,
+        int|string   $id = 0,
+        string       $obj_name = '',
+        ?string      $back = '',
+        string|array $par = '',
+        string       $id_ext = '',
+        string       $base_url = ''
     ): string
     {
-        $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-        $result .= url_var::MASK . '=' . $view;
+        $url = $base_url;
+        $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
+        $url .= url_var::MASK . '=' . $view;
         if (is_string($id)) {
-            $result .= '&id=' . $id;
+            $url .= '&id=' . $id;
         } elseif ($id <> 0) {
-            $result .= '&id=' . $id;
+            $url .= '&id=' . $id;
         }
         if ($id_ext != '') {
-            $result .= '&' . $id_ext;
+            $url .= '&' . $id_ext;
         }
         if ($back != '') {
-            $result .= '&back=' . $back;
+            $url .= '&back=' . $back;
         }
-        return $result;
+        return $url;
+    }
+
+    /**
+     * build a zukunft.com internal url based on the html one-page set up
+     * the url_var class defines the parameters
+     *
+     * @param int|string $view the code_id or the database id of the view
+     * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
+     * @param array $url_arr the back trace calls to return to the original url and for undo
+     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
+     * @return string the created url
+     */
+    static function url(
+        int|string   $view,
+        int|string   $id = 0,
+        array        $url_arr = [],
+        string       $id_ext = '',
+        string       $base_url = ''
+    ): string
+    {
+        $url = $base_url;
+        if (str_ends_with($url, '/')) {
+            $url = substr($url, 0, -1);
+        }
+        $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . url_var::PAR;
+        $url .= url_var::MASK . url_var::EQ . $view;
+        if (is_string($id)) {
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
+        } elseif ($id <> 0) {
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
+        }
+        if ($id_ext != '') {
+            $url .= url_var::ADD . $id_ext;
+        }
+        if ($url_arr != []) {
+            $url .= url_var::ADD . html_base::back_url_part($url_arr);
+        }
+        return $url;
     }
 
     /**
@@ -771,9 +815,9 @@ class html_base
      * @param array $url_array the URL parameters of the calling page e.g. /http/view.php?m=3&id=12
      * @return string the additional URL parameters e.g. '9m=3&9id=123'
      */
-    function back_url_part(array $url_array): string
+    static function back_url_part(array $url_array): string
     {
-        return $this->prefixed_url_part($url_array, url_var::BACK);
+        return self::prefixed_url_part($url_array, url_var::BACK);
     }
 
     /**
@@ -829,7 +873,7 @@ class html_base
      * @param string $prefix the prefix char e.g. url_var::BACK ('9') or url_var::PRE ('8')
      * @return string the prefixed URL parameter string e.g. '9m=3&9id=123'
      */
-    private function prefixed_url_part(array $url_array, string $prefix): string
+    static private function prefixed_url_part(array $url_array, string $prefix): string
     {
         $par = [];
         foreach ($url_array as $key => $val) {
@@ -1521,17 +1565,17 @@ class html_base
             // list of all possible view entries
             $row_nbr = $row_nbr + 1;
             $edit_script = $this->edit_url($class);
-            $url = $this->url($edit_script, $key, $back);
+            $url = $this->url_old($edit_script, $key, $back);
             $result .= $this->ref($url, $item);
             if ($row_nbr > 1) {
-                $url = $this->url($edit_script, $key, $back, '&move_up=' . $key);
+                $url = $this->url_old($edit_script, $key, $back, '&move_up=' . $key);
                 $result .= $this->ref($url, $mtr->txt(msg_id::UP));
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
             if ($row_nbr < $num_rows) {
-                $url = $this->url($edit_script, $key, $back, '&move_down=' . $key);
+                $url = $this->url_old($edit_script, $key, $back, '&move_down=' . $key);
                 $result .= $this->ref($url, $mtr->txt(msg_id::DOWN));
             }
             $result .= ' ';
@@ -1560,12 +1604,12 @@ class html_base
 
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url_new($class_name . rest_ctrl::UPDATE, $item->id(), '', $back);
+                $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), '', $back);
                 $result .= $this->ref($url, $this->esc($item->name()));
                 $result .= '<' . self::BR . '>';
             }
         }
-        $url_add = $this->url_new($class_name . rest_ctrl::CREATE, 0, '', $back);
+        $url_add = $this->url_back($class_name . rest_ctrl::CREATE, 0, '', $back);
         $msg_id = $lib->class_to_add_msg_id($class);
         $result .= (new button($url_add, $back))->add($msg_id);
         $result .= '<' . self::BR . '>';

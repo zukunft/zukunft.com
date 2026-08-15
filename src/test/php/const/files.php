@@ -123,6 +123,11 @@ class files
     CONST string IMPORT_COMPONENTS = test_paths::IMPORT_UNIT . 'components';
     CONST string IMPORT_RESULT_CALC = test_paths::IMPORT_UNIT . 'result_calc_simple';
     CONST string IMPORT_CALC_VALIDATION = test_paths::IMPORT_UNIT . 'calc_validation';
+    // the three sample files for the data object merge test and the expected merge result
+    CONST string IMPORT_MERGE_1 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online1';
+    CONST string IMPORT_MERGE_2 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online2';
+    CONST string IMPORT_MERGE_3 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online3';
+    CONST string IMPORT_MERGE_RESULT = test_paths::IMPORT_UNIT . 'offline_is_better_than_online';
     CONST string IMPORT_CALC_VALIDATION_MISMATCH = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_mismatch';
     CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
     CONST string IMPORT_VIEW_ROW_NOT_CLOSED = test_paths::IMPORT_INCONSISTENCY . 'view_row_not_closed';

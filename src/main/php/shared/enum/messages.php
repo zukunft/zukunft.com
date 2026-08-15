@@ -1069,6 +1069,11 @@ enum messages: string
         . ' found';
 
     case NOT_YET_IMPLEMENTED = 'not yet implemented';
+    case TABLE_COLUMNS_NOT_IMPLEMENTED = 'the table with related columns is not yet implemented for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    case VALUE_UNIT_NOT_UNIQUE = 'the value has more than one unit: "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
     case CANNOT_ADD_TIMESTAMP = 'Cannot add timestamp "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . '" when importing '

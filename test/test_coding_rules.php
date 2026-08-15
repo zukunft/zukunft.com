@@ -49,6 +49,7 @@ include_once test_paths::UNIT . 'coding_rule_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\unit\coding_rule_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
@@ -59,12 +60,13 @@ global $cac;
 
 // open the session, database and load the environment
 $app = new test_app();
-$db_con = $app->start("coding rules", true);
+$msg = new backend_user_message();
+$db_con = $app->start("coding rules", $msg, true);
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
-    $result = $start_usr->get();
+    $result = $start_usr->get($msg);
     $cac->set_user($start_usr);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)

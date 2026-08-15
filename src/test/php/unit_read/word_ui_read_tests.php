@@ -67,7 +67,7 @@ class word_ui_read_tests
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
         $test_page .= 'with link: ' . $wrd->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $wrd->btn_add() . '<br>';
+        $test_page .= 'add button: ' . $wrd->btn_add_back() . '<br>';
         $test_page .= 'edit button: ' . $wrd->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';

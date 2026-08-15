@@ -71,7 +71,7 @@ class formula_ui_tests
         $test_page .= 'with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'with link: ' . $frm->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $frm->btn_add() . '<br>';
+        $test_page .= 'add button: ' . $frm->btn_add_back() . '<br>';
         $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
         $test_page .= $t->dsp_title_named_edit($frm, $msg);

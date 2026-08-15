@@ -1,0 +1,1315 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-14 12:00:00",
+  "user": "zukunft",
+  "description": "Merged set of the three offline-is-better-than-online example files: interpersonal persuasion effect sizes, adolescent screen use inflection points and the Facebook deactivation experiment",
+  "words": [
+    {
+      "name": "canvassing",
+      "description": "systematic contacting of people to gauge or influence their opinions",
+      "refs": [
+        {
+          "name": "Canvassing",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "narrative",
+      "refs": [
+        {
+          "name": "Narrative",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "exchange"
+    },
+    {
+      "name": "argument",
+      "refs": [
+        {
+          "name": "Argument",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "attitude",
+      "refs": [
+        {
+          "name": "Attitude_(psychology)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "exclusionary"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "size"
+    },
+    {
+      "name": "study"
+    },
+    {
+      "name": "participant"
+    },
+    {
+      "name": "count"
+    },
+    {
+      "name": "format"
+    },
+    {
+      "name": "persuasion",
+      "refs": [
+        {
+          "name": "Persuasion",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "probability",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "Kalla"
+    },
+    {
+      "name": "Broockman"
+    },
+    {
+      "name": "Bor"
+    },
+    {
+      "name": "Petersen"
+    },
+    {
+      "name": "measured value"
+    },
+    {
+      "name": "assumed value"
+    },
+    {
+      "name": "smartphone",
+      "refs": [
+        {
+          "name": "Smartphone",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "computer",
+      "refs": [
+        {
+          "name": "Computer",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "video",
+      "refs": [
+        {
+          "name": "Video",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "game"
+    },
+    {
+      "name": "play"
+    },
+    {
+      "name": "watching"
+    },
+    {
+      "name": "use"
+    },
+    {
+      "name": "weekday"
+    },
+    {
+      "name": "weekend"
+    },
+    {
+      "name": "inflection",
+      "refs": [
+        {
+          "name": "Inflection_point",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "Przybylski"
+    },
+    {
+      "name": "Weinstein"
+    },
+    {
+      "name": "minute"
+    },
+    {
+      "name": "Facebook",
+      "description": "an online social media and social networking service owned by Meta Platforms",
+      "refs": [
+        {
+          "name": "Facebook",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q355",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "deactivation"
+    },
+    {
+      "name": "treatment"
+    },
+    {
+      "name": "control"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "index"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "deviation"
+    },
+    {
+      "name": "wellbeing",
+      "description": "how well a person's life is going for that person",
+      "refs": [
+        {
+          "name": "Well-being",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "subjective"
+    },
+    {
+      "name": "happiness",
+      "refs": [
+        {
+          "name": "Happiness",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "satisfaction"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "depression",
+      "refs": [
+        {
+          "name": "Depression_(mood)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "anxiety",
+      "refs": [
+        {
+          "name": "Anxiety",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "news",
+      "refs": [
+        {
+          "name": "News",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "knowledge"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "politics",
+      "refs": [
+        {
+          "name": "Politics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "polarization",
+      "refs": [
+        {
+          "name": "Political_polarization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "issue"
+    },
+    {
+      "name": "affective"
+    },
+    {
+      "name": "party"
+    },
+    {
+      "name": "turnout",
+      "refs": [
+        {
+          "name": "Voter_turnout",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "television"
+    },
+    {
+      "name": "solitary"
+    },
+    {
+      "name": "socializing"
+    },
+    {
+      "name": "offline"
+    },
+    {
+      "name": "activity"
+    },
+    {
+      "name": "reactivation"
+    },
+    {
+      "name": "compliance"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "user"
+    },
+    {
+      "name": "surplus"
+    },
+    {
+      "name": "consumer",
+      "refs": [
+        {
+          "name": "Consumer_surplus",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "willingness"
+    },
+    {
+      "name": "accept"
+    },
+    {
+      "name": "offer"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "psychological"
+    },
+    {
+      "name": "intervention"
+    },
+    {
+      "name": "college"
+    },
+    {
+      "name": "completion"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "Allcott"
+    },
+    {
+      "name": "Braghieri"
+    },
+    {
+      "name": "Eichmeyer"
+    },
+    {
+      "name": "Gentzkow"
+    },
+    {
+      "name": "Bolier"
+    },
+    {
+      "name": "Boxell"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "US dollar"
+    }
+  ],
+  "triples": [
+    {
+      "name": "effect size",
+      "from": "size",
+      "verb": "of",
+      "to": "effect"
+    },
+    {
+      "name": "exclusionary attitude",
+      "from": "attitude",
+      "verb": "kind of",
+      "to": "exclusionary"
+    },
+    {
+      "name": "effect size on exclusionary attitude",
+      "from": "effect size",
+      "verb": "on",
+      "to": "exclusionary attitude"
+    },
+    {
+      "name": "narrative exchange",
+      "from": "exchange",
+      "verb": "of",
+      "to": "narrative"
+    },
+    {
+      "name": "narrative exchange canvassing",
+      "from": "canvassing",
+      "verb": "uses",
+      "to": "narrative exchange"
+    },
+    {
+      "name": "argument canvassing",
+      "from": "canvassing",
+      "verb": "uses",
+      "to": "argument"
+    },
+    {
+      "name": "participant count",
+      "from": "count",
+      "verb": "of",
+      "to": "participant"
+    },
+    {
+      "from": "Kalla",
+      "verb": "and",
+      "to": "Broockman"
+    },
+    {
+      "from": "Bor",
+      "verb": "and",
+      "to": "Petersen"
+    },
+    {
+      "name": "Kalla and Broockman study",
+      "from": "Kalla and Broockman",
+      "verb": "name of",
+      "to": "study"
+    },
+    {
+      "name": "Bor and Petersen study",
+      "from": "Bor and Petersen",
+      "verb": "name of",
+      "to": "study"
+    },
+    {
+      "name": "format influence on persuasion",
+      "from": "format",
+      "verb": "influences",
+      "to": "persuasion"
+    },
+    {
+      "name": "inflection point",
+      "from": "point",
+      "verb": "of",
+      "to": "inflection"
+    },
+    {
+      "name": "smartphone use",
+      "from": "use",
+      "verb": "of",
+      "to": "smartphone"
+    },
+    {
+      "name": "computer use",
+      "from": "use",
+      "verb": "of",
+      "to": "computer"
+    },
+    {
+      "name": "video game",
+      "from": "game",
+      "verb": "of",
+      "to": "video"
+    },
+    {
+      "name": "video game play",
+      "from": "play",
+      "verb": "of",
+      "to": "video game"
+    },
+    {
+      "name": "video watching",
+      "from": "watching",
+      "verb": "of",
+      "to": "video"
+    },
+    {
+      "name": "weekday smartphone use",
+      "from": "smartphone use",
+      "verb": "on",
+      "to": "weekday"
+    },
+    {
+      "name": "weekday computer use",
+      "from": "computer use",
+      "verb": "on",
+      "to": "weekday"
+    },
+    {
+      "name": "weekday video game play",
+      "from": "video game play",
+      "verb": "on",
+      "to": "weekday"
+    },
+    {
+      "name": "weekday video watching",
+      "from": "video watching",
+      "verb": "on",
+      "to": "weekday"
+    },
+    {
+      "name": "weekend video game play",
+      "from": "video game play",
+      "verb": "on",
+      "to": "weekend"
+    },
+    {
+      "name": "weekend video watching",
+      "from": "video watching",
+      "verb": "on",
+      "to": "weekend"
+    },
+    {
+      "from": "Przybylski",
+      "verb": "and",
+      "to": "Weinstein"
+    },
+    {
+      "name": "Przybylski and Weinstein study",
+      "from": "Przybylski and Weinstein",
+      "verb": "name of",
+      "to": "study"
+    },
+    {
+      "name": "standard deviation",
+      "from": "deviation",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "name": "treatment group",
+      "from": "group",
+      "verb": "kind of",
+      "to": "treatment"
+    },
+    {
+      "name": "control group",
+      "from": "group",
+      "verb": "kind of",
+      "to": "control"
+    },
+    {
+      "name": "treatment effect",
+      "from": "effect",
+      "verb": "of",
+      "to": "treatment"
+    },
+    {
+      "name": "Facebook deactivation",
+      "from": "deactivation",
+      "verb": "of",
+      "to": "Facebook"
+    },
+    {
+      "name": "subjective wellbeing",
+      "from": "wellbeing",
+      "verb": "kind of",
+      "to": "subjective"
+    },
+    {
+      "name": "subjective wellbeing index",
+      "from": "index",
+      "verb": "of",
+      "to": "subjective wellbeing"
+    },
+    {
+      "name": "life satisfaction",
+      "from": "satisfaction",
+      "verb": "of",
+      "to": "life"
+    },
+    {
+      "name": "news knowledge",
+      "from": "knowledge",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "news knowledge index",
+      "from": "index",
+      "verb": "of",
+      "to": "news knowledge"
+    },
+    {
+      "name": "news consumption time",
+      "from": "time",
+      "verb": "of",
+      "to": "news consumption"
+    },
+    {
+      "name": "news consumption",
+      "from": "consumption",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "political polarization",
+      "from": "polarization",
+      "verb": "of",
+      "to": "politics"
+    },
+    {
+      "name": "political polarization index",
+      "from": "index",
+      "verb": "of",
+      "to": "political polarization"
+    },
+    {
+      "name": "issue polarization",
+      "from": "polarization",
+      "verb": "kind of",
+      "to": "issue"
+    },
+    {
+      "name": "affective party polarization",
+      "from": "polarization",
+      "verb": "kind of",
+      "to": "affective"
+    },
+    {
+      "name": "voter turnout effect",
+      "from": "turnout",
+      "verb": "of",
+      "to": "treatment"
+    },
+    {
+      "name": "Facebook use time",
+      "from": "time",
+      "verb": "of",
+      "to": "Facebook use"
+    },
+    {
+      "name": "Facebook use",
+      "from": "use",
+      "verb": "of",
+      "to": "Facebook"
+    },
+    {
+      "name": "solitary television watching",
+      "from": "television",
+      "verb": "kind of",
+      "to": "solitary"
+    },
+    {
+      "name": "offline socializing",
+      "from": "socializing",
+      "verb": "kind of",
+      "to": "offline"
+    },
+    {
+      "name": "offline activity count",
+      "from": "count",
+      "verb": "of",
+      "to": "offline activity"
+    },
+    {
+      "name": "offline activity",
+      "from": "activity",
+      "verb": "kind of",
+      "to": "offline"
+    },
+    {
+      "name": "reactivation speed",
+      "from": "rate",
+      "verb": "of",
+      "to": "reactivation"
+    },
+    {
+      "name": "compliance rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "compliance"
+    },
+    {
+      "name": "user count",
+      "from": "count",
+      "verb": "of",
+      "to": "user"
+    },
+    {
+      "name": "consumer surplus",
+      "from": "surplus",
+      "verb": "of",
+      "to": "consumer"
+    },
+    {
+      "name": "willingness to accept",
+      "from": "willingness",
+      "verb": "to",
+      "to": "accept"
+    },
+    {
+      "name": "offer price",
+      "from": "price",
+      "verb": "of",
+      "to": "offer"
+    },
+    {
+      "name": "psychological intervention",
+      "from": "intervention",
+      "verb": "kind of",
+      "to": "psychological"
+    },
+    {
+      "name": "college completion",
+      "from": "completion",
+      "verb": "of",
+      "to": "college"
+    },
+    {
+      "from": "Allcott",
+      "verb": "and",
+      "to": "Gentzkow"
+    },
+    {
+      "name": "Allcott and Gentzkow study",
+      "from": "Allcott and Gentzkow",
+      "verb": "name of",
+      "to": "study"
+    },
+    {
+      "name": "Bolier meta analysis",
+      "from": "Bolier",
+      "verb": "name of",
+      "to": "study"
+    },
+    {
+      "name": "Boxell polarization series",
+      "from": "Boxell",
+      "verb": "name of",
+      "to": "political polarization"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "consumer surplus (formula)",
+      "expression": "\"consumer surplus\" = \"willingness to accept\" * \"user count\"",
+      "latex": "CS = WTA \\cdot n",
+      "assigned_word": "willingness to accept"
+    },
+    {
+      "name": "relative treatment effect (formula)",
+      "expression": "\"percent\" = \"treatment effect\" / \"control group\"",
+      "latex": "\\frac{\\hat{\\tau}}{\\bar{y}_{0}}",
+      "assigned_word": "treatment effect"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Kalla Broockman 2020",
+      "description": "Kalla JL, Broockman DE (2020). Reducing Exclusionary Attitudes through Interpersonal Conversation. American Political Science Review 114(2):410-425",
+      "url": "https://doi.org/10.1017/S0003055419000923"
+    },
+    {
+      "name": "Broockman Kalla 2016",
+      "description": "Broockman DE, Kalla JL (2016). Durably reducing transphobia: a field experiment on door-to-door canvassing. Science 352:220-224",
+      "url": "https://doi.org/10.1126/science.aad9713"
+    },
+    {
+      "name": "Bor Petersen 2022",
+      "description": "Bor A, Petersen MB (2022). The Psychology of Online Political Hostility. American Political Science Review 116(1):1-18",
+      "url": "https://doi.org/10.1017/S0003055421000885"
+    },
+    {
+      "name": "Przybylski Weinstein 2017",
+      "description": "Przybylski AK, Weinstein N (2017). A Large-Scale Test of the Goldilocks Hypothesis. Psychological Science 28(2):204-215",
+      "url": "https://doi.org/10.1177/0956797616678438"
+    },
+    {
+      "name": "Allcott et al 2019",
+      "description": "Allcott H, Braghieri L, Eichmeyer S, Gentzkow M (2019/2020). The Welfare Effects of Social Media. American Economic Review 110(3):629-676; working paper of 8 November 2019",
+      "url": "https://doi.org/10.1257/aer.20190658"
+    },
+    {
+      "name": "Bolier et al 2013 as cited",
+      "description": "Bolier L et al. (2013), meta-analysis of 39 randomized evaluations of positive psychology interventions, as reported in Allcott et al",
+      "url": "https://doi.org/10.1257/aer.20190658"
+    },
+    {
+      "name": "Boxell 2018 as cited",
+      "description": "Boxell L (2018), polarization index change 1996-2016, as reported in Allcott et al",
+      "url": "https://doi.org/10.1257/aer.20190658"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "narrative exchange canvassing",
+        "effect size on exclusionary attitude",
+        "measured value"
+      ],
+      "number": "0.08",
+      "source": "Kalla Broockman 2020"
+    },
+    {
+      "words": [
+        "argument canvassing",
+        "effect size on exclusionary attitude",
+        "measured value"
+      ],
+      "number": "0",
+      "source": "Kalla Broockman 2020"
+    },
+    {
+      "words": [
+        "Kalla and Broockman study",
+        "participant count",
+        "measured value"
+      ],
+      "number": "6869",
+      "source": "Kalla Broockman 2020"
+    },
+    {
+      "words": [
+        "Bor and Petersen study",
+        "participant count",
+        "measured value"
+      ],
+      "number": "8434",
+      "source": "Bor Petersen 2022"
+    },
+    {
+      "words": [
+        "format influence on persuasion",
+        "probability",
+        "assumed value"
+      ],
+      "number": "0.8"
+    },
+    {
+      "words": [
+        "format influence on persuasion",
+        "probability",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "weekday video game play",
+        "inflection point",
+        "minute",
+        "measured value"
+      ],
+      "number": "100",
+      "source": "Przybylski Weinstein 2017"
+    },
+    {
+      "words": [
+        "weekday smartphone use",
+        "inflection point",
+        "minute",
+        "measured value"
+      ],
+      "number": "117",
+      "source": "Przybylski Weinstein 2017"
+    },
+    {
+      "words": [
+        "weekday video watching",
+        "inflection point",
+        "minute",
+        "measured value"
+      ],
+      "number": "221",
+      "source": "Przybylski Weinstein 2017"
+    },
+    {
+      "words": [
+        "weekday computer use",
+        "inflection point",
+        "minute",
+        "measured value"
+      ],
+      "number": "257",
+      "source": "Przybylski Weinstein 2017"
+    },
+    {
+      "words": [
+        "weekend video game play",
+        "inflection point",
+        "minute",
+        "measured value"
+      ],
+      "number": "215",
+      "source": "Przybylski Weinstein 2017"
+    },
+    {
+      "words": [
+        "weekend video watching",
+        "inflection point",
+        "minute",
+        "measured value"
+      ],
+      "number": "290",
+      "source": "Przybylski Weinstein 2017"
+    },
+    {
+      "words": [
+        "Przybylski and Weinstein study",
+        "participant count",
+        "measured value"
+      ],
+      "number": "120115",
+      "source": "Przybylski Weinstein 2017"
+    },
+    {
+      "words": [
+        "Allcott and Gentzkow study",
+        "participant count",
+        "measured value"
+      ],
+      "number": "1661",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Allcott and Gentzkow study",
+        "treatment group",
+        "participant count",
+        "measured value"
+      ],
+      "number": "580",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Allcott and Gentzkow study",
+        "control group",
+        "participant count",
+        "measured value"
+      ],
+      "number": "1081",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Allcott and Gentzkow study",
+        "offer price",
+        "US dollar",
+        "measured value"
+      ],
+      "number": "102",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Allcott and Gentzkow study",
+        "treatment group",
+        "compliance rate",
+        "percent",
+        "measured value"
+      ],
+      "number": "0.90",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Allcott and Gentzkow study",
+        "control group",
+        "compliance rate",
+        "percent",
+        "measured value"
+      ],
+      "number": "0.02",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Facebook use time",
+        "control group",
+        "minute",
+        "measured value"
+      ],
+      "number": "59.53",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Facebook use time",
+        "treatment effect",
+        "minute",
+        "measured value"
+      ],
+      "number": "-59.58",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Facebook use time",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "-1.59",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "news consumption time",
+        "control group",
+        "minute",
+        "measured value"
+      ],
+      "number": "52",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "news consumption time",
+        "treatment effect",
+        "minute",
+        "measured value"
+      ],
+      "number": "-8",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "news knowledge index",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "-0.19",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "news knowledge",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "-0.12",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "political polarization index",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "-0.16",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "affective party polarization",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "-0.06",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Boxell polarization series",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.379",
+      "source": "Boxell 2018 as cited"
+    },
+    {
+      "words": [
+        "issue polarization",
+        "control group",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "1.47",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "issue polarization",
+        "treatment group",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "1.35",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "voter turnout effect",
+        "percent",
+        "measured value"
+      ],
+      "number": "0.03",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "subjective wellbeing index",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.09",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "life satisfaction",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.12",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "anxiety",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.10",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "depression",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.09",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "happiness",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.08",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "psychological intervention",
+        "subjective wellbeing",
+        "effect size",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.34",
+      "source": "Bolier et al 2013 as cited"
+    },
+    {
+      "words": [
+        "psychological intervention",
+        "depression",
+        "effect size",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "-0.23",
+      "source": "Bolier et al 2013 as cited"
+    },
+    {
+      "words": [
+        "college completion",
+        "subjective wellbeing",
+        "effect size",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.23",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "solitary television watching",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.17",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "offline socializing",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.16",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "offline activity count",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.12",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "reactivation speed",
+        "treatment effect",
+        "standard deviation",
+        "measured value"
+      ],
+      "number": "0.59",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Facebook",
+        "willingness to accept",
+        "US dollar",
+        "measured value"
+      ],
+      "number": "180",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Facebook",
+        "user count",
+        "measured value"
+      ],
+      "number": "172000000",
+      "source": "Allcott et al 2019"
+    },
+    {
+      "words": [
+        "Facebook",
+        "consumer surplus",
+        "US dollar",
+        "measured value"
+      ],
+      "number": "31000000000",
+      "source": "Allcott et al 2019"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "Facebook",
+        "willingness to accept",
+        "user count",
+        "US dollar",
+        "measured value"
+      ],
+      "formula": "consumer surplus (formula)",
+      "words": [
+        "Facebook",
+        "consumer surplus",
+        "US dollar"
+      ],
+      "number": "30960000000",
+      "note": "the paper rounds this to 31 billion USD for four weeks of Facebook"
+    },
+    {
+      "context": [
+        "news consumption time",
+        "treatment effect",
+        "control group",
+        "minute",
+        "measured value"
+      ],
+      "formula": "relative treatment effect (formula)",
+      "words": [
+        "news consumption time",
+        "treatment effect",
+        "percent"
+      ],
+      "number": "-0.15",
+      "note": "result goes to percent, so no factor 100 in the expression"
+    }
+  ]
+}

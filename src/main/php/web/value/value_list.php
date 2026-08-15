@@ -192,12 +192,22 @@ class value_list extends ListBase
      * @param word|triple|source|formula|db_object|type_object|null $dbo to filter the values
      * @return value_list with only the direct linked values
      */
-    function filter(user_message $msg, word|triple|source|formula|db_object|type_object|null $dbo = null): value_list
+    function filter(
+        user_message $msg,
+        word|triple|source|formula|db_object|type_object|null $dbo = null,
+        ?phrase_list $ctx_lst = null
+    ): value_list
     {
         $val_lst = new value_list();
         if ($dbo::class == word::class or $dbo::class == triple::class) {
+            // a value of a child phrase belongs to the page phrase too, e.g. a "global warming"
+            // value is shown on the "global problem" page, because the context list contains
+            // the triple "global warming (global problem)"
+            $child_names = $ctx_lst?->child_names($dbo->phrase()) ?? [];
             foreach ($this->lst() as $val) {
                 if ($val->has_phrase($dbo->phrase(), $msg)) {
+                    $val_lst->add($val, $msg);
+                } elseif (array_intersect($child_names, $val->grp->phr_lst()->names()) != []) {
                     $val_lst->add($val, $msg);
                 }
             }
@@ -772,7 +782,7 @@ class value_list extends ListBase
             . $diff . ' ' . msg_id::MORE->text();
         $phr = $context_phr_lst->lst()[0] ?? null;
         if ($phr != null) {
-            $result = $html->ref($html->url_new(views::PHRASE_VALUES_ID, $phr->id()), $txt);
+            $result = $html->ref($html->url_back(views::PHRASE_VALUES_ID, $phr->id()), $txt);
         } else {
             $result = $txt;
         }
@@ -1477,19 +1487,19 @@ class value_list extends ListBase
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url_new(views::VALUE_ADD_ID, $val->id(), '', $back);
+                    $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), '', $back);
                     $btn = new button($url, $back);
                     $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url_new(views::VALUE_EDIT_ID, $val->id(), '', $back);
+                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url_new(views::VALUE_DEL_ID, $val->id(), '', $back);
+                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';

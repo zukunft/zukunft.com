@@ -66,6 +66,7 @@ include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 
@@ -98,6 +99,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -313,7 +315,7 @@ class ui_list extends ui_base
                 if ($lst->count() > 1) {
                     $msg = $msg_many;
                 }
-                $vrb_lnk = $html->ref($html->url_new(views::VERB_ID, $vrb->id()), $mtr->txt($msg));
+                $vrb_lnk = $html->ref($html->url_back(views::VERB_ID, $vrb->id()), $mtr->txt($msg));
                 $result = $html->span(
                     $mtr->txt(msg_id::PHRASE_HAS) . ' ' . $vrb_lnk . ': ' . $lst->name_link(),
                     styles::TEXT_NOWRAP
@@ -768,20 +770,29 @@ class ui_list extends ui_base
      * often within the values (e.g. inhabitants and area for a city) and one row per remaining
      * phrase combination (e.g. per year), so that the values of one row can be compared
      *
-     * @param word|db_object|type_object|null $dbo the phrase the values are related to
+     * @param word|triple|db_object|type_object|null $dbo the phrase the values are related to
      * @param data_object|null $dto the data cache used until the backend has returned the values
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
-        word|db_object|type_object|null $dbo,
-        user_message                    $msg,
-        ?data_object                    $dto = null
+        word|triple|db_object|type_object|null $dbo,
+        user_message                          $msg,
+        ?data_object                          $dto = null
     ): string
     {
         $result = '';
         // guard the phrase before the value load, because value_related_list reads $dbo::class
         if ($dbo != null) {
-            $val_lst = $this->value_related_list($dbo, $msg, $dto);
+            // only a phrase has the related values this table is built from; for any other
+            // class say so instead of rendering an empty table, because the caller is a
+            // component type that a view may assign to any object
+            if ($dbo::class != word::class and $dbo::class != triple::class) {
+                $msg->add_warning_with_vars(msg_id::TABLE_COLUMNS_NOT_IMPLEMENTED, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($dbo::class),
+                ]);
+                return $result;
+            }
+            $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
                 $phr_lst = new phrase_list();
@@ -796,21 +807,23 @@ class ui_list extends ui_base
     }
 
     /**
-     * the values shown by values_by_word: a word loaded with its related values carries them
+     * the values shown by values_by_word: a phrase loaded with its related values carries them
      * directly (e.g. the default word view), otherwise they are taken from the data cache
      *
-     * @param word|db_object|type_object|null $dbo the object the values are related to
+     * @param word|triple|db_object|type_object|null $dbo the object the values are related to
      * @param data_object|null $dto the data cache used until the backend has returned the values
      * @return value_list|null the values related to the given object or null if there are none
      */
     private function value_related_list(
-        word|db_object|type_object|null $dbo,
-        user_message                    $msg,
-        ?data_object                    $dto
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto,
+        ?phrase_list                           $ctx_lst = null
     ): ?value_list
     {
-        $val_lst = $dto?->val_lst?->filter($msg, $dbo);
-        if ($dbo::class == word::class and $dbo->val_lst != null) {
+        $val_lst = $dto?->val_lst?->filter($msg, $dbo, $ctx_lst);
+        // a word and a triple are both loaded with their values, so both carry them directly
+        if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->val_lst != null) {
             $val_lst = $dbo->val_lst;
         }
         return $val_lst;

@@ -264,6 +264,22 @@ body {
     white-space: nowrap;    /* keep the phrases of one value on one line */
 }
 
+/* a value shown as one row (value::links_and_measure): the phrase links, the number and the */
+/* measure stay side by side on one line, the name shrinks first if the space gets tight */
+.value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+.value-row .value-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.value-unit {
+    white-space: nowrap;    /* keep the scaling and the measure together */
+}
+
 /* buttons */
 .btn {
     background: #9ea09e; /* Sets the button background to zukunft.com specific grey */

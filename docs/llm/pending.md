@@ -2,6 +2,9 @@
 
 ## start page
 
+create in triple list a 'validate_alias_direction' function that checks if the alias verb always leads to the same main phrase
+
+based on the /test/create/ class function and the solution_prio.json create a set of test data (a filled $dto object where the database id is taken from the /test/create/ class functions and the rest e.g. the val)
 
 the basic steps to show the start page are
 

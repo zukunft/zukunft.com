@@ -30,7 +30,7 @@ global $db_con;
 // open database and display header
 $app = new application();
 $msg = new user_message(); // frontend entry point
-$db_con = $app->start("sql sequence check", '', false);
+$db_con = $app->start("sql sequence check", $msg);
 
 // load the session user parameters
 $start_usr = new user;

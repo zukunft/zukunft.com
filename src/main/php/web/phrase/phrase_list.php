@@ -247,6 +247,32 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * get the names of the phrases that this list links to the given phrase by a triple
+     * e.g. for "global problem" the names "global warming" and "populism", because the list
+     * contains the triples "global warming (global problem)" and "populism (global problem)"
+     * the verb does not matter, because e.g. "is a" and "can be" both classify the from side
+     *
+     * @param phrase $phr the phrase whose children should be returned
+     * @return array the names of the phrases that link to the given phrase
+     */
+    function child_names(phrase $phr): array
+    {
+        $result = [];
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple()) {
+                $trp = $lst_phr->obj();
+                if ($trp->get_to()?->name() == $phr->name()) {
+                    $name = $trp->get_from()?->name();
+                    if ($name != null and !in_array($name, $result)) {
+                        $result[] = $name;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the names of the phrases that this list defines as table columns, ordered by the column
      * tier of solution_prio.json: a prime column first (shown on every screen), then a second
      * column (hidden on a small screen), then a third column (only on a wide screen)
@@ -377,7 +403,7 @@ class phrase_list extends sandbox_list_named
     ): ?string
     {
         $html = new html_base();
-        $url = $html->url_new(views::WORD_RELATED_ID, $parent_id);
+        $url = $html->url_back(views::WORD_RELATED_ID, $parent_id);
         return $html->ref($url, '...');
     }
 
@@ -401,6 +427,58 @@ class phrase_list extends sandbox_list_named
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->get_from()->id() == $phr->id()) {
                         $result->add($trp, $msg);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the phrase of this cache that matches the given phrase, so that a phrase which
+     * carries only the id and the name (e.g. a phrase of a value group) can be enriched
+     * with the vars that only the fully loaded phrase has, like the description
+     *
+     * @param phrase $phr the phrase to look up, e.g. a phrase of a value group
+     * @return phrase the phrase of this cache or the given phrase if this cache has none
+     */
+    function cached_phrase(phrase $phr): phrase
+    {
+        $result = $phr;
+        foreach ($this->lst() as $cac_phr) {
+            if ($cac_phr->id() == $phr->id() and $result === $phr) {
+                $result = $cac_phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the tooltip text for the given phrase based on this cache:
+     * the description of the phrase itself, or - if the phrase has none - the description of
+     * the phrase it is a symbol for, e.g. the description of "million" is used for "mio",
+     * because a symbol is only useful if the reader knows what it stands for
+     *
+     * @param phrase $phr the phrase that should get a tooltip, e.g. "mio"
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return string the tooltip text or '' if this cache knows no description
+     */
+    function tooltip(phrase $phr, user_message $msg): string
+    {
+        global $ui_sys;
+
+        $result = $this->cached_phrase($phr)->get_description() ?? '';
+        if ($result == '') {
+            $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
+            if ($vrb != null) {
+                // the symbol is the from side, so the described phrase is the to side
+                foreach ($this->lst() as $cac_phr) {
+                    if ($cac_phr->is_triple() and $result == '') {
+                        $trp = $cac_phr->obj();
+                        if ($trp->get_verb()?->id() == $vrb->id()
+                            and $trp->get_from()?->id() == $phr->id()) {
+                            $result = $this->cached_phrase($trp->get_to())->get_description() ?? '';
+                        }
                     }
                 }
             }
@@ -827,6 +905,34 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
             if (!$phr->is_measure($msg)) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list of the scaling phrases e.g. billion
+     */
+    function scaling_list(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_scaling($msg)) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list without the scaling phrases e.g. without billion
+     */
+    function ex_scaling_list(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_scaling($msg)) {
                 $result->add($phr, $msg);
             }
         }

@@ -944,6 +944,264 @@ class data_object
         $this->res_chk_lst->add_result_direct($res);
     }
 
+
+    /*
+     * fill
+     */
+
+    /**
+     * merge the objects of the given data object into this data object without losing data:
+     * an object that this data object does not yet have is added, and a matching object
+     * (same word / triple / source / formula / view / component name, same reference key,
+     * same value phrase group) fills only the vars that are still unset here, so on a
+     * conflict this data object wins - like the first import file of a phrase stays the
+     * owner of the description (see the import order rule in docs/llm/json_structure.md)
+     *
+     * @param data_object $dto the data object with the objects that should be added
+     * @param user $usr_req the user who has requested the merge
+     * @return user_message all problems found while merging
+     */
+    function fill(data_object $dto, user $usr_req): user_message
+    {
+        $msg = new user_message();
+
+        // the named objects are matched by their unique name
+        foreach ($dto->word_list()->lst() as $wrd) {
+            $existing = $this->word_list()->get_by_name($wrd->name(), $msg);
+            if ($existing != null) {
+                $msg->merge($existing->fill($wrd, $usr_req));
+            } else {
+                $this->add_word($wrd, $msg);
+            }
+        }
+        foreach ($dto->verb_list()->lst() as $vrb) {
+            $existing = null;
+            foreach ($this->verb_list()->lst() as $vrb_of_this) {
+                if ($vrb_of_this->name() == $vrb->name()) {
+                    $existing = $vrb_of_this;
+                }
+            }
+            if ($existing != null) {
+                $msg->merge($existing->fill($vrb, $usr_req));
+            } else {
+                $this->add_verb($vrb, $msg);
+            }
+        }
+        foreach ($dto->triple_list()->lst() as $trp) {
+            $existing = $this->triple_list()->get_by_name($trp->name(), $msg);
+            if ($existing != null) {
+                $msg->merge($existing->fill($trp, $usr_req));
+            } else {
+                $this->add_triple($trp, $msg);
+            }
+        }
+        foreach ($dto->source_list()->lst() as $src) {
+            $existing = $this->source_list()->get_by_name($src->name(), $msg);
+            if ($existing != null) {
+                $msg->merge($existing->fill($src, $usr_req));
+            } else {
+                $this->add_source($src, $msg);
+            }
+        }
+        foreach ($dto->formula_list()->lst() as $frm) {
+            $existing = $this->formula_list()->get_by_name($frm->name(), $msg);
+            if ($existing != null) {
+                $msg->merge($existing->fill($frm, $usr_req));
+            } else {
+                $this->add_formula($frm, $msg);
+            }
+        }
+        foreach ($dto->view_list()->lst() as $msk) {
+            $existing = $this->view_list()->get_by_name($msk->name(), $msg);
+            if ($existing != null) {
+                $msg->merge($existing->fill($msk, $usr_req));
+            } else {
+                $this->add_view($msk, $msg);
+            }
+        }
+        foreach ($dto->component_list()->lst() as $cmp) {
+            $existing = $this->component_list()->get_by_name($cmp->name(), $msg);
+            if ($existing != null) {
+                $msg->merge($existing->fill($cmp, $usr_req));
+            } else {
+                $this->add_component($cmp, $msg);
+            }
+        }
+
+        // a reference is matched by the external key, type and phrase
+        foreach ($dto->reference_list()->lst() as $ref) {
+            $existing = null;
+            foreach ($this->reference_list()->lst() as $ref_of_this) {
+                if ($ref_of_this->get_key() == $ref->get_key()) {
+                    $existing = $ref_of_this;
+                }
+            }
+            if ($existing != null) {
+                $msg->merge($existing->fill($ref, $usr_req));
+            } else {
+                $this->add_reference($ref, $msg);
+            }
+        }
+
+        // a value is matched by the phrases of its group
+        foreach ($dto->value_list()->lst() as $val) {
+            $existing = $this->value_list()->get_by_names($val->phr_names());
+            if ($existing != null) {
+                $msg->merge($existing->fill($val, $usr_req));
+            } else {
+                $this->add_value($val);
+            }
+        }
+
+        // the remaining lists are simply added, because the list itself avoids duplicates
+        // (e.g. the calc validation results are just recalculated once more after a merge)
+        foreach ($dto->result_list()->lst() as $res) {
+            $this->add_result($res);
+        }
+        foreach ($dto->result_check_list()->lst() as $res_chk) {
+            $this->add_calc_validation($res_chk);
+        }
+        foreach ($dto->term_view_list()->lst() as $trm_msk) {
+            $this->add_term_view($trm_msk);
+        }
+        foreach ($dto->user_list()->lst() ?? [] as $usr) {
+            $this->add_user($usr);
+        }
+        foreach ($dto->ip_range_list()->lst() as $ip) {
+            $this->add_ip_range($ip, $msg);
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * export
+     */
+
+    /**
+     * create a zukunft.com import json array based on the objects of this data object
+     * e.g. to write a merged data object back to an import file
+     * the sections are in the order in which get_data_object reads an import file
+     *
+     * @param user_message $msg to collect the problems while creating the export json
+     * @return array the json array in the zukunft.com import format
+     */
+    function export_json(user_message $msg): array
+    {
+        $vars = [];
+        $vars[json_fields::VERSION] = def::PRG_VERSION;
+
+        // a word with only a name goes into the compact word-list to keep the json short;
+        // a word with refs needs a full entry, because has_cfg does not cover the refs
+        // and a name-only entry would lose them
+        $wrd_vars = [];
+        $wrd_names = [];
+        $wrd_ref_keys = [];
+        foreach ($this->word_list()->lst() as $wrd) {
+            if ($wrd->has_cfg() or count($wrd->ref_lst) > 0) {
+                $wrd_vars[] = $wrd->export_json($msg, [], false);
+                foreach ($wrd->ref_lst as $ref) {
+                    $wrd_ref_keys[] = $ref->get_key();
+                }
+            } else {
+                $wrd_names[] = $wrd->name();
+            }
+        }
+        if (count($wrd_vars) > 0) {
+            $vars[json_fields::WORDS] = $wrd_vars;
+        }
+        if (count($wrd_names) > 0) {
+            $vars[json_fields::WORD_LIST] = $wrd_names;
+        }
+
+        $vrb_vars = [];
+        foreach ($this->verb_list()->lst() as $vrb) {
+            $vrb_vars[] = $vrb->export_json($msg, [], false);
+        }
+        if (count($vrb_vars) > 0) {
+            $vars[json_fields::LIST_VERBS] = $vrb_vars;
+        }
+
+        $trp_vars = [];
+        foreach ($this->triple_list()->lst() as $trp) {
+            $trp_vars[] = $trp->export_json($msg, [], false);
+        }
+        if (count($trp_vars) > 0) {
+            $vars[json_fields::TRIPLES] = $trp_vars;
+        }
+
+        $src_vars = [];
+        foreach ($this->source_list()->lst() as $src) {
+            $src_vars[] = $src->export_json($msg, [], false);
+        }
+        if (count($src_vars) > 0) {
+            $vars[json_fields::SOURCES] = $src_vars;
+        }
+
+        // a ref of a word is already part of the word entry above (add_word registers the word
+        // refs in the reference list too), so repeat only the refs that no word entry covers
+        $ref_vars = [];
+        foreach ($this->reference_list()->lst() as $ref) {
+            if (!in_array($ref->get_key(), $wrd_ref_keys)) {
+                $ref_vars[] = $ref->export_json($msg, [], false);
+            }
+        }
+        if (count($ref_vars) > 0) {
+            $vars[json_fields::REFERENCES] = $ref_vars;
+        }
+
+        $val_vars = [];
+        foreach ($this->value_list()->lst() as $val) {
+            $val_vars[] = $val->export_json($msg, [], false);
+        }
+        if (count($val_vars) > 0) {
+            $vars[json_fields::VALUES] = $val_vars;
+        }
+
+        $frm_vars = [];
+        foreach ($this->formula_list()->lst() as $frm) {
+            $frm_vars[] = $frm->export_json($msg, [], false);
+        }
+        if (count($frm_vars) > 0) {
+            $vars[json_fields::FORMULAS] = $frm_vars;
+        }
+
+        $cmp_vars = [];
+        foreach ($this->component_list()->lst() as $cmp) {
+            $cmp_vars[] = $cmp->export_json($msg, [], false);
+        }
+        if (count($cmp_vars) > 0) {
+            $vars[json_fields::COMPONENTS] = $cmp_vars;
+        }
+
+        $msk_vars = [];
+        foreach ($this->view_list()->lst() as $msk) {
+            $msk_vars[] = $msk->export_json($msg, [], false);
+        }
+        if (count($msk_vars) > 0) {
+            $vars[json_fields::VIEWS] = $msk_vars;
+        }
+
+        $res_chk_vars = [];
+        foreach ($this->result_check_list()->lst() as $res_chk) {
+            $res_chk_vars[] = $res_chk->export_json($msg, [], false);
+        }
+        if (count($res_chk_vars) > 0) {
+            $vars[json_fields::CALC_VALIDATION] = $res_chk_vars;
+        }
+
+        // never lose data silently: report the object types that this export does not cover
+        if (!$this->user_list()->is_empty()) {
+            $msg->add_warning_text('the users are not part of the export json');
+        }
+        if (!$this->ip_range_list()->is_empty()) {
+            $msg->add_warning_text('the ip ranges are not part of the export json');
+        }
+
+        return $vars;
+    }
+
     /**
      * check if the pre-calculated results of an import can be reproduced
      * based on the values and formulas of this data object

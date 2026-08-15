@@ -66,7 +66,7 @@ class language_list extends type_list
     {
         global $mtr;
         $html = new html_base();
-        $url = $html->url_new(views::LANGUAGE_SELECT);
+        $url = $html->url_back(views::LANGUAGE_SELECT);
         $txt = $html->ref($url, $mtr->txt(msg_id::AND_MORE));
         return $html->list_item($txt);
     }

@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1170 of 5538 public functions have at least 2 unit test calls; the 4368 functions below do not
+1178 of 5551 public functions have at least 2 unit test calls; the 4373 functions below do not
 
 ## main backend
 
@@ -278,7 +278,6 @@ so same-named functions of several classes share their test calls
 \-- config_numbers
     \-- default_json - 0 unit test calls
     \-- fill_from_cache_json - 0 unit test calls
-    \-- get_by_names - 0 unit test calls
     \-- language - 1 unit test calls
     \-- load_cfg - 0 unit test calls
     \-- load_frontend_cfg - 0 unit test calls
@@ -332,7 +331,6 @@ so same-named functions of several classes share their test calls
     \-- set_user - 0 unit test calls
     \-- set_value_list - 0 unit test calls
     \-- set_view_list - 0 unit test calls
-    \-- source_list - 1 unit test calls
     \-- term_view_list - 0 unit test calls
     \-- user_list - 0 unit test calls
     \-- validate_results - 0 unit test calls
@@ -2752,7 +2750,6 @@ so same-named functions of several classes share their test calls
     \-- filter_by_time - 0 unit test calls
     \-- get_by_grp - 0 unit test calls
     \-- get_by_name_and_context - 0 unit test calls
-    \-- get_by_names - 0 unit test calls
     \-- get_from_lst - 0 unit test calls
     \-- grp_ids - 1 unit test calls
     \-- has_values - 0 unit test calls
@@ -3446,15 +3443,15 @@ so same-named functions of several classes share their test calls
     \-- set_source_list - 0 unit test calls
     \-- set_value_list - 0 unit test calls
     \-- set_view_list - 0 unit test calls
-    \-- source_list - 1 unit test calls
     \-- sys_log_list - 0 unit test calls
     \-- value_list_cloned - 0 unit test calls
     \-- view_list - 0 unit test calls
 \-- db_object
     \-- add_via_api - 0 unit test calls
     \-- api_array - 1 unit test calls
-    \-- btn_add - 0 unit test calls
+    \-- btn_add_back - 0 unit test calls
     \-- btn_add_sbx - 0 unit test calls
+    \-- btn_add_sbx_back - 0 unit test calls
     \-- btn_del - 0 unit test calls
     \-- btn_del_sbx - 0 unit test calls
     \-- btn_edit - 0 unit test calls
@@ -3755,9 +3752,10 @@ so same-named functions of several classes share their test calls
     \-- ui_progress - 0 unit test calls
     \-- url - 0 unit test calls
     \-- url_api - 0 unit test calls
+    \-- url_back - 1 unit test calls
     \-- url_ex - 0 unit test calls
     \-- url_from_back - 0 unit test calls
-    \-- url_new - 1 unit test calls
+    \-- url_old - 0 unit test calls
     \-- url_par_from_back_part - 0 unit test calls
     \-- url_with_back - 0 unit test calls
     \-- url_with_token - 0 unit test calls
@@ -3839,6 +3837,7 @@ so same-named functions of several classes share their test calls
     \-- is_word - 0 unit test calls
     \-- main_word - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_link_with_tip - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- name_tip - 1 unit test calls
     \-- obj_id - 0 unit test calls
@@ -3852,13 +3851,16 @@ so same-named functions of several classes share their test calls
     \-- assigned_subtitle - 0 unit test calls
     \-- assume_time - 0 unit test calls
     \-- btn_add_value - 0 unit test calls
+    \-- cached_phrase - 0 unit test calls
     \-- category_subtitle - 0 unit test calls
+    \-- child_names - 0 unit test calls
     \-- children - 0 unit test calls
     \-- column_names - 0 unit test calls
     \-- common - 0 unit test calls
     \-- dsp_graph - 0 unit test calls
     \-- ex_info_list - 0 unit test calls
     \-- ex_measure_list - 0 unit test calls
+    \-- ex_scaling_list - 0 unit test calls
     \-- ex_time - 0 unit test calls
     \-- get_grp_id - 0 unit test calls
     \-- has_percent - 0 unit test calls
@@ -3880,8 +3882,10 @@ so same-named functions of several classes share their test calls
     \-- phrase_selector - 0 unit test calls
     \-- remove - 0 unit test calls
     \-- result_phrases_most_relevant - 0 unit test calls
+    \-- scaling_list - 0 unit test calls
     \-- select_file - 0 unit test calls
     \-- sort_by_impact - 1 unit test calls
+    \-- tooltip - 0 unit test calls
     \-- url_mapper - 1 unit test calls
     \-- view_selector - 0 unit test calls
     \-- wrd_lst_all - 1 unit test calls
@@ -3936,7 +3940,7 @@ so same-named functions of several classes share their test calls
     \-- set_session_token - 0 unit test calls
 \-- result
     \-- api_array - 1 unit test calls
-    \-- btn_add - 0 unit test calls
+    \-- btn_add_back - 0 unit test calls
     \-- btn_del - 0 unit test calls
     \-- btn_edit - 0 unit test calls
     \-- display_linked - 0 unit test calls
@@ -4517,6 +4521,7 @@ so same-named functions of several classes share their test calls
 \-- value
     \-- api_array - 1 unit test calls
     \-- btn_add - 0 unit test calls
+    \-- btn_add_back - 0 unit test calls
     \-- btn_undo_add_value - 0 unit test calls
     \-- dsp_add_fast - 0 unit test calls
     \-- dsp_edit - 0 unit test calls
@@ -4531,6 +4536,7 @@ so same-named functions of several classes share their test calls
     \-- has_phrase - 0 unit test calls
     \-- impact - 0 unit test calls
     \-- is_id_set - 0 unit test calls
+    \-- links_and_measure - 0 unit test calls
     \-- load_by_id - 0 unit test calls
     \-- match_all - 0 unit test calls
     \-- name_link - 0 unit test calls
@@ -4551,7 +4557,6 @@ so same-named functions of several classes share their test calls
     \-- common_phrases - 0 unit test calls
     \-- dsp_table - 0 unit test calls
     \-- filter - 0 unit test calls
-    \-- get_by_names - 0 unit test calls
     \-- html - 0 unit test calls
     \-- list - 0 unit test calls
     \-- list_most_relevant - 0 unit test calls

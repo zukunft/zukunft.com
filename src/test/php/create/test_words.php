@@ -863,10 +863,34 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word the scaling symbol "mio" as its own database row, i.e. the from side of
+     *              the triple "mio is symbol for million"
+     */
+    function word_mio_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MIO_SHORT_ID, word_names::MIO_SHORT);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
     function word_math(): word
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::MATH_ID, word_names::MATH);
+        return $wrd;
+    }
+
+    /**
+     * @return word "million" with the description used as the tooltip of its symbol "mio"
+     */
+    function word_million(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MIO_ID, word_names::MIO);
+        $wrd->description = word_names::MIO_COM;
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -953,6 +977,36 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::BE_ID, word_names::BE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "loss" of the solution_prio cost values e.g. "potential loss"
+     */
+    function word_loss(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LOSS_ID, word_names::LOSS);
+        return $wrd;
+    }
+
+    /**
+     * @return word "gain" of the solution_prio gain values e.g. "potential gain"
+     */
+    function word_gain(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GAIN_ID, word_names::GAIN);
+        return $wrd;
+    }
+
+    /**
+     * @return word "cost" used e.g. as a mayor table column of the global problems
+     */
+    function word_cost(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::COST_ID, word_names::COST);
         return $wrd;
     }
 

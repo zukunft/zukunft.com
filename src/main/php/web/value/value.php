@@ -363,7 +363,7 @@ class value extends sandbox_value
     {
         $html = new html_base();
         $lib = new library();
-        $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
+        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), '', $back);
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
@@ -379,10 +379,117 @@ class value extends sandbox_value
     function value_edit(user_message $msg, string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(views::VALUE_DEFAULT_ID, $this->id(), '', $back);
+        $url = $html->url_back(views::VALUE_DEFAULT_ID, $this->id(), '', $back);
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
+    }
+
+    /**
+     * create the html code to show the phrase names related to a value in declining order of impact
+     * and the measure types behind the value as a symbol
+     * but with the tooltip of the main measure type
+     * e.g. for cost, global problem, populism, a billion, EUR 23.4 and global problem and cost in the $ex_phr_lst
+     *      the result should be populism 23.4 b EUR
+     *      where b has the tooltip and the link to phrase linked with 'is symbol for'
+     *      and EUR has the tooltip and the link to Euro linked with '?? tbd.'
+     *
+     * @param user_message $msg to collect the error messages
+     * @param array $url_arr with the url vars including the 9 prefixed vars of the previous url as a return path
+     * @param phrase_list|null $ex_phr_lst list of phrases that should be exclude from the name
+     *                                     e.g. because they have be a column header
+     * @param data_object|null $dto the frontend cache with all data needed to create the html,
+     *                              i.e. the phrases with their description for the tooltips and
+     *                              the related phrases, so that e.g. the symbol "mio" can show
+     *                              the description of the related word "million" as its tooltip
+     * @return string one row with the linked phrase names, the value with the edit link
+     *                and the measure links
+     */
+    function links_and_measure(
+        user_message     $msg,
+        array            $url_arr,
+        phrase_list|null $ex_phr_lst = null,
+        data_object|null $dto = null,
+        string           $base_url = ''
+    ): string
+    {
+        $html = new html_base();
+
+        // start with the phrases of the value group and drop the given context phrases,
+        // e.g. the page phrase and the column header of a table cell
+        $phr_lst = clone $this->grp->phr_lst();
+        if ($ex_phr_lst != null) {
+            $phr_lst = $phr_lst->remove($ex_phr_lst);
+        }
+
+        // split off the measure (e.g. EUR), the scaling (e.g. billion) and the information
+        // only phrases (e.g. 1983 (year of definition)), because they are shown behind the
+        // number resp. as the tooltip of the number, not as part of the name
+        $measure_lst = $phr_lst->measure_list($msg);
+        $scale_lst = $phr_lst->scaling_list($msg);
+        $info_lst = $phr_lst->info_list($msg);
+        $phr_lst = $phr_lst->ex_measure_list($msg);
+        $phr_lst = $phr_lst->ex_scaling_list($msg);
+        $phr_lst = $phr_lst->ex_info_list($msg);
+        if ($measure_lst->count() > 1) {
+            log_warning($this->dsp_id() . ' is not expected to have more than one measure');
+        }
+
+        // the remaining phrases name the value with the most relevant phrase first
+        $phr_lst->sort_by_impact();
+        $name_txt = $this->phrase_links($phr_lst, $dto);
+
+        // the number links to the value edit page with the calling page as the return path;
+        // the information only phrases explain the number as its tooltip
+        $url = $html->url_with_back(
+            $html->url_back(views::VALUE_DEFAULT_ID, $this->id()),
+            html_base::page_url_array($url_arr));
+        // value() already returns escaped/safe html, so ref() must not escape it again
+        $val_txt = $html->ref($url, $this->value($msg), $info_lst->name_pur(), '', true);
+
+        // the scaling and the measure phrases follow the number like on a price tag;
+        // a symbol like "mio" has no description of its own, so the cache supplies the
+        // description of the word it is a symbol for (e.g. "million") as the tooltip
+        $unit_txt = trim($this->phrase_links($scale_lst, $dto)
+            . ' ' . $this->phrase_links($measure_lst, $dto));
+
+        // each part is a span of its own, so that the css keeps the name, the number and the
+        // measure side by side on one row and wraps the name first if the space gets tight;
+        // text-nowrap also keeps each part on a single line in the html snapshot, so that the
+        // separator of the phrase links stays directly behind the link (see library::format_html)
+        $row_txt = '';
+        if ($name_txt != '') {
+            $row_txt .= $html->span($name_txt, styles::VALUE_NAME . ' ' . styles::TEXT_NOWRAP);
+        }
+        $row_txt .= $html->span($val_txt, styles::VALUE_NUM . ' ' . styles::TEXT_NOWRAP);
+        if ($unit_txt != '') {
+            $row_txt .= $html->span($unit_txt, styles::VALUE_UNIT . ' ' . styles::TEXT_NOWRAP);
+        }
+        return $html->div($row_txt, styles::VALUE_ROW);
+    }
+
+    /**
+     * the links of the given phrases, each with the best tooltip the frontend cache knows:
+     * the description of the phrase itself or of the phrase it is a symbol for
+     *
+     * @param phrase_list $phr_lst the phrases that should be linked e.g. the measure phrases
+     * @param data_object|null $dto the frontend cache with the described and related phrases
+     * @return string the comma separated html links of the given phrases
+     */
+    private function phrase_links(phrase_list $phr_lst, data_object|null $dto): string
+    {
+        if ($dto?->phr_lst == null) {
+            return $phr_lst->name_link_list();
+        }
+        $result = '';
+        $msg = new user_message(); // a local buffer, the tooltip lookup has no user relevant message
+        foreach ($phr_lst->lst() as $phr) {
+            if ($result <> '') {
+                $result .= ', ';
+            }
+            $result .= $phr->name_link_with_tip($dto->phr_lst->tooltip($phr, $msg));
+        }
+        return $result;
     }
 
     /**
@@ -406,7 +513,7 @@ class value extends sandbox_value
         if ($unit_phr_lst->count() > 1) {
             log_err($this->dsp_id() . ' is not expected to have more than one unit');
         }
-        $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
+        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), '', $back);
         $name_txt = $phr_lst->name_link_list();
         $val_txt = $this->value($msg);
         if (!$info_phr_lst->is_empty()) {
@@ -420,12 +527,25 @@ class value extends sandbox_value
     }
 
     /**
-     * perform the fixed validation tests that are never expected to be changes e.g. a value has only one unit
+     * perform the fixed validation tests that are never expected to be changed
+     * e.g. a value has only one unit, so a value with e.g. "m/s" and "Hz" is reported
+     * @param user_message $msg to collect the error messages of the phrase type checks
      * @return string the warning text translated to the frontend language as defined by the user
      */
-    function warning_text(): string
+    function warning_text(user_message $msg): string
     {
-        return '';
+        $result = '';
+        $unit_lst = $this->grp->phr_lst()->measure_list($msg);
+        if ($unit_lst->count() > 1) {
+            // a local buffer, because the warning text is returned for the page
+            // and must not flag the callers shared message as failed
+            $warning = new user_message();
+            $warning->add(msg_id::VALUE_UNIT_NOT_UNIQUE, [
+                msg_id::VAR_NAME => $unit_lst->name_pur()
+            ]);
+            $result = $warning->get_last_message_translated();
+        }
+        return $result;
     }
 
     /**
@@ -544,7 +664,7 @@ class value extends sandbox_value
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
@@ -559,7 +679,7 @@ class value extends sandbox_value
         if ($pattern != '') {
             $ref_lst->load_like($pattern);
         }
-        return $ref_lst->selector($form, $this->id(), url_var::REF,  msg_id::FORM_SELECT_VIEW_STYLE);
+        return $ref_lst->selector($form, $this->id(), url_var::REF, msg_id::FORM_SELECT_VIEW_STYLE);
     }
 
     /*
@@ -597,10 +717,11 @@ class value extends sandbox_value
      * $select_word - suggested words which the user can change
      * $type_word   - word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word
      *
-     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
      * @returns string the HTML code for a button to add a value related to this value
      */
-    function btn_add(string $back = ''): string
+    function btn_add(array $url_arr = [], string $base_url = ''): string
     {
         $msg_code_id = msg_id::VALUE_ADD;
         $explain = '';
@@ -613,9 +734,39 @@ class value extends sandbox_value
         }
 
         return parent::btn_add_sbx(
+            views::VALUE_ADD_ID,
+            $msg_code_id,
+            $url_arr, $explain, $base_url);
+    }
+
+    /**
+     * offer the user to add a new value similar to this value
+     *
+     * possible future parameters:
+     * $fixed_words - words that the user is not suggested to change this time
+     * $select_word - suggested words which the user can change
+     * $type_word   - word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word
+     *
+     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @param string $base_url to set an absolut html path for urls
+     * @returns string the HTML code for a button to add a value related to this value
+     */
+    function btn_add_back(string $back = '', string $base_url = ''): string
+    {
+        $msg_code_id = msg_id::VALUE_ADD;
+        $explain = '';
+
+        if ($this->grp->phr_lst()->is_empty()) {
+            if (!empty($this->grp->phr_lst()->lst())) {
+                $explain = htmlentities($this->grp->phr_lst()->dsp_name());
+                $msg_code_id = msg_id::VALUE_ADD_SIMILAR;
+            }
+        }
+
+        return parent::btn_add_sbx_back(
             views::VALUE_ADD,
             $msg_code_id,
-            $back, $explain);
+            $back, $explain, $base_url);
     }
 
 
@@ -674,7 +825,7 @@ class value extends sandbox_value
     function btn_undo_add_value($back): string
     {
         return \Zukunft\ZukunftCom\main\php\web\btn_undo('delete this value',
-            new html_base()->url_new(views::VALUE_DEL_ID, $this->id(), '', $back));
+            new html_base()->url_back(views::VALUE_DEL_ID, $this->id(), '', $back));
     }
 
     // display a value, means create the HTML code that allows to edit the value
@@ -683,7 +834,7 @@ class value extends sandbox_value
         log_debug('value->dsp_tbl_std ');
         $html = new html_base();
         $result = '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg)) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg)) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -695,7 +846,7 @@ class value extends sandbox_value
         $html = new html_base();
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg), '', styles::STYLE_USER) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg), '', styles::STYLE_USER) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }

@@ -550,7 +550,15 @@ class calc_internal
             if ($pos > 0) {
                 $part_l = $lib->str_left($result, $pos);
                 log_debug("left part of " . $operator . ": " . $part_l . ".");
-                $part_l = $this->parse($part_l);
+                if (trim($part_l) == '' and ($operator == chars::SUB or $operator == chars::ADD)) {
+                    // TODO Prio 1 review and avoid this exception
+                    // a blank before a sign (e.g. the " -8" in " -8 / 52" created by the calc
+                    // validation substitution) is not a left operand: the sign belongs to the
+                    // number, so use zero instead of parsing the blank as a number
+                    $part_l = 0.0;
+                } else {
+                    $part_l = $this->parse($part_l);
+                }
                 log_debug("left part result " . $part_l . ": ");
                 $part_r = $lib->str_right($result, ($pos + 1) * -1);
                 log_debug("right part " . $operator . ": " . $part_r . ".");

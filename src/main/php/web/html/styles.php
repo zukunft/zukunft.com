@@ -89,5 +89,10 @@ class styles
     const string VALUE_NAME = 'value-name';
     const string VALUE_NUM = 'value-num';
 
+    // css classes for a value shown as one row (value::links_and_measure): the row container
+    // and the measure/scaling part that follows the number like on a price tag
+    const string VALUE_ROW = 'value-row';
+    const string VALUE_UNIT = 'value-unit';
+
 
 }

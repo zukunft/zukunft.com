@@ -640,7 +640,7 @@ class word extends sandbox_code_id
      */
     function btn_unlink(int $link_id, string $back = ''): string
     {
-        $url = new html_base()->url_new(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
+        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
         return new button($url, $back)->del(msg_id::WORD_UNLINK);
     }
 
@@ -900,7 +900,7 @@ class word extends sandbox_code_id
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
+                    $url = $html->url_old(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
@@ -926,7 +926,7 @@ class word extends sandbox_code_id
     {
         $html = new html_base();
         $url = $html->url_with_back(
-            $html->url_new(views::WORD_EDIT_ID, $this->id()),
+            $html->url_back(views::WORD_EDIT_ID, $this->id()),
             [url_var::MASK => views::WORD_ID, url_var::ID => $this->id()]
         );
         $pre = $html->pre_url_part([
@@ -1076,7 +1076,7 @@ class word extends sandbox_code_id
         if ($usr->is_admin()) {
             // admin users should always have the possibility to create a new link type
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('add new link type',
-                new html_base()->url_new(views::VERB_ADD_ID, 0, '', $back));
+                new html_base()->url_back(views::VERB_ADD_ID, 0, '', $back));
         }
 
         return $result;

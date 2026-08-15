@@ -355,6 +355,14 @@ class phrase extends combine_named
     }
 
     /**
+     * @return bool true if the wrapped word or triple is a scaling phrase e.g. "billion"
+     */
+    function is_scaling(user_message $msg): bool
+    {
+        return $this->obj()->is_scaling($msg);
+    }
+
+    /**
      * @return bool true if the wrapped word or triple has the type "time" e.g. "2022 (year)"
      */
     function is_time(user_message $msg): bool
@@ -500,6 +508,36 @@ class phrase extends combine_named
     }
 
     /**
+     * like name_link, but with the tooltip given by the caller, e.g. taken from the frontend
+     * cache, so that a symbol like "mio" can show the description of "million"
+     *
+     * @param string $tip the tooltip text; if empty the description of the phrase is used
+     * @returns string the html code of the phrase link with the given tooltip
+     */
+    function name_link_with_tip(string $tip): string
+    {
+        $result = $this->name_link();
+        if ($tip != '' and ($this->get_description() ?? '') == '') {
+            $html = new html_base();
+            $url = $html->url_back($this->view_id(), $this->id());
+            $result = $html->ref($url, $this->name(), $tip);
+        }
+        return $result;
+    }
+
+    /**
+     * @return int the view id that name_link uses for this phrase class
+     */
+    private function view_id(): int
+    {
+        if ($this->is_triple()) {
+            return views::TRIPLE_ID;
+        } else {
+            return views::WORD_ID;
+        }
+    }
+
+    /**
      * simply to display a single word in a table cell
      */
     function dsp_tbl_cell(int $intent): string
@@ -611,7 +649,7 @@ class phrase extends combine_named
     function btn_add(user_message $msg, string $back): string
     {
         $wrd = $this->main_word($msg);
-        return $wrd->btn_add($back);
+        return $wrd->btn_add_back($back);
     }
 
     /**
@@ -622,7 +660,7 @@ class phrase extends combine_named
     function button_add_triple($back): string
     {
         $wrd = new word();
-        return $wrd->btn_add($back);
+        return $wrd->btn_add_back($back);
     }
 
     /**

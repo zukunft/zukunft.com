@@ -72,7 +72,11 @@ class word_names
     // words from import file scaling.json in order of appearance
     const string MIO = 'million';
     const int MIO_ID = 158;
+    const string MIO_COM = '10⁶';
+    // "mio" is the symbol word of "million" and has its own database row
     const string MIO_SHORT = 'mio';
+    const int MIO_SHORT_ID = 271;
+    const string MIO_SHORT_COM = 'the symbol used in formulas for million';
     const string BILLION = 'billion';
     const int BILLION_ID = 159;
 
@@ -115,6 +119,10 @@ class word_names
     const int GLOBAL_ID = 194;
     const string POTENTIAL = 'potential';
     const int POTENTIAL_ID = 222;
+    const string LOSS = 'loss';
+    const int LOSS_ID = 225;
+    const string GAIN = 'gain';
+    const int GAIN_ID = 223;
     const string CLIMATE = 'climate';
     const int CLIMATE_ID = 226;
     const string WARMER = 'warmer';
@@ -204,6 +212,7 @@ class word_names
     const string PROFIT = 'profit';
     const string GROSS = 'gross';
     const string COST = 'cost';
+    const int COST_ID = 309;
     const string REVENUE = 'revenue';
 
     const string LAYOUT_COM = 'the settings to position the components on the screen';

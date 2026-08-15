@@ -143,6 +143,14 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the standard phrase list for frontend unit testing
+     */
+    function phrase_list_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->phrase_list());
+    }
+
+    /**
      * @return phrase_list with the word one to force a value to be scaled to one
      */
     function phrase_list_one(): phrase_list
@@ -234,6 +242,16 @@ class test_phrases
         $lst->add($t_trp->triple_ge()->phrase());
         return $lst;
     }
+
+    /**
+     * @return phrase_list_ui the long phrase list for frontend unit testing
+     */
+    function phrase_list_long_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->phrase_list_long());
+    }
+
+
 
     function phrase_list_pi_name(): phrase_list
     {
@@ -690,6 +708,30 @@ class test_phrases
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
+    /**
+     * @return phrase_list the frontend cache for the value of the canton inhabitants shown
+     *         with the scaling symbol "mio": the described words and the triple that links
+     *         the symbol "mio" to the word "million", whose description is the symbol tooltip
+     */
+    function list_canton_mio_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_mio_symbol()->phrase());
+        $lst->add($t_wrd->word_million()->phrase());
+        $lst->add($t_trp->mio_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend cache of the canton inhabitants value
+     */
+    function list_canton_mio_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_canton_mio_cache());
+    }
+
     function phrase_list_zh_mio(): phrase_list
     {
         $t_wrd = new test_words($this->env);
@@ -704,6 +746,22 @@ class test_phrases
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
+    /**
+     * @return phrase_list of the canton inhabitants but with the scaling symbol "mio"
+     *         instead of the word "million"
+     */
+    function phrase_list_canton_mio_symbol(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_canton()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_2019()->phrase());
+        $lst->add($t_wrd->word_mio_symbol()->phrase());
+        return $lst;
+    }
+
     function phrase_list_canton_mio(): phrase_list
     {
         $t_wrd = new test_words($this->env);
@@ -746,7 +804,7 @@ class test_phrases
     }
 
     /**
-     * @return phrase_list as ch_inhabitants_in_mio_2019 but with "mio" missing the scaling type
+     * @return phrase_list as ch_inhabitants_in_mio_2019 but with "million" missing the scaling type
      *                     to test the scaling type check
      */
     function ch_inhabitants_in_mio_2019_unscaled(): phrase_list
@@ -1047,6 +1105,34 @@ class test_phrases
     function list_zh_ui(): phrase_list_ui
     {
         return $this->ui_list($this->list_zh());
+    }
+
+    /**
+     * @return phrase_list the "global problem" context of solution_prio.json: the problem
+     *         phrases with their link to "global problem" and the table column definitions,
+     *         e.g. to test the start page table of the global issues
+     */
+    function list_global_problems(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->global_problem()->phrase());
+        $lst->add($t_trp->global_warming()->phrase());
+        $lst->add($t_wrd->word_populism()->phrase());
+        $lst->add($t_trp->global_warming_problem()->phrase());
+        $lst->add($t_trp->populism_problem()->phrase());
+        $lst->add($t_trp->column_cost()->phrase());
+        $lst->add($t_trp->column_gain()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the "global problem" context for frontend unit testing
+     */
+    function list_global_problems_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_problems());
     }
 
     /**

@@ -159,7 +159,7 @@ class view extends view_exe
             $result .= $this->dsp_view_name($back);
             $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), $back, '', word::class . '=' . $back);
-            $url_edit = $html->url($class . rest_ctrl::UPDATE, $this->id(), '', '');
+            $url_edit = $html->url_old($class . rest_ctrl::UPDATE, $this->id(), '', '');
             // TODO fix for frontend based version
             //echo 'button init';
             $result .= $this->btn_edit();
@@ -168,10 +168,10 @@ class view extends view_exe
             // TODO fix for frontend based version
             //$result .= $btn->edit(messages::VIEW_EDIT);
             //$url_add = $html->url($class . api_dsp::CREATE, 0, $back, '', word::class . '=' . $back);
-            $url_add = $html->url($class . rest_ctrl::CREATE, 0, '', '');
+            $url_add = $html->url_old($class . rest_ctrl::CREATE, 0, '', '');
             // TODO fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
-            $result .= $this->btn_add();
+            $result .= $this->btn_add_back();
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -278,9 +278,9 @@ class view extends view_exe
             $url = api::FIND_SCRIPT;
             $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
-            $url = $html->url_new(views::VIEW_EDIT_ID, $this->id());
+            $url = $html->url_back(views::VIEW_EDIT_ID, $this->id());
             $result .= new button($url, $back)->edit(msg_id::VIEW_EDIT, $this->name) . ' ';
-            $url = $html->url_new(views::VIEW_ADD_ID);
+            $url = $html->url_back(views::VIEW_ADD_ID);
             $result .= new button($url, $back)->add(msg_id::VIEW_ADD);
         }
         $result .= ' - ';
@@ -431,7 +431,7 @@ class view extends view_exe
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
             $result .= $html->dsp_form_end('', $back,
-                $html->url_new(views::VIEW_DEL_ID, $this->id(), '', $back));
+                $html->url_back(views::VIEW_DEL_ID, $this->id(), '', $back));
         }
 
         // in edit mode show the assigned words and the hist on the right
@@ -514,22 +514,22 @@ class view extends view_exe
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url_new(views::VIEW_ADD_ID, $this->id(), '', $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1');
+                $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), '', $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
                 $result .= $html->dsp_form_end('',
-                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
-                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } else {
-                $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
                 $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
             }
         }
@@ -608,9 +608,9 @@ class view extends view_exe
             } else {
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = $html->url_new(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
+            $call_edit = $html->url_back(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = $html->url_new(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
+            $call_del = $html->url_back(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }

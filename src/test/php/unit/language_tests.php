@@ -108,7 +108,7 @@ class language_tests
         $ui_lst = new language_list();
         $ui_lst->set_from_json_array($api_json, $msg_ui, ui_language::class);
         $html = new html_base();
-        $url = $html->url_new(views::START_ID);
+        $url = $html->url_back(views::START_ID);
         $target = $t->file('unit/language/header_select_list.html');
         $t->assert_html($test_name, $ui_lst->select_list_item($url), $target);
 

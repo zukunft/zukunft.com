@@ -90,7 +90,7 @@ if ($db_con->is_open()) {
             // also on a pod that blocks the changes of a user without login
             $t->api_login();
             $ui = new frontend('unit ui tests');
-            $usr_ui = new user_ui($this->usr1->api_json());
+            $usr_ui = new user_ui($t->usr1->api_json());
             $msg_ui = new user_message_ui($usr_ui);
             $ui->load_dummy_cache_from_test_resources($msg_ui);
 
