@@ -83,7 +83,8 @@ class sys_log_ui_tests
 
         // test the system log html display functions
         $test_page = $html->text_h2('system log display test');
-        $log_lst = new sys_log_list_ui($t_sys->sys_log_list()->api_json());
+        $log_lst = new sys_log_list_ui();
+        $log_lst->set_from_json($t_sys->sys_log_list()->api_json(), $msg_ui);
         $test_page .= 'user view of a table with system log entries<br>';
         $test_page .= $log_lst->display() . '<br>';
         $test_page .= 'admin view of a table with system log entries<br>';

@@ -236,13 +236,17 @@ class application
         $cfg->load_cfg($msg, null, $usr_sys);
     }
 
-    function end_api(sql_db $db_con): void
+    function end_api(sql_db $db_con, user_message $msg): void
     {
         global $sys;
 
         // writing the end time is always done by a system user
-        $msg = new user_message(user::system());
         $this->write_time($db_con, $msg);
+
+        // report even closing error to be on the save side
+        if (!$msg->is_ok()) {
+            log_err_msg('end_api error', $msg);
+        }
 
         // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();

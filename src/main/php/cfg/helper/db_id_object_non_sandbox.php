@@ -364,7 +364,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
             $log->old_value = $this->unique_value();
             $log->new_value = null;
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $key_fld, '', $key_fld, $id_val);
+                $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $key_fld, '', $key_fld, $id_val);
         } else {
             $qp_log = new sql_par($this::class, $sc_par_lst);
             log_warning('No key found for the logging in db_id_object_non_sandbox::sql_delete_and_log');

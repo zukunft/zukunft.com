@@ -831,6 +831,33 @@ class test_base
     }
 
     /**
+     * check that the user message reports the expected error and clear it for the next test
+     *
+     * the counterpart of assert_msg for a test that is meant to fail: it checks that the
+     * message is not ok and that it names the expected problem, so a test cannot pass on the
+     * wrong error. the message is reset in every case - also if the error is missing or is
+     * another one - because the next test has to start from a clean message
+     * (testing.md "created once and reset after each checked test")
+     *
+     * @param string $msg (unique) description of the test
+     * @param user_message|user_message_ui $usr_msg the backend or frontend message collected during the test
+     * @param string $expected the text that the reported message is expected to contain
+     * @param float $exe_max_time the expected max time to create the result
+     * @return bool true if the expected error has been reported
+     */
+    function assert_msg_false(
+        string                       $msg,
+        user_message|user_message_ui $usr_msg,
+        string                       $expected,
+        float                        $exe_max_time = self::TIMEOUT_LIMIT
+    ): bool
+    {
+        $msg_txt = $usr_msg->text();
+        $usr_msg->reset();
+        return $this->assert_text_contains($msg, $msg_txt, $expected, $exe_max_time);
+    }
+
+    /**
      * check if the result is false and format the result as a string
      *
      * @param string $msg (unique) description of the test
@@ -1720,7 +1747,7 @@ class test_base
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
-            $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_log($sc, $msg, $sc_par_lst);
         } else {
             $qp = $usr_obj->sql_insert($sc, $msg, $sc_par_lst);
         }
@@ -1730,7 +1757,7 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
-                $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
+                $qp = $usr_obj->sql_insert_log($sc, $msg, $sc_par_lst);
             } else {
                 $qp = $usr_obj->sql_insert($sc, $msg, $sc_par_lst);
             }

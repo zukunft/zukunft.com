@@ -174,7 +174,8 @@ class system_view_ui_tests
 
         // shared frontend instance for all page tests
         $ui = new frontend('unit test');
-        $dto = $tl->ui_test_cache($t->usr1, $t);
+        $cac_msg = new user_message();
+        $dto = $tl->ui_test_cache($t->usr1, $t, $cac_msg);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($msg);

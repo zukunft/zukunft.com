@@ -867,7 +867,7 @@ class formula_list extends sandbox_list_named
 
                 // get the formulas that needs to be added
                 // TODO check if other list save function are using the cache instead of this here
-                $load_lst = $chk_lst->missing_ids();
+                $load_lst = $chk_lst->missing_ids($msg_chk);
 
                 // load the formulas by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
@@ -896,7 +896,7 @@ class formula_list extends sandbox_list_named
 
                 // get the formulas that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here
-                $add_lst = $load_lst->missing_ids();
+                $add_lst = $load_lst->missing_ids($msg_chk);
 
                 // create any missing sql insert functions and insert the missing formulas
                 if (!$add_lst->is_empty()) {
@@ -1026,14 +1026,15 @@ class formula_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to report a formula that is in the list twice
      * @return formula_list with all formulas that does not yet have a database id
      */
-    function missing_ids(): formula_list
+    function missing_ids(user_message $msg): formula_list
     {
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
             if ($frm->id() == 0) {
-                $frm_lst->add_by_name_direct($frm);
+                $frm_lst->add_by_name_direct($frm, $msg);
             }
         }
         return $frm_lst;
@@ -1065,9 +1066,14 @@ class formula_list extends sandbox_list_named
     {
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
-            if ($frm->db_ready($msg)) {
+            // db_ready returns the state of the given message, so each formula is judged by its
+            // own message - with the shared message one formula that waits for a term of a later
+            // import level would block every formula after it in the list
+            $rdy_msg = new user_message($msg->usr); // the verdict of this formula, merged on rejection
+            if ($frm->db_ready($rdy_msg)) {
                 $frm_lst->add_by_key($frm);
             } else {
+                $msg->merge($rdy_msg);
                 $msg->add(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $frm->dsp_id(),
@@ -1146,7 +1152,7 @@ class formula_list extends sandbox_list_named
                     msg_id::VAR_FORMULA => $frm->name(),
                     msg_id::VAR_FILE_NAME => $file_name
                 ]);
-                $exp = $frm->expression($cache);
+                $exp = $frm->expression($msg, $cache);
                 // TODO Prio 3 try to avoid reloading of the terms
                 $trm_lst = $frm->load_terms($msg, $cache, $exp);
                 $frm_trm_lst = $exp->terms($msg, $trm_lst);

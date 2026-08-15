@@ -1082,7 +1082,7 @@ class db_object_seq_id extends db_object
         $log->old_value = $this->name();
         $log->new_value = null;
         $qp_log = $log->sql_insert_log(
-            $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
+            $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
 
         // TODO get the fields used in the change log sql from the sql
         $func_body_change .= ' ' . $qp_log->sql . ';';

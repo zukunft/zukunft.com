@@ -74,6 +74,7 @@ include_once test_paths::UNIT_UI . 'start_ui_tests.php';
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -90,7 +91,8 @@ class all_ui_tests extends all_unit_tests
 
         // prepare the unit tests
         $tl = new test_lib();
-        $tl->ui_test_cache($t->usr_dev, $t);
+        $cac_msg = new user_message();
+        $tl->ui_test_cache($t->usr_dev, $t, $cac_msg);
         $u_env = new unit_env();
         $u_env->init_unit_tests($t->usr1);
 

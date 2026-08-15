@@ -129,7 +129,8 @@ class api_message
         if ($db_con->connected()) {
             // read as the virtual system user, because a missing site name entry
             // is created with the default value, which is a system action
-            $sys_msg = new user_message(user::system());
+            // TODO Prio o report the missing side name
+            $sys_msg = new user_message(user::system()); // not reported: a missing site name falls back to the default pod name
             $site_name = $cfg->get_db(config::SITE_NAME, $db_con, $sys_msg, 'get pod name');
             // TODO remove this fallback case
             if ($site_name == '') {

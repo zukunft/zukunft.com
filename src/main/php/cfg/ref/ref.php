@@ -1367,7 +1367,7 @@ class ref extends sandbox_link
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $sim_msg = new user_message(); // the duplicate messages only steer the branch below
+            $sim_msg = new user_message(); // not reported: the duplicate messages only steer the branch below
             $similar = $this->get_similar($sim_msg);
             if ($similar != null) {
                 if ($similar->id() != 0) {

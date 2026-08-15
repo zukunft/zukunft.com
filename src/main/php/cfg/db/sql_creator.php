@@ -1823,7 +1823,7 @@ class sql_creator
 
             // create the sql for the log entry
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
+                $sc_log, $msg, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
 
             // add the fields used to the list
             // maybe later get the fields used in the change log sql from the sql
@@ -1997,7 +1997,7 @@ class sql_creator
 
             // TODO replace dummy value table with an enum value
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
+                $sc_log, $msg, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
 
             // TODO get the fields used in the change log sql from the sql
             $qp->sql .= ' ' . $qp_log->sql . ';';
@@ -2159,7 +2159,7 @@ class sql_creator
 
         // create the sql for the log entry
         $qp = $log->sql_insert_link(
-            $sc_log, $sc_par_lst, $sbx);
+            $sc_log, $sc_par_lst, $msg, $sbx);
         $qp->par_fld_lst = $par_lst_out;
 
         return $qp;
@@ -2220,7 +2220,7 @@ class sql_creator
 
         // create the sql for the log entry
         $qp = $log->sql_insert_link(
-            $sc_log, $sc_par_lst, $sbx);
+            $sc_log, $sc_par_lst, $msg, $sbx);
 
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_field(
@@ -2293,7 +2293,7 @@ class sql_creator
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert_log($sc_log, $sc_par_lst, '', '', $num_fld);
+        $qp = $log->sql_insert_log($sc_log, $msg, $sc_par_lst, '', '', $num_fld);
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();

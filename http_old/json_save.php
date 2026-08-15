@@ -84,4 +84,4 @@ if ($usr->id() > 0) {
 }
 
 // Closing connection
-$app->end_api($db_con);
+$app->end_api($db_con, $msg);

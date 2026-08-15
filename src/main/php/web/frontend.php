@@ -698,7 +698,10 @@ class frontend
             if ($this->dto == null) {
                 $this->dto = new data_object();
             }
-            $this->dto->typ_lst_cache = new type_lists($api_msg, $msg_ui);
+            $this->dto->typ_lst_cache = new type_lists();
+            if ($api_msg != null) {
+                $this->dto->typ_lst_cache->set_from_json($api_msg, $msg_ui);
+            }
         }
     }
 
@@ -1118,7 +1121,10 @@ class frontend
             $url_key = $this->url_cache_key($url_array);
             if ($url_key != '') {
                 $cac_page = new db_cache_page();
-                $cached_html = $cac_page->html_by_url($url_key);
+                // TODO Prio 1 avoid the backend bridge
+                $msg = new backend_user_message();
+                $cached_html = $cac_page->html_by_url($url_key, $msg);
+                $msg_ui->merge($msg);
                 if ($cached_html !== null) {
                     // fill in the reading user's own anti-csrf token so the shared page does not
                     // carry the token of whoever first rendered and cached it (see request_token_valid)
@@ -1187,7 +1193,9 @@ class frontend
         $cac_page = new db_cache_page();
         $cached_html = null;
         if ($url_key != '') {
-            $cached_html = $cac_page->html_by_url($url_key);
+            $msg = new backend_user_message();
+            $cached_html = $cac_page->html_by_url($url_key, $msg);
+            $msg_ui->merge($msg);
             if ($cached_html !== null) {
                 $cached_html = db_cache_page::restore_session_token($cached_html, self::session_token());
             }

@@ -453,7 +453,7 @@ $title_sym = $form->title_of_named_with_edit_link($chf_sym);
 $t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME);
 ```
 
-### The test `$msg` is created once and reset only after an intended fail
+### The test `$msg` is created once and reset after each checked test
 
 Like `$test_name`, the `user_message $msg` a test threads into the functions
 under test is created **once**, at the block's init, and **reused** for every
@@ -472,26 +472,63 @@ $t->cleanup($msg);                                        // still the same $msg
 `$msg` is append-only in production — `http/view.php` creates the one request
 `user_message` and nothing below it ever resets or re-creates it (see
 `state-and-messages.md`). Tests are the **only** place `$msg->reset()` is
-allowed, and only **right after a test that is meant to fail**: the failing call
-leaves its expected error on `$msg`, and the reset clears it so the next
-assertion starts from a clean, `is_ok()` message instead of tripping over the
-prior failure.
+allowed, and there it is not the exception but the rule: **reset the message
+after every test whose result has been checked with an assert**, so the next
+test starts from a clean, `is_ok()` message.
 
 ```php
 // negative test — the call is supposed to report an error
 $test_name = 'adding a triple with the name of a word is rejected';
 $t->assert_false($test_name, $trp->save($msg_ui)->is_ok());
-$msg_ui->reset();   // clear the intended error before the next test
+$msg_ui->reset();   // the assert has read it, so clear it for the next test
 
 // the next test starts from a clean $msg
 $test_name = 'a valid triple is saved';
 $t->assert_true($test_name, $trp_ok->save($msg_ui)->is_ok());
+$msg_ui->reset();
 ```
 
-Never reset `$msg` after a passing test, and never spin up a fresh
-`new user_message()` mid-block just to "start clean" — reset the one block `$msg`
-so a single object carries the block's history. `reset()` keeps the user
-(`reset(keep_usr = true)`), so re-setting `$msg->usr` after it is unnecessary.
+**Why**: a test run should surface as many **independent** issues as possible.
+A message that still carries the reports of the previous test makes the next
+failure unreadable (the assert prints the whole accumulated text) and, worse,
+can suppress the next test entirely: functions that gate their work on the
+message they were given — `if ($msg->is_ok())` in the expression parser, the
+`db_ready()` / `can_be_ready()` loops (`state-and-messages.md`, "The
+`return $msg->is_ok()` trap") — do nothing when handed a message that failed
+earlier. The result is an empty list and an assert that fails for a reason that
+has nothing to do with what it tests.
+
+The reset belongs **after the assert**, never before it: the assert is the
+reader of the message (see the next section), so clearing it earlier throws away
+what the test is supposed to check. Keep the reset out of a test that
+deliberately continues to work on the collected state (a workflow snapshot
+building one message over several steps) — there the accumulation *is* the
+subject of the test.
+
+Never spin up a fresh `new user_message()` mid-block just to "start clean" —
+reset the one block `$msg` so a single object carries the block's history.
+`reset()` keeps the user (`reset(keep_usr = true)`), so re-setting `$msg->usr`
+after it is unnecessary.
+
+### In a test the assert is the reader — an asserted `$msg` is fully handled
+
+The "a message must reach the caller" rule of `state-and-messages.md` asks that
+somebody *reads* what a message collects. In a test that reader is the
+assertion: `$t->assert_msg($test_name, $msg)` reads the state (`is_ok()`) and,
+on failure, the text — and failing the run **is** the report. There is no
+request user above a test, so nothing more has to happen with the buffer:
+
+```php
+$cac_msg = new user_message();
+$tl->ui_test_cache($t->usr1, $t, $cac_msg);   // asserts $cac_msg internally
+// done - no merge, no return, no further read needed
+```
+
+This also holds when the assert sits inside the called helper (as in
+`test_lib::ui_test_cache`): the caller creates the buffer, the helper fills and
+asserts it, and neither side needs to hand the content anywhere else. Judge a
+test-side message by whether an assert consumes it, not by whether the
+immediate caller merges its return.
 
 ### Keep `$test_name` short but unique — don't repeat the subheader
 

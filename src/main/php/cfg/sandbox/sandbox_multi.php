@@ -2537,10 +2537,10 @@ class sandbox_multi extends db_object_multi_user
         // TODO replace dummy value table with an enum value
         if ($this->is_named_obj()) {
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
+                $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
         } else {
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst_log, $ext, '', '', $id_val);
+                $sc_log, $msg, $sc_par_lst_log, $ext, '', '', $id_val);
         }
 
         // TODO get the fields used in the change log sql from the sql
@@ -4095,7 +4095,7 @@ class sandbox_multi extends db_object_multi_user
                 $log->old_value = $this->name();
                 $log->new_value = null;
                 $qp_log = $log->sql_insert_log(
-                    $sc_log, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
+                    $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
                 /*

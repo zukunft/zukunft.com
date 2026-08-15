@@ -821,7 +821,7 @@ class type_object extends db_object_seq_id
         $msg = parent::fill($obj, $usr_req);
         if ($this->get_code_id() == null and $obj->get_code_id() != null) {
             // a local buffer for the permission check; the fill copies a code id already stored
-            $this->set_code_id($obj->get_code_id(), new user_message($usr_req));
+            $this->set_code_id($obj->get_code_id(), new user_message($usr_req)); // not reported, see above
         }
         if ($this->name == null and $obj->name != null) {
             $this->name = $obj->name;

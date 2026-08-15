@@ -64,6 +64,22 @@ class Message
         $this->msg_var_lst = [];
     }
 
+    /**
+     * clear the collected messages and the status
+     *
+     * only a test may call this on the message it owns, to start the next test from a clean
+     * message (testing.md "created once and reset after each checked test"); a function that
+     * has received a message never resets it (state-and-messages.md)
+     *
+     * @return void
+     */
+    function reset(): void
+    {
+        $this->msg_status = msg_id::OK;
+        $this->msg_id_lst = [];
+        $this->msg_var_lst = [];
+    }
+
     /*
      * set
      */

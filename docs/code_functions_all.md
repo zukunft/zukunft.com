@@ -1460,7 +1460,6 @@
     \-- get_usr_names - section for function get_usr_names is expected to be set and get in /formula/expression.php
     \-- element_part_list_old - section for function element_part_list_old not yet defined that it should be extract helper in /formula/expression.php
     \-- get_ref_id - section for function get_ref_id is expected to be set and get in /formula/expression.php
-    \-- element_lst_all - section for function element_lst_all not yet defined that it should be internal functions in /formula/expression.php
     \-- phr_verb_lst - section for function phr_verb_lst not yet defined that it should be to review in /formula/expression.php
     \-- get_triple_symbol - section for function get_triple_symbol is expected to be set and get in /formula/expression.php
     \-- load_verb - section for function load_verb is expected to be load in /formula/expression.php
@@ -4472,8 +4471,6 @@
 \-- internal functions
     \-- get_ref_id
         \-- expression - returns the next positive reference (word, verb or formula) id
-    \-- element_lst_all
-        \-- expression - Create a list of all formula elements
 \-- to review
     \-- phr_verb_lst
         \-- expression - similar to phr_lst, but
@@ -4871,7 +4868,7 @@
     \-- phrase_parts
         \-- triple_list - get a list of the phrase parts
     \-- missing_ids
-        \-- triple_list - @return triple_list with all phrases that does not yet have a database id
+        \-- triple_list - @param user_message $msg to report a triple that is in the list twice
     \-- get_link_conflict
         \-- triple_list - find a triple in the list that links the same from/verb/to as the given triple but carries
     \-- rename_link_conflicts
@@ -5934,6 +5931,7 @@
     \-- dsp_sandbox - section for function dsp_sandbox not yet defined that it should be set and get in /user/user_display_old.php
 \-- user_message
     \-- __construct - section for function __construct is expected to be construct and map in /user/user_message.php
+    \-- reset - section for function reset is expected to be construct and map in /user/user_message.php
     \-- api_array - section for function api_array not yet defined that it should be api in /user/user_message.php
     \-- api_json - section for function api_json not yet defined that it should be api in /user/user_message.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /user/user_message.php
@@ -6219,9 +6217,7 @@
         \-- frontend - define the settings for this word object
         \-- data_object - init the data object vars and set the lists based on the given api json
         \-- user_request - @param user_backend $usr_backend the backend user, updated in place e.g. on login
-        \-- sys_log_list - @param string|null $api_json the api message to fill this system log list
-        \-- type_lists - fill the global html frontend type vars base on the api message
-        \-- verb_list - the parent constructor is called after the reset of lst_name_dirty to enable setting by adding the list
+        \-- verb_list - create an empty list, which needs no message; a caller with an api json message
     \-- reset
         \-- data_object - init the data object vars and set the lists based on the given api json
     \-- input_valid

@@ -82,13 +82,13 @@ class expression_write_tests
 
         // create expressions for testing
         $exp = new expression($frm);
-        $exp->set_user_text($frm->usr_text);
+        $exp->set_user_text($frm->usr_text, $msg);
 
         $exp_pe = new expression($frm);
-        $exp_pe->set_user_text($frm_pe->usr_text);
+        $exp_pe->set_user_text($frm_pe->usr_text, $msg);
 
         $exp_sector = new expression($frm_sector);
-        $exp_sector->set_user_text($frm_sector->usr_text);
+        $exp_sector->set_user_text($frm_sector->usr_text, $msg);
 
         // load the test ids
         $wrd_percent = $t_db->load_word($msg, words::PCT);
@@ -106,16 +106,16 @@ class expression_write_tests
         $result = $lib->dsp_bool($exp->has_ref($msg));
         $t->assert('has_ref for "' . $frm->usr_text . '"', $result, $target);
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
-        $result = $exp->ref_text_ui();
+        $result = $exp->ref_text_ui($msg);
         $t->assert('get_ref_text for "' . $frm->usr_text . '"', $result, $target);
 
         // test the expression processing of the database reference
         $exp_db = new expression($frm);
-        $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
+        $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}', $msg);
         $target = '"' . words::PERCENT . '"=( is.numeric( "' . formula_names::THIS_NAME . '" ) & is.numeric( "' . formula_names::PRIOR . '" ) ) ( "' . formula_names::THIS_NAME . '" - "' . formula_names::PRIOR . '" ) / "' . formula_names::PRIOR . '"';
         // TODO Prio 0 rename to user_text
         $result = $exp_db->user_text_ui();
-        $t->assert('get_usr_text for "' . $exp_db->ref_text_ui() . '"', $result, $target);
+        $t->assert('get_usr_text for "' . $exp_db->ref_text_ui($msg) . '"', $result, $target);
 
         // test getting phrases that should be added to the result of a formula
         $phr_lst_res = $exp->load_result_phrases($msg);
@@ -149,7 +149,7 @@ class expression_write_tests
         $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // ... and all element groups used in the formula
-        $elm_grp_lst = $exp_sector->element_grp_lst($trm_lst);
+        $elm_grp_lst = $exp_sector->element_grp_lst($msg, $trm_lst);
         $result = $elm_grp_lst->name();
         $target = '"country,can be used as a differentiator for,canton","System Test Word Total"';
         $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);

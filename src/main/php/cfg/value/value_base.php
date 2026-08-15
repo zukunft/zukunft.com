@@ -1298,7 +1298,7 @@ class value_base extends sandbox_value
             // because more than one scaling phrase per list is not yet supported
             $src_phr = $src_scale_lst->lst()[0];
             $trg_phr = $trg_scale_lst->lst()[0];
-            $frm = $this->scaling_formula($src_phr, $trg_phr, $trm_lst);
+            $frm = $this->scaling_formula($src_phr, $trg_phr, $trm_lst, $msg);
             if ($frm == null) {
                 log_warning('no scaling formula found to convert "' . $src_phr->name()
                     . '" to "' . $trg_phr->name() . '"', 'value->scale_new');
@@ -1322,7 +1322,7 @@ class value_base extends sandbox_value
      * @param term_list $trm_lst cache of the terms that should contain the scaling formula
      * @return formula|null the formula that scales the source to the target phrase or null if no formula is found
      */
-    private function scaling_formula(phrase $src_phr, phrase $trg_phr, term_list $trm_lst): ?formula
+    private function scaling_formula(phrase $src_phr, phrase $trg_phr, term_list $trm_lst, user_message $msg): ?formula
     {
         $frm_found = null;
         foreach ($trm_lst->lst() as $trm) {
@@ -1330,9 +1330,9 @@ class value_base extends sandbox_value
                 $frm = $trm->obj();
                 if ($frm->ref_text != null and $frm->ref_text != '') {
                     $exp = new expression($frm);
-                    $exp->set_ref_text($frm->ref_text, $trm_lst);
-                    $res_ids = $exp->phr_id_lst($exp->res_part());
-                    $src_ids = $exp->phr_id_lst($exp->r_part());
+                    $exp->set_ref_text($frm->ref_text, $msg, $trm_lst);
+                    $res_ids = $exp->phr_id_lst($exp->res_part($msg));
+                    $src_ids = $exp->phr_id_lst($exp->r_part($msg));
                     if (in_array($trg_phr->id(), $res_ids->lst ?? [])
                         and in_array($src_phr->id(), $src_ids->lst ?? [])) {
                         $frm_found = $frm;
@@ -1375,7 +1375,7 @@ class value_base extends sandbox_value
                     $frm->usr = $this->get_user(); // temp solution until the bug of not setting is found
                     $dto->add_formula($frm, $msg);
                     $exp = new expression($frm);
-                    $exp->set_ref_text($frm->ref_text);
+                    $exp->set_ref_text($frm->ref_text, $msg);
                     foreach ($exp->load_result_phrases($msg)->lst() as $phr) {
                         $dto->add_phrase($phr, $msg);
                     }
@@ -1414,15 +1414,15 @@ class value_base extends sandbox_value
                 $msg->add_warning_with_vars(msg_id::SCALING_WORDS_AMBIGUOUS, [msg_id::VAR_NAME_LIST => $scale_wrd_lst->dsp_name()]);
             } else {
                 $scale_wrd = $scale_wrd_lst->lst()[0];
-                $frm = $this->scale_formula_of($scale_wrd, $dto);
+                $frm = $this->scale_formula_of($scale_wrd, $dto, $msg);
                 if ($frm == null) {
                     $msg->add_warning_with_vars(msg_id::SCALING_FORMULA_MISSING, [msg_id::VAR_WORD_NAME => $scale_wrd->name()]);
                 } else {
                     // test if it is a valid scale formula
                     // which means that the result part must contain exactly one word of type scaling
                     $exp = new expression($frm);
-                    $exp->set_ref_text($frm->ref_text, $dto->term_list());
-                    $res_ids = $exp->phr_id_lst($exp->res_part());
+                    $exp->set_ref_text($frm->ref_text, $msg, $dto->term_list());
+                    $res_ids = $exp->phr_id_lst($exp->res_part($msg));
                     $res_scale_lst = $dto->phrase_list()->filter_by_ids($res_ids)->wrd_lst_all($msg)->scaling_lst();
                     if (count($res_scale_lst->lst()) != 1) {
                         $msg->add(msg_id::SCALING_FORMULA_RESULT_INVALID, [msg_id::VAR_FORMULA_NAME => $frm->name()]);
@@ -1450,14 +1450,14 @@ class value_base extends sandbox_value
      * @param data_object $dto cache with the scaling formulas
      * @return formula|null the formula to scale values of the scaling word to one or null if no formula is found
      */
-    private function scale_formula_of(phrase $scale_wrd, data_object $dto): ?formula
+    private function scale_formula_of(phrase $scale_wrd, data_object $dto, user_message $msg): ?formula
     {
         $frm_found = null;
         foreach ($dto->formula_list()->lst() as $frm) {
             if ($frm_found == null and $frm->ref_text != null and $frm->ref_text != '') {
                 $exp = new expression($frm);
-                $exp->set_ref_text($frm->ref_text, $dto->term_list());
-                $r_ids = $exp->phr_id_lst($exp->r_part());
+                $exp->set_ref_text($frm->ref_text, $msg, $dto->term_list());
+                $r_ids = $exp->phr_id_lst($exp->r_part($msg));
                 if (in_array($scale_wrd->id(), $r_ids->lst ?? [])) {
                     $frm_found = $frm;
                 }
@@ -2115,7 +2115,7 @@ class value_base extends sandbox_value
         $usr = $this->get_user();
 
         $result = '';
-        $msg = new user_message($usr); // dead code (no caller), so nothing is dropped, see pending_prio_2.md
+        $msg = new user_message($usr); // not reported: dead code (no caller), so nothing is dropped, see pending_prio_2.md
 
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();

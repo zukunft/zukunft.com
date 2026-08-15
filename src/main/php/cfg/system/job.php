@@ -350,13 +350,13 @@ class job extends db_object_seq_id_user
     function set_type(string $code_id, user $usr_req): void
     {
         global $sys;
-        $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req)); // only for the permission check
+        $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req)); // not reported: only for the permission check
     }
 
     function set_status(string $code_id, user $usr_req): void
     {
         global $sys;
-        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req)); // only for the permission check
+        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req)); // not reported: only for the permission check
     }
 
     function type_code_id(): string

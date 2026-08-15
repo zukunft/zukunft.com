@@ -637,7 +637,7 @@ class phrase_list extends sandbox_list_named
             } else {
                 // by name, because an import assigns phrases before they have an id and the id
                 // keyed add would keep only the first of them (docs/llm/architecture.md)
-                $this->add_by_name_direct($phr, false, $msg);
+                $this->add_by_name_direct($phr, $msg);
             }
         }
         return $result;
@@ -1115,14 +1115,15 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to report a phrase that is in the list twice
      * @return phrase_list with all phrases that does not yet have a database id
      */
-    function missing_ids(): phrase_list
+    function missing_ids(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->id() == 0) {
-                $phr_lst->add_by_key($phr);
+                $phr_lst->add_by_key($phr, false, $msg);
             }
         }
         return $phr_lst;

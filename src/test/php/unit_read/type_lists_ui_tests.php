@@ -72,7 +72,8 @@ class type_lists_ui_tests
 
         // load the types from the api message
         $api_msg = $t_typ->type_lists_api($t->usr1);
-        $ui_cache = new type_lists($api_msg, $msg);
+        $ui_cache = new type_lists();
+        $ui_cache->set_from_json($api_msg, $msg);
 
         // use the system view to start the HTML test page
         $msk = $ui_cache->msk_sys->get_by_code_id(views::START_CODE);

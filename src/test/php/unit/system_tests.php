@@ -527,9 +527,10 @@ class system_tests
         $log_lst->add($log);
         $log_lst->add($log2);
 
-        $log_lst_ui = new sys_log_list_ui($log_lst->api_json());
-        $usr1_ui = new user($t->usr1->api_json());
         $msg_ui = new user_message_ui();
+        $log_lst_ui = new sys_log_list_ui();
+        $log_lst_ui->set_from_json($log_lst->api_json(), $msg_ui);
+        $usr1_ui = new user($t->usr1->api_json());
         $created = $log_lst_ui->api_json([api_types::HEADER], $msg_ui, $usr1_ui);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_TEST);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));

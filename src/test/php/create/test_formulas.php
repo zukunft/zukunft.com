@@ -539,8 +539,9 @@ class test_formulas extends test_objects
     function expression(): expression
     {
         $t_trm = new test_terms($this->env);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $trm_lst = $t_trm->term_list_time();
-        return $this->formula()->expression($trm_lst);
+        return $this->formula()->expression($msg, $trm_lst);
     }
 
     function element(): element
@@ -555,7 +556,7 @@ class test_formulas extends test_objects
         $msg = new user_message();
         $trm_lst = $t_trm->term_list_time();
         $frm = $this->formula();
-        $exp = $frm->expression($trm_lst);
+        $exp = $frm->expression($msg, $trm_lst);
         $elm_lst = $exp->element_list($msg, $trm_lst);
         return $this->add_seq_number_to_element_list($elm_lst);
     }

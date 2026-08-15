@@ -545,7 +545,7 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        $msg = new user_message(); // a legacy display function without a caller message, see dsp_sandbox_wrd_link
+        $msg = new user_message(); // not reported: a legacy display function without a caller message, see dsp_sandbox_wrd_link
 
         // TODO Prio 0 split and move the database part to the backend
         $db_con = new sql_db();
@@ -1227,7 +1227,7 @@ class user_display_old extends user
         $usr = $ui_sys->usr;
         $result = ''; // reset the html code var
         $html = new html_base();
-        $msg = new user_message(); // a deprecated direct db display function without a caller message
+        $msg = new user_message(); // not reported: a deprecated direct db display function without a caller message
 
         // create the databased link
         $db_con->usr_id = $this->id();

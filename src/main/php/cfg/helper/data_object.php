@@ -357,8 +357,13 @@ class data_object
     function phrase_list(): phrase_list
     {
         if ($this->phr_lst_dirty) {
+            // a buffer read below, because this cache refresh has no caller message
+            $cache_msg = new user_message();
             $phr_lst = $this->word_list()->phrase_lst_of_names();
-            $phr_lst->merge_by_name($this->triple_list()->phrase_lst_of_names());
+            $phr_lst->merge_by_name($this->triple_list()->phrase_lst_of_names($cache_msg));
+            if (!$cache_msg->is_ok()) {
+                log_warning('phrase cache refresh: ' . $cache_msg->text());
+            }
             $this->phr_lst = $phr_lst;
             $this->phr_lst_dirty = false;
         }
@@ -774,7 +779,7 @@ class data_object
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->trp_lst->add_by_name_direct($trp, false, $msg);
+        $this->trp_lst->add_by_name_direct($trp, $msg);
     }
 
     /**
@@ -836,7 +841,7 @@ class data_object
     function add_formula_without_ready_check(formula $frm, user_message $msg): void
     {
         $this->trm_lst_dirty = true;
-        $this->frm_lst->add_by_name_direct($frm, false, $msg);
+        $this->frm_lst->add_by_name_direct($frm, $msg);
     }
 
     /**

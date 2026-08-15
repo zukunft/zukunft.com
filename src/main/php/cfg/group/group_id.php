@@ -91,7 +91,7 @@ class group_id extends id
         // a local message, because a group id is computed from positions this list owns:
         // a missing key while sorting is an internal inconsistency and not a user decision,
         // so it is not propagated to the callers (is_prime, is_big, get_grp_id, ...)
-        $sort_msg = new user_message();
+        $sort_msg = new user_message(); // not reported, see above
         if ($phr_lst->count() <= self::PRIME_PHRASES_STD
             and $phr_lst->prime_only()
             and ($phr_lst->one_positiv() or $phr_lst->count() < self::PRIME_PHRASES_STD)

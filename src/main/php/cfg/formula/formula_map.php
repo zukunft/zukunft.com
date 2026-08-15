@@ -358,7 +358,7 @@ class formula_map extends sandbox_code_id
             if ($api_json[json_fields::USR_TEXT] <> '') {
                 // a local message, because api_mapper returns $msg->is_ok() and the terms of the
                 // expression are resolved with a term list that this mapper does not have
-                $exp_msg = new user_message();
+                $exp_msg = new user_message(); // not reported, see above
                 $this->set_user_text($api_json[json_fields::USR_TEXT], $exp_msg);
             }
         }
@@ -419,7 +419,7 @@ class formula_map extends sandbox_code_id
                 // a local message, because import_mapper returns $msg->is_ok() and a word of the
                 // expression that a later import step still creates is the normal state here,
                 // so it must not stop the import objects after this one
-                $exp_msg = new user_message();
+                $exp_msg = new user_message(); // not reported, see above
                 $this->set_user_text($in_ex_json[json_fields::USR_TEXT], $exp_msg);
             }
         }
@@ -671,15 +671,15 @@ class formula_map extends sandbox_code_id
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return expression the formula expression as an expression element
      */
-    function expression(?term_list $trm_lst = null): expression
+    function expression(user_message $msg, ?term_list $trm_lst = null): expression
     {
         $exp = new expression($this);
         // TODO Prio 0 use the ref text check function that includes the user message
         if ($this->ref_text != '' and $this->usr_text != '') {
             $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
         } else {
-            $exp->set_ref_text($this->ref_text, $trm_lst);
-            $exp->set_user_text($this->usr_text, $trm_lst);
+            $exp->set_ref_text($this->ref_text, $msg, $trm_lst);
+            $exp->set_user_text($this->usr_text, $msg, $trm_lst);
         }
         return $exp;
     }
@@ -771,10 +771,14 @@ class formula_map extends sandbox_code_id
             && ($this->ref_text === null || $this->ref_text === '')) {
             return $trm_lst ?? new term_list($this->get_user());
         }
-        $exp = $this->expression($trm_lst);
+        // the factory converts before the terms are loaded, so that attempt may fail on
+        // purpose; a report would poison the is_ok() gates of the symbol resolution below,
+        // and the load itself reports the really missing terms to the caller
+        $fac_msg = new user_message($msg->usr); // not reported: superseded by the load reports below
+        $exp = $this->expression($fac_msg, $trm_lst);
         // TODO Prio 2 try to avoid reloading of the terms
         $trm_lst = $this->load_terms($msg, $trm_lst, $exp);
-        if ($exp->is_valid() or $this->is_predefined()) {
+        if ($exp->is_valid($msg) or $this->is_predefined()) {
             $frm_trm_lst = $exp->terms($msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
                 $frm_trm = $trm_lst->get_by_name($trm->name(), $msg);
@@ -810,7 +814,9 @@ class formula_map extends sandbox_code_id
     ): term_list
     {
         if ($exp == null) {
-            $exp = $this->expression($trm_lst_in);
+            // a pre-load conversion attempt, see load_missing_terms
+            $fac_msg = new user_message($msg->usr); // not reported: superseded by the load reports below
+            $exp = $this->expression($fac_msg, $trm_lst_in);
         }
         $trm_lst = $this->load_exp_terms($msg, $trm_lst_in, $exp);
         $trm_lst->merge($this->load_phrases($msg, $trm_lst_in, $exp)->term_list());
@@ -832,7 +838,9 @@ class formula_map extends sandbox_code_id
     ): term_list
     {
         if ($exp == null) {
-            $exp = $this->expression($trm_lst_in);
+            // a pre-load conversion attempt, see load_missing_terms
+            $fac_msg = new user_message($msg->usr); // not reported: superseded by the load reports below
+            $exp = $this->expression($fac_msg, $trm_lst_in);
         }
         $trm_lst = $exp->term_id_list($msg);
         $id_lst = $trm_lst->ids();
@@ -866,7 +874,9 @@ class formula_map extends sandbox_code_id
     ): phrase_list
     {
         if ($exp == null) {
-            $exp = $this->expression($trm_lst_in);
+            // a pre-load conversion attempt, see load_missing_terms
+            $fac_msg = new user_message($msg->usr); // not reported: superseded by the load reports below
+            $exp = $this->expression($fac_msg, $trm_lst_in);
         }
         $phr_lst = $exp->phrase_id_list($msg);
         $id_lst = $phr_lst->phrase_ids();
@@ -1080,7 +1090,7 @@ class formula_map extends sandbox_code_id
         $msg = parent::diff_msg($obj, $ex_def);
         // a local message, because the diff reports the differences between the two objects and a
         // term that cannot be resolved without a term list is not one of them
-        $txt_msg = new user_message();
+        $txt_msg = new user_message(); // not reported, see above
         $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->get_ref_text($txt_msg), $obj->get_ref_text($txt_msg));
         $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_USER_TEXT, $this->get_usr_text(), $obj->get_usr_text());
         $this->diff_field_msg($msg, formula_fields::FLD_LATEX, $this->latex, $obj->latex);
@@ -1103,7 +1113,7 @@ class formula_map extends sandbox_code_id
         $result = parent::needs_db_update($db_obj, $msg);
         // a local message like in diff_msg, because whether the text can be converted right now is
         // not what this function answers, and a not ok $msg would stop the save steps after it
-        $txt_msg = new user_message();
+        $txt_msg = new user_message(); // not reported, see above
         if ($this->get_ref_text($txt_msg) != null) {
             if ($this->get_ref_text($txt_msg) != $db_obj->get_ref_text($txt_msg)) {
                 $result = true;
@@ -1781,7 +1791,7 @@ class formula_map extends sandbox_code_id
      */
     function elements(user_message $msg, ?term_list $trm_lst = null): element_list
     {
-        $exp = $this->expression($trm_lst);
+        $exp = $this->expression($msg, $trm_lst);
         return $exp->element_list($msg, $trm_lst);
     }
 
@@ -1795,7 +1805,7 @@ class formula_map extends sandbox_code_id
      */
     function elements_incl_result_phrases(user_message $msg, ?term_list $trm_lst = null): element_list
     {
-        $exp = $this->expression($trm_lst);
+        $exp = $this->expression($msg, $trm_lst);
         return $exp->elements_incl_result_phrases($msg, $trm_lst);
     }
 

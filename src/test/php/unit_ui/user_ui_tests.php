@@ -74,12 +74,12 @@ class user_ui_tests
         $t->subheader($ts . 'system errors');
 
         $test_name = 'the open system errors related to the user are listed';
-        $err_html = $log->user_system_errors($t_sys->list_for_user_ui(), $msg, msg_id::USER_SYSTEM_ERRORS);
+        $err_html = $log->user_system_errors($t_sys->list_for_user_ui($msg), $msg, msg_id::USER_SYSTEM_ERRORS);
         $t->assert_text_contains($test_name, $err_html, sys_log_tests::TV_LOG_TEXT);
         $test_page .= $err_html . '<br>';
 
         $test_name = 'the error list is limited to the most relevant entries';
-        $t->assert_text_not_contains($test_name, $t_sys->list_for_user_ui()->head(1)->get_html($msg), sys_log_tests::T2_LOG_TEXT);
+        $t->assert_text_not_contains($test_name, $t_sys->list_for_user_ui($msg)->head(1)->get_html($msg), sys_log_tests::T2_LOG_TEXT);
 
         $test_name = 'without an open system error the user gets the no-error message';
         $err_html = $log->user_system_errors($t_sys->list_for_user_empty_ui(), $msg, msg_id::USER_SYSTEM_ERRORS);

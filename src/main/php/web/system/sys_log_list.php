@@ -73,19 +73,9 @@ class sys_log_list
      * construct and map
      */
 
-    /**
-     * @param string|null $api_json the api message to fill this system log list
-     * @param user_message|null $msg to report the api mapping problems; null loses them
-     */
-    function __construct(?string $api_json = null, ?user_message $msg = null)
-    {
-        if ($api_json != null) {
-            // only the api mapping needs a message; a caller that passes none loses the mapping
-            // problems, so every caller that has one should hand it over
-            $map_msg = $msg ?? new user_message(); // a local, because a parameter is never reassigned
-            $this->set_from_json($api_json, $map_msg);
-        }
-    }
+    // an empty list needs no message, so this class has no constructor;
+    // a caller with an api json message fills the list with set_from_json($api_json, $msg),
+    // which reports the mapping problems
 
 
     /*

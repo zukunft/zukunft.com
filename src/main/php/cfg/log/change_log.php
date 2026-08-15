@@ -991,6 +991,7 @@ class change_log extends db_object_seq_id_user
      */
     function sql_insert_log(
         sql_creator   $sc,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
         string        $val_tbl = '',
@@ -1000,7 +1001,7 @@ class change_log extends db_object_seq_id_user
     ): sql_par
     {
         if ($this::class == change_link::class) {
-            return $this->sql_insert_link($sc, $sc_par_lst);
+            return $this->sql_insert_link($sc, $sc_par_lst, $msg);
         } else {
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
@@ -1067,12 +1068,14 @@ class change_log extends db_object_seq_id_user
      * dummy function overwritten by the child object
      * @param sql_creator $sc
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param user_message $msg to collect the messages
      * @param sandbox_link|null $sbx
      * @return sql_par
      */
     function sql_insert_link(
         sql_creator   $sc,
         sql_type_list $sc_par_lst,
+        user_message  $msg,
         ?sandbox_link $sbx = null
     ): sql_par
     {
@@ -1133,11 +1136,11 @@ class change_log extends db_object_seq_id_user
 
         $db_type = $db_con->get_class();
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert_log($sc);
+        $qp = $this->sql_insert_log($sc, $msg);
         if ($qp->name == 'change_values_prime_insert') {
             if (count($qp->par) > 5) {
                 log_debug('');
-                $qp = $this->sql_insert_log($sc);
+                $qp = $this->sql_insert_log($sc, $msg);
             }
         }
         $log_id = 0;

@@ -140,15 +140,13 @@ class user_message extends Message
         if (!$keep_usr) {
             $this->usr = new user();
         }
+        parent::reset();
         $this->info_text = [];
         $this->msg_text = [];
-        $this->msg_status = msg_id::OK;
         $this->start_time = null;
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
         $this->added_depending = false;
-        $this->msg_id_lst = [];
-        $this->msg_var_lst = [];
         $this->typ_lst = [];
     }
 

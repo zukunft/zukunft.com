@@ -2286,14 +2286,14 @@ class sandbox extends db_object_seq_id_user
             if (in_array($this::class, def::CODE_ID_CLASSES)) {
                 if ($this->get_code_id() != $norm_obj->get_code_id()) {
                     // a local buffer for the permission check; this only syncs the two rows internally
-                    $this->set_code_id($norm_obj->get_code_id(), new user_message($this->get_user()));
+                    $this->set_code_id($norm_obj->get_code_id(), new user_message($this->get_user())); // not reported, see above
                     log_warning('code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
             }
             // make sure that the ui msg code id never differs between the standard row and the user row
             if (in_array($this::class, def::UI_MSG_CODE_ID_CLASSES)) {
                 // a local buffer for the permission checks; this only syncs the two rows internally
-                $ui_msg = new user_message($this->get_user());
+                $ui_msg = new user_message($this->get_user()); // not reported, see above
                 if ($this->get_ui_msg_code_id() != $norm_obj->get_ui_msg_code_id()) {
                     $this->set_ui_msg_code_id($norm_obj->get_ui_msg_code_id(), $ui_msg);
                     log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
@@ -3678,7 +3678,7 @@ class sandbox extends db_object_seq_id_user
             $log->old_value = $this->name();
             $log->new_value = null;
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
+                $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
         } elseif ($this->is_link_obj()) {
             $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $fvt_lst_out, $sc_par_lst_log, $msg);
             $fvt_lst_out->add_list($qp_log->par_fld_lst);
@@ -4361,7 +4361,7 @@ class sandbox extends db_object_seq_id_user
                 $log->old_value = $this->name();
                 $log->new_value = null;
                 $qp_log = $log->sql_insert_log(
-                    $sc_log, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
+                    $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
                 // TODO Prio 0 activate or remove

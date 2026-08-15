@@ -94,4 +94,4 @@ if ($usr->id() > 0) {
 echo $result;
 
 // Closing connection
-$app->end_api($db_con);
+$app->end_api($db_con, $msg);

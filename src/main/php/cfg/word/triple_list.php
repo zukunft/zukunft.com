@@ -666,9 +666,10 @@ class triple_list extends sandbox_list_named
      * convert this triple list object into a phrase list object
      * and use the name as the unique key instead of the database id
      * used for the data_object based import
+     * @param user_message $msg to report a triple name that is in the list twice
      * @return phrase_list with all triples of this list as a phrase
      */
-    function phrase_lst_of_names(): phrase_list
+    function phrase_lst_of_names(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $lnk) {
@@ -676,7 +677,7 @@ class triple_list extends sandbox_list_named
                 log_err('unexpected phrase instead of triple in triple list');
                 $phr_lst->add_by_key($lnk);
             } else {
-                $phr_lst->add_by_name_direct($lnk->phrase());
+                $phr_lst->add_by_name_direct($lnk->phrase(), $msg);
             }
         }
         return $phr_lst;
@@ -685,25 +686,26 @@ class triple_list extends sandbox_list_named
     /**
      * get the triples that does not yet have a database id, but have a name
      * including the linked triples
+     * @param user_message $msg to report a triple name that is in the list twice
      * @return triple_list with all triples potentially missing in the database
      */
-    function triples_to_add_to_db(): triple_list
+    function triples_to_add_to_db(user_message $msg): triple_list
     {
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
             if ($trp->no_id_but_name()) {
-                $trp_lst->add_by_name_direct($trp);
+                $trp_lst->add_by_name_direct($trp, $msg);
             }
             $from = $trp->get_from();
             if ($from->is_triple()) {
                 if ($from->no_id_but_name()) {
-                    $trp_lst->add_by_name_direct($from);
+                    $trp_lst->add_by_name_direct($from, $msg);
                 }
             }
             $to = $trp->get_to();
             if ($to->is_triple()) {
                 if ($to->no_id_but_name()) {
-                    $trp_lst->add_by_name_direct($to);
+                    $trp_lst->add_by_name_direct($to, $msg);
                 }
             }
         }
@@ -730,14 +732,15 @@ class triple_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to report a triple that is in the list twice
      * @return triple_list with all phrases that does not yet have a database id
      */
-    function missing_ids(): triple_list
+    function missing_ids(user_message $msg): triple_list
     {
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
             if ($trp->id() == 0) {
-                $trp_lst->add_by_name_direct($trp);
+                $trp_lst->add_by_name_direct($trp, $msg);
             }
         }
         return $trp_lst;
@@ -853,7 +856,7 @@ class triple_list extends sandbox_list_named
                 $msg_ins->unset_added_depending();
 
                 // collect all triples with names that does not yet have a database id and needs to be added
-                $chk_lst = $this->triples_to_add_to_db();
+                $chk_lst = $this->triples_to_add_to_db($msg_chk);
 
                 // add the database id to the triple list of words and triples used until now
                 $chk_lst->fill_by_name($cache, $msg_chk, true, false);
@@ -863,7 +866,7 @@ class triple_list extends sandbox_list_named
 
                 // get the triples that needs to be added
                 // TODO check if other list save function are using the cache instead of this here
-                $load_lst = $chk_lst->missing_ids();
+                $load_lst = $chk_lst->missing_ids($msg_chk);
 
                 // load the triples by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
@@ -891,7 +894,7 @@ class triple_list extends sandbox_list_named
 
                 // get the triples that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here
-                $add_lst = $load_lst->missing_ids();
+                $add_lst = $load_lst->missing_ids($msg_chk);
 
                 // create any missing sql insert functions and insert the missing triples
                 if (!$add_lst->is_empty()) {
