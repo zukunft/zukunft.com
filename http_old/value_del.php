@@ -101,7 +101,7 @@ if ($usr->id() > 0) {
             $result .= $msk_ui->dsp_navbar($dto, $back);
 
             $val->load_phrases();
-            $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
+            $url = $html->url_old(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
             $result .= (new button($url, $back))->yes_no(
                 msg_id::VALUE_DEL->value, $val->number() . $mtr->txt(msg_id::FOR) . $val->phr_lst()->dsp_name() . '?');
         }

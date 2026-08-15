@@ -237,7 +237,7 @@ class result extends sandbox_value
      * overwrite because results should not be added via the user interface by the user
      * @return string an empty string
      */
-    function btn_add(string $back = ''): string
+    function btn_add_back(string $back = ''): string
     {
         return '';
     }

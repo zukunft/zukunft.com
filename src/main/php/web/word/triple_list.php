@@ -150,7 +150,7 @@ class triple_list extends ListBase
         }
         if ($add_btn) {
             $add_trp = $this->suggested($msg);
-            $add_url = $add_trp->btn_add($back);
+            $add_url = $add_trp->btn_add_back($back);
             $cols .= $html->td($add_url);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
@@ -276,7 +276,7 @@ class triple_list extends ListBase
                     $result .= '  <tr>';
                     $result .= '    <td>';
                     $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add similar word",
-                            $html->url_new(views::WORD_ADD_ID, 0, '', (string)$start_id, '', 'verb=' .
+                            $html->url_back(views::WORD_ADD_ID, 0, '', (string)$start_id, '', 'verb=' .
                                 $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id));
                     $result .= '    </td>';
                     $result .= '  </tr>';

@@ -315,7 +315,7 @@ class ui_list extends ui_base
                 if ($lst->count() > 1) {
                     $msg = $msg_many;
                 }
-                $vrb_lnk = $html->ref($html->url_new(views::VERB_ID, $vrb->id()), $mtr->txt($msg));
+                $vrb_lnk = $html->ref($html->url_back(views::VERB_ID, $vrb->id()), $mtr->txt($msg));
                 $result = $html->span(
                     $mtr->txt(msg_id::PHRASE_HAS) . ' ' . $vrb_lnk . ': ' . $lst->name_link(),
                     styles::TEXT_NOWRAP

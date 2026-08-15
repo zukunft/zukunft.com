@@ -562,7 +562,7 @@ class term extends combine_named
 
         $html = new html_base();
         $url = $html->url_with_back(
-            $html->url_new($this->edit_view_id(), $this->obj_id()),
+            $html->url_back($this->edit_view_id(), $this->obj_id()),
             html_base::page_url_array($url_array)
         );
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="fas fa-edit"></' . html_base::I . '>';
@@ -607,7 +607,7 @@ class term extends combine_named
     {
         $btn = new button();
         $html = new html_base();
-        $del_call = $html->url_new(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
+        $del_call = $html->url_back(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
         $result = '    <td>' . "\n";
         $result .= $btn->del(msg_id::WORD_UNLINK, $del_call);
         $result .= '    </td>' . "\n";

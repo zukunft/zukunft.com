@@ -103,7 +103,7 @@ class horizontal_ui_tests
             $test_name = 'add ' . $lib->class_to_name($class) . ' html code';
             if ($class != result::class) {
                 // it should not be possible to add result via an ui button
-                $t->assert_text_contains($test_name, $ui_obj->btn_add(), button::IMG_ADD_FA);
+                $t->assert_text_contains($test_name, $ui_obj->btn_add_back(), button::IMG_ADD_FA);
             }
             $test_name = 'edit ' . $lib->class_to_name($class) . ' html code';
             $t->assert_text_contains($test_name, $ui_obj->btn_edit(), button::IMG_EDIT_FA);

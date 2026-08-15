@@ -69,6 +69,7 @@ class button
     public string $title = ''; // title to display on mouse over
     public string $call = ''; // url to call if the user clicks
     public string $back = ''; // word id, word name or url that should be called after the action is completed
+    public array $url_arr = []; // word id, word name or url that should be called after the action is completed
 
     /*
      * construct and capsule
@@ -76,12 +77,16 @@ class button
 
     /**
      * @param string $url the url that is called if the button is pressed
-     * @param string $back the history of changes by the user to be able to perform correct undo actions
+     * @param array|string $url_arr the history of changes by the user to be able to perform correct undo actions
      */
-    function __construct(string $url = '', string $back = '')
+    function __construct(string $url = '', array|string $url_arr = '')
     {
         $this->call = $url;
-        $this->back = $back;
+        if (is_string($url_arr)) {
+            $this->back = $url_arr;
+        } else {
+            $this->url_arr = $url_arr;
+        }
     }
 
 
@@ -115,7 +120,9 @@ class button
         return $html->ref($this->call, $inner, $this->title, '', true);
     }
 
-    // same as html but the bootstrap version
+    /**
+     * same as html but the bootstrap version
+     */
     private function html_fa(string $icon): string
     {
         $html = new html_base();
@@ -134,7 +141,10 @@ class button
         }
     }
 
-    // button function to keep the image call on one place
+    /**
+     * html code for a icon to create a new entry
+     * button function to keep the image call on one place
+     */
     function add(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
@@ -276,7 +286,7 @@ class button
             $url_type = $lib->ids_to_url($type_ids, "type");
         }
 
-        $this->call = new html_base()->url_new(views::VALUE_ADD_ID, 0, '', $back) . $url_phr . $url_type;
+        $this->call = new html_base()->url_back(views::VALUE_ADD_ID, 0, '', $back) . $url_phr . $url_type;
         $result = $this->add(msg_id::ADD);
 
         log_debug($result);
@@ -358,7 +368,7 @@ class button
         } else {
             $this->title = "change this value";
         }
-        $this->call = new html_base()->url_new(views::VALUE_EDIT_ID, $group_id, '', $back);
+        $this->call = new html_base()->url_back(views::VALUE_EDIT_ID, $group_id, '', $back);
         $result = $this->edit(msg_id::EDIT);
         log_debug($result);
         return $result;
@@ -376,7 +386,7 @@ class button
         } else {
             $this->title = "delete this value";
         }
-        $this->call = new html_base()->url_new(views::VALUE_DEL_ID, $group_id, '', $back);
+        $this->call = new html_base()->url_back(views::VALUE_DEL_ID, $group_id, '', $back);
         $result = $this->del(msg_id::DEL);
         log_debug($result);
         return $result;

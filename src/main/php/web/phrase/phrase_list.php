@@ -403,7 +403,7 @@ class phrase_list extends sandbox_list_named
     ): ?string
     {
         $html = new html_base();
-        $url = $html->url_new(views::WORD_RELATED_ID, $parent_id);
+        $url = $html->url_back(views::WORD_RELATED_ID, $parent_id);
         return $html->ref($url, '...');
     }
 

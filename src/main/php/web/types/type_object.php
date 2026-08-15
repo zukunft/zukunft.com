@@ -162,7 +162,7 @@ class type_object
     function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
     {
         $html = new html_base();
-        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        $url = $html->url_back($msk_id, $this->id(), '', $back);
         return $html->ref($url, $this->name(), $this->description, $style);
     }
 

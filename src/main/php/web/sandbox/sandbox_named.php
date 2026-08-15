@@ -320,7 +320,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
     {
         $html = new html_base();
-        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        $url = $html->url_back($msk_id, $this->id(), '', $back);
         // escape the user settable name (link body); ref() escapes the
         // description that becomes the title attribute
         return $html->ref($url, $this->name(), $this->get_description(), $style);

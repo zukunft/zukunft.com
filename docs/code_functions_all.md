@@ -5354,9 +5354,8 @@
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
-    \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
-    \-- url_new - section for function url_new not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
-    \-- back_url_part - section for function back_url_part not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
+    \-- url_old - section for function url_old not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
+    \-- url_back - section for function url_back not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- pre_url_part - section for function pre_url_part not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_with_back - section for function url_with_back not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_with_token - section for function url_with_token not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -5664,7 +5663,7 @@
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result.php
     \-- figure - section for function figure not yet defined that it should be cast in /result/result.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /result/result.php
-    \-- btn_add - section for function btn_add not yet defined that it should be buttons in /result/result.php
+    \-- btn_add_back - section for function btn_add_back not yet defined that it should be buttons in /result/result.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /result/result.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /result/result.php
     \-- explain - section for function explain not yet defined that it should be review in /result/result.php
@@ -5719,10 +5718,11 @@
     \-- id - section for function id not yet defined that it should be set and get in /sandbox/db_object.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /sandbox/db_object.php
     \-- api_json - section for function api_json not yet defined that it should be interface in /sandbox/db_object.php
-    \-- btn_add - section for function btn_add not yet defined that it should be buttons in /sandbox/db_object.php
+    \-- btn_add_back - section for function btn_add_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_add_sbx - section for function btn_add_sbx not yet defined that it should be buttons in /sandbox/db_object.php
+    \-- btn_add_sbx_back - section for function btn_add_sbx_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_edit_sbx - section for function btn_edit_sbx not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_del_sbx - section for function btn_del_sbx not yet defined that it should be buttons in /sandbox/db_object.php
     \-- obj_url - section for function obj_url not yet defined that it should be display in /sandbox/db_object.php
@@ -5979,6 +5979,7 @@
     \-- ref_selector - section for function ref_selector not yet defined that it should be base in /value/value.php
     \-- has_phrase - section for function has_phrase not yet defined that it should be info in /value/value.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /value/value.php
+    \-- btn_add_back - section for function btn_add_back not yet defined that it should be buttons in /value/value.php
     \-- is_id_set - section for function is_id_set is expected to be info in /value/value.php
     \-- btn_undo_add_value - section for function btn_undo_add_value not yet defined that it should be to review in /value/value.php
     \-- dsp_tbl_std - section for function dsp_tbl_std not yet defined that it should be to review in /value/value.php
@@ -7508,19 +7509,19 @@
         \-- button - set the button user test
 \-- HTML code
     \-- add
-        \-- button - @param string $icon the path of the icon that should be shown
+        \-- button - html code for a icon to create a new entry
     \-- edit
-        \-- button - @param string $icon the path of the icon that should be shown
+        \-- button - html code for a icon to create a new entry
     \-- del
-        \-- button - @param string $icon the path of the icon that should be shown
+        \-- button - html code for a icon to create a new entry
     \-- undo
-        \-- button - @param string $icon the path of the icon that should be shown
+        \-- button - html code for a icon to create a new entry
     \-- find
-        \-- button - @param string $icon the path of the icon that should be shown
+        \-- button - html code for a icon to create a new entry
     \-- un_filter
-        \-- button - @param string $icon the path of the icon that should be shown
+        \-- button - html code for a icon to create a new entry
     \-- back_img
-        \-- button - @param string $icon the path of the icon that should be shown
+        \-- button - html code for a icon to create a new entry
     \-- back
         \-- button - display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
     \-- confirm
@@ -7593,12 +7594,10 @@
     \-- sup
         \-- html_base - @param string $text the superscript text e.g. the exponent "2"
 \-- wrapper for internal references used in the html code
-    \-- url
+    \-- url_old
         \-- html_base - build a url for link a zukunft.com element
-    \-- url_new
-        \-- html_base - build a zukunft.com internal url based on the html one-page setup
-    \-- back_url_part
-        \-- html_base - Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
+    \-- url_back
+        \-- html_base - TODO Prio 1 deprecate and replace if the the url_arr based back var
     \-- pre_url_part
         \-- html_base - Build a URL parameter string with each editable field prefixed with url_var::PRE ('8'),
     \-- url_with_back

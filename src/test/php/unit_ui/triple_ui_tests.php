@@ -70,7 +70,7 @@ class triple_ui_tests
         $test_page .= 'with tooltip: ' . $trp->name_tip() . '<br>';
         $test_page .= 'with link: ' . $trp->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $trp->btn_add() . '<br>';
+        $test_page .= 'add button: ' . $trp->btn_add_back() . '<br>';
         $test_page .= 'edit button: ' . $trp->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $trp->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');

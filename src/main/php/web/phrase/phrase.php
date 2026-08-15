@@ -519,7 +519,7 @@ class phrase extends combine_named
         $result = $this->name_link();
         if ($tip != '' and ($this->get_description() ?? '') == '') {
             $html = new html_base();
-            $url = $html->url_new($this->view_id(), $this->id());
+            $url = $html->url_back($this->view_id(), $this->id());
             $result = $html->ref($url, $this->name(), $tip);
         }
         return $result;
@@ -649,7 +649,7 @@ class phrase extends combine_named
     function btn_add(user_message $msg, string $back): string
     {
         $wrd = $this->main_word($msg);
-        return $wrd->btn_add($back);
+        return $wrd->btn_add_back($back);
     }
 
     /**
@@ -660,7 +660,7 @@ class phrase extends combine_named
     function button_add_triple($back): string
     {
         $wrd = new word();
-        return $wrd->btn_add($back);
+        return $wrd->btn_add_back($back);
     }
 
     /**

@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::CREATE . 'test_words.php';
@@ -72,6 +73,8 @@ class value_ui_tests
         // start the test section (ts)
         $ts = 'unit ui value ';
         $t->header($ts);
+        $base_url = THIS_URL;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         $t->subheader($ts . 'html');
 
@@ -86,7 +89,6 @@ class value_ui_tests
         // page phrases are excluded from the name, like in a table where the page phrase is
         // the table context and the measure is shown behind the number
         $val_zh = $t_val->people_zh_canton_mio_ui();
-        $url_arr = [url_var::MASK => views::WORD_ID];
         $test_page .= 'with linked names and separate measure: ' . $val_zh->links_and_measure($msg_ui, $url_arr) . '<br>';
         $wrd_canton = $t_wrd->word_canton();
         $phr_lst_ex = new phrase_list_ui();
@@ -100,7 +102,7 @@ class value_ui_tests
         $test_page .= 'with the tooltips from the cache: ' . $val_sym->links_and_measure($msg_ui, $url_arr, null, $dto) . '<br>';
         $test_page .= 'with measure type: ' . $tl->ui_value($t_val->light_speed())->with_unit_and_info($msg_ui) . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $val->btn_add() . '<br>';
+        $test_page .= 'add button: ' . $val->btn_add($url_arr, $base_url) . '<br>';
         $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $val->btn_del() . '<br>';
         $val_protected = new value($t_val->value_protected($msg)->api_json([api_types::INCL_PHRASES]));

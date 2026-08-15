@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1178 of 5548 public functions have at least 2 unit test calls; the 4370 functions below do not
+1178 of 5551 public functions have at least 2 unit test calls; the 4373 functions below do not
 
 ## main backend
 
@@ -3449,8 +3449,9 @@ so same-named functions of several classes share their test calls
 \-- db_object
     \-- add_via_api - 0 unit test calls
     \-- api_array - 1 unit test calls
-    \-- btn_add - 0 unit test calls
+    \-- btn_add_back - 0 unit test calls
     \-- btn_add_sbx - 0 unit test calls
+    \-- btn_add_sbx_back - 0 unit test calls
     \-- btn_del - 0 unit test calls
     \-- btn_del_sbx - 0 unit test calls
     \-- btn_edit - 0 unit test calls
@@ -3751,9 +3752,10 @@ so same-named functions of several classes share their test calls
     \-- ui_progress - 0 unit test calls
     \-- url - 0 unit test calls
     \-- url_api - 0 unit test calls
+    \-- url_back - 1 unit test calls
     \-- url_ex - 0 unit test calls
     \-- url_from_back - 0 unit test calls
-    \-- url_new - 1 unit test calls
+    \-- url_old - 0 unit test calls
     \-- url_par_from_back_part - 0 unit test calls
     \-- url_with_back - 0 unit test calls
     \-- url_with_token - 0 unit test calls
@@ -3938,7 +3940,7 @@ so same-named functions of several classes share their test calls
     \-- set_session_token - 0 unit test calls
 \-- result
     \-- api_array - 1 unit test calls
-    \-- btn_add - 0 unit test calls
+    \-- btn_add_back - 0 unit test calls
     \-- btn_del - 0 unit test calls
     \-- btn_edit - 0 unit test calls
     \-- display_linked - 0 unit test calls
@@ -4519,6 +4521,7 @@ so same-named functions of several classes share their test calls
 \-- value
     \-- api_array - 1 unit test calls
     \-- btn_add - 0 unit test calls
+    \-- btn_add_back - 0 unit test calls
     \-- btn_undo_add_value - 0 unit test calls
     \-- dsp_add_fast - 0 unit test calls
     \-- dsp_edit - 0 unit test calls

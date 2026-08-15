@@ -419,9 +419,9 @@ class db_object extends TextIdObject
      * @return string the html code for a bottom
      * to create a new sandbox object e.g. word for the current user
      */
-    function btn_add(string $back = ''): string
+    function btn_add_back(string $back = ''): string
     {
-        return $this->btn_add_sbx(
+        return $this->btn_add_sbx_back(
             $this::VIEW_ADD,
             $this::MSG_ADD,
             $back);
@@ -457,13 +457,40 @@ class db_object extends TextIdObject
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
+     * @return string the html code for a bottom
+     */
+    function btn_add_sbx(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        array      $url_arr = [],
+        string     $explain = '',
+        string     $base_url = ''
+    ): string
+    {
+        $btn = $this->btn_sbx($msk_id, $url_arr, $base_url);
+        return $btn->add($msg_code_id, $explain);
+    }
+
+    /**
+     * create the html code to add a sandbox object for the current user
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
      * @param string $back the backtrace for the return page after adding the object and for undo actions
      * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_add_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function btn_add_sbx_back(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        string     $back = '',
+        string     $explain = '',
+        string     $base_url = ''
+    ): string
     {
-        $btn = $this->btn_sbx($msk_id, $back);
+        $btn = $this->btn_sbx_back($msk_id, $back, $base_url);
         return $btn->add($msg_code_id, $explain);
     }
 
@@ -478,7 +505,7 @@ class db_object extends TextIdObject
      */
     function btn_edit_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
     {
-        $btn = $this->btn_sbx($msk_id, $back);
+        $btn = $this->btn_sbx_back($msk_id, $back);
         return $btn->edit($msg_code_id, $explain);
     }
 
@@ -494,7 +521,7 @@ class db_object extends TextIdObject
      */
     function btn_del_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
     {
-        $btn = $this->btn_sbx($msk_id, $back);
+        $btn = $this->btn_sbx_back($msk_id, $back);
         return $btn->del($msg_code_id, $explain);
     }
 
@@ -502,13 +529,29 @@ class db_object extends TextIdObject
      * create the html code for a button
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
+     * @param string $base_url to set an absolut html path for urls
      * @return button the filled bottom object
      */
-    private function btn_sbx(int|string $msk_id, string $back = ''): button
+    private function btn_sbx(int|string $msk_id, array $url_arr = [], string $base_url = ''): button
     {
         $html = new html_base();
-        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        $url = $html->url($msk_id, $this->id(), $url_arr, '', $base_url);
+        return new button($url, $url_arr);
+    }
+
+    /**
+     * create the html code for a button
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param string $base_url to set an absolut html path for urls
+     * @return button the filled bottom object
+     */
+    private function btn_sbx_back(int|string $msk_id, string $back = '', string $base_url = ''): button
+    {
+        $html = new html_base();
+        $url = $html->url_back($msk_id, $this->id(), '', $back);
         return new button($url, $back);
     }
 
@@ -525,7 +568,7 @@ class db_object extends TextIdObject
      */
     function obj_url(int|string $view, ?string $back = ''): string
     {
-        return new html_base()->url_new($view, $this->id(), '', $back);
+        return new html_base()->url_back($view, $this->id(), '', $back);
     }
 
 

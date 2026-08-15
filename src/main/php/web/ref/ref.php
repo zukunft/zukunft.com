@@ -472,7 +472,7 @@ class ref extends sandbox
         global $mtr;
         // TODO point to the dedicated refresh-job creation once that job and its view exist;
         //      for now the link only opens the async job view and does not yet create a real job
-        $url = $html->url_new(views::JOB_ASYNC_ID, $this->id());
+        $url = $html->url_back(views::JOB_ASYNC_ID, $this->id());
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::REFRESH . '"></' . html_base::I . '>';
         // reuse the small inline icon style of the page title edit icon so the refresh icon
         // is shown in a reduced size on the same line as the reference name

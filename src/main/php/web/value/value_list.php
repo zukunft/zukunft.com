@@ -782,7 +782,7 @@ class value_list extends ListBase
             . $diff . ' ' . msg_id::MORE->text();
         $phr = $context_phr_lst->lst()[0] ?? null;
         if ($phr != null) {
-            $result = $html->ref($html->url_new(views::PHRASE_VALUES_ID, $phr->id()), $txt);
+            $result = $html->ref($html->url_back(views::PHRASE_VALUES_ID, $phr->id()), $txt);
         } else {
             $result = $txt;
         }
@@ -1487,19 +1487,19 @@ class value_list extends ListBase
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url_new(views::VALUE_ADD_ID, $val->id(), '', $back);
+                    $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), '', $back);
                     $btn = new button($url, $back);
                     $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url_new(views::VALUE_EDIT_ID, $val->id(), '', $back);
+                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url_new(views::VALUE_DEL_ID, $val->id(), '', $back);
+                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
