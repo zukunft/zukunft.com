@@ -80,6 +80,7 @@ class result extends sandbox_value
     const string VIEW_EDIT = views::RESULT_EDIT;
     const string VIEW_DEL = views::RESULT_DEL;
     const int VIEW_EDIT_ID = views::RESULT_EDIT_ID;
+    const int VIEW_DEL_ID = views::RESULT_DEL_ID;
 
     // curl message id
     const msg_id MSG_EDIT = msg_id::RESULT_EDIT;
@@ -246,9 +247,9 @@ class result extends sandbox_value
      * @return string the html code for a bottom
      * to change a result e.g. to add a description as not
      */
-    function btn_edit(string $back = ''): string
+    function btn_edit_back(string $back = ''): string
     {
-        return $this->btn_edit_sbx(
+        return $this->btn_edit_sbx_back(
             $this::VIEW_EDIT,
             $this::MSG_EDIT,
             $back);
@@ -258,9 +259,9 @@ class result extends sandbox_value
      * @return string the html code for a bottom
      * to exclude a result from further usage
      */
-    function btn_del(string $back = ''): string
+    function btn_del_back(string $back = ''): string
     {
-        return $this->btn_del_sbx(
+        return $this->btn_del_sbx_back(
             $this::VIEW_DEL,
             $this::MSG_DEL,
             $back);
@@ -317,7 +318,7 @@ class result extends sandbox_value
         $frm_html = $frm;
         $result .= ' based on</br>' . $frm_html->name_link($back);
         $result .= ' ' . $frm_html->dsp_text($msg, $back) . "\n";
-        $result .= ' ' . $frm_html->btn_edit($back) . "\n";
+        $result .= ' ' . $frm_html->btn_edit_back($back) . "\n";
         $result .= '</br></br>' . "\n";
 
         // load the formula element groups

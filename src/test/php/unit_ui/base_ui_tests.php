@@ -500,16 +500,16 @@ class base_ui_tests
         $t->assert($test_name, $wrd->btn_add_back('1'), $target);
 
         $test_name = 'a sandbox object e.g. source change button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&amp;id=1&amp;back=1" title="source_edit"><i class="far fa-edit"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::SOURCE_EDIT_ID . '&amp;id=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
         $src->set_from_json($t_src->source_reserved()->api_json(), $msg);
-        $t->assert($test_name, $src->btn_edit('1'), $target);
+        $t->assert($test_name, $src->btn_edit([]), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&amp;id=1&amp;back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
         $frm->set_from_json($t_frm->formula()->api_json(), $msg);
-        $t->assert($test_name, $frm->btn_del('1'), $target);
+        $t->assert($test_name, $frm->btn_del_back('1'), $target);
 
 
         $url = $html->url_back(views::WORD_ADD_ID);

@@ -1,0 +1,7 @@
+# the api routes are extensionless directory urls (e.g. /api/typeLists) that the root
+# allow-list would block before mod_dir can add the trailing slash and serve the
+# index.php controller; so within /api also allow plain names without a dot
+<FilesMatch "^[A-Za-z0-9_]+$">
+    Require all granted
+</FilesMatch>
+                     

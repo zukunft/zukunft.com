@@ -106,9 +106,9 @@ class horizontal_ui_tests
                 $t->assert_text_contains($test_name, $ui_obj->btn_add_back(), button::IMG_ADD_FA);
             }
             $test_name = 'edit ' . $lib->class_to_name($class) . ' html code';
-            $t->assert_text_contains($test_name, $ui_obj->btn_edit(), button::IMG_EDIT_FA);
+            $t->assert_text_contains($test_name, $ui_obj->btn_edit_back(), button::IMG_EDIT_FA);
             $test_name = 'del ' . $lib->class_to_name($class) . ' html code';
-            $t->assert_text_contains($test_name, $ui_obj->btn_del(), button::IMG_DEL_FA);
+            $t->assert_text_contains($test_name, $ui_obj->btn_del_back(), button::IMG_DEL_FA);
         }
 
         $t->subheader($ts . 'url');

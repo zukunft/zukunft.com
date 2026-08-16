@@ -93,7 +93,9 @@ class ref extends sandbox
     const string VIEW_ADD = views::REF_ADD;
     const string VIEW_EDIT = views::REF_EDIT;
     const string VIEW_DEL = views::REF_DEL;
+    const int VIEW_ADD_ID = views::REF_ADD_ID;
     const int VIEW_EDIT_ID = views::REF_EDIT_ID;
+    const int VIEW_DEL_ID = views::REF_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::REF_ADD;

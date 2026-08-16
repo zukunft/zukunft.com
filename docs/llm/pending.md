@@ -14,6 +14,23 @@ the basic steps to show the start page are
 - the order of the column may differ and is relative e.g. 'per cent is after number'
 - the number of rows to show is taken from the config but can be overwritten
 
+    1. self:: instead of $this:: in the three *_back variants (db_object.php:442,469,497). self::VIEW_ADD binds to db_object, i.e. always the WORD view, regardless of the object. Late static binding ($this::) was what made the inherited helper work per class. Classes that override the *_back form (formula, result, value) are unaffected — which is why base_ui_tests still passes — but the inherited ones now build a word url:
+    - triple_list.php:153 → $add_trp->btn_add_back() gives word_add instead of triple_add
+    - triple_list.php:239 → $lnk_ui->btn_edit_back() likewise
+    - view.php:167,176 → $this->btn_edit_back() / btn_add_back() on a view gives the word views
+
+  horizontal_ui_tests:106-111 calls these for many classes but only asserts the icon is present, not the url — so nothing catches it.
+    2. AUTO_UPDATE_TEST_FILES = true (src/test/php/const/files.php:44) — must be false before commit.
+
+  Worth deciding
+
+    3. Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.
+    4. api/.htaccess — <FilesMatch "^[A-Za-z0-9_]+$"> re-allows every extensionless name under /api, which is what the routes need. Worth noting it also re-allows any other dot-free file that lands there; a tighter alternative is listing the route names, at the cost of maintenance. Your call — the current form is the one I proposed.
+    5. src/test/resources/unit/user/list.csv and api/ui_config/ui_config.json changed too — presumably from a reset_db run; worth a glance that they belong in this commit.
+
+  Checks that pass: all touched PHP lints; both .htaccess files carry their why-comment; no secrets; the snapshot diffs are consistent with the code (style links, numeric view ids, back vars).
+
+
 ## main pages
 
 in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger

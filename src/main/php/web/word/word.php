@@ -150,7 +150,9 @@ class word extends sandbox_code_id
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_ADD_ID = views::WORD_ADD_ID;
     const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
+    const int VIEW_DEL_ID = views::WORD_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::WORD_ADD;
@@ -746,7 +748,7 @@ class word extends sandbox_code_id
     {
         $html = new html_base();
         $name = $this->td();
-        $btn = $html->td($this->btn_del());
+        $btn = $html->td($this->btn_del_back());
         return $html->tr($name . $btn);
     }
 

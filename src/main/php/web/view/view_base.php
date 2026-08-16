@@ -94,6 +94,9 @@ class view_base extends sandbox_code_id
     const string VIEW_ADD = views::VIEW_ADD;
     const string VIEW_EDIT = views::VIEW_EDIT;
     const string VIEW_DEL = views::VIEW_DEL;
+    const int VIEW_ADD_ID = views::VIEW_ADD_ID;
+    const int VIEW_EDIT_ID = views::VIEW_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VIEW_ADD;

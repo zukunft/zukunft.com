@@ -132,7 +132,9 @@ class formula extends sandbox_code_id
     const string VIEW_ADD = views::FORMULA_ADD;
     const string VIEW_EDIT = views::FORMULA_EDIT;
     const string VIEW_DEL = views::FORMULA_DEL;
+    const int VIEW_ADD_ID = views::FORMULA_ADD_ID;
     const int VIEW_EDIT_ID = views::FORMULA_EDIT_ID;
+    const int VIEW_DEL_ID = views::FORMULA_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::FORMULA_ADD;
@@ -466,10 +468,10 @@ class formula extends sandbox_code_id
      * @param string $back the stack trace for the undo functionality
      * @return string html code to change to formula
      */
-    function btn_edit(string $back = ''): string
+    function btn_edit_back(string $back = ''): string
     {
         global $mtr;
-        return parent::btn_edit_sbx(
+        return parent::btn_edit_sbx_back(
             $this::VIEW_EDIT,
             $this::MSG_EDIT,
             $back, $mtr->txt(msg_id::FOR) . $this->name);
@@ -480,10 +482,10 @@ class formula extends sandbox_code_id
      * @param string $back the stack trace for the undo functionality
      * @return string html code to change to formula
      */
-    function btn_del(string $back = ''): string
+    function btn_del_back(string $back = ''): string
     {
         global $mtr;
-        return parent::btn_del_sbx(
+        return parent::btn_del_sbx_back(
             $this::VIEW_DEL,
             $this::MSG_DEL,
             $back, $mtr->txt(msg_id::OF) . $this->name);

@@ -32,6 +32,9 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -48,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -61,6 +65,9 @@ class formula_ui_tests
         $html = new html_base();
         $t_frm = new test_formulas($t);
         $msg = new user_message();
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::FORMULA_ID, url_var::ID => formula_names::INCREASE_ID];
 
         // start the test section (ts)
         $ts = 'unit ui html formula ';
@@ -71,9 +78,9 @@ class formula_ui_tests
         $test_page .= 'with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'with link: ' . $frm->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $frm->btn_add_back() . '<br>';
-        $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
-        $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
+        $test_page .= 'add button: ' . $frm->btn_add($url_arr, $base_url) . '<br>';
+        $test_page .= 'edit button: ' . $frm->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $frm->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= $t->dsp_title_named_edit($frm, $msg);
 
         // the formula page title shows the formula name with its assigned phrases as subtitle,
@@ -133,7 +140,7 @@ class formula_ui_tests
         $test_page .= $html->text_h2('values of the phrases used for the formula increase');
         $test_page .= $t_val->value_list_zh_ui()->table($msg);
 
-        $t->html_page_test($test_page, 'formula', 'formula', $msg);
+        $t->html_page_test($test_page, 'formula', 'formula', $msg, $base_url, $lan);
 
         // TODO review
 

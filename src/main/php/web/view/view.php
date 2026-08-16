@@ -96,7 +96,9 @@ class view extends view_exe
     const string VIEW_ADD = views::VIEW_ADD;
     const string VIEW_EDIT = views::VIEW_EDIT;
     const string VIEW_DEL = views::VIEW_DEL;
+    const int VIEW_ADD_ID = views::VIEW_ADD_ID;
     const int VIEW_EDIT_ID = views::VIEW_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VIEW_ADD;
@@ -162,7 +164,7 @@ class view extends view_exe
             $url_edit = $html->url_old($class . rest_ctrl::UPDATE, $this->id(), '', '');
             // TODO fix for frontend based version
             //echo 'button init';
-            $result .= $this->btn_edit();
+            $result .= $this->btn_edit_back();
             //echo 'button_dsp init' . $url_edit;
             //$btn = new button_dsp($url_edit, '');
             // TODO fix for frontend based version

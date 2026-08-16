@@ -73,6 +73,9 @@ class component_link extends sandbox_link
     const string VIEW_ADD = views::COMPONENT_LINK_ADD;
     const string VIEW_EDIT = views::COMPONENT_LINK_EDIT;
     const string VIEW_DEL = views::COMPONENT_LINK_DEL;
+    const int VIEW_ADD_ID = views::COMPONENT_LINK_ADD_ID;
+    const int VIEW_EDIT_ID = views::COMPONENT_LINK_EDIT_ID;
+    const int VIEW_DEL_ID = views::COMPONENT_LINK_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::COMPONENT_LINK_ADD;

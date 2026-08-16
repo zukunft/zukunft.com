@@ -93,6 +93,9 @@ class user extends db_object
     const string VIEW_ADD = views::USER_ADD;
     const string VIEW_EDIT = views::USER_EDIT;
     const string VIEW_DEL = views::USER_DEL;
+    const int VIEW_ADD_ID = views::USER_ADMIN_ADD_ID;
+    const int VIEW_EDIT_ID = views::USER_ADMIN_EDIT_ID;
+    const int VIEW_DEL_ID = views::USER_ADMIN_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::USER_ADD;

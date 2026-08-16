@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1180 of 5552 public functions have at least 2 unit test calls; the 4372 functions below do not
+1180 of 5559 public functions have at least 2 unit test calls; the 4379 functions below do not
 
 ## main backend
 
@@ -3448,13 +3448,18 @@ so same-named functions of several classes share their test calls
 \-- db_object
     \-- add_via_api - 0 unit test calls
     \-- api_array - 1 unit test calls
+    \-- btn_add - 0 unit test calls
     \-- btn_add_back - 0 unit test calls
     \-- btn_add_sbx - 0 unit test calls
     \-- btn_add_sbx_back - 0 unit test calls
     \-- btn_del - 0 unit test calls
+    \-- btn_del_back - 0 unit test calls
     \-- btn_del_sbx - 0 unit test calls
+    \-- btn_del_sbx_back - 0 unit test calls
     \-- btn_edit - 0 unit test calls
+    \-- btn_edit_back - 0 unit test calls
     \-- btn_edit_sbx - 0 unit test calls
+    \-- btn_edit_sbx_back - 0 unit test calls
     \-- component_link_type_selector - 0 unit test calls
     \-- component_selector - 0 unit test calls
     \-- component_style_selector - 0 unit test calls
@@ -3526,8 +3531,8 @@ so same-named functions of several classes share their test calls
     \-- names_linked - 0 unit test calls
 \-- formula
     \-- api_array - 1 unit test calls
-    \-- btn_del - 0 unit test calls
-    \-- btn_edit - 0 unit test calls
+    \-- btn_del_back - 0 unit test calls
+    \-- btn_edit_back - 0 unit test calls
     \-- db_fld_to_url - 1 unit test calls
     \-- direct_assigned_phrases - 0 unit test calls
     \-- dsp_edit - 0 unit test calls
@@ -3940,8 +3945,8 @@ so same-named functions of several classes share their test calls
 \-- result
     \-- api_array - 1 unit test calls
     \-- btn_add_back - 0 unit test calls
-    \-- btn_del - 0 unit test calls
-    \-- btn_edit - 0 unit test calls
+    \-- btn_del_back - 0 unit test calls
+    \-- btn_edit_back - 0 unit test calls
     \-- display_linked - 0 unit test calls
     \-- explain - 0 unit test calls
     \-- figure - 0 unit test calls
@@ -4521,6 +4526,8 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- btn_add - 0 unit test calls
     \-- btn_add_back - 0 unit test calls
+    \-- btn_del - 0 unit test calls
+    \-- btn_edit - 0 unit test calls
     \-- btn_undo_add_value - 0 unit test calls
     \-- dsp_add_fast - 0 unit test calls
     \-- dsp_edit - 0 unit test calls

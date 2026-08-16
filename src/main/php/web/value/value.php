@@ -102,7 +102,9 @@ class value extends sandbox_value
     const string VIEW_ADD = views::VALUE_ADD;
     const string VIEW_EDIT = views::VALUE_EDIT;
     const string VIEW_DEL = views::VALUE_DEL;
+    const int VIEW_ADD_ID = views::VALUE_ADD_ID;
     const int VIEW_EDIT_ID = views::VALUE_EDIT_ID;
+    const int VIEW_DEL_ID = views::VALUE_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VALUE_ADD;
@@ -740,6 +742,7 @@ class value extends sandbox_value
     }
 
     /**
+     * TODO Prio 0 deprecate
      * offer the user to add a new value similar to this value
      *
      * possible future parameters:
@@ -767,6 +770,42 @@ class value extends sandbox_value
             views::VALUE_ADD,
             $msg_code_id,
             $back, $explain, $base_url);
+    }
+
+    /**
+     * the html code to change the value
+     *
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @returns string the HTML code for a button to add a value related to this value
+     */
+    function btn_edit(array $url_arr = [], string $base_url = ''): string
+    {
+        $msg_code_id = msg_id::VALUE_EDIT;
+        $explain = '';
+
+        return parent::btn_edit_sbx(
+            views::VALUE_EDIT_ID,
+            $msg_code_id,
+            $url_arr, $explain, $base_url);
+    }
+
+    /**
+     * the html code to exclude or delete the value
+     *
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @returns string the HTML code for a button to add a value related to this value
+     */
+    function btn_del(array $url_arr = [], string $base_url = ''): string
+    {
+        $msg_code_id = msg_id::VALUE_DEL;
+        $explain = '';
+
+        return parent::btn_del_sbx(
+            views::VALUE_DEL_ID,
+            $msg_code_id,
+            $url_arr, $explain, $base_url);
     }
 
 

@@ -69,6 +69,9 @@ class term_view extends sandbox_link
     const string VIEW_ADD = views::VIEW_LINK_ADD;
     const string VIEW_EDIT = views::VIEW_LINK_EDIT;
     const string VIEW_DEL = views::VIEW_LINK_DEL;
+    const int VIEW_ADD_ID = views::VIEW_LINK_ADD_ID;
+    const int VIEW_EDIT_ID = views::VIEW_LINK_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_LINK_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::VIEW_LINK_ADD;

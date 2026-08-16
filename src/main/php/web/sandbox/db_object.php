@@ -105,7 +105,9 @@ class db_object extends TextIdObject
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_ADD_ID = views::WORD_ADD_ID;
     const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
+    const int VIEW_DEL_ID = views::WORD_DEL_ID;
 
     // the fallback crud message id that are expected to be overwritten by the child objects
     const msg_id MSG_ADD = msg_id::WORD_ADD;
@@ -416,27 +418,72 @@ class db_object extends TextIdObject
      */
 
     /**
+     * the html code to create a sandbox object e.g. a new word, value or formula
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code for a bottom
+     */
+    function btn_add(array $url_arr = [], string $base_url = ''): string
+    {
+        return $this->btn_add_sbx(
+            $this::VIEW_ADD_ID,
+            $this::MSG_ADD,
+            $url_arr, '', $base_url);
+    }
+
+    /**
+     * TODO Prio 0 deprecate
      * @return string the html code for a bottom
      * to create a new sandbox object e.g. word for the current user
      */
     function btn_add_back(string $back = ''): string
     {
         return $this->btn_add_sbx_back(
-            $this::VIEW_ADD,
-            $this::MSG_ADD,
+            self::VIEW_ADD,
+            self::MSG_ADD,
             $back);
     }
 
     /**
+     * the html code to change a sandbox object e.g. the word name or the type
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code for a bottom
+     */
+    function btn_edit(array $url_arr = [], string $base_url = ''): string
+    {
+        return $this->btn_edit_sbx(
+            $this::VIEW_EDIT_ID,
+            $this::MSG_EDIT,
+            $url_arr, '', $base_url);
+    }
+
+    /**
+     * TODO Prio 0 deprecate and replace with
      * @return string the html code for a bottom
      * to change a sandbox object e.g. the word name or the type
      */
-    function btn_edit(string $back = ''): string
+    function btn_edit_back(string $back = ''): string
     {
-        return $this->btn_edit_sbx(
-            $this::VIEW_EDIT,
-            $this::MSG_EDIT,
+        return $this->btn_edit_sbx_back(
+            self::VIEW_EDIT,
+            self::MSG_EDIT,
             $back);
+    }
+
+    /**
+     * the html code to exclude the sandbox object e.g. word for the current user
+     * or if no one uses the sandbox object delete the complete sandbox object e.g. word
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code for a bottom
+     */
+    function btn_del(array $url_arr = [], string $base_url = ''): string
+    {
+        return $this->btn_del_sbx(
+            $this::VIEW_DEL_ID,
+            $this::MSG_DEL,
+            $url_arr, '', $base_url);
     }
 
     /**
@@ -444,11 +491,11 @@ class db_object extends TextIdObject
      * to exclude the sandbox object e.g. word for the current user
      * or if no one uses the sandbox object delete the complete sandbox object e.g. word
      */
-    function btn_del(string $back = ''): string
+    function btn_del_back(string $back = ''): string
     {
-        return $this->btn_del_sbx(
-            $this::VIEW_DEL,
-            $this::MSG_DEL,
+        return $this->btn_del_sbx_back(
+            self::VIEW_DEL,
+            self::MSG_DEL,
             $back);
     }
 
@@ -474,6 +521,7 @@ class db_object extends TextIdObject
     }
 
     /**
+     * TODO Prio 0 deprecate
      * create the html code to add a sandbox object for the current user
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
@@ -499,11 +547,39 @@ class db_object extends TextIdObject
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code for a bottom
+     */
+    function btn_edit_sbx(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        array      $url_arr = [],
+        string     $explain = '',
+        string     $base_url = ''
+    ): string
+    {
+        $btn = $this->btn_sbx($msk_id, $url_arr, $base_url);
+        return $btn->edit($msg_code_id, $explain);
+    }
+
+    /**
+     * TODO Prio 0 deprecate
+     * html code to change a sandbox object e.g. the name or the type
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
      * @param string $back the backtrace for the return page after adding the object and for undo actions
      * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_edit_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function btn_edit_sbx_back(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        string     $back = '',
+        string     $explain = ''
+    ): string
     {
         $btn = $this->btn_sbx_back($msk_id, $back);
         return $btn->edit($msg_code_id, $explain);
@@ -515,11 +591,39 @@ class db_object extends TextIdObject
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
+     * @return string the html code for a bottom
+     */
+    function btn_del_sbx(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        array      $url_arr = [],
+        string     $explain = '',
+        string     $base_url = ''
+    ): string
+    {
+        $btn = $this->btn_sbx($msk_id, $url_arr, $base_url);
+        return $btn->del($msg_code_id, $explain);
+    }
+
+    /**
+     * TODO Prio 0 deprecate
+     * html code to exclude the sandbox object for the current user
+     * or if no one uses the word delete the complete word
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
      * @param string $back the backtrace for the return page after adding the object and for undo actions
      * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_del_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function btn_del_sbx_back(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        string     $back = '',
+        string     $explain = ''
+    ): string
     {
         $btn = $this->btn_sbx_back($msk_id, $back);
         return $btn->del($msg_code_id, $explain);

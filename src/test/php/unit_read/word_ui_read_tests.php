@@ -32,11 +32,14 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -49,6 +52,10 @@ class word_ui_read_tests
         $t_wrd = new test_words($t);
         $t_msk = new test_views($t);
         $msg = new user_message();
+
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'db read word ui ';
@@ -67,9 +74,9 @@ class word_ui_read_tests
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
         $test_page .= 'with link: ' . $wrd->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $wrd->btn_add_back() . '<br>';
-        $test_page .= 'edit button: ' . $wrd->btn_edit() . '<br>';
-        $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
+        $test_page .= 'add button: ' . $wrd->btn_add($url_arr, $base_url) . '<br>';
+        $test_page .= 'edit button: ' . $wrd->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $wrd->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $ui->dto->typ_lst_cache) . '<br>';
@@ -86,7 +93,7 @@ class word_ui_read_tests
         $test_page .= $wrd_zh->parents($msg)->name_link() . '<br>';
         $test_page .= $html->text_h2('children of ' . $wrd_city->name());
         $test_page .= $wrd_city->children($msg)->name_link() . '<br>';
-        $t->html_page_test($test_page, 'word html components', 'word_api', $msg);
+        $t->html_page_test($test_page, 'word html components', 'word_api', $msg, $base_url, $lan);
 
     }
 

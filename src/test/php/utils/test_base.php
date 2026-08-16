@@ -161,6 +161,7 @@ use Zukunft\ZukunftCom\test\php\create\test_users;
 use Exception;
 use Zukunft\ZukunftCom\test\php\unit\component_link_list_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_type.php';
@@ -566,11 +567,10 @@ class test_base
     /**
      * the HTML code to display the header text
      */
-    function header(string $header_text): void
+    function header(string $header_text, string $base_url = ''): void
     {
-        global $sys;
         global $log_txt;
-        $log_txt->header($header_text);
+        $log_txt->header($header_text, $base_url);
 
         // reset the test timer to avoid timeouts due to a delay in previous tests
         $new_start_time = microtime(true);
@@ -5623,10 +5623,18 @@ class test_base
     }
 
     private
-    function html_page(string $body, user_message_ui $msg_ui): string
+    function html_page(
+        string          $body,
+        user_message_ui $msg_ui,
+        string          $base_url = '',
+        string          $lan = languages::DEFAULT
+    ): string
     {
         $html = new html_base();
-        return $html->header('test', $msg_ui)
+        // a caller can set the pod url as the base url, so that its snapshot opened from the
+        // file system or an ide preview server still finds the styles and the icon font;
+        // the language is set once by the caller and only passed through, never overwritten
+        return $html->header('test', $msg_ui, '', $lan, $base_url)
             . $html->navbar(views::START_ID)
             . $html->main($body)
             . $html->footer();
