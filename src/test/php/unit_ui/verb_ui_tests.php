@@ -32,9 +32,14 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -46,6 +51,10 @@ class verb_ui_tests
         $t_vrb = new test_verbs($t);
         $msg = new user_message();
 
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+
         // start the test section (ts)
         $ts = 'unit ui html verb list ';
         $t->header($ts);
@@ -55,7 +64,14 @@ class verb_ui_tests
         $test_page .= 'with tooltip: ' . $vrb->name_tip() . '<br>';
         $test_page .= 'with link: ' . $vrb->name_link() . '<br>';
         $test_page .= $t->dsp_title_named_edit($vrb, $msg);
-        $t->html_page_test($test_page, 'verb', 'verb', $msg);
+
+        // the selector to pick a verb e.g. for the verb of a triple
+        $form = 'verb_ui_test';
+        $from_rows = 'verb selector: ' . '<br>';
+        $from_rows .= $t_vrb->list_all_ui($msg)->selector($form, verbs::IS_ID) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
+
+        $t->html_page_test($test_page, 'verb', 'verb', $msg, $base_url, $lan);
     }
 
 }

@@ -39,12 +39,16 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::TYPES . 'verbs.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\types\verbs as verbs_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -292,6 +296,18 @@ class test_verbs extends test_objects
     {
         $lst = new verb_list($this->env->usr1);
         $lst->load_dummy();
+        return $lst;
+    }
+
+    /**
+     * the frontend verb type list filled like the request cache, e.g. to test the verb selector
+     * @param user_message_ui $msg to report the api mapping problems of the frontend list
+     * @return verbs_ui with all system verbs
+     */
+    function list_all_ui(user_message_ui $msg): verbs_ui
+    {
+        $lst = new verbs_ui();
+        $lst->set_from_json_array(json_decode($this->list_all()->api_json(), true), $msg, verb_ui::class);
         return $lst;
     }
 

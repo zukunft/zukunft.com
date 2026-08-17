@@ -282,9 +282,10 @@ class triple_list extends ListBase
                     // give the user the possibility to add a similar word
                     $result .= '  <tr>';
                     $result .= '    <td>';
-                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add similar word",
-                            $html->url_back(views::WORD_ADD_ID, 0, '', (string)$start_id, '', 'verb=' .
-                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id));
+                    // TODO Prio 1 add a tooltip like "Add similar word",
+                    //                            $html->url_back(views::WORD_ADD_ID, 0, '', (string)$start_id, '', 'verb=' .
+                    //                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id)
+                    $result .= '      ' . $lnk->tob()->btn_add();
                     $result .= '    </td>';
                     $result .= '  </tr>';
 

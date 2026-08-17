@@ -590,7 +590,8 @@ class view_exe extends view_base
             $call_edit = $html->url_back(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= btn_edit('design the view', $call_edit) . ' ';
             $call_del = $html->url_back(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
+            // TODO Prio 0 add the tooltip 'delete the view', $call_del
+            $result .= $msk->btn_del() . ' ';
             $result .= '<br>';
         }
 
