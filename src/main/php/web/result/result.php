@@ -245,30 +245,6 @@ class result extends sandbox_value
         return '';
     }
 
-    /**
-     * @return string the html code for a bottom
-     * to change a result e.g. to add a description as not
-     */
-    function btn_edit_back(string $back = ''): string
-    {
-        return $this->btn_edit_sbx_back(
-            $this::VIEW_EDIT,
-            $this::MSG_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude a result from further usage
-     */
-    function btn_del_back(string $back = ''): string
-    {
-        return $this->btn_del_sbx_back(
-            $this::VIEW_DEL,
-            $this::MSG_DEL,
-            $back);
-    }
-
 
     /*
      * review
@@ -320,7 +296,7 @@ class result extends sandbox_value
         $frm_html = $frm;
         $result .= ' based on</br>' . $frm_html->name_link($back);
         $result .= ' ' . $frm_html->dsp_text($msg, $back) . "\n";
-        $result .= ' ' . $frm_html->btn_edit_back($back) . "\n";
+        $result .= ' ' . $frm_html->btn_edit() . "\n";
         $result .= '</br></br>' . "\n";
 
         // load the formula element groups

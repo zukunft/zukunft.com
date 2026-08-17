@@ -168,7 +168,7 @@ class view extends view_exe
             $url_edit = $html->url_old($class . rest_ctrl::UPDATE, $this->id(), '', '');
             // TODO fix for frontend based version
             //echo 'button init';
-            $result .= $this->btn_edit_back();
+            $result .= $this->btn_edit();
             //echo 'button_dsp init' . $url_edit;
             //$btn = new button_dsp($url_edit, '');
             // TODO fix for frontend based version

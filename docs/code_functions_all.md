@@ -5178,8 +5178,6 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /formula/formula.php
     \-- name_link - section for function name_link not yet defined that it should be base in /formula/formula.php
     \-- edit_link - section for function edit_link not yet defined that it should be base in /formula/formula.php
-    \-- btn_edit_back - section for function btn_edit_back not yet defined that it should be buttons in /formula/formula.php
-    \-- btn_del_back - section for function btn_del_back not yet defined that it should be buttons in /formula/formula.php
     \-- dsp_type_selector - section for function dsp_type_selector not yet defined that it should be select in /formula/formula.php
     \-- user_expression - section for function user_expression not yet defined that it should be overwrites in /formula/formula.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formula.php
@@ -5661,8 +5659,6 @@
     \-- figure - section for function figure not yet defined that it should be cast in /result/result.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /result/result.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /result/result.php
-    \-- btn_edit_back - section for function btn_edit_back not yet defined that it should be buttons in /result/result.php
-    \-- btn_del_back - section for function btn_del_back not yet defined that it should be buttons in /result/result.php
     \-- explain - section for function explain not yet defined that it should be review in /result/result.php
     \-- order error - order of section display has difference at name should be before display of display,name,get_description,display_linked does not match dsp_entries,name,name_linked,system_change_log,change_log_table_pure,user_overwrites_table_pure,user_system_errors,id,dsp_names,figures,display,name_tip,sort_by_impact,name_link,tbl,display_old,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,order of section display has difference at name should be before display of display,name,get_description,display_linked does not match dsp_entries,name,name_linked,system_change_log,change_log_table_pure,user_overwrites_table_pure,user_system_errors,id,dsp_names,figures,display,name_tip,sort_by_impact,name_link,tbl,display_old,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,order of section display has difference at name should be before display of display,name,get_description,display_linked does not match dsp_entries,name,name_linked,system_change_log,change_log_table_pure,user_overwrites_table_pure,user_system_errors,id,dsp_names,figures,display,name_tip,sort_by_impact,name_link,tbl,display_old,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,order of section display has difference at name should be before display of display,name,get_description,display_linked does not match dsp_entries,name,name_linked,system_change_log,change_log_table_pure,user_overwrites_table_pure,user_system_errors,id,dsp_names,figures,display,name_tip,sort_by_impact,name_link,tbl,display_old,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type
 \-- result_list
@@ -5717,15 +5713,10 @@
     \-- api_json - section for function api_json not yet defined that it should be interface in /sandbox/db_object.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /sandbox/db_object.php
-    \-- btn_edit_back - section for function btn_edit_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /sandbox/db_object.php
-    \-- btn_del_back - section for function btn_del_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_add_sbx - section for function btn_add_sbx not yet defined that it should be buttons in /sandbox/db_object.php
-    \-- btn_add_sbx_back - section for function btn_add_sbx_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_edit_sbx - section for function btn_edit_sbx not yet defined that it should be buttons in /sandbox/db_object.php
-    \-- btn_edit_sbx_back - section for function btn_edit_sbx_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_del_sbx - section for function btn_del_sbx not yet defined that it should be buttons in /sandbox/db_object.php
-    \-- btn_del_sbx_back - section for function btn_del_sbx_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- obj_url - section for function obj_url not yet defined that it should be display in /sandbox/db_object.php
     \-- name - section for function name is expected to be debug in /sandbox/db_object.php
     \-- get_description - section for function get_description is expected to be set and get in /sandbox/db_object.php

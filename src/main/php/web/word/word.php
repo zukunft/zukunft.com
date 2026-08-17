@@ -748,7 +748,7 @@ class word extends sandbox_code_id
     {
         $html = new html_base();
         $name = $this->td();
-        $btn = $html->td($this->btn_del_back());
+        $btn = $html->td($this->btn_del());
         return $html->tr($name . $btn);
     }
 

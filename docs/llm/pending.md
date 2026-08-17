@@ -26,10 +26,11 @@ the basic steps to show the start page are
 - the order of the column may differ and is relative e.g. 'per cent is after number'
 - the number of rows to show is taken from the config but can be overwritten
 
-Worth fixing 
+Worth fixing
+formula button tooltips lost their object name
+button is now btn_edit() with no $url_arr. Same shape at view.php:171 and word.php:751.
 Production web/ code now includes and reads test constants. web/view/view.php:67 and web/word/triple_list.php:51 add a real include_once test_paths::CONST . 'word_names.php' and hardcode word_names::ZH_ID as the back target. list_sort.php extends the same pattern to triple_names::GLOBAL_PROBLEM_ID — and there the include_once is commented out while the use is active, so it only works via the autoloader. triple_list.php:147 has a TODO Prio 0 admitting the $url_arr is a placeholder; view.php:145 has none. Either way "Zurich" as the back link on a generic view navbar is a placeholder, not behaviour.
 Dead code left behind in view.php:617,619 — $call_edit / $call_del are still built via url_back(...) but no longer used, since btn_edit()/btn_del() build their own url. The buttons also lost the word= and back context those urls carried.
-Half-migrated: view.php:171 still calls the deprecated btn_edit_back() two lines above the migrated btn_add(); word.php:751 calls btn_del_back(); result.php:323 calls btn_edit_back($back).
 Unused additions in tests: graph_tests.php:60-62 adds $base_url, $lan, $url_arr — none used in the file; languages is imported unused in both graph_tests.php and horizontal_ui_tests.php.
 Tooltip regression, visible in base_ui_tests.php:512: the delete title went from delete this formula of scale minute to sec to delete this formula — the object name dropped out of the button title. Intentional?
 Nit: shared/const/words.php:335 inserts SOLUTION after STATEMENT, breaking the alphabetical order of that list.

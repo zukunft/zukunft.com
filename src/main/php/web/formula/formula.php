@@ -460,39 +460,6 @@ class formula extends sandbox_code_id
 
 
     /*
-     * buttons
-     */
-
-    /**
-     * create the HTML code for a button to change the formula
-     * @param string $back the stack trace for the undo functionality
-     * @return string html code to change to formula
-     */
-    function btn_edit_back(string $back = ''): string
-    {
-        global $mtr;
-        return parent::btn_edit_sbx_back(
-            $this::VIEW_EDIT,
-            $this::MSG_EDIT,
-            $back, $mtr->txt(msg_id::FOR) . $this->name);
-    }
-
-    /**
-     * create the HTML code for a button to delete or exclude this formula
-     * @param string $back the stack trace for the undo functionality
-     * @return string html code to change to formula
-     */
-    function btn_del_back(string $back = ''): string
-    {
-        global $mtr;
-        return parent::btn_del_sbx_back(
-            $this::VIEW_DEL,
-            $this::MSG_DEL,
-            $back, $mtr->txt(msg_id::OF) . $this->name);
-    }
-
-
-    /*
      * select
      */
 
