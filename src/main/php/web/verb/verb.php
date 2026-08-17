@@ -85,7 +85,9 @@ class verb extends sandbox_named
     const string VIEW_ADD = views::VERB_ADD;
     const string VIEW_EDIT = views::VERB_EDIT;
     const string VIEW_DEL = views::VERB_DEL;
+    const int VIEW_ADD_ID = views::VERB_ADD_ID;
     const int VIEW_EDIT_ID = views::VERB_EDIT_ID;
+    const int VIEW_DEL_ID = views::VERB_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VERB_ADD;

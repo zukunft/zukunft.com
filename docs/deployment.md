@@ -28,6 +28,48 @@ The recommended steps to test any code changes are
 
 if an additional entry in any of the files in src/main/resources/db_code_links is done run test/reset_db.php at least once and update src/test/resources/api/ui_config/ui_config.json and src/test/resources/api/type_lists/type_lists.json based on the difference reported in the run to refresh the preloaded type list. After that refresh the local deployment to update the api tests. 
 
+## local web server for the api tests and the html snapshots
+
+The api tests and the html snapshot pages use a local web server on http://localhost/
+that serves the rsync copy of the repo in /var/www/html (see the testing steps above).
+For this host apache two one-time setup steps are needed:
+
+1. allow the .htaccess files of the repo to take effect, because the debian default
+   for /var/www is `AllowOverride None`, which silently ignores every .htaccess -
+   with it the security allow-list of the root .htaccess (e.g. the 404 for
+   /src/main/php/) and the CORS header of the web fonts (see below):
+
+   add inside the `<VirtualHost>` of /etc/apache2/sites-enabled/000-default.conf
+   ```
+   <Directory /var/www/html>
+       AllowOverride All
+   </Directory>
+   ```
+
+2. enable the headers module, which the font CORS header needs
+   (the docker image enables it in docker/Dockerfile):
+   ```
+   sudo a2enmod headers
+   sudo systemctl reload apache2
+   ```
+
+To verify both, the font request must return the CORS header:
+```
+curl -sI http://localhost/external_lib/fontawesome/webfonts/fa-solid-900.woff2 | grep -i access-control
+```
+
+### why the web fonts need a CORS header
+
+A html snapshot page (e.g. src/test/resources/web/html/object_pages/value.html) can be
+opened without a pod, e.g. from the file system or the ide preview server on another
+port. The page loads its stylesheets from http://localhost/ (the THIS_URL fallback),
+which works cross-origin, but the fonts named by the font awesome css are fetched by
+the browser in CORS mode, because a @font-face request always is. Without the header
+the font is blocked, and an icon (e.g. the add / edit / del buttons) stays invisible,
+because a font awesome icon is only a glyph of that font. external_lib/.htaccess
+therefore allows any origin for the font files of the folder - public third party
+files, read without credentials, so nothing can leak.
+
 ## system db row changes
 
 if the system configuration is adjusted that is saved in the database e.g. a change in src/main/resources/messages/system_views.json or src/main/resources/db_code_links/component_types.csv

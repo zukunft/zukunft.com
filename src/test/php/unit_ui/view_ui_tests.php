@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -52,6 +54,10 @@ class view_ui_tests
         $t_msk = new test_views($t);
         $msg = new user_message();
 
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::VIEW_EDIT_ID, url_var::ID => views::WORD_ID];
+
         // start the test section (ts)
         $ts = 'unit ui html view ';
         $t->header($ts);
@@ -61,9 +67,9 @@ class view_ui_tests
         $test_page .= 'with tooltip: ' . $msk->name_tip() . '<br>';
         $test_page .= 'with link: ' . $msk->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $msk->btn_add_back() . '<br>';
-        $test_page .= 'edit button: ' . $msk->btn_edit() . '<br>';
-        $test_page .= 'del button: ' . $msk->btn_del() . '<br>';
+        $test_page .= 'add button: ' . $msk->btn_add($url_arr, $base_url) . '<br>';
+        $test_page .= 'edit button: ' . $msk->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $msk->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= $html->text_h2('select');
         $from_rows = $msk->view_type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache, $msg) . '<br>';
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
@@ -78,7 +84,7 @@ class view_ui_tests
         $cols_html = $msk_cols->show($wrd, $msg, $ui->dto, '', '', true);
         $test_page .= $html->text_h2('side or below columns');
         $test_page .= $cols_html;
-        $t->html_page_test($test_page, 'view', 'view', $msg);
+        $t->html_page_test($test_page, 'view', 'view', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'side or below columns');
         $test_name = 'each column limits the minimal width so that up to four fit at the wide side width';

@@ -102,7 +102,9 @@ class value extends sandbox_value
     const string VIEW_ADD = views::VALUE_ADD;
     const string VIEW_EDIT = views::VALUE_EDIT;
     const string VIEW_DEL = views::VALUE_DEL;
+    const int VIEW_ADD_ID = views::VALUE_ADD_ID;
     const int VIEW_EDIT_ID = views::VALUE_EDIT_ID;
+    const int VIEW_DEL_ID = views::VALUE_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VALUE_ADD;
@@ -740,33 +742,39 @@ class value extends sandbox_value
     }
 
     /**
-     * offer the user to add a new value similar to this value
+     * the html code to change the value
      *
-     * possible future parameters:
-     * $fixed_words - words that the user is not suggested to change this time
-     * $select_word - suggested words which the user can change
-     * $type_word   - word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word
-     *
-     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @param array $url_arr the previous url with the back part
      * @param string $base_url to set an absolut html path for urls
      * @returns string the HTML code for a button to add a value related to this value
      */
-    function btn_add_back(string $back = '', string $base_url = ''): string
+    function btn_edit(array $url_arr = [], string $base_url = ''): string
     {
-        $msg_code_id = msg_id::VALUE_ADD;
+        $msg_code_id = msg_id::VALUE_EDIT;
         $explain = '';
 
-        if ($this->grp->phr_lst()->is_empty()) {
-            if (!empty($this->grp->phr_lst()->lst())) {
-                $explain = htmlentities($this->grp->phr_lst()->dsp_name());
-                $msg_code_id = msg_id::VALUE_ADD_SIMILAR;
-            }
-        }
-
-        return parent::btn_add_sbx_back(
-            views::VALUE_ADD,
+        return parent::btn_edit_sbx(
+            views::VALUE_EDIT_ID,
             $msg_code_id,
-            $back, $explain, $base_url);
+            $url_arr, $explain, $base_url);
+    }
+
+    /**
+     * the html code to exclude or delete the value
+     *
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @returns string the HTML code for a button to add a value related to this value
+     */
+    function btn_del(array $url_arr = [], string $base_url = ''): string
+    {
+        $msg_code_id = msg_id::VALUE_DEL;
+        $explain = '';
+
+        return parent::btn_del_sbx(
+            views::VALUE_DEL_ID,
+            $msg_code_id,
+            $url_arr, $explain, $base_url);
     }
 
 

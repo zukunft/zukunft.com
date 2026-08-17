@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -70,11 +71,15 @@ class value_ui_tests
         $msg = new user_message();
         $msg_ui = new user_message_ui();
 
+        // set once at the start for all pages of this test: the pod url for the styles
+        // and the language of the page; the called functions only pass them through
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+
         // start the test section (ts)
         $ts = 'unit ui value ';
         $t->header($ts);
-        $base_url = THIS_URL;
-        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         $t->subheader($ts . 'html');
 
@@ -103,11 +108,11 @@ class value_ui_tests
         $test_page .= 'with measure type: ' . $tl->ui_value($t_val->light_speed())->with_unit_and_info($msg_ui) . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $val->btn_add($url_arr, $base_url) . '<br>';
-        $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
-        $test_page .= 'del button: ' . $val->btn_del() . '<br>';
+        $test_page .= 'edit button: ' . $val->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $val->btn_del($url_arr, $base_url) . '<br>';
         $val_protected = new value($t_val->value_protected($msg)->api_json([api_types::INCL_PHRASES]));
         $test_page .= $t->dsp_title_value($val_protected, $msg_ui);
-        $t->html_page_test($test_page, 'value html components', 'value', $msg_ui);
+        $t->html_page_test($test_page, 'value html components', 'value', $msg_ui, $base_url, $lan);
 
         $t->subheader($ts . 'links and measure');
         // the speed of light value: "speed of light" names the value, "m/s" is the measure

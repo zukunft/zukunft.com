@@ -40,6 +40,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -63,6 +64,7 @@ include_once html_paths::SHARED_TYPES . 'view_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -84,6 +86,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class view extends view_exe
 {
@@ -96,7 +99,9 @@ class view extends view_exe
     const string VIEW_ADD = views::VIEW_ADD;
     const string VIEW_EDIT = views::VIEW_EDIT;
     const string VIEW_DEL = views::VIEW_DEL;
+    const int VIEW_ADD_ID = views::VIEW_ADD_ID;
     const int VIEW_EDIT_ID = views::VIEW_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VIEW_ADD;
@@ -137,12 +142,13 @@ class view extends view_exe
     {
         $lib = new library();
         $html = new html_base();
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
         $result .= '  <form action="' . api::MAIN_SCRIPT . '" class="form-inline my-2 my-lg-0">';
         // submit the search to the find view as a hidden field so the GET call is e.g. /http/view.php?m=67&pattern=ABB
         $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_FIND_ID);
-        $result .= $html->label('', url_var::PATTERN );
+        $result .= $html->label('', url_var::PATTERN);
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
@@ -171,7 +177,7 @@ class view extends view_exe
             $url_add = $html->url_old($class . rest_ctrl::CREATE, 0, '', '');
             // TODO fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
-            $result .= $this->btn_add_back();
+            $result .= $this->btn_add($url_arr);
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -382,7 +388,7 @@ class view extends view_exe
     /**
      * HTML code to edit all word fields
      */
-    function dsp_edit($add_cmp, $wrd, $back, user_message $msg): string
+    function dsp_edit(int $add_cmp, word $wrd, string $back, user_message $msg): string
     {
         global $ui_sys;
 
@@ -438,7 +444,7 @@ class view extends view_exe
         if ($this->id() > 0) {
             $result .= '</div>';
 
-            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
+            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back, $msg);
 
             // collect the history
             $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $msg, $back);
@@ -488,7 +494,7 @@ class view extends view_exe
     /**
      * lists of all view components which are used by this view
      */
-    private function linked_components($add_cmp, $wrd, string $script, $back): string
+    private function linked_components(int $add_cmp, word $wrd, string $script, string $back, user_message $msg): string
     {
         $html = new html_base();
         global $ui_sys;
@@ -548,11 +554,11 @@ class view extends view_exe
      * display the history of a view
      */
     function dsp_hist(
-        int         $page,
-        int         $size,
-        string      $call,
-        user_message $msg,
-        ?back_trace $back = null
+        int                    $page,
+        int                    $size,
+        string                 $call,
+        user_message           $msg,
+        back_trace|string|null $back = null
     ): string
     {
         $log_ui = new user_log_display();
@@ -597,7 +603,7 @@ class view extends view_exe
 
         $msk_lst = new view_list();
 
-        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' . url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($msk_lst as $msk) {
@@ -609,9 +615,9 @@ class view extends view_exe
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
             $call_edit = $html->url_back(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
+            $result .= $msk->btn_edit() . ' ';
             $call_del = $html->url_back(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
+            $result .= $msk->btn_del() . ' ';
             $result .= '<br>';
         }
 
@@ -669,7 +675,7 @@ class view extends view_exe
     {
 
         $html = new html_base();
-        $url = api::MAIN_SCRIPT . '?' . url_var::ID .'=' . $this->id();
+        $url = api::MAIN_SCRIPT . '?' . url_var::ID . '=' . $this->id();
         if (isset($wrd)) {
             $url .= '&word=' . $wrd->id();
         }

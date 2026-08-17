@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
@@ -80,6 +81,10 @@ class word_ui_tests
         $t_phr = new test_phrases($t);
         $t_trp = new test_triples($t);
 
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+
         // start the test section (ts)
         $ts = 'unit ui html word ';
         $t->header($ts);
@@ -114,9 +119,9 @@ class word_ui_tests
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
         $test_page .= 'with link: ' . $wrd->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $wrd->btn_add_back() . '<br>';
-        $test_page .= 'edit button: ' . $wrd->btn_edit() . '<br>';
-        $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
+        $test_page .= 'add button: ' . $wrd->btn_add($url_arr, $base_url) . '<br>';
+        $test_page .= 'edit button: ' . $wrd->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $wrd->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $cfg) . '<br>';
@@ -205,7 +210,7 @@ class word_ui_tests
         // the phrase title of the table view: for a word the same title as the default word view
         $test_page .= $html->text_h2('phrase title of ' . $wrd_zh->name());
         $test_page .= $form->title_phrase($wrd_zh, $msg) . '<br>';
-        $t->html_page_test($test_page, 'word html components', 'word', $msg);
+        $t->html_page_test($test_page, 'word html components', 'word', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'values in columns');
         $col_html = $list->values_in_columns($wrd_zh, $msg, $dto);

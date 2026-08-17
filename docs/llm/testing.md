@@ -727,6 +727,17 @@ up in a rendered tooltip and in a database read, so a hand-written summary makes
 the unit test and the read test disagree. Take the string from the file that owns
 the phrase (the first one importing it) and paste it unchanged.
 
+## A html snapshot page needs the local pod for its styles and fonts
+
+A page under `src/test/resources/web/html/` loads its stylesheets from
+`http://localhost/` (the `THIS_URL` fallback), so the rsync copy in `/var/www/html`
+must be served there. The icons additionally need the font CORS header of
+`external_lib/.htaccess`, because a `@font-face` request is always CORS-gated and a
+snapshot is often opened from another origin (file system or ide preview server) —
+without the header the icon glyphs stay invisible while everything else looks fine.
+The one-time apache setup (AllowOverride, mod_headers): `docs/deployment.md`,
+section *local web server for the api tests and the html snapshots*.
+
 ## Never edit an existing test resource — only add
 
 Everything under `src/test/resources/` (HTML/SQL snapshots, dummy-cache JSON,

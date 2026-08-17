@@ -84,6 +84,7 @@ use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 
 class test_cleanup extends test_api
 {
@@ -616,9 +617,16 @@ class test_cleanup extends test_api
         return $trm_lst;
     }
 
-    function html_page_test(string $body, string $title, string $filename, user_message_ui $msg = new user_message_ui()): bool
+    function html_page_test(
+        string          $body,
+        string          $title,
+        string          $filename,
+        user_message_ui $msg = new user_message_ui(),
+        string          $base_url = '',
+        string          $lan = languages::DEFAULT
+    ): bool
     {
-        return $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename, $msg);
+        return $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename, $msg, $base_url, $lan);
     }
 
     function html_view_test(string $body, string $filename, user_message_ui $msg = new user_message_ui()): bool
@@ -634,14 +642,21 @@ class test_cleanup extends test_api
      * @param user_message_ui $msg to collect the data retriaval messages
      * @return bool
      */
-    private function html_test(string $body, string $title, string $file_path, user_message_ui $msg): bool
+    private function html_test(
+        string          $body,
+        string          $title,
+        string          $file_path,
+        user_message_ui $msg,
+        string          $base_url = '',
+        string          $lan = languages::DEFAULT
+    ): bool
     {
         if ($title == '') {
             $title = 'test';
         } else {
             $title = 'test ' . $title;
         }
-        $created_html = $this->html_page($body, $title, $msg);
+        $created_html = $this->html_page($body, $title, $msg, $base_url, $lan);
         $resource_file = test_paths::RESOURCE . test_paths::HTML . $file_path . test_files::HTML;
         // the object page snapshot renders a complete html page (the all-component-types page renders every
         // component type) and compares it against a file, so a long timeout is used to avoid a false timeout
@@ -649,10 +664,19 @@ class test_cleanup extends test_api
             $file_path, $created_html, $resource_file, test_files::HTML, test_const::DUMMY_SESSION_TOKEN, self::TIMEOUT_LIMIT_LONG);
     }
 
-    private function html_page(string $body, string $title, user_message_ui $msg): string
+    private function html_page(
+        string          $body,
+        string          $title,
+        user_message_ui $msg,
+        string          $base_url = '',
+        string          $lan = languages::DEFAULT
+    ): string
     {
         $html = new html_base();
-        return $html->header($title, $msg)
+        // a caller can set the pod url as the base url, so that its snapshot opened from the
+        // file system or an ide preview server still finds the styles and the icon font;
+        // the language is set once by the caller and only passed through, never overwritten
+        return $html->header($title, $msg, '', $lan, $base_url)
             . $html->navbar(views::START_ID)
             . $html->main($body)
             . $html->footer();

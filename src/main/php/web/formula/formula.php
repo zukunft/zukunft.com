@@ -132,7 +132,9 @@ class formula extends sandbox_code_id
     const string VIEW_ADD = views::FORMULA_ADD;
     const string VIEW_EDIT = views::FORMULA_EDIT;
     const string VIEW_DEL = views::FORMULA_DEL;
+    const int VIEW_ADD_ID = views::FORMULA_ADD_ID;
     const int VIEW_EDIT_ID = views::FORMULA_EDIT_ID;
+    const int VIEW_DEL_ID = views::FORMULA_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::FORMULA_ADD;
@@ -454,39 +456,6 @@ class formula extends sandbox_code_id
         $url = $this->obj_url(views::FORMULA_EDIT_ID, $back);
         $html = new html_base();
         return $html->ref($url, $this->name(), $this->name());
-    }
-
-
-    /*
-     * buttons
-     */
-
-    /**
-     * create the HTML code for a button to change the formula
-     * @param string $back the stack trace for the undo functionality
-     * @return string html code to change to formula
-     */
-    function btn_edit(string $back = ''): string
-    {
-        global $mtr;
-        return parent::btn_edit_sbx(
-            $this::VIEW_EDIT,
-            $this::MSG_EDIT,
-            $back, $mtr->txt(msg_id::FOR) . $this->name);
-    }
-
-    /**
-     * create the HTML code for a button to delete or exclude this formula
-     * @param string $back the stack trace for the undo functionality
-     * @return string html code to change to formula
-     */
-    function btn_del(string $back = ''): string
-    {
-        global $mtr;
-        return parent::btn_del_sbx(
-            $this::VIEW_DEL,
-            $this::MSG_DEL,
-            $back, $mtr->txt(msg_id::OF) . $this->name);
     }
 
 

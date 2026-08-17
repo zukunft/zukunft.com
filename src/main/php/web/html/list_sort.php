@@ -43,7 +43,10 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+//include_once test_paths::CONST . 'triple_names.php';
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -52,6 +55,9 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class list_sort
@@ -209,10 +215,12 @@ class list_sort
         }
 
         // footer row to extend the table
+        $url_arr_problem = [url_var::MASK => views::WORD_ID, url_var::ID => triple_names::GLOBAL_PROBLEM_ID];
+        $url_arr_solution = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::SOLUTION_ID];
         $td = $html->th('', scopes::ROW);
-        $td .= $html->td($phr->button_add_triple($phr->id()));
+        $td .= $html->td($phr->button_add_triple($url_arr_problem));
         $td .= $html->td("", styles::TEXT_RIGHT);
-        $td .= $html->td($phr->button_add_triple($phr->id()));
+        $td .= $html->td($phr->button_add_triple($url_arr_solution));
         $td .= $html->td("", styles::TEXT_RIGHT);
         $tr .= $html->tr($td);
         $tbody = $html->tbody($tr);

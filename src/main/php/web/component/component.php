@@ -103,7 +103,9 @@ class component extends sandbox_code_id
     const string VIEW_ADD = views::COMPONENT_ADD;
     const string VIEW_EDIT = views::COMPONENT_EDIT;
     const string VIEW_DEL = views::COMPONENT_DEL;
+    const int VIEW_ADD_ID = views::COMPONENT_ADD_ID;
     const int VIEW_EDIT_ID = views::COMPONENT_EDIT_ID;
+    const int VIEW_DEL_ID = views::COMPONENT_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::COMPONENT_ADD;

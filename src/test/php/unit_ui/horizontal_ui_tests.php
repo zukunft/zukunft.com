@@ -41,6 +41,8 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -75,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -93,6 +96,9 @@ class horizontal_ui_tests
         $url_test = new test_mappers($t);
         $url_map = new url_mapper();
 
+        $base_url = THIS_URL;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+
         // start the test section (ts)
         $ts = 'unit ui horizontal ';
         $t->header($ts);
@@ -103,12 +109,12 @@ class horizontal_ui_tests
             $test_name = 'add ' . $lib->class_to_name($class) . ' html code';
             if ($class != result::class) {
                 // it should not be possible to add result via an ui button
-                $t->assert_text_contains($test_name, $ui_obj->btn_add_back(), button::IMG_ADD_FA);
+                $t->assert_text_contains($test_name, $ui_obj->btn_add($url_arr, $base_url), button::IMG_ADD_FA);
             }
             $test_name = 'edit ' . $lib->class_to_name($class) . ' html code';
-            $t->assert_text_contains($test_name, $ui_obj->btn_edit(), button::IMG_EDIT_FA);
+            $t->assert_text_contains($test_name, $ui_obj->btn_edit($url_arr, $base_url), button::IMG_EDIT_FA);
             $test_name = 'del ' . $lib->class_to_name($class) . ' html code';
-            $t->assert_text_contains($test_name, $ui_obj->btn_del(), button::IMG_DEL_FA);
+            $t->assert_text_contains($test_name, $ui_obj->btn_del($url_arr, $base_url), button::IMG_DEL_FA);
         }
 
         $t->subheader($ts . 'url');

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
@@ -45,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -59,6 +61,10 @@ class triple_ui_tests
         $t_phr = new test_phrases($t);
         $msg = new user_message();
 
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => triple_names::CANTON_ZURICH_ID];
+
         // start the test section (ts)
         $ts = 'unit ui html triple ';
         $t->header($ts);
@@ -70,9 +76,9 @@ class triple_ui_tests
         $test_page .= 'with tooltip: ' . $trp->name_tip() . '<br>';
         $test_page .= 'with link: ' . $trp->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $trp->btn_add_back() . '<br>';
-        $test_page .= 'edit button: ' . $trp->btn_edit() . '<br>';
-        $test_page .= 'del button: ' . $trp->btn_del() . '<br>';
+        $test_page .= 'add button: ' . $trp->btn_add($url_arr, $base_url) . '<br>';
+        $test_page .= 'edit button: ' . $trp->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $trp->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= $html->text_h2('select');
         $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT, $msg, $ui->dto->typ_lst_cache) . '<br>';
         $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
@@ -99,7 +105,7 @@ class triple_ui_tests
         $test_page .= $html->text_h2('related phrases without subtitles of ' . $trp_problem->name());
         $test_page .= $list->phrases_related_ex_subtitle($trp_problem, $msg) . '<br>';
 
-        $t->html_page_test($test_page, 'triple', 'triple', $msg);
+        $t->html_page_test($test_page, 'triple', 'triple', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'related phrases without subtitles');
         $sub_html = $list->phrases_related_ex_subtitle($trp_problem, $msg);

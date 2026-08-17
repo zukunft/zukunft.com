@@ -90,7 +90,9 @@ class source extends sandbox_code_id
     const string VIEW_ADD = views::SOURCE_ADD;
     const string VIEW_EDIT = views::SOURCE_EDIT;
     const string VIEW_DEL = views::SOURCE_DEL;
+    const int VIEW_ADD_ID = views::SOURCE_ADD_ID;
     const int VIEW_EDIT_ID = views::SOURCE_EDIT_ID;
+    const int VIEW_DEL_ID = views::SOURCE_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::SOURCE_ADD;

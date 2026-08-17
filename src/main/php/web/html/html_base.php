@@ -287,11 +287,12 @@ class html_base
         user_message|Message $msg,
         string               $style = "",
         string               $lan = languages::DEFAULT,
+        string               $base_url = '',
     ): string
     {
         $result = $this->doctype() . "\n";
         $result .= $this->lang($lan) . "\n";
-        $result .= $this->head($this->head_fill($title, $msg)) . "\n";
+        $result .= $this->head($this->head_fill($title, $msg, $base_url)) . "\n";
         if (self::UI_USE_BOOTSTRAP) {
             $result .= '<' . self::BODY . '>';
         } else {
@@ -310,34 +311,34 @@ class html_base
      * @param user_message|Message $msg
      * @return string with the html code for the head section of the html header
      */
-    private function head_fill(string $title, user_message|Message $msg): string
+    private function head_fill(string $title, user_message|Message $msg, string $base_url = ''): string
     {
         $txt = $this->charset() . "\n";
         $txt .= $this->make_flood() . "\n";
         $txt .= $this->title($title, POD_NAME, $msg) . "\n";
-        $txt .= $this->head_style() . "\n";
+        $txt .= $this->head_style($base_url) . "\n";
         return $txt;
     }
 
     /**
      * @return string with the html code for the style of the html head
      */
-    private function head_style(): string
+    private function head_style(string $base_url = ''): string
     {
         if (self::UI_USE_BOOTSTRAP) {
             // TODO Prio 3 check if the other bootstrap css also needs to be included
             // include the bootstrap stylesheets
-            $txt = $this->stylesheet_bs() . "\n";
+            $txt = $this->stylesheet_bs($base_url) . "\n";
             // include the icon font
-            $txt .= $this->stylesheet_font() . "\n";
+            $txt .= $this->stylesheet_font($base_url) . "\n";
             // include the default zukunft.com frontend style
-            $txt .= $this->stylesheet() . "\n";
+            $txt .= $this->stylesheet($base_url) . "\n";
             // TODO Prio 2 check if still needed
             // include the bootstrap JavaScript plugins
             //$result .= $this->stylesheet_bs_js_all() . "\n";
         } else {
             // use a simple stylesheet without Javascript
-            $txt = $this->stylesheet_fallback() . "\n";
+            $txt = $this->stylesheet_fallback($base_url) . "\n";
         }
         return $txt;
     }
@@ -2826,25 +2827,25 @@ class html_base
     /**
      * @return string use a simple stylesheet without JavaScript
      */
-    private function stylesheet(): string
+    private function stylesheet(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_HTML);
+        return $this->link_style(files::STYLE_HTML, $base_url);
     }
 
     /**
      * @return string use a simple stylesheet without JavaScript and without bootstrap (maybe not needed any more)
      */
-    private function stylesheet_fallback(): string
+    private function stylesheet_fallback(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_FALLBACK);
+        return $this->link_style(files::STYLE_FALLBACK, $base_url);
     }
 
     /**
      * @return string the bootstrap stylesheet
      */
-    private function stylesheet_bs(): string
+    private function stylesheet_bs(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_BS);
+        return $this->link_style(files::STYLE_BS, $base_url);
     }
 
     /**
@@ -2858,19 +2859,27 @@ class html_base
     /**
      * @return string the font stylesheet
      */
-    private function stylesheet_font(): string
+    private function stylesheet_font(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_FONT);
+        return $this->link_style(files::STYLE_FONT, $base_url);
     }
 
     /**
      * @param string $stylesheet path to the stylesheet file
+     * @param string $base_url e.g. the pod url to turn the root relative path into an
+     *                         absolute url, so that the stylesheet is also found by a page
+     *                         that is not served by the pod (e.g. a html test snapshot)
      * @return string the HTML link element for the stylesheet
      */
-    private function link_style(string $stylesheet): string
+    private function link_style(string $stylesheet, string $base_url = ''): string
     {
+        $url = $stylesheet;
+        if ($base_url != '') {
+            // without the trailing slash of the base url, because the path starts with one
+            $url = rtrim($base_url, '/') . $stylesheet;
+        }
         return '<' . self::LINK . ' ' . self::REL . '="' . self::STYLESHEET . '" '
-            . self::HREF . '="' . $stylesheet . '">';
+            . self::HREF . '="' . $url . '">';
     }
 
 }

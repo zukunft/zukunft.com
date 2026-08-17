@@ -1063,6 +1063,13 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function solution(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SOLUTION_ID, word_names::SOLUTION);
+        return $wrd;
+    }
+
     function word_climate(): word
     {
         $wrd = new word($this->env->usr1);

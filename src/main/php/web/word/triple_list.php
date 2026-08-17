@@ -32,6 +32,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -46,6 +47,8 @@ include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -59,6 +62,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class triple_list extends ListBase
 {
@@ -139,6 +144,8 @@ class triple_list extends ListBase
     function tbl(user_message $msg, string $back = '', bool $add_btn = false): string
     {
         $html = new html_base();
+        // TODO Prio 0 replace the $back parameter with $url_arr
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
         $cols = '';
         $last_trp = null;
         // TODO check if and why the next line makes sense
@@ -150,7 +157,7 @@ class triple_list extends ListBase
         }
         if ($add_btn) {
             $add_trp = $this->suggested($msg);
-            $add_url = $add_trp->btn_add_back($back);
+            $add_url = $add_trp->btn_add($url_arr);
             $cols .= $html->td($add_url);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);

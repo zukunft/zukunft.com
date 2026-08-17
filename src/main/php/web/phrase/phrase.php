@@ -646,10 +646,10 @@ class phrase extends combine_named
     /**
      * html code for a button to add a new phrase similar to this phrase
      **/
-    function btn_add(user_message $msg, string $back): string
+    function btn_add(user_message $msg, array $url_arr = [], string $base_url = ''): string
     {
         $wrd = $this->main_word($msg);
-        return $wrd->btn_add_back($back);
+        return $wrd->btn_add($url_arr, $base_url);
     }
 
     /**
@@ -657,10 +657,10 @@ class phrase extends combine_named
      * html code for a button to add a new phrase similar to this phrase
      * @return string the html to add the word or triple
      **/
-    function button_add_triple($back): string
+    function button_add_triple(array $url_arr = [], string $base_url = ''): string
     {
         $wrd = new word();
-        return $wrd->btn_add_back($back);
+        return $wrd->btn_add($url_arr, $base_url);
     }
 
     /**

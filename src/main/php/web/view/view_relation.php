@@ -70,6 +70,9 @@ class view_relation extends sandbox_link
     const string VIEW_ADD = views::VIEW_RELATION_ADD;
     const string VIEW_EDIT = views::VIEW_RELATION_EDIT;
     const string VIEW_DEL = views::VIEW_RELATION_DEL;
+    const int VIEW_ADD_ID = views::VIEW_RELATION_ADD_ID;
+    const int VIEW_EDIT_ID = views::VIEW_RELATION_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_RELATION_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::VIEW_RELATION_ADD;
