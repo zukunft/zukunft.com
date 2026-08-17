@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -1185,7 +1186,7 @@ class phrase_list extends sandbox_list_named
      */
     function btn_add_value($back): string
     {
-        $result = \Zukunft\ZukunftCom\main\php\web\btn_add_value($this, Null, $back);
+        $result = \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($this, Null, $back);
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';

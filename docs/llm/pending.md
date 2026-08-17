@@ -2,6 +2,7 @@
 
 ## temp
 
+fix the view selektor link in the word_default page
 
 ## cleanup
 

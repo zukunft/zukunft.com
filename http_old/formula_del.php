@@ -96,9 +96,9 @@ if ($usr->id() > 0) {
             $result .= $msk_ui->dsp_navbar($dto, $back);
 
             if ($frm->is_used()) {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno("Exclude \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
+                $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_yesno("Exclude \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
             } else {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno("Delete \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
+                $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_yesno("Delete \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
             }
         }
     } else {

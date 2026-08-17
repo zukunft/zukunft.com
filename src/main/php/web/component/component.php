@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::LOG . 'user_log_display.php';
@@ -869,7 +870,7 @@ class component extends sandbox_code_id
 
             $result .= $html->dsp_form_end('', $back);
         } else {
-            $result .= '      ' . btn_add('add new',
+            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add('add new',
                     $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), '', $back, '', 'add_link=1&word=' . $wrd->id));
         }
         $result .= '    </td>';

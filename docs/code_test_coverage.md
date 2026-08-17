@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1180 of 5549 public functions have at least 2 unit test calls; the 4369 functions below do not
+1180 of 5548 public functions have at least 2 unit test calls; the 4368 functions below do not
 
 ## main backend
 
@@ -4635,7 +4635,6 @@ so same-named functions of several classes share their test calls
     \-- name_tip - 1 unit test calls
     \-- only_type - 0 unit test calls
     \-- selector - 0 unit test calls
-    \-- selector_page - 0 unit test calls
 \-- view_relation
     \-- api_array - 1 unit test calls
     \-- child - 1 unit test calls

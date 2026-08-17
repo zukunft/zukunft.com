@@ -6068,7 +6068,6 @@
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
     \-- only_type - section for function only_type not yet defined that it should be filter in /view/view_list.php
     \-- selector - section for function selector not yet defined that it should be select in /view/view_list.php
-    \-- selector_page - section for function selector_page not yet defined that it should be select in /view/view_list.php
     \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- view_relation
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_relation.php
