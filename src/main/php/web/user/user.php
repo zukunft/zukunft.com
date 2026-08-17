@@ -659,10 +659,15 @@ class user extends db_object
      * display
      */
 
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::USER_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::USER_ID,
+        string $base_url = ''
+    ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back);
+        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 

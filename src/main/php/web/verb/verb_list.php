@@ -38,6 +38,7 @@ include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -45,10 +46,19 @@ use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class verb_list extends type_list
 {
+
+    /*
+     * const
+     */
+
+    // the view that shows the complete list, used as the target of the "... and n more" tail
+    const int VIEW_ALL_ID = views::VERBS_ID;
+
 
     private ?user $usr = null; // the user object of the person for whom the verb list is loaded, so to say the viewer
 
@@ -106,6 +116,10 @@ class verb_list extends type_list
         }
         return $msg->is_ok();
     }
+
+    /*
+     * display
+     */
 
     function list(string $class, string $title = ''): string
     {

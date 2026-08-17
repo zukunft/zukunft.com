@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1180 of 5548 public functions have at least 2 unit test calls; the 4368 functions below do not
+1180 of 5555 public functions have at least 2 unit test calls; the 4375 functions below do not
 
 ## main backend
 
@@ -3741,6 +3741,7 @@ so same-named functions of several classes share their test calls
     \-- text_h1 - 0 unit test calls
     \-- text_h2 - 0 unit test calls
     \-- text_h3 - 0 unit test calls
+    \-- text_h4 - 0 unit test calls
     \-- th - 0 unit test calls
     \-- th_row - 0 unit test calls
     \-- thead - 0 unit test calls
@@ -4315,7 +4316,11 @@ so same-named functions of several classes share their test calls
     \-- db_id_list - 0 unit test calls
     \-- lst_key - 0 unit test calls
     \-- lst_key_sort_by_name - 0 unit test calls
+    \-- name_link - 0 unit test calls
+    \-- name_tip - 1 unit test calls
     \-- set_from_json_array - 1 unit test calls
+    \-- sort_by_impact - 1 unit test calls
+    \-- sort_by_name - 0 unit test calls
     \-- type_selector - 0 unit test calls
 \-- type_lists
     \-- field_to_type_list - 0 unit test calls
@@ -4353,7 +4358,9 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- description - 0 unit test calls
     \-- get_description - 0 unit test calls
+    \-- impact - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_tip - 1 unit test calls
     \-- select_list_item - 1 unit test calls
     \-- set_code_id - 1 unit test calls
     \-- set_description - 1 unit test calls

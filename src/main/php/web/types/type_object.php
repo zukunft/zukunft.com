@@ -154,15 +154,43 @@ class type_object
     }
 
     /**
+     * @return float the system calculated relevance of this type; 0 because unlike a verb
+     *               a plain type has no impact, so a type list falls back to the name order
+     */
+    function impact(): float
+    {
+        return 0.0;
+    }
+
+    /**
+     * display the type name with its description as mouse over tooltip
+     * @returns string the html code
+     */
+    function name_tip(): string
+    {
+        $html = new html_base();
+        // escape the user settable name so it cannot inject markup; the
+        // description goes into the title attribute, which span() escapes
+        return $html->span($html->esc($this->name()), '', $this->get_description());
+    }
+
+    /**
      * display a word with a link to the main page for the word
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
+     * @param int $msk_id the view that shows the object, overwritten by the child class
+     * @param string $base_url to set an absolut html path for urls
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::GROUP_EDIT_ID,
+        string $base_url = ''
+    ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back);
+        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
         return $html->ref($url, $this->name(), $this->description, $style);
     }
 

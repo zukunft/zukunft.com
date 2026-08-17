@@ -200,7 +200,7 @@ class verb extends sandbox_named
         return $this->frm_name;
     }
 
-    function impact(): int
+    function impact(): float
     {
         return $this->impact;
     }
@@ -296,9 +296,14 @@ class verb extends sandbox_named
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::VERB_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::VERB_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($back, $style, $msk_id, $base_url);
     }
 
 

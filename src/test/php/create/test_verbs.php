@@ -134,6 +134,16 @@ class test_verbs extends test_objects
     }
 
     /**
+     * @return verb a standard verb with more parameters set e.g. the description for tooltips
+     */
+    function verb_is_full(): verb
+    {
+        $vrb = new verb(verbs::IS_ID, verbs::IS_NAME, verbs::IS);
+        $vrb->set_description(verbs::IS_COM);
+        return $vrb;
+    }
+
+    /**
      * @return verb the "is symbol for" verb used by symbol-relation triples (e.g. "CHF is symbol for Swiss franc")
      */
     function verb_is_symbol(): verb
@@ -269,9 +279,19 @@ class test_verbs extends test_objects
     function list_short(): verb_list
     {
         $lst = new verb_list($this->env->usr1);
-        $lst->add_verb($this->verb_is());
+        $lst->add_verb($this->verb_is_full());
         $lst->add_verb(self::verb_part());
         $lst->add_verb($this->verb_measure());
+        return $lst;
+    }
+
+    /**
+     * @return verb_list with all system verbs e.g. to test the short, more and all list versions
+     */
+    function list_all(): verb_list
+    {
+        $lst = new verb_list($this->env->usr1);
+        $lst->load_dummy();
         return $lst;
     }
 

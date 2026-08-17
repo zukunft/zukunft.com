@@ -42,22 +42,28 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::TYPES . 'ref_type.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -70,10 +76,20 @@ class type_list
     const int CODE_ID_NOT_FOUND = -1;
     // extra entry used in a selection to separate the highlighted entries from the sorted entries
     const string SELECT_SEPARATOR = ' --- ';
+    // the limit of the all version of a list, which shows every entry
+    const int LIMIT_ALL = 0;
+    // the separator between two entries of a one line list
+    // TODO Prio 1 read the separator from the config.yaml (user: frontend: lists: separator: entry)
+    const string ENTRY_SEPARATOR = ', ';
+    // the view that shows the complete list, used as the target of the "... and n more" tail;
+    // overwritten by the child that has such a view, 0 keeps the tail an unlinked text
+    const int VIEW_ALL_ID = 0;
 
     // the protected main var without id list because this is only loaded once
     protected array $lst = [];
-    private array $hash = []; // hash list with the code id for fast selection
+    // the database id of each entry on its code id, so that id() can resolve a code id without
+    // scanning the list; filled only by add_obj(), so there is one writer of this contract
+    private array $hash = [];
 
 
     function reset(): void
@@ -285,10 +301,11 @@ class type_list
             //log_warning('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
         }
         if ($id > 0) {
-            if (in_array($id, $this->hash)) {
-                $key = array_search($id, $this->hash);
-                $lst_key = array_search($key, array_keys($this->hash));
-                $result = $this->lst[$lst_key];
+            // pick by id instead of mapping the position in the hash to the position in the list,
+            // because the two are only parallel as long as no entry is added twice
+            $found = array_filter($this->lst, fn(verb|ref_type|type_object $typ) => $typ->id() == $id);
+            if ($found != []) {
+                $result = reset($found);
             } else {
                 log_warning('Type with is ' . $id . ' not found in ' . $this->dsp_id());
             }
@@ -357,6 +374,115 @@ class type_list
      */
 
     /**
+     * the names of this list in one line, comma separated, each with its description as tooltip
+     * the short version of a list shows shared_config::LIMIT_SHORT_LIST entries, the more version
+     * shared_config::LIMIT_MORE_LIST and the all version every entry (self::LIMIT_ALL)
+     * @param int $limit the maximum number of entries to show, self::LIMIT_ALL for the complete list
+     * @return string the html code of the names in one line
+     */
+    function name_tip(int $limit = shared_config::LIMIT_SHORT_LIST): string
+    {
+        return $this->names_one_line($limit, false);
+    }
+
+    /**
+     * the names of this list in one line, comma separated, each linked to its own page
+     * @param int $limit the maximum number of entries to show, self::LIMIT_ALL for the complete list
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code of the linked names in one line
+     */
+    function name_link(int $limit = shared_config::LIMIT_SHORT_LIST, string $base_url = ''): string
+    {
+        return $this->names_one_line($limit, true, $base_url);
+    }
+
+    /**
+     * the entries of this list ordered by name
+     *
+     * the sorted entries are returned instead of sorting the list in place, because get() maps the
+     * position in the hash to the position in the list, so reordering $this->lst would break every
+     * later lookup by id or code id of a preloaded type list
+     *
+     * @return array the list entries ordered by name
+     */
+    function sort_by_name(): array
+    {
+        $lst = $this->lst();
+        usort($lst, fn(verb|type_object $one, verb|type_object $two) => strcmp($one->name(), $two->name()));
+        return $lst;
+    }
+
+    /**
+     * the entries of this list ordered by the system calculated relevance, highest first,
+     * so that a shortened list shows the entries that matter most to the user
+     *
+     * entries with the same (or no) impact are ordered by name and finally by id, so that the order
+     * is always deterministic and the html does not change between runs e.g. for the snapshot tests
+     *
+     * @return array the list entries ordered by impact, name and id
+     */
+    function sort_by_impact(): array
+    {
+        $lst = $this->lst();
+        usort($lst, function (verb|type_object $one, verb|type_object $two) {
+            return $two->impact() <=> $one->impact()
+                ?: strcmp($one->name(), $two->name())
+                    ?: $one->id() <=> $two->id();
+        });
+        return $lst;
+    }
+
+    /**
+     * the shared body of name_tip and name_link
+     * @param int $limit the maximum number of entries to show, self::LIMIT_ALL for the complete list
+     * @param bool $with_link true to link each entry to its page, false to show only the tooltip
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code of the names in one line
+     */
+    private function names_one_line(int $limit, bool $with_link, string $base_url = ''): string
+    {
+        // the short and the more version show only a part of the list, so the entries with the
+        // highest impact are picked; the all version is sorted by name, which reads easier
+        $lst = $limit == self::LIMIT_ALL ? $this->sort_by_name() : $this->sort_by_impact();
+        $shown = count($lst);
+        if ($limit != self::LIMIT_ALL and $limit < $shown) {
+            $shown = $limit;
+        }
+        $names = [];
+        foreach (array_slice($lst, 0, $shown) as $obj) {
+            // named argument, so that each entry keeps the view id of its own class
+            $names[] = $with_link ? $obj->name_link(base_url: $base_url) : $obj->name_tip();
+        }
+        $line = implode(self::ENTRY_SEPARATOR, $names);
+        if ($shown < count($lst)) {
+            $line .= self::ENTRY_SEPARATOR . $this->more_tail(count($lst) - $shown, $with_link, $base_url);
+        }
+        // text-nowrap keeps the entries on one line, so that neither an entry name of several words
+        // nor the list itself is split across lines in the browser and in the html snapshot
+        return new html_base()->span($line, styles::TEXT_NOWRAP);
+    }
+
+    /**
+     * the "... and n more" tail of a truncated list
+     * TODO Prio 1 link the tail to the next list version (short to more, more to all) once the
+     *             url var for the list version exists; for now it points to the complete list
+     * @param int $diff the number of entries that are not shown
+     * @param bool $with_link true to link the tail to the view that shows the complete list
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code of the tail
+     */
+    private function more_tail(int $diff, bool $with_link, string $base_url = ''): string
+    {
+        $result = msg_id::THREE_POINTS->text() . ' ' . msg_id::AND_MORE_BEFORE->text() . ' '
+            . $diff . ' ' . msg_id::MORE->text();
+        if ($with_link and $this::VIEW_ALL_ID != 0) {
+            $html = new html_base();
+            $result = $html->ref($html->url_back($this::VIEW_ALL_ID, base_url: $base_url), $result);
+        }
+        return $result;
+    }
+
+    /**
      * create the HTML code to select a type
      * TODO Prio 0 use this var order for all selectors
      * TODO use the label_id for all function calls
@@ -397,23 +523,6 @@ class type_list
         return $sel->display();
     }
 
-
-    /*
-     * internal
-     */
-
-    /**
-     * recreate the hash table to get the database id for a code_id
-     */
-    private function set_hash(): void
-    {
-        $this->hash = [];
-        if ($this->lst != null) {
-            foreach ($this->lst as $key => $type) {
-                $this->hash[$type->code_id] = $key;
-            }
-        }
-    }
 
     /*
      * debug

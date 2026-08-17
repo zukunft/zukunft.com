@@ -133,9 +133,14 @@ class language extends type_object
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::LANGUAGE_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::LANGUAGE_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($back, $style, $msk_id, $base_url);
     }
 
 }
