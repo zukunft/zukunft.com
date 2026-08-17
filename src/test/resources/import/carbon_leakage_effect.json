@@ -1,0 +1,231 @@
+{
+  "name": "carbon_leakage_net_effect",
+  "version": "0.0.1",
+  "description": "Condition under which a national carbon price produces a negative net effect on the consumption-based footprint of a tradable product: the shift term must exceed the abatement term. Includes the general formula, the tipping point, and five worked examples (tomatoes CH/DE, steel-like).",
+  "words": [
+    {
+      "name": "consumption-based footprint",
+      "description": "greenhouse gas emissions attributed to domestic consumption of a product, regardless of production location; contrast with the territorial (UNFCCC production-based) inventory"
+    },
+    {
+      "name": "abatement term",
+      "description": "emission change from reduced domestic production intensity, applied to the initial domestic share: (1 - m0) * (eA - e0); non-positive"
+    },
+    {
+      "name": "shift term",
+      "description": "emission change from production relocating to the foreign producer: (m - m0) * (eB - eA); non-negative when the foreign producer is dirtier"
+    },
+    {
+      "name": "leakage rate",
+      "description": "L = foreign emission increase divided by domestic emission decrease; the net effect is negative exactly when L exceeds 100 percent"
+    },
+    {
+      "name": "tipping import increase",
+      "description": "critical increase of the import share dm* above which the net effect turns negative: dm* = (1 - m0) * (e0 - eA) / (eB - eA)"
+    },
+    {
+      "name": "e0",
+      "description": "domestic emission intensity before the carbon price change, in kg CO2eq per kg product (tomato examples) or t CO2eq per t product (steel example)"
+    },
+    {
+      "name": "eA",
+      "description": "domestic emission intensity after abatement triggered by the carbon price"
+    },
+    {
+      "name": "eB",
+      "description": "emission intensity of the imported product including transport"
+    },
+    {
+      "name": "m0",
+      "description": "import share of domestic consumption before the carbon price change, dimensionless fraction"
+    },
+    {
+      "name": "m",
+      "description": "import share of domestic consumption after the carbon price change, dimensionless fraction"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "net effect per unit of consumption",
+      "expression": "dE = (1 - m0) * (eA - e0) + (m - m0) * (eB - eA)",
+      "description": "change of the consumption-based footprint per kg of product at constant consumption; first summand is the abatement term, second is the shift term"
+    },
+    {
+      "name": "negative net effect condition",
+      "expression": "(m - m0) * (eB - eA) > (1 - m0) * (e0 - eA)",
+      "description": "the net effect is negative if and only if the shift term exceeds the absolute abatement term; abatement therefore does not need to be zero, only smaller than the shift"
+    },
+    {
+      "name": "tipping import increase",
+      "expression": "dm_star = (1 - m0) * (e0 - eA) / (eB - eA)",
+      "description": "import-share increase at which dE = 0"
+    },
+    {
+      "name": "necessary condition invariance",
+      "expression": "dE(m = 1) = (1 - m0) * (eB - e0)",
+      "description": "at full import the abatement intensity eA cancels; a negative net effect is possible for some m <= 1 if and only if eB > e0, independent of how much abatement occurs"
+    },
+    {
+      "name": "leakage rate",
+      "expression": "L = (m - m0) * eB / ((1 - m0) * e0 - (1 - m) * eA)",
+      "description": "net effect negative iff L > 1"
+    }
+  ],
+  "values": [
+    {
+      "word": "eB",
+      "context": "oil-heated winter greenhouse tomatoes, Germany, including road transport to Switzerland",
+      "value": 6,
+      "unit": "kg CO2eq per kg",
+      "type": "assumed value",
+      "confidence": 0.6,
+      "note": "literature range for heated greenhouse tomatoes is roughly 2 to 6 kg CO2eq per kg; 6 is an upper-range illustration, to be replaced by a verified LCA value"
+    },
+    {
+      "word": "eA",
+      "context": "heat-pump greenhouse tomatoes on Swiss hydro electricity, remaining emissions from cultivation, substrate, fertiliser, packaging",
+      "value": 1,
+      "unit": "kg CO2eq per kg",
+      "type": "assumed value",
+      "confidence": 0.6
+    },
+    {
+      "word": "e0",
+      "context": "steel, EU average blast-furnace route before additional carbon pricing",
+      "value": 2.0,
+      "unit": "t CO2eq per t crude steel",
+      "type": "assumed value",
+      "confidence": 0.6,
+      "note": "order of magnitude consistent with IEA and worldsteel figures; verify against a specific dataset before citing"
+    },
+    {
+      "word": "eB",
+      "context": "steel, coal-based blast-furnace route with coal-heavy electricity mix, typical for imports from China",
+      "value": 3.0,
+      "unit": "t CO2eq per t crude steel",
+      "type": "assumed value",
+      "confidence": 0.6,
+      "note": "verify against IEA or CBAM default values before citing"
+    }
+  ],
+  "examples": [
+    {
+      "name": "abatement dominates",
+      "product": "tomatoes",
+      "parameters": { "e0": 6, "eA": 1, "eB": 6, "m0": 0.1, "m": 0.2 },
+      "results": {
+        "E_before": 6.0,
+        "E_after": 2.0,
+        "dE": -4.0,
+        "dE_relative": -0.67,
+        "dm_star": 0.90,
+        "leakage_rate": 0.13,
+        "net_effect": "positive"
+      },
+      "type": "assumed value",
+      "confidence": 0.9,
+      "note": "carbon price triggers a switch from oil heating to heat pump; import share rises only moderately; footprint falls by two thirds"
+    },
+    {
+      "name": "tipping point with partial abatement",
+      "product": "tomatoes",
+      "parameters": { "e0": 3, "eA": 1, "eB": 6, "m0": 0.1, "m": 0.46 },
+      "results": {
+        "E_before": 3.3,
+        "E_after": 3.3,
+        "dE": 0.0,
+        "dm_star": 0.36,
+        "leakage_rate": 1.0,
+        "net_effect": "neutral"
+      },
+      "type": "assumed value",
+      "confidence": 0.9,
+      "note": "with abatement from 3 to 1 the tipping point is an import-share increase of 36 percentage points, i.e. m = 0.46"
+    },
+    {
+      "name": "shift dominates despite abatement",
+      "product": "tomatoes",
+      "parameters": { "e0": 3, "eA": 1, "eB": 6, "m0": 0.1, "m": 0.9 },
+      "results": {
+        "E_before": 3.3,
+        "E_after": 5.5,
+        "dE": 2.2,
+        "dE_relative": 0.67,
+        "dm_star": 0.36,
+        "leakage_rate": 1.85,
+        "net_effect": "negative"
+      },
+      "type": "assumed value",
+      "confidence": 0.9,
+      "note": "domestic intensity falls by two thirds, yet the consumption footprint rises by two thirds because the shift term 0.8 * 5 exceeds the abatement term 0.9 * 2; demonstrates that zero abatement is not required for a negative net effect"
+    },
+    {
+      "name": "both effects, abatement wins",
+      "product": "tomatoes",
+      "parameters": { "e0": 3, "eA": 1, "eB": 6, "m0": 0.1, "m": 0.3 },
+      "results": {
+        "E_before": 3.3,
+        "E_after": 2.5,
+        "dE": -0.8,
+        "dE_relative": -0.24,
+        "dm_star": 0.36,
+        "leakage_rate": 0.60,
+        "net_effect": "positive"
+      },
+      "type": "assumed value",
+      "confidence": 0.9,
+      "note": "60 percent leakage and still a positive net effect; leakage below 100 percent weakens but does not reverse the measure"
+    },
+    {
+      "name": "steel-like moderate intensity ratio",
+      "product": "crude steel",
+      "parameters": { "e0": 2.0, "eA": 1.6, "eB": 3.0, "m0": 0.2, "m": 0.5 },
+      "results": {
+        "E_before": 2.2,
+        "E_after": 2.3,
+        "dE": 0.1,
+        "dE_relative": 0.045,
+        "dm_star": 0.23,
+        "leakage_rate": 1.125,
+        "net_effect": "negative"
+      },
+      "type": "assumed value",
+      "confidence": 0.8,
+      "note": "even at an intensity ratio of only 1.5 the net effect turns slightly negative once the import share rises from 20 to 50 percent; the tipping increase is 23 percentage points"
+    }
+  ],
+  "assumptions": [
+    "consumption volume is constant; a demand response to higher prices would reduce total emissions and shift all tipping points upward",
+    "eB is constant, i.e. the foreign producer does not abate; a foreign carbon price would lower eB and can remove the negative-net-effect region entirely",
+    "the fossil world-market channel (lower domestic fossil demand lowering world prices and raising consumption elsewhere) is excluded; it can only worsen the balance",
+    "single product, two countries; the import-share response m(carbon price differential) is treated as an input, not modelled"
+  ],
+  "conclusions": [
+    {
+      "statement": "a negative net effect requires the shift term to exceed the abatement term, not the absence of abatement",
+      "type": "assumed value",
+      "confidence": 0.95
+    },
+    {
+      "statement": "the necessary condition eB > e0 is invariant to the amount of domestic abatement; abatement only raises the tipping import increase dm_star",
+      "type": "assumed value",
+      "confidence": 0.95
+    },
+    {
+      "statement": "net effect negative is equivalent to leakage rate above 100 percent",
+      "type": "assumed value",
+      "confidence": 0.95
+    },
+    {
+      "statement": "a bilateral border carbon adjustment priced at the carbon-price differential times the verified product intensity neutralises the shift term; the only missing input in practice is a verifiable eB per product and origin",
+      "type": "assumed value",
+      "confidence": 0.8
+    }
+  ],
+  "sources": [
+    {
+      "name": "parameter values",
+      "description": "all numeric parameters are illustrative and tagged as assumed values; before publication replace tomato intensities with a verified LCA source and steel intensities with IEA, worldsteel or EU CBAM default values"
+    }
+  ]
+}

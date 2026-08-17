@@ -132,6 +132,8 @@ messages:
   system_title_sandbox: "Sandbox"
   system_title_undo: "Undo"
   system_title_user_settings: "User setting"
+  system_title_user: "User"
+  system_title_verb: "Verb"
   system_paste_table: "Drop table"
   system_title_import: "Import"
   system_title_export: "Export"

@@ -1,8 +1,24 @@
 # pending - list of planned llm prompts with prio 1
 
+## user default view
+
+in the word_default view the my tab shows the changes that the user has done on tis object. for the user_default view all word changes (later all changes on all objects) of the user should be shown, but not in a selectable tab. Instead in a fixed column. For this probable again a new component must be created but it should be possible to reuse many part from the my tab of the word_default view. The component might be named 'all_user_overwrites'. Add the component to the user default view.
+
+add the trible overwrites to the 'all_user_overwrites' component
+
+similar to the my tab in the word default view add a my tab to the formula default view
+
+add the formula overwrites to the 'all_user_overwrites' component used in the user_default view
+
+fill the formula_link_default view with the missing fields including the my tab
+
+
+
+
 ## temp
 
-fix the view selektor link in the word_default page
+
+fix the view selector link in the word_default page
 
 ## cleanup
 
@@ -39,6 +55,10 @@ text_h4() breaks the pattern of its siblings. text_h1/2/3 pass the matching leve
 The snapshot does not actually exercise sort_by_impact(). Every verb from load_dummy() has impact 0.0, so the short and more versions fall through to the name tie-break and render alphabetically — identical to what sort_by_name() would produce. The new sort is unproven by the committed test; a fixture with distinct impacts (or an assert on sort_by_impact() directly) would close that.
 $url_arr is unused in both verb_list_ui_tests.php:64 and word_list_ui_tests.php:57. Nothing on either page takes one.
 word_list_ui_tests.php / word_list.html are unrelated to this change. The only effect is that the three stylesheet hrefs became absolute (http://localhost/…) because $base_url, $lan were added to its html_page_test call. Fine in itself, but it is a separate concern riding along — worth a glance that you want it in this commit.
+src/test/resources/import/carbon_leakage_effect.json is staged and unrelated — 244 new lines, referenced by no test and no PHP file, and nothing in this change set produces it. It looks like it wandered in from other work. Either it belongs to a different commit or its consumer is still missing.
+The component insertion point causes ~1,600 lines of avoidable churn. I placed system title user directly after system title user settings, which lands it at component id 98 and shifts every later component id by one: unit/component/list.csv 450 changed lines, unit/component_link/list.csv 1,866. Appending both new components at the end of their components blocks would have given the same result with a two-line fixture diff. I checked the pinned consts in shared/const/components.php — the highest is FORM_PLURAL_ID = 92, below the insertion point, so nothing is silently mis-pinned. But if you would rather not carry that renumbering, moving the two definitions to the end of their blocks and re-running is cheap now and awkward later.
+Seven user snapshots were renamed, not edited — 74_user.html → 74_user_9.html, and likewise 49, 50, 62, 85, 87, 89. The filename carries the dbo id, which is now 9 instead of 0. Correct consequence of user_filled_loaded, but it makes the diff read as delete+add; worth confirming the deletions are the paired old files and that the runner's "remove test files not used any more" pass did not drop anything else.
+component_types.csv gains a seeded row, so the database needs the new type. I read that as data rather than structure and left version.txt alone — your call if it should carry the minor bump plus a db_check step.
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.

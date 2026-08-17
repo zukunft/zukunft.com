@@ -186,6 +186,21 @@ class test_users
     }
 
     /**
+     * the same user as user_filled but as it is loaded from the database, so with the id set
+     * unlike user_filled the id is set, because a page that shows a user is requested by id
+     * and an object without an id cannot show its name (see docs/llm/testing.md)
+     *
+     * @param test_cleanup $t the test object with some base test functions
+     * @return user with all vars set including the database id
+     */
+    function user_filled_loaded(test_cleanup $t): user
+    {
+        $usr = $this->user_filled($t);
+        $usr->id = users::TEST_USER_ID;
+        return $usr;
+    }
+
+    /**
      * a user without login as it is loaded from the database, so with the id set
      * unlike user_ip the id is set, because the permission checks (e.g. sandbox->save)
      * use the requesting user of the message only if the user has an id

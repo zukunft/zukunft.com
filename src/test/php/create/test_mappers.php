@@ -814,6 +814,7 @@ class test_mappers
             case component_types::SYSTEM_BODY_LOGIN_RESET:
             case component_types::SYSTEM_BODY_LOGOUT:
             case component_types::SYSTEM_BODY_USER_SETTINGS:
+            case component_types::SYSTEM_TITLE_WITH_OBJECT_NAME:
                 $obj = $t_usr->user_filled($this->env);
                 break;
             case component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL:
@@ -1084,7 +1085,9 @@ class test_mappers
         $t_slg = new test_sys_log($this->env);
         switch ($class) {
             case user::class:
-                $obj = $t_usr->user_filled($this->env);
+                // the loaded user, because a show url identifies the object by id like for every
+                // other class, and without the id the page cannot show the name of the user
+                $obj = $t_usr->user_filled_loaded($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
@@ -1352,7 +1355,8 @@ class test_mappers
         $msg = new user_message();
         switch ($class) {
             case user::class:
-                $obj = $t_usr->user_filled($this->env);
+                // the loaded user, because an edit url identifies the object to change by id
+                $obj = $t_usr->user_filled_loaded($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
@@ -1495,7 +1499,8 @@ class test_mappers
         $msg = new user_message();
         switch ($class) {
             case user::class:
-                $obj = $t_usr->user_filled($this->env);
+                // the loaded user, because a del url identifies the object to remove by id
+                $obj = $t_usr->user_filled_loaded($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
             case word::class:
@@ -1621,7 +1626,8 @@ class test_mappers
         $msg = new user_message();
         switch ($class) {
             case user::class:
-                $obj = $t_usr->user_filled($this->env);
+                // the loaded user, because a step url continues to work on an existing object
+                $obj = $t_usr->user_filled_loaded($this->env);
                 $obj_array = $this->user_step_url($obj, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
