@@ -253,7 +253,7 @@ value_time: $obj_to_add, $val
 value_time_series: $db_chk, $db_rec, $db_vts, $std_rec, $vts
 value_ts_data: $ts
 value_type_list: $val_typ_lst
-verb_list: $link_types_ui, $lst, $vrb_lst, $vrb_lst_ui
+verb_list: $link_types_ui, $lst, $lst_dbl, $lst_empty, $vrb_lst, $vrb_lst_ui
 view_link_type: $lnk_typ_ui
 view_list: $dsp_to_validate, $lst, $msk_lst, $views, $wrd_lst
 view_relation_list: $mrl_lst

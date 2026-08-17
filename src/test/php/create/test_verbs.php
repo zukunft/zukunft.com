@@ -37,12 +37,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::VERB . 'verb.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -254,6 +256,31 @@ class test_verbs extends test_objects
     function verb_has(): verb
     {
         return new verb(verbs::HAS_ID, verbs::HAS_NAME, verbs::HAS);
+    }
+
+
+    /*
+     * list
+     */
+
+    /**
+     * @return verb_list with a few verbs for unit testing
+     */
+    function list_short(): verb_list
+    {
+        $lst = new verb_list($this->env->usr1);
+        $lst->add_verb($this->verb_is());
+        $lst->add_verb(self::verb_part());
+        $lst->add_verb($this->verb_measure());
+        return $lst;
+    }
+
+    /**
+     * @return verb_list without any verb e.g. to test the empty api message
+     */
+    function list_empty(): verb_list
+    {
+        return new verb_list($this->env->usr1);
     }
 
 

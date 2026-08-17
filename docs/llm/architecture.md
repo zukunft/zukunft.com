@@ -368,6 +368,34 @@ name, or the linked objects of a link), and only the write is decided by
 everything an import prepares — and if the add still reports "added", the caller
 cannot even see it (the open case in `docs/llm/pending_prio_2.md`).
 
+## A list is not a set — a repeated entry can be the data
+
+A list may hold the same object more than once, and where it does the repetition
+*is* the information:
+
+- a **view** uses the same **component** several times (once per position), so
+  the component list of a view legitimately contains one entry per usage;
+- a **verb list** built from a **triple list** counts how often each verb is
+  used, so the same verb appears once per triple.
+
+The duplicate check is therefore a **parameter of the add, never a fixed rule**:
+`add_obj($obj, $allow_duplicates, $msg)` (`shared/helper/ListOfIdObjects.php`,
+`web/sandbox/sandbox_list_named.php`, `web/types/type_list.php`).
+
+- `$allow_duplicates = false` — the list is a set: the repeat is refused and
+  reported as `msg_id::LIST_DOUBLE_ENTRY`. This is the default, because most
+  lists map unique database rows.
+- `$allow_duplicates = true` — the repeat is the data: it is added and **nothing
+  is reported**; a double entry message here would be a false alarm.
+
+The caller decides, because only the caller knows what the list means: a list
+filled from an api message of unique rows passes `false`, a usage or position
+list passes `true`. Never hard-code the check inside the list class.
+
+Both branches are behaviour, so **both need a test**: one that the repeat is
+refused and reported, and one that it is kept and silent (`testing.md`, "a
+positive and a negative test for every feature").
+
 ## Standard function names
 
 | Function | Purpose |

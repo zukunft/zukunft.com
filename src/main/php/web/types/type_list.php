@@ -84,11 +84,10 @@ class type_list
 
     /**
      * set the vars of these list display objects bases on the api json array
-     * TODO Prio 1 add user_message parameter
      * @param array $json_array an api list json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @param string $class to force the type child class e.g. verb, ref_type or language
      * @return bool true if there are no errors
-     *
      */
     function set_from_json_array(array $json_array, user_message $msg, string $class = ''): bool
     {
@@ -96,7 +95,7 @@ class type_list
             if ($class == verb::class) {
                 $vrb = new verb();
                 $vrb->api_mapper($value, $msg);
-                $this->add_obj($vrb);
+                $this->add_obj($vrb, $msg);
             } elseif ($class == ref_type::class) {
                 $ref_typ = new ref_type(
                     $value[json_fields::ID],
@@ -107,7 +106,7 @@ class type_list
                 if (key_exists(json_fields::URL, $value)) {
                     $ref_typ->url = $value[json_fields::URL];
                 }
-                $this->add_obj($ref_typ);
+                $this->add_obj($ref_typ, $msg);
             } elseif ($class == language::class) {
                 $lan = new language(
                     $value[json_fields::ID],
@@ -124,7 +123,7 @@ class type_list
                 if (key_exists(json_fields::USAGE, $value)) {
                     $lan->usage = $value[json_fields::USAGE];
                 }
-                $this->add_obj($lan);
+                $this->add_obj($lan, $msg);
             } else {
                 if (!array_key_exists(json_fields::CODE_ID, $value)) {
                     $msg->add_error_text('code id is missing for ' . implode(',', $value));
@@ -143,7 +142,7 @@ class type_list
                         $value[json_fields::NAME]
                     );
                 }
-                $this->add_obj($typ);
+                $this->add_obj($typ, $msg);
             }
         }
         return $msg->is_ok();
@@ -316,22 +315,26 @@ class type_list
 
     /**
      * add a phrase or ... to the list
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @param object $obj the type object that should be added to this list
+     * @param user_message $msg to report an entry that is already part of this list
+     * @param bool $allow_duplicates true if the list can contain the same entry twice
+     *                               e.g. a verb list that counts the verb usages of a triple list
+     * @returns bool true if the object has been added
      */
-    protected function add_obj(object $obj): user_message
+    protected function add_obj(object $obj, user_message $msg, bool $allow_duplicates = false): bool
     {
-        $msg = new user_message(); // the message IS the return value, so the caller merges it
-
-        if (!in_array($obj->id(), $this->id_lst())) {
+        $added = false;
+        if ($allow_duplicates or !in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;
             $this->hash[$obj->code_id] = $obj->id();
+            $added = true;
         } else {
             $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
                 msg_id::VAR_NAME => $obj->name(),
                 msg_id::VAR_CLASS_NAME => library::class_to_name($obj::class)
             ]);
         }
-        return $msg;
+        return $added;
     }
 
     /**
