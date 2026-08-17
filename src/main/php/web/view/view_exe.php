@@ -353,7 +353,7 @@ class view_exe extends view_base
     /**
      * HTML code to edit all word fields
      */
-    function dsp_edit($add_cmp, $wrd, $back, user_message $msg): string
+    function dsp_edit(int $add_cmp, word $wrd, string $back, user_message $msg): string
     {
         global $ui_sys;
         $usr = $ui_sys->usr;

@@ -236,9 +236,11 @@ class result extends sandbox_value
 
     /**
      * overwrite because results should not be added via the user interface by the user
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
      * @return string an empty string
      */
-    function btn_add_back(string $back = ''): string
+    function btn_add(array $url_arr = [], string $base_url = ''): string
     {
         return '';
     }

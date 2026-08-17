@@ -119,6 +119,8 @@ class word_names
     const int GLOBAL_ID = 194;
     const string POTENTIAL = 'potential';
     const int POTENTIAL_ID = 222;
+    const string SOLUTION = 'solution';
+    const int SOLUTION_ID = 214;
     const string LOSS = 'loss';
     const int LOSS_ID = 225;
     const string GAIN = 'gain';
@@ -474,6 +476,7 @@ class word_names
     );
 
     // list of words where the id is used for system testing
+    // TODO Prio 2 combine with similar list in words
     const array TEST_WORD_IDS = array(
         self::ABB_ID => self::ABB,
         self::BE_ID => self::BE,
@@ -481,6 +484,7 @@ class word_names
         self::CANTON_ID => self::CANTON,
         self::CASH_ID => self::CASH,
         self::FLOW_ID => self::FLOW,
+        self::SOLUTION_ID => self::SOLUTION,
         self::STATEMENT_ID => self::STATEMENT,
         shared_words::CH_ID => shared_words::CH,
         shared_words::CHF_ID => shared_words::CHF,

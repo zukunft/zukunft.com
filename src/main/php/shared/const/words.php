@@ -332,6 +332,7 @@ class words
         [word_names::SALES, word_names::SALES_ID],
         [self::SECOND, self::SECOND_ID],
         [word_names::STATEMENT, word_names::STATEMENT_ID],
+        [word_names::SOLUTION, word_names::SOLUTION_ID],
         [word_names::TAX, word_names::TAX_ID],
         [self::TOTAL_PRE, self::TOTAL_ID],
         [word_names::TRILLION, word_names::TRILLION_ID],

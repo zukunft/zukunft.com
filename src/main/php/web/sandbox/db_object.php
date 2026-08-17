@@ -432,19 +432,6 @@ class db_object extends TextIdObject
     }
 
     /**
-     * TODO Prio 0 deprecate
-     * @return string the html code for a bottom
-     * to create a new sandbox object e.g. word for the current user
-     */
-    function btn_add_back(string $back = ''): string
-    {
-        return $this->btn_add_sbx_back(
-            self::VIEW_ADD,
-            self::MSG_ADD,
-            $back);
-    }
-
-    /**
      * the html code to change a sandbox object e.g. the word name or the type
      * @param array $url_arr the previous url with the back part
      * @param string $base_url to set an absolut html path for urls

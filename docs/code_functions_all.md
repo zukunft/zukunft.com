@@ -5660,7 +5660,7 @@
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result.php
     \-- figure - section for function figure not yet defined that it should be cast in /result/result.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /result/result.php
-    \-- btn_add_back - section for function btn_add_back not yet defined that it should be buttons in /result/result.php
+    \-- btn_add - section for function btn_add not yet defined that it should be buttons in /result/result.php
     \-- btn_edit_back - section for function btn_edit_back not yet defined that it should be buttons in /result/result.php
     \-- btn_del_back - section for function btn_del_back not yet defined that it should be buttons in /result/result.php
     \-- explain - section for function explain not yet defined that it should be review in /result/result.php
@@ -5716,7 +5716,6 @@
     \-- api_array - section for function api_array not yet defined that it should be interface in /sandbox/db_object.php
     \-- api_json - section for function api_json not yet defined that it should be interface in /sandbox/db_object.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /sandbox/db_object.php
-    \-- btn_add_back - section for function btn_add_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_edit_back - section for function btn_edit_back not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /sandbox/db_object.php
@@ -5982,7 +5981,6 @@
     \-- ref_selector - section for function ref_selector not yet defined that it should be base in /value/value.php
     \-- has_phrase - section for function has_phrase not yet defined that it should be info in /value/value.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /value/value.php
-    \-- btn_add_back - section for function btn_add_back not yet defined that it should be buttons in /value/value.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /value/value.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /value/value.php
     \-- is_id_set - section for function is_id_set is expected to be info in /value/value.php
