@@ -315,12 +315,19 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * display a word with a link to the main page for the word
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
+     * @param int $msk_id the view that shows the object, overwritten by the child class
+     * @param string $base_url to set an absolut html path for urls
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::GROUP_EDIT_ID,
+        string $base_url = ''
+    ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back);
+        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
         // escape the user settable name (link body); ref() escapes the
         // description that becomes the title attribute
         return $html->ref($url, $this->name(), $this->get_description(), $style);

@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1180 of 5548 public functions have at least 2 unit test calls; the 4368 functions below do not
+1180 of 5549 public functions have at least 2 unit test calls; the 4369 functions below do not
 
 ## main backend
 
@@ -3741,6 +3741,7 @@ so same-named functions of several classes share their test calls
     \-- text_h1 - 0 unit test calls
     \-- text_h2 - 0 unit test calls
     \-- text_h3 - 0 unit test calls
+    \-- text_h4 - 0 unit test calls
     \-- th - 0 unit test calls
     \-- th_row - 0 unit test calls
     \-- thead - 0 unit test calls
@@ -4201,6 +4202,7 @@ so same-named functions of several classes share their test calls
     \-- system_sub_tile - 0 unit test calls
     \-- system_sub_tile_var - 0 unit test calls
     \-- system_tile - 0 unit test calls
+    \-- title_with_object_name - 0 unit test calls
     \-- undo - 0 unit test calls
     \-- user_setting - 0 unit test calls
     \-- value_details - 0 unit test calls
@@ -4315,7 +4317,11 @@ so same-named functions of several classes share their test calls
     \-- db_id_list - 0 unit test calls
     \-- lst_key - 0 unit test calls
     \-- lst_key_sort_by_name - 0 unit test calls
+    \-- name_link - 0 unit test calls
+    \-- name_tip - 1 unit test calls
     \-- set_from_json_array - 1 unit test calls
+    \-- sort_by_impact - 1 unit test calls
+    \-- sort_by_name - 0 unit test calls
     \-- type_selector - 0 unit test calls
 \-- type_lists
     \-- field_to_type_list - 0 unit test calls
@@ -4353,7 +4359,9 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- description - 0 unit test calls
     \-- get_description - 0 unit test calls
+    \-- impact - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_tip - 1 unit test calls
     \-- select_list_item - 1 unit test calls
     \-- set_code_id - 1 unit test calls
     \-- set_description - 1 unit test calls
@@ -4628,7 +4636,6 @@ so same-named functions of several classes share their test calls
     \-- name_tip - 1 unit test calls
     \-- only_type - 0 unit test calls
     \-- selector - 0 unit test calls
-    \-- selector_page - 0 unit test calls
 \-- view_relation
     \-- api_array - 1 unit test calls
     \-- child - 1 unit test calls
@@ -4656,13 +4663,9 @@ so same-named functions of several classes share their test calls
     \-- children - 0 unit test calls
     \-- db_fld_to_url - 1 unit test calls
     \-- dsp_del - 0 unit test calls
-    \-- dsp_edit - 0 unit test calls
     \-- dsp_graph - 0 unit test calls
-    \-- dsp_hist - 0 unit test calls
-    \-- dsp_hist_links - 0 unit test calls
     \-- dsp_type_selector - 0 unit test calls
     \-- dsp_unlink - 0 unit test calls
-    \-- form_edit - 0 unit test calls
     \-- get_plural - 0 unit test calls
     \-- header - 0 unit test calls
     \-- impact - 0 unit test calls
@@ -4683,8 +4686,6 @@ so same-named functions of several classes share their test calls
     \-- phrase_selector - 0 unit test calls
     \-- phrase_type_selector - 0 unit test calls
     \-- sandbox_fld_order - 1 unit test calls
-    \-- selector_link - 0 unit test calls
-    \-- selector_word - 0 unit test calls
     \-- set_type - 1 unit test calls
     \-- similar - 0 unit test calls
     \-- td - 0 unit test calls

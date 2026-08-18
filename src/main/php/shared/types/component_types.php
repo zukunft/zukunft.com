@@ -351,6 +351,8 @@ class component_types
 
     const string SYSTEM_TITLE = "system_title";
     const int SYSTEM_TITLE_ID = 63;
+    const string SYSTEM_TITLE_WITH_OBJECT_NAME = "system_title_with_object_name";
+    const int SYSTEM_TITLE_WITH_OBJECT_NAME_ID = 215;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
     const int SYSTEM_SUB_TITLE_ID = 145;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
@@ -891,6 +893,7 @@ class component_types
         [self::ROW_CENTER, self::ROW_CENTER_ID],
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
+        [self::SYSTEM_TITLE_WITH_OBJECT_NAME, self::SYSTEM_TITLE_WITH_OBJECT_NAME_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],
         [self::SYSTEM_SUB_TITLE_VAR, self::SYSTEM_SUB_TITLE_VAR_ID],
         [self::SYSTEM_BODY_ABOUT, self::SYSTEM_BODY_ABOUT_ID],

@@ -1903,6 +1903,8 @@ enum messages: string
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case SYSTEM_TITLE_USER = 'system_title_user';
+    case SYSTEM_TITLE_VERB = 'system_title_verb';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';

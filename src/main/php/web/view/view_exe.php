@@ -587,10 +587,10 @@ class view_exe extends view_base
             } else {
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = $html->url_back(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
-            $result .= btn_edit('design the view', $call_edit) . ' ';
-            $call_del = $html->url_back(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
+            // TODO Prio 0 add the tooltip 'design the view' resp. 'delete the view' and the url
+            //             context of the calling word ('word=' . $wrd_id) with the back trace
+            $result .= $msk->btn_edit() . ' ';
+            $result .= $msk->btn_del() . ' ';
             $result .= '<br>';
         }
 

@@ -33,6 +33,7 @@
 include_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR . 'const.php';
 include_once WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
@@ -95,7 +96,7 @@ if ($usr->id > 0) {
 
             // TODO: display how the views would be changed
 
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', rest_ctrl::PATH_FIXED .'component_del.php?id=' . $cmp_del_id . '&back=' . $back);
+            $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', rest_ctrl::PATH_FIXED .'component_del.php?id=' . $cmp_del_id . '&back=' . $back);
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

@@ -207,6 +207,12 @@ class user extends db_object
                 if ($url_array[url_var::USERNAME] != null) {
                     $this->name = $url_array[url_var::USERNAME];
                 }
+            } elseif (array_key_exists(url_var::NAME, $url_array)) {
+                // a user page is called with the generic name var like any other object page,
+                // whereas the admin user edit form posts the name as the username field
+                if ($url_array[url_var::NAME] != null) {
+                    $this->name = $url_array[url_var::NAME];
+                }
             }
             if (array_key_exists(url_var::EMAIL, $url_array)) {
                 if ($url_array[url_var::EMAIL] != null) {
@@ -659,10 +665,15 @@ class user extends db_object
      * display
      */
 
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::USER_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::USER_ID,
+        string $base_url = ''
+    ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back);
+        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
@@ -812,7 +823,8 @@ class user extends db_object
 
         if ($this->id > 0) {
             // display the user fields using a table and not using px in css to be independent of any screen solution
-            $header = $html->text_h2('User "' . $html->esc($this->name) . '"');
+            // the same title as the user default view builds with the system_title_with_object_name component
+            $header = $html->text_h2(msg_id::SYSTEM_TITLE_USER->text() . ' "' . $html->esc($this->name) . '"');
             $hidden_fields = $html->form_hidden("id", $this->id);
             $hidden_fields .= $html->form_hidden("back", $back);
             $detail_fields = $html->form_text(url_var::USER, $this->name, msg_id::FORM_FIELD_USERNAME);

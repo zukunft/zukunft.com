@@ -91,7 +91,7 @@ if ($usr->id() > 0) {
             $dto = new data_object();
             $result .= $msk_ui->dsp_navbar($dto, $back);
 
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno("Delete " . $dsp_del->name() . "? ", "/http/view_del.php?id=" . $dsp_del_id . "&back=" . $back);
+            $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_yesno("Delete " . $dsp_del->name() . "? ", "/http/view_del.php?id=" . $dsp_del_id . "&back=" . $back);
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

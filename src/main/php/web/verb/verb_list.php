@@ -38,6 +38,7 @@ include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -45,10 +46,19 @@ use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class verb_list extends type_list
 {
+
+    /*
+     * const
+     */
+
+    // the view that shows the complete list, used as the target of the "... and n more" tail
+    const int VIEW_ALL_ID = views::VERBS_ID;
+
 
     private ?user $usr = null; // the user object of the person for whom the verb list is loaded, so to say the viewer
 
@@ -74,31 +84,42 @@ class verb_list extends type_list
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
      * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @param bool $allow_duplicates true if the same verb may be part of this list more than once
+     *                               e.g. to count the verb usages of a triple list
      * @return bool true if there are no errors
      */
-    function set_from_json(string $json_api_msg, user_message $msg): bool
+    function set_from_json(string $json_api_msg, user_message $msg, bool $allow_duplicates = false): bool
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true), $msg);
+        return $this->set_from_json_array(json_decode($json_api_msg, true), $msg, verb::class, $allow_duplicates);
     }
 
     /**
      * set the vars of a term object based on the given json
-     * TODO Prio 1 add user_message as parameter
      * @param array $json_array an api single object json message
-     * @param string $class to force to use the verb child class of the type object
      * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @param string $class to force to use the verb child class of the type object
+     * @param bool $allow_duplicates true if the same verb may be part of this list more than once
      * @return bool true if there are no errors
      */
-    function set_from_json_array(array $json_array, user_message $msg, string $class = verb::class): bool
+    function set_from_json_array(
+        array        $json_array,
+        user_message $msg,
+        string       $class = verb::class,
+        bool         $allow_duplicates = false
+    ): bool
     {
         foreach ($json_array as $value) {
             $new = clone new verb();
             if ($new->api_mapper($value, $msg)) {
-                $this->add_obj($new);
+                $this->add_obj($new, $msg, $allow_duplicates);
             }
         }
         return $msg->is_ok();
     }
+
+    /*
+     * display
+     */
 
     function list(string $class, string $title = ''): string
     {
@@ -122,10 +143,15 @@ class verb_list extends type_list
         $item_type = 'link_type';
         $edit_script = $item_type . "_edit.php";
         $add_script = $item_type . "_add.php";
+        $vrb = null;
         foreach ($item_lst as $item) {
             $result .= $html->ref(rest_ctrl::PATH_FIXED . $edit_script . '?id=' . $item->id, $item->name) . '<br> ';
+            $vrb = $item;
         }
-        $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('Add ' . $item_type, $add_script);
+        if ($vrb != null) {
+            // TODO Prio 1 add tooltip
+            $result .= $vrb->btn_add();
+        }
         $result .= '<br>';
 
         return $result;

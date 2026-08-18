@@ -41,6 +41,7 @@ include_once test_paths::UNIT_UI . 'user_ui_tests.php';
 include_once test_paths::UNIT_UI . 'word_ui_tests.php';
 include_once test_paths::UNIT_UI . 'word_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'verb_ui_tests.php';
+include_once test_paths::UNIT_UI . 'verb_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'triple_ui_tests.php';
 include_once test_paths::UNIT_UI . 'triple_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'phrase_ui_tests.php';
@@ -107,6 +108,7 @@ class all_ui_tests extends all_unit_tests
         new word_ui_tests()->run($t, $ui->dto->typ_lst_cache);
         new word_list_ui_tests()->run($t);
         new verb_ui_tests()->run($t);
+        new verb_list_ui_tests()->run($t);
         new triple_ui_tests()->run($t, $ui);
         new triple_list_ui_tests()->run($t);
         new phrase_ui_tests()->run($t);

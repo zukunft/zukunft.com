@@ -37,12 +37,18 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::TYPES . 'verbs.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\types\verbs as verbs_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -129,6 +135,16 @@ class test_verbs extends test_objects
     function verb_is(): verb
     {
         return new verb(verbs::IS_ID, verbs::IS_NAME, verbs::IS);
+    }
+
+    /**
+     * @return verb a standard verb with more parameters set e.g. the description for tooltips
+     */
+    function verb_is_full(): verb
+    {
+        $vrb = new verb(verbs::IS_ID, verbs::IS_NAME, verbs::IS);
+        $vrb->set_description(verbs::IS_COM);
+        return $vrb;
     }
 
     /**
@@ -254,6 +270,53 @@ class test_verbs extends test_objects
     function verb_has(): verb
     {
         return new verb(verbs::HAS_ID, verbs::HAS_NAME, verbs::HAS);
+    }
+
+
+    /*
+     * list
+     */
+
+    /**
+     * @return verb_list with a few verbs for unit testing
+     */
+    function list_short(): verb_list
+    {
+        $lst = new verb_list($this->env->usr1);
+        $lst->add_verb($this->verb_is_full());
+        $lst->add_verb(self::verb_part());
+        $lst->add_verb($this->verb_measure());
+        return $lst;
+    }
+
+    /**
+     * @return verb_list with all system verbs e.g. to test the short, more and all list versions
+     */
+    function list_all(): verb_list
+    {
+        $lst = new verb_list($this->env->usr1);
+        $lst->load_dummy();
+        return $lst;
+    }
+
+    /**
+     * the frontend verb type list filled like the request cache, e.g. to test the verb selector
+     * @param user_message_ui $msg to report the api mapping problems of the frontend list
+     * @return verbs_ui with all system verbs
+     */
+    function list_all_ui(user_message_ui $msg): verbs_ui
+    {
+        $lst = new verbs_ui();
+        $lst->set_from_json_array(json_decode($this->list_all()->api_json(), true), $msg, verb_ui::class);
+        return $lst;
+    }
+
+    /**
+     * @return verb_list without any verb e.g. to test the empty api message
+     */
+    function list_empty(): verb_list
+    {
+        return new verb_list($this->env->usr1);
     }
 
 

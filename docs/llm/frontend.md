@@ -310,11 +310,47 @@ already-sorted list and assert it) — do not rely on the upstream load order.
 A new `object_pages/<name>.html` fragment that reorders between runs is the
 signal that a sort is missing.
 
+## Short, more and all — the three versions of a list
+
+Every list a page shows exists in three versions. Which one is rendered depends
+on how often the user has asked for more:
+
+| version | entries | tail |
+|---|---|---|
+| **short** (default) | 5 | `… and n more` → the more version |
+| **more** (after one click) | 20 | `… and n more` → the all version |
+| **all** (after the second click) | the whole list, paged | prev / next buttons |
+
+- `n` is the number of **extra** items, not the total.
+- Both counts are **configuration, never literals**: 5 is `select: initial:
+  entries` and 20 is `select: more: entries` in `config.yaml`. In `web/` they are
+  read through the request cache, `$ui_sys->cfg->get_by([...], $msg, <fallback
+  const>)` — never `new config()` and never an inline `5` / `20`.
+  `value_list::configured_limit()` is the pattern to copy: a named private helper
+  that asks the cache and falls back to a const when the config is not loaded.
+- The **all** version is paged (prev / next) and serves its rows from the screen
+  cache. It is offered only while the list stays below the *max frontend list
+  size* of 2'000; above that the user narrows the selection instead, because a
+  page with more rows than that is neither readable nor worth caching.
+  `change_log_list::tr_page_nav()` already builds that footer row from
+  `icons::PAGE_BACK` / `icons::PAGE_FORWARD` — the icons are there, the
+  navigation still has to be wired.
+- Which version is shown is url state like every other frontend state — no
+  JavaScript toggles it (see "Pure HTML, no JavaScript").
+- The version does not change the order: the same deterministic key sorts all
+  three, so the first 5 of the short list are the first 5 of the all list (see
+  "Always sort lists before rendering them").
+
+`config.yaml` carries `select: initial: entries` and `select: more: entries`
+today; the *max frontend list size* key for the 2'000 bound is still missing and
+has to be added together with the paged version.
+
 ## "… more" is always a link that shows more
 
 When a list is truncated to its configured limit, the "… and n more" tail is a
-**link to the view that shows the full list** — never dead text. A count that
-cannot be clicked tells the user something exists and gives no way to see it.
+**link to the next version of the list** (short → more → all) — never dead text.
+A count that cannot be clicked tells the user something exists and gives no way
+to see it.
 
 - The values list tail links to the `phrase_values` view of the page phrase
   (`value_list::more_tail`): `url_new(views::PHRASE_VALUES_ID, $phr->id())`.

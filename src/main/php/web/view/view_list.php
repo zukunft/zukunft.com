@@ -298,46 +298,4 @@ class view_list extends ListBase
         return parent::selector($form, $selected, $name, $label_id, $style, $type);
     }
 
-    /**
-     * create a selection page where the user can select a view that should be used for a view
-     */
-    /*
-    function selector_page($wrd_id, $back): string
-    {
-
-        $result = '';
-
-        $sql = "SELECT view_id, view_name
-                  FROM views
-                 WHERE code_id IS NULL
-              ORDER BY view_name;";
-        $sql = sql_lst_usr("view", $this->user());
-        $call = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
-        $field = 'new_id';
-
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
-        $msk_lst = $db_con->get_old($sql);
-        foreach ($msk_lst as $msk) {
-            $view_id = $msk['id'];
-            $view_name = $msk['name'];
-            if ($view_id == $this->id()) {
-                $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
-            } else {
-                $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
-            }
-            $call_edit = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_EDIT
-                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_DEL
-                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_del('delete the view', $call_del) . ' ';
-            $result .= '<br>';
-        }
-
-        log_debug('done');
-        return $result;
-    }
-    */
-
 }

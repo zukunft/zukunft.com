@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::LOG . 'user_log_display.php';
@@ -319,9 +320,14 @@ class component extends sandbox_code_id
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::COMPONENT_EDIT_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::COMPONENT_EDIT_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($back, $style, $msk_id, $base_url);
     }
 
 
@@ -864,7 +870,7 @@ class component extends sandbox_code_id
 
             $result .= $html->dsp_form_end('', $back);
         } else {
-            $result .= '      ' . btn_add('add new',
+            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add('add new',
                     $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), '', $back, '', 'add_link=1&word=' . $wrd->id));
         }
         $result .= '    </td>';

@@ -6,9 +6,9 @@
         <title>
             test verb - zukunft.com
         </title>
-        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -159,6 +159,202 @@
                     </a>
                 </div>
             </div>
+            <form action="/http/view.php" id="verb_ui_test">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                verb selector:
+                <br>
+                <div class="form-group col-md-4">
+                    <label for="b_form_select_verb">
+                        Verb
+                    </label>
+                    <select class="form-control" name="b" form="verb_ui_test" id="b_form_select_verb" >
+                        <option value="54"  >
+                            adds to
+                        </option>
+                        <option value="56"  >
+                            aims to trigger
+                        </option>
+                        <option value="30"  >
+                            and
+                        </option>
+                        <option value="35"  >
+                            between
+                        </option>
+                        <option value="38"  >
+                            by parts
+                        </option>
+                        <option value="19"  >
+                            can
+                        </option>
+                        <option value="20"  >
+                            can be
+                        </option>
+                        <option value="41"  >
+                            can be made of
+                        </option>
+                        <option value="42"  >
+                            can be packed in
+                        </option>
+                        <option value="4"  >
+                            can be part of
+                        </option>
+                        <option value="16"  >
+                            can be used as a differentiator for
+                        </option>
+                        <option value="22"  >
+                            can cause
+                        </option>
+                        <option value="21"  >
+                            can get
+                        </option>
+                        <option value="23"  >
+                            can have
+                        </option>
+                        <option value="24"  >
+                            can use
+                        </option>
+                        <option value="55"  >
+                            competes with
+                        </option>
+                        <option value="52"  >
+                            enables
+                        </option>
+                        <option value="59"  >
+                            expected from
+                        </option>
+                        <option value="47"  >
+                            explains
+                        </option>
+                        <option value="7"  >
+                            has a
+                        </option>
+                        <option value="32"  >
+                            in
+                        </option>
+                        <option value="17"  >
+                            influences
+                        </option>
+                        <option value="2"  selected >
+                            is a
+                        </option>
+                        <option value="45"  >
+                            is after
+                        </option>
+                        <option value="18"  >
+                            is alias of
+                        </option>
+                        <option value="15"  >
+                            is an acronym for
+                        </option>
+                        <option value="50"  >
+                            is analogous to
+                        </option>
+                        <option value="44"  >
+                            is before
+                        </option>
+                        <option value="49"  >
+                            is evidence for
+                        </option>
+                        <option value="11"  >
+                            is follower of
+                        </option>
+                        <option value="14"  >
+                            is measure type for
+                        </option>
+                        <option value="3"  >
+                            is part of
+                        </option>
+                        <option value="34"  >
+                            is ranked by
+                        </option>
+                        <option value="28"  >
+                            is selector for
+                        </option>
+                        <option value="58"  >
+                            is single attempt in
+                        </option>
+                        <option value="13"  >
+                            issue
+                        </option>
+                        <option value="29"  >
+                            is symbol for
+                        </option>
+                        <option value="9"  >
+                            is term jump for
+                        </option>
+                        <option value="8"  >
+                            is time jump for
+                        </option>
+                        <option value="40"  >
+                            is used by
+                        </option>
+                        <option value="36"  >
+                            kind of
+                        </option>
+                        <option value="51"  >
+                            limits
+                        </option>
+                        <option value="57"  >
+                            lowers barrier for
+                        </option>
+                        <option value="39"  >
+                            must be one of
+                        </option>
+                        <option value="37"  >
+                            name of
+                        </option>
+                        <option value="1"  >
+                            not set
+                        </option>
+                        <option value="5"  >
+                            of
+                        </option>
+                        <option value="31"  >
+                            on
+                        </option>
+                        <option value="26"  >
+                            per
+                        </option>
+                        <option value="53"  >
+                            reduces
+                        </option>
+                        <option value="48"  >
+                            refines
+                        </option>
+                        <option value="25"  >
+                            scaled by
+                        </option>
+                        <option value="46"  >
+                            supports
+                        </option>
+                        <option value="10"  >
+                            term type needed
+                        </option>
+                        <option value="27"  >
+                            times
+                        </option>
+                        <option value="33"  >
+                            to
+                        </option>
+                        <option value="43"  >
+                            used for
+                        </option>
+                        <option value="12"  >
+                            uses
+                        </option>
+                        <option value="60"  >
+                            weighted by
+                        </option>
+                        <option value="6"  >
+                            with
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-outline-success btn-space">
+                    save
+                </button>
+            </form>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

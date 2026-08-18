@@ -627,9 +627,14 @@ class word extends sandbox_code_id
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::WORD_ID): string
+    function name_link(
+        ?string $back = '',
+        string $style = '',
+        int $msk_id = views::WORD_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($back, $style, $msk_id, $base_url);
     }
 
 
@@ -943,77 +948,6 @@ class word extends sandbox_code_id
         return $url;
     }
 
-    /*
-     * TODO to be replaced by a system view
-     */
-
-    /**
-     * HTML code to edit all word fields
-     * @param string $dsp_graph the html code of the related phrases
-     * @param string $dsp_log the html code of the change log
-     * @param string $dsp_frm the html code of the linked formulas
-     * @param string $dsp_type the html code of the type selector formulas
-     * @param string $back the html code to be opened in case of a back action
-     * @return string the html code to display the edit page
-     */
-    function form_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
-    {
-        $html = new html_base();
-        $result = '';
-
-        if ($this->id() > 0) {
-            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id());
-            $hidden_fields .= $html->form_hidden("back", $back);
-            $hidden_fields .= $html->form_hidden("confirm", '1');
-            $detail_fields = $dsp_frm;
-            $detail_fields .= $html->form_text(url_var::PLURAL, $this->plural, msg_id::FORM_FIELD_PLURAL);
-            $detail_fields .= $html->form_text(url_var::DESCRIPTION, $this->get_description(), msg_id::FORM_FIELD_DESCRIPTION);
-            $detail_fields .= $dsp_type;
-            $detail_row = $html->fr($detail_fields) . '<br>';
-            $result = $header
-                . $html->form(views::WORD_EDIT, $hidden_fields . $detail_row)
-                . '<br>' . $dsp_graph;
-        }
-
-        $result .= $dsp_log;
-
-        return $result;
-    }
-
-
-    /**
-     * HTML code to edit all word fields
-     */
-    function dsp_edit(user_message $msg, string $back = ''): string
-    {
-        global $ui_sys;
-        $row_limit = $ui_sys->cfg->get_by([words::ROW, words::LIMIT], $msg, def::FALLBACK_DB_PAGE_ROWS);
-        $html = new html_base();
-        $phr_lst_up = $this->parents($msg);
-        $phr_lst_down = $this->children($msg);
-        $dsp_graph = $phr_lst_up->dsp_graph($this->phrase(), $msg, $back);
-        $dsp_graph .= $phr_lst_down->dsp_graph($this->phrase(), $msg, $back);
-        $wrd_ui = $this;
-        // collect the display code for the user changes
-        $dsp_log = '';
-        $changes = $this->dsp_hist($msg, 1, $row_limit, '', $back);
-        if (trim($changes) <> "") {
-            $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
-            $dsp_log .= $changes;
-        }
-        $changes = $this->dsp_hist_links($msg,0, $row_limit, '', $back);
-        if (trim($changes) <> "") {
-            $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
-            $dsp_log .= $changes;
-        }
-        return $wrd_ui->form_edit(
-            $dsp_graph,
-            $dsp_log,
-            //$this->dsp_formula($back),
-            $this->dsp_type_selector(views::WORD_EDIT, $msg),
-            $back);
-    }
 
     /*
      * to review
@@ -1022,132 +956,6 @@ class word extends sandbox_code_id
     function dsp_graph(foaf_direction $direction, user_message $msg, verb_list $link_types, string $back = ''): string
     {
         return $this->phrase()->dsp_graph($direction, $msg, $link_types, $back);
-    }
-
-    /**
-     * returns the html code to select a word link type
-     * database link must be open
-     * TODO: similar to verb->dsp_selector maybe combine???
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     */
-    function selector_link($id, $form, $back, ?type_lists $typ_lst): string
-    {
-        /*
-        log_debug('verb id ' . $id);
-
-        $result = '';
-
-        $sql_name = "";
-        if ($db_con->get_type() == sql_db::POSTGRES) {
-            $sql_name = "CASE WHEN (name_reverse  <> '' IS NOT TRUE AND name_reverse <> verb_name) THEN CONCAT(verb_name, ' (', name_reverse, ')') ELSE verb_name END AS name";
-        } elseif ($db_con->get_type() == sql_db::MYSQL) {
-            $sql_name = "IF (name_reverse <> '' AND name_reverse <> verb_name, CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name";
-        } else {
-            log_err('Unknown db type ' . $db_con->get_type());
-        }
-        $sql_avoid_code_check_prefix = "SELECT";
-        $sql = $sql_avoid_code_check_prefix . " * FROM (
-            SELECT verb_id AS id, 
-                   " . $sql_name . ",
-                   words
-              FROM verbs 
-      UNION SELECT verb_id * -1 AS id, 
-                   CONCAT(name_reverse, ' (', verb_name, ')') AS name,
-                   words
-              FROM verbs 
-             WHERE name_reverse <> '' 
-               AND name_reverse <> verb_name) AS links
-          ORDER BY words DESC, name;";
-        $sel = new html_selector;
-        $sel->form = $form;
-        $sel->name = 'verb';
-        $sel->sql = $sql;
-        $sel->selected = $id;
-        $sel->dummy_text = '';
-        */
-        global $ui_sys;
-        $usr = $ui_sys->usr;
-        // fall back to the frontend request cache if the caller has no type list
-        if ($typ_lst == null) {
-            log_err('type list cache missing, falling back to the request cache');
-            $typ_lst = $ui_sys->typ_lst_cache;
-        }
-        // TODO add $id to the parameters
-        $result = $typ_lst->vrb->selector($form);
-
-        if ($usr->is_admin()) {
-            // admin users should always have the possibility to create a new link type
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('add new link type',
-                new html_base()->url_back(views::VERB_ADD_ID, 0, '', $back));
-        }
-
-        return $result;
-    }
-
-    /**
-     * to select an existing word to be added
-     */
-    private function selector_add($id, $form): string
-    {
-        $pattern = '';
-        $phr_lst = new word_list();
-        $phr_lst->load_like($pattern);
-        //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($form, $id, url_var::WORD, msg_id::FORM_SELECT_WORD);
-    }
-
-
-    /*
-     * select
-     */
-
-    /**
-     * @returns string the html code to select a word
-     */
-    function selector_word(int $id, int $pos, string $form): string
-    {
-        $pattern = '';
-        $phr_lst = new word_list();
-        $phr_lst->load_like($pattern);
-
-        if ($pos > 0) {
-            $name = url_var::WORD_POS . $pos;
-        } else {
-            $name = url_var::WORD;
-        }
-        return $phr_lst->selector($form, $id, $name, msg_id::FORM_SELECT_WORD);
-    }
-
-    /**
-     * display the history of a word
-     * maybe move this to a new object user_log_display
-     * because this is very similar to a value linked function
-     */
-    function dsp_hist(user_message $msg, int $page = 1, int $size = 20, string $call = '', string $back = ''): string
-    {
-        $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(word::class, $this->id(), $size, $page, $msg, '', null);
-    }
-
-    /**
-     * display the history of a word
-     */
-    function dsp_hist_links($msg, $page, $size, $call, $back): string
-    {
-        log_debug($this->id() . ",size" . $size . ",b" . $size);
-        $result = ''; // reset the html code var
-
-        $log_ui = new user_log_display();
-        $log_ui->id = $this->id();
-        $log_ui->type = word::class;
-        $log_ui->page = $page;
-        $log_ui->size = $size;
-        $log_ui->call = $call;
-        $log_ui->back = $back;
-        $result .= $log_ui->dsp_hist_links($msg);
-
-        log_debug('done');
-        return $result;
     }
 
 

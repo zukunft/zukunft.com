@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            base units - zukunft.com
+            zukunft.com system write test user - Admin change user - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&amp;id=89&amp;9m=89&amp;9a=r&amp;9id=0&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
+                                    <a href="/http/view.php?m=31&amp;id=49&amp;9m=49&amp;9a=r&amp;9id=9&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&amp;9m=89&amp;9a=r&amp;9id=0&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
+                                    <a href="/http/view.php?m=30&amp;9m=49&amp;9a=r&amp;9id=9&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
                                         add view
                                     </a>
                                 </li>
@@ -63,37 +63,37 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=89&amp;q=en">
+                                    <a href="/http/view.php?m=49&amp;q=en">
                                         English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=89&amp;q=en_us">
+                                    <a href="/http/view.php?m=49&amp;q=en_us">
                                         US English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=89&amp;q=de" title="German">
+                                    <a href="/http/view.php?m=49&amp;q=de" title="German">
                                         Deutsch
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=89&amp;q=fr" title="French">
+                                    <a href="/http/view.php?m=49&amp;q=fr" title="French">
                                         Français
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=89&amp;q=es" title="Spanish">
+                                    <a href="/http/view.php?m=49&amp;q=es" title="Spanish">
                                         Español
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=89&amp;q=zh" title="Chinese">
+                                    <a href="/http/view.php?m=49&amp;q=zh" title="Chinese">
                                         漢語
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=89&amp;q=ar" title="Arabic">
+                                    <a href="/http/view.php?m=49&amp;q=ar" title="Arabic">
                                         العربية
                                     </a>
                                 </li>
@@ -106,22 +106,20 @@
                         </details>
                         <details class="user-menu">
                             <summary>
-                                <i class="fas fa-user-circle">
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test">
                                 </i>
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=61&amp;9m=89&amp;9a=r&amp;9id=0&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
-                                        Log in
+                                    system test zukunft.com system test
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=64&amp;9m=49&amp;9a=r&amp;9id=9&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=60&amp;9m=89&amp;9a=r&amp;9id=0&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
-                                        Signup
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/settings?9m=89&amp;9a=r&amp;9id=0&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
+                                    <a href="/settings?9m=49&amp;9a=r&amp;9id=9&amp;9k=zukunft.com%20system%20write%20test%20user&amp;9ip=258.257.256.255&amp;9z=0">
                                         Settings
                                     </a>
                                 </li>
@@ -132,9 +130,39 @@
             </div>
         </nav>
         <main class="main-container">
-            <span title="view the base units with the formulas" data-toggle="tooltip">
-                base units
-            </span>
+            <h4>
+                Change user (by admin)
+            </h4>
+            <form action="/http/view.php" id="admin_user_edit">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input class="form-control" type="hidden" name="m" id="mask" value="49">
+                <input class="form-control" type="hidden" name="id" id="id" value="9">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
+                <div class="row col-md-12">
+                    <input class="form-control" type="text" name="un" id="username" value="zukunft.com system write test user">
+                    <input class="form-control" type="email" name="um" id="email">
+                </div>
+                <div class="row col-md-12">
+                    <input class="form-control" type="password" name="uw" id="password">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" name="us">
+                            Create the pages from the user sandbox
+                        </label>
+                    </div>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="/http/view.php?m=0&amp;id=9" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        save
+                    </button>
+                </div>
+            </form>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

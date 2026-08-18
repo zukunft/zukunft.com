@@ -321,6 +321,13 @@
       "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
       "type": "table_with_related_columns",
       "code_id": "table_with_related_columns_phrase"
+    },
+    {
+      "name": "system title verb",
+      "description": "show the language specific word verb and the name of the shown verb as the page title",
+      "type": "system_title_with_object_name",
+      "code_id": "system_title_verb",
+      "ui_msg_code_id": "system_title_verb"
     }
   ],
   "views": [
@@ -424,10 +431,14 @@
       "components": [
         {
           "position": "1",
-          "name": "Verb"
+          "name": "system title verb"
         },
         {
           "position": "2",
+          "name": "Verb"
+        },
+        {
+          "position": "3",
           "name": "related triples"
         }
       ]

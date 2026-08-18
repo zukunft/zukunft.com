@@ -1192,7 +1192,7 @@ class value_list extends ListBase
                             }
 
                             //$result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $common_lst, $back);
-                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
+                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
                             $modal_nbr++;
                             //$result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back);
                             $result .= '      </td>' . "\n";
@@ -1298,7 +1298,7 @@ class value_list extends ListBase
                                         $type_ids[] = 0;
                                     }
 
-                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add_value($add_phr_lst, $type_ids, $back);
+                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_lst, $type_ids, $back);
                                     $result .= '      </td>' . "\n";
                                 } else {
                                     $result .= $tbl_value->dsp_tbl($back);
@@ -1331,7 +1331,7 @@ class value_list extends ListBase
                         $type_ids[] = $type_phr->id();
                         $type_ids[] = $type_phr->id();
 
-                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\btn_add_value($add_phr_ids, $type_ids, $back);
+                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_ids, $type_ids, $back);
                         $result .= '      </td>' . "\n";
                         $result .= '  </tr>' . "\n";
                     }
@@ -1489,7 +1489,7 @@ class value_list extends ListBase
                     $result .= '    <td>';
                     $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), '', $back);
                     $btn = new button($url, $back);
-                    $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
+                    $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
 
                     $result .= '    </td>';
                 }

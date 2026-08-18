@@ -744,6 +744,20 @@ class html_base
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
+    /**
+     * remove the trailing slash of a base url, because the script path already starts with one
+     * @param string $base_url the absolut html path for urls or an empty string for a relative url
+     * @return string the base url ready to be followed by the script path
+     */
+    private static function base_url_clean(string $base_url): string
+    {
+        $result = $base_url;
+        if (str_ends_with($result, '/')) {
+            $result = substr($result, 0, -1);
+        }
+        return $result;
+    }
+
     function url_back(
         int|string   $view,
         int|string   $id = 0,
@@ -754,7 +768,7 @@ class html_base
         string       $base_url = ''
     ): string
     {
-        $url = $base_url;
+        $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
         $url .= url_var::MASK . '=' . $view;
         if (is_string($id)) {
@@ -789,10 +803,7 @@ class html_base
         string       $base_url = ''
     ): string
     {
-        $url = $base_url;
-        if (str_ends_with($url, '/')) {
-            $url = substr($url, 0, -1);
-        }
+        $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . url_var::PAR;
         $url .= url_var::MASK . url_var::EQ . $view;
         if (is_string($id)) {
@@ -991,6 +1002,11 @@ class html_base
     function text_h3(string $title, string $style = ''): string
     {
         return $this->text_h($title, self::H5, self::H3, $style);
+    }
+
+    function text_h4(string $title, string $style = ''): string
+    {
+        return $this->text_h($title, self::H6, self::H3, $style);
     }
 
     private function text_h(string $title, string $bs_tag, string $tag, string $style = ''): string

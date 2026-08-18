@@ -93,7 +93,7 @@ class display_list extends html_base
                 $result .= '</td><td>';
             }
             $result .= ' ';
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('Delete component', $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
+            $result .= $entry->btn_del('Delete component', $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td></tr>';
             }

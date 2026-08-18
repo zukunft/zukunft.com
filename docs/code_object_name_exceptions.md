@@ -253,7 +253,8 @@ value_time: $obj_to_add, $val
 value_time_series: $db_chk, $db_rec, $db_vts, $std_rec, $vts
 value_ts_data: $ts
 value_type_list: $val_typ_lst
-verb_list: $link_types_ui, $lst, $vrb_lst, $vrb_lst_ui
+verb_list: $link_types_ui, $lst, $lst_all, $lst_dbl, $lst_empty, $vrb_lst, $vrb_lst_ui
+verbs: $lst
 view_link_type: $lnk_typ_ui
 view_list: $dsp_to_validate, $lst, $msk_lst, $views, $wrd_lst
 view_relation_list: $mrl_lst
@@ -263,5 +264,5 @@ view_sys_list: $lst, $sys_msk_cac, $sys_msk_lst
 view_type: $msk_typ
 views: $msk, $msk_c, $views
 word_dsp: $wrd, $wrd_pi
-word_list: $added_wrd_lst, $additional_added, $common_phr_lst, $common_phr_lst_new, $del_wrd_lst, $dest_wrd_lst, $lst, $lst_long, $parents, $phr_lst, $result, $sector_lst, $time_lst, $wrd_lst, $wrd_lst2, $wrd_lst_filter, $wrd_lst_percent, $wrd_lst_scale, $wrd_lst_time
+word_list: $added_wrd_lst, $additional_added, $common_phr_lst, $common_phr_lst_new, $del_wrd_lst, $dest_wrd_lst, $lst, $lst_long, $parents, $result, $sector_lst, $time_lst, $wrd_lst, $wrd_lst2, $wrd_lst_filter, $wrd_lst_percent, $wrd_lst_scale, $wrd_lst_time
 xml: $xml_exp, $xml_export

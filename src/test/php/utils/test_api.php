@@ -765,13 +765,60 @@ class test_api extends test_base
         int        $page = 0
     ): bool
     {
+        $lib = new library();
+        $actual = $this->assert_result_api_chg_list($class, $id, $fld, $usr, $limit, $page);
+        $filename = $this->assert_parameter_api_chg_list_filename($class, $id, $fld, $usr, $limit, $page);
+        $class = $lib->class_to_api_name($class);
+        return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class);
+    }
+
+    /**
+     * get the actual api result of the change log of one object
+     *
+     * @param string $class the class name of the object whose changes should be tested
+     * @param int|string $id the database id of the object whose changes should be tested
+     * @param string $fld the field name to filter the changes of one field e.g. word_name
+     * @param user|null $usr to filter the changes of one user
+     * @param int $limit to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
+     * @return array|null the json as an array to avoid differences due to formatting
+     */
+    function assert_result_api_chg_list(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $limit = 0,
+        int        $page = 0
+    ): ?array
+    {
         $log_lst = new change_log_list_ui();
         $json = $log_lst->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
-        $actual = json_decode($json, true);
+        return json_decode($json, true);
+    }
 
+    /**
+     * create the filename of the expected test result of a change log api test
+     *
+     * @param string $class the class name of the object whose changes should be tested
+     * @param int|string $id the database id of the object whose changes should be tested
+     * @param string $fld the field name to filter the changes of one field e.g. word_name
+     * @param user|null $usr to filter the changes of one user
+     * @param int $limit to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
+     * @return string the filename without the path and the extension
+     */
+    function assert_parameter_api_chg_list_filename(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $limit = 0,
+        int        $page = 0
+    ): string
+    {
         $lib = new library();
-        $log_class = $lib->class_to_name(change_log_list::class);
-        $filename = $log_class;
+        $filename = $lib->class_to_name(change_log_list::class);
         $class = $lib->class_to_api_name($class);
         if ($class != '') {
             $filename .= '_' . $class;
@@ -791,8 +838,34 @@ class test_api extends test_base
         if ($limit != 0) {
             $filename .= '_l' . $limit;
         }
+        return $filename;
+    }
 
-        return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class);
+    /**
+     * create the filepath of the expected test result of a change log api test
+     *
+     * @param string $class the class name of the object whose changes should be tested
+     * @param int|string $id the database id of the object whose changes should be tested
+     * @param string $fld the field name to filter the changes of one field e.g. word_name
+     * @param user|null $usr to filter the changes of one user
+     * @param int $limit to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
+     * @return string the filepath starting from the test resource path
+     */
+    function assert_parameter_api_chg_list_filepath(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $limit = 0,
+        int        $page = 0
+    ): string
+    {
+        $lib = new library();
+        return self::API_PATH . DIRECTORY_SEPARATOR . $lib->class_to_name(change_log_list::class)
+            . DIRECTORY_SEPARATOR
+            . $this->assert_parameter_api_chg_list_filename($class, $id, $fld, $usr, $limit, $page)
+            . self::JSON_EXT;
     }
 
     /**

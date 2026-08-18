@@ -42,9 +42,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -56,6 +60,10 @@ include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
@@ -89,6 +97,35 @@ class system_page extends component
             } else {
                 $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
             }
+        }
+        return $result;
+    }
+
+    /**
+     * HTML for a page title that names the object shown on the page e.g. User "zukunft.com system test"
+     * the object word comes from the message id of the component, so the same component type can title
+     * the default page of any object, and the name is the name of the object the page has been called for
+     *
+     * @param msg_id|null $ui_msg_code_id the message id of the object word in the user-specific frontend language
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object shown on the page
+     * @return string the html code of the page title
+     */
+    function title_with_object_name(
+        ?msg_id                                               $ui_msg_code_id = null,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+    ): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $title = $mtr->txt($ui_msg_code_id);
+            if ($dbo != null) {
+                // escape the user settable name, because the title is shown as raw html
+                $title .= ' "' . $html->esc($dbo->name()) . '"';
+            }
+            $result = $html->text_h2($title);
         }
         return $result;
     }

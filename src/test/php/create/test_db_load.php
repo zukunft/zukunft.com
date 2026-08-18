@@ -52,6 +52,7 @@ include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_COMPONENT . 'component_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group.php';
@@ -71,14 +72,18 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'word_names.php';
 //include_once test_paths::UNIT_WRITE . 'a_selected_test.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
@@ -101,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
@@ -119,7 +125,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -127,7 +135,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
@@ -1255,6 +1265,106 @@ class test_db_load
         new component_write_tests()->create_test_components($t);
         new component_link_write_tests()->create_test_component_links($t);
         new value_write_tests()->create_test_values($t);
+    }
+
+    /**
+     * check the api test files whose content still contains database ids that are not yet fixed
+     * e.g. the component ids shift as soon as a component is added to a seed view and the change
+     * log ids shift with every additional change written by the setup, so these files cannot be
+     * pinned like the other api test files and have to be recreated after a database reset
+     *
+     * updates the files only if test_files::AUTO_UPDATE_TEST_FILES is true, so that a normal run
+     * just reports the difference and the developer decides if the new content is expected
+     *
+     * @param test_cleanup $t the test object to collect the errors and calculate the execution times
+     * @param user_message $msg with the user for whom the api message should be created
+     * @return bool true if all checked files match the database
+     */
+    function update_files_with_not_yet_fixed_db_id(test_cleanup $t, user_message $msg): bool
+    {
+        // start the test section (ts)
+        $ts = 'db read files with not yet fixed db id ';
+
+        $t->subheader($ts . 'api');
+
+        // the components of a view, because the component ids shift with each added seed component
+        $result = $this->update_api_list_file(
+            $t, component_list::class, views::WORD_ADD_ID, url_var::VIEW);
+
+        // the changes of a word, because the change log ids shift with each additional setup change
+        if (!$this->update_api_chg_list_file($t, word::class, word_names::MATH_ID)) {
+            $result = false;
+        }
+
+        // the changes of a single word field
+        if (!$this->update_api_chg_list_file(
+            $t, word::class, word_names::MATH_ID, change_fields::FLD_WORD_NAME)) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * check one api list file and update it if the auto update flag is set
+     *
+     * @param test_cleanup $t the test object to collect the errors and calculate the execution times
+     * @param string $class the class of the list that should be checked e.g. component_list::class
+     * @param array|string $ids the database ids of the db rows that should be used for testing
+     * @param string $id_fld the field name for the object id e.g. view_id
+     * @return bool true if the file matches the database
+     */
+    private function update_api_list_file(
+        test_cleanup $t,
+        string       $class,
+        array|string $ids,
+        string       $id_fld
+    ): bool
+    {
+        $result = $t->assert_api_get_list($class, $ids, $id_fld);
+
+        // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $lib = new library();
+            $created = $t->assert_result_api_get_list($class, $ids, $id_fld);
+            if ($this->api_json_usable($created)) {
+                $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath($class, $id_fld);
+                $t->update_path_file($filepath, $lib->json_for_dev($created));
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * check one api change log file and update it if the auto update flag is set
+     *
+     * @param test_cleanup $t the test object to collect the errors and calculate the execution times
+     * @param string $class the class of the object whose changes should be checked e.g. word::class
+     * @param int|string $id the database id of the object whose changes should be checked
+     * @param string $fld the field name to check the changes of one field only e.g. word_name
+     * @return bool true if the file matches the database
+     */
+    private function update_api_chg_list_file(
+        test_cleanup $t,
+        string       $class,
+        int|string   $id,
+        string       $fld = ''
+    ): bool
+    {
+        $result = $t->assert_api_chg_list($class, $id, $fld);
+
+        // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $lib = new library();
+            $created = $t->assert_result_api_chg_list($class, $id, $fld);
+            if ($this->api_json_usable($created)) {
+                $filepath = test_paths::RESOURCE . $t->assert_parameter_api_chg_list_filepath($class, $id, $fld);
+                $t->update_path_file($filepath, $lib->json_for_dev($created));
+            }
+        }
+
+        return $result;
     }
 
     /**
