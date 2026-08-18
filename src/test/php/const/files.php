@@ -74,6 +74,7 @@ class files
     CONST string DOCS_NAME_EXCEPTIONS = test_paths::DOCS . 'code_object_name_exceptions' . self::MD;
     CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
+    CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;
 
 
     /*

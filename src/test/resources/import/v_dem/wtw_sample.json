@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "pod": "zukunft.com",
   "description": "Affective political polarization worldwide, encoded from WTW (Willis Towers Watson) Political Risk Index H1 2025, section 'Mapping political polarization around the world'. Figure 3 global time series (1900-2024) included. Narrative findings carry their source; the Figure 3 series is a manual chart digitization and therefore tagged 'assumed value' with per-point confidence.",
   "words": [

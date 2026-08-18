@@ -1,7 +1,8 @@
 {
   "title": "Fermi estimate: value of a public CBAM calculation tool",
   "description": "Expected-value estimate for building a public, source-bound CBAM (Carbon Border Adjustment Mechanism) calculation tool, conditional on the stated premise that a usable tool causes an additional 10% reduction in global GHG emissions within one year.",
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "words": [
     {
       "id": "w1",

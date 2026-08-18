@@ -895,7 +895,7 @@ class lib_tests
         $json_text = file_get_contents(test_files::IMPORT_WIKI_DEMOCRACY);
         $json_array = json_decode($json_text, true);
         $result = $lib->count_recursive($json_array, 3);
-        $t->assert("count_recursive - count level 0", $result, 178);
+        $t->assert("count_recursive - count level 0", $result, 179);
 
         // recursive diff
         $result = json_encode($lib->array_recursive_diff(

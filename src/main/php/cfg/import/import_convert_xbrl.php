@@ -752,6 +752,7 @@ class import_convert_xbrl
     {
         $result = [
             json_fields::VERSION   => def::PRG_VERSION,
+            json_fields::DATA_VERSION => def::DATA_VERSION_INIT,
             json_fields::TIME      => $time,
             json_fields::USER      => 'timon',
             json_fields::SELECTION => [self::ISSUER_ABB],

@@ -312,6 +312,7 @@ class import_wikidata
         }
         return [
             json_fields::VERSION => def::PRG_VERSION,
+            json_fields::DATA_VERSION => def::DATA_VERSION_INIT,
             json_fields::WORDS => $words,
             json_fields::TRIPLES => $triples,
             json_fields::VALUES => $values

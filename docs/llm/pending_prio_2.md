@@ -2,7 +2,22 @@
 
 ## data validation
 
-create a /test/json_validation.php script that loops over all files in src/main/resources/messages and src/test/resources/import (even new files so use dir command not a file const array) and perform the json validation checks that already exists and report issues in /docs/json_findings.md
+`test/json_validation.php` checks every json of `src/main/resources/messages` and
+`src/test/resources/import` (scanned with a directory iterator, so a new file is included) and
+writes `docs/json_findings.md`. the checks live in `test/php/utils/json_validation.php` and are
+shared with `coding_rule_tests`, which asserts the same rules for the import data only.
+the report covers: valid json, the "measured value" qualifier, a verb that is not defined in
+verbs.json, a field that no import mapper reads (every field read by a mapper is a `json_fields`
+const, so a key that is not one of them is dropped without a message) and, as the last check of a
+file without any other finding, the format version (raised to `def::PRG_VERSION` if the file is
+behind) and the data version (initial `0.0.1` added if missing).
+what is left:
+- the wikidata / wikipedia files below `src/test/resources/import` are foreign formats (raw api
+  dumps that feed the converters), so every envelope rule reports them; scope the scan by folder
+  or by a marker instead of reporting them forever
+- the other rules of `docs/llm/json_structure.md` - the triple naming rules, "a word and a triple
+  must never share a name", the value qualifier rules - are still only prose and can be added as
+  further check functions to the same class
 
 ## code cleanup
 

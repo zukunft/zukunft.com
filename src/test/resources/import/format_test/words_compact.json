@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "selection": ["short format test"],
   "words": [
     {"name": "2021", "type": "time"},

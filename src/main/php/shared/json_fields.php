@@ -43,7 +43,11 @@ class json_fields
 
     // message header
     const string POD = 'pod';
+    // the version of the json format, not of the data, so it is matched against def::PRG_VERSION
     const string VERSION = 'version';
+    // the version of the data in the file, raised by the author whenever the data changes,
+    // so that a pod can tell whether it already has the newest data of another pod
+    const string DATA_VERSION = 'data_version';
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';

@@ -1,6 +1,7 @@
 {
   "name": "carbon_leakage_net_effect",
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "description": "Condition under which a national carbon price produces a negative net effect on the consumption-based footprint of a tradable product: the shift term must exceed the abatement term. Includes the general formula, the tipping point, and five worked examples (tomatoes CH/DE, steel-like).",
   "words": [
     {

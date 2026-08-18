@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2024-02-03 13:05:00",
   "user": "timon",
   "test": "create warning",

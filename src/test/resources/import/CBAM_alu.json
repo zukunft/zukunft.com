@@ -1,5 +1,6 @@
 {
-  "schema_version": "0.0.4",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "description": "CO2-eq burden and cost breakdown for recycling aluminium (remelting scrap) using hydropower electricity, compared against primary production and the current market price. Sourced findings carry their source; conjectures are tagged 'assumed value' with numeric confidence.",
   "words": [
     {

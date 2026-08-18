@@ -62,6 +62,7 @@ ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
 RecursiveDirectoryIterator: $dir_iterator
 RecursiveIteratorIterator: $iter
+ReflectionClass: $fld_lst
 ZipArchive: $zip
 a_selected_test: $t_sel
 all_api_tests: $t_api
@@ -146,6 +147,7 @@ job_time: $job_tim
 job_type: $job_typ
 job_type_list: $job_typ_cac, $lst
 json_io: $json_export
+json_validation: $chk
 language_form: $lan_for, $lan_typ
 language_list: $lst, $ui_lst
 list_sort: $lst, $msk
