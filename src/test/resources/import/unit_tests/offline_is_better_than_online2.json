@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-08-14 12:00:00",
   "user": "zukunft",
   "description": "Empirically derived inflection points where the association between daily screen use and adolescent mental well-being turns from positive to negative",
@@ -20,8 +21,7 @@
     { "name": "count" },
     { "name": "Przybylski" },
     { "name": "Weinstein" },
-    { "name": "minute" },
-    { "name": "measured value" }
+    { "name": "minute" }
   ],
   "triples": [
     { "name": "inflection point", "from": "point", "verb": "of", "to": "inflection" },
@@ -48,12 +48,12 @@
     }
   ],
   "values": [
-    { "words": [ "weekday video game play", "inflection point", "minute", "measured value" ], "number": "100", "source": "Przybylski Weinstein 2017" },
-    { "words": [ "weekday smartphone use", "inflection point", "minute", "measured value" ], "number": "117", "source": "Przybylski Weinstein 2017" },
-    { "words": [ "weekday video watching", "inflection point", "minute", "measured value" ], "number": "221", "source": "Przybylski Weinstein 2017" },
-    { "words": [ "weekday computer use", "inflection point", "minute", "measured value" ], "number": "257", "source": "Przybylski Weinstein 2017" },
-    { "words": [ "weekend video game play", "inflection point", "minute", "measured value" ], "number": "215", "source": "Przybylski Weinstein 2017" },
-    { "words": [ "weekend video watching", "inflection point", "minute", "measured value" ], "number": "290", "source": "Przybylski Weinstein 2017" },
-    { "words": [ "Przybylski and Weinstein study", "participant count", "measured value" ], "number": "120115", "source": "Przybylski Weinstein 2017" }
+    { "words": [ "weekday video game play", "inflection point", "minute" ], "number": "100", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekday smartphone use", "inflection point", "minute" ], "number": "117", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekday video watching", "inflection point", "minute" ], "number": "221", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekday computer use", "inflection point", "minute" ], "number": "257", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekend video game play", "inflection point", "minute" ], "number": "215", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "weekend video watching", "inflection point", "minute" ], "number": "290", "source": "Przybylski Weinstein 2017" },
+    { "words": [ "Przybylski and Weinstein study", "participant count" ], "number": "120115", "source": "Przybylski Weinstein 2017" }
   ]
 }

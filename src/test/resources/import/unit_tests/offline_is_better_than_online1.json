@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-08-14 12:00:00",
   "user": "zukunft",
   "description": "Effect sizes for interpersonal persuasion and a test of the online-offline mismatch hypothesis",
@@ -23,7 +24,6 @@
     { "name": "Broockman" },
     { "name": "Bor" },
     { "name": "Petersen" },
-    { "name": "measured value" },
     { "name": "assumed value" }
   ],
   "triples": [
@@ -58,10 +58,10 @@
     }
   ],
   "values": [
-    { "words": [ "narrative exchange canvassing", "effect size on exclusionary attitude", "measured value" ], "number": "0.08", "source": "Kalla Broockman 2020" },
-    { "words": [ "argument canvassing", "effect size on exclusionary attitude", "measured value" ], "number": "0", "source": "Kalla Broockman 2020" },
-    { "words": [ "Kalla and Broockman study", "participant count", "measured value" ], "number": "6869", "source": "Kalla Broockman 2020" },
-    { "words": [ "Bor and Petersen study", "participant count", "measured value" ], "number": "8434", "source": "Bor Petersen 2022" },
+    { "words": [ "narrative exchange canvassing", "effect size on exclusionary attitude" ], "number": "0.08", "source": "Kalla Broockman 2020" },
+    { "words": [ "argument canvassing", "effect size on exclusionary attitude" ], "number": "0", "source": "Kalla Broockman 2020" },
+    { "words": [ "Kalla and Broockman study", "participant count" ], "number": "6869", "source": "Kalla Broockman 2020" },
+    { "words": [ "Bor and Petersen study", "participant count" ], "number": "8434", "source": "Bor Petersen 2022" },
     { "words": [ "format influence on persuasion", "probability", "assumed value" ], "number": "0.8" },
     { "words": [ "format influence on persuasion", "probability", "confidence", "assumed value" ], "number": "0.6" }
   ]

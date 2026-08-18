@@ -35,7 +35,6 @@
     { "name": "Toerbel", "description": "Village in Valais, Switzerland; alpine meadows, forests, irrigation channels and paths held under a common property regime alongside private arable plots. Ostrom's paradigmatic long-enduring case." },
     { "name": "count", "description": "Number of items." },
     { "name": "year", "description": "Calendar year." },
-    { "name": "measured value", "description": "Value taken from a cited source." },
     { "name": "assumed value", "description": "Value estimated in this dataset, to be given a confidence." }
   ],
   "triples": [
@@ -75,10 +74,10 @@
     { "name": "hardin-1968", "description": "Hardin, G. (1968). The Tragedy of the Commons. Science 162(3859), 1243-1248. DOI not verified in this session." }
   ],
   "values": [
-    { "words": ["design principle", "commons", "count", "measured value"], "number": 8, "source": "ostrom-1990" },
-    { "words": ["bundle of rights", "count", "measured value"], "number": 5, "source": "schlager-ostrom-1992" },
-    { "words": ["rights holder", "count", "measured value"], "number": 4, "source": "schlager-ostrom-1992" },
-    { "words": ["Toerbel", "common property regime", "year", "measured value"], "number": 1483, "source": "ostrom-1990" },
-    { "words": ["tragedy of the commons", "year", "measured value"], "number": 1968, "source": "hardin-1968" }
+    { "words": ["design principle", "commons", "count"], "number": 8, "source": "ostrom-1990" },
+    { "words": ["bundle of rights", "count"], "number": 5, "source": "schlager-ostrom-1992" },
+    { "words": ["rights holder", "count"], "number": 4, "source": "schlager-ostrom-1992" },
+    { "words": ["Toerbel", "common property regime", "year"], "number": 1483, "source": "ostrom-1990" },
+    { "words": ["tragedy of the commons", "year"], "number": 1968, "source": "hardin-1968" }
   ]
 }

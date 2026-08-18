@@ -653,15 +653,15 @@ class import_tests
         // one value per input file to prove that no file is lost in the merge
         $test_name = '... incl. the canvassing effect size of the first file';
         $val = $dto_merged->value_list()->get_by_names(
-            ['narrative exchange canvassing', 'effect size on exclusionary attitude', 'measured value']);
+            ['narrative exchange canvassing', 'effect size on exclusionary attitude']);
         $t->assert($test_name, $val?->number(), 0.08);
         $test_name = '... incl. the smartphone inflection point of the second file';
         $val = $dto_merged->value_list()->get_by_names(
-            ['weekday smartphone use', 'inflection point', 'minute', 'measured value']);
+            ['weekday smartphone use', 'inflection point', 'minute']);
         $t->assert($test_name, $val?->number(), 117.0);
         $test_name = '... incl. the consumer surplus of the third file';
         $val = $dto_merged->value_list()->get_by_names(
-            ['Facebook', 'consumer surplus', 'US dollar', 'measured value']);
+            ['Facebook', 'consumer surplus', 'US dollar']);
         $t->assert($test_name, $val?->number(), 31000000000.0);
         $test_name = '... and the merged sources match the merged file';
         $t->assert($test_name, $dto_merged->source_list()->count(), $dto_expected->source_list()->count());
