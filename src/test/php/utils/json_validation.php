@@ -67,6 +67,12 @@ class json_validation
     // the qualifier that only repeats the default, see docs/llm/json_structure.md
     const string MEASURED_VALUE = 'measured value';
 
+    // the deviation from the default that is worth recording, so it may be a multi word name
+    const string ASSUMED_VALUE = 'assumed value';
+
+    // the max length of a lower case word that can be part of a proper noun e.g. "and" or "de"
+    const int CONNECTOR_LENGTH = 3;
+
     // the max length of the sample of a finding, so that one finding stays on one report line
     const int SAMPLE_LENGTH = 120;
 
@@ -75,6 +81,7 @@ class json_validation
     const string CHK_MEASURED = 'measured value qualifier';
     const string CHK_VERB = 'verb not defined';
     const string CHK_FIELD = 'field not read by the import';
+    const string CHK_WORD_SPACE = 'word with a space';
     const string CHK_VERSION = 'format version';
 
 
@@ -123,6 +130,11 @@ class json_validation
             . ' not one of them is silently dropped: the data of the field is never imported and'
             . ' nothing is reported, because an unknown key is simply not looked at; checked are'
             . ' the top level keys and the keys of the entries of a top level list');
+        $md_txt .= $this->section_md(self::CHK_WORD_SPACE, $find_lst,
+            'a word is the smallest reusable unit of meaning, so a name with a space usually'
+            . ' hides a composition that belongs in a triple: define the single word atoms and'
+            . ' join them e.g. {from: "textbook", verb: "of", to: "economics"}; an external'
+            . ' proper noun (Burkina Faso) keeps its space and is not listed here');
         $md_txt .= $this->section_md(self::CHK_VERSION, $find_lst,
             '"version" is the version of the json format and not of the data, so it is matched'
             . ' against def::PRG_VERSION ("' . def::PRG_VERSION . '"); a file that is behind is'
@@ -136,7 +148,8 @@ class json_validation
      * check every json file of the scanned folders
      *
      * @param bool $update true to write the version fields of the files without another finding
-     * @return array map of the check name to the sorted list of the findings of that check
+     * @return array map of the check name and the scanned folder to the sorted findings, so that
+     *               the folder is named once in the report and not in front of every file
      */
     function findings(bool $update = false): array
     {
@@ -146,9 +159,11 @@ class json_validation
                 $this->check_file($sec, $file_path, $result, $update);
             }
         }
-        foreach ($result as $chk => $hits) {
-            sort($hits);
-            $result[$chk] = $hits;
+        foreach ($result as $chk => $sec_lst) {
+            foreach ($sec_lst as $sec => $hits) {
+                sort($hits);
+                $result[$chk][$sec] = $hits;
+            }
         }
         return $result;
     }
@@ -158,28 +173,32 @@ class json_validation
      *
      * @param string $sec the name of the scanned folder e.g. 'test import'
      * @param string $file_path the json file to check
-     * @param array $find_lst (in/out) map of the check name to the findings
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
      * @param bool $update true to write the version fields if no other check has a finding
      * @return void
      */
     private function check_file(string $sec, string $file_path, array &$find_lst, bool $update): void
     {
-        $name = $sec . ': ' . basename($file_path);
+        $name = basename($file_path);
         $json_array = json_decode(file_get_contents($file_path), true);
         if (!is_array($json_array)) {
-            $find_lst[self::CHK_SYNTAX][] = $name . ' - ' . json_last_error_msg();
+            $find_lst[self::CHK_SYNTAX][$sec][] = $name . ' - ' . json_last_error_msg();
         } else {
             $clean = true;
             foreach ($this->measured_value_hits($json_array) as $sec_name => $sample) {
-                $find_lst[self::CHK_MEASURED][] = $name . ' (' . $sec_name . ') - ' . $sample;
+                $find_lst[self::CHK_MEASURED][$sec][] = $name . ' (' . $sec_name . ') - ' . $sample;
                 $clean = false;
             }
             foreach ($this->verb_undefined_hits($json_array) as $verb_name => $sample) {
-                $find_lst[self::CHK_VERB][] = $name . ' - "' . $verb_name . '" in ' . $sample;
+                $find_lst[self::CHK_VERB][$sec][] = $name . ' - "' . $verb_name . '" in ' . $sample;
                 $clean = false;
             }
             foreach ($this->field_unknown_hits($json_array) as $fld_name => $sample) {
-                $find_lst[self::CHK_FIELD][] = $name . ' - ' . $fld_name . ' - ' . $sample;
+                $find_lst[self::CHK_FIELD][$sec][] = $name . ' - ' . $fld_name . ' - ' . $sample;
+                $clean = false;
+            }
+            foreach ($this->word_space_hits($json_array) as $wrd_name => $sample) {
+                $find_lst[self::CHK_WORD_SPACE][$sec][] = $name . ' - ' . $wrd_name . ' - ' . $sample;
                 $clean = false;
             }
             // the version is checked last, because a file with a finding is not yet in the
@@ -187,7 +206,7 @@ class json_validation
             if ($clean) {
                 $hit = $this->version_hit($file_path, $json_array, $update);
                 if ($hit != '') {
-                    $find_lst[self::CHK_VERSION][] = $name . ' - ' . $hit;
+                    $find_lst[self::CHK_VERSION][$sec][] = $name . ' - ' . $hit;
                 }
             }
         }
@@ -258,6 +277,71 @@ class json_validation
             }
         }
         return $unknown;
+    }
+
+    /**
+     * the word names of the given file that contain a space
+     *
+     * a word is the most atomic text of the graph, so a composition like "economics textbook"
+     * belongs in a triple that joins the single word atoms (docs/llm/json_structure.md);
+     * the documented exceptions are not reported: an external proper noun that is written with
+     * a space in the real world and the "assumed value" qualifier
+     *
+     * @param array $json_array the decoded json file
+     * @return array map of the word name with a space to the first word entry that uses it
+     */
+    function word_space_hits(array $json_array): array
+    {
+        $hits = [];
+        foreach ($json_array[json_fields::WORDS] ?? [] as $wrd) {
+            if (is_array($wrd)) {
+                $name = $wrd[json_fields::NAME] ?? '';
+                if (is_string($name) and str_contains(trim($name), ' ')) {
+                    if ($name != self::ASSUMED_VALUE and !$this->is_proper_noun($name)) {
+                        $hits['"' . $name . '"'] ??= $this->sample($wrd);
+                    }
+                }
+            }
+        }
+        return $hits;
+    }
+
+    /**
+     * a name is treated as an external proper noun if it is written like one: it starts with an
+     * upper case letter and every following word is upper case too, a short connector ("and",
+     * "de"), a name with an apostrophe ("d'Ivoire") or a parenthetical of an official name
+     * ("Cocos (Keeling) Islands"); a lower case start like "second (time)" is never a proper noun
+     *
+     * @param string $name the word name to judge
+     * @return bool true if the space of the name is expected
+     */
+    private function is_proper_noun(string $name): bool
+    {
+        $tok_lst = explode(' ', trim($name));
+        $result = $this->starts_upper(array_shift($tok_lst));
+        foreach ($tok_lst as $tok) {
+            if (!$this->starts_upper($tok)
+                and strlen($tok) > self::CONNECTOR_LENGTH
+                and !str_contains($tok, "'")
+                and !str_starts_with($tok, '(')) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the first byte and not mb_substr, so that the check also runs where mbstring is missing;
+     * a name that starts with a multi byte char is treated as upper case, which is the safe
+     * default for a proper noun like "Ãlysee"
+     *
+     * @param string $txt the text to check
+     * @return bool true if the text starts with an upper case letter
+     */
+    private function starts_upper(string $txt): bool
+    {
+        $chr = substr($txt, 0, 1);
+        return $chr != '' and $chr == strtoupper($chr);
     }
 
     /**
@@ -450,23 +534,44 @@ class json_validation
      */
 
     /**
-     * build the markdown section of one check with one line per finding
+     * build the markdown section of one check with one sub section per scanned folder
+     *
+     * the folder is the sub section headline and not a prefix of every line, so that a file
+     * name is not lost in a repeated 'import data: ' and a folder without a finding is silent
      *
      * @param string $chk the check name e.g. 'verb not defined'
-     * @param array $find_lst map of the check name to its findings
+     * @param array $find_lst map of the check name and the folder to its findings
      * @param string $explain the one line why the findings of this check matter
      * @return string the markdown section or an empty string if the check has no finding
      */
     private function section_md(string $chk, array $find_lst, string $explain): string
     {
         $sec_txt = '';
-        $hits = $find_lst[$chk] ?? [];
+        $sec_lst = $find_lst[$chk] ?? [];
+        if ($sec_lst != []) {
+            $sec_txt = "\n" . '## ' . $chk . "\n" . "\n" . $explain . "\n";
+            // the scan order and not the hit order, so that the report is stable
+            foreach (array_keys(self::SCAN_PATHS) as $sec) {
+                $sec_txt .= $this->folder_md($sec, $sec_lst[$sec] ?? []);
+            }
+        }
+        return $sec_txt;
+    }
+
+    /**
+     * @param string $sec the name of the scanned folder e.g. 'test import'
+     * @param array $hits the findings of this check in this folder
+     * @return string the markdown sub section or an empty string if the folder has no finding
+     */
+    private function folder_md(string $sec, array $hits): string
+    {
+        $sec_txt = '';
         if ($hits != []) {
             $row_txt = '';
             foreach ($hits as $hit) {
                 $row_txt .= $hit . "\n";
             }
-            $sec_txt = "\n" . '## ' . $chk . "\n" . "\n" . $explain . "\n" . "\n"
+            $sec_txt = "\n" . '### ' . $sec . "\n" . "\n"
                 . '```' . "\n" . $row_txt . '```' . "\n";
         }
         return $sec_txt;
@@ -479,8 +584,10 @@ class json_validation
     function hit_count(array $find_lst): int
     {
         $result = 0;
-        foreach ($find_lst as $hits) {
-            $result += count($hits);
+        foreach ($find_lst as $sec_lst) {
+            foreach ($sec_lst as $hits) {
+                $result += count($hits);
+            }
         }
         return $result;
     }
