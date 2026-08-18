@@ -668,13 +668,6 @@
       "ui_msg_code_id": "system_title_user_settings"
     },
     {
-      "name": "system title user",
-      "description": "show the language specific word user and the name of the shown user as the page title",
-      "type": "system_title_with_object_name",
-      "code_id": "system_title_user",
-      "ui_msg_code_id": "system_title_user"
-    },
-    {
       "name": "system body user settings",
       "description": "show the body of the user settings page",
       "type": "system_body_user_settings",
@@ -1837,6 +1830,13 @@
       "type": "button_request",
       "code_id": "button_add_languages",
       "ui_msg_code_id": "button_add_languages"
+    },
+    {
+      "name": "system title user",
+      "description": "show the language specific word user and the name of the shown user as the page title",
+      "type": "system_title_with_object_name",
+      "code_id": "system_title_user",
+      "ui_msg_code_id": "system_title_user"
     }
   ],
   "views": [

@@ -120,6 +120,12 @@ if ($db_con->is_open()) {
                 // e.g. if some words are missing due to different error handling
                 $t_db->csv_recreate($msg);
 
+                // check and update the api test files that still contain database ids which are
+                // not yet fixed e.g. the component ids that shift as soon as a component is added
+                // to a seed view, so that these files match the freshly reset database
+                $msg->usr = $t->usr1;
+                $t_db->update_files_with_not_yet_fixed_db_id($t, $msg);
+
                 // as the last step verify the type list api message against the fully reset database
                 // because src/test/resources/api/type_lists/type_lists.json is used by the unit tests
                 // if the type_list created by this reset_db script differs

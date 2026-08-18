@@ -157,6 +157,7 @@ words, triples, formulas, sources, values) and `docs/llm/json_views.md`
 - Never add a `measured value` qualifier (to a value, to a calc-validation `context`, or as a word/triple): every value is assumed to be measured. Mark only the deviation, `assumed value`, and name a `source` for the measured ones. → `docs/llm/json_structure.md`
 - `import_mapper` maps from the `$dto` only — never reads the DB; a missing reference adds a `msg_id` error, no DB load, no placeholder.
 - A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`. → `docs/llm/json_views.md`
+- A seed component's (or view's) database id is its import position, so a new one is **appended at the end** of the `components` block of the latest-imported file — inserting mid-sequence shifts every later id and churns the generated `list.csv` baselines; where a test needs the numeric id, pin it as a `*_ID` const re-baselined from the regenerated `list.csv`, never guessed. → `docs/llm/json_views.md`
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`
 - Every field written with `sql_type::LOG` needs a row in `db_code_links/change_fields.csv` (field name + `change_tables.csv` table id); a per-field change log error usually means that row is missing. → `docs/llm/architecture.md`
 
