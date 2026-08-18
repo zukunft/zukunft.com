@@ -1,5 +1,11 @@
 # pending prio 2
 
+## data validation
+
+create a /test/json_validation.php script that loops over all files in src/main/resources/messages and src/test/resources/import (even new files so use dir command not a file const array) and perform the json validation checks that already exists and report issues in /docs/json_findings.md
+
+## code cleanup
+
 ### the user_message of a request — what is left
 
 the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): outside tests the user_message is

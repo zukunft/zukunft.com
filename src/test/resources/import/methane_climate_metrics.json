@@ -1,0 +1,123 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-18 08:59:20",
+  "user": "assistant",
+  "selection": [ "methane climate metrics" ],
+  "description": "Extraktion der Methan-Klimametriken und der mathematischen Verschiebung zwischen GWP100 und GWP20 aus dem vorherigen Dialog.",
+  "words": [
+    {
+      "name": "methane",
+      "description": "ein hochwirksames Treibhausgas mit einer kurzen atmosphärischen Lebensdauer."
+    },
+    { "name": "emission" },
+    { "name": "share" },
+    { "name": "mass" },
+    {
+      "name": "GWP20",
+      "description": "Global Warming Potential (Treibhauspotenzial) über einen Zeithorizont von 20 Jahren."
+    },
+    {
+      "name": "GWP100",
+      "description": "Global Warming Potential (Treibhauspotenzial) über einen Zeithorizont von 100 Jahren."
+    },
+    { "name": "percent", "type": "measure" },
+    { "name": "year", "type": "measure" },
+    { "name": "degree", "type": "measure" },
+    { "name": "temperature" },
+    { "name": "warming" },
+    { "name": "global" },
+    { "name": "lifetime" },
+    {
+      "name": "CO2-eq",
+      "description": "Kohlendioxid-Äquivalent zur Vergleichbarkeit verschiedener Treibhausgase."
+    },
+    { "name": "total" }
+  ],
+  "triples": [
+    {
+      "name": "global warming",
+      "from": "warming",
+      "verb": "kind of",
+      "to": "global"
+    },
+    {
+      "name": "methane emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "methane"
+    },
+    {
+      "name": "emission share",
+      "from": "share",
+      "verb": "of",
+      "to": "emission"
+    },
+    {
+      "name": "total CO2-eq",
+      "from": "CO2-eq",
+      "verb": "kind of",
+      "to": "total"
+    },
+    {
+      "name": "methane CO2-eq",
+      "from": "CO2-eq",
+      "verb": "of",
+      "to": "methane"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "CO2-eq calculation (formula)",
+      "expression": "\"methane CO2-eq\" = \"mass\" * \"GWP20\"",
+      "assigned": [ "methane" ]
+    },
+    {
+      "name": "emission share calculation (formula)",
+      "expression": "\"percent\" = \"methane CO2-eq\" / \"total CO2-eq\"",
+      "assigned_word": "methane CO2-eq"
+    }
+  ],
+  "sources": [
+    {
+      "name": "chat context",
+      "description": "Werte und Relationen, die direkt aus dem vorherigen Dialog über Klimametriken extrahiert wurden."
+    }
+  ],
+  "values": [
+    {
+      "words": [ "methane", "GWP100" ],
+      "number": "28",
+      "source": "chat context"
+    },
+    {
+      "words": [ "methane", "GWP20" ],
+      "number": "84",
+      "source": "chat context"
+    },
+    {
+      "words": [ "methane emission", "emission share", "GWP100", "percent" ],
+      "number": "0.18",
+      "source": "chat context"
+    },
+    {
+      "words": [ "methane emission", "emission share", "GWP20", "percent" ],
+      "number": "0.40",
+      "source": "chat context"
+    },
+    {
+      "words": [ "methane", "lifetime", "year" ],
+      "number": "12",
+      "source": "chat context"
+    },
+    {
+      "words": [ "global warming", "degree" ],
+      "number": "1.15",
+      "source": "chat context"
+    },
+    {
+      "words": [ "methane", "global warming", "degree" ],
+      "number": "0.5",
+      "source": "chat context"
+    }
+  ]
+}
