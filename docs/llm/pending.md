@@ -2,8 +2,6 @@
 
 ## user default view
 
-remove the volatile fields e.g. 'change_time' before updating src/test/resources/api/change_log_list/change_log_list_word_1.json and src/test/resources/api/change_log_list/change_log_list_word_1_word_name.json
-
 add the trible overwrites to the 'all_user_overwrites' component
 
 similar to the my tab in the word default view add a my tab to the formula default view

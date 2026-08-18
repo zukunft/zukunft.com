@@ -1328,6 +1328,10 @@ class test_db_load
             $lib = new library();
             $created = $t->assert_result_api_get_list($class, $ids, $id_fld);
             if ($this->api_json_usable($created)) {
+                // remove the volatile fields e.g. the change time before saving, so that the
+                // stored file does not change with every database reset; the compare ignores
+                // the volatile fields anyway (see test_api::json_remove_volatile)
+                $created = $t->json_remove_volatile($created);
                 $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath($class, $id_fld);
                 $t->update_path_file($filepath, $lib->json_for_dev($created));
             }
@@ -1359,6 +1363,10 @@ class test_db_load
             $lib = new library();
             $created = $t->assert_result_api_chg_list($class, $id, $fld);
             if ($this->api_json_usable($created)) {
+                // remove the volatile fields e.g. the change time before saving, so that the
+                // stored file does not change with every database reset; the compare ignores
+                // the volatile fields anyway (see test_api::json_remove_volatile)
+                $created = $t->json_remove_volatile($created);
                 $filepath = test_paths::RESOURCE . $t->assert_parameter_api_chg_list_filepath($class, $id, $fld);
                 $t->update_path_file($filepath, $lib->json_for_dev($created));
             }
