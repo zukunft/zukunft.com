@@ -815,6 +815,7 @@ class test_mappers
             case component_types::SYSTEM_BODY_LOGOUT:
             case component_types::SYSTEM_BODY_USER_SETTINGS:
             case component_types::SYSTEM_TITLE_WITH_OBJECT_NAME:
+            case component_types::ALL_USER_OVERWRITES:
                 $obj = $t_usr->user_filled($this->env);
                 break;
             case component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL:

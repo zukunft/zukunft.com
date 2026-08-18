@@ -2,7 +2,9 @@
 
 ## user default view
 
-in the word_default view the my tab shows the changes that the user has done on tis object. for the user_default view all word changes (later all changes on all objects) of the user should be shown, but not in a selectable tab. Instead in a fixed column. For this probable again a new component must be created but it should be possible to reuse many part from the my tab of the word_default view. The component might be named 'all_user_overwrites'. Add the component to the user default view.
+remove the volatile fields e.g. 'change_time' before updating src/test/resources/api/change_log_list/change_log_list_word_1.json and src/test/resources/api/change_log_list/change_log_list_word_1_word_name.json
+
+create by script another user_default view sample like src/test/resources/web/html/views_by_id/user/74_user_9.html the shows some user userwrites
 
 add the trible overwrites to the 'all_user_overwrites' component
 
@@ -10,13 +12,37 @@ similar to the my tab in the word default view add a my tab to the formula defau
 
 add the formula overwrites to the 'all_user_overwrites' component used in the user_default view
 
-fill the formula_link_default view with the missing fields including the my tab
+fill the formula_link_default view with the missing fields including the my tab for the user_changes
 
+add the formula_link overwrites to the 'all_user_overwrites' component used in the user_default view
 
+write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show 
 
+add a 'my' tab to the value_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+
+add the value overwrites to the 'all_user_overwrites' component used in the user_default view
+
+add a 'my' tab to the component_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+
+add the component overwrites to the 'all_user_overwrites' component used in the user_default view
+
+add a 'my' tab to the view_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+
+add the view overwrites to the 'all_user_overwrites' component used in the user_default view
+
+fill the component_link_default view with the missing fields including the my tab for the user_changes
+
+add the component_link overwrites to the 'all_user_overwrites' component used in the user_default view
+
+add a 'my' tab to the source_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+
+add the source overwrites to the 'all_user_overwrites' component used in the user_default view
+
+check if any functionality or information from src/main/php/web/user/user_display_old.php has not yet been part of the default and user views and report missing parts in /docs/llm/pending.md
+
+repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
 
 ## temp
-
 
 fix the view selector link in the word_default page
 
@@ -59,6 +85,11 @@ src/test/resources/import/carbon_leakage_effect.json is staged and unrelated —
 The component insertion point causes ~1,600 lines of avoidable churn. I placed system title user directly after system title user settings, which lands it at component id 98 and shifts every later component id by one: unit/component/list.csv 450 changed lines, unit/component_link/list.csv 1,866. Appending both new components at the end of their components blocks would have given the same result with a two-line fixture diff. I checked the pinned consts in shared/const/components.php — the highest is FORM_PLURAL_ID = 92, below the insertion point, so nothing is silently mis-pinned. But if you would rather not carry that renumbering, moving the two definitions to the end of their blocks and re-running is cheap now and awkward later.
 Seven user snapshots were renamed, not edited — 74_user.html → 74_user_9.html, and likewise 49, 50, 62, 85, 87, 89. The filename carries the dbo id, which is now 9 instead of 0. Correct consequence of user_filled_loaded, but it makes the diff read as delete+add; worth confirming the deletions are the paired old files and that the runner's "remove test files not used any more" pass did not drop anything else.
 component_types.csv gains a seeded row, so the database needs the new type. I read that as data rather than structure and left version.txt alone — your call if it should carry the minor bump plus a db_check step.
+The new component is not wrapped in the row col-md-12 column div — visible in 74_user_9.html: the first four components each sit in <div class="row col-md-12">, the fifth does not. Since the request was specifically "in a fixed column", this defeats the point of the placement.
+The cause is pre-existing, not introduced here: view_exe::show() wraps a row only when it reaches the next component ($result .= $html->div_row($row, $row_style) in the BELOW branch), and the final flush at line 271-273 is a bare $result .= $row; with no div_row(). So the last component of any view has always been unwrapped — in the committed snapshot it was user system errors that lacked the div, and now it is the new one. Fixing the flush to use div_row()  with the same style resolution would wrap both, and would change the tail of many view snapshots.
+The two change-log api fixtures now carry a per-run change_time. change_log_list_word_1_word_name.json gained "change_time": "2026-08-18T09:10:19+00:00", which the committed baseline did not have. assert_api_compare() strips it before comparing (json_remove_volatile → change_log::FLD_TIME), so tests still pass — but the stored file now holds a timestamp that differs on every reset, so these two files will churn on each run.
+Cause: the update_files_with_not_yet_fixed_db_id() helpers I added last commit write the raw api response ($lib->json_for_dev($created)) without passing it through json_remove_volatile() first. The type_list_check() pattern I copied has the same property (its header timestamp also moves each run), so this is consistent with the existing code — but for the change log it bakes a volatile value per row where there was none. Stripping volatile fields before writing would make these fixtures stable.
+The files also switched from 2-space to 4-space indentation, confirming a different writer than whatever produced the committed versions.
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.

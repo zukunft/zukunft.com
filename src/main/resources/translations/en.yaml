@@ -111,6 +111,8 @@ messages:
   error_update_permission_denied: "You are not permitted to update the error status. If you want the permission, please request it at admin@zukunft.com."
   user_system_errors: "Open issues related to you"
   user_system_errors_none: "No open issue is related to you."
+  all_user_overwrites: "Changes by this user"
+  all_user_overwrites_none: "This user has not changed anything."
   change_blocked_for_ip_user: "This pod does not allow changes without a login. Please log in to add or change data."
   change_blocked_cross_origin: "This change request was blocked because it did not originate from this site. Please retry from the zukunft.com application."
   phrase_has: "has"
