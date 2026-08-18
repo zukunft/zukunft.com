@@ -70,6 +70,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
@@ -127,6 +128,7 @@ include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
+use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -770,6 +772,32 @@ class user extends db_id_object_non_sandbox
         }
 
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+    /**
+     * create the api json message with only the core fields (the id and the name)
+     * sent to the session validated requesters only: the api endpoint limits even this
+     * core message to an admin, the user himself or the session-less server side call
+     * of the own frontend that renders the user page title (see api/user/index.php and
+     * server_guard::from_own_pod), so that an external caller cannot use the api to
+     * enumerate the usernames; the email and the other personal fields are never part
+     * of this message and stay limited to an admin or the user himself
+     *
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if the header should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return string the api json message with only the public user fields
+     */
+    function api_json_core(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): string
+    {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $vars = $this->api_json_array_core($typ_lst, $msg, $usr);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**

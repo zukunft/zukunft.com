@@ -233,6 +233,7 @@
     \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /user/user.php
     \-- cloned - section for function cloned not yet defined that it should be construct and map in /user/user.php
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /user/user.php
+    \-- api_json_core - section for function api_json_core not yet defined that it should be api in /user/user.php
     \-- api_json_array_core - section for function api_json_array_core not yet defined that it should be api in /user/user.php
     \-- log_object - section for function log_object is expected to be log in /user/user.php
     \-- has_active_activation_key - section for function has_active_activation_key not yet defined that it should be set and get in /user/user.php
@@ -6839,6 +6840,9 @@
         \-- change_log_link_list - get the json of the link change history of one object from the api
     \-- load_by_object_field
         \-- change_log_list - load a list of changes from the api
+    \-- load_by_user
+        \-- change_log_list - load the changes done by the given user via the api
+        \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
     \-- 2
@@ -6850,8 +6854,6 @@
         \-- combine_named - load the phrase by name via api
     \-- load_by_id
         \-- sandbox - add the user to the load of the user sandbox object e.g. word by id via api
-    \-- load_by_user
-        \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_by_phr_lst
         \-- value_list - set the vars of a value object based on the given json
 \-- 

@@ -38,16 +38,24 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::EXECUTE . 'ui_preview.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_log.php';
 include_once test_paths::CREATE . 'test_sys_log.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -60,6 +68,7 @@ class user_ui_tests
         global $mtr;
 
         $t_sys = new test_sys_log($t);
+        $t_log = new test_log($t);
         $t_usr = new test_users();
         $log = new ui_log();
         $msg = new user_message();
@@ -84,6 +93,25 @@ class user_ui_tests
         $test_name = 'without an open system error the user gets the no-error message';
         $err_html = $log->user_system_errors($t_sys->list_for_user_empty_ui(), $msg, msg_id::USER_SYSTEM_ERRORS);
         $t->assert_text_contains($test_name, $err_html, $mtr->txt(msg_id::USER_SYSTEM_ERRORS_NONE));
+
+        $t->subheader($ts . 'all user overwrites');
+
+        // a user loaded for its page carries the changes of the user like a word carries its
+        // change log, so the fixed column can list the sandbox overwrites of the shown user
+        $test_name = 'the sandbox view overwrite of the shown user is listed';
+        $usr_sys_ui = new user_ui($t->usr_system->api_json());
+        $usr_sys_ui->chg_log = $t_log->log_list_word_changes_ui();
+        $chg_html = $log->all_user_overwrites($usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
+        $t->assert_text_contains($test_name, $chg_html, views::WORD_NAME);
+        $test_page .= $chg_html . '<br>';
+
+        $test_name = 'the normal table changes of other objects are not listed as overwrites';
+        $t->assert_text_not_contains($test_name, $chg_html, word_names::MATH);
+
+        $test_name = 'a user without changes gets the no-changes message';
+        $none_html = $log->all_user_overwrites($usr_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
+        $t->assert_text_contains($test_name, $none_html, $mtr->txt(msg_id::ALL_USER_OVERWRITES_NONE));
+        $test_page .= $none_html . '<br>';
 
         $t->subheader($ts . 'profile rights');
 

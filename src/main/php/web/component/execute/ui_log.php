@@ -166,10 +166,13 @@ class ui_log
         }
         $my_lst = new change_log_list();
         if ($dbo instanceof user) {
-            // use the given change log or, if that is empty, the global request cache
-            // (like prepared_change_log, but without the object filter, because all
-            // sandbox changes of the shown user are listed, not the changes of one object)
-            if ($log_lst->is_empty() and $ui_sys != null) {
+            // a user loaded for its page carries the changes of the user directly (see
+            // user::load_by_id_with_related); otherwise use the given change log or, if that
+            // is empty, the global request cache (like prepared_change_log, but without the
+            // object filter, because all sandbox changes of the shown user are listed)
+            if ($dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
+                $log_lst = $dbo->chg_log;
+            } elseif ($log_lst->is_empty() and $ui_sys != null) {
                 $log_lst = $ui_sys->chg_log;
             }
             // hide the changes of the admin-only fields from users without admin rights

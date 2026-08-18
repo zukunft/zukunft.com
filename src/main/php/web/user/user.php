@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 // get the pure html frontend objects
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::LOG . 'user_log_display.php';
 //include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -60,6 +61,7 @@ include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
@@ -139,6 +141,11 @@ class user extends db_object
     public ?term $trm = null;       // the last term that the user has been looking at
     public ?view $msk = null;             // the last view that the user has been looking at
     public ?source $src = null;           // the last source that the user has been looking at
+
+    // the changes done by this user as loaded with the user for its page, so that the
+    // all user overwrites column can be filled without a second backend call
+    // (like the chg_log of a word, see ui_log::all_user_overwrites)
+    public ?change_log_list $chg_log = null;
 
     // TODO Prio 0 deprecate
     public ?string $profile;
@@ -382,6 +389,31 @@ class user extends db_object
         }
 
         return $msg->is_ok();
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the user by id and the changes that the user has done, so that the user page
+     * can fill the all user overwrites column without a second backend call
+     * (like a word that carries its change log, see ui_log::all_user_overwrites)
+     *
+     * @param int|string $id the database id of the user to load
+     * @param user_message $msg to collect the load warnings for the user
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        $result = parent::load_by_id($id, $msg, [], $usr_id);
+        if ($result) {
+            $this->chg_log = new change_log_list();
+            $this->chg_log->load_by_user((int)$this->id(), $msg);
+        }
+        return $result;
     }
 
 
