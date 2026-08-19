@@ -44,7 +44,14 @@ in the formula edit (and add) view reduce the field size for the expression and 
 in the formula edit (and add) view add an icon near the formula expression and latex formula input field that the user can use to update the latex based on the expression or the other way round
 
 
+create a script that checks that all fields of the main classes are shown on the related default view, add and edit view except the fields that are explicitly excluded 
+
+
 ## temp
+
+a log_err of a missing translation ends in an endless log loop: Translator::get calls log_err, log_err writes a sys_log row, the sys_log insert fails with 'no function name detected' and calls log_err again; seen on http://localhost/http/view.php?m=74&id=3 where it filled the whole page with stack traces
+
+the change log table translates and filters all changes of the user (over 15'000 for the system user) before the configured row limit is applied, so limit the list before the rows are prepared
 
 fix the view selector link in the word_default page
 

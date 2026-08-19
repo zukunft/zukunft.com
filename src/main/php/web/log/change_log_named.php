@@ -314,9 +314,14 @@ class change_log_named extends change_log
     /**
      * the changed field name without the table id prefix, e.g. 'description' for the code id
      * '5description' (the code id is the table id followed by the field name, see change_log::set_field)
+     *
+     * public because a filter on the changed field must use the database field name and never the
+     * translated name of field_name(), which would depend on the user language
+     * (see change_log_list::filter_admin_fields)
+     *
      * @return string the changed field name e.g. 'description', 'phrase_type_id' or 'word_name'
      */
-    private function field(): string
+    function field(): string
     {
         $prefix = (string)$this->table_id;
         $code_id = $this->field_code_id();

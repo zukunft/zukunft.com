@@ -5497,6 +5497,7 @@
 \-- change_log_named
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log_named.php
     \-- tr - section for function tr not yet defined that it should be table in /log/change_log_named.php
+    \-- field - section for function field not yet defined that it should be helpers in /log/change_log_named.php
     \-- field_name - section for function field_name not yet defined that it should be helpers in /log/change_log_named.php
     \-- entry - section for function entry not yet defined that it should be helpers in /log/change_log_named.php
     \-- what - section for function what not yet defined that it should be helpers in /log/change_log_named.php
@@ -7818,6 +7819,8 @@
 \-- helpers
     \-- th
         \-- change_log_link - @return string with the html table header to show the link changes
+    \-- field
+        \-- change_log_named - the changed field name without the table id prefix, e.g. 'description' for the code id
     \-- field_name
         \-- change_log_named - the translated name of the changed field on its own (no value), with the reference (id) suffix
     \-- entry

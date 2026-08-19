@@ -221,6 +221,12 @@ class change_log_list extends ListBase
      * see fields::LOG_ADMIN_ONLY) unless the viewing user has admin, developer or system rights,
      * because the cached numbers are system internals that would only confuse a normal user
      *
+     * the filter uses the database field name and not the translated field name, because
+     * fields::LOG_ADMIN_ONLY lists the database fields: with the translated name the admin fields
+     * would be shown to a normal user as soon as the translation differs from the database name
+     * (which it does in every language except english) and every row of the list would need a
+     * translation, which writes a log entry for each field that has no translation yet
+     *
      * @param user|null $usr the user viewing the change log or null e.g. if not logged in
      * @return change_log_list the change log without the admin-only rows for a normal user
      */
@@ -230,7 +236,7 @@ class change_log_list extends ListBase
         if ($usr == null or !$usr->sees_admin_fields()) {
             $result = new change_log_list();
             foreach ($this->lst() as $chg) {
-                if (!in_array($chg->field_name(), fields::LOG_ADMIN_ONLY)) {
+                if (!in_array($chg->field(), fields::LOG_ADMIN_ONLY, true)) {
                     // allow duplicates like filter() because the api change entries carry no own id
                     $result->add_obj($chg, true);
                 }
