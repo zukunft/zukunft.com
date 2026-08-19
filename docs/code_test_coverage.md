@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1180 of 5549 public functions have at least 2 unit test calls; the 4369 functions below do not
+1180 of 5553 public functions have at least 2 unit test calls; the 4373 functions below do not
 
 ## main backend
 
@@ -2530,6 +2530,7 @@ so same-named functions of several classes share their test calls
     \-- sql_write - 0 unit test calls
 \-- user
     \-- api_json_array_core - 0 unit test calls
+    \-- api_json_core - 1 unit test calls
     \-- can_add - 0 unit test calls
     \-- can_import - 0 unit test calls
     \-- can_set_profile - 0 unit test calls
@@ -3334,6 +3335,7 @@ so same-named functions of several classes share their test calls
     \-- head - 0 unit test calls
     \-- load_api_by_object_field - 0 unit test calls
     \-- load_by_object_field - 0 unit test calls
+    \-- load_by_user - 0 unit test calls
     \-- load_fallback - 0 unit test calls
     \-- sort_by_time_and_what - 0 unit test calls
     \-- tbl - 0 unit test calls
@@ -4425,6 +4427,7 @@ so same-named functions of several classes share their test calls
     \-- view_tab_box - 0 unit test calls
     \-- views_related - 0 unit test calls
 \-- ui_log
+    \-- all_user_overwrites - 0 unit test calls
     \-- change_log_table_pure - 0 unit test calls
     \-- system_change_log - 0 unit test calls
     \-- user_overwrites_table_pure - 0 unit test calls
@@ -4474,6 +4477,7 @@ so same-named functions of several classes share their test calls
     \-- is_ip_only - 0 unit test calls
     \-- is_system - 0 unit test calls
     \-- last_term - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_or_null - 0 unit test calls
     \-- navbar_role - 0 unit test calls

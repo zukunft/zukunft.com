@@ -879,6 +879,17 @@ class test_log
     }
 
     /**
+     * @return change_log_list_ui the changes of one word as an api mapped frontend list
+     *                            including one user sandbox change (the word view overwrite)
+     *                            e.g. to test the all user overwrites column of the user page
+     */
+    function log_list_word_changes_ui(): change_log_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->log_list_word_changes(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return change_log_list the changes of one word (name, phrase type, description, impact,
      *                         usage and protection type), used e.g. to show the change log table
      *                         pure with a deterministic row per change field type

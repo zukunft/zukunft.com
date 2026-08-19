@@ -332,17 +332,25 @@ class value_list extends ListBase
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
         string       $back = '',
-        string       $style = ''
+        string       $style = '',
+        ?int         $limit = null
     ): string
     {
         $result = '';
         if (!$this->is_empty()) {
             $html = new html_base();
+            // the limit is a page total: however the values are grouped, the page never shows
+            // more values than the configured number, so that the user messages below the view
+            // stay visible (see docs/llm/frontend.md); the remaining budget is passed from
+            // section to section and the values that do not fit are counted in one more tail
+            if ($limit == null) {
+                $limit = $this->configured_limit($msg);
+            }
             // the values still to be placed; each section consumes the values it groups
             $pool = $this->lst();
-            [$time_html, $pool] = $this->time_groups($pool, $context_phr_lst, $msg, $back);
-            [$phrase_html, $pool] = $this->relevant_phrase_groups($pool, $msg, $context_phr_lst, $back);
-            $rest_html = $this->impact_group($pool, $msg, $context_phr_lst, $back);
+            [$time_html, $pool, $limit] = $this->time_groups($pool, $context_phr_lst, $msg, $back, $limit);
+            [$phrase_html, $pool, $limit] = $this->relevant_phrase_groups($pool, $msg, $context_phr_lst, $back, $limit);
+            $rest_html = $this->impact_group($pool, $msg, $context_phr_lst, $back, $limit);
             // the whole grouped list is one 'value-list' container div; the caller style (e.g. the
             // list width) is added as a second css class of that container
             $cls = $style != '' ? styles::VALUE_LIST . ' ' . $style : styles::VALUE_LIST;
@@ -358,13 +366,17 @@ class value_list extends ListBase
      * @param array $pool the values still to be placed
      * @param phrase_list $context_phr_lst phrases left out of each value line
      * @param string $back the last view to suggest the best follow-up view
-     * @return array [string the html of the time groups, array the values not put into a time group]
+     * @param int $budget the number of values that may still be shown on the page
+     * @return array [string the html of the time groups,
+     *                array the values not put into a rendered time group,
+     *                int the remaining budget]
      */
     private function time_groups(
         array        $pool,
         phrase_list  $context_phr_lst,
         user_message $msg,
-        string       $back
+        string       $back,
+        int          $budget
     ): array
     {
         // bucket the values by the id of their time phrase, keeping the time phrase per bucket
@@ -388,14 +400,22 @@ class value_list extends ListBase
 
         $result = '';
         $grouped = [];
+        $per_group = $this->configured_limit($msg);
         foreach ($ids as $id) {
-            $result .= $this->group_block($time_phr[$id], $buckets[$id], $context_phr_lst, $msg, $back);
-            foreach ($buckets[$id] as $val) {
-                $grouped[$val->id()] = true;
+            // render a group only while the page budget allows more values; a group is rendered
+            // whole (up to the per group limit), so the last rendered group may overshoot the
+            // budget slightly; the values of a skipped group stay in the pool, so the final
+            // more tail of impact_group counts them
+            if ($budget > 0) {
+                $result .= $this->group_block($time_phr[$id], $buckets[$id], $context_phr_lst, $msg, $back);
+                $budget = $budget - min(count($buckets[$id]), $per_group);
+                foreach ($buckets[$id] as $val) {
+                    $grouped[$val->id()] = true;
+                }
             }
         }
         $rest = array_values(array_filter($pool, fn(value $val) => !isset($grouped[$val->id()])));
-        return [$result, $rest];
+        return [$result, $rest, $budget];
     }
 
     /**
@@ -405,9 +425,18 @@ class value_list extends ListBase
      * @param array $pool the values still to be placed
      * @param phrase_list $context_phr_lst phrases left out of each value line
      * @param string $back the last view to suggest the best follow-up view
-     * @return array [string the html of the phrase groups, array the values not put into a phrase group]
+     * @param int $budget the number of values that may still be shown on the page
+     * @return array [string the html of the phrase groups,
+     *                array the values not put into a rendered phrase group,
+     *                int the remaining budget]
      */
-    private function relevant_phrase_groups(array $pool, user_message $msg, phrase_list $context_phr_lst, string $back): array
+    private function relevant_phrase_groups(
+        array        $pool,
+        user_message $msg,
+        phrase_list  $context_phr_lst,
+        string       $back,
+        int          $budget
+    ): array
     {
         $min = config::MIN_PHRASE_GROUP;
         [$phr_by_id, $val_phr_ids] = $this->phrase_ranking($pool, $msg, $context_phr_lst, $min);
@@ -415,14 +444,20 @@ class value_list extends ListBase
         // greedily assign each still-remaining value to the highest-impact phrase group it belongs to
         $result = '';
         $remaining = $pool;
+        $per_group = $this->configured_limit($msg);
         foreach ($phr_by_id as $id => $phr) {
-            [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
-            if (count($members) > $min) {
-                $result .= $this->group_block($phr, $members, $context_phr_lst, $msg, $back);
-                $remaining = $rest;
+            // render a group only while the page budget allows more values (like time_groups);
+            // the values of a skipped group stay in the pool for the final more tail
+            if ($budget > 0) {
+                [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
+                if (count($members) > $min) {
+                    $result .= $this->group_block($phr, $members, $context_phr_lst, $msg, $back);
+                    $budget = $budget - min(count($members), $per_group);
+                    $remaining = $rest;
+                }
             }
         }
-        return [$result, $remaining];
+        return [$result, $remaining, $budget];
     }
 
     /**
@@ -461,9 +496,11 @@ class value_list extends ListBase
                     }
                 }
             }
-            // the values that share no column phrase fill the last free column
+            // the values that share no column phrase fill the last free column,
+            // limited like every column to the configured number of values
             if ($remaining != [] and count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
-                $col_lst[] = $this->impact_group($remaining, $msg, $context_phr_lst, $back);
+                $col_lst[] = $this->impact_group(
+                    $remaining, $msg, $context_phr_lst, $back, $this->configured_limit($msg));
             }
             $result = $html->div_row_wrapping_cols($col_lst, $msg);
         }
@@ -676,15 +713,17 @@ class value_list extends ListBase
 
     /**
      * section three of list_most_relevant: the remaining values sorted by impact descending, rendered
-     * as a titleless value item list (the values share no group phrase) with the same limit and
-     * "... more" tail as list()
+     * as a titleless value item list (the values share no group phrase) limited to the remaining
+     * page budget; its "... more" tail is the single closing tail of the page and covers the
+     * ungrouped values as well as the values of the groups skipped by the budget
      *
      * @param array $pool the remaining values
      * @param phrase_list $context_phr_lst phrases left out of each value name
      * @param string $back the last view to suggest the best follow-up view
+     * @param int $budget the number of values that may still be shown on the page
      * @return string the html of the remaining values as a 'value-items' list, or '' if none remain
      */
-    private function impact_group(array $pool, user_message $msg, phrase_list $context_phr_lst, string $back): string
+    private function impact_group(array $pool, user_message $msg, phrase_list $context_phr_lst, string $back, int $budget): string
     {
         $html = new html_base();
         $result = '';
@@ -692,7 +731,10 @@ class value_list extends ListBase
             $val_lst = new value_list();
             $val_lst->set_lst($pool);
             $val_lst->sort_by_impact();
-            $limit = $this->configured_limit($msg);
+            // the remaining page budget after the grouped sections; the pool holds the ungrouped
+            // values and the values of the skipped groups, so the more tail of this last section
+            // covers everything the page does not show
+            $limit = max(0, $budget);
             $items = '';
             $i = 0;
             foreach ($val_lst->lst() as $val) {
@@ -739,9 +781,21 @@ class value_list extends ListBase
         $val_lst = new value_list();
         $val_lst->set_lst($members);
         $val_lst->sort_by_impact();
+        // show at most the configured number of values per group and offer the rest behind the
+        // "... and n more" tail, so that a phrase with many values cannot fill the whole screen
+        // and the messages below the view stay visible (see docs/llm/frontend.md)
+        $limit = $this->configured_limit($msg);
         $items = '';
+        $i = 0;
         foreach ($val_lst->lst() as $val) {
-            $items .= $this->value_item($val, $msg, $ctx, $back);
+            if ($i < $limit) {
+                $items .= $this->value_item($val, $msg, $ctx, $back);
+            }
+            $i++;
+        }
+        $diff = count($members) - $limit;
+        if ($diff > 0) {
+            $items .= $html->list_item($this->more_tail($diff, $ctx));
         }
         $result = $html->div($title . $html->list_unsorted($items, styles::VALUE_ITEMS), styles::VALUE_GROUP);
         return $result;
@@ -790,8 +844,10 @@ class value_list extends ListBase
     }
 
     /**
-     * the configured maximum number of values shown in a value list (config.yaml, falling back to
-     * config::LIMIT_VALUE_LIST); shared by list() and impact_group
+     * the configured maximum number of values shown in a value list
+     * (config.yaml "user > frontend > lists > limit > value list", falling back to
+     * config::LIMIT_VALUE_LIST if the config is not loaded);
+     * shared by list(), list_unit() and impact_group so that every value list uses the same limit
      * @return int the maximum number of value rows to show
      */
     private function configured_limit(user_message $msg): int
@@ -800,7 +856,7 @@ class value_list extends ListBase
         $result = config::LIMIT_VALUE_LIST;
         if ($ui_sys?->cfg !== null) {
             $result = $ui_sys->cfg->get_by(
-                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                [triples::VALUE_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
                 $msg, config::LIMIT_VALUE_LIST);
         }
         return $result;
@@ -861,13 +917,7 @@ class value_list extends ListBase
             // never depends on the api/db row order (see docs/llm/frontend.md), like list() and table()
             $this->sort_by_impact();
             if ($limit == null) {
-                global $ui_sys;
-                if ($ui_sys?->cfg !== null) {
-                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                        $msg, config::LIMIT_VALUE_LIST);
-                } else {
-                    $limit = config::LIMIT_VALUE_LIST;
-                }
+                $limit = $this->configured_limit($msg);
             }
 
             $i = 0;

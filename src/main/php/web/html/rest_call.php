@@ -192,16 +192,18 @@ class rest_call
      * @param string $method the REST method (GET, POST, PUT or DELETE)
      * @param string $url the url that should be called
      * @param array $data the data as a json array that should be included in the call
+     * @param array $extra_headers additional http headers e.g. a forward header so that
+     *                             a test can simulate an external caller (see server_guard::from_own_pod)
      * @return string the result from the backend
      */
-    function api_call(string $method, string $url, array $data): string
+    function api_call(string $method, string $url, array $data, array $extra_headers = []): string
     {
         $curl = curl_init();
         $data_json = json_encode($data);
 
         // collect the http headers of the request so that e.g. the put content type
         // and the anti csrf token can be combined
-        $headers = [];
+        $headers = $extra_headers;
 
         switch ($method) {
             case rest_ctrl::POST:

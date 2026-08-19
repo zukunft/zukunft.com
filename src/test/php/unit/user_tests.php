@@ -134,6 +134,15 @@ class user_tests
         $usr_key_api = json_decode($usr_key->api_json(), true);
         $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key_api));
 
+        // the public core api json is shown to any requester e.g. as the user page title,
+        // so it carries the name (which is public anyway as the author of every change log
+        // entry) but never the email or any other personal field
+        $test_name = 'the public core api json contains the user name';
+        $usr_core_api = json_decode($usr_key->api_json_core([], $msg), true);
+        $t->assert($test_name, $usr_core_api[json_fields::NAME] ?? '', users::TEST_USER_NAME);
+        $test_name = 'the public core api json does not contain the email';
+        $t->assert_false($test_name, key_exists(json_fields::EMAIL, $usr_core_api));
+
 
         $t->subheader($ts . 'change permission');
 

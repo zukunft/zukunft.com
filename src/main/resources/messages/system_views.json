@@ -1837,6 +1837,13 @@
       "type": "system_title_with_object_name",
       "code_id": "system_title_user",
       "ui_msg_code_id": "system_title_user"
+    },
+    {
+      "name": "all user overwrites",
+      "description": "show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites",
+      "type": "all_user_overwrites",
+      "code_id": "all_user_overwrites",
+      "ui_msg_code_id": "all_user_overwrites"
     }
   ],
   "views": [
@@ -6366,6 +6373,10 @@
         {
           "position": "4",
           "name": "user system errors"
+        },
+        {
+          "position": "5",
+          "name": "all user overwrites"
         }
       ]
     },

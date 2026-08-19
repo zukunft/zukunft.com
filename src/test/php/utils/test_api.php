@@ -109,6 +109,9 @@ class test_api extends test_base
     // the rejection message that the user api returns when the requesting user
     // is neither an admin nor the requested user (see api/user/index.php)
     const string USER_NOT_PERMITTED_MSG = 'not permitted';
+    // forward header to simulate the api call of an external visitor (the ip is the
+    // documentation example address also used to test server_guard::is_own_pod_call)
+    const string HEADER_FORWARDED = 'X-Forwarded-For: 203.0.113.7';
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -493,12 +496,14 @@ class test_api extends test_base
             $actual = json_decode($login_json, true);
             // if the admin login did not establish an admin session (e.g. the
             // login silently failed in this test environment) the endpoint
-            // answers with the generic 'not permitted' rejection instead of the
+            // answers with the generic 'not permitted' rejection or, for the
+            // own pod, with the core json without the email instead of the full
             // user json; skip the comparison then instead of reporting a false
-            // fixture mismatch, the rejection itself is covered by
+            // fixture mismatch, the protection itself is covered by
             // assert_api_get_not_permitted
             if (is_array($actual)
-                and ($actual[json_fields::MSG] ?? '') == self::USER_NOT_PERMITTED_MSG) {
+                and (($actual[json_fields::MSG] ?? '') == self::USER_NOT_PERMITTED_MSG
+                    or !array_key_exists(json_fields::EMAIL, $actual))) {
                 $this->dsp_warning('skipping the ' . $class_api . ' api get test because the admin login did not grant admin rights');
                 return true;
             }
@@ -552,13 +557,15 @@ class test_api extends test_base
             }
             $actual = json_decode($login_json, true);
             // if the admin login did not establish an admin session the endpoint
-            // answers with the generic 'not permitted' rejection instead of the
-            // user json; skip the comparison then instead of reporting a false
-            // fixture mismatch, the rejection itself is covered by
+            // answers with the generic 'not permitted' rejection or, for the own
+            // pod, with the core json without the email instead of the full user
+            // json; skip the comparison then instead of reporting a false
+            // fixture mismatch, the protection itself is covered by
             // assert_api_get_not_permitted (see assert_api_get)
             // TODO Prio 1 try to actually login as an test admin to simulate the admin results
             if (is_array($actual)
-                and ($actual[json_fields::MSG] ?? '') == self::USER_NOT_PERMITTED_MSG) {
+                and (($actual[json_fields::MSG] ?? '') == self::USER_NOT_PERMITTED_MSG
+                    or !array_key_exists(json_fields::EMAIL, $actual))) {
                 $this->dsp_warning('skipping the ' . $class . ' api get by text test because the admin login did not grant admin rights');
                 return true;
             }
@@ -570,31 +577,46 @@ class test_api extends test_base
     }
 
     /**
-     * check that an anonymous REST GET of a user is rejected
-     * a visitor without login always gets an auto created ip user, so this
-     * verifies that such a user cannot read another user record via the api
+     * check that an anonymous REST GET of a user returns at most the public core data
+     * a visitor without login always gets an auto created ip user, so this verifies that
+     * such a user cannot read another user record via the api: the call from the own pod
+     * (like the session-less server side call of the frontend that renders the user page
+     * title) gets only the core data (the id and the name), and the same call marked as
+     * forwarded - like any call of an external visitor - is rejected with 'not permitted',
+     * so an external caller cannot use the api to enumerate the usernames
+     * (see server_guard::from_own_pod and api/user/index.php)
      *
      * @param string $field the url field used for the lookup (id, name or email)
      * @param int|string $value the lookup value of the restricted user
-     * @param string $secret a value of the restricted record that must not leak (e.g. the email)
-     * @return bool true if the anonymous call does not return the restricted record
+     * @param string $name the name of the restricted user that only the own pod may read
+     * @param string $secret a value of the restricted record that must never leak (e.g. the email)
+     * @return bool true if the anonymous calls return at most the core data
      */
-    function assert_api_get_not_permitted(string $field, int|string $value, string $secret): bool
+    function assert_api_get_not_permitted(string $field, int|string $value, string $name, string $secret): bool
     {
         $url = $this->class_to_url(user::class);
         $data = array($field => $value);
         $ctrl = new rest_call();
-        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
-        // the anonymous call must be rejected with the generic 'not permitted'
-        // message, so a visitor cannot confirm whether a user exists
+
+        // the anonymous call of the own pod gets the core data for the user page title
+        // but never the personal fields like the email
         // the response comes from a real http REST call, so a REST timeout is used to avoid a false timeout
-        $test_name = 'anonymous api/user by ' . $field . ' is rejected with not permitted';
-        $rejected = $this->assert_text_contains($test_name, $response, self::USER_NOT_PERMITTED_MSG, self::TIMEOUT_LIMIT_REST);
-        // and the rejection must not return the user json, so the secret must be absent
-        $test_name = 'anonymous api/user by ' . $field . ' does not leak the ' . $field;
+        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $test_name = 'anonymous own pod api/user by ' . $field . ' returns the user name';
+        $core = $this->assert_text_contains($test_name, $response, $name, self::TIMEOUT_LIMIT_REST);
+        $test_name = 'anonymous own pod api/user by ' . $field . ' does not leak the email';
         $no_leak = $this->assert_false($test_name, str_contains($response, $secret));
+
+        // the same call of a user that does not match the session user and does not come
+        // from the own pod (marked by the forward header) is rejected with 'not permitted'
+        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data, [self::HEADER_FORWARDED]);
+        $test_name = 'external anonymous api/user by ' . $field . ' is rejected with not permitted';
+        $rejected = $this->assert_text_contains($test_name, $response, self::USER_NOT_PERMITTED_MSG, self::TIMEOUT_LIMIT_REST);
+        $test_name = 'external anonymous api/user by ' . $field . ' does not leak the user name';
+        $no_name = $this->assert_false($test_name, str_contains($response, $name));
+
         $result = false;
-        if ($rejected and $no_leak) {
+        if ($core and $no_leak and $rejected and $no_name) {
             $result = true;
         }
         return $result;

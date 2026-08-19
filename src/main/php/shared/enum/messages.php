@@ -1912,6 +1912,8 @@ enum messages: string
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
     case USER_SYSTEM_ERRORS = 'user_system_errors';
     case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
+    case ALL_USER_OVERWRITES = 'all_user_overwrites';
+    case ALL_USER_OVERWRITES_NONE = 'all_user_overwrites_none';
     // shown if a user without login tries to change data, but the pod does not permit that
     case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)

@@ -134,9 +134,65 @@ class ui_log
     }
 
     /**
+     * the fixed column of the user page with all changes the shown user has written to the user
+     * sandbox (overlay) tables - today the word overwrites, and every further object type as soon
+     * as its changes are part of the change log - reusing the filter, sort and table of the 'my'
+     * tab of the word page, but filtered by the shown user over all objects instead of by the
+     * session user for one object; unlike a tab the column is always shown, so an empty list
+     * renders the no-changes message instead of an empty string
+     *
+     * @param db_object $dbo the user shown on the page whose sandbox changes are listed
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param user_message $msg to collect the mapping errors
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param msg_id|null $ui_msg_code_id the message id of the headline shown in the user language
+     * @return string the html code with the overwrite table or the no-changes message
+     */
+    function all_user_overwrites(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode = false,
+        ?msg_id         $ui_msg_code_id = null
+    ): string
+    {
+        global $mtr;
+        global $ui_sys;
+
+        $html = new html_base();
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
+        }
+        $my_lst = new change_log_list();
+        if ($dbo instanceof user) {
+            // a user loaded for its page carries the changes of the user directly (see
+            // user::load_by_id_with_related); otherwise use the given change log or, if that
+            // is empty, the global request cache (like prepared_change_log, but without the
+            // object filter, because all sandbox changes of the shown user are listed)
+            if ($dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
+                $log_lst = $dbo->chg_log;
+            } elseif ($log_lst->is_empty() and $ui_sys != null) {
+                $log_lst = $ui_sys->chg_log;
+            }
+            // hide the changes of the admin-only fields from users without admin rights
+            $my_lst = $log_lst->filter_admin_fields($ui_sys->usr ?? null);
+            // keep only the sandbox (user_ table) changes of the shown user
+            $my_lst = $my_lst->filter_user_overwrites($dbo);
+            $my_lst->sort_by_time_and_what($test_mode);
+        }
+        if ($my_lst->is_empty()) {
+            $result .= $mtr->txt(msg_id::ALL_USER_OVERWRITES_NONE);
+        } else {
+            $result .= $this->table_pure($my_lst, $msg, $test_mode);
+        }
+        return $result;
+    }
+
+    /**
      * render the prepared change log as the borderless when / who / what table with the char and
      * row limits from the frontend config (config.yaml > ... > change log > what limit / row limit);
-     * the shared final step of change_log_table_pure and user_overwrites_table_pure
+     * the shared final step of change_log_table_pure, user_overwrites_table_pure and all_user_overwrites
      *
      * @param change_log_list $log_lst the filtered, sorted and row-limited change log to render
      * @param bool $test_mode true to keep the change time deterministic in the snapshots

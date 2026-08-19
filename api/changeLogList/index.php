@@ -64,6 +64,8 @@ if ($db_con->is_open()) {
     $class = $_GET[url_var::LOG_CLASS] ?? '';
     $id = $_GET[url_var::ID] ?? 0;
     $fld = $_GET[url_var::LOG_FIELD] ?? '';
+    // the user whose changes should be listed e.g. for the user page
+    $chg_usr_id = $_GET[url_var::USER] ?? 0;
 
     // TODO deprecate
     $wrd_id = $_GET[url_var::WORD] ?? 0;
@@ -72,7 +74,16 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        if ($class != '') {
+        if ($chg_usr_id != 0) {
+            // all changes done by one user e.g. for the all user overwrites
+            // column of the user page; the change log is public like on the
+            // object pages, so no extra permission check is needed here
+            $chg_usr = new user();
+            $chg_usr->load_by_id((int)$chg_usr_id, $msg);
+            $lst = new change_log_list();
+            $lst->load_by_user($chg_usr, $msg);
+            $result = $lst->api_json([], $msg);
+        } elseif ($class != '') {
             $lib = new library();
             $class = $lib->api_name_to_class($class);
             $lst = new change_log_list();

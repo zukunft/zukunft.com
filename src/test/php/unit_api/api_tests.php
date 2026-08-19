@@ -139,11 +139,13 @@ class api_tests
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, url_var::EMAIL);
         // an anonymous visitor only gets an auto created ip user and must not be
-        // able to read another user, so a read by id, name or email is rejected
-        // with 'not permitted' and does not leak the email of the system test user
-        $t->assert_api_get_not_permitted(url_var::ID, users::SYSTEM_TEST_ID, users::SYSTEM_TEST_EMAIL);
-        $t->assert_api_get_not_permitted(url_var::NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
-        $t->assert_api_get_not_permitted(url_var::EMAIL, users::SYSTEM_TEST_EMAIL, users::SYSTEM_TEST_EMAIL);
+        // able to read another user: the call from the own pod (like the frontend
+        // that renders the user page title) gets only the core data without the
+        // email, and the same call of an external visitor (marked by the forward
+        // header) is rejected with 'not permitted'
+        $t->assert_api_get_not_permitted(url_var::ID, users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
+        $t->assert_api_get_not_permitted(url_var::NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
+        $t->assert_api_get_not_permitted(url_var::EMAIL, users::SYSTEM_TEST_EMAIL, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $t->assert_api_get(word::class);
         $t->assert_api_get_json(word::class, url_var::WORD);
         $t->assert_api_get_by_text(word::class, word_names::MATH);

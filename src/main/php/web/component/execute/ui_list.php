@@ -358,9 +358,11 @@ class ui_list extends ui_base
                 $phr_lst = $lnk_lst->get_phrase_list($cac?->phr_lst ?? new phrase_list(), $msg);
             }
         }
+        // the number of phrases shown at once comes from the frontend config
+        // (config.yaml "user > frontend > lists > limit > phrase list")
         if ($ui_sys?->cfg !== null) {
             $row_limit = $ui_sys->cfg->get_by(
-                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                [triples::PHRASE_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
                 $msg, config::LIMIT_NAME_LIST);
         } else {
             $row_limit = config::LIMIT_NAME_LIST;
@@ -654,9 +656,11 @@ class ui_list extends ui_base
                 $frm_lst->load_by_phr_id($phr->id(), $msg);
             }
         }
+        // the number of formulas shown at once comes from the frontend config
+        // (config.yaml "user > frontend > lists > limit > formula list")
         if ($ui_sys?->cfg !== null) {
             $row_limit = $ui_sys->cfg->get_by(
-                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                [triples::FORMULA_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
                 $msg, config::LIMIT_NAME_LIST);
         } else {
             $row_limit = config::LIMIT_NAME_LIST;

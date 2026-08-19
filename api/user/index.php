@@ -36,11 +36,13 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -82,12 +84,20 @@ if ($db_con->is_open()) {
             $msg->add_message_text('user id or name missing');
         }
 
-        // only an admin or the user himself may read a user record; otherwise
+        // only an admin or the user himself may read the full user record; otherwise
         // an anonymous visitor (who always gets an auto created ip user) could
-        // enumerate users and read the email, ip address and activation key
+        // enumerate users and read the email, ip address and activation key;
+        // the core fields (only the id and the name) are additionally sent to the
+        // session-less server side call of the own frontend that renders the user
+        // page title (see server_guard::from_own_pod), because the frontend has
+        // validated the browsing user's session before calling the api; any other
+        // requester gets not even the core fields, so an external caller cannot
+        // use the api to enumerate the usernames
         if ($found) {
             if ($usr->is_admin() or $db_usr->id() == $usr->id) {
                 $result = $db_usr->api_json([], $msg);
+            } elseif (server_guard::from_own_pod()) {
+                $result = $db_usr->api_json_core([], $msg);
             } else {
                 $msg->add_message_text('not permitted');
             }

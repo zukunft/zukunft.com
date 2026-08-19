@@ -117,6 +117,27 @@ class change_log_list extends ListBase
     }
 
     /**
+     * load the changes done by the given user via the api
+     * e.g. for the all user overwrites column of the user page
+     *
+     * @param int $usr_id the database id of the user whose changes should be loaded
+     * @param user_message $msg to report any api problems to the user
+     * @return user_message ok or the problems of the api call and the mapping
+     */
+    function load_by_user(int $usr_id, user_message $msg): user_message
+    {
+        $lib = new library();
+        $log_class = $lib->class_to_name(change_log_list::class);
+        $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($log_class);
+        $data = [url_var::USER => $usr_id];
+        $ctrl = new rest_call();
+        $json = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $msg->merge($this->set_from_json($json));
+
+        return $msg;
+    }
+
+    /**
      * get the json of a list of changes from the api
      *
      * @param string $class the class name of the object to test

@@ -575,6 +575,10 @@ class component_types
     const int USER_SYSTEM_ERRORS_ID = 193;
     const string USER_SYSTEM_ERRORS_COM = "show the most relevant open system errors linked to the user";
 
+    const string ALL_USER_OVERWRITES = "all_user_overwrites";
+    const int ALL_USER_OVERWRITES_ID = 216;
+    const string ALL_USER_OVERWRITES_COM = "show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites";
+
     // show all word that this words is based on
     const string WORDS_UP = "word_list_up";
     // show all words that are based on the given start word
@@ -988,7 +992,8 @@ class component_types
         [self::ODS_EXPORT, self::ODS_EXPORT_ID],
         [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID],
         [self::CHANGE_LOG_TABLE_PURE, self::CHANGE_LOG_TABLE_PURE_ID],
-        [self::USER_SYSTEM_ERRORS, self::USER_SYSTEM_ERRORS_ID]
+        [self::USER_SYSTEM_ERRORS, self::USER_SYSTEM_ERRORS_ID],
+        [self::ALL_USER_OVERWRITES, self::ALL_USER_OVERWRITES_ID]
     );
 
 }
