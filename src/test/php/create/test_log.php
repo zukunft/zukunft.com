@@ -454,6 +454,22 @@ class test_log
     }
 
     /**
+     * an insert change log entry in the triple user sandbox (overlay) table, the triple twin of
+     * log_word_add_description, so that the all user overwrites column of the user page can be
+     * tested with the overwrites of more than one object type
+     * @return change with a change log entry of a user setting an own triple description
+     */
+    function log_triple_add_description(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_triple_add();
+        $chg->set_table(change_tables::TRIPLE_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = triple_names::MATH_CONST_COM;
+        return $chg;
+    }
+
+    /**
      * @return change log entry created by adding a source
      */
     function log_source_add(): change
@@ -887,6 +903,33 @@ class test_log
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->log_list_word_changes(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return change_log_list_ui the sandbox overwrites of one user on more than one object type
+     *                            as an api mapped frontend list e.g. to test the all user
+     *                            overwrites column of the user page
+     */
+    function log_list_user_overwrites_ui(): change_log_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->log_list_user_overwrites(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the changes of one user on more than one object type: the word and the triple overwrites
+     * written to the user sandbox (overlay) tables plus a change of the shared standard object,
+     * so that a test can check that the all user overwrites column lists the overwrites of every
+     * object type but never a change of the standard object
+     * @return change_log_list the sandbox overwrites of one user and one standard change
+     */
+    function log_list_user_overwrites(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->log_word_add_view());
+        $log_lst->add($this->log_triple_add_description());
+        $log_lst->add($this->log_word_add());
+        return $log_lst;
     }
 
     /**

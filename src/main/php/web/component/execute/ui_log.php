@@ -135,8 +135,8 @@ class ui_log
 
     /**
      * the fixed column of the user page with all changes the shown user has written to the user
-     * sandbox (overlay) tables - today the word overwrites, and every further object type as soon
-     * as its changes are part of the change log - reusing the filter, sort and table of the 'my'
+     * sandbox (overlay) tables - the word and triple overwrites and every further object type
+     * listed in change_tables::USER_TABLES - reusing the filter, sort and table of the 'my'
      * tab of the word page, but filtered by the shown user over all objects instead of by the
      * session user for one object; unlike a tab the column is always shown, so an empty list
      * renders the no-changes message instead of an empty string

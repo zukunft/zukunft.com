@@ -2,9 +2,7 @@
 
 ## user default view
 
-add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used   
-
-add the trible overwrites to the 'all_user_overwrites' component
+name the changed object in the what column of the 'all_user_overwrites' component, because the column lists the overwrites of more than one object type and 'added user description' alone does not tell the user which word or triple has been changed
 
 similar to the my tab in the word default view add a my tab to the formula default view
 
@@ -39,6 +37,14 @@ add the source overwrites to the 'all_user_overwrites' component used in the use
 check if any functionality or information from src/main/php/web/user/user_display_old.php has not yet been part of the default and user views and report missing parts in /docs/llm/pending.md
 
 repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
+
+add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
+
+
+in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the ttoltip of the term so that the user can check if she (or he) has selected the correct term
+
+in the formula edit (and add) view add an icon near the formula expression and latex formula input field that the user can use to update the latex based on the expression or the other way round
+
 
 ## temp
 

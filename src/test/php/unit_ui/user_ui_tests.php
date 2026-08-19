@@ -42,6 +42,7 @@ include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_log.php';
 include_once test_paths::CREATE . 'test_sys_log.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
@@ -107,6 +109,19 @@ class user_ui_tests
 
         $test_name = 'the normal table changes of other objects are not listed as overwrites';
         $t->assert_text_not_contains($test_name, $chg_html, word_names::MATH);
+
+        // the column lists the overwrites of every object type, not only the word overwrites, so
+        // that a user sees all changes on one page (the same filter by the user sandbox tables,
+        // see change_log_list::filter_user_overwrites and change_tables::USER_TABLES)
+        $usr_sys_ui->chg_log = $t_log->log_list_user_overwrites_ui();
+        $all_html = $log->all_user_overwrites($usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
+        $test_name = 'the word overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, views::WORD_NAME);
+        $test_name = 'the triple overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, triple_names::MATH_CONST_COM);
+        $test_name = 'the standard table change is not listed beside the overwrites';
+        $t->assert_text_not_contains($test_name, $all_html, word_names::MATH);
+        $test_page .= $all_html . '<br>';
 
         $test_name = 'a user without changes gets the no-changes message';
         $none_html = $log->all_user_overwrites($usr_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
