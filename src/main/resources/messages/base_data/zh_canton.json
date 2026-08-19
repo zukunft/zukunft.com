@@ -14,7 +14,6 @@
   "words": [
     {
       "name": "Zurich",
-      "description": "most populous canton of Switzerland, in the north‑eastern part of the country.",
       "refs": [
         {
           "name": "Canton_of_Zürich",
@@ -37,16 +36,14 @@
       "description": "a landlocked country at the confluence of Western, Central and Southern Europe."
     },
     {
-      "name": "district",
-      "description": "administrative subdivision of a canton"
+      "name": "district"
     },
     {
       "name": "municipality",
       "description": "smallest political administrative unit in Switzerland"
     },
     {
-      "name": "area",
-      "description": "extent of a surface measured in square units"
+      "name": "area"
     },
     {
       "name": "rank",
@@ -66,8 +63,7 @@
     },
     {
       "name": "metre",
-      "type": "measure",
-      "description": "SI base unit of length"
+      "type": "measure"
     },
     {
       "name": "population",
@@ -89,8 +85,7 @@
       "name": "percent"
     },
     {
-      "name": "foreign",
-      "description": "originating from outside the political unit"
+      "name": "foreign"
     },
     {
       "name": "nationality",
@@ -168,8 +163,7 @@
     },
     {
       "name": "month",
-      "type": "measure",
-      "description": "calendar month"
+      "type": "measure"
     },
     {
       "name": "company"
@@ -179,8 +173,7 @@
       "description": "newly created business seeking scalable growth"
     },
     {
-      "name": "patent",
-      "description": "legal right excluding others from using an invention"
+      "name": "patent"
     },
     {
       "name": "budget",
@@ -223,8 +216,7 @@
       "description": "share of dwellings available for occupation"
     },
     {
-      "name": "road",
-      "description": "way for traffic between places"
+      "name": "road"
     },
     {
       "name": "railway",
@@ -259,8 +251,7 @@
       "description": "qualified medical practitioner"
     },
     {
-      "name": "expectancy",
-      "description": "statistical average time an event is awaited"
+      "name": "expectancy"
     },
     {
       "name": "environment",
@@ -292,16 +283,13 @@
       "type": "measure"
     },
     {
-      "name": "electricity",
-      "description": "energy from flow of electric charge"
+      "name": "electricity"
     },
     {
-      "name": "renewable",
-      "description": "replenished naturally on human timescale"
+      "name": "renewable"
     },
     {
-      "name": "waste",
-      "description": "materials no longer wanted"
+      "name": "waste"
     },
     {
       "name": "recycling",
@@ -324,16 +312,14 @@
       "description": "number representing change relative to a base"
     },
     {
-      "name": "seat",
-      "description": "position in an elected assembly"
+      "name": "seat"
     },
     {
       "name": "councillor",
       "description": "member of a council"
     },
     {
-      "name": "million",
-      "description": "10⁶"
+      "name": "million"
     },
     {
       "name": "S&P",
@@ -349,8 +335,7 @@
       "description": "gigawatt hour, unit of energy"
     },
     {
-      "name": "region",
-      "description": "a defined geographic area"
+      "name": "region"
     },
     {
       "name": "Schnebelhorn",
@@ -385,16 +370,14 @@
       "description": "a measured difference between two quantities"
     },
     {
-      "name": "mortality",
-      "description": "the number of deaths in a population"
+      "name": "mortality"
     },
     {
       "name": "bed",
       "description": "a place for one patient in a hospital"
     },
     {
-      "name": "bicycle",
-      "description": "a pedal-driven two-wheeled vehicle"
+      "name": "bicycle"
     },
     {
       "name": "walking",
@@ -413,20 +396,17 @@
       "description": "the population aged 65 years and older"
     },
     {
-      "name": "square",
-      "description": "qualifier: the unit multiplied by itself, e.g. a square metre"
+      "name": "square"
     },
     {
       "name": "product",
       "description": "the goods and services that are produced"
     },
     {
-      "name": "domestic",
-      "description": "qualifier: produced within the borders of the place"
+      "name": "domestic"
     },
     {
-      "name": "gross",
-      "description": "qualifier: before any deduction"
+      "name": "gross"
     },
     {
       "name": "equivalent",
@@ -441,8 +421,7 @@
       "description": "the movement of people or goods from one place to another"
     },
     {
-      "name": "public",
-      "description": "qualifier: available to everybody"
+      "name": "public"
     },
     {
       "name": "stay",
@@ -457,16 +436,14 @@
       "description": "the degree to which something is good"
     },
     {
-      "name": "life",
-      "description": "the existence of a human being"
+      "name": "life"
     },
     {
       "name": "development",
       "description": "the process of growing or improving"
     },
     {
-      "name": "human",
-      "description": "qualifier: belonging to a human being"
+      "name": "human"
     },
     {
       "name": "coefficient",
@@ -478,7 +455,6 @@
     },
     {
       "name": "GDP",
-      "description": "a monetary measure of the market value of all the final goods and services produced in a place",
       "refs": [
         {
           "name": "Gross_domestic_product",
@@ -492,8 +468,7 @@
     },
     {
       "name": "2022",
-      "type": "time",
-      "description": "the year 2022"
+      "type": "time"
     },
     {
       "name": "2023",
@@ -761,7 +736,6 @@
       "from": "coefficient",
       "verb": "of",
       "to": "Gini",
-      "description": "measure of statistical dispersion for income or wealth inequality",
       "refs": [
         {
           "name": "Gini_coefficient",
@@ -1247,7 +1221,6 @@
     },
     {
       "name": "UNDP",
-      "description": "United Nations Development Programme, Human Development Report",
       "url": "https://hdr.undp.org"
     }
   ],

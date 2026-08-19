@@ -125,7 +125,6 @@
     },
     {
       "name": "elasticity",
-      "description": "responsiveness of one economic variable to a change in another (e.g. supply or demand as a function of changed price, cross-price, income, wealth, advertising, etc.), ranging from inelastic to elastic",
       "refs": [
         {
           "name": "Elasticity (economics)",
@@ -139,7 +138,6 @@
     },
     {
       "name": "utility",
-      "description": "concept in economics & game theory: a relative measure of happiness or satisfaction",
       "refs": [
         {
           "name": "Utility",
@@ -209,7 +207,6 @@
     },
     {
       "name": "profit",
-      "description": "concept in economics",
       "refs": [
         {
           "name": "Profit (economics)",
@@ -279,7 +276,6 @@
     },
     {
       "name": "consumption",
-      "description": "purchase and use of goods and services",
       "refs": [
         {
           "name": "Consumption (economics)",
@@ -307,7 +303,6 @@
     },
     {
       "name": "investment",
-      "description": "commitment of resources to achieve later benefits",
       "refs": [
         {
           "name": "Investment",
@@ -349,7 +344,6 @@
     },
     {
       "name": "unemployment",
-      "description": "state of being without work and actively seeking work",
       "refs": [
         {
           "name": "Unemployment",
@@ -489,7 +483,6 @@
     },
     {
       "name": "debt",
-      "description": "deferred payment, or series of payments, that is owed in the future",
       "refs": [
         {
           "name": "Debt",
@@ -829,8 +822,7 @@
       "name": "Gini"
     },
     {
-      "name": "coefficient",
-      "description": "a multiplicative factor or constant"
+      "name": "coefficient"
     },
     {
       "name": "Okun's"
@@ -1177,7 +1169,6 @@
     },
     {
       "name": "gross domestic product",
-      "description": "market value of goods and services produced within a country. see Wikipedia: Gross domestic product (Q12638)",
       "from": "domestic product",
       "verb": "kind of",
       "to": "gross"
@@ -1216,7 +1207,6 @@
     },
     {
       "name": "government spending",
-      "description": "government consumption, investment, and transfer payments. see Wikipedia: Government spending (Q1929688)",
       "from": "spending",
       "verb": "of",
       "to": "government"
@@ -1324,7 +1314,6 @@
     },
     {
       "name": "interest rate",
-      "description": "percentage of a sum of money charged for its use. see Wikipedia: Interest rate (Q179179)",
       "from": "rate",
       "verb": "of",
       "to": "interest"
@@ -1345,7 +1334,6 @@
     },
     {
       "name": "exchange rate",
-      "description": "rate at which one currency will be exchanged for another. see Wikipedia: Exchange rate (Q66100)",
       "from": "rate",
       "verb": "of",
       "to": "exchange"
@@ -1358,7 +1346,6 @@
     },
     {
       "name": "purchasing power parity",
-      "description": "economic theory that states that the exchange rate between two countries is equal to the ratio of the currencies' respective purchasing power. see Wikipedia: Purchasing power parity (Q82135)",
       "from": "parity",
       "verb": "of",
       "to": "purchasing power"
@@ -1424,7 +1411,6 @@
     },
     {
       "name": "Gini coefficient",
-      "description": "measure of inequality in income or wealth distribution. see Wikipedia: Gini coefficient (Q162455)",
       "from": "coefficient",
       "verb": "of",
       "to": "Gini"
@@ -1499,8 +1485,7 @@
       "name": "GDP per capita",
       "from": "GDP",
       "verb": "per",
-      "to": "inhabitant",
-      "description": "average income of an economy. see Wikipedia: Per capita income (Q45918)"
+      "to": "inhabitant"
     },
     {
       "description": "methods of estimating the doubling time of an investment. see Wikipedia: Rule of 72 (Q264016)",
@@ -2325,8 +2310,7 @@
   ],
   "sources": [
     {
-      "name": "by definition",
-      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+      "name": "by definition"
     },
     {
       "name": "economics textbook example",

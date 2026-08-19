@@ -13,7 +13,6 @@
   "words": [
     {
       "name": "Zurich",
-      "description": "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich.",
       "refs": [
         {
           "name": "Zurich",
@@ -27,7 +26,6 @@
     },
     {
       "name": "city",
-      "description": "a large, permanent human settlement",
       "plural": "cities",
       "refs": [
         {
@@ -42,7 +40,6 @@
     },
     {
       "name": "canton",
-      "description": "a member state of the Swiss Confederation",
       "refs": [
         {
           "name": "canton_of_Zurich",
@@ -264,16 +261,14 @@
       ]
     },
     {
-      "name": "foreign",
-      "description": "qualifier: belonging to a country other than the one of the place"
+      "name": "foreign"
     },
     {
       "name": "balance",
       "description": "the difference between the incoming and the outgoing part"
     },
     {
-      "name": "natural",
-      "description": "qualifier: caused by birth and death and not by migration"
+      "name": "natural"
     },
     {
       "name": "inhabitant",

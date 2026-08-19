@@ -6,24 +6,24 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 5,1,π,,Symbol for the ratio of the circumference of a circle to its diameter,17,,,,,,,,3
 6,1,𝑒,,Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.,17,,,,,,,,3
 7,1,physics,,Physics is the natural science of matter,1,,,,,,,,3
-8,1,science,,the systematic study of the natural world,1,,,,,,,,3
-9,1,natural,,qualifier: caused by birth and death and not by migration,1,,,,,,,,3
+8,1,science,,Science organizes knowledge in the form of testable explanations and predictions about the universe,1,,,,,,,,3
+9,1,natural,,Nature is an inherent character or constitution, particularly of the universe as a whole,1,,,,,,,,3
 10,1,universe,,The universe is all of space and time and their contents. It comprises all of existence, any fundamental interaction, physical process and physical constant, and therefore all forms of matter and energy, and the structures they form, from sub-atomic particles to entire galactic filaments.,1,,,,,,,,3
 11,1,earth,,Earth is the third planet from the Sun and the only astronomical object known to harbor life. This is enabled by Earth being an ocean world, the only one in the Solar System sustaining liquid surface water.,1,,,,,,,,3
-12,1,life,,a quality that distinguishes living organisms from inorganic matter, marked by growth, reproduction and response to stimuli.,1,,,,,,,,3
+12,1,life,,Life, sometimes referred to as biota, is a quality that distinguishes matter that has biological processes, such as signaling and self-sustaining processes, from matter that does not.,1,,,,,,,,3
 13,1,death,,Death is the end of life; the irreversible cessation of all biological functions that sustain a living organism.,1,,,,,,,,3
-14,1,human,,qualifier: belonging to a human being,1,,,,,,,,3
+14,1,human,,Humans (Homo sapiens) or modern humans are the most common and widespread species of primate, and the last surviving species of the genus Homo.,1,,,,,,,,3
 15,1,circumference,,In geometry, the circumference meaning is the perimeter of a circle or ellipse,1,,,,,,,,3
 16,1,diameter,,In geometry, a diameter of a circle is any straight line segment that passes through the centre of the circle and whose endpoints lie on the circle,1,,,,,,,,3
 17,1,Pi,,ratio of the circumference of a circle to its diameter,17,,,,,,,,3
 18,1,base,,A base is something that serves as a foundation, reference point or starting value from which other things are built, derived or measured.,1,,,,,,,,3
 19,1,unit,,A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.,1,,,,,,,,3
 20,1,system,,A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.,1,,,,,system,,,3
-21,1,international,,applying across countries,1,,,,,,,,3
-22,1,second,,the SI base unit of time,1,,,,,,,,
+21,1,international,,Internationalism is a political principle that advocates greater political or economic cooperation among states and nations.,1,,,,,,,,3
+22,1,second,,Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...),1,,,,,,,,
 23,1,s,,The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).,3,,,,,,,,3
 24,1,millisecond,milliseconds,The 1/1000th part of a second.,3,,,,,millisecond,,,3
-25,1,metre,,SI base unit of length,3,,,,,,,,3
+25,1,metre,,The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.,3,,,,,,,,3
 26,1,m,,Is a symbol for the metre, the base unit of length in the International System of Units (SI).,3,,,,,,,,3
 27,1,kilogram,,The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.,3,,,,,,,,3
 28,1,kg,,The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.,3,,,,,,,,3
@@ -85,7 +85,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 84,1,light,,Light, visible light, or visible radiation is electromagnetic radiation that can be perceived by the human eye.,3,,,,,,,,3
 85,1,speed,,In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.,3,,,,,,,,3
 86,1,acceleration,,In mechanics, acceleration is the rate of change of the velocity of an object with respect to time. Acceleration is one of several components of kinematics, the study of motion.,3,,,,,,,,3
-87,1,square,,qualifier: the unit multiplied by itself, e.g. a square metre,1,,,,,,,,3
+87,1,square,,In mathematics, a square is the result of multiplying a number by itself. The verb "to square" is used to denote this operation. Squaring is the same as raising to the power 2, and is denoted by a superscript 2.,1,,,,,,,,3
 88,1,cube,,In geometry, a cube or regular hexahedron is a three-dimensional solid object bounded by six congruent square faces, a type of polyhedron.,1,,,,,,,,3
 89,1,elementary,,In particle physics, an elementary particle or fundamental particle is a subatomic particle that is not composed of other particles. The Standard Model presently recognizes seventeen distinct particles—twelve fermions and five bosons.,1,,,,,,,,3
 90,1,charge,,Electric charge (symbol q, sometimes Q) is a physical property of matter that causes it to experience a force when placed in an electromagnetic field. Electric charge can be positive or negative.,1,,,,,,,,3
@@ -99,19 +99,19 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 98,1,rate,,In mathematics, a rate is the quotient of two quantities, often represented as a fraction.,1,,,,,,,,3
 99,1,time,,Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future,2,,,,,time,,,3
 100,1,minute,,A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.,2,,,,,,,,3
-101,1,hour,,unit of time equal to 60 minutes,3,,,,,,,,3
+101,1,hour,,An hour is a unit of time equal to 60 minutes, or 3600 seconds.,3,,,,,,,,3
 102,1,day,days,A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.,2,,,,,,,,3
 103,1,week,weeks,A week is a unit of time equal to 7 days.,2,,,,,,,,3
-104,1,month,months,calendar month,3,,,,,,,,3
+104,1,month,months,A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.,3,,,,,,,,3
 105,1,year,years,A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.,2,,,,,year,,,3
 106,1,Planck,,Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918.,1,,,,,,,,3
 107,1,Boltzmann,,Ludwig Boltzmann was an Austrian physicist and philosopher; his greatest achievements were the development of statistical mechanics.,1,,,,,,,,3
 108,1,Avogadro,,Italian scientist, most noted for his contribution to molecular theory now known as Avogadro's law, which states that equal volumes of gases under the same conditions of temperature and pressure contain equal numbers of molecules.,1,,,,,,,,3
 109,1,mechanics,,Mechanics is the area of physics concerned with the relationships between force, matter, and motion among physical objects.,1,,,,,,,,3
 110,1,distance,,Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.,3,,,,,,,,3
-111,1,kilometre,,one thousand metres,3,,,,,,,,3
+111,1,kilometre,,A kilometre is a unit of length in the International System of Units (SI) equal to one thousand metres.,3,,,,,,,,3
 112,1,km,,Is a symbol for kilometre,3,,,,,,,,3
-113,1,area,,extent of a surface measured in square units,3,,,,,,,,3
+113,1,area,,Area is the measure of a region's size on a surface.,3,,,,,,,,3
 114,1,are,,A unit of area equal to 100 square metres, defined by older forms of the metric system but now outside the modern International System of Units.,3,,,,,,,,3
 115,1,m2,,Is a symbol for square metre,3,,,,,,,,3
 116,1,hectare,,A non-SI metric unit of area equal to a square with 100-metre sides, or 10,000 square metres, primarily used in land measurement.,3,,,,,,,,3
@@ -123,7 +123,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 122,1,kWh,,A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.,3,,,,,,,,3
 123,1,gram,,The gram is a unit of mass in the International System of Units (SI) equal to one thousandth of a kilogram.,3,,,,,,,,3
 124,1,g,,Is a symbol for gram,3,,,,,,,,3
-125,1,tonne,,1 000 kg,3,,,,,,,,3
+125,1,tonne,,A metric unit of mass equal to 1,000 kilograms, also called a metric ton.,3,,,,,,,,3
 126,1,t,,Is a symbol for tonne,3,,,,,,,,3
 127,1,hyperfine,,In atomic physics, hyperfine structure refers to small shifts in otherwise degenerate electronic energy levels caused by electromagnetic interactions between atomic nuclei and electron clouds.,1,,,,,,,,3
 128,1,transition,,In atomic physics and chemistry, an atomic electron transition (also called an atomic transition, quantum jump, or quantum leap) is an electron changing from one energy level to another within an atom[1] or artificial atom.,1,,,,,,,,3
@@ -156,9 +156,9 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 155,1,scale km to 100 km,,,10,,,,,,,,
 156,1,definition of joule,,,10,,,,,,,,
 157,1,thousand,,to specify numbers in thousand,7,,,,,,,,3
-158,1,million,,10⁶,7,,,,,,,,3
+158,1,million,,to specify numbers in millions,7,,,,,,,,3
 159,1,billion,,to specify numbers in billions - 10⁹,7,,,,,,,,3
-160,1,percent,,a number or ratio expressed as a fraction of 100.,3,,,,,percent,,,3
+160,1,percent,,A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.,3,,,,,percent,,,3
 161,1,tsd.,,,7,,,,,,,,
 162,1,b,,the symbol used in formulas for billion,1,,,,,,,,
 163,1,scale thousand to one,,,10,,,,,,,,
@@ -184,34 +184,34 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 183,1,increase,,,10,,,,,,,,
 184,1,child,,a human being between birth and puberty, or between infancy and adulthood.,1,,,,,,,,
 185,1,Bern,,,1,,,,,,,,
-186,1,canton,,a member state of the Swiss Confederation,1,,,,,,,,
+186,1,canton,,a member state of the Swiss federation,1,,,,,,,,
 187,1,configuration,,,1,,,,,configuration,,,3
-188,1,city,cities,a large, permanent human settlement,1,,,,,,,,
+188,1,city,cities,a large permanent human settlement,1,,,,,,,,
 189,1,company,,legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise,1,,,,,,,,3
 190,1,eye,,,1,,,,,,,,
 191,1,fact,,,1,,,,,,,,
 192,1,Geneva,,,1,,,,,,,,
 193,1,government,,the system or group of people governing an organized community, generally a state.,1,,,,,,,,
-194,1,global,,relating to the whole world,1,,,,,,,,
+194,1,global,,relating to the whole world - here more a something that effects all people on earth (wikipedia does not really match),1,,,,,,,,
 195,1,group,,the social source of external information, i.e. the four peer actors,1,,,,,,,,
 196,1,hand,,,1,,,,,,,,
 197,1,inhabitants,,,1,,,,,,,,
 198,1,launch,,,1,,,,,,,,
 199,1,man,,,1,,,,,,,,
 200,1,part,,,1,,,,,,,,
-201,1,person,,an individual human being; here the unit for counting people.,3,,,,,,,,
+201,1,person,,an individual human being,3,,,,,,,,
 202,1,place,,,1,,,,,,,,
 203,1,pod,,,1,,,,,pod,,,3
 204,1,point,,a single unit on a scale,1,,,,,,,,
-205,1,problem,,,1,,,,,,,,
+205,1,problem,,A problem is if someone is getting unhappy. This can be measured with "happy time points".,1,,,,,,,,
 206,1,Switzerland,,a landlocked country at the confluence of Western, Central and Southern Europe.,1,,,,,,,,
 207,1,url,,,1,,,,,url,,,3
 208,1,way,,,1,,,,,,,,
-209,1,woman,,an adult female human being.,1,,,,,,,,
+209,1,woman,,an adult female human,1,,,,,,,,
 210,1,work,,In physics, work is the energy transferred to or from an object via the application of force along a displacement.,1,,,,,,,,
 211,1,world,,all countries of the earth taken together,1,,,,,,,,
 212,1,zukunft.com,,the name of this system, used to mark its internal keywords,23,,,,,zukunft.com,,,3
-213,1,Zurich,,most populous canton of Switzerland, in the north‑eastern part of the country.,1,,,,,,,,
+213,1,Zurich,,place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich.,1,,,,,,,,
 214,1,solution,,a homogeneous mixture of a solute dissolved in a solvent,1,,,,,,,,
 215,1,priority,,the rank that decides which problem is worked on first,1,,,,,,,,
 216,1,probability,,Probability is the branch of mathematics concerning numerical descriptions of how likely an event is to occur.,1,,,,,,,,
@@ -297,14 +297,14 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 296,1,method,,a defined procedure for reaching a result,1,,,,,,,,
 297,1,basic,,covering the minimum that is needed,1,,,,,,,,
 298,1,income,,Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.,1,,,,,,,,
-299,1,public,,qualifier: available to everybody,1,,,,,,,,
+299,1,public,,provided by or open to the general population,1,,,,,,,,
 300,1,share,,attributable proportion of a whole, 0..1,1,,,,,,,,
 301,1,tax,,compulsory financial charge to public authority,1,,,,,,,,
 302,1,free,,usable, studyable, shareable and improvable by everyone,1,,,,,,,,
 303,1,fluid,,changing continuously instead of only at fixed points in time,1,,,,,,,,
 304,1,democracy,,system of government by the whole population,1,,,,,,,,
-305,1,gross,,qualifier: before any deduction,1,,,,,,,,
-306,1,domestic,,qualifier: produced within the borders of the place,1,,,,,,,,
+305,1,gross,,counted before any deduction,1,,,,,,,,
+306,1,domestic,,within the borders of one country,1,,,,,,,,
 307,1,usage,,how frequently a word, term, or service is used,1,,,,,,,,
 308,1,assumed value,,,1,,,,,,,,
 309,1,cost,,value of money that has been used up to produce something,1,,,,,,,,
@@ -367,7 +367,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 366,1,forward rate from spot,,,10,,,,,,,,
 367,1,yearly average turnover by month sum,,,10,,,,,,,,
 368,1,OTC,,Over-the-counter (OTC) refers to trading conducted directly between two parties without the supervision of an exchange. Most foreign exchange trading takes place on OTC markets rather than on centralised exchanges.,1,,,,,,,,
-369,1,foreign,,originating from outside the political unit,1,,,,,,,,
+369,1,foreign,,Originating from or characteristic of a country other than the one being referenced. In finance the term typically qualifies currencies, transactions, or instruments tied to a country other than the domestic one.,1,,,,,,,,
 370,1,instruments,,Financial instruments are monetary contracts between parties. In foreign exchange markets, the main instruments include spot transactions, outright forwards, foreign exchange swaps, currency swaps, and options.,1,,,,,,,,
 371,1,Euro,,The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.,1,,,,,,,,
 372,1,Yen,,The yen (symbol: ¥; currency code: JPY) is the official currency of Japan. It is the third most-traded currency in the foreign exchange market after the United States dollar and the euro, and is widely used as a reserve currency. The yen is divided into 100 sen, though sen are no longer used in everyday transactions.,1,,,,,,,,
@@ -379,7 +379,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 378,1,forwards,,Forward contracts are agreements to buy or sell an asset at a predetermined price on a specified future date. Currency forwards are widely used to hedge foreign exchange risk arising from future cash flows in foreign currencies.,1,,,,,,,,
 379,1,swap,,A currency swap (or FX swap) is a foreign exchange transaction that combines a spot purchase or sale of a currency with a simultaneous forward sale or purchase of the same currency. It is widely used to manage liquidity and hedge foreign exchange exposure.,1,,,,,,,,
 380,1,option,,A foreign exchange option gives the holder the right, but not the obligation, to exchange one currency for another at a specified rate on or before a specified date. Options are typically used to hedge or to speculate on currency movements.,1,,,,,,,,
-381,1,2022,,the year 2022,2,,,,,,,,
+381,1,2022,,The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.,2,,,,,,,,
 382,1,¥,,The yen and yuan sign (¥) is a currency symbol used both for the Japanese yen and the Chinese yuan (the primary unit of the renminbi). It consists of the Latin letter Y crossed by one or two horizontal strokes.,1,,,,,,,,
 383,1,USD,,ISO 4217 alphabetic code for the United States dollar.,3,,,,,,,,
 384,1,US$,,Symbol or abbreviation for the United States dollar, used to disambiguate from other dollar-denominated currencies.,1,,,,,,,,
@@ -529,7 +529,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 528,1,symbol,,,1,,,,,,,,
 529,1,abbreviation,,,1,,,,,,,,
 530,1,proportion,,,1,,,,,,,,
-531,1,growth,,the increase in the inflation-adjusted value of the goods and services produced by an economy over time.,1,,,,,,,,
+531,1,growth,,rate of increase over a period,1,,,,,,,,
 532,1,USD cross rate,,,10,,,,,,,,
 533,1,Denomination,,,1,,,,,,,,
 534,1,pence,,,1,,,,,,,,
@@ -798,7 +798,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 797,1,welfare (formula),,,10,,,,,,,,
 798,1,elevation,,height above mean sea level,1,,,,,,,,
 799,1,nationality,,legal belonging to a state,1,,,,,,,,
-800,1,median,,the middle value that separates the higher half from the lower half,1,,,,,,,,
+800,1,median,,value separating the higher half from the lower half,1,,,,,,,,
 801,1,age,,length of time a person has lived,1,,,,,,,,
 802,1,male,,sex category,1,,,,,,,,
 803,1,female,,sex category,1,,,,,,,,
@@ -814,12 +814,12 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 813,1,tram,,rail vehicle running on streets,1,,,,,,,,
 814,1,bus,,large road vehicle carrying passengers,1,,,,,,,,
 815,1,punctuality,,degree of arriving at scheduled time,1,,,,,,,,
-816,1,bicycle,,a pedal-driven two-wheeled vehicle,1,,,,,,,,
+816,1,bicycle,,human‑powered two‑wheel vehicle,1,,,,,,,,
 817,1,track,,prepared path for movement,1,,,,,,,,
 818,1,fountain,,structure issuing water,1,,,,,,,,
 819,1,school,,institution for educating children,1,,,,,,,,
 820,1,university,,highest level teaching and research institution,1,,,,,,,,
-821,1,student,,a person enrolled in a school or other educational institution who attends classes to acquire knowledge.,1,,,,,,,,
+821,1,student,,person enrolled at an educational institution,1,,,,,,,,
 822,1,PISA,,OECD Programme for International Student Assessment,1,,,,,,,,
 823,1,hospital,,institution providing medical treatment,1,,,,,,,,
 824,1,doctor,,qualified medical practitioner,1,,,,,,,,
@@ -833,13 +833,13 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 832,1,tourism,,travel for pleasure or business,1,,,,,,,,
 833,1,safety,,condition of being protected from harm,1,,,,,,,,
 834,1,homicide,,killing of one human by another,1,,,,,,,,
-835,1,district,,administrative subdivision of a canton,1,,,,,,,,
+835,1,district,,administrative subdivision of a city,1,,,,,,,,
 836,1,German,,West‑Germanic language, official in Zurich,1,,,,,,,,
 837,1,agglomeration,,urban core plus surrounding built‑up areas,1,,,,,,,,
 838,1,commuter,,person travelling regularly between home and work,1,,,,,,,,
 839,1,inbound,,coming into the place,1,,,,,,,,
 840,1,outbound,,going out of the place,1,,,,,,,,
-841,1,internet,,the global system of interconnected computer networks that links devices and people worldwide.,1,,,,,,,,
+841,1,internet,,global computer network,1,,,,,,,,
 842,1,sunshine,,direct sunlight reaching the ground,1,,,,,,,,
 843,1,precipitation,,rain, snow, hail etc. falling from atmosphere,1,,,,,,,,
 844,1,millimetre,,one thousandth of a metre,3,,,,,,,,
@@ -852,24 +852,24 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 851,1,fare,,the price charged to a passenger for public transport,1,,,,,,,,
 852,1,zone,,a subdivided area with a common tariff or purpose,1,,,,,,,,
 853,1,QS,,Quacquarelli Symonds, publisher of the QS World University Rankings,1,,,,,,,,
-854,1,patent,,legal right excluding others from using an invention,1,,,,,,,,
-855,1,region,,a defined geographic area,1,,,,,,,,
-856,1,seat,,position in an elected assembly,1,,,,,,,,
+854,1,patent,,an exclusive right granted for an invention,1,,,,,,,,
+855,1,region,,an area of land larger than a city and its surroundings,1,,,,,,,,
+856,1,seat,,a membership position in an elected assembly,1,,,,,,,,
 857,1,Gemeinderat,,the municipal parliament and legislative body of the city of Zurich,1,,,,,,,,
 858,1,freedom,,the state of being free from constraint,1,,,,,,,,
 859,1,museum,,institution that cares for and displays a collection,1,,,,,,,,
 860,1,theatre,,building or company for the performance of plays,1,,,,,,,,
 861,1,restaurant,,business that prepares and serves food to guests,1,,,,,,,,
 862,1,hotel,,establishment providing paid lodging,1,,,,,,,,
-863,1,electricity,,energy from flow of electric charge,1,,,,,,,,
-864,1,renewable,,replenished naturally on human timescale,1,,,,,,,,
-865,1,waste,,materials no longer wanted,1,,,,,,,,
+863,1,electricity,,energy from the flow of electric charge,1,,,,,,,,
+864,1,renewable,,replenished naturally on a human timescale,1,,,,,,,,
+865,1,waste,,material discarded after use,1,,,,,,,,
 866,1,recycling,,converting waste into reusable material,1,,,,,,,,
-867,1,road,,way for traffic between places,1,,,,,,,,
+867,1,road,,a route for vehicles between two places,1,,,,,,,,
 868,1,trip,,a single journey from one place to another,1,,,,,,,,
-869,1,expectancy,,statistical average time an event is awaited,1,,,,,,,,
+869,1,expectancy,,the expected value of a quantity,1,,,,,,,,
 870,1,infant,,a child in the first year of life,1,,,,,,,,
-871,1,mortality,,the number of deaths in a population, scaled to the size of that population per unit of time.,1,,,,,,,,
+871,1,mortality,,the incidence of death in a population,1,,,,,,,,
 872,1,drinking,,suitable or intended for consumption as a drink,1,,,,,,,,
 873,1,reading,,the skill of interpreting written text,1,,,,,,,,
 874,1,S&P,,S&P Global Ratings, a credit rating agency,1,,,,,,,,
@@ -914,7 +914,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 913,1,Maschwanden,,municipality in the Knonau district with the highest tax multiplier,1,,,,,,,,
 914,1,Regierungsrat,,the seven-member executive council of the canton of Zurich,1,,,,,,,,
 915,1,ratio,,a quotient of two quantities,1,,,,,,,,
-916,1,gap,,the difference between a quantity and a reference level,1,,,,,,,,
+916,1,gap,,a measured difference between two quantities,1,,,,,,,,
 917,1,bed,,a place for one patient in a hospital,1,,,,,,,,
 918,1,walking,,travelling on foot,1,,,,,,,,
 919,1,age 0 to 19,,the population aged 0 to 19 years,1,,,,,,,,

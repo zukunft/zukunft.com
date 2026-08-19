@@ -74,6 +74,7 @@ class json_validation
     const int CONNECTOR_LENGTH = 3;
 
     // the max length of the sample of a finding, so that one finding stays on one report line
+    // this limit is for the report only: a comparison always uses the complete value
     const int SAMPLE_LENGTH = 120;
 
     // the check names used as the section names of the report
@@ -87,7 +88,20 @@ class json_validation
     const string CHK_NAME_DOUBLE = 'phrase name defined twice';
     const string CHK_CROSS_NAME = 'triple name with different keys across the main data';
     const string CHK_CROSS_KEY = 'triple key with different names across the main data';
+    const string CHK_CROSS_DESC = 'description differs across the main data';
     const string CHK_VERSION = 'format version';
+
+    // the top level lists whose entries the import merges by name, mapped to the namespace of
+    // that name: a word and a triple are one phrase, while a source, a formula, a view and a
+    // component each live in their own namespace, so the same name there is another database row
+    const array NAMED_SECTIONS = [
+        json_fields::WORDS => 'phrase',
+        json_fields::TRIPLES => 'phrase',
+        json_fields::SOURCES => 'source',
+        json_fields::FORMULAS => 'formula',
+        json_fields::VIEWS => 'view',
+        json_fields::COMPONENTS => 'component',
+    ];
 
 
     /*
@@ -163,6 +177,12 @@ class json_validation
             'the same from/verb/to key must have the same name in every main data file, because'
             . ' the key is unique in the database, so the second name cannot be created; a'
             . ' triple without a name is not compared, because it takes the existing name');
+        $md_txt .= $this->section_md(self::CHK_CROSS_DESC, $find_lst,
+            'the import merges an object by its name, so the second file describes the row that'
+            . ' the first file has created: a system import runs with no_upd, compares the two'
+            . ' descriptions and stops the whole file with "description is ... instead of ...";'
+            . ' the description belongs in the home file (the one imported first, see'
+            . ' docs/llm/json_structure.md) and every other file repeats the name without it');
         $md_txt .= $this->section_md(self::CHK_VERSION, $find_lst,
             '"version" is the version of the json format and not of the data, so it is matched'
             . ' against def::PRG_VERSION ("' . def::PRG_VERSION . '"); a file that is behind is'
@@ -188,6 +208,7 @@ class json_validation
             }
         }
         $this->cross_file_hits($result);
+        $this->cross_description_hits($result);
         foreach ($result as $chk => $sec_lst) {
             foreach ($sec_lst as $sec => $hits) {
                 sort($hits);
@@ -246,6 +267,65 @@ class json_validation
                     $dsp[] = '"' . $name . '" (' . $file . ')';
                 }
                 $find_lst[self::CHK_CROSS_KEY][$sec][] = $key . ' - ' . implode(' vs ', $dsp);
+            }
+        }
+    }
+
+    /**
+     * check that the main data files agree on the description of a name
+     *
+     * only the main data, because these files are all imported into the same pod, while the
+     * test data contains alternative versions of the same scenario on purpose
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
+     */
+    private function cross_description_hits(array &$find_lst): void
+    {
+        $sec = array_key_first(self::SCAN_PATHS);
+        $name_desc = [];
+        foreach ($this->json_file_list(self::SCAN_PATHS[$sec]) as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                $this->description_by_name($json_array, basename($file_path), $name_desc);
+            }
+        }
+        foreach ($name_desc as $space => $space_lst) {
+            foreach ($space_lst as $name => $desc_lst) {
+                if (count($desc_lst) > 1) {
+                    $dsp = [];
+                    foreach ($desc_lst as $desc => $file) {
+                        $dsp[] = '"' . $this->cut($desc) . '" (' . $file . ')';
+                    }
+                    $find_lst[self::CHK_CROSS_DESC][$sec][] = $space . ' "' . $name . '" - '
+                        . implode(' vs ', $dsp);
+                }
+            }
+        }
+    }
+
+    /**
+     * add the descriptions of one file to the given map of the name to its descriptions
+     *
+     * an entry without a description is the correct re-declaration of a borrowed name, so only
+     * a filled description is a claim and only two filled ones can disagree
+     *
+     * @param array $json_array the decoded json file
+     * @param string $file_name the name of the file used to name the source of a finding
+     * @param array $name_desc (in/out) map of namespace, name and description to the first file
+     * @return void
+     */
+    private function description_by_name(array $json_array, string $file_name, array &$name_desc): void
+    {
+        foreach (self::NAMED_SECTIONS as $sec_name => $space) {
+            foreach ($json_array[$sec_name] ?? [] as $entry) {
+                if (is_array($entry)) {
+                    $name = $entry[json_fields::NAME] ?? '';
+                    $desc = trim($entry[json_fields::DESCRIPTION] ?? '');
+                    if ($name != '' and $desc != '') {
+                        $name_desc[$space][$name][$desc] ??= $file_name;
+                    }
+                }
             }
         }
     }
@@ -653,8 +733,23 @@ class json_validation
      */
     private function sample(array $entry): string
     {
+        return $this->cut(json_encode($entry));
+    }
+
+    /**
+     * the given text short enough for one report line
+     *
+     * the cut is used for the display of a finding only, never for a comparison and never as
+     * the key of a map, because two texts that differ only behind the cut must still be found
+     * (see docs/llm/structure.md "100% correct - never a shortcut")
+     *
+     * @param string $txt the text to show in the report
+     * @return string the text cut after SAMPLE_LENGTH chars
+     */
+    private function cut(string $txt): string
+    {
         $lib = new library();
-        $result = json_encode($entry);
+        $result = $txt;
         if (strlen($result) > self::SAMPLE_LENGTH) {
             $result = $lib->str_left($result, self::SAMPLE_LENGTH) . ' ...';
         }

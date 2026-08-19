@@ -1203,7 +1203,7 @@
   "views": [
     {
       "name": "company sheet",
-      "comment": "The income statement, balance sheet or cash flow sheet of a big company",
+      "description": "The income statement, balance sheet or cash flow sheet of a big company",
       "type": "detail_view",
       "components": [
         {
@@ -1222,7 +1222,7 @@
     },
     {
       "name": "complete",
-      "comment": "Show a word, all related words to edit the word tree and the linked formulas with some results",
+      "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
       "type": "word_default",
       "components": [
         {
@@ -1245,7 +1245,6 @@
     },
     {
       "name": "company list with main ratios",
-      "comment": "List the most interesting companies with the main ratios",
       "type": "detail_view",
       "components": [
         {

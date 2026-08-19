@@ -87,7 +87,6 @@
     },
     {
       "name": "internet",
-      "description": "the global system of interconnected computer networks that links devices and people worldwide.",
       "refs": [
         {
           "name": "Internet",

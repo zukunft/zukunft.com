@@ -9,8 +9,7 @@
   "description": "Calibration log for the thread-selection judgement behind the forum-outreach Fermi model, using the real ZEIT-online forum reaction measures. For each building-block post (anchored by its forum URL as a ref of type general) a forecast of each reaction count is recorded BEFORE posting (assumed value, committed in its own git commit so the timestamp proves it predates the result), and the observed counts are recorded AFTER, marked only by their source. The measures are the five ZEIT reaction icons (star = positive/agreeing, smile = friendly/amused, astonished = surprised, frown = rejecting/displeased, eyebrow = skeptical) plus the count of substantive text replies. The calibration error (forecast minus observed) is calc-validated per measure per post, so over time the graph shows whether the pre-post thread-fit judgement is well calibrated or systematically too optimistic. Replace the example post with real ones; add the measured values and their calc-validation in a later commit once each thread's reaction has settled.",
   "words": [
     {
-      "name": "post",
-      "description": "a single message submitted to an online forum or comment thread."
+      "name": "post"
     },
     {
       "name": "Die Zeit",
@@ -45,8 +44,7 @@
       "description": "engaging with the content of an argument rather than with its tone or the person."
     },
     {
-      "name": "reaction",
-      "description": "a reader response to a post, on ZEIT online registered by clicking one of the reaction icons."
+      "name": "reaction"
     },
     {
       "name": "icon",
@@ -103,16 +101,13 @@
       ]
     },
     {
-      "name": "error",
-      "description": "the difference between an estimated value and its observed value."
+      "name": "error"
     },
     {
-      "name": "count",
-      "description": "the number of items in a set."
+      "name": "count"
     },
     {
-      "name": "assumed value",
-      "description": "a value set by reasoned assumption before observation, not measured."
+      "name": "assumed value"
     },
     {
       "name": "2026-06-20",

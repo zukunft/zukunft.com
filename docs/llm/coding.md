@@ -10,19 +10,30 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
-## The two rules above all others
+## The three rules above all others
 
 1. **Reduce to the max.** Prefer the smallest change that does the job: fewer
    lines, functions, assertions, parameters. When in doubt, leave it out — every
-   rule below is subordinate to this one. (Saint-Exupéry: perfection is reached
-   not when there is nothing left to add, but when there is nothing left to
-   remove.)
+   rule below is subordinate to this one, correctness excepted: shorter is never
+   worth a wrong answer. (Saint-Exupéry: perfection is reached not when there is
+   nothing left to add, but when there is nothing left to remove.)
 2. **One logical element per line — three at most** (one assignment, one call,
    one condition). When a line packs more, split it into named steps or push a
    chain behind a well-named helper; but don't pad a simple expression across
    many lines either — minimise lines subject to each line still reading at a
    glance. Worked examples and the companion ~50-line function-body limit:
    `docs/llm/structure.md`.
+3. **100% correct — never a shortcut.** The target of this code is to be correct
+   for every input the type allows, not for the data seen so far. A comparison
+   uses the complete value: never compare a prefix, a cut, a hash or a rounded
+   copy, and never use a shortened text as a map key, and never stop a check
+   after the first N entries. Shortening is for the **display** only — a report
+   line may be cut, the value behind it never is. If the complete job takes
+   longer, **do it completely and tell the user that it takes longer** — cost is
+   never a reason to cut. Where a complete solution is out of reach in this
+   change, say so and record the gap in `docs/llm/pending_prio_2.md`; a visible
+   gap is honest, a quiet approximation is not. Worked example and the review
+   question: `docs/llm/structure.md`.
 
 ## Build / test / commit
 

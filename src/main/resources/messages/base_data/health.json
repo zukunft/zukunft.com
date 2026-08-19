@@ -47,7 +47,6 @@
     },
     {
       "name": "mortality",
-      "description": "the number of deaths in a population, scaled to the size of that population per unit of time.",
       "refs": [
         {
           "name": "Mortality_rate",
@@ -123,7 +122,6 @@
     },
     {
       "name": "life",
-      "description": "a quality that distinguishes living organisms from inorganic matter, marked by growth, reproduction and response to stimuli.",
       "refs": [
         {
           "name": "Life",
@@ -146,8 +144,7 @@
       "description": "persisting for a long time or constantly recurring"
     },
     {
-      "name": "gap",
-      "description": "the difference between a quantity and a reference level"
+      "name": "gap"
     },
     {
       "name": "world"

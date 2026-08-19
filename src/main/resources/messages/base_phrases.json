@@ -74,7 +74,7 @@
     },
     {
       "name": "global",
-      "description": "relating to the whole world",
+      "description": "relating to the whole world - here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",
@@ -123,6 +123,7 @@
     },
     {
       "name": "problem",
+      "description": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
         {
           "name": "Problem_solving",
@@ -183,7 +184,7 @@
     },
     {
       "name": "Zurich",
-      "description": "the largest city of Switzerland and the capital of its canton"
+      "description": "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich."
     }
   ],
   "triples": [
@@ -192,6 +193,7 @@
       "from": "problem",
       "verb": "can be",
       "to": "global",
+      "description": "here more a personal issue (wikipedia does not really match)",
       "refs": [
         {
           "name": "List_of_global_issues",

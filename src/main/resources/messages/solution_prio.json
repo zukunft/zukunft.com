@@ -10,7 +10,6 @@
   "words": [
     {
       "name": "problem",
-      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
         {
           "name": "Problem_solving",
@@ -20,8 +19,6 @@
     },
     {
       "name": "global",
-      "description": "relating to the whole world",
-      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",
@@ -748,7 +745,6 @@
       "from": "problem",
       "verb": "can be",
       "to": "global",
-      "comment": "here more a personal issue (wikipedia does not really match)",
       "refs": [
         {
           "name": "List_of_global_issues",

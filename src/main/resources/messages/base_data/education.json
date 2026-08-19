@@ -23,7 +23,6 @@
     },
     {
       "name": "student",
-      "description": "a person enrolled in a school or other educational institution who attends classes to acquire knowledge.",
       "refs": [
         {
           "name": "Student",

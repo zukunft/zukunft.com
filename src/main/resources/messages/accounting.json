@@ -276,7 +276,6 @@
     },
     {
       "name": "budget",
-      "description": "balance sheet or statement of estimated receipts and expenditures",
       "refs": [
         {
           "name": "Budget",

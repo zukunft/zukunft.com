@@ -14,7 +14,7 @@ formula_id,user_id,formula_name,formula_text,resolved_text,latex,description,for
 13,1,scale km to 100 km,{t80}={w112}*100,"per 100 km" = "km" * 100,\text{per 100 km} = 100 \cdot \text{km},,1,,,,,,,
 14,1,definition of joule,{w49}=({w28}*{w25}*{w25})/({t64}*{t64}),"joule" = ( "kg" * "metre" * "metre" ) / ( "second (time)" * "second (time)" ),\text{J} = \dfrac{\text{kg} \cdot \text{m}^2}{\text{s}^2},the SI definition of the unit joule,1,,,,,,,
 15,1,scale thousand to one,{w4}={w157}*1000,"one" = "thousand" * 1000,,,1,,,,,,,
-16,1,scale million to one,{w4}={w158}*1000000,"one" = "million" * 1000000,,,1,,,,,,,3
+16,1,scale million to one,{w4}={w158}*1000000,"one" = "million" * 1000000,,convert numbers in millions to one and back,1,,,,,,,3
 17,1,scale billion to one,{w4}={w159}*1000000000,"one" = "billion" * 1000000000,,,1,,,,,,,
 18,1,this,={w166},="Now",,hardcoded formula to select now, today, this year, ...,4,,,,,,,3
 19,1,next,=value[{v8}->,{v11}->{w166}],=value["time jump"->,"follower"->"Now"],,hardcoded formula to select tomorrow, next week, next year, ...,2,,,,,,,3

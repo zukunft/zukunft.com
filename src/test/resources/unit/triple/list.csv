@@ -21,7 +21,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 20,25,26,22,1,metre per second,,,The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.,,,3,,,,,,,,3
 21,22,20,87,1,second squared,,,,,,,,,,,,,,3
 22,22,20,88,1,second cubed,,,,,,,,,,,,,,3
-23,25,20,87,1,square metre,,,SI derived unit of area equal to one square with sides of one metre.,,,3,,,,,,,,3
+23,25,20,87,1,square metre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,3,,,,,,,,3
 24,25,20,88,1,cubic metre,,,The cubic metre is the unit of volume in the International System of Units (SI). It is the volume of a cube with edges measuring one metre in length.,,,,,,,,,,,3
 25,89,23,90,1,elementary charge,,,The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.,,,,,,,,,,,3
 26,2,5,106,1,Planck constant,,,The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.,,,,,,,,,,,3
@@ -100,7 +100,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 99,161,18,157,1,tsd. is alias of thousand,,,,,,,,,,,,,,
 100,26,29,158,1,m is symbol for million,,,,,,,,,,,,,,
 101,162,29,159,1,b is symbol for billion,,,,,,,,,,,,,,
-102,205,20,194,1,global problem,,,,,,,,,,,,,,
+102,205,20,194,1,global problem,,,here more a personal issue (wikipedia does not really match),,,,,,,,,,,
 103,20,1,187,1,system configuration,,,,,,23,,,,,,,1,3
 104,213,2,188,1,Zurich (city),,,Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.,,,,,,71152,,,,,3
 105,213,2,186,1,Zurich (canton),,,The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.,,,,,,32400,,,,,3
@@ -694,7 +694,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 693,780,5,268,1,population density,,,measurement of population per unit area or unit volume,,,,,,,,,,,
 694,268,36,369,1,foreign population share,,,,,,,,,,,,,,
 695,800,5,801,1,median age,,,,,,,,,,,,,,
-696,111,20,87,1,square kilometre,,,SI derived unit of area equal to one square with sides of one metre.,,,3,,,,,,,,3
+696,111,20,87,1,square kilometre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,3,,,,,,,,3
 697,881,26,22,1,bit per second,,,unit of data rate,,,3,,,,,,,,
 698,882,36,306,1,domestic product,,,,,,,,,,,,,,
 699,883,36,884,1,financial centre,,,location with concentration of financial institutions,,,,,,,,,,,
@@ -704,7 +704,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 703,888,36,889,1,overnight stay,,,one night spent by a visitor in accommodation,,,,,,,,,,,
 704,890,5,12,1,quality of life,,,general well‑being of individuals and societies,,,,,,,,,,,
 705,891,5,14,1,human development,,,,,,,,,,,,,,
-706,892,5,893,1,Gini coefficient,,,measure of statistical dispersion for income or wealth inequality,,,,,,,,,,,
+706,892,5,893,1,Gini coefficient,,,measure of statistical dispersion for income/wealth inequality,,,,,,,,,,,
 707,895,5,894,1,full‑time equivalent,,,standardised measure of workload,,,,,,,,,,,
 708,805,5,-104,1,unemployment rate of Zurich (city),,,,,,,,,,,,,,
 709,807,26,104,1,median monthly salary,,,,,,,,,,,,,,
