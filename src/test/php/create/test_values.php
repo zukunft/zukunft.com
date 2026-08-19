@@ -333,6 +333,80 @@ class test_values extends test_objects
     }
 
     /**
+     * a value list that groups into many small time groups: two values per year over seven years,
+     * so that no single group reaches the value list limit but the page total does
+     * e.g. to test that the total number of shown values is limited however the values are grouped
+     *
+     * @return value_list with more values in many small groups than the value list limit
+     */
+    function value_list_many_year_groups(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $zh = $t_wrd->word_zh()->phrase();
+        $bern = $t_wrd->word_bern()->phrase();
+        $years = [
+            $t_wrd->word_2019(), $t_wrd->word_2020(), $t_wrd->word_2021(), $t_wrd->word_2022(),
+            $t_wrd->word_2023(), $t_wrd->word_2024(), $t_wrd->word_2025()
+        ];
+
+        $lst = new value_list($this->env->usr1);
+        $number = 400000;
+        foreach ($years as $yr) {
+            $lst->add($this->value_for_phrases([$inhab, $zh, $yr->phrase()], $number));
+            $number++;
+            $lst->add($this->value_for_phrases([$inhab, $bern, $yr->phrase()], $number));
+            $number++;
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend value list with many small year groups
+     */
+    function value_list_many_year_groups_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_many_year_groups(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * a value list where all values share one phrase, so that they form a single group with more
+     * members than the configured value list limit e.g. to test that a group is shortened
+     * each value has its own year, so that the values are grouped by the shared phrase
+     * and not by the time word
+     *
+     * @return value_list with more values in one group than the value list limit
+     */
+    function value_list_large_group(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $zh = $t_wrd->word_zh()->phrase();
+        $years = [
+            $t_wrd->word_2019(), $t_wrd->word_2020(), $t_wrd->word_2021(), $t_wrd->word_2022(),
+            $t_wrd->word_2023(), $t_wrd->word_2024(), $t_wrd->word_2025(), $t_wrd->word_2026()
+        ];
+
+        $lst = new value_list($this->env->usr1);
+        $number = 400000;
+        foreach ($years as $yr) {
+            $lst->add($this->value_for_phrases([$inhab, $zh, $yr->phrase()], $number));
+            $number++;
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend value list with one group above the value list limit
+     */
+    function value_list_large_group_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_large_group(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value with the maximal number of prime phrase
      */
     function value_main(): value

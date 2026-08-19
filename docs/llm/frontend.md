@@ -310,6 +310,30 @@ already-sorted list and assert it) — do not rely on the upstream load order.
 A new `object_pages/<name>.html` fragment that reorders between runs is the
 signal that a sort is missing.
 
+## A page never fills the screen — the messages below it must stay visible
+
+The user messages are rendered **below the view** (`<!--usr_msg-->` in the page
+skeleton), so a page that fills the whole screen hides them: the user acts, the
+page reports the result, and the report is one scroll below the fold where
+nobody looks. A page must therefore stay short enough that the message area is
+visible without scrolling.
+
+The consequence for every list renderer: **each list is limited on its own**, not
+only the page as a whole.
+
+- A limit applies **per group**, not just to the ungrouped rest. A grouped list
+  (`value_list::list_most_relevant`: time groups, phrase groups, then the rest by
+  impact) shortens every single group with its own `… and n more`, because one
+  phrase with a hundred values would otherwise fill the screen even though the
+  final section is limited. `group_block()` is the pattern to copy.
+- The limit is the configured one (`config.yaml`, see the section above), never a
+  literal, so an admin can tune how much a page shows.
+- The same holds for a new list component: if it can grow with the data, it needs
+  a limit and a tail, even when it sits next to lists that already have one.
+
+When you add or change a page renderer, ask what the page looks like for the
+object with the *most* data, not for the test fixture.
+
 ## Short, more and all — the three versions of a list
 
 Every list a page shows exists in three versions. Which one is rendered depends

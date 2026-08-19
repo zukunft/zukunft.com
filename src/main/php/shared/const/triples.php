@@ -60,6 +60,7 @@ class triples
     const string FACTOR_WRONG = 'factor wrong';
     const string FILE_READ = 'file read';
     const string FILE_SIZE = 'file size';
+    const string FORMULA_LIST = 'formula list';
     const string FUTURE_PERCENT = 'future percent';
     const string INCREASE_LIST = 'increase list';
     const string IP_USER = 'ip user';
@@ -89,6 +90,7 @@ class triples
     const string PER_MONTH = 'per month';
     const string PER_VERB = 'per verb';
     const string PER_WEEK = 'per week';
+    const string PHRASE_LIST = 'phrase list';
     const string CHANGE_LOG = 'change log';
     const string PER_YEAR = 'per year';
     const string PHRASE_DISTRIBUTION = 'phrase distribution';
@@ -123,6 +125,7 @@ class triples
     const string TIME_PERCENT = 'time percent';
     const string TOP_LEVEL = 'top level';
     const string USER_FRONTEND = 'user frontend';
+    const string VALUE_LIST = 'value list';
     const string VALUE_TABLE = 'value table';
     const string WEB_MOBILE = 'web mobile';
     const string WHAT_LIMIT = 'what limit';

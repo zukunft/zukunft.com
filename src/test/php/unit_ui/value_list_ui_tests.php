@@ -41,6 +41,9 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -124,6 +127,21 @@ class value_list_ui_tests
         $test_name = 'a missing config value returns the given default';
         $t->assert($test_name, $cfg->get_by([words::POD], $msg_ui, 7), 7);
 
+        // the number of entries shown at once must always come from config.yaml, so that an admin
+        // can change it without a code update; the *_LIST consts are only the fallback used until
+        // the config is loaded, so each list needs its own key and must never borrow the key of
+        // another list (e.g. the value list used to read the link list limit)
+        $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
+        $yaml_limits = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::USER][words::DEFAULT]
+            [words::FRONTEND][words::LISTS][words::LIMIT] ?? [];
+        $list_keys = [triples::VALUE_LIST, triples::PHRASE_LIST, triples::FORMULA_LIST];
+        foreach ($list_keys as $list_key) {
+            $test_name = 'the ' . $list_key . ' limit is defined in config.yaml';
+            $t->assert_greater_zero($test_name, $yaml_limits[$list_key][words::SYS_CONF_VALUE] ?? 0);
+        }
+        $test_name = 'each list limit has its own config key';
+        $t->assert($test_name, count(array_unique($list_keys)), count($list_keys));
+
         $t->subheader($ts . 'sort by impact');
         $impact_lst = $t_val->value_list_zh_impact_ui();
         $impact_lst->sort_by_impact();
@@ -138,7 +156,9 @@ class value_list_ui_tests
         $t->assert($test_name, new value_list_ui()->list($msg_ui), '');
 
         $t->subheader($ts . 'most relevant');
-        $mr_html = $t_val->value_list_most_relevant_ui()->list_most_relevant($msg_ui);
+        // a limit above the fixture size, so that these blocks test the grouping and the order;
+        // the total limit and the tails are tested in the blocks below
+        $mr_html = $t_val->value_list_most_relevant_ui()->list_most_relevant($msg_ui, limit: 10);
         $test_name = 'the newest time group (2022) is shown before the older one (2021)';
         $t->assert_text_order($test_name, $mr_html, word_names::YEAR_2022, word_names::YEAR_2021);
         $test_name = 'the time groups are shown before the repeated-phrase group';
@@ -147,6 +167,34 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $mr_html, word_names::ABB, word_names::PI);
         $test_name = 'most relevant of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->list_most_relevant($msg_ui), '');
+
+        // a group must not fill the whole screen, so that the user messages below the view
+        // stay visible without scrolling (see docs/llm/frontend.md)
+        $grp_html = $t_val->value_list_large_group_ui()->list_most_relevant($msg_ui);
+        $test_name = 'a group with more values than the limit ends with the more tail';
+        $t->assert_text_contains($test_name, $grp_html, msg_id::MORE->text());
+        $test_name = 'a group shows only the configured number of values';
+        // one list item per shown value plus one for the more tail
+        $t->assert($test_name, substr_count($grp_html, '<' . html_base::LI . '>'),
+            shared_config::LIMIT_VALUE_LIST + 1);
+        $test_name = 'a group that fits shows all values without a more tail';
+        $t->assert_text_not_contains($test_name, $mr_html, msg_id::MORE->text());
+
+        // the limit is a page total: many small groups must not show more values than one big
+        // group, so groups are rendered newest first until the total is reached and all other
+        // values are behind one more tail (docs/llm/frontend.md "a page never fills the screen")
+        $many_html = $t_val->value_list_many_year_groups_ui()->list_most_relevant($msg_ui);
+        $test_name = 'the total of all groups is limited to the configured number of values';
+        // one list item per shown value plus one for the single more tail
+        $t->assert($test_name, substr_count($many_html, '<' . html_base::LI . '>'),
+            shared_config::LIMIT_VALUE_LIST + 1);
+        $test_name = 'the values of the skipped groups are counted in the more tail';
+        $t->assert_text_contains($test_name, $many_html,
+            msg_id::AND_MORE_BEFORE->text() . ' 8 ' . msg_id::MORE->text());
+        $test_name = 'the newest year group is shown';
+        $t->assert_text_contains($test_name, $many_html, word_names::YEAR_2025);
+        $test_name = 'the oldest year group is behind the more tail';
+        $t->assert_text_not_contains($test_name, $many_html, word_names::YEAR_2019);
 
         $t->subheader($ts . 'columns');
         $col_html = $t_val->value_list_most_relevant_ui()->columns_by_phrase($msg_ui);
@@ -198,11 +246,23 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $tail_html, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
         $test_name = 'the more tail link selects the page phrase';
         $t->assert_text_contains($test_name, $tail_html, 'id=' . $phr_inhabitant->id());
-        $tail_plain = $t_val->list_all_ui($msg)->list($msg_ui, new phrase_list_ui(), '', '', 1);
+        $lst_all_ui = $t_val->list_all_ui($msg);
+        $tail_plain = $lst_all_ui->list($msg_ui, new phrase_list_ui(), '', '', 1);
         $test_name = 'without a page phrase the more tail has no link';
         $t->assert_text_not_contains($test_name, $tail_plain, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
         $test_name = 'without a page phrase the more count is still shown';
         $t->assert_text_contains($test_name, $tail_plain, msg_id::MORE->text());
+
+        // the tail tells the user that the list is shortened, so it must be the last entry
+        // and it must only be there if the list really does not show every value
+        $test_name = 'a shortened list ends with the more tail';
+        $t->assert_text_ends($test_name, $tail_plain, msg_id::MORE->text());
+        $test_name = 'the more tail counts the values that are not shown';
+        $t->assert_text_contains($test_name, $tail_plain,
+            msg_id::AND_MORE_BEFORE->text() . ' ' . ($lst_all_ui->count() - 1) . ' ' . msg_id::MORE->text());
+        $full_html = $lst_all_ui->list($msg_ui, $phr_lst_context_ui, '', '', $lst_all_ui->count());
+        $test_name = 'a list that shows every value has no more tail';
+        $t->assert_text_not_contains($test_name, $full_html, msg_id::MORE->text());
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

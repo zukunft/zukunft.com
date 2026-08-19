@@ -925,6 +925,32 @@ class test_base
     }
 
     /**
+     * check that the result text ends with the target text
+     * e.g. that a shortened list ends with the "... and n more" tail
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $haystack the actual result
+     * @param string $needle the text that is expected at the end of the haystack
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @return bool true if the haystack ends with the needle
+     */
+    function assert_text_ends(
+        string $msg,
+        string $haystack,
+        string $needle,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
+        string $comment = ''): bool
+    {
+        if (str_ends_with(trim($haystack), $needle)) {
+            $result = $needle;
+        } else {
+            $result = $haystack;
+        }
+        return $this->assert($msg, $result, $needle, $exe_max_time, $comment);
+    }
+
+    /**
      * check that the first text appears before the second text in the result
      *
      * @param string $msg (unique) description of the test

@@ -351,6 +351,15 @@ zukunft.com:
               link list:
                 sys-conf-value: 8
                 tooltip-comment: "number of initial entries to show in a list of links"
+              phrase list:
+                sys-conf-value: 8
+                tooltip-comment: "number of phrases to show at once e.g. the phrases assigned to a formula; if more phrases are assigned the list ends with '... and n more'"
+              formula list:
+                sys-conf-value: 8
+                tooltip-comment: "number of formulas to show at once e.g. the formulas assigned to a phrase; if more formulas are assigned the list ends with '... and n more'"
+              value list:
+                sys-conf-value: 20
+                tooltip-comment: "number of values to show at once e.g. on a word page; if a phrase has more values the list ends with '... and n more' which links to the view that shows all values of the phrase"
               system errors:
                 sys-conf-value: 10
                 tooltip-comment: "number of the most relevant open system errors to show to the user"
