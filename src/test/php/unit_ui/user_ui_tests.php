@@ -51,6 +51,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -120,8 +121,31 @@ class user_ui_tests
         $test_name = 'the triple overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, triple_names::MATH_CONST_COM);
         $test_name = 'the standard table change is not listed beside the overwrites';
-        $t->assert_text_not_contains($test_name, $all_html, word_names::MATH);
+        $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
+
+        // the column lists the changes of more than one object, so the change text alone does not
+        // tell the user which object has been changed and the what column names the object first;
+        // the name comes first, so that it survives the shortening of the what column
+        $test_name = 'the what column names the changed triple';
+        $t->assert_text_contains($test_name, $all_html,
+            triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed word';
+        $t->assert_text_contains($test_name, $all_html,
+            word_names::MATH . change_log_named_ui::OBJECT_SEPARATOR);
+
+        $test_name = 'the object name is not cut off by the what column limit';
+        $t->assert_text_contains($test_name, $all_html,
+            triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR . $mtr->txt(msg_id::LOG_ADD));
         $test_page .= $all_html . '<br>';
+
+        // on an object page the object is named by the page itself, so the change log there must
+        // not repeat the object name in every row; the object is only named where it is requested
+        $test_name = 'by default a change does not name the changed object';
+        $plain_what = '';
+        foreach ($t_log->log_list_user_overwrites_ui()->lst() as $chg_ui) {
+            $plain_what .= $chg_ui->what_text();
+        }
+        $t->assert_text_not_contains($test_name, $plain_what, change_log_named_ui::OBJECT_SEPARATOR);
 
         $test_name = 'a user without changes gets the no-changes message';
         $none_html = $log->all_user_overwrites($usr_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);

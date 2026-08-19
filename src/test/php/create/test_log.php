@@ -466,6 +466,8 @@ class test_log
         $chg->set_table(change_tables::TRIPLE_USR, $msg);
         $chg->set_field(fields::FLD_DESCRIPTION, $msg);
         $chg->new_value = triple_names::MATH_CONST_COM;
+       // the name of the changed object as change_log_list::load_row_names sets it from the db
+        $chg->row_name = triple_names::MATH_CONST;
         return $chg;
     }
 
@@ -925,10 +927,16 @@ class test_log
      */
     function log_list_user_overwrites(): change_log_list
     {
+        // the word overwrite carries the name of the changed word like the triple overwrite, so
+        // that the column can name the object of every change (see change_log_list::load_row_names)
+        $wrd_chg = $this->log_word_add_view();
+        $wrd_chg->row_name = word_names::MATH;
         $log_lst = new change_log_list();
-        $log_lst->add($this->log_word_add_view());
+        $log_lst->add($wrd_chg);
         $log_lst->add($this->log_triple_add_description());
-        $log_lst->add($this->log_word_add());
+        // a change of the shared standard word, which the column must never list as an overwrite;
+        // the renamed-from value is unique to this change, so a test can detect it
+        $log_lst->add($this->log_word_update());
         return $log_lst;
     }
 

@@ -184,7 +184,10 @@ class ui_log
         if ($my_lst->is_empty()) {
             $result .= $mtr->txt(msg_id::ALL_USER_OVERWRITES_NONE);
         } else {
-            $result .= $this->table_pure($my_lst, $msg, $test_mode);
+            // this column lists the changes of all objects of the user, so unlike the 'my' tab of
+            // an object page the what column must name the changed object, because 'added user
+            // description' alone does not tell the user which word or triple has been changed
+            $result .= $this->table_pure($my_lst, $msg, $test_mode, true);
         }
         return $result;
     }
@@ -196,9 +199,16 @@ class ui_log
      *
      * @param change_log_list $log_lst the filtered, sorted and row-limited change log to render
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param bool $with_object true to name the changed object in the what column, which is needed
+     *                          if the table lists the changes of more than one object
      * @return string the html code of the borderless when / who / what change log table
      */
-    private function table_pure(change_log_list $log_lst, user_message $msg, bool $test_mode): string
+    private function table_pure(
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode,
+        bool            $with_object = false
+    ): string
     {
         global $ui_sys;
         $what_max_chars = 0;
@@ -211,7 +221,7 @@ class ui_log
                 [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
                 $msg, 0);
         }
-        return $log_lst->tbl_when_who_what($what_max_chars, $max_rows, $test_mode);
+        return $log_lst->tbl_when_who_what($what_max_chars, $max_rows, $test_mode, $with_object);
     }
 
     /**

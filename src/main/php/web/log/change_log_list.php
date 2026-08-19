@@ -363,9 +363,17 @@ class change_log_list extends ListBase
      * @param int $what_max_chars the max number of chars per what entry, 0 for no limit
      * @param int $max_rows the max number of change rows shown, 0 for no limit
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param bool $with_object true to name the changed object in the what column, which is needed
+     *                          if the table lists the changes of more than one object e.g. the all
+     *                          user overwrites column of the user page
      * @return string the html code of the borderless when / who / what table
      */
-    function tbl_when_who_what(int $what_max_chars, int $max_rows = 0, bool $test_mode = false): string
+    function tbl_when_who_what(
+        int  $what_max_chars,
+        int  $max_rows = 0,
+        bool $test_mode = false,
+        bool $with_object = false
+    ): string
     {
         global $mtr;
         $html = new html_base();
@@ -377,7 +385,7 @@ class change_log_list extends ListBase
         // sorted newest first by ui_log::prepared_change_log resp. the test)
         $lst = $max_rows > 0 ? $this->head($max_rows) : $this;
         foreach ($lst->lst() as $chg) {
-            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode);
+            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode, $with_object);
         }
         // the forward button appears when more changes exist than the row limit shows; the back
         // button is prepared for the paging implementation (see docs/llm/pending.md) but stays hidden

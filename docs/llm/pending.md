@@ -2,8 +2,6 @@
 
 ## user default view
 
-name the changed object in the what column of the 'all_user_overwrites' component, because the column lists the overwrites of more than one object type and 'added user description' alone does not tell the user which word or triple has been changed
-
 similar to the my tab in the word default view add a my tab to the formula default view
 
 add the formula overwrites to the 'all_user_overwrites' component used in the user_default view

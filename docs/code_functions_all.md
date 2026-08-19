@@ -1924,6 +1924,7 @@
     \-- load_sql_by_obj - section for function load_sql_by_obj is expected to be load sql in /log/change_log_link_list.php
     \-- add - section for function add not yet defined that it should be load in /log/change_log_link_list.php
 \-- change_log_list
+    \-- load_row_names - section for function load_row_names is expected to be load in /log/change_log_list.php
     \-- load_sql_obj_fld - section for function load_sql_obj_fld is expected to be load sql in /log/change_log_list.php
     \-- load_sql_obj_last - section for function load_sql_obj_last is expected to be load sql in /log/change_log_list.php
     \-- add - section for function add not yet defined that it should be modify in /log/change_log_list.php
@@ -4181,6 +4182,8 @@
         \-- change_link - display the last change related to one object (word, formula, value, verb, ...)
     \-- add
         \-- change_link - similar to add_link, but additional fix the references as a text for fast displaying
+    \-- load_row_names
+        \-- change_log_list - set the name of the changed object on each change of this list, e.g. the word name of a word
 \-- add
     \-- add_info_with_vars
         \-- sql_message - add an info message id and a list of related variables

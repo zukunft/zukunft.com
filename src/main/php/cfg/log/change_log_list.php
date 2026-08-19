@@ -61,7 +61,10 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
@@ -91,8 +94,11 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -131,6 +137,90 @@ class change_log_list extends list_db_read
             $vars[] = $chg->api_json_array($typ_lst, $msg, $usr);
         }
         return $vars;
+    }
+
+    /**
+     * set the name of the changed object on each change of this list, e.g. the word name of a word
+     * change, so that a change log listing the changes of more than one object can name the changed
+     * object (see web/log/change_log_named::object_prefix); the names are loaded with one query per
+     * object type, because a change log page can contain many changes
+     *
+     * called by the api controller only for a change log that spans objects (the changes of one
+     * user), because an object page already names the object it shows; an object type that is not
+     * (yet) included here keeps an empty name and the frontend then shows the change without the
+     * object, so a missing type never hides a change
+     *
+     * @param user $usr the user who has requested the change log, so that the names are the ones
+     *                  this user may see
+     * @param user_message $msg to collect the problems of loading the changed objects
+     * @return void
+     */
+    function load_row_names(user $usr, user_message $msg): void
+    {
+        $names = [];
+        $ids = $this->row_ids_by_table();
+        $wrd_ids = $ids[change_tables::WORD] ?? [];
+        if ($wrd_ids != []) {
+            $wrd_lst = new word_list($usr);
+            $wrd_lst->load_by_ids($wrd_ids, $msg);
+            $names[change_tables::WORD] = $this->names_by_id($wrd_lst->lst());
+        }
+        $trp_ids = $ids[change_tables::TRIPLE] ?? [];
+        if ($trp_ids != []) {
+            $trp_lst = new triple_list($usr);
+            $trp_lst->load_by_ids($trp_ids, $msg);
+            $names[change_tables::TRIPLE] = $this->names_by_id($trp_lst->lst());
+        }
+        foreach ($this->lst() as $chg) {
+            $chg->row_name = $names[$this->std_table($chg->table())][$chg->row_id] ?? null;
+        }
+    }
+
+    /**
+     * the row ids of this list grouped by the standard table name, so that the names of the changed
+     * objects can be loaded with one query per object type; a user sandbox (overlay) change is
+     * grouped with the change of the standard object, because both name the same object
+     *
+     * @return array a list of the changed row ids by the standard table name
+     */
+    private function row_ids_by_table(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $chg) {
+            $table = $this->std_table($chg->table());
+            // the same object is usually changed more than once, so load each id only once
+            if ($chg->row_id != null and $chg->row_id != 0
+                and !in_array((int)$chg->row_id, $result[$table] ?? [], true)) {
+                $result[$table][] = (int)$chg->row_id;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $table the change log table name e.g. 'user_words'
+     * @return string the name of the table with the standard objects e.g. 'words'
+     */
+    private function std_table(string $table): string
+    {
+        $result = $table;
+        if (str_starts_with($table, change_tables::USER_PREFIX)) {
+            $result = substr($table, strlen(change_tables::USER_PREFIX));
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $lst a list of named objects e.g. the loaded words
+     * @return array the object name by the object id
+     */
+    private function names_by_id(array $lst): array
+    {
+        $result = [];
+        foreach ($lst as $obj) {
+            $result[$obj->id()] = $obj->name();
+        }
+        return $result;
     }
 
 
