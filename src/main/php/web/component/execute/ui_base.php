@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_object.php';
@@ -43,6 +44,7 @@ include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -121,6 +123,24 @@ class ui_base
     function source_name(db_object|type_object|null $dbo = null): string
     {
         return $this->dbo_name($dbo);
+    }
+
+    /**
+     * @param source|db_object|null $dbo the source whose doi should be shown
+     * @return string the doi as a link to doi.org or an empty text if the source has no doi
+     */
+    function source_doi_link(source|db_object|null $dbo = null): string
+    {
+        $result = '';
+        if ($dbo instanceof source) {
+            $doi_url = $dbo->doi_url();
+            if ($doi_url != null) {
+                $html = new html_base();
+                // the doi is user-settable, but html_base::ref escapes the shown name
+                $result = $html->ref($doi_url, $dbo->doi());
+            }
+        }
+        return $result;
     }
 
     /**

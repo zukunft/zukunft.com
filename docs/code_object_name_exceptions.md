@@ -36,7 +36,7 @@ phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_new, $ref_obj, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_ui, $res_upd, $result, $rst
-source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_usr2, $src_usr2_reloaded, $usr_ui
+source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_ui, $src_usr2, $src_usr2_reloaded, $usr_ui
 sql_message: $msg
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
 term: $frm, $msk, $term, $trm_back, $trm_by_obj_id, $trp, $vrb, $wrd
@@ -229,7 +229,7 @@ trm_ids: $ids, $trm_ids
 type_list: $typ_lst
 type_lists: $frontend_cache, $sys_typ_lst, $typ_lst, $typ_lst_all, $typ_lst_cached, $ui_cache
 type_object: $act, $tbl, $typ, $typ_obj, $type, $type_obj
-ui_base: $base
+ui_base: $base, $ui
 ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port

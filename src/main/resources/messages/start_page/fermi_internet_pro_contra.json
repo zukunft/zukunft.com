@@ -696,7 +696,7 @@
     {
       "name": "Christakis 2012 mouse overstimulation",
       "description": "Christakis DA, Ramirez JSB, Ramirez JM (2012). Overstimulation of newborn mice leads to behavioral differences and deficits in cognitive performance. Scientific Reports 2:546. p10 mice, 70 dB audio + flashing lights, 6 h/day, 42 days; overstimulated mice performed significantly worse on Light-Dark Latency, Elevated Plus Maze, Novel Object Recognition and Barnes Maze.",
-      "url": "https://doi.org/10.1038/srep00546"
+      "doi": "10.1038/srep00546"
     },
     {
       "name": "Anthropic RSI warning (heise 2026)",

@@ -49,6 +49,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -105,6 +107,7 @@ class source extends sandbox_code_id
      */
 
     private ?string $url = null;
+    private ?string $doi = null;
 
 
     /*
@@ -127,6 +130,11 @@ class source extends sandbox_code_id
             } else {
                 $this->url = null;
             }
+            if (array_key_exists(url_var::DOI, $url_array)) {
+                $this->doi = $url_array[url_var::DOI];
+            } else {
+                $this->doi = null;
+            }
         }
         return $msg;
     }
@@ -146,6 +154,28 @@ class source extends sandbox_code_id
     }
 
     /**
+     * as a function to overwrite the parent function
+     * @return string|null the digital object identifier e.g. 10.5281/zenodo.19443909
+     */
+    function doi(): ?string
+    {
+        return $this->doi;
+    }
+
+    /**
+     * @return string|null the doi.org url of the doi or null if this source has no doi
+     */
+    function doi_url(): ?string
+    {
+        if ($this->doi == null or $this->doi == '') {
+            $result = null;
+        } else {
+            $result = def::LINK_DOI . $this->doi;
+        }
+        return $result;
+    }
+
+    /**
      * @return array the ordered db field names of a source used for the change preview order
      */
     function sandbox_fld_order(): array
@@ -162,6 +192,7 @@ class source extends sandbox_code_id
             source_fields::FLD_NAME => url_var::NAME,
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             fields::FLD_URL => url_var::URL,
+            fields::FLD_DOI => url_var::DOI,
         ];
     }
 
@@ -184,6 +215,11 @@ class source extends sandbox_code_id
         } else {
             $this->url = null;
         }
+        if (array_key_exists(json_fields::DOI, $json_array)) {
+            $this->doi = $json_array[json_fields::DOI];
+        } else {
+            $this->doi = null;
+        }
         return $msg->is_ok();
     }
 
@@ -195,6 +231,7 @@ class source extends sandbox_code_id
     {
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::URL] = $this->url;
+        $vars[json_fields::DOI] = $this->doi;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

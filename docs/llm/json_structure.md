@@ -883,13 +883,18 @@ not be re-declared as a word in a consumer file.
 {
   "name": "Berns paper",
   "description": "Berns GS, ... (2005). Biological Psychiatry 58:245-253",
-  "url":  "https://doi.org/..."
+  "doi":  "10.1016/j.biopsych.2005.04.012"
 }
 ```
 
 Sources are referenced by name in `value.source` and must be defined in the
 same file as the values that use them. Sources live in their own namespace —
 a source whose name equals a triple's name is fine.
+
+A source that has a **doi** carries it in `doi` — the bare identifier, without
+the `https://doi.org/` prefix, which the frontend adds to build the link. `url`
+stays the field for a source that has no doi (a website, a pdf, a dataset); a
+source may carry both, e.g. the doi of the paper and the url of the download.
 
 ### A source name never appears in a value's `words`
 

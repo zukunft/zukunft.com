@@ -150,6 +150,8 @@ class source extends sandbox_code_id
     // database fields additional to the user sandbox fields
     // the internet link to the source
     public ?string $url = null;
+    // the digital object identifier of the source e.g. 10.5281/zenodo.19443909 used to create the url to doi.org
+    public ?string $doi = null;
 
 
     /*
@@ -177,6 +179,7 @@ class source extends sandbox_code_id
     {
         parent::reset($keep_user);
         $this->url = null;
+        $this->doi = null;
     }
 
     /**
@@ -203,6 +206,7 @@ class source extends sandbox_code_id
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             $this->url = $db_row[fields::FLD_URL];
+            $this->doi = $db_row[fields::FLD_DOI];
         }
         return $msg->is_ok();
     }
@@ -220,6 +224,9 @@ class source extends sandbox_code_id
 
         if (array_key_exists(json_fields::URL, $api_json)) {
             $this->url = $api_json[json_fields::URL];
+        }
+        if (array_key_exists(json_fields::DOI, $api_json)) {
+            $this->doi = $api_json[json_fields::DOI];
         }
 
         return $msg->is_ok();
@@ -243,6 +250,9 @@ class source extends sandbox_code_id
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->url = $in_ex_json[json_fields::URL];
+        }
+        if (key_exists(json_fields::DOI, $in_ex_json)) {
+            $this->doi = $in_ex_json[json_fields::DOI];
         }
 
         return $msg->is_ok();
@@ -270,6 +280,7 @@ class source extends sandbox_code_id
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::URL] = $this->url;
+            $vars[json_fields::DOI] = $this->doi;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
@@ -295,6 +306,9 @@ class source extends sandbox_code_id
 
         if ($this->url <> '') {
             $vars[json_fields::URL] = $this->url;
+        }
+        if ($this->doi <> '') {
+            $vars[json_fields::DOI] = $this->doi;
         }
 
         return $vars;
@@ -408,6 +422,7 @@ class source extends sandbox_code_id
     {
         $msg = parent::diff_msg($obj, $ex_def);
         $this->diff_field_msg($msg, fields::FLD_URL, $this->url, $obj->url);
+        $this->diff_field_msg($msg, fields::FLD_DOI, $this->doi, $obj->doi);
         return $msg;
     }
 
@@ -424,6 +439,11 @@ class source extends sandbox_code_id
         $result = parent::needs_db_update($db_obj, $msg);
         if ($this->url != null) {
             if ($this->url != $db_obj->url) {
+                $result = true;
+            }
+        }
+        if ($this->doi != null) {
+            if ($this->doi != $db_obj->doi) {
                 $result = true;
             }
         }
@@ -447,6 +467,9 @@ class source extends sandbox_code_id
         if ($std_obj->url !== $this->url) {
             $result->url = $this->url;
         }
+        if ($std_obj->doi !== $this->doi) {
+            $result->doi = $this->doi;
+        }
         return $result;
     }
 
@@ -467,6 +490,9 @@ class source extends sandbox_code_id
         $msg = parent::fill($obj, $usr_req);
         if ($this->url === null and $obj->url != null) {
             $this->url = $obj->url;
+        }
+        if ($this->doi === null and $obj->doi != null) {
+            $this->doi = $obj->doi;
         }
         return $msg;
     }
@@ -624,6 +650,7 @@ class source extends sandbox_code_id
             [
                 source_fields::FLD_TYPE,
                 fields::FLD_URL,
+                fields::FLD_DOI,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -678,6 +705,21 @@ class source extends sandbox_code_id
                 $this->url,
                 source_db::FLD_URL_SQL_TYP,
                 $obj->url
+            );
+        }
+        if ($obj->doi !== $this->doi) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DOI,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DOI),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                fields::FLD_DOI,
+                $this->doi,
+                source_db::FLD_DOI_SQL_TYP,
+                $obj->doi
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));

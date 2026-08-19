@@ -226,7 +226,7 @@
     {
       "name": "Weinstein Stason 1977 NEJM",
       "description": "Weinstein MC, Stason WB (1977). Foundations of cost-effectiveness analysis for health and medical practices. New England Journal of Medicine 296:716-721. A QALY is a life year weighted by a health-utility factor between 0 and 1.",
-      "url": "https://doi.org/10.1056/NEJM197703312961304"
+      "doi": "10.1056/NEJM197703312961304"
     }
   ],
   "values": [

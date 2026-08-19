@@ -69,8 +69,10 @@ class source_db
     // the field names and their descriptions are defined in source_fields
     // *_SQL_TYP is the sql data type used for the field
     const sql_field_type FLD_URL_SQL_TYP = sql_field_type::TEXT;
+    const sql_field_type FLD_DOI_SQL_TYP = sql_field_type::TEXT;
     const string FLD_CODE_ID_COM = 'to select sources used by this program';
     const string FLD_URL_COM = 'the url of the source';
+    const string FLD_DOI_COM = 'the digital object identifier of the source used to create the url to doi.org';
 
     // list of fields that MUST be set by one user
     const array FLD_LST_MUST_BE_IN_STD = array(
@@ -85,6 +87,7 @@ class source_db
         [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', source_fields::FLD_DESCRIPTION_COM],
         [source_fields::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, source_type::class, source_fields::FLD_TYPE_COM],
         [fields::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [fields::FLD_DOI, self::FLD_DOI_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DOI_COM],
         [fields::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [fields::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', fields::FLD_USAGE_COM],
     );
@@ -98,6 +101,7 @@ class source_db
     // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
         fields::FLD_URL,
+        fields::FLD_DOI,
         fields::FLD_DESCRIPTION
     );
     // list of the user-specific numeric database field names

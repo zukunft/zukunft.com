@@ -365,22 +365,22 @@
     {
       "name": "Ebbinghaus 1885 Murre Dros 2015",
       "description": "Ebbinghaus H (1885) Ueber das Gedaechtnis, replicated by Murre JMJ and Dros J (2015) PLoS ONE 10:e0120644: about 34 percent of learned material is retained one day after learning.",
-      "url": "https://doi.org/10.1371/journal.pone.0120644"
+      "doi": "10.1371/journal.pone.0120644"
     },
     {
       "name": "Bloom 1984 two sigma",
       "description": "Bloom BS (1984). The 2 sigma problem. Educational Researcher 13(6):4-16. One-to-one tutored students performed about two standard deviations above conventional class instruction.",
-      "url": "https://doi.org/10.3102/0013189X013006004"
+      "doi": "10.3102/0013189X013006004"
     },
     {
       "name": "Barnett Ceci 2002",
       "description": "Barnett SM, Ceci SJ (2002). When and where do we apply what we learn? A taxonomy for far transfer. Psychological Bulletin 128:612-637.",
-      "url": "https://doi.org/10.1037/0033-2909.128.4.612"
+      "doi": "10.1037/0033-2909.128.4.612"
     },
     {
       "name": "Miller 1956",
       "description": "Miller GA (1956). The magical number seven, plus or minus two. Psychological Review 63:81-97. Working memory holds about seven chunks of information.",
-      "url": "https://doi.org/10.1037/h0043158"
+      "doi": "10.1037/h0043158"
     }
   ],
   "values": [

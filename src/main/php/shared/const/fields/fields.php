@@ -64,6 +64,8 @@ class fields
     // link
     const string FLD_URL_COM = 'the concrete url for the entry';
     const string FLD_URL = 'url';              // field name for an external url (source and ref)
+    const string FLD_DOI_COM = 'the digital object identifier of the entry used to create the url to doi.org';
+    const string FLD_DOI = 'doi';              // field name for the digital object identifier (source)
 
     // value
     const string FLD_VALUE_COM = 'the configuration value';

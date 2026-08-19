@@ -122,17 +122,17 @@
     {
       "name": "Allcott et al 2019",
       "description": "Allcott H, Braghieri L, Eichmeyer S, Gentzkow M (2019/2020). The Welfare Effects of Social Media. American Economic Review 110(3):629-676; working paper of 8 November 2019",
-      "url": "https://doi.org/10.1257/aer.20190658"
+      "doi": "10.1257/aer.20190658"
     },
     {
       "name": "Bolier et al 2013 as cited",
       "description": "Bolier L et al. (2013), meta-analysis of 39 randomized evaluations of positive psychology interventions, as reported in Allcott et al",
-      "url": "https://doi.org/10.1257/aer.20190658"
+      "doi": "10.1257/aer.20190658"
     },
     {
       "name": "Boxell 2018 as cited",
       "description": "Boxell L (2018), polarization index change 1996-2016, as reported in Allcott et al",
-      "url": "https://doi.org/10.1257/aer.20190658"
+      "doi": "10.1257/aer.20190658"
     }
   ],
   "values": [

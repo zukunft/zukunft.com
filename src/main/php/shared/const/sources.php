@@ -61,6 +61,8 @@ class sources
     const string BFS = 'Federal Statistical Office';
     const string BFS_COM = 'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.';
     const string BFS_ULR = 'https://www.bfs.admin.ch/bfs/en/home.html';
+    // the digital object identifier used for testing (the doi of the zukunft.com concept paper)
+    const string TEST_DOI = '10.5281/zenodo.19443909';
     const int TRUST_ME_BRO_ID = 9;
     const string TRUST_ME_BRO = 'my estimates';
     const string SYSTEM_TEST_ADD = 'System Test Source';

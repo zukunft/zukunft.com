@@ -802,6 +802,14 @@ class db_object extends TextIdObject
     }
 
     /**
+     * @return string|null the doi field of some child object e.g. the source
+     */
+    function doi(): ?string
+    {
+        return log_missing_overwrite('doi', $this::class);
+    }
+
+    /**
      * create the user message that a selector function has been called
      * that is not defined for this class and log a warning
      * e.g. if a view component requests a selector that the shown object does not offer

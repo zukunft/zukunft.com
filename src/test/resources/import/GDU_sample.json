@@ -118,12 +118,12 @@
     {
       "name": "Stiglitz Fitoussi Durand 2018",
       "description": "Beyond GDP: Measuring What Counts for Economic and Social Performance. OECD. Central message: what we measure affects what we do; GDP over-reliance contributed to policymakers missing the 2008 crisis and to inadequate crisis response.",
-      "url": "https://doi.org/10.1787/9789264307292-en"
+      "doi": "10.1787/9789264307292-en"
     },
     {
       "name": "Strathern 1997",
       "description": "Improving ratings: audit in the British University system. European Review 5(3), 305-321. Formulation of Goodhart's law: when a measure becomes a target, it ceases to be a good measure.",
-      "url": "https://doi.org/10.1002/(SICI)1234-981X(199707)5:3<305::AID-EURO184>3.0.CO;2-4"
+      "doi": "10.1002/(SICI)1234-981X(199707)5:3<305::AID-EURO184>3.0.CO;2-4"
     },
     {
       "name": "MacKenzie 2006",

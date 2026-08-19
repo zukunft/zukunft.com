@@ -1845,6 +1845,13 @@
       "type": "all_user_overwrites",
       "code_id": "all_user_overwrites",
       "ui_msg_code_id": "all_user_overwrites"
+    },
+    {
+      "name": "system form field doi",
+      "description": "the doi field in a form",
+      "type": "system_form_field_doi",
+      "code_id": "form_field_doi",
+      "ui_msg_code_id": "form_field_doi"
     }
   ],
   "views": [
@@ -2992,40 +2999,44 @@
         },
         {
           "position": "7",
-          "name": "system form field description"
+          "name": "system form field doi"
         },
         {
           "position": "8",
-          "name": "system form select view"
+          "name": "system form field description"
         },
         {
           "position": "9",
+          "name": "system form select view"
+        },
+        {
+          "position": "10",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system formatter row right"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "system form button cancel"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system form button save"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system formatter row end"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "system form end"
         }
       ]
@@ -3065,100 +3076,104 @@
         },
         {
           "position": "7",
-          "name": "system form field description"
+          "name": "system form field doi"
         },
         {
           "position": "8",
-          "name": "system form select view"
+          "name": "system form field description"
         },
         {
           "position": "9",
+          "name": "system form select view"
+        },
+        {
+          "position": "10",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system formatter row right"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "system form button cancel"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system form button save"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system formatter row end"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "system form end"
         },
         {
-          "position": "16",
+          "position": "17",
           "name": "system formatter row start"
         },
         {
-          "position": "17",
+          "position": "18",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "18",
+          "position": "19",
           "name": "system formatter row end"
         },
         {
-          "position": "19",
+          "position": "20",
           "name": "system formatter row start"
         },
         {
-          "position": "20",
+          "position": "21",
           "name": "system sub title values",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "21",
+          "position": "22",
           "name": "value list of source",
           "position_type": "combine"
         },
         {
-          "position": "22",
+          "position": "23",
           "name": "system sub title references",
           "style": "col-md-4"
         },
         {
-          "position": "23",
+          "position": "24",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "24",
+          "position": "25",
           "name": "system formatter row end"
         },
         {
-          "position": "25",
+          "position": "26",
           "name": "system formatter row start"
         },
         {
-          "position": "26",
+          "position": "27",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "27",
+          "position": "28",
           "name": "change log source",
           "position_type": "combine"
         },
         {
-          "position": "28",
+          "position": "29",
           "name": "system formatter row end"
         }
       ]

@@ -249,7 +249,7 @@
     },
     {
       "name": "McMullan et al. 2019",
-      "url": "https://doi.org/10.1016/j.jad.2018.11.037",
+      "doi": "10.1016/j.jad.2018.11.037",
       "description": "McMullan RD, Berle D, Arnaez S, Starcevic V. The relationships between health anxiety, online health information seeking, and cyberchondria: systematic review and meta-analysis. Journal of Affective Disorders 245:270-278. 20 studies, 7373 participants, random-effects model. DOI verified."
     },
     {
@@ -259,27 +259,27 @@
     },
     {
       "name": "Fisher, Goddu & Keil 2015",
-      "url": "https://doi.org/10.1037/xge0000070",
+      "doi": "10.1037/xge0000070",
       "description": "Searching for explanations: How the internet inflates estimates of internal knowledge. Journal of Experimental Psychology: General 144(3):674-687. Nine experiments. DOI verified."
     },
     {
       "name": "de Berker et al. 2016",
-      "url": "https://doi.org/10.1038/ncomms10996",
+      "doi": "10.1038/ncomms10996",
       "description": "de Berker AO, Rutledge RB, Mathys C, Marshall L, Cross GF, Dolan RJ, Bestmann S. Computations of uncertainty mediate acute stress responses in humans. Nature Communications 7:10996. n=45 participants under probabilistic shock threat; skin conductance n=45, pupillometry n=22; hierarchical Bayesian learning model; salivary cortisol as manipulation check. DOI verified."
     },
     {
       "name": "Tannenbaum et al. 2015",
-      "url": "https://doi.org/10.1037/a0039729",
+      "doi": "10.1037/a0039729",
       "description": "Tannenbaum MB, Hepler J, Zimmerman RS, Saul L, Jacobs S, Wilson K, Albarracin D. Appealing to fear: a meta-analysis of fear appeal effectiveness and theories. Psychological Bulletin 141(6):1178-1204. 127 papers (9% unpublished), 248 independent samples, N=27,372. DOI verified."
     },
     {
       "name": "Coan et al. 2006",
-      "url": "https://doi.org/10.1111/j.1467-9280.2006.01832.x",
+      "doi": "10.1111/j.1467-9280.2006.01832.x",
       "description": "Coan JA, Schaefer HS, Davidson RJ. Lending a hand: social regulation of the neural response to threat. Psychological Science 17(12):1032-1039. fMRI, 16 married women under threat of electric shock in three conditions: husband's hand, stranger's hand, no hand. Small sample; predates current power standards. DOI verified."
     },
     {
       "name": "Packheiser et al. 2024",
-      "url": "https://doi.org/10.1038/s41562-024-01841-8",
+      "doi": "10.1038/s41562-024-01841-8",
       "description": "Packheiser J, Hartmann H, Fredriksen K, Gazzola V, Keysers C, Michon F. A systematic review and multivariate meta-analysis of the physical and mental health benefits of touch interventions. Nature Human Behaviour 8(6):1088-1107. Pre-registered (PROSPERO CRD42022304281); 137 studies in the meta-analysis plus 75 in the systematic review, n=12,966. Authors flag small-study bias and the impossibility of blinding. DOI verified."
     },
     {
@@ -289,7 +289,7 @@
     },
     {
       "name": "Rozenblit & Keil 2002",
-      "url": "https://doi.org/10.1207/s15516709cog2605_1",
+      "doi": "10.1207/s15516709cog2605_1",
       "description": "Rozenblit L, Keil F. The misunderstood limits of folk science: an illusion of explanatory depth. Cognitive Science 26(5):521-562. Twelve studies. Participants rate understanding, produce a step-by-step mechanistic explanation, then re-rate. An older Elsevier DOI, 10.1016/S0364-0213(02)00078-2, points to the same article; the Wiley DOI given here is the one on the publisher's article page. Both verified."
     },
     {

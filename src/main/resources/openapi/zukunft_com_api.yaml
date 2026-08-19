@@ -2421,6 +2421,10 @@ components:
           type: string
           description: url to the original data source
           example: https://visionofhumanity.org/app/uploads/2019/06/GPI-2019-web003.pdf
+        doi:
+          type: string
+          description: the digital object identifier of the source used to create the url to doi.org
+          example: 10.1016/j.biopsych.2005.04.012
         comment:
           type: string
           description: the name of the source that must be unique within a pod

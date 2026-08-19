@@ -610,17 +610,17 @@
     {
       "name": "Bienstman 2024",
       "description": "Bienstman, Rummens & Marx (2024). Explaining the democratic malaise: inequality, external efficacy and political trust. European Journal of Political Research. FE + causal mediation: inequality lowers trust via efficacy.",
-      "url": "https://doi.org/10.1111/1475-6765.12611"
+      "doi": "10.1111/1475-6765.12611"
     },
     {
       "name": "Devine 2025",
       "description": "Devine (2025). The causes of perceived government trustworthiness. European Journal of Political Research. Experimental: benevolence is the strongest trust determinant; competence and integrity secondary.",
-      "url": "https://doi.org/10.1111/1475-6765.12742"
+      "doi": "10.1111/1475-6765.12742"
     },
     {
       "name": "Van de Walle Bouckaert 2003",
       "description": "Van de Walle & Bouckaert (2003). Public Service Performance and Trust in Government: The Problem of Causality. Int. J. Public Administration 26(8-9). Performance and trust are reciprocal.",
-      "url": "https://doi.org/10.1081/PAD-120019352"
+      "doi": "10.1081/PAD-120019352"
     },
     {
       "name": "Tsfati misinformation review 2023",
@@ -630,12 +630,12 @@
     {
       "name": "Van Remoortere Vliegenthart 2025",
       "description": "Van Remoortere & Vliegenthart (2025). Affective polarization and political (dis)trust. Cross-lagged panel: higher trust lowers polarisation; polarisation does not significantly raise distrust.",
-      "url": "https://doi.org/10.1177/02673231251370866"
+      "doi": "10.1177/02673231251370866"
     },
     {
       "name": "Nieuwenhuis inequality trust 2017",
       "description": "Nieuwenhuis (2017). Less equal, less trusting? Longitudinal effects of income inequality on trust in US states 1973-2012. Social Science Research. Longitudinal effect weak and sensitive to time controls.",
-      "url": "https://doi.org/10.1016/j.ssresearch.2018.04.005"
+      "doi": "10.1016/j.ssresearch.2018.04.005"
     },
     {
       "name": "UN World Population Prospects 2024",

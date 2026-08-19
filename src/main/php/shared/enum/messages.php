@@ -1978,6 +1978,7 @@ enum messages: string
 
     // source and reference fields
     case FORM_FIELD_URL = 'form_field_url';
+    case FORM_FIELD_DOI = 'form_field_doi';
     case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
 
     // formula fields
@@ -2402,6 +2403,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_DATETIME_PRECISION = 'system_db_field_datetime_precision';
     case SYSTEM_DB_FIELD_DB_CACHE_ID = 'system_db_field_db_cache_id';
     case SYSTEM_DB_FIELD_DESCRIPTION = 'system_db_field_description';
+    case SYSTEM_DB_FIELD_DOI = 'system_db_field_doi';
     case SYSTEM_DB_FIELD_DOMAIN_DEFAULT = 'system_db_field_domain_default';
     case SYSTEM_DB_FIELD_DTD_IDENTIFIER = 'system_db_field_dtd_identifier';
     case SYSTEM_DB_FIELD_ELEMENT_TYPE_ID = 'system_db_field_element_type_id';

@@ -55,25 +55,25 @@
         "name": "Hohenstein et al. 2023",
         "description": "Hohenstein, J., Kizilcec, R. F., DiFranzo, D., Aghajari, Z., Mieczkowski, H., Levy, K., Naaman, M., Hancock, J., & Jung, M. F. (2023). Artificial intelligence in communication impacts language and social relationships. Scientific Reports, 13(1), 5487. Two randomized experiments on smart replies. Open access.",
         "type": "source",
-        "url": "https://doi.org/10.1038/s41598-023-30938-9"
+        "doi": "10.1038/s41598-023-30938-9"
       },
       {
         "name": "Mieczkowski et al. 2021",
         "description": "Mieczkowski, H., Hancock, J. T., Naaman, M., Jung, M., & Hohenstein, J. (2021). AI-Mediated Communication: Language Use and Interpersonal Effects in a Referential Communication Task. Proceedings of the ACM on Human-Computer Interaction, 5(CSCW1), 1-14. Replicates the positivity bias; mixed evidence on undermined social attraction.",
         "type": "source",
-        "url": "https://doi.org/10.1145/3449091"
+        "doi": "10.1145/3449091"
       },
       {
         "name": "Purcell et al. 2024",
         "description": "Purcell, Z. A., Dong, M., Nussberger, A.-M., Koebis, N., & Jakesch, M. (2024). People have different expectations for their own versus others' use of AI-mediated communication tools. British Journal of Psychology, 1-19. Two representative-sample studies (N=477; N=765).",
         "type": "source",
-        "url": "https://doi.org/10.1111/bjop.12727"
+        "doi": "10.1111/bjop.12727"
       },
       {
         "name": "Hancock, Naaman & Levy 2020",
         "description": "Hancock, J. T., Naaman, M., & Levy, K. (2020). AI-Mediated Communication: Definition, Research Agenda, and Ethical Considerations. Journal of Computer-Mediated Communication, 25(1), 89-100. Defines the AI-MC concept.",
         "type": "source",
-        "url": "https://doi.org/10.1093/jcmc/zmz022"
+        "doi": "10.1093/jcmc/zmz022"
       }
     ],
     "values": [

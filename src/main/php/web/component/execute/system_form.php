@@ -992,6 +992,29 @@ class system_form extends component
     }
 
     /**
+     * @return string the html code to request a doi from the user
+     */
+    function form_field_doi(db_object $dbo, string $style_text = ''): string
+    {
+        $html = new html_base();
+        $doi = $dbo->doi();
+        if ($doi == null) {
+            $doi = '';
+        }
+        if ($style_text == '') {
+            $style_text = view_styles::COL_SM_12;
+        }
+        return $html->form_field(
+            url_var::DOI,
+            msg_id::FORM_FIELD_DOI,
+            $doi,
+            html_base::INPUT_TEXT,
+            '',
+            $style_text
+        );
+    }
+
+    /**
      * @return string the html code to request the group name
      */
     function form_field_group_name(db_object $dbo): string

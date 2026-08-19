@@ -1329,7 +1329,7 @@
     {
       "name": "Berns paper",
       "description": "Berns GS, Chappelow J, Zink CF, Pagnoni G, Martin-Skurski ME, Richards J (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biol Psychiatry 58:245-253",
-      "url": "https://doi.org/10.1016/j.biopsych.2005.04.012"
+      "doi": "10.1016/j.biopsych.2005.04.012"
     }
   ],
   "values": [

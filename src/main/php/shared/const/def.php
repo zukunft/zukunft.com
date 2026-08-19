@@ -92,6 +92,7 @@ class def
     const string LINK_AGPL = 'https://www.gnu.org/licenses/agpl.html';
     const string LINK_GITHUB_TREAM = 'https://github.com/zukunft/tream';
     const string LINK_TREAM_DEMO = 'https://tream.biz/p4a/applications/tream/';
+    const string LINK_DOI = 'https://doi.org/'; // the base url to create the link of a doi e.g. of a source
     const string LINK_PAPER_DELPHI = 'https://dx.doi.org/10.2139/ssrn.6497759';
     const string LINK_PAPER_IMPERATIVE = 'https://doi.org/10.5281/zenodo.19443909';
 

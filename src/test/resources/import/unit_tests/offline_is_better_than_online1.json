@@ -44,17 +44,17 @@
     {
       "name": "Kalla Broockman 2020",
       "description": "Kalla JL, Broockman DE (2020). Reducing Exclusionary Attitudes through Interpersonal Conversation. American Political Science Review 114(2):410-425",
-      "url": "https://doi.org/10.1017/S0003055419000923"
+      "doi": "10.1017/S0003055419000923"
     },
     {
       "name": "Broockman Kalla 2016",
       "description": "Broockman DE, Kalla JL (2016). Durably reducing transphobia: a field experiment on door-to-door canvassing. Science 352:220-224",
-      "url": "https://doi.org/10.1126/science.aad9713"
+      "doi": "10.1126/science.aad9713"
     },
     {
       "name": "Bor Petersen 2022",
       "description": "Bor A, Petersen MB (2022). The Psychology of Online Political Hostility. American Political Science Review 116(1):1-18",
-      "url": "https://doi.org/10.1017/S0003055421000885"
+      "doi": "10.1017/S0003055421000885"
     }
   ],
   "values": [
