@@ -58,10 +58,10 @@ use ReflectionClass;
 class json_validation
 {
 
-    // the folders with the import json files: the productive import data and the test imports
+    // the folders with the import json files: the data of the pod and the data used for testing
     const array SCAN_PATHS = [
-        'import data' => files::MESSAGE_PATH,
-        'test import' => test_paths::IMPORT,
+        'main data' => files::MESSAGE_PATH,
+        'test data' => test_paths::IMPORT,
     ];
 
     // the qualifier that only repeats the default, see docs/llm/json_structure.md
@@ -82,6 +82,11 @@ class json_validation
     const string CHK_VERB = 'verb not defined';
     const string CHK_FIELD = 'field not read by the import';
     const string CHK_WORD_SPACE = 'word with a space';
+    const string CHK_FORWARD = 'triple uses a phrase that is defined later';
+    const string CHK_TRIPLE_KEY = 'triple key used twice';
+    const string CHK_NAME_DOUBLE = 'phrase name defined twice';
+    const string CHK_CROSS_NAME = 'triple name with different keys across the main data';
+    const string CHK_CROSS_KEY = 'triple key with different names across the main data';
     const string CHK_VERSION = 'format version';
 
 
@@ -135,6 +140,29 @@ class json_validation
             . ' hides a composition that belongs in a triple: define the single word atoms and'
             . ' join them e.g. {from: "textbook", verb: "of", to: "economics"}; an external'
             . ' proper noun (Burkina Faso) keeps its space and is not listed here');
+        $md_txt .= $this->section_md(self::CHK_FORWARD, $find_lst,
+            'the import resolves the from and the to of a triple against the phrases known at'
+            . ' that point of the file, so a building block that stands below its user is not'
+            . ' found: the triple gets the phrase id 0, is reported as incomplete and the whole'
+            . ' file is dropped; move the building block in front of its first user');
+        $md_txt .= $this->section_md(self::CHK_TRIPLE_KEY, $find_lst,
+            'two triples with the same from, verb and to get the same database key, so the'
+            . ' second insert fails with a database duplicate key error that only names the ids;'
+            . ' if two concepts share the key, add a building block triple in between'
+            . ' (docs/llm/json_structure.md "from/verb/to is unique within an import")');
+        $md_txt .= $this->section_md(self::CHK_NAME_DOUBLE, $find_lst,
+            'a word and a triple must never share a name and a name must be defined only once,'
+            . ' because the import resolves a phrase by its name, so the second definition is'
+            . ' either dropped or replaces the first one silently');
+        $md_txt .= $this->section_md(self::CHK_CROSS_NAME, $find_lst,
+            'the main data files are imported into the same pod, so a triple name that maps to'
+            . ' different from/verb/to keys in two files is one database row fought over by two'
+            . ' concepts: the import of the later file cannot create its triple, the phrase id'
+            . ' stays 0 and the insert fails with a database duplicate key error');
+        $md_txt .= $this->section_md(self::CHK_CROSS_KEY, $find_lst,
+            'the same from/verb/to key must have the same name in every main data file, because'
+            . ' the key is unique in the database, so the second name cannot be created; a'
+            . ' triple without a name is not compared, because it takes the existing name');
         $md_txt .= $this->section_md(self::CHK_VERSION, $find_lst,
             '"version" is the version of the json format and not of the data, so it is matched'
             . ' against def::PRG_VERSION ("' . def::PRG_VERSION . '"); a file that is behind is'
@@ -159,6 +187,7 @@ class json_validation
                 $this->check_file($sec, $file_path, $result, $update);
             }
         }
+        $this->cross_file_hits($result);
         foreach ($result as $chk => $sec_lst) {
             foreach ($sec_lst as $sec => $hits) {
                 sort($hits);
@@ -169,9 +198,62 @@ class json_validation
     }
 
     /**
+     * check that the main data files agree on the triple names and keys
+     *
+     * only the main data, because these files are all imported into the same pod, while the
+     * test data contains alternative versions of the same scenario on purpose
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
+     */
+    private function cross_file_hits(array &$find_lst): void
+    {
+        $sec = array_key_first(self::SCAN_PATHS);
+        $name_keys = [];
+        $key_names = [];
+        foreach ($this->json_file_list(self::SCAN_PATHS[$sec]) as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+                    if (is_array($trp)) {
+                        $key = '"' . ($trp[json_fields::EX_FROM] ?? '') . '" "'
+                            . ($trp[json_fields::EX_VERB] ?? '') . '" "'
+                            . ($trp[json_fields::EX_TO] ?? '') . '"';
+                        $name_keys[$this->triple_name($trp)][$key] = basename($file_path);
+                        // only an explicit name is a naming claim: a triple without a name
+                        // simply takes the name that the key already has on import
+                        $name = $trp[json_fields::NAME] ?? '';
+                        if ($name != '') {
+                            $key_names[$key][$name] = basename($file_path);
+                        }
+                    }
+                }
+            }
+        }
+        foreach ($name_keys as $name => $keys) {
+            if (count($keys) > 1) {
+                $dsp = [];
+                foreach ($keys as $key => $file) {
+                    $dsp[] = $key . ' (' . $file . ')';
+                }
+                $find_lst[self::CHK_CROSS_NAME][$sec][] = '"' . $name . '" - ' . implode(' vs ', $dsp);
+            }
+        }
+        foreach ($key_names as $key => $names) {
+            if (count($names) > 1) {
+                $dsp = [];
+                foreach ($names as $name => $file) {
+                    $dsp[] = '"' . $name . '" (' . $file . ')';
+                }
+                $find_lst[self::CHK_CROSS_KEY][$sec][] = $key . ' - ' . implode(' vs ', $dsp);
+            }
+        }
+    }
+
+    /**
      * check one json file and add each finding to the given list
      *
-     * @param string $sec the name of the scanned folder e.g. 'test import'
+     * @param string $sec the name of the scanned folder e.g. 'test data'
      * @param string $file_path the json file to check
      * @param array $find_lst (in/out) map of the check name and the folder to the findings
      * @param bool $update true to write the version fields if no other check has a finding
@@ -199,6 +281,18 @@ class json_validation
             }
             foreach ($this->word_space_hits($json_array) as $wrd_name => $sample) {
                 $find_lst[self::CHK_WORD_SPACE][$sec][] = $name . ' - ' . $wrd_name . ' - ' . $sample;
+                $clean = false;
+            }
+            foreach ($this->forward_reference_hits($json_array) as $trp_name => $sample) {
+                $find_lst[self::CHK_FORWARD][$sec][] = $name . ' - ' . $trp_name . ' - ' . $sample;
+                $clean = false;
+            }
+            foreach ($this->triple_key_hits($json_array) as $key_name => $sample) {
+                $find_lst[self::CHK_TRIPLE_KEY][$sec][] = $name . ' - ' . $key_name . ' - ' . $sample;
+                $clean = false;
+            }
+            foreach ($this->name_double_hits($json_array) as $dbl_name => $sample) {
+                $find_lst[self::CHK_NAME_DOUBLE][$sec][] = $name . ' - ' . $dbl_name . ' - ' . $sample;
                 $clean = false;
             }
             // the version is checked last, because a file with a finding is not yet in the
@@ -301,6 +395,128 @@ class json_validation
                         $hits['"' . $name . '"'] ??= $this->sample($wrd);
                     }
                 }
+            }
+        }
+        return $hits;
+    }
+
+    /**
+     * the triples of the given file that use a phrase which the file defines only later
+     *
+     * the import maps the triples in the order of the file and resolves the from and the to
+     * against the phrases known until then, so a forward reference gets the phrase id 0 and
+     * the import of the complete file fails (docs/llm/json_structure.md)
+     *
+     * @param array $json_array the decoded json file
+     * @return array map of the triple and the phrase used too early to the triple entry
+     */
+    function forward_reference_hits(array $json_array): array
+    {
+        // the words are imported before the triples, so all of them are known
+        $known = [];
+        foreach ($json_array[json_fields::WORDS] ?? [] as $wrd) {
+            if (is_array($wrd)) {
+                $known[$wrd[json_fields::NAME] ?? ''] = true;
+            }
+        }
+        // every name that the file creates at all, because a phrase that the file never
+        // defines is expected to come from a file that has been imported before
+        $own = $known;
+        foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+            if (is_array($trp)) {
+                $own[$this->triple_name($trp)] = true;
+            }
+        }
+        $hits = [];
+        foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+            if (is_array($trp)) {
+                foreach ([json_fields::EX_FROM, json_fields::EX_TO] as $fld) {
+                    $ref = $trp[$fld] ?? '';
+                    if ($ref != ''
+                        and !array_key_exists($ref, $known)
+                        and array_key_exists($ref, $own)) {
+                        $hits['"' . $this->triple_name($trp) . '" ' . $fld . ' "' . $ref . '"']
+                            ??= $this->sample($trp);
+                    }
+                }
+                // only after the check, because a triple never uses itself
+                $known[$this->triple_name($trp)] = true;
+            }
+        }
+        return $hits;
+    }
+
+    /**
+     * @param array $trp the triple entry of the import json
+     * @return string the name of the triple, which is the given name or the generated name
+     */
+    private function triple_name(array $trp): string
+    {
+        $result = $trp[json_fields::NAME] ?? '';
+        if ($result == '') {
+            $result = trim(($trp[json_fields::EX_FROM] ?? '') . ' '
+                . ($trp[json_fields::EX_VERB] ?? '') . ' '
+                . ($trp[json_fields::EX_TO] ?? ''));
+        }
+        return $result;
+    }
+
+    /**
+     * the from, verb and to combinations that the given file uses for more than one triple
+     *
+     * the combination is the database key of a triple, so a double gets a duplicate key error
+     * from the database that only names the ids; reporting it here names the entries instead
+     *
+     * @param array $json_array the decoded json file
+     * @return array map of the double key to the second triple entry that uses it
+     */
+    function triple_key_hits(array $json_array): array
+    {
+        $keys = [];
+        $hits = [];
+        foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+            if (is_array($trp)) {
+                $key = '"' . ($trp[json_fields::EX_FROM] ?? '') . '" "'
+                    . ($trp[json_fields::EX_VERB] ?? '') . '" "'
+                    . ($trp[json_fields::EX_TO] ?? '') . '"';
+                if (array_key_exists($key, $keys)) {
+                    $hits[$key] ??= $this->sample($trp);
+                }
+                $keys[$key] = true;
+            }
+        }
+        return $hits;
+    }
+
+    /**
+     * the phrase names that the given file defines more than once
+     *
+     * the import resolves a phrase by its name, so a name that is defined as a word and as a
+     * triple or by two triples with different keys is silently reduced to one of them
+     *
+     * @param array $json_array the decoded json file
+     * @return array map of the double name to the second entry that defines it
+     */
+    function name_double_hits(array $json_array): array
+    {
+        $names = [];
+        $hits = [];
+        foreach ($json_array[json_fields::WORDS] ?? [] as $wrd) {
+            if (is_array($wrd)) {
+                $name = $wrd[json_fields::NAME] ?? '';
+                if ($name != '' and array_key_exists($name, $names)) {
+                    $hits['"' . $name . '"'] ??= $this->sample($wrd);
+                }
+                $names[$name] = true;
+            }
+        }
+        foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+            if (is_array($trp)) {
+                $name = $this->triple_name($trp);
+                if ($name != '' and array_key_exists($name, $names)) {
+                    $hits['"' . $name . '"'] ??= $this->sample($trp);
+                }
+                $names[$name] = true;
             }
         }
         return $hits;
@@ -537,7 +753,7 @@ class json_validation
      * build the markdown section of one check with one sub section per scanned folder
      *
      * the folder is the sub section headline and not a prefix of every line, so that a file
-     * name is not lost in a repeated 'import data: ' and a folder without a finding is silent
+     * name is not lost in a repeated 'main data: ' and a folder without a finding is silent
      *
      * @param string $chk the check name e.g. 'verb not defined'
      * @param array $find_lst map of the check name and the folder to its findings
@@ -559,7 +775,7 @@ class json_validation
     }
 
     /**
-     * @param string $sec the name of the scanned folder e.g. 'test import'
+     * @param string $sec the name of the scanned folder e.g. 'test data'
      * @param array $hits the findings of this check in this folder
      * @return string the markdown sub section or an empty string if the folder has no finding
      */

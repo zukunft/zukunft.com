@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -156,6 +157,9 @@ class system_views_read_tests
         // FIND
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
+
+        // remove test files not used any more e.g. the snapshot of an object id that has changed
+        $t->delete_unused_files(test_paths::VIEWS);
 
 
         // start the test section (ts)

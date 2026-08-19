@@ -65,6 +65,8 @@ class json_fields
 
     // a short description of concrete object used e.g. for the tooltip in the frontend
     const string DESCRIPTION = 'description';
+    // an additional info of a value or result e.g. how a calc validation number has been derived
+    const string NOTE = 'note';
 
     // the json field name for code id to select a single object
     // to link predefined functionality to a row e.g. to select a system view

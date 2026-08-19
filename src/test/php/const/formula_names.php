@@ -80,7 +80,7 @@ class formula_names
     // increase object page sample renders it without a term list, so without the term links
     const string INCREASE_LATEX = '\text{' . words::PERCENT . '} = \frac{ \text{' . word_names::THIS_NAME . '} - \text{' . word_names::PRIOR_NAME . '} }{ \text{' . word_names::PRIOR_NAME . '} }';
     const string JOULE_DEF = 'definition of joule';
-    const int JOULE_DEF_ID = 27;
+    const int JOULE_DEF_ID = 14;
     const string JOULE_DEF_EXP = '"' . word_names::JOULE . '" = ( "' . word_names::KG . '" * "' . word_names::METRE . '" * "' . word_names::METRE . '" ) / ( "' . words::SECOND . '" * "' . words::SECOND . '" )';
     // each term is wrapped in \text{} so the expression_latex_link component can replace the
     // token with a link to the term
@@ -96,7 +96,7 @@ class formula_names
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
-    const int CITY_POPULATION_ID = 26;
+    const int CITY_POPULATION_ID = 24;
     const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "city" )';
 
     // persevered formula names for unit and integration tests

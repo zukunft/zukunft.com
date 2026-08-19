@@ -110,30 +110,7 @@
       "type": "measure"
     },
     {
-      "name": "GDP per capita",
-      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
-      "refs": [
-        {
-          "name": "GDP_per_capita",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q17312912",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "Now"
-    },
-    {
-      "name": "foreign nationals",
-      "refs": [
-        {
-          "name": "Foreign_national",
-          "type": "wikipedia"
-        }
-      ]
     },
     {
       "name": "birth",
@@ -159,15 +136,6 @@
         {
           "name": "Q58702",
           "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "natural balance",
-      "refs": [
-        {
-          "name": "Rate_of_natural_increase",
-          "type": "wikipedia"
         }
       ]
     },
@@ -282,6 +250,36 @@
       "description": "a stored number; reference the provenance qualifier triple, not this bare word"
     },
     {
+      "name": "count",
+      "description": "the number of items of the kind that the count is of"
+    },
+    {
+      "name": "national",
+      "description": "a citizen of a country",
+      "refs": [
+        {
+          "name": "Nationality",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "foreign",
+      "description": "qualifier: belonging to a country other than the one of the place"
+    },
+    {
+      "name": "balance",
+      "description": "the difference between the incoming and the outgoing part"
+    },
+    {
+      "name": "natural",
+      "description": "qualifier: caused by birth and death and not by migration"
+    },
+    {
+      "name": "inhabitant",
+      "description": "person who lives permanently in a place"
+    },
+    {
       "name": "2024",
       "type": "time"
     },
@@ -292,18 +290,6 @@
     {
       "name": "2022",
       "type": "time"
-    },
-    {
-      "name": "birth count",
-      "description": "number of live births in the period"
-    },
-    {
-      "name": "death count",
-      "description": "number of deaths in the period"
-    },
-    {
-      "name": "foreign count",
-      "description": "number of foreign nationals"
     }
   ],
   "triples": [
@@ -383,10 +369,72 @@
       "to": "canton"
     },
     {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant",
+      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
+      "refs": [
+        {
+          "name": "GDP_per_capita",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17312912",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
       "name": "canton GDP per capita",
       "from": "GDP per capita",
       "verb": "of",
       "to": "canton"
+    },
+    {
+      "name": "birth count",
+      "from": "count",
+      "verb": "of",
+      "to": "birth",
+      "description": "number of live births in the period"
+    },
+    {
+      "name": "death count",
+      "from": "count",
+      "verb": "of",
+      "to": "death",
+      "description": "number of deaths in the period"
+    },
+    {
+      "name": "natural balance",
+      "from": "balance",
+      "verb": "kind of",
+      "to": "natural",
+      "refs": [
+        {
+          "name": "Rate_of_natural_increase",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "foreign nationals",
+      "from": "national",
+      "verb": "kind of",
+      "to": "foreign",
+      "refs": [
+        {
+          "name": "Foreign_national",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "foreign count",
+      "from": "count",
+      "verb": "of",
+      "to": "foreign nationals",
+      "description": "number of foreign nationals"
     },
     {
       "name": "foreign share",

@@ -20,6 +20,14 @@ what is left:
   further check functions to the same class
 
 ## code cleanup
+The cleanup deleted 14 snapshots and the blast radius is wider than the orphan case. delete_unused_files() removes every .html under views_by_object/ that this run did not write. That is correct for a full run, but a partial run — test_part.php, a single test class, or
+a test group temporarily commented out — writes only a subset, so with AUTO_UPDATE_TEST_FILES = true it silently deletes the rest. The pre-existing views_by_id loop has the same property; I extended it to a second folder without adding a guard against a partial run. A     
+cheap fix would be to skip the cleanup unless the expected number of assert_view calls was reached, or to run it only from the full-suite entry point.
+Some deletions are worth confirming before committing. Certain orphans are clear (triple_28/30/50/53/57/99, formula_26, value_32770 — all superseded by re-baselined ids). Less clear: word/word_add.html and word_default_word_198/214/258/363/400. These correspond to ids that no current assert_view uses, but if the covering test was disabled rather than removed, the baseline is now gone and will have to be regenerated when it is re-enabled. word_default_word_197/213/397 survived, which suggests the 198/214/400 files are simply the pre-shift twins — worth one look.
+The keep-list matches by basename, not by path. SNAPSHOT_KEEP = ['word_add.html'] protects the root views_by_object/word_add.html you named and any word/word_add.html in a subfolder. For a filename that appears in several folders this is ambiguous; a path-relative entry would be precise. It also means the already-deleted word/word_add.html would be protected if it ever returns.
+delete_path_file() still has its pre-existing redundant nested condition — if (AUTO_UPDATE_TEST_FILES) { log_warning(...); if (AUTO_UPDATE_TEST_FILES) { unlink(...) } }. The inner check can never differ from the outer one. Not introduced here, but now one level deeper inside my guard.
+The changeset spans six unrelated topics — the json validation checks, the json data fixes (GDP/Zurich/Share), the note→add_info import, the db_ready from/to fix, the id-const re-baseline, and the snapshot cleanup. The db_ready fix is the one with real production impact and would be easier to bisect on its own.
+docs/todo.md and the AUTO_UPDATE_TEST_FILES = false reset are in the tree from your side, not from this work — the flag being back to false is correct for committing.
 
 ### the user_message of a request — what is left
 

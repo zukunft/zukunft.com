@@ -40,6 +40,9 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
 
     TODO create a formula "good enougth" default view
+    TODO in the formula expression '{' and '}' should be escaped to avoid confusion with the term links
+    TODO in the json import seperate the share (asset) from share (to share thnigs)
+    TODO if a page shows only the 'share (asset)' use 'share' instead of 'share (asset)'
     TODO create the main workflows including unit and write tests
     TODO add unit test for all frontend components
     TODO review the start page and base it purely on database values

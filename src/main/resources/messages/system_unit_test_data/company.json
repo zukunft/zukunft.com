@@ -213,16 +213,16 @@
       "to": "income"
     },
     {
-      "name": "Share Price",
-      "from": "Share",
-      "verb": "has a",
-      "to": "price"
+      "name": "Share price",
+      "from": "price",
+      "verb": "of",
+      "to": "Share"
     }
   ],
   "formulas": [
     {
       "name": "PE Ratio",
-      "expression": "= \"Share Price\" / \"Earnings\"",
+      "expression": "= \"Share price\" / \"Earnings\"",
       "assigned_word": "Share"
     },
     {

@@ -396,6 +396,40 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * the objects of this list that can be added to the database, the others are reported
+     *
+     * the last check before the sql is created: an object that is not db ready would be
+     * inserted with the id 0 of the linked object, and the database rejects the second object
+     * with a zero key with a duplicate key error that names only the ids, so the reason is
+     * reported here while the name of the object is still known
+     *
+     * @param user_message $msg to report the object that cannot be added and why
+     * @param string $class the class of the objects e.g. to name it in the message
+     * @return sandbox_list_named the objects that can be added to the database
+     */
+    private function db_ready_only(user_message $msg, string $class): sandbox_list_named
+    {
+        $lib = new library();
+        $lst = clone $this;
+        $lst->reset();
+        foreach ($this->lst() as $sbx) {
+            // a per object buffer, because db_ready returns the state of the given message,
+            // so one object that is not ready must not exclude every object after it
+            $rdy_msg = new user_message($msg->usr); // the verdict of this object
+            if ($sbx->db_ready($rdy_msg)) {
+                $lst->add_by_name_direct($sbx, $msg);
+            } else {
+                $msg->add(msg_id::DB_INSERT_NOT_READY, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
+                    msg_id::VAR_NAME => $sbx->dsp_id(),
+                ]);
+                $msg->merge($rdy_msg);
+            }
+        }
+        return $lst;
+    }
+
+    /**
      * get the words, formulas, components that needs to be saved to the database
      * TODO review overwrites and e.g. check word list usage
      * @param user_message $msg to report an object that is in the list twice
@@ -1021,6 +1055,7 @@ class sandbox_list_named extends sandbox_list
         foreach ($add_lst->lst() as $sbx) {
             $sbx->check_protection_change(null, $msg);
         }
+        $add_lst = $add_lst->db_ready_only($msg, $class);
         $imp->step_end(count($db_names));
 
         if (!$add_lst->is_empty()) {

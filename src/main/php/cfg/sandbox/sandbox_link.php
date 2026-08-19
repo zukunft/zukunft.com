@@ -932,30 +932,35 @@ class sandbox_link extends sandbox
     {
         parent::db_ready($msg);
 
-        if ($this->needs_from()) {
-            if ($this->fob == null) {
-                // for some triples it is ok if the from object is not set
-                // e.g. per day
+        // a verb like "is alias of" or "per" allows a link without a from object (e.g. "per day"
+        // or "m3/s is alias of cubic metre per second"), but only a from that is really absent:
+        // a named from without a database id is never ready, because inserting the id 0 creates
+        // a broken database row and the next id 0 link fails with a duplicate key error
+        if ($this->fob == null or $this->fob->name() == '') {
+            if ($this->needs_from()) {
                 $msg->add(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
-            } else {
-                // if the from object is set it should be valid
-                // e.g. for cubic meter per second
-                if (!$this->fob->is_valid()) {
-                    $msg->add(msg_id::FROM_ZERO_ID,
-                        [msg_id::VAR_NAME => $this->dsp_id()]);
-                }
+            }
+        } else {
+            // if the from object is named it must have a database id
+            // e.g. for cubic metre per second
+            if (!$this->fob->is_valid()) {
+                $msg->add(msg_id::FROM_ZERO_ID,
+                    [msg_id::VAR_NAME => $this->dsp_id()]);
             }
         }
-        if ($this->needs_to()) {
-            if ($this->tob == null) {
+        // the same split as for the from side: only a to that is really absent is excused by
+        // needs_to (e.g. a reference that carries an external key instead of a target object);
+        // a named to without a database id is never ready
+        if ($this->tob == null or $this->tob->name() == '') {
+            if ($this->needs_to()) {
                 $msg->add(msg_id::TO_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
-            } else {
-                if (!$this->tob->is_valid()) {
-                    $msg->add(msg_id::TO_ZERO_ID,
-                        [msg_id::VAR_NAME => $this->dsp_id()]);
-                }
+            }
+        } else {
+            if (!$this->tob->is_valid()) {
+                $msg->add(msg_id::TO_ZERO_ID,
+                    [msg_id::VAR_NAME => $this->dsp_id()]);
             }
         }
         return $msg->is_ok();

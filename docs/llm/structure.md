@@ -165,6 +165,42 @@ if (property_exists($dbo, 'phrases_related') && $dbo->phrases_related !== null) 
 return $result;
 ```
 
+## Fix the pattern, not the instance — no unexplained asymmetry
+
+The target of every fix is **error-free code**, not a silenced error message.
+A defect that was found in one place usually lives in a *pattern* — a pair of
+symmetric branches, a family of sibling classes, the same loop over another
+list. Fixing only the instance that happened to fail leaves the same bug
+dormant in its twins, protected by nothing but the coincidence that no data has
+hit them yet.
+
+So when the cause of a defect is understood, apply the corrected rule to every
+place that shares the structure, **in the same change**:
+
+- the **symmetric branch**: `sandbox_link::db_ready` skipped the validity check
+  of a link end when the verb allows an absent end — found and fixed on the
+  `from` side. The `to` side had the identical structure and was only safe
+  because the single `needs_to() == false` class happens to have no target
+  object at all; one new override would have reintroduced the bug. Both sides
+  now encode the one rule: the verb can excuse an *absent* link end, never an
+  *unresolved* one.
+- the **sibling classes**: a gate defect confirmed in `formula_list::get_ready`
+  is the same defect in `triple_list::get_ready` and
+  `component_list::get_ready` — fix them together or record the remainder as an
+  explicit work item, never leave them silently different.
+- the **same pattern elsewhere**: after correcting a call signature at the
+  failing call site, sweep for the other call sites of the same function before
+  reporting done.
+
+If a counterpart is *deliberately* left different — the semantics really do
+differ, or the twin fix needs its own test run — the difference is not left to
+be rediscovered: the code comment at the asymmetric place says why, or the
+remaining places are listed in `docs/llm/pending_prio_2.md`. An asymmetry
+without an explanation reads as an oversight, because it usually is one.
+
+The check for the review: "would this fix have prevented the *next* failure of
+the same kind, or only re-labelled the last one?"
+
 ## Never fail silently — record the reason on `$msg`
 
 A function that carries a `user_message $msg` (or `Message`) and can reject, skip

@@ -2505,8 +2505,7 @@
     {
       "name": "m/s",
       "description": "The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",
-      "from": "m/s",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "metre per second",
       "type": "measure",
       "protection": "admin_protection"

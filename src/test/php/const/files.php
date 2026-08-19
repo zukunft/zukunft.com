@@ -64,6 +64,13 @@ class files
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
 
+    // the snapshots that no test of a run writes, but that must never be removed by the
+    // cleanup of the unused test files e.g. the initial test page created before the
+    // snapshots have been named by the object id
+    CONST array SNAPSHOT_KEEP = [
+        'word_add' . self::HTML,
+    ];
+
 
     /*
      * docs

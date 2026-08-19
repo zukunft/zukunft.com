@@ -49,9 +49,6 @@
       "description": "extent of a surface measured in square units"
     },
     {
-      "name": "square kilometre"
-    },
-    {
       "name": "rank",
       "description": "position in an ordered list"
     },
@@ -135,16 +132,6 @@
       "description": "West‑Germanic language, official in Zurich"
     },
     {
-      "name": "gross domestic product",
-      "description": "total market value of goods and services produced",
-      "refs": [
-        {
-          "name": "Gross_domestic_product",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "billion"
     },
     {
@@ -158,10 +145,6 @@
     {
       "name": "employee",
       "description": "person working for an organisation in return for payment"
-    },
-    {
-      "name": "full‑time equivalent",
-      "description": "standardised measure of workload"
     },
     {
       "name": "sector",
@@ -252,10 +235,6 @@
       "type": "measure"
     },
     {
-      "name": "public transport",
-      "description": "shared passenger transport available to general public"
-    },
-    {
       "name": "school",
       "description": "institution for educating children"
     },
@@ -333,10 +312,6 @@
       "description": "travel for pleasure or business"
     },
     {
-      "name": "overnight stay",
-      "description": "one night spent by a visitor in accommodation"
-    },
-    {
       "name": "safety",
       "description": "condition of being protected from harm"
     },
@@ -345,32 +320,8 @@
       "description": "killing of one human by another"
     },
     {
-      "name": "quality of life",
-      "description": "general well‑being of individuals and societies"
-    },
-    {
       "name": "index",
       "description": "number representing change relative to a base"
-    },
-    {
-      "name": "human development index",
-      "description": "UN composite index of life expectancy, education, income",
-      "refs": [
-        {
-          "name": "Human_Development_Index",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "Gini coefficient",
-      "description": "measure of statistical dispersion for income or wealth inequality",
-      "refs": [
-        {
-          "name": "Gini_coefficient",
-          "type": "wikipedia"
-        }
-      ]
     },
     {
       "name": "seat",
@@ -460,6 +411,84 @@
     {
       "name": "age 65 plus",
       "description": "the population aged 65 years and older"
+    },
+    {
+      "name": "square",
+      "description": "qualifier: the unit multiplied by itself, e.g. a square metre"
+    },
+    {
+      "name": "product",
+      "description": "the goods and services that are produced"
+    },
+    {
+      "name": "domestic",
+      "description": "qualifier: produced within the borders of the place"
+    },
+    {
+      "name": "gross",
+      "description": "qualifier: before any deduction"
+    },
+    {
+      "name": "equivalent",
+      "description": "the amount that corresponds to a reference amount"
+    },
+    {
+      "name": "full‑time",
+      "description": "qualifier: with the complete regular working time"
+    },
+    {
+      "name": "transport",
+      "description": "the movement of people or goods from one place to another"
+    },
+    {
+      "name": "public",
+      "description": "qualifier: available to everybody"
+    },
+    {
+      "name": "stay",
+      "description": "the time that a visitor spends at a place"
+    },
+    {
+      "name": "overnight",
+      "description": "qualifier: lasting for one night"
+    },
+    {
+      "name": "quality",
+      "description": "the degree to which something is good"
+    },
+    {
+      "name": "life",
+      "description": "the existence of a human being"
+    },
+    {
+      "name": "development",
+      "description": "the process of growing or improving"
+    },
+    {
+      "name": "human",
+      "description": "qualifier: belonging to a human being"
+    },
+    {
+      "name": "coefficient",
+      "description": "a number that describes a property of a system"
+    },
+    {
+      "name": "Gini",
+      "description": "Corrado Gini, the statistician who defined the coefficient"
+    },
+    {
+      "name": "GDP",
+      "description": "a monetary measure of the market value of all the final goods and services produced in a place",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12796",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "2022",
@@ -652,6 +681,95 @@
       "to": "language"
     },
     {
+      "name": "square kilometre",
+      "from": "kilometre",
+      "verb": "can be",
+      "to": "square"
+    },
+    {
+      "name": "domestic product",
+      "from": "product",
+      "verb": "kind of",
+      "to": "domestic"
+    },
+    {
+      "name": "gross domestic product",
+      "from": "domestic product",
+      "verb": "kind of",
+      "to": "gross",
+      "description": "total market value of goods and services produced",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "GDP",
+      "verb": "is symbol for",
+      "to": "gross domestic product"
+    },
+    {
+      "name": "full‑time equivalent",
+      "from": "equivalent",
+      "verb": "of",
+      "to": "full‑time",
+      "description": "standardised measure of workload"
+    },
+    {
+      "name": "public transport",
+      "from": "transport",
+      "verb": "kind of",
+      "to": "public",
+      "description": "shared passenger transport available to general public"
+    },
+    {
+      "name": "overnight stay",
+      "from": "stay",
+      "verb": "kind of",
+      "to": "overnight",
+      "description": "one night spent by a visitor in accommodation"
+    },
+    {
+      "from": "quality",
+      "verb": "of",
+      "to": "life",
+      "description": "general well‑being of individuals and societies"
+    },
+    {
+      "name": "human development",
+      "from": "development",
+      "verb": "of",
+      "to": "human"
+    },
+    {
+      "name": "human development index",
+      "from": "index",
+      "verb": "of",
+      "to": "human development",
+      "description": "UN composite index of life expectancy, education, income",
+      "refs": [
+        {
+          "name": "Human_Development_Index",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gini coefficient",
+      "from": "coefficient",
+      "verb": "of",
+      "to": "Gini",
+      "description": "measure of statistical dispersion for income or wealth inequality",
+      "refs": [
+        {
+          "name": "Gini_coefficient",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "GDP of Zurich (canton)",
       "from": "gross domestic product",
       "verb": "of",
@@ -665,7 +783,7 @@
     },
     {
       "name": "GDP per capita",
-      "from": "gross domestic product",
+      "from": "GDP",
       "verb": "per",
       "to": "inhabitant"
     },

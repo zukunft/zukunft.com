@@ -51,6 +51,7 @@ detail file. Order is by how often they fire, not importance.
 
 ### Understanding the request
 - If the request's target is ambiguous ("here", "this", a name that matches several places), name the candidates and ask which is meant before changing anything; a pasted error trace, file path or line number counts as unambiguous. Investigating to narrow the candidates is fine, but the question comes before the fix — stating the chosen reading in the final report is not a substitute.
+- The target is error-free code, not just the reported issue gone: when fixing a defect, apply the corrected rule to every place that shares the same structure — the symmetric branch, the sibling class, the same pattern in the other list — in the same change. A fix that leaves an unexplained asymmetry (the from side checked, the to side not) is a latent copy of the bug; if a counterpart is deliberately left different, the code comment says why. → `docs/llm/structure.md`
 
 ### Structure & style
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`

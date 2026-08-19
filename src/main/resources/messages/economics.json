@@ -880,6 +880,10 @@
     {
       "name": "point",
       "description": "a single unit on a scale"
+    },
+    {
+      "name": "inhabitant",
+      "description": "person who lives permanently in a place"
     }
   ],
   "triples": [
@@ -1177,6 +1181,11 @@
       "from": "domestic product",
       "verb": "kind of",
       "to": "gross"
+    },
+    {
+      "from": "GDP",
+      "verb": "is symbol for",
+      "to": "gross domestic product"
     },
     {
       "name": "national product",
@@ -1487,10 +1496,11 @@
       "to": "asset"
     },
     {
-      "description": "average income of an economy. see Wikipedia: Per capita income (Q45918)",
+      "name": "GDP per capita",
       "from": "GDP",
       "verb": "per",
-      "to": "capita"
+      "to": "inhabitant",
+      "description": "average income of an economy. see Wikipedia: Per capita income (Q45918)"
     },
     {
       "description": "methods of estimating the doubling time of an investment. see Wikipedia: Rule of 72 (Q264016)",

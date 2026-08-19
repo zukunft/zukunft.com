@@ -256,9 +256,6 @@
       "name": "Target"
     },
     {
-      "name": "Price"
-    },
-    {
       "name": "Earning"
     },
     {
@@ -984,7 +981,7 @@
       "name": "Price Earning",
       "from": "Earning",
       "verb": "and",
-      "to": "Price"
+      "to": "price"
     },
     {
       "name": "Price Earning Ratio",

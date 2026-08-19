@@ -673,6 +673,32 @@ conventional composition is:
 The triple's `name` is free-form and need not be grammatically derivable from
 its `from`/`verb`/`to` — it just has to be unique.
 
+### A building block is defined before the triple that uses it
+
+The import resolves the `from` and the `to` of a triple against the phrases it
+knows **at that point of the file**, in file order. So a composition has to
+stand **above** every triple that builds on it — a forward reference is not
+resolved later, it fails:
+
+```json
+"triples": [
+  { "name": "GDP per capita",        "from": "GDP",            "verb": "per", "to": "person" },
+  { "name": "canton GDP per capita", "from": "GDP per capita", "verb": "of",  "to": "canton" }
+]
+```
+
+Turned around, the import reports *`triple phrase from id is 0`*, *`Cannot find
+word or triple "GDP per capita"`* and drops the whole file, because the building
+block does not exist yet when the dependent triple is mapped.
+
+The same holds for a word: define the atoms in `words` (which the import reads
+before the triples) and only then compose them. When a new building block is
+inserted into an existing file, put it in front of its **first** user, not at
+the end of the block of related triples.
+
+`test/json_validation.php` reports a forward reference as *"triple uses a phrase
+that is defined later"*.
+
 ## Formulas
 
 ```json
