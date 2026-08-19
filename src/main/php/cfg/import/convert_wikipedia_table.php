@@ -686,6 +686,7 @@ class convert_wikipedia_table
         $header = [];
         $header[json_fields::POD] = POD_NAME;
         $header[json_fields::VERSION] = def::PRG_VERSION;
+        $header[json_fields::DATA_VERSION] = def::DATA_VERSION_INIT;
         if ($timestamp == '') {
             $header[json_fields::TIME] = (new DateTime())->format(DateTimeInterface::ATOM);
         } else {

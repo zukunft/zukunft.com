@@ -16,7 +16,8 @@ Every import JSON has this top-level shape:
 
 ```json
 {
-  "version":   "0.0.3",
+  "version":      "0.0.3",
+  "data_version": "0.0.1",
   "time":      "2026-06-04 12:00:00",
   "user":      "username",
   "selection": [ "..." ],
@@ -130,11 +131,40 @@ users still see.
 
 ### Version check
 
+**`version` is the version of the json *format*, never of the data.** It says in
+which format the file is written, so it is matched against `def::PRG_VERSION`
+(the minor version of the program, raised whenever the json format or the
+database changes). Two files of completely different data have the same
+`version` as long as they use the same format.
+
 `version` is matched against `def::PRG_VERSION`. If the file's version is newer,
 the import emits `msg_id::IMPORT_VERSION_NEWER`:
 *`Import file has been created with version "X", which is newer than this,
 which is "Y"`*. The check is non-fatal — subsequent objects are still
 processed — but the message surfaces in the returned `user_message`.
+
+### `data_version` is the version of the content
+
+**`data_version`** names the version of the *data* in the file and is raised by
+the author with every data change, so that a pod can tell whether it already has
+the newest data of another pod. A new file starts at `0.0.1`; the program never
+compares it against its own version.
+
+`test/json_validation.php` maintains both fields as the **last** check of a file
+that has no other finding:
+
+- a file whose **format** version is behind `def::PRG_VERSION` is raised to it,
+  because the format has been migrated together with the program;
+- a file whose format version is **ahead** is only reported and never changed —
+  its data may need a program version that is not installed yet, which is exactly
+  what `IMPORT_VERSION_NEWER` warns about (`version_newer_test.json` keeps its
+  `9.9.9` for that test);
+- a file without a `data_version` gets the initial `0.0.1`.
+
+The version is checked last on purpose: a file that breaks one of the other
+rules is not yet in the format of this program version, so raising its version
+would hide the finding. Only the version lines are rewritten (never the whole
+file via `json_encode`), so the diff of a data file stays reviewable.
 
 ## Words
 
@@ -642,6 +672,32 @@ conventional composition is:
 
 The triple's `name` is free-form and need not be grammatically derivable from
 its `from`/`verb`/`to` — it just has to be unique.
+
+### A building block is defined before the triple that uses it
+
+The import resolves the `from` and the `to` of a triple against the phrases it
+knows **at that point of the file**, in file order. So a composition has to
+stand **above** every triple that builds on it — a forward reference is not
+resolved later, it fails:
+
+```json
+"triples": [
+  { "name": "GDP per capita",        "from": "GDP",            "verb": "per", "to": "person" },
+  { "name": "canton GDP per capita", "from": "GDP per capita", "verb": "of",  "to": "canton" }
+]
+```
+
+Turned around, the import reports *`triple phrase from id is 0`*, *`Cannot find
+word or triple "GDP per capita"`* and drops the whole file, because the building
+block does not exist yet when the dependent triple is mapped.
+
+The same holds for a word: define the atoms in `words` (which the import reads
+before the triples) and only then compose them. When a new building block is
+inserted into an existing file, put it in front of its **first** user, not at
+the end of the block of related triples.
+
+`test/json_validation.php` reports a forward reference as *"triple uses a phrase
+that is defined later"*.
 
 ## Formulas
 

@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-04 21:02:00",
   "user": "timon",
   "selection": [
@@ -110,10 +111,11 @@
       "name": "Share"
     },
     {
-      "name": "proportion"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
-      "name": "Price"
+      "name": "proportion"
     },
     {
       "name": "Euro"
@@ -324,7 +326,6 @@
     },
     {
       "name": "m/s",
-      "from": "m/s",
       "verb": "is symbol for",
       "to": "metre per second"
     },
@@ -523,8 +524,8 @@
       "to": "Power"
     },
     {
-      "name": "Share Price",
-      "from": "Price",
+      "name": "Share price",
+      "from": "price",
       "verb": "of",
       "to": "Share"
     },
@@ -768,7 +769,7 @@
       "words": [
         "Vestas",
         "Equity",
-        "Price",
+        "price",
         "DKK"
       ],
       "number": "168.5"

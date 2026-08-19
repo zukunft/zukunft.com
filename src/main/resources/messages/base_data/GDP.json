@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-18 12:00:00",
   "user": "timon",
   "selection": [
@@ -24,20 +25,6 @@
         }
       ],
       "type": "measure"
-    },
-    {
-      "name": "GDP per capita",
-      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
-      "refs": [
-        {
-          "name": "GDP_per_capita",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q17312912",
-          "type": "wikidata"
-        }
-      ]
     },
     {
       "name": "population",
@@ -222,6 +209,10 @@
       ]
     },
     {
+      "name": "inhabitant",
+      "description": "person who lives permanently in a place"
+    },
+    {
       "name": "2022",
       "type": "time"
     },
@@ -295,6 +286,23 @@
         {
           "name": "Real_gross_domestic_product",
           "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant",
+      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
+      "refs": [
+        {
+          "name": "GDP_per_capita",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17312912",
+          "type": "wikidata"
         }
       ]
     },

@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "pod": "zukunft.com",
   "description": "Affective political polarization time series from the V-Dem dataset (variable v2cacamps), the indicator underlying WTW Political Risk Index H1 2025 Figure 3. Built from the provided CSV sample. All data points are sourced, each retaining the V-Dem confidence interval.",
   "words": [

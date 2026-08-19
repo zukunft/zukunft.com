@@ -537,6 +537,11 @@ class import
                         msg_id::VAR_VALUE_CHK => def::PRG_VERSION
                     ]);
                 }
+            } elseif ($key == json_fields::DATA_VERSION) {
+                // TODO Prio 2 remember the data version to detect if a pod has newer data
+                // the data version is the version of the content of the file and not of the
+                // format (see docs/llm/json_structure.md), so it is never checked against the
+                // program version; it is accepted here, so that it is not an unknown element
             } elseif ($key == json_fields::POD) {
                 // TODO set the source pod
                 // a standard export carries these metadata sections; not importing them yet is a known

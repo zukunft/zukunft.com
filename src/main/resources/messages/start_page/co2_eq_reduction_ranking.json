@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "user": "timon",
   "description": "Global climate gas emission reduction solutions ranked by effort versus expected return. 46 solutions, each with reduction potential (Gt CO2eq/yr by ~2035), one-time initial effort (billion USD), fulfillment probability, derived expected return and effort return score, and a rank with best effort/return on top. All estimate ranges span about one standard deviation. Potentials overlap between solutions and must not be summed.",
   "words": [

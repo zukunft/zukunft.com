@@ -99,9 +99,6 @@
       "name": "Petersen"
     },
     {
-      "name": "measured value"
-    },
-    {
       "name": "assumed value"
     },
     {
@@ -815,8 +812,7 @@
     {
       "words": [
         "narrative exchange canvassing",
-        "effect size on exclusionary attitude",
-        "measured value"
+        "effect size on exclusionary attitude"
       ],
       "number": "0.08",
       "source": "Kalla Broockman 2020"
@@ -824,8 +820,7 @@
     {
       "words": [
         "argument canvassing",
-        "effect size on exclusionary attitude",
-        "measured value"
+        "effect size on exclusionary attitude"
       ],
       "number": "0",
       "source": "Kalla Broockman 2020"
@@ -833,8 +828,7 @@
     {
       "words": [
         "Kalla and Broockman study",
-        "participant count",
-        "measured value"
+        "participant count"
       ],
       "number": "6869",
       "source": "Kalla Broockman 2020"
@@ -842,8 +836,7 @@
     {
       "words": [
         "Bor and Petersen study",
-        "participant count",
-        "measured value"
+        "participant count"
       ],
       "number": "8434",
       "source": "Bor Petersen 2022"
@@ -869,8 +862,7 @@
       "words": [
         "weekday video game play",
         "inflection point",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "100",
       "source": "Przybylski Weinstein 2017"
@@ -879,8 +871,7 @@
       "words": [
         "weekday smartphone use",
         "inflection point",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "117",
       "source": "Przybylski Weinstein 2017"
@@ -889,8 +880,7 @@
       "words": [
         "weekday video watching",
         "inflection point",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "221",
       "source": "Przybylski Weinstein 2017"
@@ -899,8 +889,7 @@
       "words": [
         "weekday computer use",
         "inflection point",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "257",
       "source": "Przybylski Weinstein 2017"
@@ -909,8 +898,7 @@
       "words": [
         "weekend video game play",
         "inflection point",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "215",
       "source": "Przybylski Weinstein 2017"
@@ -919,8 +907,7 @@
       "words": [
         "weekend video watching",
         "inflection point",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "290",
       "source": "Przybylski Weinstein 2017"
@@ -928,8 +915,7 @@
     {
       "words": [
         "Przybylski and Weinstein study",
-        "participant count",
-        "measured value"
+        "participant count"
       ],
       "number": "120115",
       "source": "Przybylski Weinstein 2017"
@@ -937,8 +923,7 @@
     {
       "words": [
         "Allcott and Gentzkow study",
-        "participant count",
-        "measured value"
+        "participant count"
       ],
       "number": "1661",
       "source": "Allcott et al 2019"
@@ -947,8 +932,7 @@
       "words": [
         "Allcott and Gentzkow study",
         "treatment group",
-        "participant count",
-        "measured value"
+        "participant count"
       ],
       "number": "580",
       "source": "Allcott et al 2019"
@@ -957,8 +941,7 @@
       "words": [
         "Allcott and Gentzkow study",
         "control group",
-        "participant count",
-        "measured value"
+        "participant count"
       ],
       "number": "1081",
       "source": "Allcott et al 2019"
@@ -967,8 +950,7 @@
       "words": [
         "Allcott and Gentzkow study",
         "offer price",
-        "US dollar",
-        "measured value"
+        "US dollar"
       ],
       "number": "102",
       "source": "Allcott et al 2019"
@@ -978,8 +960,7 @@
         "Allcott and Gentzkow study",
         "treatment group",
         "compliance rate",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "0.90",
       "source": "Allcott et al 2019"
@@ -989,8 +970,7 @@
         "Allcott and Gentzkow study",
         "control group",
         "compliance rate",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "0.02",
       "source": "Allcott et al 2019"
@@ -999,8 +979,7 @@
       "words": [
         "Facebook use time",
         "control group",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "59.53",
       "source": "Allcott et al 2019"
@@ -1009,8 +988,7 @@
       "words": [
         "Facebook use time",
         "treatment effect",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "-59.58",
       "source": "Allcott et al 2019"
@@ -1019,8 +997,7 @@
       "words": [
         "Facebook use time",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "-1.59",
       "source": "Allcott et al 2019"
@@ -1029,8 +1006,7 @@
       "words": [
         "news consumption time",
         "control group",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "52",
       "source": "Allcott et al 2019"
@@ -1039,8 +1015,7 @@
       "words": [
         "news consumption time",
         "treatment effect",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "number": "-8",
       "source": "Allcott et al 2019"
@@ -1049,8 +1024,7 @@
       "words": [
         "news knowledge index",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "-0.19",
       "source": "Allcott et al 2019"
@@ -1059,8 +1033,7 @@
       "words": [
         "news knowledge",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "-0.12",
       "source": "Allcott et al 2019"
@@ -1069,8 +1042,7 @@
       "words": [
         "political polarization index",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "-0.16",
       "source": "Allcott et al 2019"
@@ -1079,8 +1051,7 @@
       "words": [
         "affective party polarization",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "-0.06",
       "source": "Allcott et al 2019"
@@ -1088,8 +1059,7 @@
     {
       "words": [
         "Boxell polarization series",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.379",
       "source": "Boxell 2018 as cited"
@@ -1098,8 +1068,7 @@
       "words": [
         "issue polarization",
         "control group",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "1.47",
       "source": "Allcott et al 2019"
@@ -1108,8 +1077,7 @@
       "words": [
         "issue polarization",
         "treatment group",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "1.35",
       "source": "Allcott et al 2019"
@@ -1117,8 +1085,7 @@
     {
       "words": [
         "voter turnout effect",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "0.03",
       "source": "Allcott et al 2019"
@@ -1127,8 +1094,7 @@
       "words": [
         "subjective wellbeing index",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.09",
       "source": "Allcott et al 2019"
@@ -1137,8 +1103,7 @@
       "words": [
         "life satisfaction",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.12",
       "source": "Allcott et al 2019"
@@ -1147,8 +1112,7 @@
       "words": [
         "anxiety",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.10",
       "source": "Allcott et al 2019"
@@ -1157,8 +1121,7 @@
       "words": [
         "depression",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.09",
       "source": "Allcott et al 2019"
@@ -1167,8 +1130,7 @@
       "words": [
         "happiness",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.08",
       "source": "Allcott et al 2019"
@@ -1178,8 +1140,7 @@
         "psychological intervention",
         "subjective wellbeing",
         "effect size",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.34",
       "source": "Bolier et al 2013 as cited"
@@ -1189,8 +1150,7 @@
         "psychological intervention",
         "depression",
         "effect size",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "-0.23",
       "source": "Bolier et al 2013 as cited"
@@ -1200,8 +1160,7 @@
         "college completion",
         "subjective wellbeing",
         "effect size",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.23",
       "source": "Allcott et al 2019"
@@ -1210,8 +1169,7 @@
       "words": [
         "solitary television watching",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.17",
       "source": "Allcott et al 2019"
@@ -1220,8 +1178,7 @@
       "words": [
         "offline socializing",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.16",
       "source": "Allcott et al 2019"
@@ -1230,8 +1187,7 @@
       "words": [
         "offline activity count",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.12",
       "source": "Allcott et al 2019"
@@ -1240,8 +1196,7 @@
       "words": [
         "reactivation speed",
         "treatment effect",
-        "standard deviation",
-        "measured value"
+        "standard deviation"
       ],
       "number": "0.59",
       "source": "Allcott et al 2019"
@@ -1250,8 +1205,7 @@
       "words": [
         "Facebook",
         "willingness to accept",
-        "US dollar",
-        "measured value"
+        "US dollar"
       ],
       "number": "180",
       "source": "Allcott et al 2019"
@@ -1259,8 +1213,7 @@
     {
       "words": [
         "Facebook",
-        "user count",
-        "measured value"
+        "user count"
       ],
       "number": "172000000",
       "source": "Allcott et al 2019"
@@ -1269,8 +1222,7 @@
       "words": [
         "Facebook",
         "consumer surplus",
-        "US dollar",
-        "measured value"
+        "US dollar"
       ],
       "number": "31000000000",
       "source": "Allcott et al 2019"
@@ -1282,8 +1234,7 @@
         "Facebook",
         "willingness to accept",
         "user count",
-        "US dollar",
-        "measured value"
+        "US dollar"
       ],
       "formula": "consumer surplus (formula)",
       "words": [
@@ -1299,8 +1250,7 @@
         "news consumption time",
         "treatment effect",
         "control group",
-        "minute",
-        "measured value"
+        "minute"
       ],
       "formula": "relative treatment effect (formula)",
       "words": [

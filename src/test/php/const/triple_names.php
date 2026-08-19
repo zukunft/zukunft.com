@@ -53,44 +53,44 @@ class triple_names
     // "Caesium-133" is built in units.json as the triple Caesium 'kind of' 133,
     // so it is a triple phrase and no longer a word
     const string CS_133 = 'Caesium-133';
-    const int CS_133_ID = 50;
+    const int CS_133_ID = 49;
     const string CS_133_COM = 'Caesium-133 is the only stable isotope of caesium. The SI base unit of time, the second, is defined by the unperturbed ground-state hyperfine transition frequency of this atom, set at 9192631770 Hz.';
     const string EULER_NUMBER = "Euler's number";
     const int EULER_NUMBER_ID = 2;
     const string EULER_NUMBER_COM = 'The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.';
     const string E = '𝑒 (unit symbol)';
-    const int E_ID = 59;
+    const int E_ID = 58;
     const string E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
     const string PI = 'Pi (math)';
     const string PI_NAME = 'Pi (math)';
-    const int PI_ID = 57;
+    const int PI_ID = 56;
     const string PI_COM = 'ratio of the circumference of a circle to its diameter';
 
     // si units
     const string SPEED_OF_LIGHT = 'speed of light';
-    const int SPEED_OF_LIGHT_ID = 30;
+    const int SPEED_OF_LIGHT_ID = 29;
     const string SPEED_OF_LIGHT_COM = 'The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.';
     const string M_PER_S = 'm/s';
-    const int M_PER_S_ID = 72;
+    const int M_PER_S_ID = 71;
     const string M_PER_S_COM = 'The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.';
     const string TRANSITION_CS = 'hyperfine transition frequency of Cs';
     const int TRANSITION_CS_ID = 89;
     const string TRANSITION_FREQUENCY = 'hyperfine transition frequency';
-    const int TRANSITION_FREQUENCY_ID = 76;
+    const int TRANSITION_FREQUENCY_ID = 75;
     const string HYPERFINE_TRANSITION = 'hyperfine transition';
-    const int HYPERFINE_TRANSITION_ID = 49;
+    const int HYPERFINE_TRANSITION_ID = 48;
     const string DEFINITION_YEAR_1983 = '1983 (year of definition)';
-    const int DEFINITION_YEAR_1983_ID = 79;
+    const int DEFINITION_YEAR_1983_ID = 78;
     const string DEFINITION_YEAR_1967 = '1967 (year of definition)';
-    const int DEFINITION_YEAR_1967_ID = 77;
+    const int DEFINITION_YEAR_1967_ID = 76;
     const string DEFINITION_YEAR = 'year of definition';
-    const int DEFINITION_YEAR_ID = 55;
+    const int DEFINITION_YEAR_ID = 54;
     const string YEAR_1983 = '1983 (year)';
-    const int YEAR_1983_ID = 53;
+    const int YEAR_1983_ID = 52;
     const string YEAR_1967 = '1967 (year)';
-    const int YEAR_1967_ID = 51;
+    const int YEAR_1967_ID = 50;
     const string YEAR_2019 = '2019 (year)';
-    const int YEAR_2019_ID = 54;
+    const int YEAR_2019_ID = 53;
     const string YEAR_2020 = '2020 (year)';
     const int YEAR_2020_ID = 201;
     const string YEAR_2021 = '2021 (year)';
@@ -174,7 +174,7 @@ class triple_names
     const string US_GAAP_XBRL = 'us-gaap';
 
     const string SECOND = 'second (time)';
-    const int SECOND_ID = 65;
+    const int SECOND_ID = 64;
     const string TN_CUBIC_METER = 'm3';
 
     const string CANTON_ZURICH = 'Zurich (canton)';
@@ -208,7 +208,7 @@ class triple_names
     const int US_DOLLAR_ID = 251;
     const string US_DOLLAR_COM = 'The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world\'s primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.';
     const string US_DOLLAR_CURRENCY = 'US dollar (currency)';
-    const int US_DOLLAR_CURRENCY_ID = 321;
+    const int US_DOLLAR_CURRENCY_ID = 320;
     const string EURO_CURRENCY = 'Euro (currency)';
     const int EURO_CURRENCY_ID = 300;
     const int EURO_ID = 122;

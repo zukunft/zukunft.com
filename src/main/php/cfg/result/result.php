@@ -179,6 +179,13 @@ class result extends sandbox_value
     // in memory only fields (all methods except load and save should use the wrd_lst object not the ids and not the group id)
     public ?bool $val_missing = False;         // true if at least one of the results is not set which means is NULL (but zero is a value)
     public ?bool $is_updated = False;          // true if the result has been calculated, but not yet saved
+    // the description of this result e.g. the numbers used by a calc validation; not named
+    // description, because get_description() of sandbox_value is the description of the phrase
+    // group, which is shared by every value and result of the same phrases
+    // TODO Prio 2 save it in an own "add_info" table that contains only the result id and this
+    //      text: the result tables are expected to have many rows, so an additional field would
+    //      grow the heavy tables for an info that only few results have
+    public ?string $add_info = null;
     public ?string $ref_text = null;           // the formula text in the database reference format on which the result is based
     public ?string $num_text = null;           // the formula text filled with numbers used for the result calculation
     public ?DateTime $last_val_update = null;  // the time of the last update of an underlying value, formula result or formula
@@ -203,6 +210,7 @@ class result extends sandbox_value
         $this->frm = new formula($this->get_user());
         $this->set_grp(new group($this->get_user()));
         $this->src_grp = new group($this->get_user());
+        $this->add_info = null;
         $this->set_id(0);
     }
 
@@ -372,6 +380,13 @@ class result extends sandbox_value
                     [msg_id::VAR_VALUE => $value, msg_id::VAR_GROUP => $this->grp()->dsp_id()]
                 );
             }
+        }
+
+        // the note of a calc validation says how the expected number has been derived, so it is
+        // the description of this result; it is only kept in memory until the add_info table
+        // exists, see the TODO Prio 2 of the add_info field
+        if (key_exists(json_fields::NOTE, $in_ex_json)) {
+            $this->add_info = $in_ex_json[json_fields::NOTE];
         }
 
         return $msg->is_ok();

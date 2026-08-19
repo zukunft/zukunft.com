@@ -1460,6 +1460,12 @@ enum messages: string
     case DB_INSERT_ID_MISSING = 'insert of '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' does not return the expected database id';
+    // reported instead of a database duplicate key error, which would only name the zero ids
+    case DB_INSERT_NOT_READY = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not added to the database, because it is not complete';
     case DB_PHRASE_MISSING = 'phrase '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';

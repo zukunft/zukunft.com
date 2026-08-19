@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2021-05-25 23:09:45",
   "user": "timon",
   "description": "Does the near-universal availability of answers on the internet produce more trust or more fear? Measured values from survey and meta-analytic evidence, plus assumed values for the causal decomposition. v0.0.2 adds the moderator decomposition: under which conditions an answer terminates a question (trust) versus leaves it open (fear). v0.0.3 adds the relationship dimension: what an available human answerer supplies that an information system cannot, decomposed into co-regulation, case context and accountability. v0.0.4 derives indications and contraindications for a traceable knowledge system from the values already in this file, and treats dose as the amount of possibility space shown at once. v0.0.5 adds the channel dimension: fear of losing the answer infrastructure itself, its observed near-absence, and the disconnection resilience of a provenance chain. v0.0.6 evaluates deliberate worst-case drills as a remedy, and proposes the explanation probe as the correctly targeted alternative.",

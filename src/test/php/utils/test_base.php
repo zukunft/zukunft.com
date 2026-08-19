@@ -461,6 +461,10 @@ class test_base
     public string $name;
     public string $resource_path;
 
+    // the snapshot files written by assert_view, so that delete_unused_files can remove the
+    // files of an object id that is not tested any more e.g. after a phrase id re-baseline
+    public array $updated_files = [];
+
     // list with all prepared sql queries to check if the name is unique
     public array $unique_sql_names;
 
@@ -1199,6 +1203,9 @@ class test_base
             }
         }
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
+        // remember the snapshot of this object id, so that delete_unused_files can remove the
+        // snapshot of an id that is no longer tested e.g. after a phrase id re-baseline
+        $this->updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
 
         // load the view from the database (the db layer measures its own read time)
         $msk = new view($usr);
@@ -5873,10 +5880,36 @@ class test_base
      */
     function delete_path_file(string $file_path): void
     {
-        if (test_files::AUTO_UPDATE_TEST_FILES) {
-            log_warning('orphaned test snapshot – consider deleting: ' . $file_path);
+        // an exception is kept, because it is not written by a test of this run, but is still
+        // the expected result of a test e.g. the initial test page
+        if (!in_array(basename($file_path), test_files::SNAPSHOT_KEEP)) {
             if (test_files::AUTO_UPDATE_TEST_FILES) {
-                unlink($file_path);
+                log_warning('orphaned test snapshot – consider deleting: ' . $file_path);
+                if (test_files::AUTO_UPDATE_TEST_FILES) {
+                    unlink($file_path);
+                }
+            }
+        }
+    }
+
+    /**
+     * remove the html snapshots of the given folder that no assert_view has written in this run
+     *
+     * a snapshot is named by the database id of the shown object, so re-baselining a phrase id
+     * leaves the snapshot of the old id behind, where it is never checked again; the same
+     * cleanup as for the views_by_id folder, but based on the files that assert_view has
+     * collected in updated_files
+     *
+     * @param string $path the resource folder to clean e.g. test_paths::VIEWS
+     * @return void
+     */
+    function delete_unused_files(string $path): void
+    {
+        $lib = new library();
+        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::HTML . $path) as $file_path) {
+            if (str_ends_with($file_path, test_files::HTML)
+                and !in_array($file_path, $this->updated_files)) {
+                $this->delete_path_file($file_path);
             }
         }
     }
