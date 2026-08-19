@@ -166,6 +166,19 @@ class test_log
 
 
     /*
+     * const
+     */
+
+    // the number of user overwrites of log_list_many_user_overwrites, which must be higher than
+    // the change log row limit, so that a test can check that the list is cut; the unit tests use
+    // an empty frontend config (see test_lib::ui_test_cache), so the limit of a unit test is the
+    // fallback of ui_log::configured_row_limit and not the value of config.yaml
+    const int MANY_OVERWRITES = 25;
+    // the start of the value of each overwrite of log_list_many_user_overwrites
+    const string OVERWRITE_VALUE = 'no ';
+
+
+    /*
      * vars
      */
 
@@ -937,6 +950,39 @@ class test_log
         // a change of the shared standard word, which the column must never list as an overwrite;
         // the renamed-from value is unique to this change, so a test can detect it
         $log_lst->add($this->log_word_update());
+        return $log_lst;
+    }
+
+    /**
+     * @return change_log_list_ui more user overwrites than a page can show as an api mapped
+     *                            frontend list e.g. to test the row limit of a change log table
+     */
+    function log_list_many_user_overwrites_ui(): change_log_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->log_list_many_user_overwrites(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * more user sandbox overwrites of one user than a change log table shows, each with an own
+     * value that names its position, so that a test can check which of them are shown; the value
+     * is short enough to stay within the configured what limit, so that the test does not depend
+     * on the shortening of the what column
+     * @return change_log_list the overwrites of one user, newest (the highest number) written last
+     */
+    function log_list_many_user_overwrites(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        for ($i = 1; $i <= self::MANY_OVERWRITES; $i++) {
+            $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+            $chg = $this->log_word_add();
+            $chg->set_table(change_tables::WORD_USR, $msg);
+            $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+            // a two digit number, so that the value of one entry is not part of the value of
+            // another entry e.g. 'no 1' would be part of 'no 12'
+            $chg->new_value = self::OVERWRITE_VALUE . str_pad((string)$i, 2, '0', STR_PAD_LEFT);
+            $log_lst->add($chg);
+        }
         return $log_lst;
     }
 

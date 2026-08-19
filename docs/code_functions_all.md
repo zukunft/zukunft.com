@@ -3487,7 +3487,7 @@
     \-- load_sql_by_url
         \-- db_cache_page - create an SQL statement to retrieve a cached html page by url from the database
     \-- load_sql_by_user
-        \-- change_log_list - create an SQL statement to retrieve the changes done by the given user
+        \-- change_log_list - create an SQL statement to retrieve the overwrites done by the given user
     \-- load_sql_by_ip_addresses
         \-- ip_range - create an SQL statement to retrieve the ip range from the database
 \-- im- and export
@@ -6845,7 +6845,7 @@
     \-- load_by_object_field
         \-- change_log_list - load a list of changes from the api
     \-- load_by_user
-        \-- change_log_list - load the changes done by the given user via the api
+        \-- change_log_list - load the overwrites done by the given user via the api
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api

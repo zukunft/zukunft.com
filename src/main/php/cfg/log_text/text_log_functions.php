@@ -589,6 +589,16 @@ function log_msg(string  $msg_text,
 
     $result = '';
 
+    // an error inside the log writer itself would call the log writer again: writing a sys_log row
+    // needs the log function name (which may be saved and permission checked) and a database insert,
+    // and each of these can fail with an own error text, which passes the message dedup below and
+    // starts the next round; so while a log entry is written, any further message is only counted
+    // and the loop stops after the first round (see system_object::log_writing)
+    if ($sys?->log_writing) {
+        $sys->log_dropped++;
+        return $result;
+    }
+
     // use an alternative database connection if requested
     $used_db_con = $db_con;
     if ($given_db_con != null) {
@@ -644,21 +654,30 @@ function log_msg(string  $msg_text,
             if (($msg_log_level > text_log::LOG_LEVEL or $force_log)
                 and sys_log_insert_allowed(time())) {
 
-                $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($function_name);
-                if ($fnc == null) {
-                    $sys_log_fnc = new sys_log_function();
-                    $sys_log_fnc->name = $function_name;
-                    $sys_log_fnc->code_id = $function_name;
-                    // saving a new function name is a system action, so use a local message
-                    // with the system user instead of touching the user of the log message
-                    $sys_msg = new user_message($sys->system_user());
-                    $sys_log_fnc->save($sys_msg);
-                    $msg->merge($sys_msg);
-                    $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
-                }
+                // from here on the log writer uses the database and the permission check, which
+                // can fail and log themselves, so the guard at the top of this function drops
+                // these nested messages; the flag is reset in every case, because a log writer
+                // that stays switched off would hide all following errors of this request
+                $sys->log_writing = true;
+                try {
+                    $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($function_name);
+                    if ($fnc == null) {
+                        $sys_log_fnc = new sys_log_function();
+                        $sys_log_fnc->name = $function_name;
+                        $sys_log_fnc->code_id = $function_name;
+                        // saving a new function name is a system action, so use a local message
+                        // with the system user instead of touching the user of the log message
+                        $sys_msg = new user_message($sys->system_user());
+                        $sys_log_fnc->save($sys_msg);
+                        $msg->merge($sys_msg);
+                        $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
+                    }
 
-                $sys_log->set($user_id, $function_name, $trace, $msg_log_level, $msg_text, $msg_description, $msg);
-                $sys_log->insert($msg);
+                    $sys_log->set($user_id, $function_name, $trace, $msg_log_level, $msg_text, $msg_description, $msg);
+                    $sys_log->insert($msg);
+                } finally {
+                    $sys->log_writing = false;
+                }
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {

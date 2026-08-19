@@ -66,6 +66,9 @@ if ($db_con->is_open()) {
     $fld = $_GET[url_var::LOG_FIELD] ?? '';
     // the user whose changes should be listed e.g. for the user page
     $chg_usr_id = $_GET[url_var::USER] ?? 0;
+    // the number of log entries the frontend wants to show, so that the backend does not read and
+    // send the complete change log of a user just to fill a list of a few rows
+    $log_size = (int)($_GET[url_var::LOG_SIZE] ?? 0);
 
     // TODO deprecate
     $wrd_id = $_GET[url_var::WORD] ?? 0;
@@ -75,12 +78,15 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
 
         if ($chg_usr_id != 0) {
-            // all changes done by one user e.g. for the all user overwrites
+            // the overwrites done by one user e.g. for the all user overwrites
             // column of the user page; the change log is public like on the
             // object pages, so no extra permission check is needed here
             $chg_usr = new user();
             $chg_usr->load_by_id((int)$chg_usr_id, $msg);
             $lst = new change_log_list();
+            if ($log_size > 0) {
+                $lst->limit = $log_size;
+            }
             $lst->load_by_user($chg_usr, $msg);
             // this change log spans the objects of the user, so unlike the change log of one object
             // it must name the changed object; the names are the ones the requesting user may see

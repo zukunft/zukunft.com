@@ -43,8 +43,11 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
@@ -61,7 +64,10 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -117,8 +123,13 @@ class change_log_list extends ListBase
     }
 
     /**
-     * load the changes done by the given user via the api
+     * load the overwrites done by the given user via the api
      * e.g. for the all user overwrites column of the user page
+     *
+     * only the number of rows that the page can show is requested (plus one to detect that more
+     * rows exist), because a user can have more changes than a page should ever read: the system
+     * user has over 15'000, and reading them all just to show a few is a waste of database time,
+     * api transfer and frontend filtering
      *
      * @param int $usr_id the database id of the user whose changes should be loaded
      * @param user_message $msg to report any api problems to the user
@@ -130,11 +141,35 @@ class change_log_list extends ListBase
         $log_class = $lib->class_to_name(change_log_list::class);
         $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($log_class);
         $data = [url_var::USER => $usr_id];
+        // one row more than shown, so that the paging footer of the table can tell the user
+        // that more changes exist (see tbl_when_who_what)
+        $data[url_var::LOG_SIZE] = $this->configured_row_limit($msg) + 1;
         $ctrl = new rest_call();
         $json = $ctrl->api_call(rest_ctrl::GET, $url, $data);
         $msg->merge($this->set_from_json($json));
 
         return $msg;
+    }
+
+    /**
+     * the configured maximum number of change rows shown in a change log table
+     * (config.yaml "user > frontend > change log > row limit", falling back to
+     * config::ROW_LIMIT if the config is not loaded); the same limit that
+     * ui_log::table_pure uses to render, so that not more rows are loaded than shown
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximum number of change rows to show
+     */
+    private function configured_row_limit(user_message $msg): int
+    {
+        global $ui_sys;
+        $result = config::ROW_LIMIT;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg, config::ROW_LIMIT);
+        }
+        return $result;
     }
 
     /**

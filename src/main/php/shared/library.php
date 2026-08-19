@@ -105,6 +105,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
@@ -190,6 +191,11 @@ class library
     // the compact json format (see json_compact_format)
     const int JSON_MAX_LINE_LEN = 140; // an object or array is kept on one line up to this length
     const int JSON_INDENT = 2;         // the added spaces per level for the objects that need more lines
+
+    // the end of the php file name in an exception trace line e.g. '#0 /path/library.php(2448): ...'
+    const string PHP_TRACE_FILE_END = '.php(';
+    // the sys_log function name used if no script name can be taken from the exception trace
+    const string FUNCTION_UNKNOWN = 'unknown function';
 
     /*
      * internal const
@@ -2440,14 +2446,31 @@ class library
         return $result;
     }
 
+    /**
+     * the name of the php script that has most likely caused a log message, taken from the first
+     * line of the exception trace and used as the name and code id of the sys_log function
+     *
+     * the name must stay short: it is written to the sys_log_function name field, and a name that
+     * does not fit makes the insert fail, which logs again and never ends (see log_msg); so if the
+     * trace does not contain the project path - e.g. a deployment in another directory such as
+     * /var/www/html - the file name of the first trace line is used instead of the whole trace
+     *
+     * @param string $trace the exception trace as created by Exception::getTraceAsString
+     * @return string the script name e.g. 'src/main/php/shared/helper/Translator' or 'Translator'
+     */
     static function php_function_from_exception(string $trace): string
     {
-        $fnc = self::str_right_of($trace, def_shared::PROJECT_PATH);
-        $fnc = self::str_left_of($fnc, '.php(');
+        $fnc = self::str_left_of(self::str_right_of($trace, def_shared::PROJECT_PATH), self::PHP_TRACE_FILE_END);
         if ($fnc == '') {
-            $fnc = 'no function name detected in ' . $trace;
+            $fnc = self::str_right_of_or_all(
+                self::str_left_of($trace, self::PHP_TRACE_FILE_END), DIRECTORY_SEPARATOR);
         }
-        return $fnc;
+        if ($fnc == '') {
+            $fnc = self::FUNCTION_UNKNOWN;
+        }
+        // a name that does not fit would make the insert of the log entry fail, and a log entry
+        // that is not written is an error nobody ever sees
+        return mb_substr($fnc, 0, sql_field_type::NAME_MAX_LEN);
     }
 
     function php_code_use(array $lines): array

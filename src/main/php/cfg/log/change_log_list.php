@@ -458,7 +458,14 @@ class change_log_list extends list_db_read
      */
 
     /**
-     * create an SQL statement to retrieve the changes done by the given user
+     * create an SQL statement to retrieve the overwrites done by the given user
+     *
+     * only the changes of the user sandbox (overlay) tables are selected, because this is what the
+     * only consumer shows (the all user overwrites column of the user page, see
+     * web/component/execute/ui_log::all_user_overwrites) and because only then the row limit is
+     * correct: with all changes selected, the limit would cut off the overwrites of a user who has
+     * also changed many standard objects (over 15'000 for the system user), so that the column
+     * would show none of the overwrites
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr the user sandbox object
@@ -469,9 +476,33 @@ class change_log_list extends list_db_read
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
         $sc->add_where(user_db::FLD_ID, $usr->id);
+        // TODO replace 'l2' with a var or const (like load_sql_by_obj_fld)
+        $sc->add_where(change_field::FLD_TABLE, $this->user_table_ids(), sql_par_type::INT_LIST, 'l2');
+        // the page limit set by the caller, so that a user page never reads the complete change
+        // log of the user just to show the newest rows
+        $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * @return array the database ids of the user sandbox (overlay) tables e.g. of user_words,
+     *               used to select only the changes that a user has done on an own overlay row
+     */
+    private function user_table_ids(): array
+    {
+        global $sys;
+        $result = [];
+        foreach (change_tables::USER_TABLES as $table_name) {
+            // checked without auto-adding the table, because a table that is not used yet
+            // simply has no changes to select
+            $table_id = $sys->typ_lst->cng_tbl->id($table_name, false);
+            if ($table_id > 0) {
+                $result[] = $table_id;
+            }
+        }
+        return $result;
     }
 
     /**
