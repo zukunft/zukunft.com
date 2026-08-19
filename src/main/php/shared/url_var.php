@@ -120,6 +120,7 @@ class url_var
     const string VIEW_PARENT = 'df'; // the "from" display view that should be modified
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
+    const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
     const string VIEW_TYPE = 'dt';
     const string VIEW_RELATION_TYPE = 'dr'; // the type of the view to view link
@@ -427,6 +428,7 @@ class url_var
     const string SOURCE_HUMAN = 'source_id';
     const string SOURCE_TYPE_HUMAN = 'source_type';
     const string URL_HUMAN = 'url';
+    const string DOI_HUMAN = 'doi';
 
     // ref
     const string REF_HUMAN = 'ref_id';
@@ -644,6 +646,7 @@ class url_var
         [self::SOURCE_HUMAN, self::SOURCE],
         [self::SOURCE_TYPE_HUMAN, self::SOURCE_TYPE],
         [self::URL_HUMAN, self::URL],
+        [self::DOI_HUMAN, self::DOI],
 
         // ref
         [self::REF_HUMAN, self::REF],

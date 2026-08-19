@@ -1325,7 +1325,6 @@
     },
     {
       "name": "working memory",
-      "description": "cognitive system with a limited capacity that is responsible for temporarily holding information available for processing. see Wikipedia: Working memory (Q11337567)",
       "from": "memory",
       "verb": "kind of",
       "to": "working"
@@ -1395,7 +1394,6 @@
     },
     {
       "name": "cognitive development",
-      "description": "field of study in neuroscience and psychology. see Wikipedia: Cognitive development (Q2910672)",
       "from": "development",
       "verb": "kind of",
       "to": "cognitive"
@@ -1684,7 +1682,6 @@
     },
     {
       "name": "standard deviation",
-      "description": "a measure of the amount of variation or dispersion of a set of values around their mean",
       "from": "deviation",
       "verb": "kind of",
       "to": "standard"

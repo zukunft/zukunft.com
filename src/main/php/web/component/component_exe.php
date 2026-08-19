@@ -291,6 +291,7 @@ class component_exe extends component
 
             // for external links
             component_types::FORM_FIELD_URL => $form->form_field_url($dbo, $style),
+            component_types::FORM_FIELD_DOI => $form->form_field_doi($dbo, $style),
 
             // preview of the changes if confirmed
             component_types::FORM_PREVIEW => $page->preview(),
@@ -425,6 +426,7 @@ class component_exe extends component
 
             // name display components for admin-editable system objects
             component_types::SOURCE_NAME => $base->source_name($dbo),
+            component_types::SOURCE_DOI_LINK => $base->source_doi_link($dbo),
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
             component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),

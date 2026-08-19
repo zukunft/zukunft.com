@@ -81,7 +81,7 @@
     },
     {
       "name": "scale million to one",
-      "comment": "convert numbers in millions to one and back",
+      "description": "convert numbers in millions to one and back",
       "expression": "\"one\" = \"million\" * 1000000",
       "type": "scaling",
       "assigned_word": "million",

@@ -122,7 +122,6 @@
     },
     {
       "name": "area",
-      "description": "Area is the quantity that expresses the extent of a two-dimensional region in the plane.",
       "refs": [
         {
           "name": "Area",
@@ -150,7 +149,6 @@
     },
     {
       "name": "volume",
-      "description": "Volume is a measure of three-dimensional space.",
       "refs": [
         {
           "name": "Volume",
@@ -234,7 +232,6 @@
     },
     {
       "name": "square",
-      "description": "A square is a regular quadrilateral with four equal sides and four right angles.",
       "refs": [
         {
           "name": "Square",
@@ -304,7 +301,6 @@
     },
     {
       "name": "cube",
-      "description": "A cube is a three-dimensional solid object bounded by six square faces.",
       "refs": [
         {
           "name": "Cube",
@@ -408,7 +404,6 @@
     },
     {
       "name": "angle",
-      "description": "In Euclidean geometry, an angle is the figure formed by two rays sharing a common endpoint, called the vertex of the angle.",
       "refs": [
         {
           "name": "Angle",
@@ -504,7 +499,6 @@
     },
     {
       "name": "radian",
-      "description": "The radian is a unit of plane angle defined such that one full turn equals 2π radians.",
       "refs": [
         {
           "name": "Radian",
@@ -564,7 +558,6 @@
     },
     {
       "name": "line",
-      "description": "In geometry, a straight line is an infinite length, breadthless, idealised geometric object.",
       "refs": [
         {
           "name": "Line (geometry)",
@@ -1782,7 +1775,6 @@
     },
     {
       "name": "standard deviation",
-      "description": "In statistics, the standard deviation is a measure of the amount of variation or dispersion of a set of values.",
       "from": "standard",
       "verb": "kind of",
       "to": "deviation",
@@ -1891,7 +1883,6 @@
     },
     {
       "name": "percent change",
-      "description": "Percentage change is a way of expressing a change in a variable; it represents the relative change between the old value and the new one.",
       "from": "percent",
       "verb": "of",
       "to": "change",

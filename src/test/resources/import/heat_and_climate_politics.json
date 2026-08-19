@@ -77,25 +77,25 @@
         "name": "Lohmann & Kontoleon 2023",
         "description": "Lohmann, P. M., & Kontoleon, A. (2023). Do Flood and Heatwave Experiences Shape Climate Opinion? Causal Evidence from Flooding and Heatwaves in England and Wales. Environmental and Resource Economics, 86(1), 263-304. Difference-in-differences matching on geo-referenced panel data.",
         "type": "source",
-        "url": "https://doi.org/10.1007/s10640-023-00796-0"
+        "doi": "10.1007/s10640-023-00796-0"
       },
       {
         "name": "Visconti et al. 2024",
         "description": "Visconti, G., Young, K., & Weis Kintziger, K. (2024). The effect of different extreme weather events on attitudes toward climate change. PLOS ONE, 19(5), e0300967. Three-wave US panel, dynamic difference-in-differences. Tested fires, floods, hurricanes, severe storms (heatwaves not separately tested).",
         "type": "source",
-        "url": "https://doi.org/10.1371/journal.pone.0300967"
+        "doi": "10.1371/journal.pone.0300967"
       },
       {
         "name": "Bergquist et al. 2022",
         "description": "Bergquist, M., Nilsson, A., Harring, N., & Jagers, S. C. (2022). Meta-analyses of fifteen determinants of public opinion about climate change taxes and laws. Nature Climate Change, 12(3), 235-240. 89 datasets, 51 articles, 33 countries, N=119,465.",
         "type": "source",
-        "url": "https://doi.org/10.1038/s41558-022-01297-6"
+        "doi": "10.1038/s41558-022-01297-6"
       },
       {
         "name": "Zaval et al. 2014",
         "description": "Zaval, L., Keenan, E. A., Johnson, E. J., & Weber, E. U. (2014). How warm days increase belief in global warming. Nature Climate Change, 4(2), 143-147. Demonstrates transient, weather-dependent belief shifts (local-warming effect).",
         "type": "source",
-        "url": "https://doi.org/10.1038/nclimate2093"
+        "doi": "10.1038/nclimate2093"
       },
       {
         "name": "Howarth et al. 2025",

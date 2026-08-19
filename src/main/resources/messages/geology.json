@@ -339,7 +339,6 @@
     },
     {
       "name": "hardness",
-      "description": "measure of how resistant solid matter is to various kinds of permanent shape change when a force is applied",
       "refs": [
         {
           "name": "Hardness",
@@ -1893,7 +1892,6 @@
     },
     {
       "name": "shear modulus",
-      "description": "ratio of shear stress to the shear strain",
       "from": "modulus",
       "verb": "kind of",
       "to": "shear",

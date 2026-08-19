@@ -165,6 +165,45 @@ if (property_exists($dbo, 'phrases_related') && $dbo->phrases_related !== null) 
 return $result;
 ```
 
+## 100% correct — never a shortcut, tell the user it takes longer instead
+
+The target of this code is to be **100% correct**. Not "correct for the data
+seen so far", not "correct enough to pass the test at hand" — correct for every
+input the type allows. A shortcut that is right in the common case is a defect
+that has not fired yet, and shipping it is worse than shipping nothing, because
+the wrong result now carries the authority of a finished job.
+
+So a comparison uses the **complete** value. Never compare a prefix, a cut, a
+hash, a rounded number or a normalised copy of what should be compared, and
+never use a shortened text as a map key: the moment two values differ only
+behind the cut, the code reports them as equal and the difference is lost. The
+same holds for a check that "usually" finds every case, a loop that stops after
+the first N entries and a sample that stands in for a set.
+
+Shortening the **display** is a different thing and it is allowed: a report line
+that stays readable is worth a cut, as long as the cut happens on the way to the
+screen and never on the way into a comparison.
+
+The counter-example that named this rule: the json findings report cut every
+description after 120 characters, and the cross-file description check used that
+cut text as the key of its comparison map. Two descriptions that share their
+first 120 characters were silently declared identical, so the check reported
+"no finding" for a conflict that stops an import. The fix is not a longer cut:
+`json_validation::cut()` is called by the display of a finding only, while
+`description_by_name()` keys its map by the full description — cut once, at the
+end, and never before the compare.
+
+Cost is never the reason to cut a check. If the complete job needs more time,
+more memory or more passes over the data, **do the complete job and tell the
+user that it takes longer**. "This scan reads all 183 files twice and takes
+about a minute" is an acceptable answer. Silently checking half of them is not.
+If a complete solution is genuinely out of reach in this change, say so plainly
+and record the gap in `docs/llm/pending_prio_2.md` — an explicit, visible gap is
+honest, a quiet approximation is not.
+
+The check for the review: "on which input does this give the wrong answer?" If
+that input exists, the code is not finished, however unlikely the input looks.
+
 ## Fix the pattern, not the instance — no unexplained asymmetry
 
 The target of every fix is **error-free code**, not a silenced error message.

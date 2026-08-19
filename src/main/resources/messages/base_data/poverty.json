@@ -92,16 +92,14 @@
       "description": "based on personal perception or self-assessment"
     },
     {
-      "name": "international",
-      "description": "applying across countries"
+      "name": "international"
     },
     {
       "name": "multidimensional",
       "description": "covering several dimensions such as health, education and living standards"
     },
     {
-      "name": "median",
-      "description": "the middle value that separates the higher half from the lower half"
+      "name": "median"
     },
     {
       "name": "line",

@@ -38,7 +38,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
@@ -135,6 +137,24 @@ class source_tests
         $t->subheader($ts . 'frontend');
         $src = $t_src->source_reserved();
         $t->assert_api_to_ui($src, new source_ui());
+
+        $test_name = 'the doi of a source creates the url to doi.org';
+        $src_ui = new source_ui($t_src->source_filled_included()->api_json());
+        $t->assert($test_name, $src_ui->doi_url(), def::LINK_DOI . sources::TEST_DOI);
+
+        $test_name = 'a source without doi has no doi url';
+        $src_ui = new source_ui($t_src->source_reserved()->api_json());
+        $t->assert_null($test_name, $src_ui->doi_url());
+
+        $ui = new ui_base();
+        $test_name = 'the doi of a source is shown as a link to doi.org';
+        $src_ui = new source_ui($t_src->source_filled_included()->api_json());
+        $t->assert($test_name, $ui->source_doi_link($src_ui),
+            '<a href="' . def::LINK_DOI . sources::TEST_DOI . '">' . sources::TEST_DOI . '</a>');
+
+        $test_name = 'a source without doi shows no doi link';
+        $src_ui = new source_ui($t_src->source_reserved()->api_json());
+        $t->assert($test_name, $ui->source_doi_link($src_ui), '');
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_src->source(), $t->usr_system);

@@ -215,3 +215,5 @@ component_type_id, type_name, description, code_id
 214, 'table with related columns', 'show the values related to a phrase as a table with one column per phrase used most often within the values and one row per remaining phrase combination', 'table_with_related_columns'
 215, 'system title with object name', 'page title that shows the translated object word of the component and the name of the shown object e.g. Verb "is a"', 'system_title_with_object_name'
 216, 'all user overwrites', 'show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites', 'all_user_overwrites'
+217, 'system form field doi', 'the doi field in a form', 'system_form_field_doi'
+218, 'source doi link', 'show the doi of a source as a link to doi.org', 'source_doi_link'

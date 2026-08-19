@@ -364,12 +364,12 @@
     {
       "name": "Springmann meat tax 2022",
       "description": "Funke F, Mattauch L, ... Edenhofer O (2022). Toward Optimal Meat Pricing: Is It Time to Tax Meat Consumption? Review of Environmental Economics and Policy. External cost of beef from climate + nutrient pollution US$5.75-9.17/kg.",
-      "url": "https://doi.org/10.1086/721078"
+      "doi": "10.1086/721078"
     },
     {
       "name": "Michalke TCA 2023",
       "description": "Michalke A, Stein L, Fichtner R, Gaugler T, Stoll-Kleemann S (2023). True cost accounting of organic and conventional food production. J. Cleaner Production 408:137134. Conventional meat externality EUR 4.42/kg; beef highest of all products.",
-      "url": "https://doi.org/10.1016/j.jclepro.2023.137134"
+      "doi": "10.1016/j.jclepro.2023.137134"
     },
     {
       "name": "Penny true cost 2020",
@@ -379,7 +379,7 @@
     {
       "name": "Arrigoni Italy LCA 2023",
       "description": "Arrigoni A, Marveggio D, ... (2023). Environmental and health-related external costs of meat consumption in Italy. Sci. Total Environ. External cost of beef EUR 1.3 per 100 g pre-ingestion.",
-      "url": "https://doi.org/10.1016/j.scitotenv.2023.161747"
+      "doi": "10.1016/j.scitotenv.2023.161747"
     },
     {
       "name": "Perotti Switzerland 2019",
@@ -389,7 +389,7 @@
     {
       "name": "Reisinger PBMA 2025",
       "description": "Reisinger A et al. (2025). Quantifying ... Plant-Based Meat Alternatives ... vs Beef. Foods 15(11):1949. Monetised total dietary risk: beef patty USD 1.63 vs Beyond Burger USD 0.16; Beyond Burger ~9% of beef patty external cost.",
-      "url": "https://doi.org/10.3390/foods15111949"
+      "doi": "10.3390/foods15111949"
     },
     {
       "name": "US meat subsidy commentary 2015",

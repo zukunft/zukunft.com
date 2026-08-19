@@ -264,6 +264,10 @@ class component_types
     // for external links
     const string FORM_FIELD_URL = "system_form_field_url";
     const int FORM_FIELD_URL_ID = 71;
+    const string FORM_FIELD_DOI = "system_form_field_doi";
+    const int FORM_FIELD_DOI_ID = 217;
+    const string SOURCE_DOI_LINK = "source_doi_link";
+    const int SOURCE_DOI_LINK_ID = 218;
 
     // preview of the changes if confirmed
     const string FORM_PREVIEW = "system_form_preview";
@@ -620,6 +624,7 @@ class component_types
         self::FORM_FIELD_NAME,
         self::FORM_FIELD_DESCRIPTION,
         self::FORM_FIELD_URL,
+        self::FORM_FIELD_DOI,
         self::FORM_FIELD_PLURAL,
         self::FORM_FIELD_FORMULA_EXPRESSION,
         self::FORM_FIELD_FORMULA_LATEX,
@@ -800,6 +805,7 @@ class component_types
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
+        [self::FORM_FIELD_DOI, self::FORM_FIELD_DOI_ID],
         [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],
         [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
         [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
@@ -945,6 +951,7 @@ class component_types
         [self::RANKING_PARAMETERS, self::RANKING_PARAMETERS_ID],
         [self::RANKING_LIST, self::RANKING_LIST_ID],
         [self::SOURCE_NAME, self::SOURCE_NAME_ID],
+        [self::SOURCE_DOI_LINK, self::SOURCE_DOI_LINK_ID],
         [self::REFERENCE_NAME, self::REFERENCE_NAME_ID],
         [self::LANGUAGE_NAME, self::LANGUAGE_NAME_ID],
         [self::RESULTS_RELATED, self::RESULTS_RELATED_ID],

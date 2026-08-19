@@ -124,8 +124,7 @@
       "description": "attributable proportion of a whole, 0..1"
     },
     {
-      "name": "attribution",
-      "description": "assignment of an effect to a cause"
+      "name": "attribution"
     },
     {
       "name": "cause",
@@ -141,8 +140,7 @@
       ]
     },
     {
-      "name": "effect",
-      "description": "the outcome of a cause"
+      "name": "effect"
     },
     {
       "name": "incompetence",
@@ -247,8 +245,7 @@
       "name": "year"
     },
     {
-      "name": "baseline",
-      "description": "reference magnitude against which a loss is measured"
+      "name": "baseline"
     },
     {
       "name": "waking",
@@ -282,8 +279,7 @@
       ]
     },
     {
-      "name": "assumed",
-      "description": "qualifier: value is an explicit assumption, not a measurement"
+      "name": "assumed"
     },
     {
       "name": "value",
@@ -298,8 +294,7 @@
       "description": "upper bound of an assumed band"
     },
     {
-      "name": "centre",
-      "description": "geometric centre of a band"
+      "name": "centre"
     },
     {
       "name": "strong",
@@ -310,26 +305,44 @@
       "description": "evidence-adjusted variant after the literature review"
     },
     {
-      "name": "A",
-      "description": "evidence grade A: longitudinal/experimental with causal identification"
+      "name": "A"
     },
     {
       "name": "B",
       "description": "evidence grade B: mixed evidence"
     },
     {
-      "name": "C",
-      "description": "evidence grade C: predominantly correlational"
+      "name": "C"
     },
     {
-      "name": "global",
-      "description": "global scope"
+      "name": "global"
     },
     {
       "name": "2005"
     },
     {
       "name": "2025"
+    },
+    {
+      "name": "source"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "mayor"
+    },
+    {
+      "name": "main"
+    },
+    {
+      "name": "minor"
     }
   ],
   "triples": [
@@ -337,8 +350,7 @@
       "name": "assumed value",
       "from": "value",
       "verb": "must be one of",
-      "to": "assumed",
-      "description": "provenance qualifier: number is an explicit assumption"
+      "to": "assumed"
     },
     {
       "name": "cause to effect",
@@ -490,23 +502,125 @@
       "verb": "of",
       "to": "bad steering loss",
       "description": "result: HTP/yr loss attributable to the full chain"
+    },
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "column (system)",
+      "description": "keyword for columns used by the system components",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_column"
+    },
+    {
+      "name": "mayor column (system)",
+      "description": "keyword for columns that should be shown in a table even if the screen is small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "mayor",
+      "code_id": "system_column_mayor"
+    },
+    {
+      "name": "main column (system)",
+      "description": "keyword for columns that should always be shown if the screen not small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "main",
+      "code_id": "system_column_main"
+    },
+    {
+      "name": "minor column (system)",
+      "description": "keyword for columns that should always be shown if the screen wide",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "minor",
+      "code_id": "system_column_minor"
+    },
+    {
+      "name": "column low",
+      "description": "the 'low' column of the chain link table, the lower bound of the range",
+      "from": "low",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column centre",
+      "description": "the 'centre' column of the chain link table and the base variant column of the sensitivity table",
+      "from": "centre",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column evidence",
+      "description": "the evidence adjusted variant column of the sensitivity table, hidden on a small screen",
+      "from": "evidence",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column strong",
+      "description": "the contra thesis variant column of the sensitivity table, shown only on a wide screen",
+      "from": "strong",
+      "verb": "can be",
+      "to": "minor column (system)"
+    },
+    {
+      "name": "column high",
+      "description": "the 'high' column of the chain link table, the upper bound of the range",
+      "from": "high",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column share",
+      "description": "the 'share' column of the channel table with the attributed share per channel",
+      "from": "share",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column direction",
+      "description": "the 'direction' column of the channel table, hidden on a small screen",
+      "from": "direction",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column grade",
+      "description": "the 'grade' column of the channel table, hidden on a small screen",
+      "from": "grade",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column source",
+      "from": "source",
+      "verb": "can be",
+      "to": "minor column (system)"
     }
   ],
   "sources": [
     {
       "name": "Bienstman 2024",
       "description": "Bienstman, Rummens & Marx (2024). Explaining the democratic malaise: inequality, external efficacy and political trust. European Journal of Political Research. FE + causal mediation: inequality lowers trust via efficacy.",
-      "url": "https://doi.org/10.1111/1475-6765.12611"
+      "doi": "10.1111/1475-6765.12611"
     },
     {
       "name": "Devine 2025",
       "description": "Devine (2025). The causes of perceived government trustworthiness. European Journal of Political Research. Experimental: benevolence is the strongest trust determinant; competence and integrity secondary.",
-      "url": "https://doi.org/10.1111/1475-6765.12742"
+      "doi": "10.1111/1475-6765.12742"
     },
     {
       "name": "Van de Walle Bouckaert 2003",
       "description": "Van de Walle & Bouckaert (2003). Public Service Performance and Trust in Government: The Problem of Causality. Int. J. Public Administration 26(8-9). Performance and trust are reciprocal.",
-      "url": "https://doi.org/10.1081/PAD-120019352"
+      "doi": "10.1081/PAD-120019352"
     },
     {
       "name": "Tsfati misinformation review 2023",
@@ -516,21 +630,19 @@
     {
       "name": "Van Remoortere Vliegenthart 2025",
       "description": "Van Remoortere & Vliegenthart (2025). Affective polarization and political (dis)trust. Cross-lagged panel: higher trust lowers polarisation; polarisation does not significantly raise distrust.",
-      "url": "https://doi.org/10.1177/02673231251370866"
+      "doi": "10.1177/02673231251370866"
     },
     {
       "name": "Nieuwenhuis inequality trust 2017",
       "description": "Nieuwenhuis (2017). Less equal, less trusting? Longitudinal effects of income inequality on trust in US states 1973-2012. Social Science Research. Longitudinal effect weak and sensitive to time controls.",
-      "url": "https://doi.org/10.1016/j.ssresearch.2018.04.005"
+      "doi": "10.1016/j.ssresearch.2018.04.005"
     },
     {
       "name": "UN World Population Prospects 2024",
-      "description": "UN DESA, World Population Prospects 2024, world total ~8.0e9.",
       "url": "https://population.un.org/wpp/"
     },
     {
-      "name": "zukunft.com Fermi assumption",
-      "description": "explicit modelling assumption set by the analyst for this Fermi estimate, not a measurement"
+      "name": "zukunft.com Fermi assumption"
     }
   ],
   "values": [
@@ -1028,12 +1140,6 @@
         "economic share",
         "media share",
         "polarisation share"
-      ],
-      "columns": [
-        "share",
-        "direction",
-        "grade",
-        "source"
       ]
     },
     {
@@ -1048,11 +1154,6 @@
         "distrust mediation share",
         "avoidable share",
         "chain HTP loss"
-      ],
-      "columns": [
-        "low",
-        "centre",
-        "high"
       ]
     },
     {
@@ -1060,16 +1161,11 @@
       "type": "system_table",
       "code_id": "fermi_sensitivity_table",
       "ui_msg_code_id": "fermi_sensitivity_table",
-      "description": "one row per scenario variant of the sign-determining link s_komplex: base, evidence-adjusted, strong; columns s_komplex, avoidable share, chain result, factor vs base. Renders the 'Sensitivity' table of the markdown.",
+      "description": "one column per scenario variant of the sign-determining link s_komplex: base (centre), evidence-adjusted and strong; one row per chain link that a variant changes. Renders the 'Sensitivity' table of the markdown with the variants as the columns.",
       "phrases": [
         "complexity share",
         "avoidable share",
         "chain HTP loss"
-      ],
-      "variants": [
-        "centre",
-        "evidence",
-        "strong"
       ]
     }
   ],
@@ -1100,10 +1196,10 @@
       ]
     }
   ],
-  "view_validations": [
+  "view-validation": [
     {
       "url": "mask=theses/antitheses&words=complexity,trust",
-      "md": "# Fermi: complexity → trust → bad decisions\n \nCompanion overview to `fermi_complexity_trust.json`. Global scope, ~2005–2025.\nAll numbers reproduced by the `calc-validation` block in the JSON. Provenance is\ncarried by the source of a measured number and by the `assumed value` qualifier\nof a set one;\neach competing cause additionally carries a `cause to effect` / `bidirectional`\ndirection triple and an `evidence grade A/B/C` triple.\n \n## Causal direction and evidence grade per channel\n \nGrade A = longitudinal/experimental with causal identification, B = mixed,\nC = predominantly correlational.\n \n| channel | share (mid) | dominant direction | strength | grade | source |\n| --- | ---: | --- | --- | :---: | --- |\n| incompetence / broken promises | 0.32 | cause → trust, but reciprocal | strong | A–B | Devine 2025; Van de Walle Bouckaert 2003 |\n| economic (inequality) | 0.27 | cause → trust, via efficacy | medium–strong | A | Bienstman 2024; Nieuwenhuis 2017 |\n| media / misinformation | 0.20 | mixed, weaker than assumed | weak–medium | B | Tsfati misinformation review 2023 |\n| polarisation / identity | 0.15 | bidirectional, partly trust → polarisation | medium | B | Van Remoortere Vliegenthart 2025 |\n| complexity | 0.09 | weak, mostly an amplifier | very weak | C | zukunft.com Fermi assumption |\n \nShares sum to ~1.03; causes overlap, so they are not disjoint.\n \nKey finding from the literature review: complexity is the only channel **without**\na causal-identified longitudinal study supporting a complexity → trust arrow,\nwhile inequality → trust (via efficacy) and benevolence/competence → trust are\ncausally identified. Several channels (performance ↔ trust, polarisation ↔ trust)\nare reciprocal, so part of what the comment reads as a directed\n\"complexity → distrust → bad decision\" arrow is in fact a feedback loop.\n \n## Chain links and result (HTP per year)\n \n`chain = R_total * s_komplex * t_misstrauen * q_fehlentscheid`\n \n| link | symbol | low | centre | high | role |\n| --- | --- | ---: | ---: | ---: | --- |\n| welfare lost to bad steering | R_total | 2.4e7 | 7.6e7 | 2.4e8 | scale |\n| complexity attribution share | s_komplex | 0.05 | 0.087 | 0.15 | sign-determining |\n| distrust mediation | t_misstrauen | 0.3 | 0.46 | 0.7 | mechanism |\n| avoidable (causal) fraction | q_fehlentscheid | 0.2 | 0.35 | 0.6 | causality |\n| chain result | HTP/yr | 7.2e4 | 1.0e6 | 1.5e7 | product |\n \n## Sensitivity of the sign-determining assumption\n \n| variant | s_komplex | q | result (centre) | factor vs base |\n| --- | ---: | ---: | ---: | ---: |\n| base | 0.087 | 0.346 | 1.0e6 HTP/yr | 1.00x |\n| evidence-adjusted | 0.066 | 0.263 | 6.0e5 HTP/yr | 0.58x |\n| strong (complexity primary) | 0.30 | 0.346 | 3.6e6 HTP/yr | 3.46x |\n \nThe evidence-adjusted centre lowers the original by factor 0.58, reflecting the\nabsence of causal-identified support for complexity and the reciprocal nature of\nthe distrust channel. Even the strong variant lifts the result only 3.46x without\nmaking the thesis dominant: complexity is a third-order amplifier (5–15 %), not a\nprimary driver of the trust decline.\n"
+      "description": "# Fermi: complexity → trust → bad decisions\n \nCompanion overview to `fermi_complexity_trust.json`. Global scope, ~2005–2025.\nAll numbers reproduced by the `calc-validation` block in the JSON. Provenance is\ncarried by the source of a measured number and by the `assumed value` qualifier\nof a set one;\neach competing cause additionally carries a `cause to effect` / `bidirectional`\ndirection triple and an `evidence grade A/B/C` triple.\n \n## Causal direction and evidence grade per channel\n \nGrade A = longitudinal/experimental with causal identification, B = mixed,\nC = predominantly correlational.\n \n| channel | share (mid) | dominant direction | strength | grade | source |\n| --- | ---: | --- | --- | :---: | --- |\n| incompetence / broken promises | 0.32 | cause → trust, but reciprocal | strong | A–B | Devine 2025; Van de Walle Bouckaert 2003 |\n| economic (inequality) | 0.27 | cause → trust, via efficacy | medium–strong | A | Bienstman 2024; Nieuwenhuis 2017 |\n| media / misinformation | 0.20 | mixed, weaker than assumed | weak–medium | B | Tsfati misinformation review 2023 |\n| polarisation / identity | 0.15 | bidirectional, partly trust → polarisation | medium | B | Van Remoortere Vliegenthart 2025 |\n| complexity | 0.09 | weak, mostly an amplifier | very weak | C | zukunft.com Fermi assumption |\n \nShares sum to ~1.03; causes overlap, so they are not disjoint.\n \nKey finding from the literature review: complexity is the only channel **without**\na causal-identified longitudinal study supporting a complexity → trust arrow,\nwhile inequality → trust (via efficacy) and benevolence/competence → trust are\ncausally identified. Several channels (performance ↔ trust, polarisation ↔ trust)\nare reciprocal, so part of what the comment reads as a directed\n\"complexity → distrust → bad decision\" arrow is in fact a feedback loop.\n \n## Chain links and result (HTP per year)\n \n`chain = R_total * s_komplex * t_misstrauen * q_fehlentscheid`\n \n| link | symbol | low | centre | high | role |\n| --- | --- | ---: | ---: | ---: | --- |\n| welfare lost to bad steering | R_total | 2.4e7 | 7.6e7 | 2.4e8 | scale |\n| complexity attribution share | s_komplex | 0.05 | 0.087 | 0.15 | sign-determining |\n| distrust mediation | t_misstrauen | 0.3 | 0.46 | 0.7 | mechanism |\n| avoidable (causal) fraction | q_fehlentscheid | 0.2 | 0.35 | 0.6 | causality |\n| chain result | HTP/yr | 7.2e4 | 1.0e6 | 1.5e7 | product |\n \n## Sensitivity of the sign-determining assumption\n \n| variant | s_komplex | q | result (centre) | factor vs base |\n| --- | ---: | ---: | ---: | ---: |\n| base | 0.087 | 0.346 | 1.0e6 HTP/yr | 1.00x |\n| evidence-adjusted | 0.066 | 0.263 | 6.0e5 HTP/yr | 0.58x |\n| strong (complexity primary) | 0.30 | 0.346 | 3.6e6 HTP/yr | 3.46x |\n \nThe evidence-adjusted centre lowers the original by factor 0.58, reflecting the\nabsence of causal-identified support for complexity and the reciprocal nature of\nthe distrust channel. Even the strong variant lifts the result only 3.46x without\nmaking the thesis dominant: complexity is a third-order amplifier (5–15 %), not a\nprimary driver of the trust decline.\n"
     }
   ]
 }

@@ -155,7 +155,6 @@
     },
     {
       "name": "velocity",
-      "description": "Velocity is the directional speed of a motion of an object as a function of time; it is the rate of change of an object's position with respect to a frame of reference.",
       "type": "measure",
       "refs": [
         {
@@ -170,7 +169,6 @@
     },
     {
       "name": "acceleration",
-      "description": "In mechanics, acceleration is the rate of change of the velocity of an object with respect to time.",
       "type": "measure",
       "refs": [
         {
@@ -1021,7 +1019,6 @@
     },
     {
       "name": "g",
-      "description": "g is the standard acceleration due to gravity at Earth's surface, approximately 9.80665 m/s².",
       "type": "constant",
       "refs": [
         {
@@ -1092,7 +1089,6 @@
     },
     {
       "name": "R",
-      "description": "R is the molar gas constant, equivalent to the Boltzmann constant multiplied by the Avogadro constant.",
       "type": "constant",
       "refs": [
         {
@@ -1312,12 +1308,10 @@
       "description": "the branch of physics that deals with heat, work, temperature and the statistical behaviour of systems."
     },
     {
-      "name": "physics",
-      "description": "the natural science that studies matter, energy, motion and their interactions; its subareas used here are mechanics, thermodynamics, electromagnetism, optics and quantum mechanics"
+      "name": "physics"
     },
     {
-      "name": "mechanics",
-      "description": "the branch of physics that deals with the motion, forces and energy of objects"
+      "name": "mechanics"
     },
     {
       "name": "electromagnetism",
@@ -1349,7 +1343,6 @@
     },
     {
       "name": "second (time)",
-      "description": "the time-unit reading of the ambiguous word 'second'; displayed as 'second' with 'time unit' shown only in the tooltip",
       "from": "second",
       "verb": "must be one of",
       "to": "time unit"
@@ -1494,7 +1487,6 @@
     },
     {
       "name": "angular velocity",
-      "description": "In physics, angular velocity is a pseudovector representation of how the angular position or orientation of an object changes with time.",
       "from": "angular",
       "verb": "kind of",
       "to": "velocity",

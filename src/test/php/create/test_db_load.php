@@ -1025,6 +1025,7 @@ class test_db_load
         $src->set_name(sources::SYSTEM_TEST_ADD_API);
         $src->description = sources::SYSTEM_TEST_ADD_API_COM;
         $src->url = sources::SYSTEM_TEST_ADD_API_URL;
+        $src->doi = sources::TEST_DOI;
         $src->type_id = $sys->typ_lst->src_typ->id(source_types::PDF);
         $body_array = $src->api_json_array(new api_type_list([]), $msg);
         return $msg_api->api_header_array($pod_name, source::class, $this->env->usr1, $body_array);

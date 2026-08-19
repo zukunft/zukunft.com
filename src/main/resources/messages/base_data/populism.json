@@ -87,7 +87,6 @@
     },
     {
       "name": "internet",
-      "description": "the global system of interconnected computer networks that links devices and people worldwide.",
       "refs": [
         {
           "name": "Internet",
@@ -233,7 +232,7 @@
     {
       "name": "Vosoughi Roy Aral 2018 Science",
       "description": "Vosoughi S, Roy D, Aral S (2018). The spread of true and false news online. Science 359:1146-1151. False news spread significantly farther, faster and deeper than the truth and was about 70 percent more likely to be retweeted.",
-      "url": "https://doi.org/10.1126/science.aap9559"
+      "doi": "10.1126/science.aap9559"
     },
     {
       "name": "Oxford Word of the Year 2024",

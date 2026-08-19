@@ -108,6 +108,10 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT, $t);
         $test_name = 'sql_format insert MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT_MYSQL, $t);
+        $test_name = 'sql_format prepared insert';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT_PREPARED, $t);
+        $test_name = 'sql_format prepared insert MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT_PREPARED_MYSQL, $t);
         $test_name = 'sql_format update';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UPDATE, $t);
         $test_name = 'sql_format update MariaSQL';
@@ -128,6 +132,8 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE, $t);
         $test_name = 'sql_format create table MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE_MYSQL, $t);
+        $test_name = 'sql_format create table with user table and comments';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_CREATE_USER, $t);
 
         // json_compact_format recreates the compact layout of the import files (e.g.
         // travel_scoring_value_list.json) from the standard php json pretty print

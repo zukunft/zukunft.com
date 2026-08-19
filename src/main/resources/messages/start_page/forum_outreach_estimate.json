@@ -37,8 +37,7 @@
       ]
     },
     {
-      "name": "post",
-      "description": "a single message submitted to an online forum or comment thread."
+      "name": "post"
     },
     {
       "name": "reader",
@@ -100,7 +99,6 @@
     },
     {
       "name": "hour",
-      "description": "a unit of time equal to 60 minutes.",
       "type": "measure",
       "refs": [
         {
@@ -114,12 +112,10 @@
       ]
     },
     {
-      "name": "count",
-      "description": "the number of items in a set."
+      "name": "count"
     },
     {
-      "name": "rate",
-      "description": "a ratio of one quantity to another, often per unit time or per item."
+      "name": "rate"
     },
     {
       "name": "share",
@@ -127,7 +123,6 @@
     },
     {
       "name": "probability",
-      "description": "a measure of the likelihood of an event, between 0 and 1.",
       "refs": [
         {
           "name": "Probability",
@@ -141,7 +136,6 @@
     },
     {
       "name": "percent",
-      "description": "a proportion expressed as a fraction of 100.",
       "type": "measure",
       "refs": [
         {
@@ -151,16 +145,14 @@
       ]
     },
     {
-      "name": "work",
-      "description": "activity involving effort done to achieve a purpose or result."
+      "name": "work"
     },
     {
       "name": "project",
       "description": "an individual or collaborative undertaking planned to achieve a particular aim."
     },
     {
-      "name": "assumed value",
-      "description": "a value set by reasoned assumption for a Fermi estimate, not measured."
+      "name": "assumed value"
     }
   ],
   "triples": [

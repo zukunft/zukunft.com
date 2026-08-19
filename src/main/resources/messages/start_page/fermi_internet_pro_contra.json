@@ -12,8 +12,7 @@
       "name": "value"
     },
     {
-      "name": "assumed",
-      "description": "provenance qualifier: the number is a set Fermi input, not a measurement; the conclusion may hinge on it"
+      "name": "assumed"
     },
     {
       "name": "harm"
@@ -152,13 +151,11 @@
     },
     {
       "name": "DALY",
-      "type": "measure",
-      "description": "disability-adjusted life year (UN); one lost year of healthy life"
+      "type": "measure"
     },
     {
       "name": "HTP",
-      "type": "measure",
-      "description": "Happy Time Point; DALY extended to Maslow levels 1-2, impact-weighted reach"
+      "type": "measure"
     },
     {
       "name": "CHF",
@@ -182,8 +179,7 @@
       "description": "base modifier for directional properties"
     },
     {
-      "name": "reduction",
-      "description": "base concept for a decrease in a specific friction quantity"
+      "name": "reduction"
     },
     {
       "name": "runaway",
@@ -194,8 +190,7 @@
       "description": "actions taken to reduce the severity or probability of a negative event"
     },
     {
-      "name": "efficacy",
-      "description": "the performance metrics of a specific intervention framework"
+      "name": "efficacy"
     },
     {
       "name": "audio",
@@ -701,7 +696,7 @@
     {
       "name": "Christakis 2012 mouse overstimulation",
       "description": "Christakis DA, Ramirez JSB, Ramirez JM (2012). Overstimulation of newborn mice leads to behavioral differences and deficits in cognitive performance. Scientific Reports 2:546. p10 mice, 70 dB audio + flashing lights, 6 h/day, 42 days; overstimulated mice performed significantly worse on Light-Dark Latency, Elevated Plus Maze, Novel Object Recognition and Barnes Maze.",
-      "url": "https://doi.org/10.1038/srep00546"
+      "doi": "10.1038/srep00546"
     },
     {
       "name": "Anthropic RSI warning (heise 2026)",

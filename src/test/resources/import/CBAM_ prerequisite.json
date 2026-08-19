@@ -106,22 +106,22 @@
     {
       "name": "Nordhaus 2015",
       "description": "Nordhaus, W. (2015): Climate Clubs: Overcoming Free-Riding in International Climate Policy. American Economic Review 105(4), 1339-1370. Finding: without sanctions on non-participants no stable coalition beyond minimal abatement; small trade penalties enable large stable coalitions with high abatement.",
-      "url": "https://doi.org/10.1257/aer.15000001"
+      "doi": "10.1257/aer.15000001"
     },
     {
       "name": "Branger Quirion 2014b",
       "description": "Branger, F. & Quirion, P. (2014): Would Border Carbon Adjustments Prevent Carbon Leakage and Heavy Industry Competitiveness Losses? Ecological Economics 99, 29-39. Meta-analysis of 25 studies, 310 estimates.",
-      "url": "https://doi.org/10.1016/j.ecolecon.2013.12.010"
+      "doi": "10.1016/j.ecolecon.2013.12.010"
     },
     {
       "name": "Branger Quirion 2014a",
       "description": "Branger, F. & Quirion, P. (2014): Climate Policy and the Carbon Haven Effect. WIREs Climate Change 5(1), 53-71.",
-      "url": "https://doi.org/10.1002/wcc.245"
+      "doi": "10.1002/wcc.245"
     },
     {
       "name": "SEI et al. 2023",
       "description": "SEI, Climate Analytics, E3G, IISD, UNEP (2023): The Production Gap Report 2023. Governments plan ~110% more fossil fuel production in 2030 than consistent with 1.5 C; none of 20 profiled producer countries committed to 1.5 C-aligned production cuts.",
-      "url": "https://doi.org/10.51414/sei2023.050"
+      "doi": "10.51414/sei2023.050"
     },
     {
       "name": "World Bank 2025",

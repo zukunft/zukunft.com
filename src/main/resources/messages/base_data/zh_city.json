@@ -26,8 +26,7 @@
       "description": "a landlocked country at the confluence of Western, Central and Southern Europe."
     },
     {
-      "name": "area",
-      "description": "extent of a surface measured in square units"
+      "name": "area"
     },
     {
       "name": "elevation",
@@ -54,12 +53,10 @@
     },
     {
       "name": "percent",
-      "type": "measure",
-      "description": "ratio expressed per hundred"
+      "type": "measure"
     },
     {
-      "name": "foreign",
-      "description": "originating from outside the political unit"
+      "name": "foreign"
     },
     {
       "name": "nationality",
@@ -119,8 +116,7 @@
       "description": "position in an ordered list"
     },
     {
-      "name": "global",
-      "description": "relating to the whole world"
+      "name": "global"
     },
     {
       "name": "dwelling",
@@ -220,8 +216,7 @@
     },
     {
       "name": "tonne",
-      "type": "measure",
-      "description": "1 000 kg"
+      "type": "measure"
     },
     {
       "name": "budget",
@@ -442,22 +437,18 @@
       "description": "the skill of interpreting written text"
     },
     {
-      "name": "science",
-      "description": "the systematic study of the natural world"
+      "name": "science"
     },
     {
       "name": "kilometre",
-      "type": "measure",
-      "description": "one thousand metres"
+      "type": "measure"
     },
     {
       "name": "hour",
-      "type": "measure",
-      "description": "unit of time equal to 60 minutes"
+      "type": "measure"
     },
     {
-      "name": "million",
-      "description": "10⁶"
+      "name": "million"
     },
     {
       "name": "S&P",
@@ -488,28 +479,24 @@
       "description": "a measurement scale ranging from 0 to 100 points"
     },
     {
-      "name": "square",
-      "description": "qualifier: the unit multiplied by itself, e.g. a square metre"
+      "name": "square"
     },
     {
       "name": "bit",
       "description": "the smallest unit of digital information"
     },
     {
-      "name": "second",
-      "description": "the SI base unit of time"
+      "name": "second"
     },
     {
       "name": "product",
       "description": "the goods and services that are produced"
     },
     {
-      "name": "domestic",
-      "description": "qualifier: produced within the borders of the place"
+      "name": "domestic"
     },
     {
-      "name": "gross",
-      "description": "qualifier: before any deduction"
+      "name": "gross"
     },
     {
       "name": "centre",
@@ -544,16 +531,14 @@
       "description": "the degree to which something is good"
     },
     {
-      "name": "life",
-      "description": "the existence of a human being"
+      "name": "life"
     },
     {
       "name": "development",
       "description": "the process of growing or improving"
     },
     {
-      "name": "human",
-      "description": "qualifier: belonging to a human being"
+      "name": "human"
     },
     {
       "name": "coefficient",
@@ -573,7 +558,6 @@
     },
     {
       "name": "GDP",
-      "description": "a monetary measure of the market value of all the final goods and services produced in a place",
       "refs": [
         {
           "name": "Gross_domestic_product",
@@ -713,7 +697,6 @@
       "from": "metre",
       "verb": "can be",
       "to": "square",
-      "description": "SI derived unit of area equal to one square with sides of one metre.",
       "type": "measure"
     },
     {

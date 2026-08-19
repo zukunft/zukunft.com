@@ -126,8 +126,7 @@
       "name": "geothermal"
     },
     {
-      "name": "global",
-      "description": "relating to the whole world"
+      "name": "global"
     },
     {
       "name": "green"
@@ -171,8 +170,7 @@
       "name": "material"
     },
     {
-      "name": "maximum",
-      "description": "Upper bound of the estimate range, about one standard deviation above the central value."
+      "name": "maximum"
     },
     {
       "name": "meat"
@@ -181,8 +179,7 @@
       "name": "methane"
     },
     {
-      "name": "minimum",
-      "description": "Lower bound of the estimate range, about one standard deviation below the central value."
+      "name": "minimum"
     },
     {
       "name": "mobility"
@@ -217,8 +214,7 @@
       "name": "rank"
     },
     {
-      "name": "recycling",
-      "description": "Enhanced collection and recycling of metals, plastics and construction materials. Translation of the German keyword 'Recycling'."
+      "name": "recycling"
     },
     {
       "name": "reduced"
@@ -382,8 +378,7 @@
       "name": "greenhouse gas",
       "from": "gas",
       "verb": "of",
-      "to": "greenhouse",
-      "description": "A gas that absorbs and emits infrared radiation and thus warms the atmosphere."
+      "to": "greenhouse"
     },
     {
       "name": "greenhouse gas emission",
@@ -494,8 +489,7 @@
       "name": "public transport",
       "from": "transport",
       "verb": "kind of",
-      "to": "public",
-      "description": "Modal shift from cars to buses, trams, metro and rail through service expansion and pricing. Translation of the German keyword 'ÖPNV'."
+      "to": "public"
     },
     {
       "name": "speed limit",

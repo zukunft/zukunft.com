@@ -808,7 +808,7 @@
   "views": [
     {
       "name": "Wind investment",
-      "comment": "show is a investment in a wind park or a producer of wind turbines is better",
+      "description": "show is a investment in a wind park or a producer of wind turbines is better",
       "type": "detail_view",
       "components": [
         {

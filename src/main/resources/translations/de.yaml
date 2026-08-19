@@ -261,6 +261,7 @@ messages:
   system_db_field_datetime_precision: "Datumzeit Genauigkeit"
   system_db_field_db_cache_id: "DB Cache ID"
   system_db_field_description: "Beschreibung"
+  system_db_field_doi: "DOI"
   system_db_field_domain_default: "Domäne Standard"
   system_db_field_dtd_identifier: "DTD Bezeichner"
   system_db_field_element_type_id: "Element Typ ID"

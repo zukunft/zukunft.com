@@ -10,7 +10,6 @@
   "words": [
     {
       "name": "conformity",
-      "description": "agreeing with an exogenous source of information when that information is wrong",
       "refs": [
         {
           "name": "Conformity",
@@ -54,16 +53,13 @@
       "description": "an incorrect same/different judgment in the mental rotation task"
     },
     {
-      "name": "rate",
-      "description": "frequency or proportion measured per unit of comparison"
+      "name": "rate"
     },
     {
-      "name": "count",
-      "description": "numerical extent or number of a set"
+      "name": "count"
     },
     {
-      "name": "age",
-      "description": "age of a participant in years"
+      "name": "age"
     },
     {
       "name": "baseline",
@@ -92,20 +88,17 @@
       ]
     },
     {
-      "name": "time",
-      "description": "duration measured for a process"
+      "name": "time"
     },
     {
       "name": "disparity",
       "description": "angular difference of orientation between the two rotated objects"
     },
     {
-      "name": "angle",
-      "description": "an angular quantity measured in degrees"
+      "name": "angle"
     },
     {
-      "name": "stimulus",
-      "description": "one of the paired three-dimensional Shepard and Metzler objects"
+      "name": "stimulus"
     },
     {
       "name": "same",
@@ -150,8 +143,7 @@
       ]
     },
     {
-      "name": "threshold",
-      "description": "significance level applied to select activated voxels"
+      "name": "threshold"
     },
     {
       "name": "scan",
@@ -249,33 +241,28 @@
       ]
     },
     {
-      "name": "duration",
-      "description": "a length of time in the experiment"
+      "name": "duration"
     },
     {
       "name": "page",
       "description": "journal page number"
     },
     {
-      "name": "volume",
-      "description": "journal volume number"
+      "name": "volume"
     },
     {
       "name": "percent"
     },
     {
       "name": "millisecond",
-      "description": "1/1000 of a second",
       "type": "measure"
     },
     {
       "name": "millimetre",
-      "description": "1/1000 of a metre",
       "type": "measure"
     },
     {
-      "name": "mean",
-      "description": "arithmetic mean"
+      "name": "mean"
     },
     {
       "name": "SD",
@@ -318,12 +305,10 @@
       "description": "uncorrected for multiple comparisons"
     },
     {
-      "name": "female",
-      "description": "female participants"
+      "name": "female"
     },
     {
-      "name": "male",
-      "description": "male participants"
+      "name": "male"
     },
     {
       "name": "excluded",
@@ -358,8 +343,7 @@
       "description": "the natural number two"
     },
     {
-      "name": "F",
-      "description": "Fisher F test statistic"
+      "name": "F"
     },
     {
       "name": "MNI",
@@ -378,12 +362,10 @@
       "description": "two qualifying entities holding simultaneously"
     },
     {
-      "name": "centre",
-      "description": "central point of a region"
+      "name": "centre"
     },
     {
-      "name": "coefficient",
-      "description": "a multiplicative factor or constant"
+      "name": "coefficient"
     },
     {
       "name": "condition",
@@ -414,8 +396,7 @@
       "description": "unit of angle equal to 1/360 of a full rotation"
     },
     {
-      "name": "diameter",
-      "description": "straight-line distance through the centre of a sphere"
+      "name": "diameter"
     },
     {
       "name": "difference",
@@ -438,8 +419,7 @@
       "description": "spatial reach of a contiguous activation cluster"
     },
     {
-      "name": "freedom",
-      "description": "unconstrained parameter that may vary independently"
+      "name": "freedom"
     },
     {
       "name": "gyrus",
@@ -474,8 +454,7 @@
       "description": "on the left side of the brain"
     },
     {
-      "name": "limit",
-      "description": "maximum allowable value of a quantity"
+      "name": "limit"
     },
     {
       "name": "main",
@@ -530,8 +509,7 @@
       "description": "set of written questions used to gather responses"
     },
     {
-      "name": "rating",
-      "description": "rated value on a scale, often self-reported"
+      "name": "rating"
     },
     {
       "name": "regression",
@@ -562,8 +540,7 @@
       "description": "reaction time abbreviation"
     },
     {
-      "name": "second",
-      "description": "SI base unit of time"
+      "name": "second"
     },
     {
       "name": "size",
@@ -574,12 +551,10 @@
       "description": "one two-dimensional acquisition plane of a volume"
     },
     {
-      "name": "slope",
-      "description": "rate of change of the regression line"
+      "name": "slope"
     },
     {
-      "name": "sphere",
-      "description": "three-dimensional ball-shaped region"
+      "name": "sphere"
     },
     {
       "name": "split",
@@ -598,24 +573,21 @@
       "description": "participant is confident in their own answer"
     },
     {
-      "name": "t",
-      "description": "Student t test statistic"
+      "name": "t"
     },
     {
       "name": "type",
       "description": "category to which an instance belongs"
     },
     {
-      "name": "unit",
-      "description": "standard quantity used as a measure"
+      "name": "unit"
     },
     {
       "name": "unsure",
       "description": "participant lacks confidence in their own answer"
     },
     {
-      "name": "value",
-      "description": "a quantitative magnitude assigned to a quantity"
+      "name": "value"
     }
   ],
   "triples": [
@@ -1228,7 +1200,6 @@
       "from": "second",
       "verb": "must be one of",
       "to": "time",
-      "description": "SI unit of time",
       "type": "measure"
     },
     {
@@ -1358,7 +1329,7 @@
     {
       "name": "Berns paper",
       "description": "Berns GS, Chappelow J, Zink CF, Pagnoni G, Martin-Skurski ME, Richards J (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biol Psychiatry 58:245-253",
-      "url": "https://doi.org/10.1016/j.biopsych.2005.04.012"
+      "doi": "10.1016/j.biopsych.2005.04.012"
     }
   ],
   "values": [

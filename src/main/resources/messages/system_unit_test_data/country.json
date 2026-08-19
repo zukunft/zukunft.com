@@ -43,8 +43,7 @@
       "name": "million"
     },
     {
-      "name": "ranking",
-      "comment": "relationship between a set of items, often recorded in a list, such that, for any two items, the first is either 'higher than', 'lower than', or 'equal to' the second. The default criteria is here 'good' and 'bad'."
+      "name": "ranking"
     },
     { "name": "k" },
     { "name": "Now" },
@@ -211,7 +210,7 @@
   "views": [
     {
       "name": "country ratios",
-      "comment": "List all countries with the main ratios",
+      "description": "List all countries with the main ratios",
       "components": [
         {
           "position": "1",

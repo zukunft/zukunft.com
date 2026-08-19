@@ -1637,6 +1637,7 @@ CREATE TABLE IF NOT EXISTS sources
     description    text         DEFAULT NULL,
     source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
+    doi            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
     usage          bigint       DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
@@ -1651,6 +1652,7 @@ COMMENT ON COLUMN sources.source_name    IS 'the unique name of the source used 
 COMMENT ON COLUMN sources.description    IS 'the user-specific description of the source for mouse over helps';
 COMMENT ON COLUMN sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN sources.url            IS 'the url of the source';
+COMMENT ON COLUMN sources.doi            IS 'the digital object identifier of the source used to create the url to doi.org';
 COMMENT ON COLUMN sources.code_id        IS 'to select sources used by this program';
 COMMENT ON COLUMN sources.usage          IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN sources.excluded       IS 'true if a user, but not all, have removed it';
@@ -1669,6 +1671,7 @@ CREATE TABLE IF NOT EXISTS user_sources
     description    text         DEFAULT NULL,
     source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
+    doi            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
     usage          bigint       DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
@@ -1683,6 +1686,7 @@ COMMENT ON COLUMN user_sources.source_name    IS 'the unique name of the source 
 COMMENT ON COLUMN user_sources.description    IS 'the user-specific description of the source for mouse over helps';
 COMMENT ON COLUMN user_sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN user_sources.url            IS 'the url of the source';
+COMMENT ON COLUMN user_sources.doi            IS 'the digital object identifier of the source used to create the url to doi.org';
 COMMENT ON COLUMN user_sources.code_id        IS 'to select sources used by this program';
 COMMENT ON COLUMN user_sources.usage          IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN user_sources.excluded       IS 'true if a user, but not all, have removed it';

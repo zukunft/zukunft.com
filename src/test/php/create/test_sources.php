@@ -116,6 +116,7 @@ class test_sources extends test_objects
     {
         global $sys;
         $src = $this->source();
+        $src->doi = sources::TEST_DOI;
         $src->exclude();
         $src->set_share_id($sys->typ_lst->shr_typ->id(share_type_shared::GROUP));
         $src->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::USER));

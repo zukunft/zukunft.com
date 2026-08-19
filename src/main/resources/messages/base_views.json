@@ -329,6 +329,12 @@
       "type": "system_title_with_object_name",
       "code_id": "system_title_verb",
       "ui_msg_code_id": "system_title_verb"
+    },
+    {
+      "name": "source doi link",
+      "description": "show the doi of a source as a link to doi.org",
+      "type": "source_doi_link",
+      "code_id": "source_doi_link"
     }
   ],
   "views": [
@@ -528,6 +534,10 @@
         },
         {
           "position": "2",
+          "name": "source doi link"
+        },
+        {
+          "position": "3",
           "name": "related values"
         }
       ]

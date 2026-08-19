@@ -11,13 +11,19 @@
       "name": "ISO 3166"
     },
     {
-      "name": "ISO 3166 Alpha-3 code"
+      "name": "code"
     },
     {
-      "name": "English short name  (using title case)"
+      "name": "Alpha-3"
     },
     {
-      "name": "Alpha-3 code"
+      "name": "name"
+    },
+    {
+      "name": "short"
+    },
+    {
+      "name": "English"
     },
     {
       "name": "Afghanistan"
@@ -176,8 +182,7 @@
       "name": "BTN"
     },
     {
-      "name": "Bolivia, Plurinational State of",
-      "link": "Bolivia"
+      "name": "Bolivia"
     },
     {
       "name": "BOL"
@@ -303,7 +308,10 @@
       "name": "CXR"
     },
     {
-      "name": "Cocos (Keeling) Islands"
+      "name": "Cocos Islands"
+    },
+    {
+      "name": "Keeling Islands"
     },
     {
       "name": "CCK"
@@ -327,7 +335,7 @@
       "name": "COG"
     },
     {
-      "name": "Congo, Democratic Republic of the"
+      "name": "DR Congo"
     },
     {
       "name": "COD"
@@ -453,7 +461,10 @@
       "name": "ETH"
     },
     {
-      "name": "Falkland Islands (Malvinas)"
+      "name": "Falkland Islands"
+    },
+    {
+      "name": "Malvinas"
     },
     {
       "name": "FLK"
@@ -651,7 +662,7 @@
       "name": "IDN"
     },
     {
-      "name": "Iran, Islamic Republic of"
+      "name": "Iran"
     },
     {
       "name": "IRN"
@@ -729,13 +740,13 @@
       "name": "KIR"
     },
     {
-      "name": "Korea, Democratic People's Republic of"
+      "name": "North Korea"
     },
     {
       "name": "PRK"
     },
     {
-      "name": "Korea, Republic of"
+      "name": "South Korea"
     },
     {
       "name": "KOR"
@@ -885,13 +896,13 @@
       "name": "MEX"
     },
     {
-      "name": "Micronesia, Federated States of"
+      "name": "Micronesia"
     },
     {
       "name": "FSM"
     },
     {
-      "name": "Moldova, Republic of"
+      "name": "Moldova"
     },
     {
       "name": "MDA"
@@ -1041,7 +1052,7 @@
       "name": "PLW"
     },
     {
-      "name": "Palestine, State of"
+      "name": "Palestine"
     },
     {
       "name": "PSE"
@@ -1137,7 +1148,7 @@
       "name": "BLM"
     },
     {
-      "name": "Saint Helena, Ascension and Tristan da Cunha[lower-alpha 4]"
+      "name": "Saint Helena, Ascension and Tristan da Cunha"
     },
     {
       "name": "SHN"
@@ -1155,7 +1166,7 @@
       "name": "LCA"
     },
     {
-      "name": "Saint Martin (French part)"
+      "name": "Saint Martin"
     },
     {
       "name": "MAF"
@@ -1227,7 +1238,7 @@
       "name": "SGP"
     },
     {
-      "name": "Sint Maarten (Dutch part)"
+      "name": "Sint Maarten"
     },
     {
       "name": "SXM"
@@ -1323,7 +1334,7 @@
       "name": "SYR"
     },
     {
-      "name": "Taiwan, Province of China"
+      "name": "Taiwan"
     },
     {
       "name": "TWN"
@@ -1335,7 +1346,7 @@
       "name": "TJK"
     },
     {
-      "name": "Tanzania, United Republic of"
+      "name": "Tanzania"
     },
     {
       "name": "TZA"
@@ -1437,7 +1448,7 @@
       "name": "USA"
     },
     {
-      "name": "United States Minor Outlying Islands[lower-alpha 6]"
+      "name": "United States Minor Outlying Islands"
     },
     {
       "name": "UMI"
@@ -1461,7 +1472,7 @@
       "name": "VUT"
     },
     {
-      "name": "Venezuela, Bolivarian Republic of"
+      "name": "Venezuela"
     },
     {
       "name": "VEN"
@@ -1473,13 +1484,13 @@
       "name": "VNM"
     },
     {
-      "name": "Virgin Islands (British)"
+      "name": "British Virgin Islands"
     },
     {
       "name": "VGB"
     },
     {
-      "name": "Virgin Islands (U.S.)"
+      "name": "United States Virgin Islands"
     },
     {
       "name": "VIR"
@@ -1516,6 +1527,30 @@
     }
   ],
   "triples": [
+    {
+      "name": "Alpha-3 code",
+      "from": "code",
+      "verb": "kind of",
+      "to": "Alpha-3"
+    },
+    {
+      "name": "ISO 3166 Alpha-3 code",
+      "from": "Alpha-3 code",
+      "verb": "of",
+      "to": "ISO 3166"
+    },
+    {
+      "name": "short name",
+      "from": "name",
+      "verb": "kind of",
+      "to": "short"
+    },
+    {
+      "name": "English short name",
+      "from": "short name",
+      "verb": "in",
+      "to": "English"
+    },
     {
       "from": "Afghanistan",
       "verb": "is a",
@@ -1907,9 +1942,14 @@
       "to": "Bhutan"
     },
     {
-      "from": "Bolivia, Plurinational State of",
+      "from": "Bolivia",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Plurinational State of Bolivia",
+      "verb": "is alias of",
+      "to": "Bolivia"
     },
     {
       "from": "BOL",
@@ -1919,7 +1959,7 @@
     {
       "from": "BOL",
       "verb": "is symbol for",
-      "to": "Bolivia, Plurinational State of"
+      "to": "Bolivia"
     },
     {
       "from": "Bonaire, Sint Eustatius and Saba",
@@ -2222,9 +2262,14 @@
       "to": "Christmas Island"
     },
     {
-      "from": "Cocos (Keeling) Islands",
+      "from": "Cocos Islands",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "from": "Keeling Islands",
+      "verb": "is alias of",
+      "to": "Cocos Islands"
     },
     {
       "from": "CCK",
@@ -2234,7 +2279,7 @@
     {
       "from": "CCK",
       "verb": "is symbol for",
-      "to": "Cocos (Keeling) Islands"
+      "to": "Cocos Islands"
     },
     {
       "from": "Colombia",
@@ -2282,9 +2327,14 @@
       "to": "Congo"
     },
     {
-      "from": "Congo, Democratic Republic of the",
+      "from": "DR Congo",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Democratic Republic of the Congo",
+      "verb": "is alias of",
+      "to": "DR Congo"
     },
     {
       "from": "COD",
@@ -2294,7 +2344,7 @@
     {
       "from": "COD",
       "verb": "is symbol for",
-      "to": "Congo, Democratic Republic of the"
+      "to": "DR Congo"
     },
     {
       "from": "Cook Islands",
@@ -2597,9 +2647,14 @@
       "to": "Ethiopia"
     },
     {
-      "from": "Falkland Islands (Malvinas)",
+      "from": "Falkland Islands",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "from": "Malvinas",
+      "verb": "is alias of",
+      "to": "Falkland Islands"
     },
     {
       "from": "FLK",
@@ -2609,7 +2664,7 @@
     {
       "from": "FLK",
       "verb": "is symbol for",
-      "to": "Falkland Islands (Malvinas)"
+      "to": "Falkland Islands"
     },
     {
       "from": "Faroe Islands",
@@ -3092,9 +3147,14 @@
       "to": "Indonesia"
     },
     {
-      "from": "Iran, Islamic Republic of",
+      "from": "Iran",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Islamic Republic of Iran",
+      "verb": "is alias of",
+      "to": "Iran"
     },
     {
       "from": "IRN",
@@ -3104,7 +3164,7 @@
     {
       "from": "IRN",
       "verb": "is symbol for",
-      "to": "Iran, Islamic Republic of"
+      "to": "Iran"
     },
     {
       "from": "Iraq",
@@ -3287,9 +3347,14 @@
       "to": "Kiribati"
     },
     {
-      "from": "Korea, Democratic People's Republic of",
+      "from": "North Korea",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Democratic People's Republic of Korea",
+      "verb": "is alias of",
+      "to": "North Korea"
     },
     {
       "from": "PRK",
@@ -3299,12 +3364,17 @@
     {
       "from": "PRK",
       "verb": "is symbol for",
-      "to": "Korea, Democratic People's Republic of"
+      "to": "North Korea"
     },
     {
-      "from": "Korea, Republic of",
+      "from": "South Korea",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Republic of Korea",
+      "verb": "is alias of",
+      "to": "South Korea"
     },
     {
       "from": "KOR",
@@ -3314,7 +3384,7 @@
     {
       "from": "KOR",
       "verb": "is symbol for",
-      "to": "Korea, Republic of"
+      "to": "South Korea"
     },
     {
       "from": "Kuwait",
@@ -3677,9 +3747,14 @@
       "to": "Mexico"
     },
     {
-      "from": "Micronesia, Federated States of",
+      "from": "Micronesia",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Federated States of Micronesia",
+      "verb": "is alias of",
+      "to": "Micronesia"
     },
     {
       "from": "FSM",
@@ -3689,12 +3764,17 @@
     {
       "from": "FSM",
       "verb": "is symbol for",
-      "to": "Micronesia, Federated States of"
+      "to": "Micronesia"
     },
     {
-      "from": "Moldova, Republic of",
+      "from": "Moldova",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Republic of Moldova",
+      "verb": "is alias of",
+      "to": "Moldova"
     },
     {
       "from": "MDA",
@@ -3704,7 +3784,7 @@
     {
       "from": "MDA",
       "verb": "is symbol for",
-      "to": "Moldova, Republic of"
+      "to": "Moldova"
     },
     {
       "from": "Monaco",
@@ -4067,9 +4147,14 @@
       "to": "Palau"
     },
     {
-      "from": "Palestine, State of",
+      "from": "Palestine",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "State of Palestine",
+      "verb": "is alias of",
+      "to": "Palestine"
     },
     {
       "from": "PSE",
@@ -4079,7 +4164,7 @@
     {
       "from": "PSE",
       "verb": "is symbol for",
-      "to": "Palestine, State of"
+      "to": "Palestine"
     },
     {
       "from": "Panama",
@@ -4307,7 +4392,7 @@
       "to": "Saint Barth\u00e9lemy"
     },
     {
-      "from": "Saint Helena, Ascension and Tristan da Cunha[lower-alpha 4]",
+      "from": "Saint Helena, Ascension and Tristan da Cunha",
       "verb": "is a",
       "to": "country"
     },
@@ -4319,7 +4404,7 @@
     {
       "from": "SHN",
       "verb": "is symbol for",
-      "to": "Saint Helena, Ascension and Tristan da Cunha[lower-alpha 4]"
+      "to": "Saint Helena, Ascension and Tristan da Cunha"
     },
     {
       "from": "Saint Kitts and Nevis",
@@ -4352,7 +4437,7 @@
       "to": "Saint Lucia"
     },
     {
-      "from": "Saint Martin (French part)",
+      "from": "Saint Martin",
       "verb": "is a",
       "to": "country"
     },
@@ -4364,7 +4449,7 @@
     {
       "from": "MAF",
       "verb": "is symbol for",
-      "to": "Saint Martin (French part)"
+      "to": "Saint Martin"
     },
     {
       "from": "Saint Pierre and Miquelon",
@@ -4532,7 +4617,7 @@
       "to": "Singapore"
     },
     {
-      "from": "Sint Maarten (Dutch part)",
+      "from": "Sint Maarten",
       "verb": "is a",
       "to": "country"
     },
@@ -4544,7 +4629,7 @@
     {
       "from": "SXM",
       "verb": "is symbol for",
-      "to": "Sint Maarten (Dutch part)"
+      "to": "Sint Maarten"
     },
     {
       "from": "Slovakia",
@@ -4772,9 +4857,15 @@
       "to": "Syrian Arab Republic"
     },
     {
-      "from": "Taiwan, Province of China",
+      "from": "Taiwan",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Taiwan, Province of China",
+      "verb": "is alias of",
+      "to": "Taiwan",
+      "description": "the ISO 3166 listing name of Taiwan, which is an apposition and not an official long form"
     },
     {
       "from": "TWN",
@@ -4784,7 +4875,7 @@
     {
       "from": "TWN",
       "verb": "is symbol for",
-      "to": "Taiwan, Province of China"
+      "to": "Taiwan"
     },
     {
       "from": "Tajikistan",
@@ -4802,9 +4893,14 @@
       "to": "Tajikistan"
     },
     {
-      "from": "Tanzania, United Republic of",
+      "from": "Tanzania",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "United Republic of Tanzania",
+      "verb": "is alias of",
+      "to": "Tanzania"
     },
     {
       "from": "TZA",
@@ -4814,7 +4910,7 @@
     {
       "from": "TZA",
       "verb": "is symbol for",
-      "to": "Tanzania, United Republic of"
+      "to": "Tanzania"
     },
     {
       "from": "Thailand",
@@ -5057,7 +5153,7 @@
       "to": "United States of America"
     },
     {
-      "from": "United States Minor Outlying Islands[lower-alpha 6]",
+      "from": "United States Minor Outlying Islands",
       "verb": "is a",
       "to": "country"
     },
@@ -5069,7 +5165,7 @@
     {
       "from": "UMI",
       "verb": "is symbol for",
-      "to": "United States Minor Outlying Islands[lower-alpha 6]"
+      "to": "United States Minor Outlying Islands"
     },
     {
       "from": "Uruguay",
@@ -5117,9 +5213,14 @@
       "to": "Vanuatu"
     },
     {
-      "from": "Venezuela, Bolivarian Republic of",
+      "from": "Venezuela",
       "verb": "is a",
       "to": "country"
+    },
+    {
+      "name": "Bolivarian Republic of Venezuela",
+      "verb": "is alias of",
+      "to": "Venezuela"
     },
     {
       "from": "VEN",
@@ -5129,7 +5230,7 @@
     {
       "from": "VEN",
       "verb": "is symbol for",
-      "to": "Venezuela, Bolivarian Republic of"
+      "to": "Venezuela"
     },
     {
       "from": "Viet Nam",
@@ -5147,7 +5248,7 @@
       "to": "Viet Nam"
     },
     {
-      "from": "Virgin Islands (British)",
+      "from": "British Virgin Islands",
       "verb": "is a",
       "to": "country"
     },
@@ -5159,10 +5260,10 @@
     {
       "from": "VGB",
       "verb": "is symbol for",
-      "to": "Virgin Islands (British)"
+      "to": "British Virgin Islands"
     },
     {
-      "from": "Virgin Islands (U.S.)",
+      "from": "United States Virgin Islands",
       "verb": "is a",
       "to": "country"
     },
@@ -5174,7 +5275,7 @@
     {
       "from": "VIR",
       "verb": "is symbol for",
-      "to": "Virgin Islands (U.S.)"
+      "to": "United States Virgin Islands"
     },
     {
       "from": "Wallis and Futuna",

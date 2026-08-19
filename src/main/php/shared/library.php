@@ -500,7 +500,7 @@ class library
      * format a generated sql script so that it is easy to read and review
      * e.g. as in the test resource files of src/test/resources/db/format_test/
      * supports the postgres log functions, the mariadb log procedures,
-     * the prepared update statements
+     * the prepared insert and update statements
      * and the prepared select queries with the user sandbox case or if fields
      * a sql script that does not match any of these patterns is returned unchanged
      *
@@ -521,6 +521,8 @@ class library
             . 'BEGIN (.+) END; '
             . "PREPARE (\S+) FROM 'SELECT (\S+) \((.+?)\)'; "
             . 'SELECT (\S+) \((.+)\);$/';
+        $pg_insert = '/^PREPARE (\S+)(?: \((.+?)\))? AS (INSERT INTO .+);$/';
+        $my_insert = "/^PREPARE (\S+) FROM '(INSERT INTO .+)';$/";
         $pg_update = '/^PREPARE (\S+) \((.+?)\) AS (UPDATE .+);$/';
         $my_update = "/^PREPARE (\S+) FROM '(UPDATE .+)';$/";
         $pg_select = '/^PREPARE (\S+)(?: \((.+?)\))? AS SELECT (.+?) FROM (.+);$/';
@@ -529,12 +531,20 @@ class library
             $result = $this->sql_format_function($prt);
         } elseif (preg_match($my_procedure, $sql, $prt)) {
             $result = $this->sql_format_procedure($prt);
+        } elseif (preg_match($pg_insert, $sql, $prt)) {
+            // the parameter list is optional e.g. an insert of only fixed values
+            $params = ($prt[2] ?? '') != '' ? ' (' . implode(', ', $this->sql_split($prt[2])) . ')' : '';
+            $result = 'PREPARE ' . $prt[1] . $params . " AS\n"
+                . $this->sql_format_insert_stmt($prt[3]);
+        } elseif (preg_match($my_insert, $sql, $prt)) {
+            $result = 'PREPARE ' . $prt[1] . " FROM\n"
+                . $this->sql_format_quoted($this->sql_format_insert_stmt($prt[2]));
         } elseif (preg_match($pg_update, $sql, $prt)) {
             $result = 'PREPARE ' . $prt[1] . ' (' . implode(', ', $this->sql_split($prt[2])) . ") AS\n"
                 . $this->sql_format_update($prt[3]);
         } elseif (preg_match($my_update, $sql, $prt)) {
             $result = 'PREPARE ' . $prt[1] . " FROM\n"
-                . $this->sql_format_update_quoted($prt[2]);
+                . $this->sql_format_quoted($this->sql_format_update($prt[2]));
         } elseif (preg_match($pg_select, $sql, $prt)) {
             // the parameter list is optional e.g. the count queries prepare without a parameter
             $params = ($prt[2] ?? '') != '' ? ' (' . implode(', ', $this->sql_split($prt[2])) . ')' : '';
@@ -557,8 +567,9 @@ class library
      * format a table setup script the same way the existing setup sql test resource
      * files are formatted, i.e. a create table, index or foreign key / constraint
      * script (one or several statements with the matching header comment blocks):
-     * a header comment block, for a CREATE TABLE one column per line with the names
-     * aligned (and for the mariadb dialect the types and null clause aligned as well)
+     * a header comment block, for a CREATE TABLE one column per line with the names,
+     * the types and the null clause aligned and the closing bracket on its own line,
+     * for a group of COMMENT ON statements the IS aligned
      * and for an ALTER TABLE with several clauses one clause per line.
      *
      * the formatting only rearranges whitespace and never changes any token, so
@@ -571,8 +582,6 @@ class library
     private function sql_format_setup(string $sql): string
     {
         $input = $this->trim($sql);
-        $is_mysql = stripos($input, 'ENGINE = InnoDB') !== false
-            || stripos($input, 'AUTO_INCREMENT') !== false;
 
         $result = '';
         $prev_kind = '';
@@ -580,7 +589,7 @@ class library
             if ($st == '') {
                 continue;
             }
-            $piece = $this->sql_format_setup_stmt($st, $is_mysql) . ';';
+            $piece = $this->sql_format_setup_stmt($st) . ';';
             $kind = $this->sql_format_setup_kind($piece);
             // a header prefixed statement always starts a new table section
             $starts_group = str_starts_with($piece, '--');
@@ -599,7 +608,7 @@ class library
             }
             $prev_kind = $kind;
         }
-        $result .= "\n";
+        $result = $this->sql_format_align_comments($result) . "\n";
 
         // safety net: never change any token; keep the raw input if the reformat does not match
         // the input under the same normalization that the sql asserts use (trim_sql),
@@ -616,10 +625,9 @@ class library
      * the mariadb auto increment block, the CREATE TABLE and the ALTER TABLE clauses
      *
      * @param string $st one top level statement without the trailing ';'
-     * @param bool $is_mysql true to align the statement for the mariadb dialect
      * @return string the formatted statement
      */
-    private function sql_format_setup_stmt(string $st, bool $is_mysql): string
+    private function sql_format_setup_stmt(string $st): string
     {
         $prefix = '';
         // a real separator line has many dashes; the '-- ... --' header has only two
@@ -639,7 +647,7 @@ class library
             $st = trim($m[2]);
         }
         if (preg_match('/^CREATE TABLE /', $st)) {
-            return $prefix . $this->sql_format_create_table($st, $is_mysql);
+            return $prefix . $this->sql_format_create_table($st);
         }
         // an ALTER TABLE with several comma separated clauses gets one clause per line
         if (preg_match('/^ALTER TABLE (\S+) (.+)$/s', $st, $m)) {
@@ -654,14 +662,13 @@ class library
     }
 
     /**
-     * format a single CREATE TABLE statement with one column per line and the names
-     * (and for mariadb the types and null clause) aligned in columns
+     * format a single CREATE TABLE statement with one column per line, the names, the
+     * types and the null clause aligned in columns and the closing bracket on its own line
      *
      * @param string $create the CREATE TABLE statement without the trailing ';'
-     * @param bool $is_mysql true to align the statement for the mariadb dialect
      * @return string the formatted CREATE TABLE statement
      */
-    private function sql_format_create_table(string $create, bool $is_mysql): string
+    private function sql_format_create_table(string $create): string
     {
         if (!preg_match('/^CREATE TABLE (IF NOT EXISTS )?(\S+) \((.*)$/s', $create, $m)) {
             return $create;
@@ -722,44 +729,38 @@ class library
             $def = $sp === false ? '' : trim(substr($c, $sp + 1));
             $parsed[] = [$name, $def];
             $name_w = max($name_w, strlen($name));
-            if ($is_mysql) {
-                $sp2 = strpos($def, ' ');
-                $type = $sp2 === false ? $def : substr($def, 0, $sp2);
-                $after = $sp2 === false ? '' : trim(substr($def, $sp2 + 1));
-                $type_w = max($type_w, strlen($type));
-                if (str_starts_with($after, 'NOT NULL')) {
-                    $null_w = max($null_w, 8);
-                } elseif (str_starts_with($after, 'DEFAULT NULL')) {
-                    $null_w = max($null_w, 12);
-                }
+            $sp2 = strpos($def, ' ');
+            $type = $sp2 === false ? $def : substr($def, 0, $sp2);
+            $after = $sp2 === false ? '' : trim(substr($def, $sp2 + 1));
+            $type_w = max($type_w, strlen($type));
+            if (str_starts_with($after, 'NOT NULL')) {
+                $null_w = max($null_w, 8);
+            } elseif (str_starts_with($after, 'DEFAULT NULL')) {
+                $null_w = max($null_w, 12);
             }
         }
 
         // build the aligned column lines
         $lines = [];
         foreach ($parsed as [$name, $def]) {
-            if ($is_mysql) {
-                $sp = strpos($def, ' ');
-                $type = $sp === false ? $def : substr($def, 0, $sp);
-                $after = $sp === false ? '' : trim(substr($def, $sp + 1));
-                $null_clause = '';
-                $rem = $after;
-                if (str_starts_with($after, 'NOT NULL')) {
-                    $null_clause = 'NOT NULL';
-                    $rem = trim(substr($after, 8));
-                } elseif (str_starts_with($after, 'DEFAULT NULL')) {
-                    $null_clause = 'DEFAULT NULL';
-                    $rem = trim(substr($after, 12));
-                }
-                if ($null_clause != '') {
-                    $body = str_pad($type, $type_w) . ' '
-                        . str_pad($null_clause, $null_w, ' ', STR_PAD_LEFT)
-                        . ($rem != '' ? ' ' . $rem : '');
-                } else {
-                    $body = str_pad($type, $type_w) . ($after != '' ? ' ' . $after : '');
-                }
+            $sp = strpos($def, ' ');
+            $type = $sp === false ? $def : substr($def, 0, $sp);
+            $after = $sp === false ? '' : trim(substr($def, $sp + 1));
+            $null_clause = '';
+            $rem = $after;
+            if (str_starts_with($after, 'NOT NULL')) {
+                $null_clause = 'NOT NULL';
+                $rem = trim(substr($after, 8));
+            } elseif (str_starts_with($after, 'DEFAULT NULL')) {
+                $null_clause = 'DEFAULT NULL';
+                $rem = trim(substr($after, 12));
+            }
+            if ($null_clause != '') {
+                $body = str_pad($type, $type_w) . ' '
+                    . str_pad($null_clause, $null_w, ' ', STR_PAD_LEFT)
+                    . ($rem != '' ? ' ' . $rem : '');
             } else {
-                $body = $def;
+                $body = str_pad($type, $type_w) . ($after != '' ? ' ' . $after : '');
             }
             $lines[] = '    ' . str_pad($name, $name_w) . ' ' . rtrim($body);
         }
@@ -767,21 +768,60 @@ class library
             $lines[] = '    ' . $c;
         }
 
+        // the mariadb table options follow the closing bracket, one option per line
         $out = 'CREATE TABLE ' . $if_not_exists . $table . "\n(\n";
-        if ($is_mysql) {
-            $out .= implode(",\n", $lines) . "\n)";
-            if ($tbl_tail != '') {
-                if (preg_match("/^ENGINE = (\S+) DEFAULT CHARSET = (\S+) COMMENT ('.*')$/s", $tbl_tail, $em)) {
-                    $out .= "\n    ENGINE = " . $em[1] . "\n    DEFAULT CHARSET = " . $em[2]
-                        . "\n    COMMENT " . $em[3];
-                } else {
-                    $out .= ' ' . $tbl_tail;
-                }
+        $out .= implode(",\n", $lines) . "\n)";
+        if ($tbl_tail != '') {
+            if (preg_match("/^ENGINE = (\S+) DEFAULT CHARSET = (\S+) COMMENT ('.*')$/s", $tbl_tail, $em)) {
+                $out .= "\n    ENGINE = " . $em[1] . "\n    DEFAULT CHARSET = " . $em[2]
+                    . "\n    COMMENT " . $em[3];
+            } else {
+                $out .= ' ' . $tbl_tail;
             }
-        } else {
-            $out .= implode(",\n", $lines) . ')';
         }
         return $out;
+    }
+
+    /**
+     * align the IS of each group of directly following COMMENT ON statements
+     * so that the comment texts of one table start in the same column
+     *
+     * @param string $sql a formatted table setup script
+     * @return string the script with the object names of each comment group padded
+     */
+    private function sql_format_align_comments(string $sql): string
+    {
+        $lines = explode("\n", $sql);
+        $group = [];
+        foreach ($lines as $pos => $line) {
+            if (preg_match('/^(COMMENT ON (?:TABLE|COLUMN) \S+) IS (.*)$/', $line, $m)) {
+                $group[$pos] = [$m[1], $m[2]];
+            } else {
+                $lines = $this->sql_format_align_comment_group($lines, $group);
+                $group = [];
+            }
+        }
+        $lines = $this->sql_format_align_comment_group($lines, $group);
+        return implode("\n", $lines);
+    }
+
+    /**
+     * pad the object names of one group of COMMENT ON statements to the longest of the group
+     *
+     * @param array $lines the lines of the formatted table setup script
+     * @param array $group the parsed comment lines of one group keyed by the line position
+     * @return array the lines with the comments of the given group aligned
+     */
+    private function sql_format_align_comment_group(array $lines, array $group): array
+    {
+        $width = 0;
+        foreach ($group as [$head]) {
+            $width = max($width, strlen($head));
+        }
+        foreach ($group as $pos => [$head, $text]) {
+            $lines[$pos] = str_pad($head, $width) . ' IS ' . $text;
+        }
+        return $lines;
     }
 
     /**
@@ -1050,6 +1090,32 @@ class library
     }
 
     /**
+     * format a prepared insert statement with the field list, the value list and the
+     * returning field on their own line, the keywords right aligned and the value list
+     * starting in the same column as the field list
+     *
+     * @param string $stm a single line statement e.g. 'INSERT INTO sources (user_id) VALUES ($1) RETURNING source_id'
+     * @return string the insert statement with one clause per line and the closing semicolon
+     */
+    private function sql_format_insert_stmt(string $stm): string
+    {
+        // an unexpected statement is kept on a single line
+        if (!preg_match('/^INSERT INTO (\S+) \((.+?)\) VALUES \((.+?)\)(?: RETURNING (.+))?$/', $stm, $prt)) {
+            return '    ' . $stm . ';';
+        }
+        $head = '    INSERT INTO ' . $prt[1] . ' ';
+        $key_w = strlen('    INSERT INTO');
+        $lines = [$head . '(' . implode(', ', $this->sql_split($prt[2])) . ')'];
+        $lines[] = str_pad('VALUES', $key_w, ' ', STR_PAD_LEFT)
+            . str_pad('', strlen($head) - $key_w)
+            . '(' . implode(', ', $this->sql_split($prt[3])) . ')';
+        if (($prt[4] ?? '') != '') {
+            $lines[] = str_pad('RETURNING', $key_w, ' ', STR_PAD_LEFT) . ' ' . $prt[4];
+        }
+        return implode("\n", $lines) . ';';
+    }
+
+    /**
      * format an update statement with one field per line and the values aligned
      *
      * @param string $stm a single line statement e.g. 'UPDATE user_words SET word_name = _word_name WHERE ...'
@@ -1085,16 +1151,16 @@ class library
     }
 
     /**
-     * format a prepared mariadb update statement which is quoted as a string
+     * quote a formatted mariadb statement e.g. an insert or an update
      * each line gets an extra leading space so that the statement
-     * keeps the update layout within the quotes
+     * keeps its layout within the quotes
      *
-     * @param string $stm a single line update statement without the quotes
-     * @return string the formatted update statement including the quotes
+     * @param string $stm a formatted statement without the quotes
+     * @return string the formatted statement including the quotes
      */
-    private function sql_format_update_quoted(string $stm): string
+    private function sql_format_quoted(string $stm): string
     {
-        $lines = explode("\n", $this->sql_format_update($stm));
+        $lines = explode("\n", $stm);
         foreach ($lines as $i => $line) {
             if ($i == 0) {
                 $lines[$i] = substr($line, 0, 4) . "'" . substr($line, 4);

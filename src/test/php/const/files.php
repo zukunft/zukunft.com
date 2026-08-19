@@ -215,6 +215,9 @@ class files
     CONST string SQL_FORMAT_TEST_MYSQL = 'word_update_log_0022004000002_user_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_INSERT = 'word_insert_log_0111005000001' . self::SQL;
     CONST string SQL_FORMAT_TEST_INSERT_MYSQL = 'word_insert_log_0111005000001_mysql' . self::SQL;
+    // the prepared insert statement without the change log function
+    CONST string SQL_FORMAT_TEST_INSERT_PREPARED = 'source_insert_01110011000' . self::SQL;
+    CONST string SQL_FORMAT_TEST_INSERT_PREPARED_MYSQL = 'source_insert_01110011000_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_UPDATE = 'word_update_0022004000002' . self::SQL;
     CONST string SQL_FORMAT_TEST_UPDATE_MYSQL = 'word_update_0022004000002_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
@@ -225,6 +228,8 @@ class files
     CONST string SQL_FORMAT_TEST_COUNT_USER_MYSQL = 'user_list_by_count_user_rows_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE = 'db_cache_page_create' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE_MYSQL = 'db_cache_page_create_mysql' . self::SQL;
+    // the create of a table with its user sandbox table and the column comments
+    CONST string SQL_FORMAT_TEST_CREATE_USER = 'source_create' . self::SQL;
 
     // for the JSON formatter
     CONST string JSON_FORMAT_TEST_WORDS = 'words_compact' . self::JSON;

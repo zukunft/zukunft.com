@@ -641,7 +641,7 @@
     {
       "name": "Gneezy Rustichini 2000",
       "description": "Gneezy U, Rustichini A (2000). A Fine Is a Price. Journal of Legal Studies 29(1):1-17. Field experiment: a fine for late daycare pickup increased lateness and the effect persisted after removal.",
-      "url": "https://doi.org/10.1086/468061"
+      "doi": "10.1086/468061"
     },
     {
       "name": "Titmuss 1970",
@@ -651,17 +651,17 @@
     {
       "name": "Ostrom 1990",
       "description": "Ostrom E (1990). Governing the Commons: The Evolution of Institutions for Collective Action. Cambridge University Press. Documents long-lived user-governed common-pool resource regimes, e.g. Toerbel (Wallis) Alpine commons.",
-      "url": "https://doi.org/10.1017/CBO9780511807763"
+      "doi": "10.1017/CBO9780511807763"
     },
     {
       "name": "Galor Oezak 2016",
       "description": "Galor O, Oezak O (2016). The Agricultural Origins of Time Preference. American Economic Review 106(10):3064-3103. Pre-industrial agro-climatic return to investment predicts contemporary long-term orientation.",
-      "url": "https://doi.org/10.1257/aer.20150020"
+      "doi": "10.1257/aer.20150020"
     },
     {
       "name": "Mehlum Moene Torvik 2006",
       "description": "Mehlum H, Moene K, Torvik R (2006). Institutions and the Resource Curse. The Economic Journal 116(508):1-20. The resource curse operates through the quality of institutions.",
-      "url": "https://doi.org/10.1111/j.1468-0297.2006.01045.x"
+      "doi": "10.1111/j.1468-0297.2006.01045.x"
     }
   ],
   "values": [

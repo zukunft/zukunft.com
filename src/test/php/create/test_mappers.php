@@ -1888,6 +1888,7 @@ class test_mappers
         $url_array[] = [url_var::NAME, $src->name()];
         $url_array[] = [url_var::DESCRIPTION, $src->get_description()];
         $url_array[] = [url_var::URL, $src->url];
+        $url_array[] = [url_var::DOI, $src->doi];
         $url_array[] = [url_var::TYPE, $src->type_id($msg)];
         // TODO Prio 1 activate
         // $url_array[] = [url_var::VIEW, $src->get_view_id()];

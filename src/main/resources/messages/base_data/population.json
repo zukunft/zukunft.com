@@ -64,7 +64,6 @@
     },
     {
       "name": "woman",
-      "description": "an adult female human being.",
       "refs": [
         {
           "name": "Woman",
@@ -168,7 +167,6 @@
   "sources": [
     {
       "name": "UN World Population Prospects 2024",
-      "description": "United Nations, World Population Prospects 2024: world population about 8.09 billion mid-2023 and 8.16 billion mid-2024; global total fertility rate about 2.25 children per woman in 2023.",
       "url": "https://population.un.org/wpp/"
     },
     {
@@ -179,7 +177,7 @@
     {
       "name": "Espenshade Guzman Westoff 2003",
       "description": "Espenshade TJ, Guzman JC, Westoff CF (2003). The surprising global variation in replacement fertility. Population Research and Policy Review 22:575-583. Replacement-level fertility averages about 2.1 children per woman.",
-      "url": "https://doi.org/10.1023/B:POPU.0000020882.29684.8e"
+      "doi": "10.1023/B:POPU.0000020882.29684.8e"
     }
   ],
   "values": [

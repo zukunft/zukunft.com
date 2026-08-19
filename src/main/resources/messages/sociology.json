@@ -416,7 +416,6 @@
     },
     {
       "name": "value",
-      "description": "personal value, basis for ethical action",
       "refs": [
         {
           "name": "Value (ethics and social sciences)",
@@ -1312,7 +1311,6 @@
     },
     {
       "name": "life expectancy",
-      "description": "statistical measure of how long a person or organism may live, based on factors of their life",
       "from": "expectancy",
       "verb": "of",
       "to": "life",

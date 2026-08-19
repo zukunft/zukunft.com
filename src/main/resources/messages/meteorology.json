@@ -409,7 +409,6 @@
     },
     {
       "name": "precipitation",
-      "description": "liquid or solid water that falls to the ground",
       "refs": [
         {
           "name": "Precipitation (meteorology)",

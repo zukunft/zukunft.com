@@ -111,6 +111,9 @@ class json_fields
     // the external link of a source or a reference
     const string URL = 'url';
 
+    // the digital object identifier of a source used to create the url to doi.org
+    const string DOI = 'doi';
+
     // the pre-rendered html page of a cached view-only request
     const string HTML_PAGE = 'html_page';
 
