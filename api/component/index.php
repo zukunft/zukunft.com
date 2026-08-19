@@ -34,8 +34,10 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -65,7 +67,7 @@ if ($db_con->is_open()) {
 
         // the session user may differ from the data user e.g. an admin wants to see the data
         // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg);
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
 
         $cmp = new component($load_usr);
         if ($cmp_id > 0) {

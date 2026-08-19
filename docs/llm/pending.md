@@ -2,6 +2,8 @@
 
 ## user default view
 
+add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used   
+
 add the trible overwrites to the 'all_user_overwrites' component
 
 similar to the my tab in the word default view add a my tab to the formula default view
