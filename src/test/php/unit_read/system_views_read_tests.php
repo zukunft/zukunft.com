@@ -40,6 +40,7 @@ include_once paths::SHARED_CONST . 'views.php';
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -61,6 +63,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -78,6 +81,7 @@ class system_views_read_tests
     {
         // init
         $t_frm = new test_formulas($t);
+        $t_log = new test_log($t);
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
         $msg = new user_message();
@@ -148,6 +152,18 @@ class system_views_read_tests
         $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
         $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);
         // USER
+        // the user page lists the sandbox overwrites of the shown user in a fixed column, so the
+        // change log of the test context decides what the column shows; the overwrites of the
+        // test user are taken from a fixture, because the changes in the database grow with every
+        // test run, which would make the snapshot change without a code change
+        $cfg_chg = clone $cfg;
+        $cfg_chg->chg_log = $t_log->log_list_user_overwrites_ui();
+        // the shown user has done the overwrites of the test context, so the column lists them
+        // and names the changed word and triple of each overwrite
+        $t->assert_view(views::USER, $t->usr1, new user(), users::SYSTEM_TEST_ID, $cfg_chg);
+        // the same test context for a user who has not done any of these overwrites, so the column
+        // shows the no-changes message, which also checks that it filters by the shown user
+        $t->assert_view(views::USER, $t->usr1, new user(), users::SYSTEM_TEST_NORMAL_ID, $cfg_chg);
         // LANGUAGE
         // SYS LOG
         // CHANGE LOG

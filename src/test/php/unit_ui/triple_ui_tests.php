@@ -42,14 +42,19 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_ui_tests
@@ -125,6 +130,46 @@ class triple_ui_tests
         $t->assert_text_contains($test_name, $ttl_html, $trp->get_from()->name());
         $test_name = 'the phrase title subheader names the to phrase of the triple';
         $t->assert_text_contains($test_name, $ttl_html, $trp->get_to()->name());
+
+        $t->subheader($ts . 'view tab box');
+
+        // like on the word page the 'my' tab shows the fields the session user has overwritten
+        // in user_triples and is only shown if the user is logged in and the api has delivered
+        // overwrites; the tab rendering itself is shared with the word page (ui_list::view_tab_box),
+        // so this block checks that a triple with overwrites gets the tab like a word
+        global $ui_sys;
+        global $mtr;
+        $trp_json = json_decode($t_trp->triple()->api_json(), true);
+        $trp_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_DESCRIPTION,
+                json_fields::USR_VALUE => 'my triple description',
+                json_fields::STD_VALUE => triple_names::MATH_CONST_COM,
+            ],
+        ];
+        $trp_tab = new triple(json_encode($trp_json));
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+
+        $test_name = 'the user with triple overwrites sees the my tab';
+        $t_usr = new test_users();
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($trp_tab, $msg, true);
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+
+        $test_name = '... with the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, 'my triple description');
+        $t->assert_text_contains($test_name, $tab_html, triple_names::MATH_CONST_COM);
+
+        $test_name = 'without a logged in user the triple page shows no my tab';
+        unset($ui_sys->usr);
+        $anon_html = $list->view_tab_box($trp_tab, $msg, true);
+        $t->assert_text_not_contains($test_name, $anon_html, $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep != null) {
+            $ui_sys->usr = $usr_tab_keep;
+        }
     }
 
 }

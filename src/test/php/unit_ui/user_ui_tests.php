@@ -42,6 +42,7 @@ include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_log.php';
 include_once test_paths::CREATE . 'test_sys_log.php';
@@ -49,11 +50,17 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
@@ -107,6 +114,66 @@ class user_ui_tests
 
         $test_name = 'the normal table changes of other objects are not listed as overwrites';
         $t->assert_text_not_contains($test_name, $chg_html, word_names::MATH);
+
+        // the column lists the overwrites of every object type, not only the word overwrites, so
+        // that a user sees all changes on one page (the same filter by the user sandbox tables,
+        // see change_log_list::filter_user_overwrites and change_tables::USER_TABLES)
+        $usr_sys_ui->chg_log = $t_log->log_list_user_overwrites_ui();
+        $all_html = $log->all_user_overwrites($usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
+        $test_name = 'the word overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, views::WORD_NAME);
+        $test_name = 'the triple overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, triple_names::MATH_CONST_COM);
+        $test_name = 'the standard table change is not listed beside the overwrites';
+        $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
+
+        // the column lists the changes of more than one object, so the change text alone does not
+        // tell the user which object has been changed and the what column names the object first;
+        // the name comes first, so that it survives the shortening of the what column
+        $test_name = 'the what column names the changed triple';
+        $t->assert_text_contains($test_name, $all_html,
+            triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed word';
+        $t->assert_text_contains($test_name, $all_html,
+            word_names::MATH . change_log_named_ui::OBJECT_SEPARATOR);
+
+        $test_name = 'the object name is not cut off by the what column limit';
+        $t->assert_text_contains($test_name, $all_html,
+            triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR . $mtr->txt(msg_id::LOG_ADD));
+        $test_page .= $all_html . '<br>';
+
+        // a user can have far more overwrites than a page should show (over 15'000 for the system
+        // user), so the list is cut to the configured number of rows before the rows are prepared
+        // and the newest overwrites are the ones that are shown
+        $usr_sys_ui->chg_log = $t_log->log_list_many_user_overwrites_ui();
+        $many_html = $log->all_user_overwrites($usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
+        // the same limit and the same fallback as ui_log::configured_row_limit, because the unit
+        // tests use an empty frontend config, so that here the fallback is the effective limit
+        global $ui_sys;
+        $row_limit = config::ROW_LIMIT;
+        if ($ui_sys?->cfg !== null) {
+            $row_limit = (int)$ui_sys->cfg->get_by(
+                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg, config::ROW_LIMIT);
+        }
+        $test_name = 'the newest overwrite is shown';
+        $t->assert_text_contains($test_name, $many_html,
+            test_log::OVERWRITE_VALUE . test_log::MANY_OVERWRITES);
+        $test_name = 'the oldest overwrite above the configured row limit is not shown';
+        $t->assert_text_not_contains($test_name, $many_html, test_log::OVERWRITE_VALUE . '01');
+        // one table row per shown change plus the header row and the paging row that tells the
+        // user that more changes exist
+        $test_name = 'the change log table shows the configured number of rows';
+        $t->assert($test_name, substr_count($many_html, '<' . html_base::TR . '>'), $row_limit + 2);
+
+        // on an object page the object is named by the page itself, so the change log there must
+        // not repeat the object name in every row; the object is only named where it is requested
+        $test_name = 'by default a change does not name the changed object';
+        $plain_what = '';
+        foreach ($t_log->log_list_user_overwrites_ui()->lst() as $chg_ui) {
+            $plain_what .= $chg_ui->what_text();
+        }
+        $t->assert_text_not_contains($test_name, $plain_what, change_log_named_ui::OBJECT_SEPARATOR);
 
         $test_name = 'a user without changes gets the no-changes message';
         $none_html = $log->all_user_overwrites($usr_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);

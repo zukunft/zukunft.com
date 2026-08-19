@@ -89,6 +89,14 @@ class system_object
     public system_time_list $times;
     // to avoid repeating the same message
     public array $log_msg_lst;
+    // true while a log entry is written to the database, so that an error inside the log writer
+    // itself (e.g. a failed sys_log insert or a permission check of the log function name) does
+    // not call the log writer again, which would never end (see log_msg)
+    public bool $log_writing = false;
+    // the number of log entries dropped because they have been caused by the log writer itself;
+    // these errors are still counted in errors above (log_err counts before it writes), so a log
+    // loop is never hidden, and this counter tells how many of the errors the log writer caused
+    public int $log_dropped = 0;
     // the log object for standard io logging
     public text_log $log_txt;
 
@@ -123,6 +131,8 @@ class system_object
         $this->time_limit = microtime(true) + 2;
         $this->times = new system_time_list();
         $this->log_msg_lst = array();
+        $this->log_writing = false;
+        $this->log_dropped = 0;
         $this->typ_lst = new type_lists();
         $this->log_txt = new text_log();
         $this->sys_usr_lst = new user_list();

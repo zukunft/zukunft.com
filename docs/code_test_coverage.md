@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1180 of 5553 public functions have at least 2 unit test calls; the 4373 functions below do not
+1181 of 5555 public functions have at least 2 unit test calls; the 4374 functions below do not
 
 ## main backend
 
@@ -98,6 +98,7 @@ so same-named functions of several classes share their test calls
     \-- load_by_user - 0 unit test calls
     \-- load_obj_field_last - 0 unit test calls
     \-- load_obj_last - 0 unit test calls
+    \-- load_row_names - 0 unit test calls
     \-- load_sql_by_user - 0 unit test calls
     \-- load_sql_obj_fld - 0 unit test calls
     \-- load_sql_obj_last - 0 unit test calls
@@ -3209,7 +3210,6 @@ so same-named functions of several classes share their test calls
     \-- php_code_use_converted - 0 unit test calls
     \-- php_code_use_sorted - 0 unit test calls
     \-- php_expected_function_section - 0 unit test calls
-    \-- php_function_from_exception - 0 unit test calls
     \-- php_function_to_test_category - 0 unit test calls
     \-- php_namespace_from_code - 0 unit test calls
     \-- php_path_convert - 0 unit test calls
@@ -3343,6 +3343,7 @@ so same-named functions of several classes share their test calls
 \-- change_log_named
     \-- dsp - 0 unit test calls
     \-- entry - 0 unit test calls
+    \-- field - 0 unit test calls
     \-- field_name - 0 unit test calls
     \-- is_user_sandbox_change - 0 unit test calls
     \-- tr - 0 unit test calls

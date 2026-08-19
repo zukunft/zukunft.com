@@ -1924,6 +1924,7 @@
     \-- load_sql_by_obj - section for function load_sql_by_obj is expected to be load sql in /log/change_log_link_list.php
     \-- add - section for function add not yet defined that it should be load in /log/change_log_link_list.php
 \-- change_log_list
+    \-- load_row_names - section for function load_row_names is expected to be load in /log/change_log_list.php
     \-- load_sql_obj_fld - section for function load_sql_obj_fld is expected to be load sql in /log/change_log_list.php
     \-- load_sql_obj_last - section for function load_sql_obj_last is expected to be load sql in /log/change_log_list.php
     \-- add - section for function add not yet defined that it should be modify in /log/change_log_list.php
@@ -3486,7 +3487,7 @@
     \-- load_sql_by_url
         \-- db_cache_page - create an SQL statement to retrieve a cached html page by url from the database
     \-- load_sql_by_user
-        \-- change_log_list - create an SQL statement to retrieve the changes done by the given user
+        \-- change_log_list - create an SQL statement to retrieve the overwrites done by the given user
     \-- load_sql_by_ip_addresses
         \-- ip_range - create an SQL statement to retrieve the ip range from the database
 \-- im- and export
@@ -4181,6 +4182,8 @@
         \-- change_link - display the last change related to one object (word, formula, value, verb, ...)
     \-- add
         \-- change_link - similar to add_link, but additional fix the references as a text for fast displaying
+    \-- load_row_names
+        \-- change_log_list - set the name of the changed object on each change of this list, e.g. the word name of a word
 \-- add
     \-- add_info_with_vars
         \-- sql_message - add an info message id and a list of related variables
@@ -5494,6 +5497,7 @@
 \-- change_log_named
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log_named.php
     \-- tr - section for function tr not yet defined that it should be table in /log/change_log_named.php
+    \-- field - section for function field not yet defined that it should be helpers in /log/change_log_named.php
     \-- field_name - section for function field_name not yet defined that it should be helpers in /log/change_log_named.php
     \-- entry - section for function entry not yet defined that it should be helpers in /log/change_log_named.php
     \-- what - section for function what not yet defined that it should be helpers in /log/change_log_named.php
@@ -6841,7 +6845,7 @@
     \-- load_by_object_field
         \-- change_log_list - load a list of changes from the api
     \-- load_by_user
-        \-- change_log_list - load the changes done by the given user via the api
+        \-- change_log_list - load the overwrites done by the given user via the api
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
@@ -7815,6 +7819,8 @@
 \-- helpers
     \-- th
         \-- change_log_link - @return string with the html table header to show the link changes
+    \-- field
+        \-- change_log_named - the changed field name without the table id prefix, e.g. 'description' for the code id
     \-- field_name
         \-- change_log_named - the translated name of the changed field on its own (no value), with the reference (id) suffix
     \-- entry

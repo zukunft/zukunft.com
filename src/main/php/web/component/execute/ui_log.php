@@ -47,6 +47,7 @@ include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 
 class ui_log
 {
@@ -135,8 +137,8 @@ class ui_log
 
     /**
      * the fixed column of the user page with all changes the shown user has written to the user
-     * sandbox (overlay) tables - today the word overwrites, and every further object type as soon
-     * as its changes are part of the change log - reusing the filter, sort and table of the 'my'
+     * sandbox (overlay) tables - the word and triple overwrites and every further object type
+     * listed in change_tables::USER_TABLES - reusing the filter, sort and table of the 'my'
      * tab of the word page, but filtered by the shown user over all objects instead of by the
      * session user for one object; unlike a tab the column is always shown, so an empty list
      * renders the no-changes message instead of an empty string
@@ -180,11 +182,22 @@ class ui_log
             // keep only the sandbox (user_ table) changes of the shown user
             $my_lst = $my_lst->filter_user_overwrites($dbo);
             $my_lst->sort_by_time_and_what($test_mode);
+            // cut the list to the number of rows that can be shown plus one row to detect that
+            // more changes exist, so that the rows are prepared only for the changes that the
+            // user can see; the api is asked for the same number (see
+            // change_log_list::load_by_user), so this only limits a list from the request cache
+            $max_rows = $this->configured_row_limit($msg);
+            if ($max_rows > 0) {
+                $my_lst = $my_lst->head($max_rows + 1);
+            }
         }
         if ($my_lst->is_empty()) {
             $result .= $mtr->txt(msg_id::ALL_USER_OVERWRITES_NONE);
         } else {
-            $result .= $this->table_pure($my_lst, $msg, $test_mode);
+            // this column lists the changes of all objects of the user, so unlike the 'my' tab of
+            // an object page the what column must name the changed object, because 'added user
+            // description' alone does not tell the user which word or triple has been changed
+            $result .= $this->table_pure($my_lst, $msg, $test_mode, true);
         }
         return $result;
     }
@@ -196,22 +209,51 @@ class ui_log
      *
      * @param change_log_list $log_lst the filtered, sorted and row-limited change log to render
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param bool $with_object true to name the changed object in the what column, which is needed
+     *                          if the table lists the changes of more than one object
      * @return string the html code of the borderless when / who / what change log table
      */
-    private function table_pure(change_log_list $log_lst, user_message $msg, bool $test_mode): string
+    private function table_pure(
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode,
+        bool            $with_object = false
+    ): string
     {
         global $ui_sys;
         $what_max_chars = 0;
-        $max_rows = 0;
         if ($ui_sys?->cfg !== null) {
             $what_max_chars = (int)$ui_sys->cfg->get_by(
                 [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
                 $msg, 0);
-            $max_rows = (int)$ui_sys->cfg->get_by(
-                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
-                $msg, 0);
         }
-        return $log_lst->tbl_when_who_what($what_max_chars, $max_rows, $test_mode);
+        $max_rows = $this->configured_row_limit($msg);
+        return $log_lst->tbl_when_who_what($what_max_chars, $max_rows, $test_mode, $with_object);
+    }
+
+    /**
+     * the configured maximum number of change rows shown in a change log table
+     * (config.yaml "user > frontend > change log > row limit"); shared by the renderer and by
+     * all_user_overwrites, so that never more rows are prepared than the table shows
+     *
+     * the fallback is a real limit and not "no limit", because a page must never grow with the
+     * number of changes of a user (see docs/llm/frontend.md); it is the same const that
+     * change_log_list::load_by_user uses for this config key, so that the number of rows loaded
+     * from the api and the number of rows shown can never drift apart
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximum number of change rows to show
+     */
+    private function configured_row_limit(user_message $msg): int
+    {
+        global $ui_sys;
+        $result = config::ROW_LIMIT;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg, config::ROW_LIMIT);
+        }
+        return $result;
     }
 
     /**

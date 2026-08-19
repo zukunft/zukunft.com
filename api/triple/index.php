@@ -33,9 +33,11 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_WORD . 'triple.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -69,8 +71,11 @@ if ($db_con->is_open()) {
         $typ_lst = api_type_list::from_url_array($_GET);
 
         // the session user may differ from the data user e.g. an admin wants to see the data
-        // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($usr_id, $msg);
+        // of a user or the own html frontend requests the data for the browsing user whose
+        // session it has validated itself; the data user is included in the request in
+        // url_var::USER and honored for a server-to-server call of this pod, so that e.g.
+        // the 'my' tab of the triple page can show the overwrites of the browsing user
+        $load_usr = $usr->data_user($usr_id, $msg, server_guard::from_own_pod());
 
 
         $trp = new triple($load_usr);

@@ -291,6 +291,9 @@ class json_fields
     const string TABLE_ID = 'table_id';
     const string FIELD_ID = 'field_id';
     const string ROW_ID = 'row_id';
+    // the name of the changed object (the row_id resolved to e.g. the word name), so that a change
+    // log that lists the changes of more than one object can name the changed object
+    const string ROW_NAME = 'row_name';
     const string CHANGE_TIME = 'change_time';
     const string OLD_VALUE = 'old_value';
     const string OLD_ID = 'old_id';

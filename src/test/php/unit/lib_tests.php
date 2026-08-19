@@ -39,8 +39,10 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once test_paths::CONST . 'files.php';
 include_once paths::SHARED_CONST . 'users.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_const;
@@ -311,6 +313,28 @@ class lib_tests
         $target = "ignore start<select";
         $result = $lib->str_right_of_or_all($text, $maker);
         $t->assert("str_right_of_or_all: right of (or all) \"" . $maker . "\" is \", because the maker is not part of the given string" . $target . "\"", $result, $target);
+
+        // the script name of a log entry is written to the sys_log_functions name field, so it
+        // must stay short also if the trace does not contain the project path e.g. if the pod is
+        // deployed to /var/www/html; a name with the complete trace would not fit into the field
+        // and the failing insert would log again and never end (see log_msg)
+        $trace_dev = '#0 ' . def_shared::PROJECT_PATH
+            . 'src/main/php/shared/helper/Translator.php(184): log_err()';
+        $test_name = 'the script name of a trace within the project path';
+        $t->assert($test_name, library::php_function_from_exception($trace_dev),
+            'src/main/php/shared/helper/Translator');
+
+        $trace_deployed = '#0 /var/www/html/src/main/php/shared/helper/Translator.php(184): log_err()'
+            . "\n" . '#1 /var/www/html/src/main/php/web/log/change_log_named.php(356): field_name()';
+        $test_name = 'the script name of a trace outside the project path';
+        $t->assert($test_name, library::php_function_from_exception($trace_deployed), 'Translator');
+
+        $test_name = 'the script name of a trace outside the project path fits into the db field';
+        $t->assert_true($test_name,
+            strlen(library::php_function_from_exception($trace_deployed)) <= sql_field_type::NAME_MAX_LEN);
+
+        $test_name = 'a trace without any script name does not create a name with the trace';
+        $t->assert($test_name, library::php_function_from_exception(''), library::FUNCTION_UNKNOWN);
 
         // test base_class_name
         $class = 'cfg\language';

@@ -76,6 +76,10 @@ class change_log_named extends change_log
     // configured char limit, to indicate that the full text is shown in the mouseover popup
     const string MORE_INDICATOR = '...';
 
+    // between the name of the changed object and the change itself in a change log that lists the
+    // changes of more than one object e.g. 'Pi: added user description "..."'
+    const string OBJECT_SEPARATOR = ': ';
+
     // the translated suffix of a reference (id) field name that is dropped when only the field itself
     // is named (not its value), e.g. 'view id' -> 'view' in 'remove user overwrite for view'
     // TODO Prio 2 detect by an const array of the db id field names not a text pattern
@@ -92,6 +96,11 @@ class change_log_named extends change_log
     public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
     public ?string $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+    // the name of the changed object e.g. the word name of a word change, set by the backend from
+    // the row id (see cfg/log/change_log_list::load_row_names) and null if the backend has not
+    // resolved a name for this change; used to name the object in a change log that lists the
+    // changes of more than one object e.g. the all user overwrites column of the user page
+    public ?string $row_name = null;
 
 
     /*
@@ -126,6 +135,11 @@ class change_log_named extends change_log
             $this->new_id = $json_array[json_fields::NEW_ID];
         } else {
             $this->new_id = null;
+        }
+        if (array_key_exists(json_fields::ROW_NAME, $json_array)) {
+            $this->row_name = $json_array[json_fields::ROW_NAME];
+        } else {
+            $this->row_name = null;
         }
         return $msg->is_ok();
     }
@@ -300,9 +314,14 @@ class change_log_named extends change_log
     /**
      * the changed field name without the table id prefix, e.g. 'description' for the code id
      * '5description' (the code id is the table id followed by the field name, see change_log::set_field)
+     *
+     * public because a filter on the changed field must use the database field name and never the
+     * translated name of field_name(), which would depend on the user language
+     * (see change_log_list::filter_admin_fields)
+     *
      * @return string the changed field name e.g. 'description', 'phrase_type_id' or 'word_name'
      */
-    private function field(): string
+    function field(): string
     {
         $prefix = (string)$this->table_id;
         $code_id = $this->field_code_id();
@@ -471,16 +490,17 @@ class change_log_named extends change_log
      * stored xss because the old and new value are user settable (like entry() and tr())
      *
      * @param int $max_chars the max number of chars shown, 0 or less for no limit
+     * @param bool $with_object true to name the changed object in front of the text
      * @return string the length limited and escaped change description without the user name
      */
-    function what(int $max_chars): string
+    function what(int $max_chars, bool $with_object = false): string
     {
         $html = new html_base();
 
         // start from the raw description, so the char limit counts the visible chars and never cuts
         // an html entity in half, and escape only the final shortened text; the '...' shows that
         // the full text is available in the mouseover popup (see tr_when_who_what)
-        $what = $this->what_text();
+        $what = $this->what_text($with_object);
         if ($max_chars > 0 and mb_strlen($what) > $max_chars) {
             $what = mb_substr($what, 0, $max_chars) . self::MORE_INDICATOR;
         }
@@ -492,9 +512,13 @@ class change_log_named extends change_log
      * value without the user (the user is the separate 'who' column); the shared source of what()
      * and the tie-break sort key of the change log table (change_log_list::sort_by_time_and_what)
      *
+     * @param bool $with_object true to name the changed object in front of the text, which is
+     *                          needed if the change log lists the changes of more than one object;
+     *                          the sort key never names the object, so that the sort of a list
+     *                          does not depend on how the list is displayed
      * @return string the change description without the user name
      */
-    function what_text(): string
+    function what_text(bool $with_object = false): string
     {
         global $mtr;
         // for a type field show the type name instead of the type id (see value_to_show)
@@ -528,6 +552,30 @@ class change_log_named extends change_log
             } else {
                 $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
             }
+        }
+        if ($with_object) {
+            $result = $this->object_prefix() . $result;
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the changed object put in front of the change text e.g. 'Pi: ', so that the user
+     * knows which object has been changed if the change log lists more than one object
+     *
+     * the name comes first and not after the change, because the what column is shortened to the
+     * configured number of chars (config.yaml 'what limit'), which would cut off a trailing object
+     * name exactly for the long changes; this way the object stays visible and the value is the
+     * part that moves into the mouseover popup
+     *
+     * @return string the name of the changed object and the separator,
+     *                or '' if the backend has not sent a name for this change
+     */
+    private function object_prefix(): string
+    {
+        $result = '';
+        if ($this->row_name != null and $this->row_name != '') {
+            $result = $this->row_name . self::OBJECT_SEPARATOR;
         }
         return $result;
     }
@@ -590,9 +638,11 @@ class change_log_named extends change_log
      *
      * @param int $what_max_chars the max number of chars shown in the what column (config.yaml), 0 for no limit
      * @param bool $test_mode true to use a fixed change time so the change log snapshots stay deterministic
+     * @param bool $with_object true to name the changed object in the what column, which is needed
+     *                          if the table lists the changes of more than one object
      * @return string the html code of the borderless table row
      */
-    function tr_when_who_what(int $what_max_chars, bool $test_mode = false): string
+    function tr_when_who_what(int $what_max_chars, bool $test_mode = false, bool $with_object = false): string
     {
         global $ui_sys;
         $html = new html_base();
@@ -606,9 +656,9 @@ class change_log_named extends change_log
         $who = $this->usr != null ? $this->usr->name_link() : '';
         // show the full change text as a mouseover popup only when the what column is shortened, so the
         // user can still read the complete change that the '...' indicates (td escapes the title)
-        $full_what = $this->what_text();
+        $full_what = $this->what_text($with_object);
         $popup = ($what_max_chars > 0 and mb_strlen($full_what) > $what_max_chars) ? $full_what : '';
-        $what_cell = $html->td($this->what($what_max_chars), '', 0, $popup);
+        $what_cell = $html->td($this->what($what_max_chars, $with_object), '', 0, $popup);
         return $html->tr($html->td($when) . $html->td($who) . $what_cell);
     }
 
