@@ -23,14 +23,10 @@
       "type": "measure"
     },
     {
-      "name": "disease burden",
-      "description": "the impact of a health problem in a population, often quantified in DALYs by mortality and morbidity.",
-      "refs": [
-        {
-          "name": "Disease_burden",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "disease"
+    },
+    {
+      "name": "burden"
     },
     {
       "name": "YLL",
@@ -111,6 +107,19 @@
     }
   ],
   "triples": [
+    {
+      "name": "disease burden",
+      "from": "burden",
+      "verb": "of",
+      "to": "disease",
+      "description": "the impact of a health problem in a population, often quantified in DALYs by mortality and morbidity.",
+      "refs": [
+        {
+          "name": "Disease_burden",
+          "type": "wikipedia"
+        }
+      ]
+    },
     {
       "name": "children per woman",
       "from": "child",

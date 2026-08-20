@@ -934,7 +934,7 @@
       "name": "parameter"
     },
     {
-      "name": "angular"
+      "name": "angle"
     },
     {
       "name": "velocity"
@@ -1340,8 +1340,8 @@
     {
       "name": "angular velocity",
       "from": "velocity",
-      "verb": "kind of",
-      "to": "angular"
+      "verb": "per",
+      "to": "angle"
     },
     {
       "description": "the rate of rotation of the Earth about its axis, about 7.292e-5 radians per second",

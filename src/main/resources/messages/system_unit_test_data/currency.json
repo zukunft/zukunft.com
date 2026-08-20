@@ -199,9 +199,9 @@
   "triples": [
     {
       "name": "exchange rate",
-      "from": "exchange",
-      "verb": "has a",
-      "to": "rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "exchange",
       "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.",
       "refs": [
         {
@@ -346,9 +346,9 @@
     },
     {
       "name": "interest rate",
-      "from": "interest",
-      "verb": "has a",
-      "to": "rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "interest",
       "description": "The interest rate is the proportion of a loan or deposit that is charged or paid as interest, typically expressed as an annual percentage. Central bank policy rates are key drivers of currency valuations and forward rates.",
       "refs": [
         {

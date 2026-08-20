@@ -56,7 +56,7 @@
       "name": "percent"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -179,7 +179,7 @@
         "reduce climate gas emissions",
         "carbon tariff",
         "carbon leakage rate",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "-0.08",

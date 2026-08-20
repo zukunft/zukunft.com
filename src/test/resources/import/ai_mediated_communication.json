@@ -185,13 +185,6 @@
         "description": "Rate of message exchange in a conversation; an outcome measured by Hohenstein et al. 2023."
       },
       {
-        "name": "assumed value",
-        "from": "value",
-        "verb": "kind of",
-        "to": "assumed",
-        "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
-      },
-      {
         "name": "confidence value",
         "from": "value",
         "verb": "kind of",
@@ -374,7 +367,7 @@
         "words": [
           "expectation shift hypothesis",
           "AI-mediated communication",
-          "assumed value"
+          "assumed"
         ],
         "value": true,
         "source": null,
@@ -400,7 +393,7 @@
         "words": [
           "never-use maxim",
           "AI-mediated communication",
-          "assumed value"
+          "assumed"
         ],
         "value": true,
         "source": null,

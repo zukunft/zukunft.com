@@ -521,10 +521,6 @@
       "name": "USD"
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "waste",
       "description": "unwanted or unusable material; here spent nuclear fuel and contaminated material.",
       "refs": [
@@ -1039,13 +1035,6 @@
       "verb": "kind of",
       "to": "upper bound",
       "description": "the high end of an estimated range."
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     }
   ],
   "sources": [
@@ -1139,7 +1128,7 @@
       "words": [
         "Beznau shutdown year",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "2032",
       "source": "Wikipedia Kernenergie in der Schweiz"
@@ -1148,7 +1137,7 @@
       "words": [
         "Gösgen shutdown year",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "2040",
       "source": "FuW Energiezukunft Schweiz 2026"
@@ -1157,7 +1146,7 @@
       "words": [
         "Leibstadt shutdown year",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "2045",
       "source": "FuW Energiezukunft Schweiz 2026"
@@ -1166,7 +1155,7 @@
       "words": [
         "Beznau production loss at shutdown",
         "TWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "5.5",
       "source": "FuW Energiezukunft Schweiz 2026"
@@ -1175,7 +1164,7 @@
       "words": [
         "Gösgen production loss at shutdown",
         "TWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "8",
       "source": "FuW Energiezukunft Schweiz 2026"
@@ -1184,7 +1173,7 @@
       "words": [
         "Leibstadt production loss at shutdown",
         "TWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "9.5",
       "source": "FuW Energiezukunft Schweiz 2026"
@@ -1211,7 +1200,7 @@
       "words": [
         "capacity factor of nuclear power",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9",
       "source": "Lazard LCOE+ 2025"
@@ -1221,7 +1210,7 @@
         "capacity factor of solar photovoltaic",
         "Switzerland",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.11",
       "source": "Lazard LCOE+ 2025"
@@ -1285,7 +1274,7 @@
         "decommissioning and disposal cost",
         "Switzerland",
         "CHF bn",
-        "assumed value"
+        "assumed"
       ],
       "number": "23.9",
       "source": "Wikipedia Kernenergie in der Schweiz"
@@ -1307,7 +1296,7 @@
         "levelized cost adder",
         "mean",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1625",
       "source": "Lazard LCOE+ 2025",
@@ -1318,7 +1307,7 @@
         "levelized cost adder",
         "lower bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1225",
       "source": "Lazard LCOE+ 2025",
@@ -1329,7 +1318,7 @@
         "levelized cost adder",
         "upper bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2025",
       "source": "Lazard LCOE+ 2025",
@@ -1340,7 +1329,7 @@
         "decommissioning cost adder",
         "mean",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0208",
       "source": "Wikipedia Kernenergie in der Schweiz",
@@ -1351,7 +1340,7 @@
         "decommissioning cost adder",
         "lower bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0128",
       "source": "Wikipedia Kernenergie in der Schweiz",
@@ -1362,7 +1351,7 @@
         "decommissioning cost adder",
         "upper bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0288",
       "source": "Wikipedia Kernenergie in der Schweiz",
@@ -1373,7 +1362,7 @@
         "carbon benefit adder",
         "mean",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "-0.003",
       "source": "BAFU CO2 levy 2025",
@@ -1384,7 +1373,7 @@
         "carbon benefit adder",
         "lower bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "-0.007",
       "source": "BAFU CO2 levy 2025",
@@ -1395,7 +1384,7 @@
         "carbon benefit adder",
         "upper bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.001",
       "source": "BAFU CO2 levy 2025",
@@ -1406,7 +1395,7 @@
         "supply security adder",
         "mean",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "-0.02",
       "source": "FuW Energiezukunft Schweiz 2026",
@@ -1417,7 +1406,7 @@
         "supply security adder",
         "lower bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "-0.04",
       "source": "FuW Energiezukunft Schweiz 2026",
@@ -1428,7 +1417,7 @@
         "supply security adder",
         "upper bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "FuW Energiezukunft Schweiz 2026",
@@ -1439,7 +1428,7 @@
         "uranium dependency adder",
         "mean",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.005",
       "source": "GRS Swiss nuclear overview 2024",
@@ -1450,7 +1439,7 @@
         "uranium dependency adder",
         "lower bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "GRS Swiss nuclear overview 2024",
@@ -1461,7 +1450,7 @@
         "uranium dependency adder",
         "upper bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.01",
       "source": "GRS Swiss nuclear overview 2024",
@@ -1472,7 +1461,7 @@
         "construction delay adder",
         "mean",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.015",
       "source": "bluewin Swiss reactor build 2026",
@@ -1483,7 +1472,7 @@
         "construction delay adder",
         "lower bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "bluewin Swiss reactor build 2026",
@@ -1494,7 +1483,7 @@
         "construction delay adder",
         "upper bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.03",
       "source": "bluewin Swiss reactor build 2026",
@@ -1558,7 +1547,7 @@
         "Gösgen production loss at shutdown",
         "Leibstadt production loss at shutdown",
         "TWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "fleet production loss sum",
       "words": [
@@ -1578,7 +1567,7 @@
         "construction delay adder",
         "lower bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "social cost per kWh lower formula",
       "words": [
@@ -1599,7 +1588,7 @@
         "construction delay adder",
         "mean",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "social cost per kWh formula",
       "words": [
@@ -1620,7 +1609,7 @@
         "construction delay adder",
         "upper bound estimate",
         "CHF per kWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "social cost per kWh upper formula",
       "words": [

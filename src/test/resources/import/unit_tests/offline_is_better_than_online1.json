@@ -28,8 +28,7 @@
     {"name": "Petersen"},
     {"name": "probability", "refs": [{"name": "Probability", "type": "wikipedia"}]},
     {"name": "size"},
-    {"name": "study"},
-    {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"}
+    {"name": "study"}
   ],
   "triples": [
     {"name": "effect size", "from": "size", "verb": "of", "to": "effect"},
@@ -43,8 +42,7 @@
     {"from": "Bor", "verb": "and", "to": "Petersen"},
     {"name": "Kalla and Broockman study", "from": "Kalla and Broockman", "verb": "name of", "to": "study"},
     {"name": "Bor and Petersen study", "from": "Bor and Petersen", "verb": "name of", "to": "study"},
-    {"name": "format influence on persuasion", "from": "format", "verb": "influences", "to": "persuasion"},
-    {"name": "assumed value", "from": "value", "verb": "kind of", "to": "assumed"}
+    {"name": "format influence on persuasion", "from": "format", "verb": "influences", "to": "persuasion"}
   ],
   "sources": [
     {
@@ -68,7 +66,7 @@
     {"words": ["argument canvassing", "effect size on exclusionary attitude"], "number": "0", "source": "Kalla Broockman 2020"},
     {"words": ["Kalla and Broockman study", "participant count"], "number": "6869", "source": "Kalla Broockman 2020"},
     {"words": ["Bor and Petersen study", "participant count"], "number": "8434", "source": "Bor Petersen 2022"},
-    {"words": ["format influence on persuasion", "probability", "assumed value"], "number": "0.8"},
-    {"words": ["format influence on persuasion", "probability", "confidence", "assumed value"], "number": "0.6"}
+    {"words": ["format influence on persuasion", "probability", "assumed"], "number": "0.8"},
+    {"words": ["format influence on persuasion", "probability", "confidence", "assumed"], "number": "0.6"}
   ]
 }

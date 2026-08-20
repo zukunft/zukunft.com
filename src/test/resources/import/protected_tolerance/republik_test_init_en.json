@@ -73,7 +73,7 @@
     {
       "words": [
         "implementation cost",
-        "assumed value"
+        "assumed"
       ],
       "value": 1,
       "unit": "click (merge of a finished PR)",
@@ -89,7 +89,7 @@
     {
       "words": [
         "P(publishers implement | annoyed)",
-        "assumed value"
+        "assumed"
       ],
       "value": 0.08,
       "unit": "probability",
@@ -105,7 +105,7 @@
     {
       "words": [
         "P(publishers throttle | annoyed)",
-        "assumed value"
+        "assumed"
       ],
       "value": 0.55,
       "unit": "probability",
@@ -121,7 +121,7 @@
     {
       "words": [
         "Single-Attempt Failure Rate",
-        "assumed value"
+        "assumed"
       ],
       "value": 0.9,
       "unit": "share",
@@ -137,7 +137,7 @@
     {
       "words": [
         "Bus Factor zukunft.com",
-        "assumed value"
+        "assumed"
       ],
       "value": 1,
       "unit": "persons",
@@ -236,13 +236,6 @@
       "verb": "of",
       "to": "zukunft.com",
       "description": "Number of people whose loss would halt the project"
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     },
     {
       "name": "confidence value",

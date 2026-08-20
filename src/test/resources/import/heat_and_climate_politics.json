@@ -134,13 +134,6 @@
         "description": "Coordinated narratives that reinterpret heatwaves as natural or exaggerated, neutralising their potential persuasive value; commonly conflates short-term weather with long-term climate."
       },
       {
-        "name": "assumed value",
-        "from": "value",
-        "verb": "kind of",
-        "to": "assumed",
-        "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
-      },
-      {
         "name": "confidence value",
         "from": "value",
         "verb": "kind of",
@@ -312,7 +305,7 @@
       },
       {
         "name": "experienced heat is a weak lever for climate policy compared to perceived fairness and effectiveness",
-        "words": ["heatwave", "climate policy support", "perceived fairness", "perceived effectiveness", "assumed value"],
+        "words": ["heatwave", "climate policy support", "perceived fairness", "perceived effectiveness", "assumed"],
         "value": true,
         "source": null,
         "predicate": "is weaker than",

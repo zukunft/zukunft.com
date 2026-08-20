@@ -223,13 +223,6 @@
       "description": "US dollars per metric tonne of CO2, in 2020 USD at a 2 percent near-term discount rate"
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
-    },
-    {
       "name": "confidence value",
       "from": "value",
       "verb": "kind of",
@@ -281,7 +274,7 @@
         "causal chain",
         "usable",
         "fraction",
-        "assumed value"
+        "assumed"
       ],
       "value": 0.10,
       "description": "User-stated premise, taken as given for this model; not derived from an independent causal chain. This is the single largest source of uncertainty in the whole estimate and should be its own decomposed sub-model."
@@ -301,7 +294,7 @@
         "public CBAM calculation tool",
         "build cost",
         "USD",
-        "assumed value"
+        "assumed"
       ],
       "value": 1500000,
       "description": "2 developers + 1 trade/carbon-accounting domain expert + 1 policy/legal, 18 months, plus data licensing/verification infrastructure"
@@ -320,7 +313,7 @@
         "public CBAM calculation tool",
         "technical completion",
         "probability",
-        "assumed value"
+        "assumed"
       ],
       "value": 0.7
     },
@@ -338,7 +331,7 @@
         "public CBAM calculation tool",
         "effect-relevant adoption",
         "probability",
-        "assumed value"
+        "assumed"
       ],
       "value": 0.04,
       "description": "conditional on technical completion; largest source of adoption uncertainty"

@@ -113,13 +113,6 @@
       "description": "Survey question: would be displeased if their child married someone from the opposing political party."
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Provenance qualifier: value estimated/digitized, not directly published as a number; carries a confidence value."
-    },
-    {
       "name": "confidence value",
       "from": "value",
       "verb": "kind of",
@@ -194,184 +187,184 @@
       "description": "Both parties exceeded 60% in 2016"
     },
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1900", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1900", "assumed"],
       "number": 2.07,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1900", "confidence value"], "number": 0.6},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1905", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1905", "assumed"],
       "number": 2.06,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1905", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1910", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1910", "assumed"],
       "number": 2.05,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1910", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1915", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1915", "assumed"],
       "number": 2.02,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1915", "confidence value"], "number": 0.6},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1920", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1920", "assumed"],
       "number": 2.05,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1920", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1925", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1925", "assumed"],
       "number": 2.08,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1925", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1930", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1930", "assumed"],
       "number": 2.07,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1930", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1935", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1935", "assumed"],
       "number": 2.12,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1935", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1940", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1940", "assumed"],
       "number": 2.15,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1940", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1944", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1944", "assumed"],
       "number": 2.22,
       "source": "WTW Political Risk Index H1 2025",
       "description": "Turning point of the curve (1944 spike), more reliable than a mid-segment interpolation."
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1944", "confidence value"], "number": 0.6},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1946", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1946", "assumed"],
       "number": 2.11,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1946", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1950", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1950", "assumed"],
       "number": 2.12,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1950", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1955", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1955", "assumed"],
       "number": 2.13,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1955", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1960", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1960", "assumed"],
       "number": 2.16,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1960", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1965", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1965", "assumed"],
       "number": 2.18,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1965", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1971", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1971", "assumed"],
       "number": 2.28,
       "source": "WTW Political Risk Index H1 2025",
       "description": "Turning point of the curve (1971 peak), more reliable than a mid-segment interpolation."
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1971", "confidence value"], "number": 0.6},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1975", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1975", "assumed"],
       "number": 2.27,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1975", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1980", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1980", "assumed"],
       "number": 2.2,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1980", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1985", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1985", "assumed"],
       "number": 2.15,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1985", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1989", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1989", "assumed"],
       "number": 2.1,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1989", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1991", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1991", "assumed"],
       "number": 2.02,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1991", "confidence value"], "number": 0.55},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "1995", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "1995", "assumed"],
       "number": 2.01,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "1995", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2000", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2000", "assumed"],
       "number": 1.96,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "2000", "confidence value"], "number": 0.55},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2003", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2003", "assumed"],
       "number": 1.94,
       "source": "WTW Political Risk Index H1 2025",
       "description": "Turning point of the curve (2003 trough), more reliable than a mid-segment interpolation."
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "2003", "confidence value"], "number": 0.6},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2005", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2005", "assumed"],
       "number": 1.97,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "2005", "confidence value"], "number": 0.5},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2010", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2010", "assumed"],
       "number": 2.02,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "2010", "confidence value"], "number": 0.55},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2015", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2015", "assumed"],
       "number": 2.13,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "2015", "confidence value"], "number": 0.55},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2020", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2020", "assumed"],
       "number": 2.3,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "2020", "confidence value"], "number": 0.55},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2022", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2022", "assumed"],
       "number": 2.4,
       "source": "WTW Political Risk Index H1 2025"
     },
     {"phrases": ["global average affective polarization", "world", "polarization index value", "2022", "confidence value"], "number": 0.55},
     {
-      "phrases": ["global average affective polarization", "world", "polarization index value", "2024", "assumed value"],
+      "phrases": ["global average affective polarization", "world", "polarization index value", "2024", "assumed"],
       "number": 2.43,
       "source": "WTW Political Risk Index H1 2025",
       "description": "Turning point of the curve (2024 top), more reliable than a mid-segment interpolation."
@@ -384,7 +377,7 @@
       "phrases": ["global average affective polarization", "world", "polarization index value"],
       "source": "WTW Political Risk Index H1 2025",
       "underlying_data": "Varieties of Democracy (V-Dem) Project",
-      "provenance_note_for_user": "The 30 points of this series are in the values above, each tagged 'assumed value' and followed by its 'confidence value'. Values manually digitized by reading the Figure 3 curve against its gridlines (axis 1.8-2.6, gridlines every 0.2). They are NOT published numbers. Confidence is per-point; turning points (1915 trough, 1944 spike, 1971 peak, 2003 trough, 2024 top) are more reliable than mid-segment interpolations. Replace with exact V-Dem v2cl_acjst / polarization series values when available.",
+      "provenance_note_for_user": "The 30 points of this series are in the values above, each tagged 'assumed' and followed by its 'confidence value'. Values manually digitized by reading the Figure 3 curve against its gridlines (axis 1.8-2.6, gridlines every 0.2). They are NOT published numbers. Confidence is per-point; turning points (1915 trough, 1944 spike, 1971 peak, 2003 trough, 2024 top) are more reliable than mid-segment interpolations. Replace with exact V-Dem v2cl_acjst / polarization series values when available.",
       "unit": "index (V-Dem expert scale)"
     }
   ],

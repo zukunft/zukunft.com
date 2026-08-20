@@ -426,6 +426,7 @@
     },
     {
       "name": "Zurich Insurance",
+      "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
       "from": "Zurich",
       "verb": "is a",
       "to": "company"
@@ -708,9 +709,9 @@
     },
     {
       "name": "cash flow statement",
-      "from": "cash flow",
-      "verb": "can use",
-      "to": "statement"
+      "from": "statement",
+      "verb": "of",
+      "to": "cash flow"
     },
     {
       "name": "income taxes is part of cash flow statement",

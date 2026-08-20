@@ -106,13 +106,6 @@
       "description": "Direct Air Capture (DAC); technology that chemically filters CO2 from ambient air. Distinct from flue-gas capture, which removes CO2 from a combustion exhaust stream"
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
-    },
-    {
       "name": "confidence value",
       "from": "value",
       "verb": "kind of",
@@ -223,7 +216,7 @@
       "claim": "A building plot is reserved at the KEZO site for capturing CO2 from the incinerator's flue gas, planned from around 2035",
       "value": 2035,
       "unit": "year (planned start)",
-      "words": ["flue-gas carbon capture", "KEZO", "assumed value"],
+      "words": ["flue-gas carbon capture", "KEZO", "assumed"],
       "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal",
       "description": "Masterplan explicitly states the technology and timing are not yet defined; plot is dimensioned to remain future-proof and could alternatively host biomass / energy conversion. Low confidence reflects open technology and schedule."
     },

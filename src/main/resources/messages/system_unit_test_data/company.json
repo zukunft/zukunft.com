@@ -202,9 +202,9 @@
     {
       "name": "cash flow statement",
       "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
-      "from": "cash flow",
-      "verb": "can use",
-      "to": "statement"
+      "from": "statement",
+      "verb": "of",
+      "to": "cash flow"
     },
     {
       "name": "income taxes",

@@ -62,13 +62,6 @@
   ],
   "triples": [
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Coder estimate, not a measured number; carries a confidence value."
-    },
-    {
       "name": "confidence value",
       "from": "value",
       "verb": "kind of",
@@ -425,30 +418,30 @@
       "description": "only thread on the page with no reply counter"
     },
     {
-      "words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "social valence", "assumed"],
       "value": 0.7,
       "description": "connecting, solution-oriented hook; full text not visible"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "social valence", "confidence value"], "value": 0.5},
-    {"words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "constructive orientation", "assumed value"], "value": 0.9},
+    {"words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "constructive orientation", "assumed"], "value": 0.9},
     {"words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "constructive orientation", "confidence value"], "value": 0.5},
     {"words": ["heise heatwave thread 2026-06", "thread by udolein", "reply count"], "value": 22},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by udolein", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by udolein", "social valence", "assumed"],
       "value": -0.7,
       "description": "contempt/whining frame, camp-building"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by udolein", "social valence", "confidence value"], "value": 0.7},
-    {"words": ["heise heatwave thread 2026-06", "thread by udolein", "constructive orientation", "assumed value"], "value": -0.6},
+    {"words": ["heise heatwave thread 2026-06", "thread by udolein", "constructive orientation", "assumed"], "value": -0.6},
     {"words": ["heise heatwave thread 2026-06", "thread by udolein", "constructive orientation", "confidence value"], "value": 0.6},
     {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "reply count"], "value": 28},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "social valence", "assumed"],
       "value": -0.7,
       "description": "contempt, trivialization"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "social valence", "confidence value"], "value": 0.7},
-    {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "constructive orientation", "assumed value"], "value": -0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "constructive orientation", "assumed"], "value": -0.5},
     {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "constructive orientation", "confidence value"], "value": 0.6},
     {
       "words": ["heise heatwave thread 2026-06", "thread by Whynodd", "reply count"],
@@ -456,126 +449,126 @@
       "description": "highest reply count on the page"
     },
     {
-      "words": ["heise heatwave thread 2026-06", "thread by Whynodd", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by Whynodd", "social valence", "assumed"],
       "value": 0.1,
       "description": "factual, slightly concern-oriented"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by Whynodd", "social valence", "confidence value"], "value": 0.4},
-    {"words": ["heise heatwave thread 2026-06", "thread by Whynodd", "constructive orientation", "assumed value"], "value": -0.1},
+    {"words": ["heise heatwave thread 2026-06", "thread by Whynodd", "constructive orientation", "assumed"], "value": -0.1},
     {"words": ["heise heatwave thread 2026-06", "thread by Whynodd", "constructive orientation", "confidence value"], "value": 0.4},
     {"words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "reply count"], "value": 23},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "social valence", "assumed"],
       "value": -0.4,
       "description": "presumably ironic downplaying/trollbait"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "social valence", "confidence value"], "value": 0.45},
-    {"words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "constructive orientation", "assumed value"], "value": -0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "constructive orientation", "assumed"], "value": -0.5},
     {
       "words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "constructive orientation", "confidence value"],
       "value": 0.45
     },
     {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "reply count"], "value": 22},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by foobar99", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by foobar99", "social valence", "assumed"],
       "value": -0.3,
       "description": "resignation/cynicism"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "social valence", "confidence value"], "value": 0.5},
-    {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "constructive orientation", "assumed value"], "value": -0.7},
+    {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "constructive orientation", "assumed"], "value": -0.7},
     {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "constructive orientation", "confidence value"], "value": 0.6},
     {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "reply count"], "value": 21},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by Racer4711", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by Racer4711", "social valence", "assumed"],
       "value": -0.5,
       "description": "dismissive, but implicit action reference"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "social valence", "confidence value"], "value": 0.55},
-    {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "constructive orientation", "assumed value"], "value": 0},
+    {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "constructive orientation", "assumed"], "value": 0},
     {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "constructive orientation", "confidence value"], "value": 0.4},
     {"words": ["heise heatwave thread 2026-06", "thread by solaire", "reply count"], "value": 16},
-    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "social valence", "assumed value"], "value": -0.2},
+    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "social valence", "assumed"], "value": -0.2},
     {"words": ["heise heatwave thread 2026-06", "thread by solaire", "social valence", "confidence value"], "value": 0.4},
-    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "constructive orientation", "assumed value"], "value": -0.2},
+    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "constructive orientation", "assumed"], "value": -0.2},
     {"words": ["heise heatwave thread 2026-06", "thread by solaire", "constructive orientation", "confidence value"], "value": 0.4},
     {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "reply count"], "value": 13},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "social valence", "assumed"],
       "value": 0,
       "description": "minimal hook, hard to code"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "social valence", "confidence value"], "value": 0.3},
-    {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "constructive orientation", "assumed value"], "value": -0.3},
+    {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "constructive orientation", "assumed"], "value": -0.3},
     {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "constructive orientation", "confidence value"], "value": 0.3},
     {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "reply count"], "value": 10},
-    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "social valence", "assumed value"], "value": 0.2},
+    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "social valence", "assumed"], "value": 0.2},
     {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "social valence", "confidence value"], "value": 0.35},
-    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "constructive orientation", "assumed value"], "value": 0.3},
+    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "constructive orientation", "assumed"], "value": 0.3},
     {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "constructive orientation", "confidence value"], "value": 0.35},
     {"words": ["heise heatwave thread 2026-06", "thread by MmDGA", "reply count"], "value": 9},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by MmDGA", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by MmDGA", "social valence", "assumed"],
       "value": -0.4,
       "description": "presumably ironic/polemic, camp slogan"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by MmDGA", "social valence", "confidence value"], "value": 0.45},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by MmDGA", "constructive orientation", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by MmDGA", "constructive orientation", "assumed"],
       "value": 0.2,
       "description": "apparent solution proposal"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by MmDGA", "constructive orientation", "confidence value"], "value": 0.35},
     {"words": ["heise heatwave thread 2026-06", "thread by notting", "reply count"], "value": 6},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by notting", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by notting", "social valence", "assumed"],
       "value": 0.1,
       "description": "factual"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by notting", "social valence", "confidence value"], "value": 0.4},
-    {"words": ["heise heatwave thread 2026-06", "thread by notting", "constructive orientation", "assumed value"], "value": -0.1},
+    {"words": ["heise heatwave thread 2026-06", "thread by notting", "constructive orientation", "assumed"], "value": -0.1},
     {"words": ["heise heatwave thread 2026-06", "thread by notting", "constructive orientation", "confidence value"], "value": 0.4},
     {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "reply count"], "value": 3},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "social valence", "assumed"],
       "value": -0.3,
       "description": "sarcastic allusion"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "social valence", "confidence value"], "value": 0.4},
-    {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "constructive orientation", "assumed value"], "value": -0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "constructive orientation", "assumed"], "value": -0.4},
     {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "constructive orientation", "confidence value"], "value": 0.4},
     {"words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "reply count"], "value": 1},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "social valence", "assumed"],
       "value": -0.1,
       "description": "gallows humor"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "social valence", "confidence value"], "value": 0.35},
-    {"words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "constructive orientation", "assumed value"], "value": -0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "constructive orientation", "assumed"], "value": -0.5},
     {
       "words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "constructive orientation", "confidence value"],
       "value": 0.4
     },
     {"words": ["heise heatwave thread 2026-06", "thread by sensonu", "reply count"], "value": 1},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by sensonu", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by sensonu", "social valence", "assumed"],
       "value": -0.5,
       "description": "party-political blame assignment -> divisive"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by sensonu", "social valence", "confidence value"], "value": 0.5},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by sensonu", "constructive orientation", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by sensonu", "constructive orientation", "assumed"],
       "value": -0.7,
       "description": "pure blame assignment, no solution/action reference; example of X/Y coupling (lower-left quadrant)"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by sensonu", "constructive orientation", "confidence value"], "value": 0.5},
     {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "reply count"], "value": 1},
     {
-      "words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "social valence", "assumed value"],
+      "words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "social valence", "assumed"],
       "value": -0.2,
       "description": "presumably ironic downplaying"
     },
     {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "social valence", "confidence value"], "value": 0.35},
-    {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "constructive orientation", "assumed value"], "value": -0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "constructive orientation", "assumed"], "value": -0.4},
     {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "constructive orientation", "confidence value"], "value": 0.35}
   ],
   "analysis_notes": {

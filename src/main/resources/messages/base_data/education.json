@@ -31,31 +31,11 @@
       ]
     },
     {
-      "name": "working memory",
-      "description": "a cognitive system with limited capacity that temporarily holds information available for processing.",
-      "refs": [
-        {
-          "name": "Working_memory",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "metacognition",
       "description": "awareness and understanding of one's own thought processes; thinking about thinking.",
       "refs": [
         {
           "name": "Metacognition",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cognitive development",
-      "description": "the emergence of the ability to consciously think, reason and understand, from childhood to adulthood.",
-      "refs": [
-        {
-          "name": "Cognitive_development",
           "type": "wikipedia"
         }
       ]
@@ -76,36 +56,6 @@
       "refs": [
         {
           "name": "Zone_of_proximal_development",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "Bloom's taxonomy",
-      "description": "a set of hierarchical models used to classify educational learning objectives into levels of complexity.",
-      "refs": [
-        {
-          "name": "Bloom's_taxonomy",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "effect size",
-      "description": "a quantitative measure of the magnitude of a phenomenon, such as the standardised difference between two means.",
-      "refs": [
-        {
-          "name": "Effect_size",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "standard deviation",
-      "description": "a measure of the amount of variation or dispersion of a set of values.",
-      "refs": [
-        {
-          "name": "Standard_deviation",
           "type": "wikipedia"
         }
       ]
@@ -232,6 +182,37 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "memory"
+    },
+    {
+      "name": "working"
+    },
+    {
+      "name": "cognitive"
+    },
+    {
+      "name": "development"
+    },
+    {
+      "name": "Bloom",
+      "description": "Benjamin Bloom, the educational psychologist who chaired the committee of the taxonomy"
+    },
+    {
+      "name": "taxonomy"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "size"
+    },
+    {
+      "name": "deviation"
+    },
+    {
+      "name": "standard"
     }
   ],
   "triples": [
@@ -243,7 +224,6 @@
       "description": "a measurable result that a learner is expected to achieve"
     },
     {
-      "name": "transfer of learning",
       "from": "transfer",
       "verb": "of",
       "to": "learning",
@@ -255,13 +235,6 @@
       "verb": "of",
       "to": "knowledge",
       "description": "the proportion of learned knowledge still remembered after a delay"
-    },
-    {
-      "name": "working memory capacity",
-      "from": "capacity",
-      "verb": "of",
-      "to": "working memory",
-      "description": "the number of chunks that working memory can hold, about seven (Miller) or four (Cowan)"
     },
     {
       "from": "metacognition",
@@ -279,11 +252,6 @@
       "to": "learning"
     },
     {
-      "from": "working memory",
-      "verb": "influences",
-      "to": "learning"
-    },
-    {
       "name": "near transfer",
       "from": "transfer",
       "verb": "kind of",
@@ -294,36 +262,6 @@
       "from": "transfer",
       "verb": "kind of",
       "to": "far"
-    },
-    {
-      "from": "remember",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "understand",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "apply",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "analyze",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "evaluate",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "create",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
     },
     {
       "name": "tutored score",
@@ -359,6 +297,113 @@
       "verb": "of",
       "to": "transfer",
       "description": "the transfer performance as a share of the trained performance"
+    },
+    {
+      "name": "working memory",
+      "from": "memory",
+      "verb": "kind of",
+      "to": "working",
+      "description": "a cognitive system with limited capacity that temporarily holds information available for processing.",
+      "refs": [
+        {
+          "name": "Working_memory",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cognitive development",
+      "from": "development",
+      "verb": "kind of",
+      "to": "cognitive",
+      "description": "the emergence of the ability to consciously think, reason and understand, from childhood to adulthood.",
+      "refs": [
+        {
+          "name": "Cognitive_development",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Bloom's taxonomy",
+      "from": "taxonomy",
+      "verb": "of",
+      "to": "Bloom",
+      "description": "a set of hierarchical models used to classify educational learning objectives into levels of complexity.",
+      "refs": [
+        {
+          "name": "Bloom's_taxonomy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "effect size",
+      "from": "size",
+      "verb": "of",
+      "to": "effect",
+      "description": "a quantitative measure of the magnitude of a phenomenon, such as the standardised difference between two means.",
+      "refs": [
+        {
+          "name": "Effect_size",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "standard deviation",
+      "from": "deviation",
+      "verb": "can be",
+      "to": "standard",
+      "description": "a measure of the amount of variation or dispersion of a set of values.",
+      "refs": [
+        {
+          "name": "Standard_deviation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "working memory capacity",
+      "from": "capacity",
+      "verb": "of",
+      "to": "working memory",
+      "description": "the number of chunks that working memory can hold, about seven (Miller) or four (Cowan)"
+    },
+    {
+      "from": "working memory",
+      "verb": "influences",
+      "to": "learning"
+    },
+    {
+      "from": "remember",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "understand",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "apply",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "analyze",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "evaluate",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "create",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
     }
   ],
   "sources": [

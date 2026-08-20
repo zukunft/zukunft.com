@@ -210,10 +210,6 @@
       "description": "of a photovoltaic plant, large utility-scale ground-mounted."
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "variable",
       "description": "of a cost, depending on the amount produced (here including fuel)."
     },
@@ -388,13 +384,6 @@
       "verb": "kind of",
       "to": "upper bound",
       "description": "the high end of an estimated range."
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     }
   ],
   "sources": [
@@ -431,7 +420,7 @@
         "capacity factor",
         "2018",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9",
       "source": "EIA AEO 2013"
@@ -442,7 +431,7 @@
         "capital cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "83.4",
       "source": "EIA AEO 2013"
@@ -453,7 +442,7 @@
         "fixed maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "11.6",
       "source": "EIA AEO 2013"
@@ -464,7 +453,7 @@
         "variable maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "12.3",
       "source": "EIA AEO 2013"
@@ -475,7 +464,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.1",
       "source": "EIA AEO 2013"
@@ -486,7 +475,7 @@
         "levelized cost of electricity",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "108.4",
       "source": "EIA AEO 2013"
@@ -497,7 +486,7 @@
         "capacity factor",
         "2018",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.878",
       "source": "EIA AEO 2013"
@@ -508,7 +497,7 @@
         "capital cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "15.8",
       "source": "EIA AEO 2013"
@@ -519,7 +508,7 @@
         "fixed maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.7",
       "source": "EIA AEO 2013"
@@ -530,7 +519,7 @@
         "variable maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "48.4",
       "source": "EIA AEO 2013"
@@ -541,7 +530,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.2",
       "source": "EIA AEO 2013"
@@ -552,7 +541,7 @@
         "levelized cost of electricity",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "67.1",
       "source": "EIA AEO 2013"
@@ -563,7 +552,7 @@
         "capacity factor",
         "2018",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.34",
       "source": "EIA AEO 2013"
@@ -574,7 +563,7 @@
         "capital cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "70.3",
       "source": "EIA AEO 2013"
@@ -585,7 +574,7 @@
         "fixed maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "13.1",
       "source": "EIA AEO 2013"
@@ -596,7 +585,7 @@
         "variable maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "EIA AEO 2013"
@@ -607,7 +596,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "3.2",
       "source": "EIA AEO 2013"
@@ -618,7 +607,7 @@
         "levelized cost of electricity",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "86.6",
       "source": "EIA AEO 2013"
@@ -629,7 +618,7 @@
         "capacity factor",
         "2018",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25",
       "source": "EIA AEO 2013"
@@ -640,7 +629,7 @@
         "capital cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "130.4",
       "source": "EIA AEO 2013"
@@ -651,7 +640,7 @@
         "fixed maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "9.9",
       "source": "EIA AEO 2013"
@@ -662,7 +651,7 @@
         "variable maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "EIA AEO 2013"
@@ -673,7 +662,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.0",
       "source": "EIA AEO 2013"
@@ -684,7 +673,7 @@
         "levelized cost of electricity",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "144.3",
       "source": "EIA AEO 2013"
@@ -695,7 +684,7 @@
         "capacity factor",
         "2018",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.52",
       "source": "EIA AEO 2013"
@@ -706,7 +695,7 @@
         "capital cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "78.1",
       "source": "EIA AEO 2013"
@@ -717,7 +706,7 @@
         "fixed maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.1",
       "source": "EIA AEO 2013"
@@ -728,7 +717,7 @@
         "variable maintenance cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "6.1",
       "source": "EIA AEO 2013"
@@ -739,7 +728,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.0",
       "source": "EIA AEO 2013"
@@ -750,7 +739,7 @@
         "levelized cost of electricity",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "90.3",
       "source": "EIA AEO 2013"
@@ -761,7 +750,7 @@
         "capacity factor",
         "2022",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.41",
       "source": "EIA AEO 2018"
@@ -772,7 +761,7 @@
         "capital cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "43.1",
       "source": "EIA AEO 2018"
@@ -783,7 +772,7 @@
         "fixed maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "13.4",
       "source": "EIA AEO 2018"
@@ -794,7 +783,7 @@
         "variable maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "EIA AEO 2018"
@@ -805,7 +794,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.5",
       "source": "EIA AEO 2018"
@@ -816,7 +805,7 @@
         "levelized cost of electricity",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "59.1",
       "source": "EIA AEO 2018"
@@ -827,7 +816,7 @@
         "capacity factor",
         "2022",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45",
       "source": "EIA AEO 2018"
@@ -838,7 +827,7 @@
         "capital cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "115.8",
       "source": "EIA AEO 2018"
@@ -849,7 +838,7 @@
         "fixed maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "19.9",
       "source": "EIA AEO 2018"
@@ -860,7 +849,7 @@
         "variable maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "EIA AEO 2018"
@@ -871,7 +860,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.3",
       "source": "EIA AEO 2018"
@@ -882,7 +871,7 @@
         "levelized cost of electricity",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "138.0",
       "source": "EIA AEO 2018"
@@ -893,7 +882,7 @@
         "capacity factor",
         "2022",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.29",
       "source": "EIA AEO 2018"
@@ -904,7 +893,7 @@
         "capital cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "51.2",
       "source": "EIA AEO 2018"
@@ -915,7 +904,7 @@
         "fixed maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "8.7",
       "source": "EIA AEO 2018"
@@ -926,7 +915,7 @@
         "variable maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "EIA AEO 2018"
@@ -937,7 +926,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "3.3",
       "source": "EIA AEO 2018"
@@ -948,7 +937,7 @@
         "levelized cost of electricity",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "63.2",
       "source": "EIA AEO 2018"
@@ -959,7 +948,7 @@
         "capacity factor",
         "2022",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25",
       "source": "EIA AEO 2018"
@@ -970,7 +959,7 @@
         "capital cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "128.4",
       "source": "EIA AEO 2018"
@@ -981,7 +970,7 @@
         "fixed maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "32.6",
       "source": "EIA AEO 2018"
@@ -992,7 +981,7 @@
         "variable maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0",
       "source": "EIA AEO 2018"
@@ -1003,7 +992,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.1",
       "source": "EIA AEO 2018"
@@ -1014,7 +1003,7 @@
         "levelized cost of electricity",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "165.1",
       "source": "EIA AEO 2018"
@@ -1025,7 +1014,7 @@
         "capacity factor",
         "2022",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.64",
       "source": "EIA AEO 2018"
@@ -1036,7 +1025,7 @@
         "capital cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "48.2",
       "source": "EIA AEO 2018"
@@ -1047,7 +1036,7 @@
         "fixed maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "9.8",
       "source": "EIA AEO 2018"
@@ -1058,7 +1047,7 @@
         "variable maintenance cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.8",
       "source": "EIA AEO 2018"
@@ -1069,7 +1058,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.9",
       "source": "EIA AEO 2018"
@@ -1080,7 +1069,7 @@
         "levelized cost of electricity",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "61.7",
       "source": "EIA AEO 2018"
@@ -1092,7 +1081,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "7",
       "source": "Fraunhofer ISE 2024"
@@ -1104,7 +1093,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "12",
       "source": "Fraunhofer ISE 2024"
@@ -1116,7 +1105,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "15.1",
       "source": "Fraunhofer ISE 2024"
@@ -1128,7 +1117,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "25.7",
       "source": "Fraunhofer ISE 2024"
@@ -1140,7 +1129,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "17.3",
       "source": "Fraunhofer ISE 2024"
@@ -1152,7 +1141,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "29.3",
       "source": "Fraunhofer ISE 2024"
@@ -1164,7 +1153,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "10.9",
       "source": "Fraunhofer ISE 2024"
@@ -1176,7 +1165,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "18.1",
       "source": "Fraunhofer ISE 2024"
@@ -1188,7 +1177,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.3",
       "source": "Fraunhofer ISE 2024"
@@ -1200,7 +1189,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "9.2",
       "source": "Fraunhofer ISE 2024"
@@ -1212,7 +1201,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "5.5",
       "source": "Fraunhofer ISE 2024"
@@ -1224,7 +1213,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "10.3",
       "source": "Fraunhofer ISE 2024"
@@ -1236,7 +1225,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "11.5",
       "source": "Fraunhofer ISE 2024"
@@ -1248,7 +1237,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "23.5",
       "source": "Fraunhofer ISE 2024"
@@ -1260,7 +1249,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "6.3",
       "source": "Fraunhofer ISE 2024"
@@ -1272,7 +1261,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "14.4",
       "source": "Fraunhofer ISE 2024"
@@ -1284,7 +1273,7 @@
         "2024",
         "Eurocent per kWh",
         "lower bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.1",
       "source": "Fraunhofer ISE 2024"
@@ -1296,7 +1285,7 @@
         "2024",
         "Eurocent per kWh",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "6.9",
       "source": "Fraunhofer ISE 2024"
@@ -1325,7 +1314,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "levelized cost of electricity component formula",
       "words": [
@@ -1346,7 +1335,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "levelized cost of electricity component formula",
       "words": [
@@ -1367,7 +1356,7 @@
         "grid cost",
         "2018",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "levelized cost of electricity component formula",
       "words": [
@@ -1388,7 +1377,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "levelized cost of electricity component formula",
       "words": [
@@ -1409,7 +1398,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "levelized cost of electricity component formula",
       "words": [
@@ -1430,7 +1419,7 @@
         "grid cost",
         "2022",
         "USD per MWh",
-        "assumed value"
+        "assumed"
       ],
       "formula": "levelized cost of electricity component formula",
       "words": [

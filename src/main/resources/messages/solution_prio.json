@@ -718,7 +718,8 @@
       "description": "how frequently a word, term, or service is used"
     },
     {
-      "name": "assumed value"
+      "name": "assumed",
+      "description": "qualifier: value is an explicit modelling assumption"
     },
     {
       "name": "cost",
@@ -1680,7 +1681,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "11.2"
     },
@@ -1692,7 +1693,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "16"
     },
@@ -1703,7 +1704,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "8"
     },
@@ -1715,7 +1716,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "12"
     },
@@ -1726,7 +1727,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "7.3"
     },
@@ -1738,7 +1739,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "6"
     },
@@ -1749,7 +1750,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "6.5"
     },
@@ -1761,7 +1762,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "9"
     },
@@ -1772,7 +1773,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.5"
     },
@@ -1784,7 +1785,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "7"
     },
@@ -1795,7 +1796,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "3.2"
     },
@@ -1807,7 +1808,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "5.5"
     },
@@ -1818,7 +1819,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.5"
     },
@@ -1830,7 +1831,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "4"
     },
@@ -1841,7 +1842,7 @@
         "loss",
         "trillion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.8"
     },
@@ -1853,7 +1854,7 @@
         "gain",
         "billion",
         "htp",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     }

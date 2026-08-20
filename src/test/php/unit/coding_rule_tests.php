@@ -204,7 +204,7 @@ class coding_rule_tests
      * verify that no import json of src/main/resources/messages adds a "measured value" qualifier:
      * every value is assumed to be measured, so the qualifier only repeats the default while it
      * lengthens the phrase group and needs a word or triple in every file that borrows it;
-     * only the deviation "assumed value" is worth recording (see docs/llm/json_structure.md)
+     * only the deviation, the word "assumed", is worth recording (see docs/llm/json_structure.md)
      *
      * @param test_cleanup $t the test harness used for the assertion
      * @return void

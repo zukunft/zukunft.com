@@ -9,7 +9,7 @@
     "canton",
     "statistics"
   ],
-  "description": "Key figures for the city and canton of Zurich as of 31.12.2025 (population definitive, other 2025 values provisional), with derived results computed by formulas and reproduced in the calc-validation block (except the canton population year-over-year growth, which the system 'increase' formula derives through the time dimension and is therefore not calc-validated). Derived values carry 'assumed value' only where a modelling assumption (e.g. waking welfare fraction) enters, otherwise they are pure formula outputs. Words prefer a Wikipedia ref over a free-text description per schema guidance.",
+  "description": "Key figures for the city and canton of Zurich as of 31.12.2025 (population definitive, other 2025 values provisional), with derived results computed by formulas and reproduced in the calc-validation block (except the canton population year-over-year growth, which the system 'increase' formula derives through the time dimension and is therefore not calc-validated). Derived values carry 'assumed' only where a modelling assumption (e.g. waking welfare fraction) enters, otherwise they are pure formula outputs. Words prefer a Wikipedia ref over a free-text description per schema guidance.",
   "words": [
     {
       "name": "Zurich",
@@ -243,10 +243,6 @@
       "description": "qualifier: value is an explicit modelling assumption"
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "count",
       "description": "the number of items of the kind that the count is of"
     },
@@ -325,13 +321,6 @@
       ],
       "impact": 32400,
       "protection": "admin_protection"
-    },
-    {
-      "name": "assumed value",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value.",
-      "from": "value",
-      "verb": "must be one of",
-      "to": "assumed"
     },
     {
       "name": "city area",
@@ -593,7 +582,7 @@
     {
       "words": [
         "waking welfare fraction",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6",
       "source": "zukunft.com Fermi assumption"
@@ -874,7 +863,7 @@
         "population",
         "waking welfare fraction",
         "2025",
-        "assumed value"
+        "assumed"
       ],
       "formula": "welfare (formula)",
       "words": [

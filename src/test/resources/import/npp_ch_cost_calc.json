@@ -578,13 +578,6 @@
       "to": "kWh"
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "a conjectured value not directly measured, carrying a numeric confidence."
-    },
-    {
       "name": "nuclear power plant",
       "from": "plant",
       "verb": "of",
@@ -711,7 +704,7 @@
         "EPR reactor",
         "capacity factor",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -721,7 +714,7 @@
         "EPR reactor",
         "lifetime",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "60",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -731,7 +724,7 @@
         "EPR reactor",
         "lifetime energy production",
         "kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "756864000000",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -750,7 +743,7 @@
         "nuclear reactor",
         "accident probability over lifetime",
         "median value",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.00598",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -771,7 +764,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2829",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -782,7 +775,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.237",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -793,7 +786,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6314",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -804,7 +797,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9461",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -815,7 +808,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.4936",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -826,7 +819,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2369",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -837,7 +830,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.7581",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -848,7 +841,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "3.9688",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -859,7 +852,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.0831",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -870,7 +863,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2367",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -881,7 +874,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.5484",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -892,7 +885,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "14.2102",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -903,7 +896,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.4423",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -914,7 +907,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2366",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -925,7 +918,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "11.5677",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -936,7 +929,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "39.3714",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -951,7 +944,7 @@
         "EPR reactor",
         "lifetime",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "formula": "accident probability over lifetime (formula)",
       "words": [

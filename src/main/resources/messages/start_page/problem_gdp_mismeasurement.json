@@ -52,7 +52,7 @@
       "name": "percent"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -130,7 +130,7 @@
         "gross domestic usage",
         "GDP mismeasurement",
         "annual",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "0.0011",

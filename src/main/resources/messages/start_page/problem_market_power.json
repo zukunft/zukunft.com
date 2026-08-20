@@ -54,7 +54,7 @@
       "name": "annual"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -129,7 +129,7 @@
       "words": [
         "search engine",
         "market share",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "0.91"
@@ -142,7 +142,7 @@
         "annual",
         "million",
         "USD",
-        "assumed value"
+        "assumed"
       ],
       "number": "910"
     },
@@ -150,7 +150,7 @@
       "words": [
         "market share threshold",
         "market share tax",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "0.3"

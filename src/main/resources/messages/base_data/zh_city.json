@@ -210,9 +210,10 @@
       "description": "large inland body of water"
     },
     {
-      "name": "carbon dioxide",
-      "type": "measure",
-      "description": "CO₂, main greenhouse gas"
+      "name": "carbon"
+    },
+    {
+      "name": "dioxide"
     },
     {
       "name": "tonne",
@@ -414,10 +415,6 @@
       "description": "the expected value of a quantity"
     },
     {
-      "name": "infant",
-      "description": "a child in the first year of life"
-    },
-    {
       "name": "mortality",
       "description": "the incidence of death in a population"
     },
@@ -475,8 +472,13 @@
       "description": "the 36th edition of the Global Financial Centres Index"
     },
     {
-      "name": "100 point scale",
-      "description": "a measurement scale ranging from 0 to 100 points"
+      "name": "100"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "scale"
     },
     {
       "name": "square"
@@ -621,6 +623,27 @@
     }
   ],
   "triples": [
+    {
+      "name": "carbon dioxide",
+      "from": "dioxide",
+      "verb": "of",
+      "to": "carbon",
+      "type": "measure",
+      "description": "CO₂, main greenhouse gas"
+    },
+    {
+      "name": "point scale",
+      "from": "scale",
+      "verb": "of",
+      "to": "point"
+    },
+    {
+      "name": "100 point scale",
+      "from": "point scale",
+      "verb": "with",
+      "to": "100",
+      "description": "a measurement scale ranging from 0 to 100 points"
+    },
     {
       "name": "Swiss franc",
       "from": "franc",
@@ -927,13 +950,13 @@
       "to": "Zurich (city)"
     },
     {
-      "name": "number of primary schools",
+      "name": "number of primary schools in Zurich (city)",
       "from": "school",
-      "verb": "kind of",
-      "to": "education"
+      "verb": "in",
+      "to": "Zurich (city)"
     },
     {
-      "name": "number of universities",
+      "name": "number of universities in Zurich (city)",
       "from": "university",
       "verb": "in",
       "to": "Zurich (city)"
@@ -1089,7 +1112,7 @@
       "to": "Zurich (city)"
     },
     {
-      "name": "full‑time equivalent jobs",
+      "name": "full‑time equivalent jobs in Zurich (city)",
       "from": "full‑time equivalent",
       "verb": "in",
       "to": "Zurich (city)"
@@ -1149,7 +1172,7 @@
       "to": "year"
     },
     {
-      "name": "number of nationalities present",
+      "name": "number of nationalities present in Zurich (city)",
       "from": "nationality",
       "verb": "in",
       "to": "Zurich (city)"
@@ -1277,8 +1300,8 @@
     {
       "name": "infant mortality per 1000 live births",
       "from": "mortality",
-      "verb": "of",
-      "to": "infant"
+      "verb": "per",
+      "to": "birth"
     },
     {
       "name": "city employees total",
@@ -1495,7 +1518,7 @@
     },
     {
       "words": [
-        "number of nationalities present",
+        "number of nationalities present in Zurich (city)",
         "Zurich (city)"
       ],
       "number": "170",
@@ -1621,7 +1644,7 @@
     },
     {
       "words": [
-        "full‑time equivalent jobs",
+        "full‑time equivalent jobs in Zurich (city)",
         "Zurich (city)",
         "2023"
       ],
@@ -1831,7 +1854,7 @@
     },
     {
       "words": [
-        "number of primary schools",
+        "number of primary schools in Zurich (city)",
         "Zurich (city)",
         "2024"
       ],
@@ -1840,7 +1863,7 @@
     },
     {
       "words": [
-        "number of universities",
+        "number of universities in Zurich (city)",
         "Zurich (city)"
       ],
       "number": "6",

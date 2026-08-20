@@ -592,10 +592,6 @@
       ]
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "warming",
       "description": "the rise of global average temperature."
     },
@@ -1046,13 +1042,6 @@
           "type": "wikipedia"
         }
       ]
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     }
   ],
   "sources": [
@@ -1278,7 +1267,7 @@
         "Olkiluoto III",
         "construction cost",
         "EUR bn",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
       "source": "Reuters Olkiluoto",
@@ -1290,7 +1279,7 @@
         "nuclear power plant",
         "construction cost",
         "EUR bn",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
       "source": "Reuters Olkiluoto"
@@ -1301,7 +1290,7 @@
         "construction time",
         "year",
         "upper bound estimate",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
       "source": "Republik Atomkraft 2019",
@@ -1343,7 +1332,7 @@
         "carbon price",
         "lower bound estimate",
         "EUR per tonne CO2",
-        "assumed value"
+        "assumed"
       ],
       "number": "30",
       "source": "OECD NEA carbon pricing 2011",
@@ -1355,7 +1344,7 @@
         "carbon price",
         "upper bound estimate",
         "EUR per tonne CO2",
-        "assumed value"
+        "assumed"
       ],
       "number": "50",
       "source": "OECD NEA carbon pricing 2011"
@@ -1426,7 +1415,7 @@
         "photovoltaic waste",
         "2050",
         "million tonne",
-        "assumed value"
+        "assumed"
       ],
       "number": "80",
       "source": "IEA WEO 2018 electricity",
@@ -1436,7 +1425,7 @@
       "words": [
         "solar dominance multiplier",
         "times",
-        "assumed value"
+        "assumed"
       ],
       "number": "15",
       "source": "Republik Atomkraft 2019",
@@ -1487,7 +1476,7 @@
         "uranium",
         "reserve duration",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "130",
       "source": "Republik Atomkraft 2019",
@@ -1518,7 +1507,7 @@
         "molten salt reactor",
         "operating temperature",
         "Celsius",
-        "assumed value"
+        "assumed"
       ],
       "number": "300",
       "source": "Republik Atomkraft 2019",
@@ -1529,7 +1518,7 @@
         "nuclear fusion",
         "operating temperature",
         "Celsius",
-        "assumed value"
+        "assumed"
       ],
       "number": "150000000",
       "source": "Republik Atomkraft 2019",
@@ -1541,7 +1530,7 @@
         "nuclear fusion",
         "experiment start",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "2025",
       "source": "Republik Atomkraft 2019",
@@ -1552,7 +1541,7 @@
         "nuclear power",
         "scenario growth factor",
         "times",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.5",
       "source": "World Nuclear IPCC 1.5C",
@@ -1563,7 +1552,7 @@
         "global warming",
         "2100",
         "Celsius",
-        "assumed value"
+        "assumed"
       ],
       "number": "3",
       "source": "IPCC SR15 Chapter 2",
@@ -1613,7 +1602,7 @@
         "2050",
         "million tonne",
         "times",
-        "assumed value"
+        "assumed"
       ],
       "formula": "photovoltaic waste high scenario formula",
       "words": [

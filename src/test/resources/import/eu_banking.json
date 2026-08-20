@@ -302,10 +302,6 @@
       ]
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "washing",
       "description": "used figuratively for presenting something in a misleadingly favourable light, as in greenwashing.",
       "refs": [
@@ -458,13 +454,6 @@
       "description": "annual contribution margin per paying customer in EUR, net of cost to serve; assumes a fee-based model with no data monetization and no interchange-heavy card economics."
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "a value that is a conjecture or interpretation rather than a sourced measurement; in this file it also flags findings whose confidence is intrinsically limited, such as a market-absence claim derived from web search that cannot be proven exhaustively."
-    },
-    {
       "name": "digital euro",
       "from": "euro",
       "verb": "kind of",
@@ -586,7 +575,7 @@
     {
       "words": [
         "EU retail bank sovereignty market gap",
-        "assumed value"
+        "assumed"
       ],
       "number": "0",
       "source": "zukunft.com market-gap analysis"
@@ -610,7 +599,7 @@
       "words": [
         "switching willingness",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.02",
       "source": "zukunft.com market-gap analysis"
@@ -619,7 +608,7 @@
       "words": [
         "captured market share",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.05",
       "source": "zukunft.com market-gap analysis"
@@ -628,7 +617,7 @@
       "words": [
         "contribution margin per customer",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "45",
       "source": "zukunft.com market-gap analysis"
@@ -636,7 +625,7 @@
     {
       "words": [
         "sovereignty bank customer",
-        "assumed value"
+        "assumed"
       ],
       "number": "165000",
       "source": "zukunft.com market-gap analysis"
@@ -645,7 +634,7 @@
       "words": [
         "sovereignty bank annual profit",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "7425000",
       "source": "zukunft.com market-gap analysis"
@@ -670,7 +659,7 @@
         "switching willingness",
         "captured market share",
         "contribution margin per customer",
-        "assumed value",
+        "assumed",
         "percent",
         "EUR"
       ],
@@ -678,7 +667,7 @@
       "words": [
         "sovereignty bank annual profit",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "7425000",
       "note": "base case: 165,000,000 * 0.02 * 0.05 * 45. Percent values scale as fractions."

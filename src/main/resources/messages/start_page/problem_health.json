@@ -30,7 +30,7 @@
       "name": "percent"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -81,7 +81,7 @@
       "words": [
         "health taxes",
         "economic capacity",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "0.1"

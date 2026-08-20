@@ -659,6 +659,12 @@ of the test phrases. Those ids come from the insert order of the import files, s
 word in `base_phrases.json`, a split of one multi-word word into a triple, an
 extra file in `files::BASE_DATA_PATH_FILES`, all of them.
 
+The cheapest re-baseline is the one that is not needed: a change to a seed
+import stays as small as the task asks for, so that the object count of every
+class stays the same. Never reformat a seed file and never add or remove a
+word, triple or other object on the side — see *Change as little as the task
+asks for* in `docs/llm/json_structure.md`.
+
 The authority for the new ids is `src/test/resources/unit/<class>/list.csv`. That
 file is not hand-maintained: `test_db_load::csv_recreate()` dumps the whole table
 with `sql_db::csv_from_class()` after a database reset. So the sequence is

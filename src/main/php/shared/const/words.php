@@ -263,7 +263,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 770;
+    const int VERBS_ID = 769;
     const string VERSION = 'version';
     const string VIEW = 'view';
     const string VIEWS = 'views';

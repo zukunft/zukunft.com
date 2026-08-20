@@ -119,13 +119,6 @@
   ],
   "triples": [
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
-    },
-    {
       "name": "confidence value",
       "from": "value",
       "verb": "kind of",
@@ -635,13 +628,13 @@
       "description": "Qualitative direction rather than a pooled effect size: across nine experiments, prior internet search raised self-rated ability to explain unrelated questions. Effect survived controls for time, content, search autonomy, dependent-measure misreading and general overconfidence; driven specifically by querying search engines."
     },
     {
-      "words": ["answer abundance", "trust in news", "correlation coefficient", "assumed value"],
+      "words": ["answer abundance", "trust in news", "correlation coefficient", "assumed"],
       "number": -0.3,
       "description": "Conjecture. The trust decline is co-determined by political polarization, platformisation and election cycles; the share attributable to answer abundance as such is not separately identified by any source here. Low confidence, stated only to make the unmeasured term explicit rather than to hide it."
     },
     {"words": ["answer abundance", "trust in news", "correlation coefficient", "confidence value"], "number": 0.25},
     {
-      "words": ["verification cost", "prior probability weighting", "assumed value"],
+      "words": ["verification cost", "prior probability weighting", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Conjecture: traceability lowers verification cost but does not by itself supply prior probability weighting, and an answer set without priors is anxiogenic regardless of how well each element is sourced. Testable prediction: a sourced-but-unranked answer set should produce anxiety comparable to an unsourced one, while a ranked estimate with an explicit likelihood should not."
@@ -669,21 +662,21 @@
       "description": "Moderation analysis: effectiveness increased when the message included efficacy statements, depicted high susceptibility and severity, and recommended a one-time rather than repeated action. Threat information without an action component is the degenerate case."
     },
     {
-      "words": ["termination criterion", "source contradiction", "assumed value"],
+      "words": ["termination criterion", "source contradiction", "assumed"],
       "number": -1,
       "unit": "direction",
       "description": "Conjecture: contradiction between accessible sources converts an object-level question into the meta-level question of credibility, which has no natural stopping rule. The resulting regress, not the volume of information, is proposed as the dominant anxiogenic factor under answer abundance. Testable against the DNR trust series: markets with higher measured source disagreement should show higher avoidance at equal news volume."
     },
     {"words": ["termination criterion", "source contradiction", "confidence value"], "number": 0.65},
     {
-      "words": ["self-initiated question", "termination criterion", "assumed value"],
+      "words": ["self-initiated question", "termination criterion", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Conjecture: an answer to a question the person posed can terminate that question; an answer pushed by a feed adds threat load without a corresponding question to close, so it cannot terminate. Predicts that search and feed differ in affective outcome even at identical content."
     },
     {"words": ["self-initiated question", "termination criterion", "confidence value"], "number": 0.5},
     {
-      "words": ["possibility space", "action space", "termination criterion", "assumed value"],
+      "words": ["possibility space", "action space", "termination criterion", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Summary conjecture integrating the three measured moderators: an answer produces trust when it narrows the possibility space and widens the action space, and fear when it widens the possibility space and leaves the action space unchanged. Online symptom search is the canonical instance of the second case. Caveat: narrowing the possibility space is also the mechanism of the Fisher et al. illusion, so closure is necessary but not sufficient for calibration."
@@ -725,70 +718,70 @@
       "description": "Creators rank high on ease of understanding, entertainment value and relatability, and markedly lower on trustworthiness and impartiality. Only 3% rely on creators as their sole news source. Read here as the market's revealed answer to the demand for an available human: proximity without accountability."
     },
     {
-      "words": ["answerer accountability", "case context conditioning", "social buffering", "assumed value"],
+      "words": ["answerer accountability", "case context conditioning", "social buffering", "assumed"],
       "number": 3,
       "unit": "count",
       "description": "Conjecture: what an available human answerer supplies decomposes into exactly these three functions. Only accountability is fully engineerable into an information system, case context partially, co-regulation not at all. Consequence: source traceability is a surrogate for accountability, since it records provenance but not who bears the cost of being wrong. Durable named authorship is the closer substitute."
     },
     {"words": ["answerer accountability", "case context conditioning", "social buffering", "confidence value"], "number": 0.7},
     {
-      "words": ["parasocial availability", "answerer accountability", "assumed value"],
+      "words": ["parasocial availability", "answerer accountability", "assumed"],
       "number": -1,
       "unit": "direction",
       "description": "Conjecture: creator-mediated news satisfies the demand for an available answerer while removing the accountability that made the available answerer trustworthy. Predicts that creator reliance rises fastest in markets with the largest declines in institutional trust."
     },
     {"words": ["parasocial availability", "answerer accountability", "confidence value"], "number": 0.6},
     {
-      "words": ["asking cost", "answerer accountability", "assumed value"],
+      "words": ["asking cost", "answerer accountability", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Conjecture: the social price of asking a person (exposed ignorance, obligation, reciprocity) is both the reason search displaced asking and the reason a human answer carries weight. The two cannot be separated: an answer that costs nothing to obtain commits nobody. Counter-consideration against over-valuing proximate human answerers: familiarity optimises affective calibration, not accuracy, and confidently wrong advice from a trusted proximate source is a well-documented misinformation channel."
     },
     {"words": ["asking cost", "answerer accountability", "confidence value"], "number": 0.55},
     {
-      "words": ["traceable knowledge system", "contraindication", "irreducible uncertainty", "assumed value"],
+      "words": ["traceable knowledge system", "contraindication", "irreducible uncertainty", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Derived from de Berker et al.: a system that enumerates the possibility space enlarges it. Under acute arousal with irreducible uncertainty, its output is structurally equivalent to symptom search. Contraindicated. A demonstrated contraindication is a result, not a cost to the project."
     },
     {"words": ["traceable knowledge system", "contraindication", "irreducible uncertainty", "confidence value"], "number": 0.7},
     {
-      "words": ["traceable knowledge system", "contraindication", "efficacy statement", "assumed value"],
+      "words": ["traceable knowledge system", "contraindication", "efficacy statement", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Derived from Tannenbaum et al.: threat magnitude without an available action produces avoidance rather than action. Contraindicated where the user holds no lever over the modelled quantity."
     },
     {"words": ["traceable knowledge system", "contraindication", "efficacy statement", "confidence value"], "number": 0.7},
     {
-      "words": ["traceable knowledge system", "contraindication", "verification cost", "assumed value"],
+      "words": ["traceable knowledge system", "contraindication", "verification cost", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Contraindicated where verification cost exceeds decision value: cheap, reversible, low-stakes decisions. Tracing is net negative there."
     },
     {"words": ["traceable knowledge system", "contraindication", "verification cost", "confidence value"], "number": 0.75},
     {
-      "words": ["traceable knowledge system", "contraindication", "case context conditioning", "assumed value"],
+      "words": ["traceable knowledge system", "contraindication", "case context conditioning", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Contraindicated where an accountable human with case knowledge is available and better conditioned on the particular situation, and where the question does not decompose into number-bound triples (grief, loyalty, aesthetic judgement)."
     },
     {"words": ["traceable knowledge system", "contraindication", "case context conditioning", "confidence value"], "number": 0.6},
     {
-      "words": ["traceable knowledge system", "indication", "assumed value"],
+      "words": ["traceable knowledge system", "indication", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "The complement of the contraindications: irreversible, contested, multi-party decisions where the disagreement runs over numbers, where the parties need to locate the exact point of divergence, and where no single accountable person has jurisdiction. Narrower than 'decision infrastructure' but sharply bounded."
     },
     {"words": ["traceable knowledge system", "indication", "confidence value"], "number": 0.7},
     {
-      "words": ["contraindication", "structural accountability", "declarative accountability", "assumed value"],
+      "words": ["contraindication", "structural accountability", "declarative accountability", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Conjecture answering the accountability gap identified in v0.0.3: a published contraindication list states where the builder accepts failure, is falsifiable and carries reputational cost, which a source chain does not. But declared warnings are cheap. It counts as accountability only when the system acts on it, by refusing, routing elsewhere or degrading to 'ask a person'. Structural, not declarative."
     },
     {"words": ["contraindication", "structural accountability", "declarative accountability", "confidence value"], "number": 0.65},
     {
-      "words": ["information dose", "possibility space", "therapeutic window", "assumed value"],
+      "words": ["information dose", "possibility space", "therapeutic window", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Operationalisation of dose for a knowledge system: the amount of possibility space presented at once. The same underlying data yields the full branched model for a deliberating body and a single figure with error bars plus one next step for an individual under pressure. Two doses of one thing, not two products."
@@ -816,28 +809,28 @@
       "description": "Drone strikes directly struck two AWS facilities in the United Arab Emirates (me-central-1) and damaged one in Bahrain (me-south-1) on 1-2 March 2026, with a further Bahrain disruption on 23 March. AWS advised customers to back up or migrate. Cloudflare characterises kinetic damage to hyperscaler infrastructure as an unprecedented escalation."
     },
     {
-      "words": ["infrastructure dependency awareness", "acute stress response", "assumed value"],
+      "words": ["infrastructure dependency awareness", "acute stress response", "assumed"],
       "number": -1,
       "unit": "direction",
       "description": "Conjecture, and a prediction the existing values already generate: fear of losing the answer infrastructure should be largely absent despite near-total dependency. Two mechanisms converge. Per de Berker, stress tracks represented uncertainty, and most people hold no distribution over this event. Per Tannenbaum, threat without an available action produces avoidance rather than preparation, and an individual has no lever over a cable cut or a state shutdown. Predicts high dependency with near-zero private mitigation, which is what is observed."
     },
     {"words": ["infrastructure dependency awareness", "acute stress response", "confidence value"], "number": 0.6},
     {
-      "words": ["exposure fear", "illusion of explanatory depth", "connectivity loss", "assumed value"],
+      "words": ["exposure fear", "illusion of explanatory depth", "connectivity loss", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Conjecture: the affectively loaded component is not loss of a tool but retroactive falsification of self-assessed knowledge, given the Fisher et al. finding that access is conflated with understanding. Disconnection would reveal the misattribution. Predicts avoidance of the topic rather than worry about it, and that the effect is strongest in those who search most."
     },
     {"words": ["exposure fear", "illusion of explanatory depth", "connectivity loss", "confidence value"], "number": 0.5},
     {
-      "words": ["provenance portability", "traceable knowledge system", "assumed value"],
+      "words": ["provenance portability", "traceable knowledge system", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "A source chain is printable; a search ranking is not. Design consequence following the structural accountability criterion in v0.0.4: a knowledge system that cannot state what it knows without a server has made its users' knowledge conditional on its own uptime, which institutionalises the Fisher effect rather than correcting it."
     },
     {"words": ["provenance portability", "traceable knowledge system", "confidence value"], "number": 0.75},
     {
-      "words": ["offline staleness", "provenance portability", "assumed value"],
+      "words": ["offline staleness", "provenance portability", "assumed"],
       "number": -1,
       "unit": "direction",
       "description": "Counter-cost, stated against the preceding value: a stale local model is more dangerous than none, because the provenance chain continues to look authoritative after its sources have moved. Offline capability trades currency for availability. A dosing question, not a free gain."
@@ -865,35 +858,35 @@
       "description": "The Swiss national drill tests the sirens for one minute on the first Wednesday of February and explicitly requires no protective measures from the population: the mechanism is tested, not the population's endurance. Noted alongside it: the civil protection office's principal preparedness recommendation on the day is to install and keep current a smartphone alerting app, routing preparedness through the infrastructure whose loss would constitute the emergency."
     },
     {
-      "words": ["announced drill", "irreducible uncertainty", "assumed value"],
+      "words": ["announced drill", "irreducible uncertainty", "assumed"],
       "number": -1,
       "unit": "direction",
       "description": "Conjecture against the annual-shutdown proposal, derived from de Berker: an announced drill has zero uncertainty about onset, duration and end, and therefore trains the one case that is not the problem. Real disruptions are of unbounded duration; the Iranian shutdown ran from 8 January to at least late April. Habituation to a bounded outage does not transfer to an unbounded one."
     },
     {"words": ["announced drill", "irreducible uncertainty", "confidence value"], "number": 0.75},
     {
-      "words": ["announced drill", "shutdown capability", "government directed shutdown", "assumed value"],
+      "words": ["announced drill", "shutdown capability", "government directed shutdown", "assumed"],
       "number": -1,
       "unit": "direction",
       "description": "Conjecture: at national scale, the party able to run the drill is the party the resilience is needed against. The two most complete national outages observed in Q1 2026 were state-ordered. An institutionalised annual shutdown normalises and rehearses the capability; population and apparatus are trained together and only one benefits. Additional cost: emergency calls, medical telemetry, payments and socially isolated people make a national outage an incident with casualties rather than an exercise."
     },
     {"words": ["announced drill", "shutdown capability", "government directed shutdown", "confidence value"], "number": 0.7},
     {
-      "words": ["scoped failure drill", "infrastructure dependency awareness", "assumed value"],
+      "words": ["scoped failure drill", "infrastructure dependency awareness", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Conjecture: at organisational and individual scale the proposal holds, but its yield is the dependency inventory rather than emotional habituation. Bounded drills therefore find more unknown dependencies per unit of harm than total ones, which inverts the intuition that a bigger drill teaches more."
     },
     {"words": ["scoped failure drill", "infrastructure dependency awareness", "confidence value"], "number": 0.7},
     {
-      "words": ["explanation probe", "exposure fear", "exposure with response prevention", "assumed value"],
+      "words": ["explanation probe", "exposure fear", "exposure with response prevention", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Conjecture: for exposure fear specifically, disconnection is the wrong instrument. The misattribution is 'I know this' versus 'I can retrieve this', and the Rozenblit-Keil probe targets it directly, costs minutes, requires no infrastructure and can be run while online, therefore often. Disconnection tests availability; explanation tests possession."
     },
     {"words": ["explanation probe", "exposure fear", "exposure with response prevention", "confidence value"], "number": 0.65},
     {
-      "words": ["explanation probe", "calibration gap", "traceable knowledge system", "assumed value"],
+      "words": ["explanation probe", "calibration gap", "traceable knowledge system", "assumed"],
       "number": 1,
       "unit": "direction",
       "description": "Buildable design consequence: require the user to state an expected order of magnitude before the source chain is revealed, and show the gap. This is the annual drill run continuously at zero blast radius, and it is the mechanism by which a traceable system can avoid institutionalising the Fisher effect rather than merely not causing it. Untested: eliciting a guess first may also anchor the user on their own estimate, which would work against calibration."

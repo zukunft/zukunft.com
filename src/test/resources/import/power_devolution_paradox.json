@@ -1,9 +1,6 @@
 {
-  "pod": {
-    "version": "0.0.3",
-    "description": "Claim analysis: reducing the power of the powerful is usually a net benefit; revised premise: no actor can ensure even distribution of power, because relinquishing power removes the capacity to guarantee the outcome",
-    "time": "2026-08-04"
-  },
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "words": [
     {
       "name": "assumed"
@@ -171,13 +168,6 @@
       "verb": "kind of",
       "to": "historical",
       "description": "post-abdication collapse cases: Sulla's restored republic, Diocletian's tetrarchy"
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     },
     {
       "name": "confidence value",

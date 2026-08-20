@@ -46,41 +46,11 @@
       ]
     },
     {
-      "name": "false news",
-      "description": "false or misleading information presented as news, often to damage a reputation or for political or financial gain.",
-      "refs": [
-        {
-          "name": "Fake_news",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "agnotology",
       "description": "the study of culturally induced ignorance or doubt, particularly through the publication of inaccurate or misleading data.",
       "refs": [
         {
           "name": "Agnotology",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "brain rot",
-      "description": "the supposed deterioration of a person's mental state from the overconsumption of trivial or unchallenging online material.",
-      "refs": [
-        {
-          "name": "Brain_rot",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "social media",
-      "description": "interactive technologies that let people create and share content and form networks through virtual communities.",
-      "refs": [
-        {
-          "name": "Social_media",
           "type": "wikipedia"
         }
       ]
@@ -158,33 +128,31 @@
     {
       "name": "2024",
       "type": "time"
+    },
+    {
+      "name": "media"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "brain"
+    },
+    {
+      "name": "rot"
+    },
+    {
+      "name": "false"
+    },
+    {
+      "name": "news"
     }
   ],
   "triples": [
     {
-      "from": "false news",
-      "verb": "kind of",
-      "to": "misinformation"
-    },
-    {
       "from": "disinformation",
       "verb": "kind of",
       "to": "misinformation"
-    },
-    {
-      "from": "social media",
-      "verb": "can cause",
-      "to": "disinformation"
-    },
-    {
-      "from": "social media",
-      "verb": "can cause",
-      "to": "brain rot"
-    },
-    {
-      "from": "social media",
-      "verb": "can cause",
-      "to": "polarization"
     },
     {
       "from": "disinformation",
@@ -203,12 +171,6 @@
       "to": "internet"
     },
     {
-      "name": "social media user",
-      "from": "user",
-      "verb": "of",
-      "to": "social media"
-    },
-    {
       "name": "internet share",
       "from": "share",
       "verb": "of",
@@ -216,11 +178,76 @@
       "description": "the share of the world population that uses the internet"
     },
     {
+      "name": "social media",
+      "from": "media",
+      "verb": "kind of",
+      "to": "social",
+      "description": "interactive technologies that let people create and share content and form networks through virtual communities.",
+      "refs": [
+        {
+          "name": "Social_media",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "social media",
+      "verb": "can cause",
+      "to": "disinformation"
+    },
+    {
+      "from": "social media",
+      "verb": "can cause",
+      "to": "polarization"
+    },
+    {
+      "name": "social media user",
+      "from": "user",
+      "verb": "of",
+      "to": "social media"
+    },
+    {
       "name": "social media share",
       "from": "share",
       "verb": "of",
       "to": "social media",
       "description": "the share of the world population that uses social media"
+    },
+    {
+      "name": "brain rot",
+      "from": "rot",
+      "verb": "of",
+      "to": "brain",
+      "description": "the supposed deterioration of a person's mental state from the overconsumption of trivial or unchallenging online material.",
+      "refs": [
+        {
+          "name": "Brain_rot",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "false news",
+      "from": "news",
+      "verb": "kind of",
+      "to": "false",
+      "description": "false or misleading information presented as news, often to damage a reputation or for political or financial gain.",
+      "refs": [
+        {
+          "name": "Fake_news",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "false news",
+      "verb": "kind of",
+      "to": "misinformation"
+    },
+    {
+      "from": "social media",
+      "verb": "can cause",
+      "to": "brain rot"
     }
   ],
   "sources": [

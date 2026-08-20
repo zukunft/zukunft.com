@@ -772,9 +772,9 @@
   "triples": [
     {
       "name": "exchange rate",
-      "from": "exchange",
-      "verb": "has a",
-      "to": "rate"
+      "from": "rate",
+      "verb": "of",
+      "to": "exchange"
     },
     {
       "name": "source currency",

@@ -9,7 +9,7 @@
     "long-term orientation",
     "resource curse"
   ],
-  "description": "Knowledge captured from a dialogue on whether incentives can be scaled back without eroding cooperation. Measured findings carry their source; the conversation's own conjectures are tagged 'assumed value' so the most load-bearing assumptions can later be surfaced for scrutiny.",
+  "description": "Knowledge captured from a dialogue on whether incentives can be scaled back without eroding cooperation. Measured findings carry their source; the conversation's own conjectures are tagged 'assumed' so the most load-bearing assumptions can later be surfaced for scrutiny.",
   "words": [
     {
       "name": "agriculture",
@@ -417,10 +417,6 @@
       ]
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "wealth",
       "refs": [
         {
@@ -638,13 +634,6 @@
       "verb": "can cause",
       "to": "scaling",
       "description": "OPEN QUESTION: whether group-sanction-based cooperation that works in small units scales to anonymous mass societies; transparency proposed as a substitute for mutual acquaintance."
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "qualifier marking a value as an assumption or conjecture to be verified later, not an established measurement."
     }
   ],
   "sources": [
@@ -722,7 +711,7 @@
     {
       "words": [
         "seasonality causes long-term orientation",
-        "assumed value",
+        "assumed",
         "qualitative"
       ],
       "number": "0.4",
@@ -731,7 +720,7 @@
     {
       "words": [
         "latitude as confounder",
-        "assumed value",
+        "assumed",
         "qualitative"
       ],
       "number": "0.7",
@@ -740,7 +729,7 @@
     {
       "words": [
         "trust erosion hysteresis",
-        "assumed value",
+        "assumed",
         "qualitative"
       ],
       "number": "0.5",
@@ -749,7 +738,7 @@
     {
       "words": [
         "incentive reduction can raise trust",
-        "assumed value",
+        "assumed",
         "supported"
       ],
       "number": "0.6",
@@ -758,7 +747,7 @@
     {
       "words": [
         "fast transition can destroy intermediary structures",
-        "assumed value",
+        "assumed",
         "supported"
       ],
       "number": "0.65",
@@ -767,7 +756,7 @@
     {
       "words": [
         "scaling problem of commons governance",
-        "assumed value",
+        "assumed",
         "contested"
       ],
       "number": "0.5",

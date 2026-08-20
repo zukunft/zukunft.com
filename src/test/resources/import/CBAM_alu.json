@@ -173,13 +173,6 @@
     {"from": "EUR", "verb": "per", "to": "tonne", "description": "Euros per metric tonne"},
     {"name": "EUR/t (unit symbol)", "from": "EUR/t", "verb": "is symbol for", "to": "EUR per tonne"},
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
-    },
-    {
       "name": "confidence value",
       "from": "value",
       "verb": "kind of",
@@ -201,7 +194,7 @@
       "description": "Recycling uses about 5% of the energy of primary production (Hall-Heroult ~14,000 kWh/t)."
     },
     {
-      "words": ["specific electricity demand", "aluminium recycling", "MWh/t", "assumed value"],
+      "words": ["specific electricity demand", "aluminium recycling", "MWh/t", "assumed"],
       "value": 0.65,
       "description": "Derived from ~5% of ~14 MWh/t primary; remelting electricity typically 0.6-0.7 MWh/t. Range 0.6-0.7."
     },
@@ -217,7 +210,7 @@
       "description": "Hall-Heroult electrolysis requires approximately 14,000 kWh per tonne."
     },
     {
-      "words": ["CO2-eq burden", "hydropower electricity", "gCO2eq/kWh", "assumed value"],
+      "words": ["CO2-eq burden", "hydropower electricity", "gCO2eq/kWh", "assumed"],
       "value": 17,
       "description": "Lifecycle emission factor for hydropower, typical range 10-24 gCO2eq/kWh; midpoint used."
     },
@@ -227,7 +220,7 @@
       "description": "Subjective probability that the assumed 17 gCO2eq/kWh is the right value within the range 10-24."
     },
     {
-      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "electric furnace", "kgCO2eq/t", "assumed value"],
+      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "electric furnace", "kgCO2eq/t", "assumed"],
       "value": 90,
       "description": "Hypothetical case: ALL energy electric from hydropower, only material/dross losses remain. Range 50-150 kg/t."
     },
@@ -244,7 +237,7 @@
         "electric furnace",
         "kgCO2eq/t",
         "specific electricity demand",
-        "assumed value"
+        "assumed"
       ],
       "value": 12,
       "description": "Electricity-only share at 0.65 MWh/t and 17 gCO2eq/kWh. Range ~7-16 kg/t. Excludes non-electric process emissions."
@@ -263,7 +256,7 @@
       "description": "Subjective probability that the assumed 12 kg CO2-eq/t is the right value within the range 7-16."
     },
     {
-      "words": ["CO2-eq burden", "aluminium recycling", "gas-fired furnace", "kgCO2eq/t", "assumed value"],
+      "words": ["CO2-eq burden", "aluminium recycling", "gas-fired furnace", "kgCO2eq/t", "assumed"],
       "value": 450,
       "description": "Realistic full balance for secondary aluminium with gas-fired remelt furnace. Range ~300-600 kg/t. Contrast to the hydropower electric case."
     },
@@ -311,7 +304,7 @@
       "description": "Regional premium typically 80-300 USD/t (e.g. ~210 US Midwest, ~180 Japan CIF). Midpoint used."
     },
     {
-      "words": ["scrap input cost", "aluminium recycling", "USD/t", "assumed value"],
+      "words": ["scrap input cost", "aluminium recycling", "USD/t", "assumed"],
       "value": 2600,
       "description": "Scrap typically 70-95% of LME depending on quality. At LME ~3150 that is ~2200-3000 USD/t. Midpoint used."
     },
@@ -321,7 +314,7 @@
       "description": "Subjective probability that the assumed 2600 USD/t is the right value within the range 2200-3000."
     },
     {
-      "words": ["conversion cost", "aluminium recycling", "EUR/t", "assumed value"],
+      "words": ["conversion cost", "aluminium recycling", "EUR/t", "assumed"],
       "value": 275,
       "description": "Total conversion margin excluding metal value: energy ~40-60, melt loss, labour, salts, pretreatment, maintenance. Range ~150-400 EUR/t."
     },
@@ -331,7 +324,7 @@
       "description": "Subjective probability that the assumed 275 EUR/t is the right value within the range 150-400."
     },
     {
-      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "EUR/t", "specific electricity demand", "assumed value"],
+      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "EUR/t", "specific electricity demand", "assumed"],
       "value": 50,
       "description": "Electricity cost component of conversion: 0.65 MWh/t at ~60-100 EUR/MWh industrial. Small share of total conversion cost."
     },
@@ -341,7 +334,7 @@
       "description": "Subjective probability that the assumed 50 EUR/t is the right value at 60-100 EUR/MWh industrial electricity."
     },
     {
-      "words": ["melt loss", "aluminium recycling", "fraction", "assumed value"],
+      "words": ["melt loss", "aluminium recycling", "fraction", "assumed"],
       "value": 0.05,
       "description": "Dross and oxidation loss during remelting, typically 2-8%. Midpoint used; often the largest hidden cost block."
     },

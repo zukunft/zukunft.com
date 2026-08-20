@@ -115,10 +115,6 @@
       "description": "Is a symbol for US dollar"
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "welfare"
     },
     {
@@ -282,12 +278,6 @@
       "to": "year"
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed"
-    },
-    {
       "from": "gross domestic usage",
       "verb": "is a",
       "to": "welfare measure"
@@ -384,7 +374,7 @@
         "taxi example",
         "gross domestic usage",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1",
       "source": "zukunft.com GDU text",
@@ -394,7 +384,7 @@
       "words": [
         "encyclopedia example",
         "gross domestic usage",
-        "assumed value"
+        "assumed"
       ],
       "number": "5000000000",
       "source": "zukunft.com GDU text",
@@ -404,7 +394,7 @@
       "words": [
         "air pollution example",
         "gross domestic usage",
-        "assumed value"
+        "assumed"
       ],
       "number": "-200000000",
       "source": "zukunft.com GDU text",

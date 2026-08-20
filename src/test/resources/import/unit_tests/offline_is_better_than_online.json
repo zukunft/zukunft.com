@@ -363,10 +363,6 @@
       "name": "user"
     },
     {
-      "name": "value",
-      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
-    },
-    {
       "name": "video",
       "refs": [
         {
@@ -745,12 +741,6 @@
       "to": "political polarization"
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed"
-    },
-    {
       "name": "US dollar",
       "from": "dollar",
       "verb": "kind of",
@@ -863,7 +853,7 @@
       "words": [
         "format influence on persuasion",
         "probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.8"
     },
@@ -872,7 +862,7 @@
         "format influence on persuasion",
         "probability",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     },

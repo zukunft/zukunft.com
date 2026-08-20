@@ -66,7 +66,7 @@
     },
     {"from": "Zurich (canton)", "verb": "is part of", "to": "Switzerland"},
     {"name": "Zurich (city) share of Zurich (canton)", "from": "Zurich (city)", "verb": "is part of", "to": "Zurich (canton)"},
-    {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company"},
+    {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company", "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich"},
     {"from": "ZU", "verb": "is an acronym for", "to": "Zurich"},
     {"from": "2013", "verb": "is a", "to": "year"},
     {"from": "2014", "verb": "is a", "to": "year"},

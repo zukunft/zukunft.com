@@ -35,8 +35,7 @@
     {"name": "rate"},
     {"name": "riding"},
     {"name": "ton"},
-    {"name": "USD", "description": "Is a symbol for US dollar"},
-    {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"}
+    {"name": "USD", "description": "Is a symbol for US dollar"}
   ],
   "triples": [
     {"name": "climate policy", "from": "policy", "verb": "of", "to": "climate"},
@@ -123,7 +122,6 @@
     },
     {"name": "ton CO2-eq", "from": "ton", "verb": "of", "to": "CO2-eq"},
     {"from": "USD", "verb": "per", "to": "ton CO2-eq"},
-    {"name": "assumed value", "from": "value", "verb": "kind of", "to": "assumed"},
     {
       "name": "climate policy effectiveness",
       "from": "effectiveness",

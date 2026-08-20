@@ -196,13 +196,6 @@
       "description": "a bilateral border carbon adjustment priced at the carbon-price differential times the verified product intensity neutralises the shift term; the only missing input in practice is a verifiable eB per product and origin"
     },
     {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
-    },
-    {
       "name": "confidence value",
       "from": "value",
       "verb": "kind of",
@@ -239,25 +232,25 @@
   ],
   "values": [
     {
-      "words": ["eB", "tomatoes", "oil-heated greenhouse", "Germany", "kgCO2eq/kg", "assumed value"],
+      "words": ["eB", "tomatoes", "oil-heated greenhouse", "Germany", "kgCO2eq/kg", "assumed"],
       "value": 6,
       "description": "Oil-heated winter greenhouse tomatoes, Germany, including road transport to Switzerland. Literature range for heated greenhouse tomatoes is roughly 2 to 6 kg CO2eq per kg; 6 is an upper-range illustration, to be replaced by a verified LCA value."
     },
     {"words": ["eB", "tomatoes", "oil-heated greenhouse", "Germany", "kgCO2eq/kg", "confidence value"], "value": 0.6},
     {
-      "words": ["eA", "tomatoes", "heat-pump greenhouse", "Switzerland", "kgCO2eq/kg", "assumed value"],
+      "words": ["eA", "tomatoes", "heat-pump greenhouse", "Switzerland", "kgCO2eq/kg", "assumed"],
       "value": 1,
       "description": "Heat-pump greenhouse tomatoes on Swiss hydro electricity, remaining emissions from cultivation, substrate, fertiliser, packaging."
     },
     {"words": ["eA", "tomatoes", "heat-pump greenhouse", "Switzerland", "kgCO2eq/kg", "confidence value"], "value": 0.6},
     {
-      "words": ["e0", "crude steel", "blast furnace route", "European Union", "tCO2eq/t", "assumed value"],
+      "words": ["e0", "crude steel", "blast furnace route", "European Union", "tCO2eq/t", "assumed"],
       "value": 2,
       "description": "EU average blast-furnace route before additional carbon pricing. Order of magnitude consistent with IEA and worldsteel figures; verify against a specific dataset before citing."
     },
     {"words": ["e0", "crude steel", "blast furnace route", "European Union", "tCO2eq/t", "confidence value"], "value": 0.6},
     {
-      "words": ["eB", "crude steel", "blast furnace route", "China", "tCO2eq/t", "assumed value"],
+      "words": ["eB", "crude steel", "blast furnace route", "China", "tCO2eq/t", "assumed"],
       "value": 3,
       "description": "Coal-based blast-furnace route with coal-heavy electricity mix, typical for imports from China. Verify against IEA or CBAM default values before citing."
     },

@@ -59,14 +59,7 @@
       "description": "the rate or condition of being diseased in a population; the prevalence or incidence of ill health"
     },
     {
-      "name": "life expectancy",
-      "description": "a statistical measure of the average time an organism is expected to live, based on the year of birth and other demographic factors.",
-      "refs": [
-        {
-          "name": "Life_expectancy",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "expectancy"
     },
     {
       "name": "HALE",
@@ -165,6 +158,23 @@
     }
   ],
   "triples": [
+    {
+      "name": "life expectancy",
+      "description": "a statistical measure of the average time an organism is expected to live, based on the year of birth and other demographic factors.",
+      "from": "expectancy",
+      "verb": "of",
+      "to": "life",
+      "refs": [
+        {
+          "name": "Life expectancy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188419",
+          "type": "wikidata"
+        }
+      ]
+    },
     {
       "from": "DALY",
       "verb": "kind of",

@@ -680,6 +680,9 @@
       "name": "angular"
     },
     {
+      "name": "angle"
+    },
+    {
       "name": "linear"
     },
     {
@@ -751,12 +754,6 @@
     },
     {
       "name": "distance"
-    },
-    {
-      "name": "time"
-    },
-    {
-      "name": "number"
     },
     {
       "name": "constant",
@@ -865,7 +862,7 @@
       "description": "Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918."
     },
     {
-      "name": "de Broglie",
+      "name": "deBroglie",
       "description": "Louis de Broglie was a French physicist and aristocrat known for his contributions to quantum theory.",
       "refs": [
         {
@@ -1322,11 +1319,17 @@
       "description": "the branch of physics that deals with light and its interaction with matter"
     },
     {
-      "name": "quantum mechanics",
-      "description": "the branch of physics that describes matter and energy at atomic and subatomic scales"
+      "name": "quantum"
     }
   ],
   "triples": [
+    {
+      "name": "quantum mechanics",
+      "from": "mechanics",
+      "verb": "kind of",
+      "to": "quantum",
+      "description": "the branch of physics that describes matter and energy at atomic and subatomic scales"
+    },
     {
       "name": "time unit",
       "from": "unit",
@@ -1487,9 +1490,9 @@
     },
     {
       "name": "angular velocity",
-      "from": "angular",
-      "verb": "kind of",
-      "to": "velocity",
+      "from": "velocity",
+      "verb": "per",
+      "to": "angle",
       "refs": [
         {
           "name": "Angular velocity",
@@ -1784,7 +1787,7 @@
     {
       "name": "de Broglie relation",
       "description": "The de Broglie hypothesis proposes that all matter exhibits wave-like behaviour, and the de Broglie wavelength of a particle is inversely proportional to its momentum.",
-      "from": "de Broglie",
+      "from": "deBroglie",
       "verb": "name of",
       "to": "equation",
       "refs": [

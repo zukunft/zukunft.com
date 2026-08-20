@@ -64,11 +64,12 @@ class json_validation
         'test data' => test_paths::IMPORT,
     ];
 
+    // the folder with the json files that break a rule on purpose to test the import error
+    // handling, so a finding there is the expected result and never reported
+    const string SKIP_PATH = test_paths::IMPORT_INCONSISTENCY;
+
     // the qualifier that only repeats the default, see docs/llm/json_structure.md
     const string MEASURED_VALUE = 'measured value';
-
-    // the deviation from the default that is worth recording, so it may be a multi word name
-    const string ASSUMED_VALUE = 'assumed value';
 
     // the max length of a lower case word that can be part of a proper noun e.g. "and" or "de"
     const int CONNECTOR_LENGTH = 3;
@@ -131,7 +132,9 @@ class json_validation
             . ' the checks are the same as in coding_rule_tests, but listed per file here' . "\n";
         $md_txt .= "\n";
         $md_txt .= $file_cnt . ' json files checked, '
-            . $this->hit_count($find_lst) . ' findings' . "\n";
+            . $this->hit_count($find_lst) . ' findings'
+            . ' (' . self::SKIP_PATH . ' is not checked, because these files'
+            . ' break a rule on purpose)' . "\n";
 
         $md_txt .= $this->section_md(self::CHK_SYNTAX, $find_lst,
             'a file that cannot be decoded is skipped by every other check,'
@@ -139,7 +142,7 @@ class json_validation
         $md_txt .= $this->section_md(self::CHK_MEASURED, $find_lst,
             'every value is assumed to be measured, so the qualifier only repeats the default'
             . ' while it lengthens the phrase group and needs a word or triple in every file'
-            . ' that borrows it; only the deviation "assumed value" is worth recording');
+            . ' that borrows it; only the deviation, the word "assumed", is worth recording');
         $md_txt .= $this->section_md(self::CHK_VERB, $find_lst,
             'the import resolves a verb by an exact name match and creates the verb when the name'
             . ' is unknown (see triple::import_mapper), so a typo silently grows the shared verb'
@@ -458,8 +461,8 @@ class json_validation
      *
      * a word is the most atomic text of the graph, so a composition like "economics textbook"
      * belongs in a triple that joins the single word atoms (docs/llm/json_structure.md);
-     * the documented exceptions are not reported: an external proper noun that is written with
-     * a space in the real world and the "assumed value" qualifier
+     * the documented exception is not reported: an external proper noun that is written with
+     * a space in the real world
      *
      * @param array $json_array the decoded json file
      * @return array map of the word name with a space to the first word entry that uses it
@@ -471,7 +474,7 @@ class json_validation
             if (is_array($wrd)) {
                 $name = $wrd[json_fields::NAME] ?? '';
                 if (is_string($name) and str_contains(trim($name), ' ')) {
-                    if ($name != self::ASSUMED_VALUE and !$this->is_proper_noun($name)) {
+                    if (!$this->is_proper_noun($name)) {
                         $hits['"' . $name . '"'] ??= $this->sample($wrd);
                     }
                 }
@@ -905,14 +908,16 @@ class json_validation
 
     /**
      * @param string $path the folder to scan for json import files
-     * @return array the path of every json file below the given folder
+     * @return array the path of every json file below the given folder except the files of
+     *               self::SKIP_PATH, which are broken on purpose
      */
     function json_file_list(string $path): array
     {
         $result = [];
         $dir_iterator = new RecursiveDirectoryIterator($path);
         foreach (new RecursiveIteratorIterator($dir_iterator) as $file) {
-            if (str_ends_with($file->getFilename(), files::JSON)) {
+            if (str_ends_with($file->getFilename(), files::JSON)
+                && !str_starts_with($file->getPathname(), self::SKIP_PATH)) {
                 $result[] = $file->getPathname();
             }
         }

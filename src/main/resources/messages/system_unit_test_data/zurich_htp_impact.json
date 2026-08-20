@@ -11,7 +11,7 @@
     { "name": "city", "description": "a large permanent human settlement" },
     { "name": "canton", "description": "a member state of the Swiss federation" },
     { "name": "workplace", "plural": "workplaces", "description": "a location that hosts jobs" },
-    { "name": "Zurich Insurance", "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich" },
+    { "name": "company" },
     { "name": "entity", "plural": "entities", "description": "an organisation or administrative body that can influence people" },
     { "name": "inhabitant", "plural": "inhabitants" },
     { "name": "customer", "plural": "customers", "description": "a person served by a commercial entity" },
@@ -32,6 +32,7 @@
     { "name": "2023", "type": "time" }
   ],
   "triples": [
+    { "name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company" },
     { "name": "city of Zurich", "from": "city", "verb": "of", "to": "Zurich", "description": "the municipality of Zurich, the largest city of Switzerland" },
     { "name": "canton of Zurich", "from": "canton", "verb": "of", "to": "Zurich", "description": "the most populous canton of Switzerland" },
     { "name": "city of Zurich workplaces", "from": "workplace", "verb": "of", "to": "city of Zurich", "description": "the city of Zurich seen as an employer location, hosting the jobs within the municipality including commuters" },

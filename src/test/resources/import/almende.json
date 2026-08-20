@@ -51,7 +51,6 @@
     {"name": "type"},
     {"name": "unit"},
     {"name": "user"},
-    {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"},
     {"name": "withdrawal"},
     {"name": "year", "description": "Calendar year."}
   ],
@@ -208,13 +207,6 @@
       "verb": "of",
       "to": "commons",
       "description": "Hardin's 1968 model of inevitable degradation; it assumes open access, which is why Ostrom regarded the label as a misnomer."
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Value estimated in this dataset, to be given a confidence."
     },
     {"name": "common-pool resource type", "from": "common-pool resource", "verb": "is a", "to": "good type"},
     {"name": "private good type", "from": "private good", "verb": "is a", "to": "good type"},
