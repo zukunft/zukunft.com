@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-08-20T08:41:07+00:00",
+    "timestamp": "2026-08-20T10:41:27+00:00",
     "body": {
         "user_profiles": [
             {
@@ -8089,6 +8089,18 @@
                 "code_id": "result",
                 "description": "only expected to be used for result objects",
                 "id": 19
+            },
+            {
+                "name": "for views only",
+                "code_id": "view",
+                "description": "only expected to be used for view objects",
+                "id": 20
+            },
+            {
+                "name": "for components only",
+                "code_id": "component",
+                "description": "only expected to be used for component objects",
+                "id": 21
             }
         ],
         "view_styles": [
@@ -9445,6 +9457,24 @@
                 "code_id": "source_doi_link",
                 "description": "show the doi of a source as a link to doi.org",
                 "id": 218
+            },
+            {
+                "name": "show reverse",
+                "code_id": "system_show_field_reverse",
+                "description": "show the reverse name of a verb without link or form field",
+                "id": 219
+            },
+            {
+                "name": "show plural reverse",
+                "code_id": "system_show_field_plural_reverse",
+                "description": "show the plural reverse name of a verb without link or form field",
+                "id": 220
+            },
+            {
+                "name": "source url link",
+                "code_id": "source_url_link",
+                "description": "show the url of a source as a link to the source",
+                "id": 221
             }
         ],
         "component_link_types": [
@@ -21062,11 +21092,63 @@
                     },
                     {
                         "link_id": 1009,
-                        "id": 286,
-                        "name": "related triples",
-                        "description": "triples where this verb is used",
-                        "type_id": 47,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
                         "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1010,
+                        "id": 325,
+                        "name": "system show field reverse",
+                        "description": "the reverse name of a verb as read only",
+                        "type_id": 219,
+                        "code_id": "show_field_reverse",
+                        "position": 4,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1011,
+                        "id": 307,
+                        "name": "system show field plural",
+                        "description": "show the plural form of a word as read only text",
+                        "type_id": 190,
+                        "code_id": "show_field_plural",
+                        "position": 5,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1012,
+                        "id": 326,
+                        "name": "system show field plural reverse",
+                        "description": "the plural of the reverse name of a verb as read only",
+                        "type_id": 220,
+                        "code_id": "show_field_plural_reverse",
+                        "position": 6,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1013,
+                        "id": 59,
+                        "name": "system sub title triples",
+                        "description": "show the language specific sub title for a triple list",
+                        "type_id": 145,
+                        "code_id": "system_sub_title_triples",
+                        "ui_msg_code_id": "system_sub_title_triples",
+                        "position": 7,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1014,
+                        "id": 327,
+                        "name": "verb triples",
+                        "description": "the triples that use this verb with a link to each triple",
+                        "type_id": 137,
+                        "code_id": "verb_triples",
+                        "position": 8,
                         "position_type": 1
                     }
                 ]
@@ -21079,7 +21161,7 @@
                 "code_id": "triple_default",
                 "components": [
                     {
-                        "link_id": 1010,
+                        "link_id": 1015,
                         "id": 280,
                         "name": "Triple title",
                         "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
@@ -21089,7 +21171,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1011,
+                        "link_id": 1016,
                         "id": 313,
                         "name": "system sub title description",
                         "description": "show the language specific sub title for the description column",
@@ -21101,7 +21183,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 1012,
+                        "link_id": 1017,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -21111,7 +21193,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1013,
+                        "link_id": 1018,
                         "id": 309,
                         "name": "phrase aliases",
                         "description": "show the phrases that are an alias of this phrase",
@@ -21121,7 +21203,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1014,
+                        "link_id": 1019,
                         "id": 310,
                         "name": "phrase symbols",
                         "description": "show the symbols of this phrase",
@@ -21131,7 +21213,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1015,
+                        "link_id": 1020,
                         "id": 312,
                         "name": "related phrases without subtitles",
                         "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
@@ -21141,7 +21223,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1016,
+                        "link_id": 1021,
                         "id": 60,
                         "name": "system sub title references",
                         "description": "show the language specific sub title for a reference list",
@@ -21152,7 +21234,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1017,
+                        "link_id": 1022,
                         "id": 237,
                         "name": "ref list word",
                         "description": "changeable list of reference of this word",
@@ -21162,7 +21244,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1018,
+                        "link_id": 1023,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -21173,7 +21255,7 @@
                         "position_type": 5
                     },
                     {
-                        "link_id": 1019,
+                        "link_id": 1024,
                         "id": 296,
                         "name": "values by triple",
                         "description": "show the most relevant values where this triple is used",
@@ -21182,7 +21264,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1020,
+                        "link_id": 1025,
                         "id": 62,
                         "name": "system sub title formulas",
                         "description": "show the language specific sub title for a formula list",
@@ -21193,7 +21275,7 @@
                         "position_type": 6
                     },
                     {
-                        "link_id": 1021,
+                        "link_id": 1026,
                         "id": 314,
                         "name": "formula list",
                         "description": "list of formulas",
@@ -21202,7 +21284,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1022,
+                        "link_id": 1027,
                         "id": 319,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
@@ -21221,31 +21303,64 @@
                 "code_id": "source_default",
                 "components": [
                     {
-                        "link_id": 1023,
-                        "id": 288,
-                        "name": "source name",
-                        "description": "simply show the name of a source",
-                        "type_id": 58,
+                        "link_id": 1028,
+                        "id": 328,
+                        "name": "Source title",
+                        "description": "show the source name as the page title and the type, the share and the protection in the subtitle",
+                        "type_id": 192,
+                        "code_id": "title_of_named_with_edit_link_source",
                         "position": 1,
                         "position_type": 1
                     },
                     {
-                        "link_id": 1024,
+                        "link_id": 1029,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1030,
+                        "id": 330,
+                        "name": "source url link",
+                        "description": "show the url of a source as a link to the source",
+                        "type_id": 221,
+                        "code_id": "source_url_link",
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1031,
                         "id": 324,
                         "name": "source doi link",
                         "description": "show the doi of a source as a link to doi.org",
                         "type_id": 218,
                         "code_id": "source_doi_link",
-                        "position": 2,
+                        "position": 4,
                         "position_type": 1
                     },
                     {
-                        "link_id": 1025,
-                        "id": 295,
-                        "name": "related values",
-                        "description": "show the most relevant and related values",
-                        "type_id": 11,
-                        "position": 3,
+                        "link_id": 1032,
+                        "id": 61,
+                        "name": "system sub title values",
+                        "description": "show the language specific sub title for a value list",
+                        "type_id": 145,
+                        "code_id": "system_sub_title_values",
+                        "ui_msg_code_id": "system_sub_title_values",
+                        "position": 5,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1033,
+                        "id": 331,
+                        "name": "source values",
+                        "description": "the values that name this source with the unit and the phrases of each value",
+                        "type_id": 152,
+                        "code_id": "source_values",
+                        "position": 6,
                         "position_type": 1
                     }
                 ]
@@ -21258,16 +21373,17 @@
                 "code_id": "ref_default",
                 "components": [
                     {
-                        "link_id": 1026,
-                        "id": 289,
-                        "name": "reference name",
-                        "description": "simply show the name of a reference",
-                        "type_id": 59,
+                        "link_id": 1034,
+                        "id": 329,
+                        "name": "Reference title",
+                        "description": "show the reference name as the page title and the predicate, the share and the protection in the subtitle",
+                        "type_id": 192,
+                        "code_id": "title_of_named_with_edit_link_ref",
                         "position": 1,
                         "position_type": 1
                     },
                     {
-                        "link_id": 1027,
+                        "link_id": 1035,
                         "id": 295,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21285,7 +21401,7 @@
                 "code_id": "language_default",
                 "components": [
                     {
-                        "link_id": 1028,
+                        "link_id": 1036,
                         "id": 290,
                         "name": "language name",
                         "description": "simply show the name of a language",
@@ -21294,7 +21410,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1029,
+                        "link_id": 1037,
                         "id": 295,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21312,7 +21428,7 @@
                 "code_id": "value_default",
                 "components": [
                     {
-                        "link_id": 1030,
+                        "link_id": 1038,
                         "id": 282,
                         "name": "Value title",
                         "description": "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle",
@@ -21322,7 +21438,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1031,
+                        "link_id": 1039,
                         "id": 294,
                         "name": "main value",
                         "description": "show one most relevant value",
@@ -21340,7 +21456,7 @@
                 "code_id": "formula_default",
                 "components": [
                     {
-                        "link_id": 1032,
+                        "link_id": 1040,
                         "id": 281,
                         "name": "Formula title",
                         "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
@@ -21350,7 +21466,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1033,
+                        "link_id": 1041,
                         "id": 284,
                         "name": "Expression with links",
                         "description": "show the formula expression in the latex format with a tooltip and a link for each term",
@@ -21360,7 +21476,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 1034,
+                        "link_id": 1042,
                         "id": 283,
                         "name": "Expression",
                         "type_id": 62,
@@ -21369,7 +21485,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 1035,
+                        "link_id": 1043,
                         "id": 313,
                         "name": "system sub title description",
                         "description": "show the language specific sub title for the description column",
@@ -21380,7 +21496,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1036,
+                        "link_id": 1044,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -21390,7 +21506,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1037,
+                        "link_id": 1045,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -21401,7 +21517,7 @@
                         "position_type": 5
                     },
                     {
-                        "link_id": 1038,
+                        "link_id": 1046,
                         "id": 295,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21410,7 +21526,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1039,
+                        "link_id": 1047,
                         "id": 298,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -21419,7 +21535,7 @@
                         "position_type": 6
                     },
                     {
-                        "link_id": 1040,
+                        "link_id": 1048,
                         "id": 319,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
@@ -21438,7 +21554,7 @@
                 "code_id": "result_default",
                 "components": [
                     {
-                        "link_id": 1041,
+                        "link_id": 1049,
                         "id": 298,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -21456,7 +21572,7 @@
                 "code_id": "ranking",
                 "components": [
                     {
-                        "link_id": 1042,
+                        "link_id": 1050,
                         "id": 299,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
@@ -21465,7 +21581,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1043,
+                        "link_id": 1051,
                         "id": 300,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
@@ -21474,7 +21590,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1044,
+                        "link_id": 1052,
                         "id": 301,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
@@ -21548,7 +21664,7 @@
                 "code_id": "math_const",
                 "components": [
                     {
-                        "link_id": 1045,
+                        "link_id": 1053,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21557,7 +21673,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1046,
+                        "link_id": 1054,
                         "id": 293,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
@@ -21566,7 +21682,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1047,
+                        "link_id": 1055,
                         "id": 292,
                         "name": "formulas",
                         "description": "simply show all related formulas",
@@ -21584,7 +21700,7 @@
                 "code_id": "global_problem",
                 "components": [
                     {
-                        "link_id": 1048,
+                        "link_id": 1056,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21593,7 +21709,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1049,
+                        "link_id": 1057,
                         "id": 302,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
@@ -21602,7 +21718,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1050,
+                        "link_id": 1058,
                         "id": 303,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
@@ -21611,7 +21727,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1051,
+                        "link_id": 1059,
                         "id": 304,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
@@ -21645,7 +21761,7 @@
                 "code_id": "currency",
                 "components": [
                     {
-                        "link_id": 1052,
+                        "link_id": 1060,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21654,7 +21770,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1053,
+                        "link_id": 1061,
                         "id": 305,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
@@ -21663,7 +21779,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1054,
+                        "link_id": 1062,
                         "id": 295,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21672,7 +21788,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1055,
+                        "link_id": 1063,
                         "id": 306,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",
@@ -21690,7 +21806,7 @@
                 "code_id": "phrase_values",
                 "components": [
                     {
-                        "link_id": 1056,
+                        "link_id": 1064,
                         "id": 279,
                         "name": "Word title",
                         "description": "show the word name as a page title",
@@ -21700,7 +21816,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1057,
+                        "link_id": 1065,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -21711,7 +21827,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1058,
+                        "link_id": 1066,
                         "id": 320,
                         "name": "values in columns",
                         "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
@@ -21730,7 +21846,7 @@
                 "code_id": "table",
                 "components": [
                     {
-                        "link_id": 1059,
+                        "link_id": 1067,
                         "id": 321,
                         "name": "phrase title",
                         "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
@@ -21740,7 +21856,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1060,
+                        "link_id": 1068,
                         "id": 322,
                         "name": "table with related columns",
                         "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
@@ -21748,6 +21864,64 @@
                         "code_id": "table_with_related_columns_phrase",
                         "position": 2,
                         "position_type": 3
+                    }
+                ]
+            },
+            {
+                "id": 114,
+                "name": "View",
+                "description": "the default view for views",
+                "type_id": 20,
+                "code_id": "view_default",
+                "components": [
+                    {
+                        "link_id": 1069,
+                        "id": 332,
+                        "name": "View title",
+                        "description": "show the view name as the page title and the type, the share and the protection in the subtitle",
+                        "type_id": 192,
+                        "code_id": "title_of_named_with_edit_link_view",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1070,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 2,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 115,
+                "name": "Component",
+                "description": "the default view for components",
+                "type_id": 21,
+                "code_id": "component_default",
+                "components": [
+                    {
+                        "link_id": 1071,
+                        "id": 333,
+                        "name": "Component title",
+                        "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
+                        "type_id": 192,
+                        "code_id": "title_of_named_with_edit_link_component",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1072,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 2,
+                        "position_type": 1
                     }
                 ]
             }
