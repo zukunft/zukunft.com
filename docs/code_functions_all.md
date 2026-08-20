@@ -4942,6 +4942,8 @@
     \-- show_name_big - section for function show_name_big not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_description - section for function show_description not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_plural - section for function show_plural not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
+    \-- show_reverse - section for function show_reverse not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
+    \-- show_plural_reverse - section for function show_plural_reverse not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_phrase_type - section for function show_phrase_type not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_ref_type - section for function show_ref_type not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_ref_key - section for function show_ref_key not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
@@ -7017,7 +7019,7 @@
     \-- phrases_of_formula
         \-- ui_list - HTML for the list of words and triples assigned to the given formula in order of impact
     \-- triple_list
-        \-- ui_list - TODO move to a component exe part class
+        \-- ui_list - the triples that use the given verb as a comma separated list of the triple names with a
     \-- formula_list
         \-- ui_list - get a list of formulas related to e.g. a verb
     \-- formulas_of_parents
@@ -7201,6 +7203,10 @@
         \-- system_form - @param db_object|type_object $dbo the object
     \-- show_plural
         \-- system_form - @param word|db_object $dbo the word
+    \-- show_reverse
+        \-- system_form - @param verb|db_object $dbo the verb
+    \-- show_plural_reverse
+        \-- system_form - @param verb|db_object $dbo the verb
     \-- show_phrase_type
         \-- system_form - @param word|db_object $dbo the word
     \-- show_ref_type

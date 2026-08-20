@@ -372,23 +372,33 @@ class ui_list extends ui_base
     }
 
     /**
+     * the triples that use the given verb as a comma separated list of the triple names with a
+     * link to each triple, used by the verb default page and the verb edit and delete pages
+     *
      * TODO move to a component exe part class
-     * @return string a dummy text
+     *
+     * @param db_object|null $dbo the verb whose triples should be listed
+     * @param data_object|null $cfg the request cache with the preloaded triples
+     * @return string the linked triple names or the message that the verb is not used for triples
      */
     function triple_list(?db_object $dbo = null, user_message $msg, ?data_object $cfg = null): string
     {
         global $mtr;
 
         $result = '';
-        $trp_lst = clone $cfg->trp_lst;
-        if ($dbo::class == verb::class) {
+        // without the preloaded triples the list cannot be created, and showing the not-used
+        // message would tell the user that the verb has no triples, which is not known here
+        if ($cfg?->trp_lst == null) {
+            log_err('the triple cache is missing to select the triples of a verb');
+        } elseif ($dbo::class == verb::class) {
+            $trp_lst = clone $cfg->trp_lst;
             $trp_lst = $trp_lst->get_by_verb($dbo, $msg);
             $result = $trp_lst->display($msg);
+            if ($result == '') {
+                $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
+            }
         } else {
             log_err($dbo::class . '  is not expected to be a selection for triples');
-        }
-        if ($result == '') {
-            $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
         }
         return $result;
     }

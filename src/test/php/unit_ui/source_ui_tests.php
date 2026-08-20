@@ -32,7 +32,11 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
@@ -56,7 +60,32 @@ class source_ui_tests
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';
         $test_page .= $t->dsp_title_named_edit($src, $msg);
+        // the filled source has a non default type, share and protection, so its title shows all
+        // three parts of the subtitle, which the default source of the page above does not
+        $src_filled = new source($t_src->source_filled_included()->api_json());
+        $test_page .= $t->dsp_title_named_edit($src_filled, $msg);
         $t->html_page_test($test_page, 'source', 'source', $msg);
+
+        $t->subheader($ts . 'title');
+
+        // the source default view shows the source name as the page title and the type, the share
+        // and the protection in the subtitle like the word default view (see base_views.json
+        // source_default), so the api message of a source must carry these three fields
+        $test_name = 'the type of a source is sent to the frontend';
+        $t->assert_true($test_name, $src_filled->type_id($msg) > 0);
+        $test_name = 'the share type of a source is sent to the frontend';
+        $t->assert_true($test_name, $src_filled->share_id() > 0);
+        $test_name = 'the protection type of a source is sent to the frontend';
+        $t->assert_true($test_name, $src_filled->protection_id() > 0);
+
+        $sfm = new system_form();
+        $ttl_html = $sfm->title_named($src_filled, $msg);
+        $test_name = 'the source title names the source';
+        $t->assert_text_contains($test_name, $ttl_html, $src_filled->name());
+        $test_name = 'the source title links to the source edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::SOURCE_EDIT_ID);
+        $test_name = 'the source title has a subtitle for the type, share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
     }
 
 }

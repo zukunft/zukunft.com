@@ -67,6 +67,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
@@ -105,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -643,6 +645,25 @@ class system_form extends component
     function show_plural(word|db_object $dbo): string
     {
         return $this->esc($dbo->plural ?? '');
+    }
+
+    /**
+     * @param verb|db_object $dbo the verb
+     * @return string the reverse name of the verb as read-only text (empty if no reverse name is set)
+     */
+    function show_reverse(verb|db_object $dbo): string
+    {
+        return $this->esc($dbo->reverse ?? '');
+    }
+
+    /**
+     * @param verb|db_object $dbo the verb
+     * @return string the plural of the reverse name of the verb as read-only text
+     *                (empty if no plural reverse name is set)
+     */
+    function show_plural_reverse(verb|db_object $dbo): string
+    {
+        return $this->esc($dbo->rev_plural ?? '');
     }
 
     /**

@@ -542,6 +542,10 @@ class component_types
     const int SHOW_PLURAL_ID = 190;
     const string SHOW_PHRASE_TYPE = "system_show_field_phrase_type";
     const int SHOW_PHRASE_TYPE_ID = 191;
+    const string SHOW_REVERSE = "system_show_field_reverse";
+    const int SHOW_REVERSE_ID = 219;
+    const string SHOW_PLURAL_REVERSE = "system_show_field_plural_reverse";
+    const int SHOW_PLURAL_REVERSE_ID = 220;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -973,6 +977,8 @@ class component_types
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_PLURAL, self::SHOW_PLURAL_ID],
         [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
+        [self::SHOW_REVERSE, self::SHOW_REVERSE_ID],
+        [self::SHOW_PLURAL_REVERSE, self::SHOW_PLURAL_REVERSE_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

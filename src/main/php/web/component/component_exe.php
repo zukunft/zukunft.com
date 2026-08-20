@@ -415,6 +415,8 @@ class component_exe extends component
             component_types::SHOW_NAME_BIG => $form->show_name_big($dbo, $this->code_id),
             component_types::SHOW_DESCRIPTION => $form->show_description($dbo),
             component_types::SHOW_PLURAL => $form->show_plural($dbo),
+            component_types::SHOW_REVERSE => $form->show_reverse($dbo),
+            component_types::SHOW_PLURAL_REVERSE => $form->show_plural_reverse($dbo),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo, $msg),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),

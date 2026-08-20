@@ -335,6 +335,43 @@
       "description": "show the doi of a source as a link to doi.org",
       "type": "source_doi_link",
       "code_id": "source_doi_link"
+    },
+    {
+      "name": "system show field reverse",
+      "description": "the reverse name of a verb as read only",
+      "type": "system_show_field_reverse",
+      "code_id": "show_field_reverse"
+    },
+    {
+      "name": "system show field plural reverse",
+      "description": "the plural of the reverse name of a verb as read only",
+      "type": "system_show_field_plural_reverse",
+      "code_id": "show_field_plural_reverse"
+    },
+    {
+      "name": "verb triples",
+      "description": "the triples that use this verb with a link to each triple",
+      "type": "triples_by_verb",
+      "code_id": "verb_triples"
+    },
+    {
+      "name": "Source title",
+      "description": "show the source name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_source"
+    },
+    {
+      "name": "Reference title",
+      "description": "show the reference name as the page title and the predicate, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_ref"
+    },
+    {
+      "name": "system sub title triples",
+      "description": "show the language specific sub title for a triple list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_triples",
+      "ui_msg_code_id": "system_sub_title_triples"
     }
   ],
   "views": [
@@ -446,7 +483,27 @@
         },
         {
           "position": "3",
-          "name": "related triples"
+          "name": "system show field description"
+        },
+        {
+          "position": "4",
+          "name": "system show field reverse"
+        },
+        {
+          "position": "5",
+          "name": "system show field plural"
+        },
+        {
+          "position": "6",
+          "name": "system show field plural reverse"
+        },
+        {
+          "position": "7",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "8",
+          "name": "verb triples"
         }
       ]
     },
@@ -530,7 +587,7 @@
       "components": [
         {
           "position": "1",
-          "name": "source name"
+          "name": "Source title"
         },
         {
           "position": "2",
@@ -550,7 +607,7 @@
       "components": [
         {
           "position": "1",
-          "name": "reference name"
+          "name": "Reference title"
         },
         {
           "position": "2",
