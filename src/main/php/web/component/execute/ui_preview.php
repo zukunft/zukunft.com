@@ -405,7 +405,7 @@ class ui_preview extends ui_base
     }
 
     /**
-     * the 'my' tab table of the word or triple page: one row per field that the session user
+     * the 'my' tab table of the word, triple or formula page: one row per field that the session user
      * has overwritten in the user sandbox (overlay) table e.g. user_words, with the translated
      * field name, the user value ('your'), the value of the standard object ('instead') and an
      * undo icon that links to the confirm page which sets the field back to the standard value;
@@ -413,7 +413,7 @@ class ui_preview extends ui_base
      * (tab_box skips tabs without content); the admin-only fields (the cached usage and impact
      * numbers) are hidden from users without admin or developer rights like in the change log
      *
-     * @param db_object $dbo the word or triple that should be shown to the user
+     * @param db_object $dbo the word, triple or formula that should be shown to the user
      * @param user_message $msg to collect the mapping errors
      * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
@@ -457,14 +457,14 @@ class ui_preview extends ui_base
     }
 
     /**
-     * the 'others' tab table of the word or triple page: one row per field and user for the
+     * the 'others' tab table of the word, triple or formula page: one row per field and user for the
      * shared overwrites that users other than the session user have done, with the translated
      * field name, the name of the overwriting user, the value of that user, the value of the
      * standard object ('instead') and an apply icon that links to the confirm page which takes
      * over the other user's value for the session user; an empty string if the session user is
      * not logged in or no other user has a shared overwrite, so the tab is dropped
      *
-     * @param db_object $dbo the word or triple that should be shown to the user
+     * @param db_object $dbo the word, triple or formula that should be shown to the user
      * @param user_message $msg to collect the mapping errors
      * @param array $url_array the parsed url of the current page, carried into the apply links
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
@@ -524,7 +524,7 @@ class ui_preview extends ui_base
      * the overwritten field set back to the standard value and the user value as the '8'-prefixed
      * opening value, so confirming the shown change removes the user overwrite of the field
      *
-     * @param db_object $dbo the word or triple whose overwrite can be undone
+     * @param db_object $dbo the word, triple or formula whose overwrite can be undone
      * @param string $fld the db field name of the overwritten field
      * @param array $ovr the overwrite entry with the user and the standard value
      * @param array $url_array the parsed url of the current page that is carried into the link
@@ -544,7 +544,7 @@ class ui_preview extends ui_base
      * '8'-prefixed opening value, so confirming the shown change takes over the other user's
      * overwrite for the session user
      *
-     * @param db_object $dbo the word or triple shown to the user
+     * @param db_object $dbo the word, triple or formula shown to the user
      * @param string $fld the db field name of the field that the other user has overwritten
      * @param array $ovr the overwrite entry with the other user's value
      * @param user_message $msg to collect the mapping errors
@@ -568,7 +568,7 @@ class ui_preview extends ui_base
      * url are kept, so the confirm submit never resets other fields; shared by the undo link of
      * the 'my' tab and the apply link of the 'others' tab
      *
-     * @param db_object $dbo the word or triple shown to the user
+     * @param db_object $dbo the word, triple or formula shown to the user
      * @param string $fld the db field name of the field to change
      * @param string $new_val the value that confirming the change saves for the session user
      * @param string $old_val the '8'-prefixed opening value shown as the current value

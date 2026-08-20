@@ -941,6 +941,13 @@ check where in the frontend a parameter / configuration values is used that is n
 
 create a script that updates all caches e.g. src/test/resources/api/type_lists/type_lists.json and src/test/resources/api/ui_config/ui_config.json after a change of any parameter in src/main/resources/db_code_links
 
+cover the log_err_msg_ui guard branches of web/component/execute/ui_list.php (triple_list,
+formula_list, values_by_source, result_list: missing selection object, missing cache list,
+unexpected selection class) with unit tests: each branch is reached today only by calling the
+function with a null $dbo, a null cache or a foreign class, and log_err_msg_ui writes a sys_log
+row via log_msg, which needs $db_con and therefore cannot run in the unit_ui tier; either add a
+test-mode short circuit to the log writer or move these tests to unit_write
+
 ### remaining potential security issues
 
 add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor

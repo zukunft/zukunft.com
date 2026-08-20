@@ -294,6 +294,17 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view with all fields set but not excluded, so that the api message carries all
+     *         fields e.g. to test the view default page title
+     */
+    function view_filled_included(): view
+    {
+        $msk = $this->view_filled();
+        $msk->include();
+        return $msk;
+    }
+
+    /**
      * @return view with all fields set and a reserved test name for testing the db write function
      */
     function view_filled_add(): view

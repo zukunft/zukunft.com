@@ -32,7 +32,11 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -55,7 +59,32 @@ class reference_ui_tests
         $test_page .= 'with tooltip: ' . $ref->name_tip() . '<br>';
         $test_page .= 'with link: ' . $ref->name_link() . '<br>';
         $test_page .= $t->dsp_title_named_edit($ref, $msg);
+        // the filled reference has a non default share and protection, so its title shows all
+        // three parts of the subtitle, which the reference of the page above does not
+        $ref_filled = new ref($t_ref->ref_filled()->api_json());
+        $test_page .= $t->dsp_title_named_edit($ref_filled, $msg);
         $t->html_page_test($test_page, 'reference', 'reference', $msg);
+
+        $t->subheader($ts . 'title');
+
+        // the reference default view shows the reference name as the page title and the predicate,
+        // the share and the protection in the subtitle like the source default view (see
+        // base_views.json ref_default), so the api message must carry these three fields
+        $test_name = 'the predicate of a reference is sent to the frontend';
+        $t->assert_true($test_name, $ref_filled->type_id($msg) > 0);
+        $test_name = 'the share type of a reference is sent to the frontend';
+        $t->assert_true($test_name, $ref_filled->share_id() > 0);
+        $test_name = 'the protection type of a reference is sent to the frontend';
+        $t->assert_true($test_name, $ref_filled->protection_id() > 0);
+
+        $sfm = new system_form();
+        $ttl_html = $sfm->title_named($ref_filled, $msg);
+        $test_name = 'the reference title names the reference';
+        $t->assert_text_contains($test_name, $ttl_html, $ref_filled->name());
+        $test_name = 'the reference title links to the reference edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::REF_EDIT_ID);
+        $test_name = 'the reference title has a subtitle for the predicate, share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
 
         // a reference always provides a phrase for the rendering like the other db objects:
         // the linked phrase, or an empty phrase e.g. for a new reference of an add form

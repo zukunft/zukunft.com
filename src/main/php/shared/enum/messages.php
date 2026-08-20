@@ -1679,6 +1679,7 @@ enum messages: string
     case NOT_USED_FOR_VERB = 'not used for verb';
     case NOT_USED_FOR_TRIPLES = 'not used for triples';
     case INFO_NOT_USED_FOR_FORMULAS = 'info_not_used_for_formulas';
+    case INFO_NOT_USED_FOR_VALUES = 'info_not_used_for_values';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';

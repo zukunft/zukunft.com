@@ -63,6 +63,7 @@ include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_ELEMENT . 'element_group.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_FORMULA . 'figure_list.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -76,11 +77,14 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -95,6 +99,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
@@ -104,8 +109,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\const\views as views_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -133,6 +141,17 @@ class formula extends formula_map
     // load_latex_terms() and emitted via api_json_array() under the INCL_RELATED flag so the
     // "expression_latex_link" component can turn each latex token into a link to the term
     public ?term_list $latex_terms = null;
+
+    // the most recent change log entries of this formula; populated lazily by
+    // load_changes_related() and only emitted via api_json_array() under the INCL_RELATED flag,
+    // so the changes tab of the default formula view can show them, latest first
+    public ?change_log_list $changes_related = null;
+
+    // the views that can show this formula: its own default view or, if none is set, the system
+    // default formula view; populated lazily by load_views_related() and only emitted via
+    // api_json_array() under the INCL_RELATED flag, so the views tab of the default formula
+    // view can offer at least one view
+    public ?view_list $views_related = null;
 
 
     /*
@@ -564,6 +583,52 @@ class formula extends formula_map
     }
 
     /**
+     * load the most recent change log entries of this formula into the in-memory
+     * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
+     * @param user_message $msg to collect any problem while loading the changes
+     * @return void
+     */
+    function load_changes_related(user_message $msg): void
+    {
+        $chg_lst = new change_log_list();
+        $chg_lst->load_obj_last($this, $this->get_user(), $msg);
+        $this->changes_related = $chg_lst;
+    }
+
+    /**
+     * load the views related to this formula into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; currently the formula's own
+     * default view, loaded by id so that it carries the name the api and frontend name_link need
+     * TODO add the default views of the assigned phrases once the related-phrase load is not
+     *      limited to the direct assignments, mirroring word::load_views_related()
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_related(user_message $msg): void
+    {
+        $msk_lst = new view_list($this->get_user());
+        if ($this->get_view_id() > 0) {
+            $msk = new view($this->get_user());
+            $msk->load_by_id($this->get_view_id(), $msg);
+            // a view that cannot be loaded must not enter the list, because a list holding an
+            // unloaded entry is not empty and would suppress the system default view fallback
+            if ($msk->id() > 0) {
+                $msk_lst->add($msk);
+            }
+        }
+        // a formula without an own default view is shown with the system default formula view,
+        // so the views tab of the formula page offers at least this view
+        if ($msk_lst->is_empty()) {
+            $msk = new view($this->get_user());
+            $msk->load_by_code_id(views_shared::FORMULA, $msg);
+            if ($msk->id() > 0) {
+                $msk_lst->add($msk);
+            }
+        }
+        $this->views_related = $msk_lst;
+    }
+
+    /**
      * load the formula and, in the same call, the related view-models the default formula view
      * expects: the assigned phrases for the "Formula title" subtitle and the latex terms for the
      * "expression_latex_link" component (like word::load_by_id_with_related)
@@ -581,9 +646,9 @@ class formula extends formula_map
     }
 
     /**
-     * extend the formula api message with the assigned phrases so the frontend "Formula title"
-     * component can show them in the subtitle; only added for a page request (INCL_RELATED)
-     * of a saved formula (a fresh formula with id 0 has no assigned phrases)
+     * extend the formula api message with the data that the default formula view needs;
+     * only added for a page request (INCL_RELATED) of a saved formula, because a fresh
+     * formula with id 0 has no related data yet
      * @param api_type_list|array $typ_lst configuration for the api message
      * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created
@@ -596,28 +661,87 @@ class formula extends formula_map
         }
         $vars = parent::api_json_array($typ_lst, $msg, $usr);
         if ($typ_lst->incl_related() and $this->id() != 0) {
-            if ($this->phrases_related == null and !$typ_lst->test_mode()) {
-                $this->load_phrases_related($msg);
+            $vars = array_merge($vars, $this->api_related_array($typ_lst, $msg, $usr));
+        }
+        return $vars;
+    }
+
+    /**
+     * the related data of the default formula view: the assigned phrases for the "Formula title"
+     * subtitle, the latex terms for the "expression_latex_link" component and the views, the
+     * changes and the user overwrites for the tabs of the "view tab box" component
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the related entries of the api json array
+     */
+    private function api_related_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        if ($this->phrases_related == null and !$typ_lst->test_mode()) {
+            $this->load_phrases_related($msg);
+        }
+        if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+            // drop the assigned phrases the requester may not read (idor)
+            $this->phrases_related->filter_readable_by($usr);
+            // INCL_PHRASES so each assigned phrase carries its name (and description for the
+            // tooltip) needed by the subtitle links, sorted by impact in the frontend
+            $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
+                new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+        }
+        if ($this->latex_terms == null and !$typ_lst->test_mode()) {
+            $this->load_latex_terms($msg);
+        }
+        if ($this->latex_terms != null and !$this->latex_terms->is_empty()) {
+            // drop the latex terms the requester may not read (idor)
+            $this->latex_terms->filter_readable_by($usr);
+            // INCL_PHRASES so each latex term carries its name (and description for the
+            // tooltip) needed by the "expression_latex_link" component to create the links
+            $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
+                new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+        }
+        if ($this->changes_related == null and !$typ_lst->test_mode()) {
+            $this->load_changes_related($msg);
+        }
+        if ($this->changes_related != null and !$this->changes_related->is_empty()) {
+            $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
+                new api_type_list(), $msg, $usr);
+        }
+        if ($this->views_related == null and !$typ_lst->test_mode()) {
+            $this->load_views_related($msg);
+        }
+        if ($this->views_related != null and !$this->views_related->is_empty()) {
+            // drop the related views the requester may not read (idor)
+            $this->views_related->filter_readable_by($usr);
+            $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
+                new api_type_list(), $msg, $usr);
+        }
+        return array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
+    }
+
+    /**
+     * the fields that the requesting user and the other users have overwritten in user_formulas,
+     * each with the user value and the standard value, so the 'my' and the 'others' tab of the
+     * "view tab box" component can show them; the test mode reads no overlay rows
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the overwrite entries of the api json array
+     */
+    private function api_overwrites_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        if (!$typ_lst->test_mode()) {
+            $ovr_msg = new user_message($usr); // a buffer for the user of this api call, which can differ from the user of the request message, merged back below
+            $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
+            if ($usr_ovr != []) {
+                $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
             }
-            if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
-                // drop the assigned phrases the requester may not read (idor)
-                $this->phrases_related->filter_readable_by($usr);
-                // INCL_PHRASES so each assigned phrase carries its name (and description for the
-                // tooltip) needed by the subtitle links, sorted by impact in the frontend
-                $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
-                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
+            if ($oth_ovr != []) {
+                $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
             }
-            if ($this->latex_terms == null and !$typ_lst->test_mode()) {
-                $this->load_latex_terms($msg);
-            }
-            if ($this->latex_terms != null and !$this->latex_terms->is_empty()) {
-                // drop the latex terms the requester may not read (idor)
-                $this->latex_terms->filter_readable_by($usr);
-                // INCL_PHRASES so each latex term carries its name (and description for the
-                // tooltip) needed by the "expression_latex_link" component to create the links
-                $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
-                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
-            }
+            $msg->merge($ovr_msg);
         }
         return $vars;
     }

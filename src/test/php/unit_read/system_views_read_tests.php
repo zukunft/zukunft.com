@@ -159,7 +159,7 @@ class system_views_read_tests
         $cfg_chg = clone $cfg;
         $cfg_chg->chg_log = $t_log->log_list_user_overwrites_ui();
         // the shown user has done the overwrites of the test context, so the column lists them
-        // and names the changed word and triple of each overwrite
+        // and names the changed word, triple and formula of each overwrite
         $t->assert_view(views::USER, $t->usr1, new user(), users::SYSTEM_TEST_ID, $cfg_chg);
         // the same test context for a user who has not done any of these overwrites, so the column
         // shows the no-changes message, which also checks that it filters by the shown user

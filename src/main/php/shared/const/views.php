@@ -52,7 +52,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 113;
+    const int MAX_TEST_ID = 115;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -286,6 +286,12 @@ class views
     const int FORMULA_ID = 97;
     const string RESULT = 'result_default';
     const int RESULT_ID = 98;
+    // appended at the end of base_views.json, so the import position is after the last
+    // view of the previously imported files (see docs/llm/json_views.md)
+    const string VIEW = 'view_default';
+    const int VIEW_DEFAULT_ID = 114;
+    const string COMPONENT = 'component_default';
+    const int COMPONENT_DEFAULT_ID = 115;
 
     // base views for users
     const string RANKING = 'ranking';
@@ -586,14 +592,16 @@ class views
     const array VIEW_MASKS_IDS = [
         self::VIEW_ADD_ID,
         self::VIEW_EDIT_ID,
-        self::VIEW_DEL_ID
+        self::VIEW_DEL_ID,
+        self::VIEW_DEFAULT_ID,
     ];
 
     // system masks that have a component as the main object
     const array COMPONENT_MASKS_IDS = [
         self::COMPONENT_ADD_ID,
         self::COMPONENT_EDIT_ID,
-        self::COMPONENT_DEL_ID
+        self::COMPONENT_DEL_ID,
+        self::COMPONENT_DEFAULT_ID,
     ];
 
     // system masks that have a term to view link as the main object
@@ -748,6 +756,8 @@ class views
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
         self::TABLE_ID,
+        self::VIEW_DEFAULT_ID,
+        self::COMPONENT_DEFAULT_ID,
     ];
 
     // system masks that add a sandbox object
@@ -1011,6 +1021,8 @@ class views
         self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
         self::TABLE_ID => self::TABLE,
         self::CURRENCY_ID => self::CURRENCY,
+        self::VIEW_DEFAULT_ID => self::VIEW,
+        self::COMPONENT_DEFAULT_ID => self::COMPONENT,
     ];
 
     const array SYSTEM_VIEWS = [
@@ -1113,7 +1125,6 @@ class views
     /**
      * returns the code id of the base view that is used to show the changeable object
      * e.g. for word_edit the word view is returned
-     * TODO easy add missing default views e.g. for component
      *
      * @param string $msk_ci
      * @return string
@@ -1129,8 +1140,8 @@ class views
             self::VALUE_ADD, self::VALUE_EDIT, self::VALUE_DEL => self::VALUE,
             //self::GROUP_ADD, self::GROUP_EDIT, self::GROUP_DEL => self::GROUP,
             self::FORMULA_ADD, self::FORMULA_EDIT, self::FORMULA_DEL => self::FORMULA,
-            //self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
-            //self::COMPONENT_ADD, self::COMPONENT_EDIT, self::COMPONENT_DEL => self::COMPONENT,
+            self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
+            self::COMPONENT_ADD, self::COMPONENT_EDIT, self::COMPONENT_DEL => self::COMPONENT,
             default => ''
         };
     }
@@ -1270,6 +1281,8 @@ class views
             self::FORMULA_TEST_ID => self::FORMULA_ID,
             self::RESULT_ADD_ID, self::RESULT_EDIT_ID, self::RESULT_DEL_ID => self::RESULT_ID,
             self::LANGUAGE_ADD_ID, self::LANGUAGE_EDIT_ID, self::LANGUAGE_DEL_ID => self::LANGUAGE_ID,
+            self::VIEW_ADD_ID, self::VIEW_EDIT_ID, self::VIEW_DEL_ID => self::VIEW_DEFAULT_ID,
+            self::COMPONENT_ADD_ID, self::COMPONENT_EDIT_ID, self::COMPONENT_DEL_ID => self::COMPONENT_DEFAULT_ID,
             default => self::START_ID
         };
     }

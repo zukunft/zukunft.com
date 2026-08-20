@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1183 of 5560 public functions have at least 2 unit test calls; the 4377 functions below do not
+1183 of 5565 public functions have at least 2 unit test calls; the 4382 functions below do not
 
 ## main backend
 
@@ -571,10 +571,12 @@ so same-named functions of several classes share their test calls
     \-- get_res_lst - 0 unit test calls
     \-- load_all_terms - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
+    \-- load_changes_related - 0 unit test calls
     \-- load_data_for_calc - 0 unit test calls
     \-- load_latex_terms - 0 unit test calls
     \-- load_phrases_related - 0 unit test calls
     \-- load_values - 0 unit test calls
+    \-- load_views_related - 0 unit test calls
     \-- ref_exp_is_valid - 0 unit test calls
     \-- reload_if_incomplete - 0 unit test calls
     \-- reload_objects - 0 unit test calls
@@ -4168,11 +4170,13 @@ so same-named functions of several classes share their test calls
     \-- show_parent_view - 0 unit test calls
     \-- show_phrase_type - 0 unit test calls
     \-- show_plural - 0 unit test calls
+    \-- show_plural_reverse - 0 unit test calls
     \-- show_ref_key - 0 unit test calls
     \-- show_ref_source - 0 unit test calls
     \-- show_ref_type - 0 unit test calls
     \-- show_ref_url - 0 unit test calls
     \-- show_relation_type - 0 unit test calls
+    \-- show_reverse - 0 unit test calls
     \-- show_start_pos - 0 unit test calls
     \-- show_usage - 0 unit test calls
     \-- title_formula - 0 unit test calls
@@ -4384,6 +4388,7 @@ so same-named functions of several classes share their test calls
     \-- phrase_name - 0 unit test calls
     \-- reference_name - 0 unit test calls
     \-- source_name - 0 unit test calls
+    \-- source_url_link - 0 unit test calls
     \-- table - 0 unit test calls
     \-- triple_name - 0 unit test calls
     \-- value_name - 0 unit test calls

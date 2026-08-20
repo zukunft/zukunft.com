@@ -2,9 +2,11 @@
 
 ## user default view
 
-similar to the my tab in the word default view add a my tab to the formula default view
+add a formula_link_default, term_view, component_link and view_relation default view that contains a title / subtitle similar to the word_default view and the main fields of the database tables to system views
 
-add the formula overwrites to the 'all_user_overwrites' component used in the user_default view
+add a view and component default view to system views
+
+add a title with subtitle similar to the triple title / subtitle to the formula_link_default, term_view, component_link and view_relation views
 
 fill the formula_link_default view with the missing fields including the my tab for the user_changes
 
@@ -176,13 +178,13 @@ extend the result default view, which today only shows the related results, with
 
 add the missing db fields to the view add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the usage as display-only info in the edit view, because unlike the other edit views the view edit view has no usage section yet
 
-create the missing view default view (view_default): a view that shows a view itself with its name, description, type, style and the list of linked components, plus the usage e.g. the terms that use it as their default view
+extend the view default view (view_default, which shows the name with the type, share and protection in the title subtitle plus the description) with the style, the list of linked components and the usage e.g. the terms that use it as their default view; the style needs the style_id api mapping in web/view/view.php first, which the frontend view does not carry yet
 
 ### component
 
 add the missing db fields to the component add and edit views: a formula selection (formula_id, used for the calculated component types), a linked component selection (linked_component_id) together with its link types (component_link_type_id and link_type_id), and, for users whose profile passes can_set_code_id, the code_id and ui_msg_code_id fields (with ui_msg_code_id_vars, ui_msg_code_id_exception and ui_msg_value_exception); show the usage as display-only info in the edit view
 
-create the missing component default view (component_default): a view that shows a component itself with its name, description, type, style, the row and column phrases and the views that use it
+extend the component default view (component_default, which shows the name with the type in the title subtitle plus the description) with the style, the row and column phrases and the views that use it
 
 ### view link
 

@@ -143,6 +143,7 @@ class coding_rule_tests
         $t->subheader($ts . 'import json consistency');
         // TODO Prio 3 maybe switch it on as a warning
         //$this->json_no_measured_value_tests($t);
+        $this->json_view_component_defined_tests($t);
 
         $t->subheader($ts . 'verb consistency');
         $this->verb_group_tests($t);
@@ -289,6 +290,43 @@ class coding_rule_tests
         sort($names);
 
         $test_name = 'every verb used by an import json is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that every component used by a view of a view import json is defined in the components
+     * block of the same file, because the import resolves a component of a view by its name within
+     * the file: a view that uses a component defined only in another file stops the import of the
+     * complete file with 'component with name ... missing', so e.g. base_views.json repeats the
+     * definition of the system components that its views use (see docs/llm/json_views.md)
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_view_component_defined_tests(test_cleanup $t): void
+    {
+        $names = [];
+        foreach ([files::SYSTEM_VIEWS, files::BASE_VIEWS] as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (is_array($json_array)) {
+                $defined = [];
+                foreach ($json_array[json_fields::COMPONENTS] ?? [] as $cmp) {
+                    $defined[] = $cmp[json_fields::NAME] ?? '';
+                }
+                foreach ($json_array[json_fields::VIEWS] ?? [] as $msk) {
+                    foreach ($msk[json_fields::COMPONENTS] ?? [] as $cmp) {
+                        $name = $cmp[json_fields::NAME] ?? '';
+                        if ($name != '' and !in_array($name, $defined, true)) {
+                            $names[] = basename($path) . ': ' . $name
+                                . ' used by ' . ($msk[json_fields::CODE_ID] ?? '');
+                        }
+                    }
+                }
+            }
+        }
+        sort($names);
+
+        $test_name = 'every component used by a view is defined in the same import json';
         $t->assert($test_name, implode(', ', $names), '');
     }
 

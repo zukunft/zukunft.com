@@ -249,6 +249,17 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component with all fields set but not excluded, so that the api message carries
+     *         all fields e.g. to test the component default page title
+     */
+    function component_filled_included(): component
+    {
+        $cmp = $this->component_filled();
+        $cmp->include();
+        return $cmp;
+    }
+
+    /**
      * @return component with all fields set to check if the save and load process is complete
      */
     function component_filled_all(): component

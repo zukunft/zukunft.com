@@ -61,6 +61,7 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -81,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
@@ -159,21 +161,34 @@ class change_log_list extends list_db_read
     {
         $names = [];
         $ids = $this->row_ids_by_table();
-        $wrd_ids = $ids[change_tables::WORD] ?? [];
-        if ($wrd_ids != []) {
-            $wrd_lst = new word_list($usr);
-            $wrd_lst->load_by_ids($wrd_ids, $msg);
-            $names[change_tables::WORD] = $this->names_by_id($wrd_lst->lst());
-        }
-        $trp_ids = $ids[change_tables::TRIPLE] ?? [];
-        if ($trp_ids != []) {
-            $trp_lst = new triple_list($usr);
-            $trp_lst->load_by_ids($trp_ids, $msg);
-            $names[change_tables::TRIPLE] = $this->names_by_id($trp_lst->lst());
+        foreach ($this->name_lists($usr) as $table => $obj_lst) {
+            $row_ids = $ids[$table] ?? [];
+            if ($row_ids != []) {
+                $obj_lst->load_by_ids($row_ids, $msg);
+                $names[$table] = $this->names_by_id($obj_lst->lst());
+            }
         }
         foreach ($this->lst() as $chg) {
             $chg->row_name = $names[$this->std_table($chg->table())][$chg->row_id] ?? null;
         }
+    }
+
+    /**
+     * the empty object list per standard table name that can load the names of the changed rows
+     * of that table with one query; a table that is missing here simply gets no object name in
+     * the change log, so add the list of an object type as soon as its page or its overwrites
+     * are shown (see docs/llm/pending.md)
+     *
+     * @param user $usr the user for whom the object names should be loaded
+     * @return array the empty name list by the standard table name
+     */
+    private function name_lists(user $usr): array
+    {
+        return [
+            change_tables::WORD => new word_list($usr),
+            change_tables::TRIPLE => new triple_list($usr),
+            change_tables::FORMULA => new formula_list($usr),
+        ];
     }
 
     /**

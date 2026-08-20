@@ -634,37 +634,39 @@ class view extends view_exe
      */
 
     /**
-     * the 'view' button that opens the given word rendered with this view
+     * the 'view' button that opens the given object rendered with this view
      * TODO Prio 3 add the back trace url so the user can return after opening the view
      *
-     * @param int $wrd_id the id of the word to open in this view
+     * @param int $dbo_id the id of the word, triple or formula to open in this view
      * @return string the html link of the open button
      */
-    function open_link(int $wrd_id): string
+    function open_link(int $dbo_id): string
     {
         global $mtr;
         $html = new html_base();
         $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $this->id()
-            . url_var::ADD . url_var::ID . url_var::EQ . $wrd_id;
+            . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id;
         return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_OPEN));
     }
 
     /**
-     * the 'switch' button that opens the word edit view where this view can be set
-     * as the default view of the given word
-     * TODO Prio 2 preselect this view as the default view of the word and add the back trace url,
+     * the 'switch' button that opens the edit view of the shown object where this view can be
+     * set as the default view of that object; the edit view id comes from the caller, because
+     * a triple and a formula are changed with another view than a word
+     * TODO Prio 2 preselect this view as the default view of the object and add the back trace url,
      *      so the switch is again a one-click action as it was in the retired http_old/word_edit.php
      *      (see docs/llm/pending_next_launch.md)
      *
-     * @param int $wrd_id the id of the word whose default view should be set to this view
+     * @param int $dbo_id the id of the object whose default view should be set to this view
+     * @param int $edit_msk_id the id of the edit view of the object e.g. word::VIEW_EDIT_ID
      * @return string the html link of the switch button
      */
-    function switch_link(int $wrd_id): string
+    function switch_link(int $dbo_id, int $edit_msk_id): string
     {
         global $mtr;
         $html = new html_base();
-        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_EDIT_ID
-            . url_var::ADD . url_var::ID . url_var::EQ . $wrd_id;
+        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $edit_msk_id
+            . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id;
         return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_SWITCH));
     }
 

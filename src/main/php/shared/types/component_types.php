@@ -268,6 +268,8 @@ class component_types
     const int FORM_FIELD_DOI_ID = 217;
     const string SOURCE_DOI_LINK = "source_doi_link";
     const int SOURCE_DOI_LINK_ID = 218;
+    const string SOURCE_URL_LINK = "source_url_link";
+    const int SOURCE_URL_LINK_ID = 221;
 
     // preview of the changes if confirmed
     const string FORM_PREVIEW = "system_form_preview";
@@ -542,6 +544,10 @@ class component_types
     const int SHOW_PLURAL_ID = 190;
     const string SHOW_PHRASE_TYPE = "system_show_field_phrase_type";
     const int SHOW_PHRASE_TYPE_ID = 191;
+    const string SHOW_REVERSE = "system_show_field_reverse";
+    const int SHOW_REVERSE_ID = 219;
+    const string SHOW_PLURAL_REVERSE = "system_show_field_plural_reverse";
+    const int SHOW_PLURAL_REVERSE_ID = 220;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -952,6 +958,7 @@ class component_types
         [self::RANKING_LIST, self::RANKING_LIST_ID],
         [self::SOURCE_NAME, self::SOURCE_NAME_ID],
         [self::SOURCE_DOI_LINK, self::SOURCE_DOI_LINK_ID],
+        [self::SOURCE_URL_LINK, self::SOURCE_URL_LINK_ID],
         [self::REFERENCE_NAME, self::REFERENCE_NAME_ID],
         [self::LANGUAGE_NAME, self::LANGUAGE_NAME_ID],
         [self::RESULTS_RELATED, self::RESULTS_RELATED_ID],
@@ -973,6 +980,8 @@ class component_types
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_PLURAL, self::SHOW_PLURAL_ID],
         [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
+        [self::SHOW_REVERSE, self::SHOW_REVERSE_ID],
+        [self::SHOW_PLURAL_REVERSE, self::SHOW_PLURAL_REVERSE_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

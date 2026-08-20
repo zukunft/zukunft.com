@@ -415,6 +415,8 @@ class component_exe extends component
             component_types::SHOW_NAME_BIG => $form->show_name_big($dbo, $this->code_id),
             component_types::SHOW_DESCRIPTION => $form->show_description($dbo),
             component_types::SHOW_PLURAL => $form->show_plural($dbo),
+            component_types::SHOW_REVERSE => $form->show_reverse($dbo),
+            component_types::SHOW_PLURAL_REVERSE => $form->show_plural_reverse($dbo),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo, $msg),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),
@@ -427,6 +429,7 @@ class component_exe extends component
             // name display components for admin-editable system objects
             component_types::SOURCE_NAME => $base->source_name($dbo),
             component_types::SOURCE_DOI_LINK => $base->source_doi_link($dbo),
+            component_types::SOURCE_URL_LINK => $base->source_url_link($dbo),
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
             component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
@@ -460,7 +463,7 @@ class component_exe extends component
             // related
             component_types::LIST_REF => $list->ref_list_word($dbo, $msg, $cfg),
             component_types::LIST_VIEWS => $list->views_related($dbo, $cfg),
-            component_types::LIST_RESULTS => $list->result_list($dbo, $cfg),
+            component_types::LIST_RESULTS => $list->result_list($dbo, $msg, $cfg),
             component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
             component_types::FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode),
             // the changeable formula list shows the same list as the formula list type;

@@ -32,9 +32,13 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -55,7 +59,9 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_ui_tests
@@ -141,6 +147,94 @@ class formula_ui_tests
         $test_page .= $t_val->value_list_zh_ui()->table($msg);
 
         $t->html_page_test($test_page, 'formula', 'formula', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'view tab box');
+
+        // the formula default view shows the same tab box as the word default view (see
+        // base_views.json formula_default): a views tab with the views that can show the formula,
+        // a changes tab with its change log and a my tab with the user overwrites of the session
+        // user; the backend fills the three lists under the INCL_RELATED flag, so this block first
+        // checks the api round trip and then the rendering of the tabs
+        global $ui_sys;
+        global $mtr;
+        $t_msk = new test_views($t);
+        $t_usr = new test_users();
+        $frm_related = $t_frm->formula_increase();
+        $frm_related->views_related = $t_msk->view_list_word();
+        $frm_related->changes_related = $t_log->log_list_formula_increase();
+        // test mode so the backend emits the two given lists without loading them from the database
+        $frm_json = json_decode($frm_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the views of a formula are sent to the frontend';
+        $t->assert_true($test_name, ($frm_json[json_fields::VIEWS] ?? []) != []);
+        $test_name = 'the changes of a formula are sent to the frontend';
+        $t->assert_true($test_name, ($frm_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' and 'others' rows are added here like on the word and the triple page
+        $frm_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_DESCRIPTION,
+                json_fields::USR_VALUE => 'my formula description',
+                json_fields::STD_VALUE => 'the standard formula description',
+            ],
+        ];
+        $frm_tab = new formula(json_encode($frm_json));
+
+        $test_name = 'the views of a formula reach the frontend formula object';
+        $t->assert_true($test_name, $frm_tab->view_lst != null and !$frm_tab->view_lst->is_empty());
+        $test_name = 'the changes of a formula reach the frontend formula object';
+        $t->assert_true($test_name, $frm_tab->chg_log != null and !$frm_tab->chg_log->is_empty());
+
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        $log_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"';
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($frm_tab, $msg, true);
+
+        $test_name = 'the formula page shows the views tab';
+        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... with the name of a view that can show the formula';
+        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the switch button must open the edit view of the shown object, so on a formula page the
+        // formula edit view and never the word edit view (see view::switch_link)
+        $test_name = '... and a switch button that opens the formula edit view';
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::MASK . '=' . views::FORMULA_EDIT_ID
+            . '&amp;' . url_var::ID . '=' . formula_names::INCREASE_ID);
+
+        $test_name = 'the formula page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the change that added the formula';
+        $t->assert_text_contains($test_name, $tab_html, formula_names::INCREASE);
+
+        $test_name = 'the user with formula overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = '... with the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, 'my formula description');
+        $t->assert_text_contains($test_name, $tab_html, 'the standard formula description');
+
+        // a formula loaded without the related data has neither a views nor a my tab
+        $frm_plain = new formula($t_frm->formula_increase()->api_json());
+        $plain_html = $list->view_tab_box($frm_plain, $msg, true);
+        $test_name = 'a formula without views shows no views tab';
+        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
+        $test_name = 'a formula without overwrites shows no my tab';
+        $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
+
+        $test_name = 'without a logged in user the formula page shows no my tab';
+        unset($ui_sys->usr);
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($frm_tab, $msg, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
 
         // TODO review
 
