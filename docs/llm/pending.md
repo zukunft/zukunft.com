@@ -2,8 +2,6 @@
 
 ## user default view
 
-similar to the views, changes and my tabs in the word default view add the views, changes and my tabs to the formula default view
-
 add the formula overwrites to the 'all_user_overwrites' component used in the user_default view
 
 fill the formula_link_default view with the missing fields including the my tab for the user_changes

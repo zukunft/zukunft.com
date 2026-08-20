@@ -23,6 +23,8 @@
     \-- assign_phr_ulst_direct - section for function assign_phr_ulst_direct not yet defined that it should be assign in /formula/formula.php
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /formula/formula.php
     \-- load_latex_terms - section for function load_latex_terms is expected to be load in /formula/formula.php
+    \-- load_changes_related - section for function load_changes_related is expected to be load in /formula/formula.php
+    \-- load_views_related - section for function load_views_related is expected to be load in /formula/formula.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formula.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
     \-- assign_phr_glst - section for function assign_phr_glst not yet defined that it should be assign in /formula/formula.php
@@ -827,10 +829,14 @@
         \-- formula - load the phrases this formula is assigned to into the in-memory phrases_related list so
     \-- load_latex_terms
         \-- formula - load the terms shown in the latex format into the in-memory latex_terms list so that
+    \-- load_changes_related
+        \-- formula - load the most recent change log entries of this formula into the in-memory
+    \-- load_views_related
+        \-- formula - load the views related to this formula into the in-memory views_related list so that
     \-- load_by_id_with_related
         \-- formula - load the formula and, in the same call, the related view-models the default formula view
     \-- api_json_array
-        \-- formula - extend the formula api message with the assigned phrases so the frontend "Formula title"
+        \-- formula - extend the formula api message with the data that the default formula view needs;
     \-- assign_phr_glst
         \-- formula - returns a list of all words that the formula is assigned to
     \-- assign_phr_lst
@@ -7032,7 +7038,7 @@
     \-- views_related
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
-        \-- ui_list - HTML for the col-4 tab box of the word or triple page: a "Views" tab with the related
+        \-- ui_list - HTML for the col-4 tab box of the word, triple or formula page: a "Views" tab with the
     \-- link_list_word
         \-- ui_list - @param db_object $dbo the word, triple or formula object that should be shown to the user
     \-- num_list
@@ -7087,9 +7093,9 @@
     \-- popup_changes
         \-- ui_preview - show the pending field changes as a centered three column table so the user can confirm them:
     \-- user_overwrites_table
-        \-- ui_preview - the 'my' tab table of the word or triple page: one row per field that the session user
+        \-- ui_preview - the 'my' tab table of the word, triple or formula page: one row per field that the session user
     \-- other_overwrites_table
-        \-- ui_preview - the 'others' tab table of the word or triple page: one row per field and user for the
+        \-- ui_preview - the 'others' tab table of the word, triple or formula page: one row per field and user for the
     \-- popup_impact
         \-- ui_preview - show the impact of the pending change centered below the change table:
     \-- view_diff

@@ -561,15 +561,15 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for the col-4 tab box of the word or triple page: a "Views" tab with the related
-     * views (each a preview placeholder plus the open and switch buttons), a "Changes" tab
-     * with the change log of the object, latest first, a "My" tab with the session user's
+     * HTML for the col-4 tab box of the word, triple or formula page: a "Views" tab with the
+     * related views (each a preview placeholder plus the open and switch buttons), a "Changes"
+     * tab with the change log of the object, latest first, a "My" tab with the session user's
      * own overwrites (the user_ table rows e.g. of user_words), which is only shown if the
      * user is logged in and has created overwrites of this object, and an "Others" tab with
      * the shared overwrites that other users have done on this object
      * TODO Prio 3 replace the view preview placeholder with a real miniature preview
      *
-     * @param db_object $dbo the word or triple that should be shown to the user
+     * @param db_object $dbo the word, triple or formula that should be shown to the user
      * @param user_message $msg
      * @param bool $test_mode true to create a reproducible result without a backend call
      * @param array $url_array the parsed url of the current page, carried into the my tab undo links
@@ -579,14 +579,19 @@ class ui_list extends ui_base
     {
         global $mtr;
         $result = '';
-        if ($dbo::class == word::class or $dbo::class == triple::class) {
+        if ($dbo::class == word::class
+            or $dbo::class == triple::class
+            or $dbo::class == formula::class) {
             $html = new html_base();
             // tab 1: each related view as a preview placeholder with the open and switch buttons
             $views_html = '';
             if ($dbo->view_lst != null) {
                 foreach ($dbo->view_lst->lst() as $msk) {
                     $preview = $html->div('view preview', view_styles::COL_SM_12);
-                    $buttons = $msk->open_link($dbo->id()) . ' ' . $msk->switch_link($dbo->id());
+                    // the switch button opens the edit view of the shown object, which differs
+                    // per class, so the edit view id of the object is passed to the link builder
+                    $buttons = $msk->open_link($dbo->id())
+                        . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID);
                     // escape the view name (div emits its body raw and the name is user input); the
                     // preview and buttons around it are already-built html (stored xss via view name)
                     $views_html .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);

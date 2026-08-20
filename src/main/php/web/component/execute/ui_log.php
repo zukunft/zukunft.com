@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -50,6 +51,7 @@ include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -85,7 +87,7 @@ class ui_log
      * when, who and what; the number of shown rows and the max chars of the what column both
      * come from the frontend config (config.yaml, like system_change_log above)
      *
-     * @param db_object $dbo the word or triple whose change log is shown
+     * @param db_object $dbo the word, triple or formula whose change log is shown
      * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @return string the html code of the borderless when / who / what change log table
@@ -109,7 +111,7 @@ class ui_log
      * a word) - used by the 'my' tab of the view tab box; an empty string if the user is not
      * logged in or has no overwrites of this object, so the tab is only shown when it has content
      *
-     * @param db_object $dbo the word or triple whose user overwrites are shown
+     * @param db_object $dbo the word, triple or formula whose user overwrites are shown
      * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
@@ -263,7 +265,7 @@ class ui_log
      * of rows; the shared preparation of system_change_log and change_log_table_pure so both use the
      * exact same filter, sort and limit parameters
      *
-     * @param db_object $dbo the word or triple whose change log is shown
+     * @param db_object $dbo the word, triple or formula whose change log is shown
      * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
      * @param bool $test_mode true to sort the change time at whole-second resolution so the snapshot stays stable
      * @param user|null $overwrites_of if set keep only the user sandbox changes of this user (the 'my' tab)
@@ -277,10 +279,13 @@ class ui_log
         ?user           $overwrites_of = null
     ): change_log_list
     {
-        // a word or triple loaded for its page carries its recent changes directly (like the
-        // related values, formulas and references); otherwise use the given change log or, if
+        // a word, triple or formula loaded for its page carries its recent changes directly (like
+        // the related values, formulas and references); otherwise use the given change log or, if
         // that is empty, the global request cache
-        if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
+        if (($dbo::class == word::class
+                or $dbo::class == triple::class
+                or $dbo::class == formula::class)
+            and $dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
             $log_lst = $dbo->chg_log;
         } elseif ($log_lst->is_empty()) {
             global $ui_sys;

@@ -65,6 +65,7 @@ include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::ELEMENT . 'element.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -96,6 +97,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
@@ -162,6 +164,14 @@ class formula extends sandbox_code_id
     // the terms used in the formula expression; filled from the api message and used to create
     // the term links of the "expression_latex_link" component (web has no direct db access)
     public ?term_list $trm_lst = null;
+
+    // the most recent change log entries of this formula; filled from the INCL_RELATED api
+    // message and shown by the changes tab of the "view tab box" component
+    public ?change_log_list $chg_log = null;
+
+    // the views suggested for this formula; filled from the INCL_RELATED api message and
+    // shown by the views tab of the "view tab box" component
+    public ?view_list $view_lst = null;
 
 
     /*
@@ -334,6 +344,30 @@ class formula extends sandbox_code_id
             }
         } else {
             $this->trm_lst = null;
+        }
+        if (array_key_exists(json_fields::CHANGES, $json_array)) {
+            $value = $json_array[json_fields::CHANGES];
+            if (is_array($value)) {
+                $lst = new change_log_list();
+                $lst->api_mapper($value);
+                $this->chg_log = $lst;
+            } else {
+                $this->chg_log = null;
+            }
+        } else {
+            $this->chg_log = null;
+        }
+        if (array_key_exists(json_fields::VIEWS, $json_array)) {
+            $value = $json_array[json_fields::VIEWS];
+            if (is_array($value)) {
+                $lst = new view_list();
+                $lst->api_mapper($value);
+                $this->view_lst = $lst;
+            } else {
+                $this->view_lst = null;
+            }
+        } else {
+            $this->view_lst = null;
         }
         return $msg->is_ok();
     }
@@ -521,8 +555,10 @@ class formula extends sandbox_code_id
     /**
      * load the formula incl. its related view-models by adding the ?incl_related=1 url flag so
      * the api handler sets api_types::INCL_RELATED and the backend formula::api_json_array() emits
-     * the assigned phrases (for the "Formula title" subtitle) and the latex terms (for the
-     * "expression_latex_link" component); the frontend api_mapper picks them up into phr_lst/trm_lst
+     * the assigned phrases (for the "Formula title" subtitle), the latex terms (for the
+     * "expression_latex_link" component) and the views, changes and user overwrites (for the
+     * "view tab box" component); the frontend api_mapper picks them up into phr_lst, trm_lst,
+     * view_lst, chg_log and the user_overwrites / other_overwrites of the sandbox parent
      * @param int|string $id the formula id to load
      * @param int $usr_id the id of the session user to load the formula for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
