@@ -32,10 +32,16 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\component\component_exe;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_ui_tests
@@ -77,7 +83,39 @@ class component_ui_tests
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '', '', $test_form_unique_id++) . '<br>';
         $test_page .= $t->dsp_title_named_edit($cmp, $msg);
+        // the filled component has a non default type, share and protection, so its title shows
+        // all three parts of the subtitle, which the hand-built component of the line above does
+        // not; the included copy is used, because the api message of the excluded filled
+        // component is empty
+        $t_cmp = new test_components($t);
+        $cmp_filled = new component($t_cmp->component_filled_included()->api_json());
+        $test_page .= $t->dsp_title_named_edit($cmp_filled, $msg);
         $t->html_page_test($test_page, 'component', 'component', $msg);
+
+        $t->subheader($ts . 'title');
+
+        // the component default page shows the component name as the page title and the type, the
+        // share and the protection in the subtitle like the word default view (see base_views.json
+        // component_default), so the api message of a component must carry these three fields
+        $test_name = 'the type of a component is sent to the frontend';
+        $t->assert_true($test_name, $cmp_filled->type_id($msg) > 0);
+        $test_name = 'the share type of a component is sent to the frontend';
+        $t->assert_true($test_name, $cmp_filled->share_id() > 0);
+        $test_name = 'the protection type of a component is sent to the frontend';
+        $t->assert_true($test_name, $cmp_filled->protection_id() > 0);
+
+        $sfm = new system_form();
+        $ttl_html = $sfm->title_named($cmp_filled, $msg);
+        $test_name = 'the component title names the component';
+        $t->assert_text_contains($test_name, $ttl_html, $cmp_filled->name());
+        $test_name = 'the component title links to the component edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::COMPONENT_EDIT_ID);
+        $test_name = 'the component title has a subtitle for the type, share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+        // a component without a type shows no empty subtitle brackets
+        $test_name = 'a component without a type shows no subtitle';
+        $cmp_plain = new component($t_cmp->component_add()->api_json());
+        $t->assert_text_not_contains($test_name, $sfm->title_named($cmp_plain, $msg), styles::SUBTITLE);
     }
 
 }

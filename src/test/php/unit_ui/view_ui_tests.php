@@ -34,8 +34,10 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -75,6 +77,34 @@ class view_ui_tests
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
         $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
         $test_page .= $t->dsp_title_named_edit($msk, $msg);
+        // the filled view has a non default type, share and protection, so its title shows all
+        // three parts of the subtitle, which the plain view of the line above does not
+        $msk_filled = new view($t_msk->view_filled_included()->api_json());
+        $test_page .= $t->dsp_title_named_edit($msk_filled, $msg);
+
+        $t->subheader($ts . 'title');
+
+        // the view default page shows the view name as the page title and the type, the share
+        // and the protection in the subtitle like the word default view (see base_views.json
+        // view_default), so the api message of a view must carry these three fields
+        $test_name = 'the type of a view is sent to the frontend';
+        $t->assert_true($test_name, $msk_filled->type_id($msg) > 0);
+        $test_name = 'the share type of a view is sent to the frontend';
+        $t->assert_true($test_name, $msk_filled->share_id() > 0);
+        $test_name = 'the protection type of a view is sent to the frontend';
+        $t->assert_true($test_name, $msk_filled->protection_id() > 0);
+
+        $sfm = new system_form();
+        $ttl_html = $sfm->title_named($msk_filled, $msg);
+        $test_name = 'the view title names the view';
+        $t->assert_text_contains($test_name, $ttl_html, $msk_filled->name());
+        $test_name = 'the view title links to the view edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::VIEW_EDIT_ID);
+        $test_name = 'the view title has a subtitle for the type, share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+        // a view without type, share and protection set shows no empty subtitle brackets
+        $test_name = 'a view without a type shows no subtitle';
+        $t->assert_text_not_contains($test_name, $sfm->title_named($msk, $msg), styles::SUBTITLE);
 
         // show a view with a side-or-below group where the columns
         // are shown side by side on wide screens and stacked on small screens

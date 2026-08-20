@@ -57,6 +57,8 @@ class view_types
     const string VALUE = "value";
     const string FORMULA = "formula";
     const string RESULT = "result";
+    const string VIEW = "view";
+    const string COMPONENT = "component";
 
 
     // list of view types that are used by the system
@@ -78,6 +80,8 @@ class view_types
         self::VALUE,
         self::FORMULA,
         self::RESULT,
+        self::VIEW,
+        self::COMPONENT,
     );
 
     // list of view types that can be used for values and results

@@ -384,6 +384,18 @@
       "description": "the values that name this source with the unit and the phrases of each value",
       "type": "values_by_source",
       "code_id": "source_values"
+    },
+    {
+      "name": "View title",
+      "description": "show the view name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_view"
+    },
+    {
+      "name": "Component title",
+      "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_component"
     }
   ],
   "views": [
@@ -937,6 +949,38 @@
           "position": "2",
           "name": "table with related columns",
           "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "View",
+      "description": "the default view for views",
+      "code_id": "view_default",
+      "type": "view",
+      "components": [
+        {
+          "position": "1",
+          "name": "View title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        }
+      ]
+    },
+    {
+      "name": "Component",
+      "description": "the default view for components",
+      "code_id": "component_default",
+      "type": "component",
+      "components": [
+        {
+          "position": "1",
+          "name": "Component title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
         }
       ]
     }

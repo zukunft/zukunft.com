@@ -262,8 +262,21 @@ class system_view_ui_tests
         $t->assert_true($test_name, $msk->change_to_show_id(views::WORD_EDIT_ID) == views::WORD_ID);
         $test_name = 'a blocked formula test shows the formula default view';
         $t->assert_true($test_name, $msk->change_to_show_id(views::FORMULA_TEST_ID) == views::FORMULA_ID);
+        $test_name = 'a blocked view edit shows the view default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_EDIT_ID) == views::VIEW_DEFAULT_ID);
+        $test_name = 'a blocked component edit shows the component default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::COMPONENT_EDIT_ID) == views::COMPONENT_DEFAULT_ID);
         $test_name = 'a blocked mask without an object view falls back to the start view';
         $t->assert_true($test_name, $msk->change_to_show_id(views::UNDO_ID) == views::START_ID);
+
+        // the edit form's cancel button returns to the object's default view, so the base view
+        // of the view and the component change masks is their new default view
+        $test_name = 'the base view of the view edit mask is the view default view';
+        $t->assert($test_name, $msk->system_to_base(views::VIEW_EDIT), views::VIEW);
+        $test_name = 'the base view of the component edit mask is the component default view';
+        $t->assert($test_name, $msk->system_to_base(views::COMPONENT_EDIT), views::COMPONENT);
+        $test_name = 'a mask without a base view returns an empty code id';
+        $t->assert($test_name, $msk->system_to_base(views::UNDO), '');
 
         // tls is enforced (plain http redirected to https) in the prod and test environment so the
         // session cookie is never sent in the clear, but not in dev so the local http docker works;

@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-08-20T07:24:28+00:00",
+    "timestamp": "2026-08-20T10:00:32+00:00",
     "body": {
         "user_profiles": [
             {
@@ -8089,6 +8089,18 @@
                 "code_id": "result",
                 "description": "only expected to be used for result objects",
                 "id": 19
+            },
+            {
+                "name": "for views only",
+                "code_id": "view",
+                "description": "only expected to be used for view objects",
+                "id": 20
+            },
+            {
+                "name": "for components only",
+                "code_id": "component",
+                "description": "only expected to be used for component objects",
+                "id": 21
             }
         ],
         "view_styles": [
@@ -21852,6 +21864,64 @@
                         "code_id": "table_with_related_columns_phrase",
                         "position": 2,
                         "position_type": 3
+                    }
+                ]
+            },
+            {
+                "id": 114,
+                "name": "View",
+                "description": "the default view for views",
+                "type_id": 20,
+                "code_id": "view_default",
+                "components": [
+                    {
+                        "link_id": 1069,
+                        "id": 332,
+                        "name": "View title",
+                        "description": "show the view name as the page title and the type, the share and the protection in the subtitle",
+                        "type_id": 192,
+                        "code_id": "title_of_named_with_edit_link_view",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1070,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 2,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 115,
+                "name": "Component",
+                "description": "the default view for components",
+                "type_id": 21,
+                "code_id": "component_default",
+                "components": [
+                    {
+                        "link_id": 1071,
+                        "id": 333,
+                        "name": "Component title",
+                        "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
+                        "type_id": 192,
+                        "code_id": "title_of_named_with_edit_link_component",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1072,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 2,
+                        "position_type": 1
                     }
                 ]
             }
