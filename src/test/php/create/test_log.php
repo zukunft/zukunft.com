@@ -176,6 +176,10 @@ class test_log
     const int MANY_OVERWRITES = 25;
     // the start of the value of each overwrite of log_list_many_user_overwrites
     const string OVERWRITE_VALUE = 'no ';
+    // the user value of the formula description overwrite of log_formula_increase_description,
+    // which must not contain the formula name, so that a test can tell the object name that the
+    // what column puts in front of the change from the change text itself
+    const string FORMULA_OVERWRITE_COM = 'my own text for this calculation';
 
 
     /*
@@ -597,6 +601,23 @@ class test_log
     }
 
     /**
+     * @return change log entry created by overwriting the description of the increase formula in
+     *         the user sandbox (user_formulas), so that the all user overwrites column of the
+     *         user page can be tested with a formula overwrite
+     */
+    function log_formula_increase_description(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_formula_increase_add();
+        $chg->set_table(change_tables::FORMULA_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = self::FORMULA_OVERWRITE_COM;
+        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        $chg->row_name = formula_names::INCREASE;
+        return $chg;
+    }
+
+    /**
      * @return change_log_list the changes of creating the increase formula (name and expression)
      */
     function log_list_formula_increase(): change_log_list
@@ -932,10 +953,10 @@ class test_log
     }
 
     /**
-     * the changes of one user on more than one object type: the word and the triple overwrites
-     * written to the user sandbox (overlay) tables plus a change of the shared standard object,
-     * so that a test can check that the all user overwrites column lists the overwrites of every
-     * object type but never a change of the standard object
+     * the changes of one user on more than one object type: the word, the triple and the formula
+     * overwrites written to the user sandbox (overlay) tables plus a change of the shared standard
+     * object, so that a test can check that the all user overwrites column lists the overwrites of
+     * every object type but never a change of the standard object
      * @return change_log_list the sandbox overwrites of one user and one standard change
      */
     function log_list_user_overwrites(): change_log_list
@@ -947,6 +968,7 @@ class test_log
         $log_lst = new change_log_list();
         $log_lst->add($wrd_chg);
         $log_lst->add($this->log_triple_add_description());
+        $log_lst->add($this->log_formula_increase_description());
         // a change of the shared standard word, which the column must never list as an overwrite;
         // the renamed-from value is unique to this change, so a test can detect it
         $log_lst->add($this->log_word_update());

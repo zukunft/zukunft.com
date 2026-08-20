@@ -2,7 +2,13 @@
 
 ## user default view
 
-add the formula overwrites to the 'all_user_overwrites' component used in the user_default view
+add a view and component default view that contains a title / subtitle similar to the word_default view and the main fields of the database tables to system views
+
+add a formula_link_default, term_view, component_link and view_relation default view that contains a title / subtitle similar to the word_default view and the main fields of the database tables to system views
+
+add a view and component default view to system views
+
+add a title with subtitle similar to the triple title / subtitle to the formula_link_default, term_view, component_link and view_relation views
 
 fill the formula_link_default view with the missing fields including the my tab for the user_changes
 

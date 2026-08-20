@@ -42,6 +42,7 @@ include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_log.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -124,6 +126,8 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $all_html, views::WORD_NAME);
         $test_name = 'the triple overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, triple_names::MATH_CONST_COM);
+        $test_name = 'the formula overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::FORMULA_OVERWRITE_COM);
         $test_name = 'the standard table change is not listed beside the overwrites';
         $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
 
@@ -136,6 +140,9 @@ class user_ui_tests
         $test_name = 'the what column names the changed word';
         $t->assert_text_contains($test_name, $all_html,
             word_names::MATH . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed formula';
+        $t->assert_text_contains($test_name, $all_html,
+            formula_names::INCREASE . change_log_named_ui::OBJECT_SEPARATOR);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,
