@@ -268,6 +268,8 @@ class component_types
     const int FORM_FIELD_DOI_ID = 217;
     const string SOURCE_DOI_LINK = "source_doi_link";
     const int SOURCE_DOI_LINK_ID = 218;
+    const string SOURCE_URL_LINK = "source_url_link";
+    const int SOURCE_URL_LINK_ID = 221;
 
     // preview of the changes if confirmed
     const string FORM_PREVIEW = "system_form_preview";
@@ -956,6 +958,7 @@ class component_types
         [self::RANKING_LIST, self::RANKING_LIST_ID],
         [self::SOURCE_NAME, self::SOURCE_NAME_ID],
         [self::SOURCE_DOI_LINK, self::SOURCE_DOI_LINK_ID],
+        [self::SOURCE_URL_LINK, self::SOURCE_URL_LINK_ID],
         [self::REFERENCE_NAME, self::REFERENCE_NAME_ID],
         [self::LANGUAGE_NAME, self::LANGUAGE_NAME_ID],
         [self::RESULTS_RELATED, self::RESULTS_RELATED_ID],

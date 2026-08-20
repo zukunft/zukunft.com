@@ -429,6 +429,7 @@ class component_exe extends component
             // name display components for admin-editable system objects
             component_types::SOURCE_NAME => $base->source_name($dbo),
             component_types::SOURCE_DOI_LINK => $base->source_doi_link($dbo),
+            component_types::SOURCE_URL_LINK => $base->source_url_link($dbo),
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
             component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
@@ -462,7 +463,7 @@ class component_exe extends component
             // related
             component_types::LIST_REF => $list->ref_list_word($dbo, $msg, $cfg),
             component_types::LIST_VIEWS => $list->views_related($dbo, $cfg),
-            component_types::LIST_RESULTS => $list->result_list($dbo, $cfg),
+            component_types::LIST_RESULTS => $list->result_list($dbo, $msg, $cfg),
             component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
             component_types::FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode),
             // the changeable formula list shows the same list as the formula list type;

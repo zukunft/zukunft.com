@@ -372,6 +372,18 @@
       "type": "system_sub_title",
       "code_id": "system_sub_title_triples",
       "ui_msg_code_id": "system_sub_title_triples"
+    },
+    {
+      "name": "source url link",
+      "description": "show the url of a source as a link to the source",
+      "type": "source_url_link",
+      "code_id": "source_url_link"
+    },
+    {
+      "name": "source values",
+      "description": "the values that name this source with the unit and the phrases of each value",
+      "type": "values_by_source",
+      "code_id": "source_values"
     }
   ],
   "views": [
@@ -591,11 +603,23 @@
         },
         {
           "position": "2",
-          "name": "source doi link"
+          "name": "system show field description"
         },
         {
           "position": "3",
-          "name": "related values"
+          "name": "source url link"
+        },
+        {
+          "position": "4",
+          "name": "source doi link"
+        },
+        {
+          "position": "5",
+          "name": "system sub title values"
+        },
+        {
+          "position": "6",
+          "name": "source values"
         }
       ]
     },

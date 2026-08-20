@@ -214,7 +214,9 @@ class value_list extends ListBase
         }
         if ($dbo::class == source::class) {
             foreach ($this->lst() as $val) {
-                if ($val->source_id() == $dbo->id()) {
+                // a value without a source belongs to no source, so the null source id must not
+                // match the id 0 of a source that is not yet written to the database
+                if ($val->source_id() != null and $val->source_id() == $dbo->id()) {
                     $val_lst->add($val, $msg);
                 }
             }

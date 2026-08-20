@@ -378,6 +378,7 @@ class ui_list extends ui_base
      * TODO move to a component exe part class
      *
      * @param db_object|null $dbo the verb whose triples should be listed
+     * @param user_message $msg to report a missing cache or an unexpected selection object
      * @param data_object|null $cfg the request cache with the preloaded triples
      * @return string the linked triple names or the message that the verb is not used for triples
      */
@@ -386,10 +387,10 @@ class ui_list extends ui_base
         global $mtr;
 
         $result = '';
-        // without the preloaded triples the list cannot be created, and showing the not-used
-        // message would tell the user that the verb has no triples, which is not known here
-        if ($cfg?->trp_lst == null) {
-            log_err('the triple cache is missing to select the triples of a verb');
+        // without the verb or the preloaded triples the list cannot be created, and showing the
+        // not-used message would tell the user that the verb has no triples, which is not known here
+        if ($dbo == null or $cfg?->trp_lst == null) {
+            log_err_msg_ui('the verb or the triple cache is missing to select the triples of a verb', $msg);
         } elseif ($dbo::class == verb::class) {
             $trp_lst = clone $cfg->trp_lst;
             $trp_lst = $trp_lst->get_by_verb($dbo, $msg);
@@ -398,7 +399,7 @@ class ui_list extends ui_base
                 $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
             }
         } else {
-            log_err($dbo::class . '  is not expected to be a selection for triples');
+            log_err_msg_ui($dbo::class . ' is not expected to be a selection for triples', $msg);
         }
         return $result;
     }
@@ -406,6 +407,7 @@ class ui_list extends ui_base
     /**
      * get a list of formulas related to e.g. a verb
      * @param db_object $dbo e.g. a verb to select only the formulas where the object is used
+     * @param user_message $msg to report an unexpected selection object
      * @param data_object|null $cfg the cache values used for a backend independent preselection of the formulas
      * @return string the most relevant formulas related to e.g. a verb
      */
@@ -415,11 +417,17 @@ class ui_list extends ui_base
 
         $result = '';
         if ($dbo::class == verb::class) {
-            $frm_lst = clone $cfg->frm_lst;
-            $frm_lst = $frm_lst->get_by_verb($dbo, $msg);
-            $result = $frm_lst->name_link();
-            if ($result == '') {
-                $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+            // without the preloaded formulas the list cannot be created, and showing the not-used
+            // message would tell the user that the verb has no formulas, which is not known here
+            if ($cfg?->frm_lst == null) {
+                log_err_msg_ui('the formula cache is missing to select the formulas of a verb', $msg);
+            } else {
+                $frm_lst = clone $cfg->frm_lst;
+                $frm_lst = $frm_lst->get_by_verb($dbo, $msg);
+                $result = $frm_lst->name_link();
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+                }
             }
         } elseif ($dbo::class == word::class or $dbo::class == triple::class) {
             // the word/triple carries its own related formulas from the INCL_RELATED api message
@@ -427,7 +435,7 @@ class ui_list extends ui_base
                 $result = $dbo->frm_lst->name_link();
             }
         } else {
-            log_err($dbo::class . ' is not expected to be a selection for formulas');
+            log_err_msg_ui($dbo::class . ' is not expected to be a selection for formulas', $msg);
         }
         return $result;
     }
@@ -869,11 +877,14 @@ class ui_list extends ui_base
     }
 
     /**
-     * show a list of values related to the given triple
+     * the values that name the given source with the unit and the phrases of each value,
+     * used by the source default page
      *
-     * @param source|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
+     * @param source|db_object|null $dbo the source whose values should be listed
+     * @param user_message $msg to report a missing cache or an unexpected selection object
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
-     * @return string the html code to show the list of values
+     * @param int|null $style_id the optional list column style
+     * @return string the values of the source or the message that the source is not used for values
      */
     function values_by_source(
         source|db_object|null $dbo,
@@ -882,8 +893,23 @@ class ui_list extends ui_base
         ?int                  $style_id = null
     ): string
     {
-        $val_lst = $dto->val_lst?->filter($msg, $dbo);
-        return $this->value_list_unit($val_lst, $msg, $style_id);
+        global $mtr;
+
+        $result = '';
+        // without the source or the preloaded values the list cannot be created, and showing the
+        // not-used message would tell the user that the source has no values, which is not known here
+        if ($dbo == null or $dto?->val_lst == null) {
+            log_err_msg_ui('the source or the value cache is missing to select the values of a source', $msg);
+        } elseif ($dbo::class == source::class) {
+            $val_lst = $dto->val_lst->filter($msg, $dbo);
+            $result = $this->value_list_unit($val_lst, $msg, $style_id);
+            if ($result == '') {
+                $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES);
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to be a selection for values', $msg);
+        }
+        return $result;
     }
 
     /**
@@ -1002,22 +1028,32 @@ class ui_list extends ui_base
     }
 
     /**
-     * @return string a dummy text
+     * the results of the given formula as a comma separated list of the result names with a
+     * link to each result
+     *
+     * @param db_object|null $dbo the formula whose results should be listed
+     * @param user_message $msg to report a missing cache or an unexpected selection object
+     * @param data_object|null $cfg the request cache with the preloaded results
+     * @return string the linked result names or the message that the formula has no results
      */
-    function result_list(?db_object $dbo = null, ?data_object $cfg = null): string
+    function result_list(?db_object $dbo = null, user_message $msg, ?data_object $cfg = null): string
     {
         global $mtr;
 
         $result = '';
-        $res_lst = clone $cfg->res_lst;
-        if ($dbo::class == formula::class) {
+        // without the formula or the preloaded results the list cannot be created, and showing the
+        // not-used message would tell the user that the formula has no results, which is not known here
+        if ($dbo == null or $cfg?->res_lst == null) {
+            log_err_msg_ui('the formula or the result cache is missing to select the results of a formula', $msg);
+        } elseif ($dbo::class == formula::class) {
+            $res_lst = clone $cfg->res_lst;
             $res_lst = $res_lst->get_by_formula($dbo);
             $result = $res_lst->name_link();
+            if ($result == '') {
+                $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS);
+            }
         } else {
-            log_err($dbo::class . '  is not expected to be a selection for results');
-        }
-        if ($result == '') {
-            $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS);
+            log_err_msg_ui($dbo::class . ' is not expected to be a selection for results', $msg);
         }
         return $result;
     }

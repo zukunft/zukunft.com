@@ -2,9 +2,7 @@
 
 ## user default view
 
-add to source default view the fields description, type and url. And add a component with the value that are linked to this source
-
-similar to the my tab in the word default view add a my tab to the formula default view
+similar to the views, changes and my tabs in the word default view add the views, changes and my tabs to the formula default view
 
 add the formula overwrites to the 'all_user_overwrites' component used in the user_default view
 

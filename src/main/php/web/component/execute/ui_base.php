@@ -144,6 +144,25 @@ class ui_base
     }
 
     /**
+     * @param source|db_object|null $dbo the source whose url should be shown
+     * @return string the url as a link to the source or an empty text if the source has no url
+     */
+    function source_url_link(source|db_object|null $dbo = null): string
+    {
+        $result = '';
+        if ($dbo instanceof source) {
+            $url = $dbo->url();
+            if ($url != null and $url != '') {
+                $html = new html_base();
+                // the url is user-settable, but html_base::ref escapes the shown name
+                // and drops the link if the scheme is not one of the allowed ones
+                $result = $html->ref($url, $url);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param db_object|type_object|null $dbo the reference whose name should be shown
      * @return string the name of the given reference (admin users can change it via the related form)
      */

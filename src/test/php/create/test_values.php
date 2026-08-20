@@ -696,6 +696,21 @@ class test_values extends test_objects
         return $tl->list_to_ui($this->value_list_math(), [api_types::INCL_PHRASES]);
     }
 
+    /**
+     * two values that name the reserved test source and one value without a source, so that the
+     * value list of the source default view can be tested for both the included and the excluded case
+     * @return value_list_ui the ui value list with the values of the reserved test source
+     */
+    function list_by_source_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->transition_cs_133());
+        $lst->add($this->light_speed());
+        $lst->add($this->people_zh());
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
     function list_all_ui(user_message $msg): value_list_ui
     {
         $tl = new test_lib();

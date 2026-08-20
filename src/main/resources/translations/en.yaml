@@ -316,6 +316,7 @@ messages:
   form_phrase_type_from: "from type"
   form_phrase_type_to: "to type"
   info_not_used_for_formulas: "not used for formulas"
+  info_not_used_for_values: "not used for values"
   undo: "undo"
   undo_add: "delete added"
   undo_edit: "undo edit"

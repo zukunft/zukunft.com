@@ -219,3 +219,4 @@ component_type_id, type_name, description, code_id
 218, 'source doi link', 'show the doi of a source as a link to doi.org', 'source_doi_link'
 219, 'show reverse', 'show the reverse name of a verb without link or form field', 'system_show_field_reverse'
 220, 'show plural reverse', 'show the plural reverse name of a verb without link or form field', 'system_show_field_plural_reverse'
+221, 'source url link', 'show the url of a source as a link to the source', 'source_url_link'
