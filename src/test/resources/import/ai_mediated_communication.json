@@ -5,74 +5,219 @@
     "pod": "zukunft.com",
     "words": [
       {
-        "name": "AI-mediated communication",
-        "description": "Interpersonal communication in which an AI system modifies, augments, or generates message content to achieve communicative or relational goals (Hancock, Naaman & Levy 2020). Abbreviated AI-MC.",
+        "name": "AI",
+        "description": "artificial intelligence system that modifies, augments or generates message content",
         "type": "word"
+      },
+      {
+        "name": "AI-mediated",
+        "type": "word"
+      },
+      {
+        "name": "assumed",
+        "type": "word"
+      },
+      {
+        "name": "bias",
+        "type": "word"
+      },
+      {
+        "name": "closeness",
+        "type": "word"
+      },
+      {
+        "name": "communication",
+        "type": "word"
+      },
+      {
+        "name": "confidence",
+        "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value.",
+        "type": "word"
+      },
+      {
+        "name": "discrepancy",
+        "type": "word"
+      },
+      {
+        "name": "expectation",
+        "type": "word"
+      },
+      {
+        "name": "hypothesis",
+        "type": "word"
+      },
+      {
+        "name": "interpersonal",
+        "type": "word"
+      },
+      {
+        "name": "maxim",
+        "type": "word"
+      },
+      {
+        "name": "never-use",
+        "type": "word"
+      },
+      {
+        "name": "overt",
+        "description": "known to or suspected by the conversation partner, as opposed to undisclosed",
+        "type": "word"
+      },
+      {
+        "name": "positivity",
+        "type": "word"
+      },
+      {
+        "name": "rating",
+        "type": "word"
+      },
+      {
+        "name": "reply",
+        "plural": "replies",
+        "type": "word"
+      },
+      {
+        "name": "self-other",
+        "type": "word"
+      },
+      {
+        "name": "shift",
+        "type": "word"
+      },
+      {
+        "name": "smart",
+        "type": "word"
+      },
+      {
+        "name": "speed",
+        "type": "word"
+      },
+      {
+        "name": "use",
+        "type": "word"
+      },
+      {
+        "name": "value",
+        "description": "a stored number; reference the provenance qualifier triple, not this bare word",
+        "type": "word"
+      }
+    ],
+    "triples": [
+      {
+        "name": "AI-mediated communication",
+        "from": "communication",
+        "verb": "kind of",
+        "to": "AI-mediated",
+        "description": "Interpersonal communication in which an AI system modifies, augments, or generates message content to achieve communicative or relational goals (Hancock, Naaman & Levy 2020). Abbreviated AI-MC."
       },
       {
         "name": "smart replies",
-        "description": "Algorithmic short response suggestions offered to a user inside a messaging interface; the specific AI-MC form tested by Hohenstein et al. 2023.",
-        "type": "word"
+        "from": "reply",
+        "verb": "kind of",
+        "to": "smart",
+        "description": "Algorithmic short response suggestions offered to a user inside a messaging interface; the specific AI-MC form tested by Hohenstein et al. 2023."
       },
       {
         "name": "positivity bias",
-        "description": "Tendency of AI-generated response suggestions to skew toward positive emotional language, observed across smart-reply studies.",
-        "type": "word"
+        "from": "bias",
+        "verb": "of",
+        "to": "positivity",
+        "description": "Tendency of AI-generated response suggestions to skew toward positive emotional language, observed across smart-reply studies."
       },
       {
         "name": "self-other discrepancy",
-        "description": "Pattern where a person expects others to use AI-MC more than they themselves do, and judges others' AI use less acceptable than their own.",
-        "type": "word"
+        "from": "discrepancy",
+        "verb": "kind of",
+        "to": "self-other",
+        "description": "Pattern where a person expects others to use AI-MC more than they themselves do, and judges others' AI use less acceptable than their own."
+      },
+      {
+        "name": "AI use",
+        "from": "use",
+        "verb": "of",
+        "to": "AI"
       },
       {
         "name": "overt AI use",
-        "description": "AI assistance that the conversation partner is aware of or suspects, as opposed to undisclosed use. The trigger for negative interpersonal evaluation.",
-        "type": "word"
+        "from": "AI use",
+        "verb": "kind of",
+        "to": "overt",
+        "description": "AI assistance that the conversation partner is aware of or suspects, as opposed to undisclosed use. The trigger for negative interpersonal evaluation."
+      },
+      {
+        "name": "interpersonal closeness",
+        "from": "closeness",
+        "verb": "kind of",
+        "to": "interpersonal"
       },
       {
         "name": "interpersonal closeness rating",
-        "description": "Self-reported evaluation by a conversation partner of how close and cooperative the other party felt during the exchange.",
-        "type": "word"
+        "from": "rating",
+        "verb": "of",
+        "to": "interpersonal closeness",
+        "description": "Self-reported evaluation by a conversation partner of how close and cooperative the other party felt during the exchange."
+      },
+      {
+        "name": "expectation shift",
+        "from": "shift",
+        "verb": "of",
+        "to": "expectation"
       },
       {
         "name": "expectation shift hypothesis",
-        "description": "Conjecture that habitual exposure to AI-smoothed replies recalibrates a person's baseline expectation for how human conversation should feel, reducing tolerance for friction. Not directly measured by the experiments cited here.",
-        "type": "word"
+        "from": "hypothesis",
+        "verb": "of",
+        "to": "expectation shift",
+        "description": "Conjecture that habitual exposure to AI-smoothed replies recalibrates a person's baseline expectation for how human conversation should feel, reducing tolerance for friction. Not directly measured by the experiments cited here."
       },
       {
         "name": "never-use maxim",
-        "description": "Normative position that LLM AI should never be used for interpersonal communication. A prescriptive maxim, not an empirical finding.",
-        "type": "word"
+        "from": "maxim",
+        "verb": "kind of",
+        "to": "never-use",
+        "description": "Normative position that LLM AI should never be used for interpersonal communication. A prescriptive maxim, not an empirical finding."
       },
       {
         "name": "communication speed",
-        "description": "Rate of message exchange in a conversation; an outcome measured by Hohenstein et al. 2023.",
-        "type": "word"
+        "from": "speed",
+        "verb": "of",
+        "to": "communication",
+        "description": "Rate of message exchange in a conversation; an outcome measured by Hohenstein et al. 2023."
+      },
+      {
+        "name": "assumed value",
+        "from": "value",
+        "verb": "kind of",
+        "to": "assumed",
+        "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
+      },
+      {
+        "name": "confidence value",
+        "from": "value",
+        "verb": "kind of",
+        "to": "confidence",
+        "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
       }
     ],
     "sources": [
       {
         "name": "Hohenstein et al. 2023",
         "description": "Hohenstein, J., Kizilcec, R. F., DiFranzo, D., Aghajari, Z., Mieczkowski, H., Levy, K., Naaman, M., Hancock, J., & Jung, M. F. (2023). Artificial intelligence in communication impacts language and social relationships. Scientific Reports, 13(1), 5487. Two randomized experiments on smart replies. Open access.",
-        "type": "source",
         "doi": "10.1038/s41598-023-30938-9"
       },
       {
         "name": "Mieczkowski et al. 2021",
         "description": "Mieczkowski, H., Hancock, J. T., Naaman, M., Jung, M., & Hohenstein, J. (2021). AI-Mediated Communication: Language Use and Interpersonal Effects in a Referential Communication Task. Proceedings of the ACM on Human-Computer Interaction, 5(CSCW1), 1-14. Replicates the positivity bias; mixed evidence on undermined social attraction.",
-        "type": "source",
         "doi": "10.1145/3449091"
       },
       {
         "name": "Purcell et al. 2024",
         "description": "Purcell, Z. A., Dong, M., Nussberger, A.-M., Koebis, N., & Jakesch, M. (2024). People have different expectations for their own versus others' use of AI-mediated communication tools. British Journal of Psychology, 1-19. Two representative-sample studies (N=477; N=765).",
-        "type": "source",
         "doi": "10.1111/bjop.12727"
       },
       {
         "name": "Hancock, Naaman & Levy 2020",
         "description": "Hancock, J. T., Naaman, M., & Levy, K. (2020). AI-Mediated Communication: Definition, Research Agenda, and Ethical Considerations. Journal of Computer-Mediated Communication, 25(1), 89-100. Defines the AI-MC concept.",
-        "type": "source",
         "doi": "10.1093/jcmc/zmz022"
       }
     ],
@@ -137,7 +282,7 @@
           "is decreased by",
           "overt AI use"
         ],
-        "notes_replaced_by_words": "The boomerang effect: benefits hold only while AI use stays covert; once suspected, evaluation drops. See word 'overt AI use'."
+        "notes_replaced_by_words": "The boomerang effect: benefits hold only while AI use stays covert; once suspected, evaluation drops. See the triple 'overt AI use'."
       },
       {
         "name": "positivity bias replicated in referential task",
@@ -161,7 +306,6 @@
           "interpersonal closeness rating"
         ],
         "value": true,
-        "confidence": 0.5,
         "source": "Mieczkowski et al. 2021",
         "predicate": "may decrease",
         "triple": [
@@ -170,6 +314,15 @@
           "AI-generated language"
         ],
         "notes_replaced_by_words": "Authors describe the evidence as preliminary and mixed; confidence kept low deliberately."
+      },
+      {
+        "name": "confidence in AI-generated language undermining social attractiveness",
+        "words": [
+          "AI-mediated communication",
+          "interpersonal closeness rating",
+          "confidence value"
+        ],
+        "value": 0.5
       },
       {
         "name": "people expect others to use AI-MC more than themselves",
@@ -220,11 +373,10 @@
         "name": "habitual AI exposure shifts baseline expectation for human conversation",
         "words": [
           "expectation shift hypothesis",
-          "AI-mediated communication"
+          "AI-mediated communication",
+          "assumed value"
         ],
-        "value_type": "assumed value",
         "value": true,
-        "confidence": 0.35,
         "source": null,
         "predicate": "is hypothesized to",
         "triple": [
@@ -235,14 +387,22 @@
         "notes_replaced_by_words": "Core conjecture under examination. The cited experiments measure in-interaction perception, not durable recalibration of conversational expectation. Plausible and consistent with computer-mediated-communication theory, but not directly tested here. Low confidence reflects the gap between measured effect and claimed long-run shift."
       },
       {
+        "name": "confidence in the expectation shift hypothesis",
+        "words": [
+          "expectation shift hypothesis",
+          "AI-mediated communication",
+          "confidence value"
+        ],
+        "value": 0.35
+      },
+      {
         "name": "AI should never be used for interpersonal communication",
         "words": [
           "never-use maxim",
-          "AI-mediated communication"
+          "AI-mediated communication",
+          "assumed value"
         ],
-        "value_type": "assumed value",
         "value": true,
-        "confidence": 0.2,
         "source": null,
         "predicate": "is asserted as",
         "triple": [
@@ -251,6 +411,15 @@
           "normative position"
         ],
         "notes_replaced_by_words": "A normative maxim, not an empirical result. The evidence supports a narrower claim: overt or suspected AI use damages trust and perception. That narrower, measured claim does not entail an absolute prohibition. Low confidence flags the gap between the strong maxim and the data."
+      },
+      {
+        "name": "confidence in the never-use maxim",
+        "words": [
+          "never-use maxim",
+          "AI-mediated communication",
+          "confidence value"
+        ],
+        "value": 0.2
       }
     ]
   }

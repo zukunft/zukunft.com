@@ -12,84 +12,23 @@
   "description": "Knowledge captured from a dialogue on whether incentives can be scaled back without eroding cooperation. Measured findings carry their source; the conversation's own conjectures are tagged 'assumed value' so the most load-bearing assumptions can later be surfaced for scrutiny.",
   "words": [
     {
-      "name": "incentive",
-      "description": "something that motivates or encourages an agent to act in a particular way.",
+      "name": "agriculture",
       "refs": [
         {
-          "name": "Incentive",
+          "name": "Agriculture",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "trust",
-      "description": "the willingness of one party to become vulnerable to another party on the presumption that the other will act in a beneficial manner.",
-      "refs": [
-        {
-          "name": "Trust_(social_science)",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "assumed"
     },
     {
-      "name": "cooperation",
-      "description": "the process of groups of organisms working or acting together for common, mutual, or some underlying benefit.",
+      "name": "autonomy",
+      "description": "the capacity of an agent to act in accordance with self-given principles; in Kant, the ground of moral obligation.",
       "refs": [
         {
-          "name": "Cooperation",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "motivation",
-      "description": "the reason or reasons one has for acting or behaving in a particular way.",
-      "refs": [
-        {
-          "name": "Motivation",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "intrinsic",
-      "description": "behaviour driven by internal rewards, arising from within the individual.",
-      "refs": [
-        {
-          "name": "Motivation",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "crowding",
-      "description": "in motivation theory, the effect by which an external intervention undermines (crowds out) or strengthens (crowds in) intrinsic motivation.",
-      "refs": [
-        {
-          "name": "Motivation_crowding_theory",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "effect"
-    },
-    {
-      "name": "fine",
-      "description": "a monetary penalty imposed as punishment for an offence.",
-      "refs": [
-        {
-          "name": "Fine_(penalty)",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "price",
-      "description": "the quantity of payment given by one party to another in return for goods or services.",
-      "refs": [
-        {
-          "name": "Price",
+          "name": "Autonomy",
           "type": "wikipedia"
         }
       ]
@@ -104,20 +43,11 @@
       ]
     },
     {
-      "name": "donation",
+      "name": "casa-particular",
+      "description": "private family lodging offered to travellers in Cuba, legalised as a form of private enterprise.",
       "refs": [
         {
-          "name": "Blood_donation",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "commons",
-      "description": "the cultural and natural resources accessible to all members of a society, including natural materials such as air, water, and a habitable earth.",
-      "refs": [
-        {
-          "name": "Commons",
+          "name": "Casa_particular",
           "type": "wikipedia"
         }
       ]
@@ -133,114 +63,17 @@
       ]
     },
     {
-      "name": "resource",
-      "description": "a source or supply from which a benefit is produced."
-    },
-    {
-      "name": "governance",
+      "name": "commons",
+      "description": "the cultural and natural resources accessible to all members of a society, including natural materials such as air, water, and a habitable earth.",
       "refs": [
         {
-          "name": "Governance",
+          "name": "Commons",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "reciprocity",
-      "description": "in social psychology, a social norm of responding to a positive action with another positive action.",
-      "refs": [
-        {
-          "name": "Reciprocity_(social_and_political_philosophy)",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "curse"
-    },
-    {
-      "name": "institution",
-      "description": "a humanly devised structure of rules and norms that shape and constrain social behaviour.",
-      "refs": [
-        {
-          "name": "Institution",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "sovereign",
-      "refs": [
-        {
-          "name": "Sovereign_wealth_fund",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "wealth",
-      "refs": [
-        {
-          "name": "Sovereign_wealth_fund",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "fund"
-    },
-    {
-      "name": "time",
-      "refs": [
-        {
-          "name": "Time_preference",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "preference",
-      "refs": [
-        {
-          "name": "Time_preference",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "long-term"
-    },
-    {
-      "name": "orientation"
-    },
-    {
-      "name": "agriculture",
-      "refs": [
-        {
-          "name": "Agriculture",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "seasonality",
-      "description": "the presence of variations that occur at specific regular intervals less than a year, such as seasonal weather.",
-      "refs": [
-        {
-          "name": "Seasonality",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "latitude",
-      "description": "a geographic coordinate that specifies the north-south position of a point on the surface of a body.",
-      "refs": [
-        {
-          "name": "Latitude",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "confidence"
     },
     {
       "name": "confounder",
@@ -248,35 +81,6 @@
       "refs": [
         {
           "name": "Confounding",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "enlightenment",
-      "description": "an intellectual and philosophical movement that dominated Europe in the 17th and 18th centuries, with global influences.",
-      "refs": [
-        {
-          "name": "Age_of_Enlightenment",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "autonomy",
-      "description": "the capacity of an agent to act in accordance with self-given principles; in Kant, the ground of moral obligation.",
-      "refs": [
-        {
-          "name": "Autonomy",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "deontology",
-      "refs": [
-        {
-          "name": "Deontology",
           "type": "wikipedia"
         }
       ]
@@ -291,23 +95,27 @@
       ]
     },
     {
-      "name": "hysteresis",
-      "description": "the dependence of the state of a system on its history; a path-dependent persistence of an effect after its cause is removed.",
+      "name": "contested"
+    },
+    {
+      "name": "cooperation",
+      "description": "the process of groups of organisms working or acting together for common, mutual, or some underlying benefit.",
       "refs": [
         {
-          "name": "Hysteresis",
+          "name": "Cooperation",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "equilibrium"
-    },
-    {
-      "name": "low"
-    },
-    {
-      "name": "trap"
+      "name": "crowding",
+      "description": "in motivation theory, the effect by which an external intervention undermines (crowds out) or strengthens (crowds in) intrinsic motivation.",
+      "refs": [
+        {
+          "name": "Motivation_crowding_theory",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "Cuba",
@@ -324,26 +132,127 @@
       ]
     },
     {
-      "name": "casa-particular",
-      "description": "private family lodging offered to travellers in Cuba, legalised as a form of private enterprise.",
+      "name": "curse"
+    },
+    {
+      "name": "deontology",
       "refs": [
         {
-          "name": "Casa_particular",
+          "name": "Deontology",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "Norway",
-      "description": "a Nordic country in Northern Europe.",
+      "name": "donation",
       "refs": [
         {
-          "name": "Norway",
+          "name": "Blood_donation",
           "type": "wikipedia"
-        },
+        }
+      ]
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "enlightenment",
+      "description": "an intellectual and philosophical movement that dominated Europe in the 17th and 18th centuries, with global influences.",
+      "refs": [
         {
-          "name": "Q20",
-          "type": "wikidata"
+          "name": "Age_of_Enlightenment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "equilibrium"
+    },
+    {
+      "name": "fine",
+      "description": "a monetary penalty imposed as punishment for an offence.",
+      "refs": [
+        {
+          "name": "Fine_(penalty)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fund"
+    },
+    {
+      "name": "governance",
+      "refs": [
+        {
+          "name": "Governance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hysteresis",
+      "description": "the dependence of the state of a system on its history; a path-dependent persistence of an effect after its cause is removed.",
+      "refs": [
+        {
+          "name": "Hysteresis",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "incentive",
+      "description": "something that motivates or encourages an agent to act in a particular way.",
+      "refs": [
+        {
+          "name": "Incentive",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "institution",
+      "description": "a humanly devised structure of rules and norms that shape and constrain social behaviour.",
+      "refs": [
+        {
+          "name": "Institution",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "intrinsic",
+      "description": "behaviour driven by internal rewards, arising from within the individual.",
+      "refs": [
+        {
+          "name": "Motivation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "latitude",
+      "description": "a geographic coordinate that specifies the north-south position of a point on the surface of a body.",
+      "refs": [
+        {
+          "name": "Latitude",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "long-term"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "motivation",
+      "description": "the reason or reasons one has for acting or behaving in a particular way.",
+      "refs": [
+        {
+          "name": "Motivation",
+          "type": "wikipedia"
         }
       ]
     },
@@ -362,6 +271,78 @@
       ]
     },
     {
+      "name": "Norway",
+      "description": "a Nordic country in Northern Europe.",
+      "refs": [
+        {
+          "name": "Norway",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q20",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "open-source",
+      "description": "software released under a licence in which the copyright holder grants the rights to use, study, change, and distribute the software and its source code.",
+      "refs": [
+        {
+          "name": "Open-source_software",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "orientation"
+    },
+    {
+      "name": "phosphate",
+      "refs": [
+        {
+          "name": "Phosphate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "preference",
+      "refs": [
+        {
+          "name": "Time_preference",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "price",
+      "description": "the quantity of payment given by one party to another in return for goods or services.",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "qualitative"
+    },
+    {
+      "name": "reciprocity",
+      "description": "in social psychology, a social norm of responding to a positive action with another positive action.",
+      "refs": [
+        {
+          "name": "Reciprocity_(social_and_political_philosophy)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "resource",
+      "description": "a source or supply from which a benefit is produced."
+    },
+    {
       "name": "Russia",
       "description": "a country spanning Eastern Europe and North Asia.",
       "refs": [
@@ -376,10 +357,38 @@
       ]
     },
     {
-      "name": "phosphate",
+      "name": "scaling"
+    },
+    {
+      "name": "seasonality",
+      "description": "the presence of variations that occur at specific regular intervals less than a year, such as seasonal weather.",
       "refs": [
         {
-          "name": "Phosphate",
+          "name": "Seasonality",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "sovereign",
+      "refs": [
+        {
+          "name": "Sovereign_wealth_fund",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "supported"
+    },
+    {
+      "name": "time",
+      "refs": [
+        {
+          "name": "Time_preference",
           "type": "wikipedia"
         }
       ]
@@ -395,36 +404,30 @@
       ]
     },
     {
-      "name": "speed"
+      "name": "trap"
     },
     {
-      "name": "open-source",
-      "description": "software released under a licence in which the copyright holder grants the rights to use, study, change, and distribute the software and its source code.",
+      "name": "trust",
+      "description": "the willingness of one party to become vulnerable to another party on the presumption that the other will act in a beneficial manner.",
       "refs": [
         {
-          "name": "Open-source_software",
+          "name": "Trust_(social_science)",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "scaling"
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
     },
     {
-      "name": "assumed value",
-      "description": "qualifier marking a value as an assumption or conjecture to be verified later, not an established measurement."
-    },
-    {
-      "name": "confidence"
-    },
-    {
-      "name": "qualitative"
-    },
-    {
-      "name": "supported"
-    },
-    {
-      "name": "contested"
+      "name": "wealth",
+      "refs": [
+        {
+          "name": "Sovereign_wealth_fund",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "triples": [
@@ -635,6 +638,13 @@
       "verb": "can cause",
       "to": "scaling",
       "description": "OPEN QUESTION: whether group-sanction-based cooperation that works in small units scales to anonymous mass societies; transparency proposed as a substitute for mutual acquaintance."
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "assumed",
+      "description": "qualifier marking a value as an assumption or conjecture to be verified later, not an established measurement."
     }
   ],
   "sources": [

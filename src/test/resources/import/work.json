@@ -21,6 +21,12 @@
       ]
     },
     {
+      "name": "activity"
+    },
+    {
+      "name": "cash"
+    },
+    {
       "name": "CHF",
       "refs": [
         {
@@ -34,7 +40,31 @@
       ]
     },
     {
+      "name": "flow"
+    },
+    {
+      "name": "investing"
+    },
+    {
+      "name": "statement"
+    }
+  ],
+  "formulas": [],
+  "sources": [],
+  "values": [],
+  "views": [],
+  "triples": [
+    {
+      "name": "cash flow",
+      "from": "flow",
+      "verb": "of",
+      "to": "cash"
+    },
+    {
       "name": "cash flow statement",
+      "from": "statement",
+      "verb": "of",
+      "to": "cash flow",
       "refs": [
         {
           "name": "Cash_flow_statement",
@@ -43,7 +73,16 @@
       ]
     },
     {
+      "name": "investing activity",
+      "from": "activity",
+      "verb": "kind of",
+      "to": "investing"
+    },
+    {
       "name": "cash flow statement investing activity",
+      "from": "investing activity",
+      "verb": "of",
+      "to": "cash flow statement",
       "refs": [
         {
           "name": "Cash_flow_statement#Investing_activities",
@@ -51,13 +90,5 @@
         }
       ]
     }
-  ],
-  "formulas": [
-  ],
-  "sources": [
-  ],
-  "values": [
-  ],
-  "views": [
   ]
 }

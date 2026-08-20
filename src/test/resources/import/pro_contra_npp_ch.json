@@ -9,446 +9,13 @@
   "description": "Argumente und Zahlen pro und kontra Neubau von Kernkraftwerken in der Schweiz (Stand der Debatte 2025/2026, nach Aufhebung des Neubauverbots durch das Parlament). Pro- und Kontra-Argumente sind als Triples modelliert, belegt durch Werte mit Quellen; einige Rechnungen sind als calc-validation hinterlegt.",
   "words": [
     {
-      "name": "Switzerland",
-      "description": "a landlocked country located in west-central Europe.",
-      "refs": [
-        {
-          "name": "Switzerland",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q39",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "nuclear",
-      "description": "relating to the nucleus of an atom and the energy released in nuclear reactions."
-    },
-    {
-      "name": "power",
-      "description": "the rate, per unit time, at which electrical energy is transferred.",
-      "refs": [
-        {
-          "name": "Power_(physics)",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "plant",
-      "description": "an industrial facility for the generation of electric power.",
-      "refs": [
-        {
-          "name": "Power_station",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "new",
-      "description": "recently built or established, as opposed to existing."
-    },
-    {
-      "name": "electricity",
-      "description": "the set of physical phenomena associated with the presence and motion of electric charge.",
-      "refs": [
-        {
-          "name": "Electricity",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "production",
-      "description": "the action of making or generating something."
-    },
-    {
-      "name": "consumption",
-      "description": "the using up of a resource."
-    },
-    {
-      "name": "share",
-      "description": "a part or portion of a larger amount."
-    },
-    {
-      "name": "import",
-      "description": "a good or commodity brought into a country from abroad.",
-      "refs": [
-        {
-          "name": "Import",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "export",
-      "description": "a good or commodity sent out of a country.",
-      "refs": [
-        {
-          "name": "Export",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "argument",
-      "description": "a reason or set of reasons given in support of an idea or position.",
-      "refs": [
-        {
-          "name": "Argument",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "pro",
-      "description": "an argument or consideration in favour of something."
-    },
-    {
-      "name": "contra",
-      "description": "an argument or consideration against something."
-    },
-    {
-      "name": "supply",
-      "description": "the amount of a resource available for use.",
-      "refs": [
-        {
-          "name": "Supply_(economics)",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "security",
-      "description": "the state of being free from danger or threat."
-    },
-    {
-      "name": "winter",
-      "description": "the coldest season of the year, in Switzerland the period of highest electricity demand and lowest solar yield.",
-      "refs": [
-        {
-          "name": "Winter",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "gap",
-      "description": "an unfilled space or interval; here a shortfall between supply and demand."
-    },
-    {
-      "name": "greenhouse",
-      "description": "relating to gases that trap heat in the atmosphere."
-    },
-    {
-      "name": "gas",
-      "description": "a state of matter; here shorthand for a greenhouse gas emission.",
-      "refs": [
-        {
-          "name": "Gas",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "emission",
-      "description": "the production and discharge of something, especially gas."
-    },
-    {
-      "name": "lifecycle",
-      "description": "the whole series of stages over the life of a product or facility.",
-      "refs": [
-        {
-          "name": "Life-cycle_assessment",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "capacity",
-      "description": "the maximum output an installation can produce."
-    },
-    {
-      "name": "factor",
-      "description": "a ratio; here the ratio of actual to maximum possible output."
-    },
-    {
-      "name": "baseload",
-      "description": "the minimum level of demand on an electrical grid over a span of time, met by continuous generation.",
-      "refs": [
-        {
-          "name": "Base_load",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "levelized",
-      "description": "averaged over the lifetime of an asset."
-    },
-    {
-      "name": "cost",
-      "description": "the amount paid or required for something.",
-      "refs": [
-        {
-          "name": "Cost",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "energy",
-      "description": "the capacity to do work, here electrical energy.",
-      "refs": [
-        {
-          "name": "Energy",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11379",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "construction",
-      "description": "the building of an installation.",
-      "refs": [
-        {
-          "name": "Construction",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "time",
-      "description": "the measured duration of an event.",
-      "refs": [
-        {
-          "name": "Time",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11471",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "decommissioning",
-      "description": "the process of shutting down and dismantling a nuclear facility.",
-      "refs": [
-        {
-          "name": "Nuclear_decommissioning",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "disposal",
-      "description": "the action of getting rid of waste, here radioactive waste."
-    },
-    {
-      "name": "waste",
-      "description": "unwanted or unusable material; here spent nuclear fuel and contaminated material.",
-      "refs": [
-        {
-          "name": "Waste",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "uranium",
-      "description": "a chemical element used as nuclear fuel.",
-      "refs": [
-        {
-          "name": "Uranium",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1098",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "fuel",
-      "description": "material burned or consumed to produce energy.",
-      "refs": [
-        {
-          "name": "Fuel",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "dependency",
-      "description": "the state of relying on something external."
-    },
-    {
-      "name": "solar",
-      "description": "relating to energy from the sun.",
-      "refs": [
-        {
-          "name": "Solar_energy",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "photovoltaic",
-      "description": "converting light directly into electricity.",
-      "refs": [
-        {
-          "name": "Photovoltaics",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "wind",
-      "description": "the use of air flow to generate electricity.",
-      "refs": [
-        {
-          "name": "Wind_power",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "onshore",
-      "description": "located on land, as opposed to offshore."
-    },
-    {
-      "name": "renewable",
-      "description": "an energy source that is naturally replenished.",
-      "refs": [
-        {
-          "name": "Renewable_energy",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "Beznau",
-      "description": "the oldest Swiss nuclear power station, in the canton of Aargau.",
-      "refs": [
-        {
-          "name": "Beznau_Nuclear_Power_Plant",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "Gösgen",
-      "description": "a Swiss nuclear power station in the canton of Solothurn.",
-      "refs": [
-        {
-          "name": "Gösgen_Nuclear_Power_Plant",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "Leibstadt",
-      "description": "the newest and most powerful Swiss nuclear power station, in the canton of Aargau.",
-      "refs": [
-        {
-          "name": "Leibstadt_Nuclear_Power_Plant",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "shutdown",
-      "description": "the permanent ceasing of operation of a plant."
-    },
-    {
-      "name": "year"
-    },
-    {
-      "name": "TWh",
-      "description": "terawatt-hour, a unit of energy equal to one billion kilowatt-hours.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Kilowatt-hour",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "percent",
-      "description": "a proportion expressed as a fraction of 100.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Percentage",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "USD"
-    },
-    {
-      "name": "MWh",
-      "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Kilowatt-hour",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "CHF"
-    },
-    {
-      "name": "bn",
-      "description": "billion, a scaling word for 1e9.",
-      "type": "measure"
-    },
-    {
-      "name": "CO2eq",
-      "description": "carbon-dioxide equivalent, a measure of greenhouse-gas emission expressed as the equivalent mass of CO2.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Global_warming_potential",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "kWh",
-      "description": "kilowatt-hour, a unit of energy.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Kilowatt-hour",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "gram",
-      "description": "a metric unit of mass.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Gram",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "2024",
       "description": "the calendar year 2024.",
+      "type": "time"
+    },
+    {
+      "name": "2025",
+      "description": "the calendar year 2025.",
       "type": "time"
     },
     {
@@ -467,25 +34,274 @@
       "type": "time"
     },
     {
-      "name": "2025",
-      "description": "the calendar year 2025.",
-      "type": "time"
-    },
-    {
-      "name": "lower bound estimate",
-      "description": "the low end of an estimated range."
-    },
-    {
-      "name": "upper bound estimate",
-      "description": "the high end of an estimated range."
-    },
-    {
-      "name": "social",
-      "description": "relating to society and external effects beyond the private actor."
-    },
-    {
       "name": "adder",
       "description": "an additive contribution to a total, here a per-kWh cost component; positive raises the cost, negative lowers it."
+    },
+    {
+      "name": "argument",
+      "description": "a reason or set of reasons given in support of an idea or position.",
+      "refs": [
+        {
+          "name": "Argument",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "baseload",
+      "description": "the minimum level of demand on an electrical grid over a span of time, met by continuous generation.",
+      "refs": [
+        {
+          "name": "Base_load",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Beznau",
+      "description": "the oldest Swiss nuclear power station, in the canton of Aargau.",
+      "refs": [
+        {
+          "name": "Beznau_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "bn",
+      "description": "billion, a scaling word for 1e9.",
+      "type": "measure"
+    },
+    {
+      "name": "bound"
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum output an installation can produce."
+    },
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "CO2",
+      "description": "carbon dioxide, the principal anthropogenic greenhouse gas.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Carbon_dioxide",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "CO2eq",
+      "description": "carbon-dioxide equivalent, a measure of greenhouse-gas emission expressed as the equivalent mass of CO2.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Global_warming_potential",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "construction",
+      "description": "the building of an installation.",
+      "refs": [
+        {
+          "name": "Construction",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "consumption",
+      "description": "the using up of a resource."
+    },
+    {
+      "name": "contra",
+      "description": "an argument or consideration against something."
+    },
+    {
+      "name": "cost",
+      "description": "the amount paid or required for something.",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "decommissioning",
+      "description": "the process of shutting down and dismantling a nuclear facility.",
+      "refs": [
+        {
+          "name": "Nuclear_decommissioning",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "delay",
+      "description": "a period by which something is late or postponed."
+    },
+    {
+      "name": "dependency",
+      "description": "the state of relying on something external."
+    },
+    {
+      "name": "disposal",
+      "description": "the action of getting rid of waste, here radioactive waste."
+    },
+    {
+      "name": "duration",
+      "description": "the length of time something continues."
+    },
+    {
+      "name": "electricity",
+      "description": "the set of physical phenomena associated with the presence and motion of electric charge.",
+      "refs": [
+        {
+          "name": "Electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "emission",
+      "description": "the production and discharge of something, especially gas."
+    },
+    {
+      "name": "energy",
+      "description": "the capacity to do work, here electrical energy.",
+      "refs": [
+        {
+          "name": "Energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11379",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "estimate"
+    },
+    {
+      "name": "export",
+      "description": "a good or commodity sent out of a country.",
+      "refs": [
+        {
+          "name": "Export",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "factor",
+      "description": "a ratio; here the ratio of actual to maximum possible output."
+    },
+    {
+      "name": "fuel",
+      "description": "material burned or consumed to produce energy.",
+      "refs": [
+        {
+          "name": "Fuel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gap",
+      "description": "an unfilled space or interval; here a shortfall between supply and demand."
+    },
+    {
+      "name": "gas",
+      "description": "a state of matter; here shorthand for a greenhouse gas emission.",
+      "refs": [
+        {
+          "name": "Gas",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gram",
+      "description": "a metric unit of mass.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Gram",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "greenhouse",
+      "description": "relating to gases that trap heat in the atmosphere."
+    },
+    {
+      "name": "Gösgen",
+      "description": "a Swiss nuclear power station in the canton of Solothurn.",
+      "refs": [
+        {
+          "name": "Gösgen_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "import",
+      "description": "a good or commodity brought into a country from abroad.",
+      "refs": [
+        {
+          "name": "Import",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kWh",
+      "description": "kilowatt-hour, a unit of energy.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Leibstadt",
+      "description": "the newest and most powerful Swiss nuclear power station, in the canton of Aargau.",
+      "refs": [
+        {
+          "name": "Leibstadt_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "levelized",
+      "description": "averaged over the lifetime of an asset."
+    },
+    {
+      "name": "lifecycle",
+      "description": "the whole series of stages over the life of a product or facility.",
+      "refs": [
+        {
+          "name": "Life-cycle_assessment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "lower"
     },
     {
       "name": "mean",
@@ -498,8 +314,68 @@
       ]
     },
     {
-      "name": "shadow",
-      "description": "an imputed price for a non-market effect, used to monetise it."
+      "name": "MWh",
+      "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "new",
+      "description": "recently built or established, as opposed to existing."
+    },
+    {
+      "name": "nuclear",
+      "description": "relating to the nucleus of an atom and the energy released in nuclear reactions."
+    },
+    {
+      "name": "onshore",
+      "description": "located on land, as opposed to offshore."
+    },
+    {
+      "name": "percent",
+      "description": "a proportion expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "photovoltaic",
+      "description": "converting light directly into electricity.",
+      "refs": [
+        {
+          "name": "Photovoltaics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "plant",
+      "description": "an industrial facility for the generation of electric power.",
+      "refs": [
+        {
+          "name": "Power_station",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "power",
+      "description": "the rate, per unit time, at which electrical energy is transferred.",
+      "refs": [
+        {
+          "name": "Power_(physics)",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "price",
@@ -512,13 +388,93 @@
       ]
     },
     {
-      "name": "CO2",
-      "description": "carbon dioxide, the principal anthropogenic greenhouse gas.",
-      "type": "measure",
+      "name": "pro",
+      "description": "an argument or consideration in favour of something."
+    },
+    {
+      "name": "production",
+      "description": "the action of making or generating something."
+    },
+    {
+      "name": "Rappen",
+      "description": "one hundredth of a Swiss franc.",
+      "type": "measure"
+    },
+    {
+      "name": "renewable",
+      "description": "an energy source that is naturally replenished.",
       "refs": [
         {
-          "name": "Carbon_dioxide",
+          "name": "Renewable_energy",
           "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "security",
+      "description": "the state of being free from danger or threat."
+    },
+    {
+      "name": "shadow",
+      "description": "an imputed price for a non-market effect, used to monetise it."
+    },
+    {
+      "name": "share",
+      "description": "a part or portion of a larger amount."
+    },
+    {
+      "name": "shutdown",
+      "description": "the permanent ceasing of operation of a plant."
+    },
+    {
+      "name": "social",
+      "description": "relating to society and external effects beyond the private actor."
+    },
+    {
+      "name": "solar",
+      "description": "relating to energy from the sun.",
+      "refs": [
+        {
+          "name": "Solar_energy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "supply",
+      "description": "the amount of a resource available for use.",
+      "refs": [
+        {
+          "name": "Supply_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Switzerland",
+      "description": "a landlocked country located in west-central Europe.",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "time",
+      "description": "the measured duration of an event.",
+      "refs": [
+        {
+          "name": "Time",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11471",
+          "type": "wikidata"
         }
       ]
     },
@@ -534,17 +490,72 @@
       ]
     },
     {
-      "name": "Rappen",
-      "description": "one hundredth of a Swiss franc.",
-      "type": "measure"
+      "name": "TWh",
+      "description": "terawatt-hour, a unit of energy equal to one billion kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "duration",
-      "description": "the length of time something continues."
+      "name": "upper"
     },
     {
-      "name": "delay",
-      "description": "a period by which something is late or postponed."
+      "name": "uranium",
+      "description": "a chemical element used as nuclear fuel.",
+      "refs": [
+        {
+          "name": "Uranium",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1098",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
+    },
+    {
+      "name": "waste",
+      "description": "unwanted or unusable material; here spent nuclear fuel and contaminated material.",
+      "refs": [
+        {
+          "name": "Waste",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wind",
+      "description": "the use of air flow to generate electricity.",
+      "refs": [
+        {
+          "name": "Wind_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "winter",
+      "description": "the coldest season of the year, in Switzerland the period of highest electricity demand and lowest solar yield.",
+      "refs": [
+        {
+          "name": "Winter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year"
     }
   ],
   "triples": [
@@ -854,25 +865,21 @@
       "description": "the combined annual electricity production lost once all Swiss nuclear power plants are shut down on schedule; the result of the fleet production loss sum formula."
     },
     {
-      "name": "lifecycle greenhouse gas emission of nuclear power",
       "from": "lifecycle greenhouse gas emission",
       "verb": "of",
       "to": "nuclear power"
     },
     {
-      "name": "lifecycle greenhouse gas emission of solar photovoltaic",
       "from": "lifecycle greenhouse gas emission",
       "verb": "of",
       "to": "solar photovoltaic"
     },
     {
-      "name": "capacity factor of nuclear power",
       "from": "capacity factor",
       "verb": "of",
       "to": "nuclear power"
     },
     {
-      "name": "capacity factor of solar photovoltaic",
       "from": "capacity factor",
       "verb": "of",
       "to": "solar photovoltaic"
@@ -896,14 +903,12 @@
       "to": "onshore wind"
     },
     {
-      "name": "CO2eq per kWh",
       "from": "CO2eq",
       "verb": "per",
       "to": "kWh",
       "description": "grams of CO2-equivalent emitted per kilowatt-hour generated."
     },
     {
-      "name": "USD per MWh",
       "from": "USD",
       "verb": "per",
       "to": "MWh",
@@ -917,7 +922,6 @@
       "description": "billions of Swiss francs."
     },
     {
-      "name": "CHF per kWh",
       "from": "CHF",
       "verb": "per",
       "to": "kWh",
@@ -1009,6 +1013,39 @@
       "verb": "of",
       "to": "construction time",
       "description": "contra: monetised cost of the long build/delay risk (capital tied up, gap bridged by other means); positive adder."
+    },
+    {
+      "name": "lower bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "lower"
+    },
+    {
+      "name": "lower bound estimate",
+      "from": "estimate",
+      "verb": "kind of",
+      "to": "lower bound",
+      "description": "the low end of an estimated range."
+    },
+    {
+      "name": "upper bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "upper"
+    },
+    {
+      "name": "upper bound estimate",
+      "from": "estimate",
+      "verb": "kind of",
+      "to": "upper bound",
+      "description": "the high end of an estimated range."
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "assumed",
+      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     }
   ],
   "sources": [

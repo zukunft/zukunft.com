@@ -12,36 +12,32 @@
       "type": "time"
     },
     {
-      "name": "kWh",
-      "type": "measure"
-    },
-    {
-      "name": "per kWh",
-      "type": "measure_divisor"
-    },
-    {
-      "name": "electricity"
+      "name": "CO2"
     },
     {
       "name": "consumed"
     },
     {
+      "name": "electricity"
+    },
+    {
       "name": "gram"
     },
     {
-      "name": "CO2"
+      "name": "hydropower"
     },
     {
-      "name": "solar"
+      "name": "kWh",
+      "type": "measure"
     },
     {
       "name": "power"
     },
     {
-      "name": "Swiss"
+      "name": "solar"
     },
     {
-      "name": "hydropower"
+      "name": "Swiss"
     }
   ],
   "triples": [
@@ -62,6 +58,12 @@
       "from": "hydropower",
       "verb": "kind of",
       "to": "Swiss"
+    },
+    {
+      "name": "per kWh",
+      "from": "gram",
+      "verb": "per",
+      "to": "kWh"
     }
   ],
   "formulas": [],

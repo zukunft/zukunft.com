@@ -1,92 +1,356 @@
 {
-  "title": "Fermi estimate: value of a public CBAM calculation tool",
-  "description": "Expected-value estimate for building a public, source-bound CBAM (Carbon Border Adjustment Mechanism) calculation tool, conditional on the stated premise that a usable tool causes an additional 10% reduction in global GHG emissions within one year.",
+  "description": "Fermi estimate of a public CBAM calculation tool: Expected-value estimate for building a public, source-bound CBAM (Carbon Border Adjustment Mechanism) calculation tool, conditional on the stated premise that a usable tool causes an additional 10% reduction in global GHG emissions within one year.",
   "version": "0.0.3",
   "data_version": "0.0.1",
   "words": [
     {
-      "id": "w1",
-      "name": "CBAM public calculation tool",
+      "name": "2024",
+      "type": "time"
+    },
+    {
+      "name": "adoption",
+      "description": "use of the tool by importers, authorities or civil society"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "build",
+      "description": "the one-off creation of the tool"
+    },
+    {
+      "name": "calculation"
+    },
+    {
+      "name": "carbon"
+    },
+    {
+      "name": "causal"
+    },
+    {
+      "name": "CBAM",
+      "description": "Carbon Border Adjustment Mechanism"
+    },
+    {
+      "name": "chain"
+    },
+    {
+      "name": "CO2"
+    },
+    {
+      "name": "completion"
+    },
+    {
+      "name": "confidence",
+      "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "effect-relevant",
+      "description": "at a scale sufficient to plausibly drive the assumed emissions effect, e.g. integrated into EU CBAM reporting workflows or widely used by importers and civil society"
+    },
+    {
+      "name": "emission"
+    },
+    {
+      "name": "fraction",
+      "description": "a dimensionless share between 0 and 1"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "greenhouse"
+    },
+    {
+      "name": "GtCO2eq",
+      "description": "Is a symbol for gigatonnes of CO2 equivalent"
+    },
+    {
+      "name": "probability",
+      "description": "a dimensionless probability between 0 and 1"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "SCC"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "technical"
+    },
+    {
+      "name": "tonne"
+    },
+    {
+      "name": "tool"
+    },
+    {
+      "name": "usable",
+      "description": "the tool is technically functional AND adopted at a scale sufficient to plausibly drive the assumed emissions effect; bundles technical completion and adoption"
+    },
+    {
+      "name": "USD",
+      "description": "US dollars"
+    },
+    {
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
+    },
+    {
+      "name": "year"
+    }
+  ],
+  "triples": [
+    {
+      "name": "calculation tool",
+      "from": "tool",
+      "verb": "of",
+      "to": "calculation"
+    },
+    {
+      "name": "CBAM calculation tool",
+      "from": "calculation tool",
+      "verb": "of",
+      "to": "CBAM"
+    },
+    {
+      "name": "public CBAM calculation tool",
+      "from": "CBAM calculation tool",
+      "verb": "kind of",
+      "to": "public",
       "description": "Publicly usable, source-verifiable tool for calculating carbon-border-adjustment obligations, in the zukunft.com sense of numbers bound to word/triple/source chains"
     },
     {
-      "id": "w2",
-      "name": "usable",
-      "description": "Tool is technically functional AND adopted at a scale sufficient to plausibly drive the assumed emissions effect (e.g. integrated into EU CBAM reporting workflows or widely used by importers/civil society) — bundles technical completion and adoption"
+      "name": "greenhouse gas",
+      "from": "gas",
+      "verb": "of",
+      "to": "greenhouse"
     },
     {
-      "id": "w3",
-      "name": "global GHG emissions 2024",
-      "description": "Total global greenhouse gas emissions, 2024, GtCO2eq, all sectors including LULUCF"
+      "name": "greenhouse gas emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "greenhouse gas",
+      "description": "Release of a greenhouse gas into the atmosphere."
     },
     {
-      "id": "w4",
-      "name": "social cost of carbon (SCC)",
+      "name": "global greenhouse gas emissions",
+      "from": "greenhouse gas emission",
+      "verb": "kind of",
+      "to": "global",
+      "description": "Total global greenhouse gas emissions, all sectors including LULUCF"
+    },
+    {
+      "name": "greenhouse gas emission reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "greenhouse gas emission"
+    },
+    {
+      "name": "carbon cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "carbon"
+    },
+    {
+      "name": "social cost of carbon",
+      "from": "carbon cost",
+      "verb": "kind of",
+      "to": "social",
       "description": "EPA 2023 central estimate, 2020 USD per metric ton CO2, 2% near-term discount rate"
     },
     {
-      "id": "w5",
-      "name": "causal chain: tool usable -> 10% reduction",
+      "name": "SCC (acronym)",
+      "from": "SCC",
+      "verb": "is an acronym for",
+      "to": "social cost of carbon"
+    },
+    {
+      "name": "causal chain",
+      "from": "chain",
+      "verb": "kind of",
+      "to": "causal",
       "description": "The assumed mechanism: public tool -> supply-chain transparency -> closes carbon-leakage gap -> changes importer behavior -> tightens policy -> global emissions effect. Stated as a premise by the user, NOT independently derived or verified here."
+    },
+    {
+      "name": "build cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "build",
+      "description": "one-off cost of building the tool"
+    },
+    {
+      "name": "technical completion",
+      "from": "completion",
+      "verb": "kind of",
+      "to": "technical",
+      "description": "the tool is finished and technically functional"
+    },
+    {
+      "name": "effect-relevant adoption",
+      "from": "adoption",
+      "verb": "kind of",
+      "to": "effect-relevant",
+      "description": "the finished tool is adopted widely enough to drive the assumed emissions effect"
+    },
+    {
+      "from": "GtCO2eq",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "tonne CO2",
+      "from": "tonne",
+      "verb": "of",
+      "to": "CO2"
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "tonne CO2",
+      "description": "US dollars per metric tonne of CO2, in 2020 USD at a 2 percent near-term discount rate"
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "assumed",
+      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
+    },
+    {
+      "name": "confidence value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "confidence",
+      "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
     }
   ],
   "values": [
     {
-      "id": "v1",
-      "word_id": "w3",
-      
+      "words": [
+        "global greenhouse gas emissions",
+        "2024",
+        "GtCO2eq per year"
+      ],
       "value": 57.7,
-      "unit": "GtCO2eq/year",
-      "confidence": 0.9,
       "source": "UNEP Emissions Gap Report 2025, Chapter 2",
-      "year": 2024,
       "url": "https://publications.jrc.ec.europa.eu/repository/handle/JRC143107"
     },
     {
-      "id": "v2",
-      "word_id": "w4",
-      
+      "words": [
+        "global greenhouse gas emissions",
+        "2024",
+        "GtCO2eq per year",
+        "confidence value"
+      ],
+      "value": 0.9
+    },
+    {
+      "words": [
+        "social cost of carbon",
+        "USD per tonne CO2"
+      ],
       "value": 190,
-      "unit": "USD/tCO2 (2020 USD, 2% discount rate)",
-      "confidence": 0.7,
-      "note": "range 120-340 USD/t depending on discount rate (2.5%/2.0%/1.5%)",
+      "description": "range 120-340 USD/t depending on discount rate (2.5%/2.0%/1.5%)",
       "source": "EPA Report on the Social Cost of Greenhouse Gases, Dec 2023",
       "url": "https://www.epa.gov/system/files/documents/2023-12/epa_scghg_2023_report_final.pdf"
     },
     {
-      "id": "v3",
-      "word_id": "w5",
-      "type": "assumed value",
+      "words": [
+        "social cost of carbon",
+        "USD per tonne CO2",
+        "confidence value"
+      ],
+      "value": 0.7
+    },
+    {
+      "words": [
+        "greenhouse gas emission reduction",
+        "causal chain",
+        "usable",
+        "fraction",
+        "assumed value"
+      ],
       "value": 0.10,
-      "unit": "fraction of global GHG emissions",
-      "confidence": 0.1,
-      "note": "User-stated premise, taken as given for this model; not derived from an independent causal chain. This is the single largest source of uncertainty in the whole estimate and should be its own decomposed sub-model."
+      "description": "User-stated premise, taken as given for this model; not derived from an independent causal chain. This is the single largest source of uncertainty in the whole estimate and should be its own decomposed sub-model."
     },
     {
-      "id": "v4",
-      "word_id": "w2",
-      "type": "assumed value",
+      "words": [
+        "greenhouse gas emission reduction",
+        "causal chain",
+        "usable",
+        "fraction",
+        "confidence value"
+      ],
+      "value": 0.1
+    },
+    {
+      "words": [
+        "public CBAM calculation tool",
+        "build cost",
+        "USD",
+        "assumed value"
+      ],
       "value": 1500000,
-      "unit": "USD, build cost",
-      "confidence": 0.5,
-      "note": "2 developers + 1 trade/carbon-accounting domain expert + 1 policy/legal, 18 months, plus data licensing/verification infrastructure"
+      "description": "2 developers + 1 trade/carbon-accounting domain expert + 1 policy/legal, 18 months, plus data licensing/verification infrastructure"
     },
     {
-      "id": "v5",
-      "word_id": "w2",
-      "type": "assumed value",
-      "value": 0.7,
-      "unit": "probability, technical completion",
-      "confidence": 0.6
+      "words": [
+        "public CBAM calculation tool",
+        "build cost",
+        "USD",
+        "confidence value"
+      ],
+      "value": 0.5
     },
     {
-      "id": "v6",
-      "word_id": "w2",
-      "type": "assumed value",
+      "words": [
+        "public CBAM calculation tool",
+        "technical completion",
+        "probability",
+        "assumed value"
+      ],
+      "value": 0.7
+    },
+    {
+      "words": [
+        "public CBAM calculation tool",
+        "technical completion",
+        "probability",
+        "confidence value"
+      ],
+      "value": 0.6
+    },
+    {
+      "words": [
+        "public CBAM calculation tool",
+        "effect-relevant adoption",
+        "probability",
+        "assumed value"
+      ],
       "value": 0.04,
-      "unit": "probability, adoption at effect-relevant scale",
-      "confidence": 0.3,
-      "note": "conditional on technical completion; largest source of adoption uncertainty"
+      "description": "conditional on technical completion; largest source of adoption uncertainty"
+    },
+    {
+      "words": [
+        "public CBAM calculation tool",
+        "effect-relevant adoption",
+        "probability",
+        "confidence value"
+      ],
+      "value": 0.3
     }
   ],
   "formula": "EV = P(usable) * (0.10 * global_emissions_2024 * SCC) - build_cost, where P(usable) = P(technical completion) * P(adoption)",
@@ -99,10 +363,6 @@
     ],
     "expected_value_usd": 29200000000,
     "expected_value_note": "One-year, non-compounding effect only, per the stated premise. If the effect is assumed durable/annual, NPV over 10y at 5% discount scales roughly x7.7.",
-    "sensitivity": "Cost-effectiveness case (build_cost vs. EV) is positive even at P(usable) as low as 0.0001 (EV ~110M USD, still >>build_cost). The result is therefore almost entirely determined by v3 (the 10% causal premise), not by cost or adoption probability."
-  },
-  "open_questions": [
-    "Decompose v3 (10% global reduction from one tool becoming usable) into its own causal chain: transparency -> carbon-leakage closure -> importer behavior change -> policy tightening -> measured emissions effect, each with sourced or explicitly assumed sub-values.",
-    "Current EU CBAM covers a small fraction of traded goods/sectors (steel, aluminium, cement, fertilizer, electricity, hydrogen) and has no export-rebate symmetry as of 2026 — relevant prior constraint on how large a plausible tool-driven effect could be."
-  ]
+    "sensitivity": "Cost-effectiveness case (build_cost vs. EV) is positive even at P(usable) as low as 0.0001 (EV ~110M USD, still >>build_cost). The result is therefore almost entirely determined by the 10 percent causal premise, not by cost or adoption probability."
+  }
 }

@@ -9,199 +9,6 @@
   "description": "Werte und Formeln zum Thema Stromgestehungskosten (Levelized Cost of Electricity, LCOE) aus dem deutschen Wikipedia-Artikel \"Stromgestehungskosten\". Modelliert sind die LCOE neuer Kraftwerke nach Energietraeger (Fraunhofer ISE 2024, Eurocent je kWh, als Spannweiten) sowie die Kostenkomponenten (Kapitalkosten, fixe und variable Betriebs- und Wartungskosten, Netzkosten) und der daraus berechnete LCOE-Wert nach EIA (USD je MWh, Inbetriebnahme 2018 und 2022). Die Komponentensumme ist als Formel mit calc-validation hinterlegt. Quelle des Artikels: https://de.wikipedia.org/wiki/Stromgestehungskosten",
   "words": [
     {
-      "name": "power",
-      "description": "the rate, per unit time, at which electrical energy is transferred.",
-      "refs": [
-        {
-          "name": "Power_(physics)",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "nuclear",
-      "description": "relating to the nucleus of an atom and the energy released in nuclear reactions."
-    },
-    {
-      "name": "hydro",
-      "description": "relating to electricity generated from flowing water."
-    },
-    {
-      "name": "wind",
-      "description": "the use of air flow to generate electricity.",
-      "refs": [
-        {
-          "name": "Wind_power",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "onshore",
-      "description": "located on land, as opposed to offshore."
-    },
-    {
-      "name": "offshore",
-      "description": "located at sea."
-    },
-    {
-      "name": "photovoltaic",
-      "description": "converting light directly into electricity.",
-      "refs": [
-        {
-          "name": "Photovoltaics",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "utility",
-      "description": "of a photovoltaic plant, large utility-scale ground-mounted."
-    },
-    {
-      "name": "rooftop",
-      "description": "of a photovoltaic plant, a small roof-mounted installation."
-    },
-    {
-      "name": "thermal",
-      "description": "relating to heat; here concentrating solar thermal power."
-    },
-    {
-      "name": "solar",
-      "description": "relating to energy from the sun.",
-      "refs": [
-        {
-          "name": "Solar_energy",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cycle",
-      "description": "a thermodynamic cycle; here a gas-and-steam combined cycle."
-    },
-    {
-      "name": "combined",
-      "description": "of a gas plant, using a combined gas-and-steam cycle."
-    },
-    {
-      "name": "coal",
-      "description": "a combustible black sedimentary rock burned to generate electricity."
-    },
-    {
-      "name": "hard",
-      "description": "of coal, anthracite or bituminous hard coal."
-    },
-    {
-      "name": "lignite",
-      "description": "brown coal, a soft low-grade coal burned for electricity."
-    },
-    {
-      "name": "biomass",
-      "description": "organic material burned to generate electricity."
-    },
-    {
-      "name": "electricity",
-      "description": "the set of physical phenomena associated with electric charge.",
-      "refs": [
-        {
-          "name": "Electricity",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cost",
-      "description": "the amount paid or required for something.",
-      "refs": [
-        {
-          "name": "Cost",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "levelized",
-      "description": "averaged over the lifetime of an asset as a present value per unit of output."
-    },
-    {
-      "name": "capital",
-      "description": "the up-front investment expenditure to build a plant."
-    },
-    {
-      "name": "maintenance",
-      "description": "the operations and upkeep of a plant during its lifetime."
-    },
-    {
-      "name": "fixed",
-      "description": "of a cost, independent of the amount produced."
-    },
-    {
-      "name": "variable",
-      "description": "of a cost, depending on the amount produced (here including fuel)."
-    },
-    {
-      "name": "grid",
-      "description": "the transmission network; here grid connection and system cost."
-    },
-    {
-      "name": "capacity",
-      "description": "the maximum output an installation can produce."
-    },
-    {
-      "name": "factor",
-      "description": "a ratio; here the ratio of actual to maximum possible output."
-    },
-    {
-      "name": "lower bound estimate",
-      "description": "the low end of an estimated range."
-    },
-    {
-      "name": "upper bound estimate",
-      "description": "the high end of an estimated range."
-    },
-    {
-      "name": "USD"
-    },
-    {
-      "name": "Eurocent",
-      "description": "one hundredth of a euro.",
-      "type": "measure"
-    },
-    {
-      "name": "MWh",
-      "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Kilowatt-hour",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "kWh",
-      "description": "kilowatt-hour, a unit of energy.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Kilowatt-hour",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "percent",
-      "description": "a proportion expressed as a fraction of 100.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Percentage",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "2018",
       "description": "the calendar year 2018.",
       "type": "time"
@@ -215,6 +22,210 @@
       "name": "2024",
       "description": "the calendar year 2024.",
       "type": "time"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "biomass",
+      "description": "organic material burned to generate electricity."
+    },
+    {
+      "name": "bound"
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum output an installation can produce."
+    },
+    {
+      "name": "capital",
+      "description": "the up-front investment expenditure to build a plant."
+    },
+    {
+      "name": "coal",
+      "description": "a combustible black sedimentary rock burned to generate electricity."
+    },
+    {
+      "name": "combined",
+      "description": "of a gas plant, using a combined gas-and-steam cycle."
+    },
+    {
+      "name": "cost",
+      "description": "the amount paid or required for something.",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cycle",
+      "description": "a thermodynamic cycle; here a gas-and-steam combined cycle."
+    },
+    {
+      "name": "electricity",
+      "description": "the set of physical phenomena associated with electric charge.",
+      "refs": [
+        {
+          "name": "Electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "estimate"
+    },
+    {
+      "name": "Eurocent",
+      "description": "one hundredth of a euro.",
+      "type": "measure"
+    },
+    {
+      "name": "factor",
+      "description": "a ratio; here the ratio of actual to maximum possible output."
+    },
+    {
+      "name": "fixed",
+      "description": "of a cost, independent of the amount produced."
+    },
+    {
+      "name": "grid",
+      "description": "the transmission network; here grid connection and system cost."
+    },
+    {
+      "name": "hard",
+      "description": "of coal, anthracite or bituminous hard coal."
+    },
+    {
+      "name": "hydro",
+      "description": "relating to electricity generated from flowing water."
+    },
+    {
+      "name": "kWh",
+      "description": "kilowatt-hour, a unit of energy.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "levelized",
+      "description": "averaged over the lifetime of an asset as a present value per unit of output."
+    },
+    {
+      "name": "lignite",
+      "description": "brown coal, a soft low-grade coal burned for electricity."
+    },
+    {
+      "name": "lower"
+    },
+    {
+      "name": "maintenance",
+      "description": "the operations and upkeep of a plant during its lifetime."
+    },
+    {
+      "name": "MWh",
+      "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nuclear",
+      "description": "relating to the nucleus of an atom and the energy released in nuclear reactions."
+    },
+    {
+      "name": "offshore",
+      "description": "located at sea."
+    },
+    {
+      "name": "onshore",
+      "description": "located on land, as opposed to offshore."
+    },
+    {
+      "name": "percent",
+      "description": "a proportion expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "photovoltaic",
+      "description": "converting light directly into electricity.",
+      "refs": [
+        {
+          "name": "Photovoltaics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "power",
+      "description": "the rate, per unit time, at which electrical energy is transferred.",
+      "refs": [
+        {
+          "name": "Power_(physics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rooftop",
+      "description": "of a photovoltaic plant, a small roof-mounted installation."
+    },
+    {
+      "name": "solar",
+      "description": "relating to energy from the sun.",
+      "refs": [
+        {
+          "name": "Solar_energy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "thermal",
+      "description": "relating to heat; here concentrating solar thermal power."
+    },
+    {
+      "name": "upper"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "utility",
+      "description": "of a photovoltaic plant, large utility-scale ground-mounted."
+    },
+    {
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
+    },
+    {
+      "name": "variable",
+      "description": "of a cost, depending on the amount produced (here including fuel)."
+    },
+    {
+      "name": "wind",
+      "description": "the use of air flow to generate electricity.",
+      "refs": [
+        {
+          "name": "Wind_power",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "triples": [
@@ -291,7 +302,6 @@
       "to": "levelized"
     },
     {
-      "name": "levelized cost of electricity",
       "from": "levelized cost",
       "verb": "of",
       "to": "electricity",
@@ -352,6 +362,39 @@
       "verb": "per",
       "to": "kWh",
       "description": "euro-cents per kilowatt-hour generated."
+    },
+    {
+      "name": "lower bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "lower"
+    },
+    {
+      "name": "lower bound estimate",
+      "from": "estimate",
+      "verb": "kind of",
+      "to": "lower bound",
+      "description": "the low end of an estimated range."
+    },
+    {
+      "name": "upper bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "upper"
+    },
+    {
+      "name": "upper bound estimate",
+      "from": "estimate",
+      "verb": "kind of",
+      "to": "upper bound",
+      "description": "the high end of an estimated range."
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "assumed",
+      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     }
   ],
   "sources": [

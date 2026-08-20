@@ -8,7 +8,24 @@
   ],
   "words": [
     {
+      "name": "average"
+    },
+    {
+      "name": "game"
+    },
+    {
+      "name": "offer"
+    },
+    {
+      "name": "ultimatum"
+    }
+  ],
+  "triples": [
+    {
       "name": "Ultimatum Game",
+      "from": "game",
+      "verb": "kind of",
+      "to": "ultimatum",
       "refs": [
         {
           "name": "Ultimatum_game",
@@ -17,21 +34,25 @@
       ]
     },
     {
-      "name": "Ultimatum Game average offer"
+      "name": "average offer",
+      "from": "offer",
+      "verb": "kind of",
+      "to": "average"
+    },
+    {
+      "name": "Ultimatum Game average offer",
+      "from": "average offer",
+      "verb": "of",
+      "to": "Ultimatum Game"
     }
   ],
-  "triples": [
-  ],
-  "formulas": [
-  ],
+  "formulas": [],
   "sources": [
     {
       "name": "The neural basis of economic decision-making in the Ultimatum Game",
       "url": "https://pubmed.ncbi.nlm.nih.gov/12805551/"
     }
   ],
-  "values": [
-  ],
-  "views": [
-  ]
+  "values": [],
+  "views": []
 }

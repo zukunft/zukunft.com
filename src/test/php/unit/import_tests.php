@@ -647,7 +647,7 @@ class import_tests
         sort($names_expected);
         $t->assert($test_name, $names_merged, $names_expected);
         $test_name = '... and the duplicated triples of the three files are merged';
-        $t->assert($test_name, $dto_merged->triple_list()->count(), 61);
+        $t->assert($test_name, $dto_merged->triple_list()->count(), 63);
         $test_name = '... and the merged values match the merged file';
         $t->assert($test_name, $dto_merged->value_list()->count(), $dto_expected->value_list()->count());
         // one value per input file to prove that no file is lost in the merge

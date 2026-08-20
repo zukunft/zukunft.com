@@ -1,30 +1,30 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-08-14 12:00:00",
   "user": "zukunft",
   "description": "Merged set of the three offline-is-better-than-online example files: interpersonal persuasion effect sizes, adolescent screen use inflection points and the Facebook deactivation experiment",
   "words": [
     {
-      "name": "canvassing",
-      "description": "systematic contacting of people to gauge or influence their opinions",
+      "name": "accept"
+    },
+    {
+      "name": "activity"
+    },
+    {
+      "name": "affective"
+    },
+    {
+      "name": "Allcott"
+    },
+    {
+      "name": "anxiety",
       "refs": [
         {
-          "name": "Canvassing",
+          "name": "Anxiety",
           "type": "wikipedia"
         }
       ]
-    },
-    {
-      "name": "narrative",
-      "refs": [
-        {
-          "name": "Narrative",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "exchange"
     },
     {
       "name": "argument",
@@ -36,6 +36,9 @@
       ]
     },
     {
+      "name": "assumed"
+    },
+    {
       "name": "attitude",
       "refs": [
         {
@@ -45,70 +48,38 @@
       ]
     },
     {
-      "name": "exclusionary"
-    },
-    {
-      "name": "effect"
-    },
-    {
-      "name": "size"
-    },
-    {
-      "name": "study"
-    },
-    {
-      "name": "participant"
-    },
-    {
-      "name": "count"
-    },
-    {
-      "name": "format"
-    },
-    {
-      "name": "persuasion",
-      "refs": [
-        {
-          "name": "Persuasion",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "probability",
-      "refs": [
-        {
-          "name": "Probability",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "confidence"
-    },
-    {
-      "name": "Kalla"
-    },
-    {
-      "name": "Broockman"
+      "name": "Bolier"
     },
     {
       "name": "Bor"
     },
     {
-      "name": "Petersen"
+      "name": "Boxell"
     },
     {
-      "name": "assumed value"
+      "name": "Braghieri"
     },
     {
-      "name": "smartphone",
+      "name": "Broockman"
+    },
+    {
+      "name": "canvassing",
+      "description": "systematic contacting of people to gauge or influence their opinions",
       "refs": [
         {
-          "name": "Smartphone",
+          "name": "Canvassing",
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "college"
+    },
+    {
+      "name": "completion"
+    },
+    {
+      "name": "compliance"
     },
     {
       "name": "computer",
@@ -120,52 +91,55 @@
       ]
     },
     {
-      "name": "video",
+      "name": "confidence"
+    },
+    {
+      "name": "consumer",
       "refs": [
         {
-          "name": "Video",
+          "name": "Consumer_surplus",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "game"
+      "name": "consumption"
     },
     {
-      "name": "play"
+      "name": "control"
     },
     {
-      "name": "watching"
+      "name": "count"
     },
     {
-      "name": "use"
+      "name": "deactivation"
     },
     {
-      "name": "weekday"
-    },
-    {
-      "name": "weekend"
-    },
-    {
-      "name": "inflection",
+      "name": "depression",
       "refs": [
         {
-          "name": "Inflection_point",
+          "name": "Depression_(mood)",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "point"
+      "name": "deviation"
     },
     {
-      "name": "Przybylski"
+      "name": "dollar"
     },
     {
-      "name": "Weinstein"
+      "name": "effect"
     },
     {
-      "name": "minute"
+      "name": "Eichmeyer"
+    },
+    {
+      "name": "exchange"
+    },
+    {
+      "name": "exclusionary"
     },
     {
       "name": "Facebook",
@@ -182,38 +156,16 @@
       ]
     },
     {
-      "name": "deactivation"
+      "name": "format"
     },
     {
-      "name": "treatment"
+      "name": "game"
     },
     {
-      "name": "control"
+      "name": "Gentzkow"
     },
     {
       "name": "group"
-    },
-    {
-      "name": "index"
-    },
-    {
-      "name": "standard"
-    },
-    {
-      "name": "deviation"
-    },
-    {
-      "name": "wellbeing",
-      "description": "how well a person's life is going for that person",
-      "refs": [
-        {
-          "name": "Well-being",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "subjective"
     },
     {
       "name": "happiness",
@@ -225,25 +177,43 @@
       ]
     },
     {
-      "name": "satisfaction"
+      "name": "income"
     },
     {
-      "name": "life"
+      "name": "index"
     },
     {
-      "name": "depression",
+      "name": "inflection",
       "refs": [
         {
-          "name": "Depression_(mood)",
+          "name": "Inflection_point",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "anxiety",
+      "name": "intervention"
+    },
+    {
+      "name": "issue"
+    },
+    {
+      "name": "Kalla"
+    },
+    {
+      "name": "knowledge"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "minute"
+    },
+    {
+      "name": "narrative",
       "refs": [
         {
-          "name": "Anxiety",
+          "name": "Narrative",
           "type": "wikipedia"
         }
       ]
@@ -258,19 +228,37 @@
       ]
     },
     {
-      "name": "knowledge"
+      "name": "offer"
     },
     {
-      "name": "consumption"
+      "name": "offline"
     },
     {
-      "name": "politics",
+      "name": "participant"
+    },
+    {
+      "name": "party"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "persuasion",
       "refs": [
         {
-          "name": "Politics",
+          "name": "Persuasion",
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "Petersen"
+    },
+    {
+      "name": "play"
+    },
+    {
+      "name": "point"
     },
     {
       "name": "polarization",
@@ -282,13 +270,79 @@
       ]
     },
     {
-      "name": "issue"
+      "name": "politics",
+      "refs": [
+        {
+          "name": "Politics",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "affective"
+      "name": "price"
     },
     {
-      "name": "party"
+      "name": "probability",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Przybylski"
+    },
+    {
+      "name": "psychological"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "reactivation"
+    },
+    {
+      "name": "satisfaction"
+    },
+    {
+      "name": "size"
+    },
+    {
+      "name": "smartphone",
+      "refs": [
+        {
+          "name": "Smartphone",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "socializing"
+    },
+    {
+      "name": "solitary"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "study"
+    },
+    {
+      "name": "subjective"
+    },
+    {
+      "name": "surplus"
+    },
+    {
+      "name": "television"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "treatment"
     },
     {
       "name": "turnout",
@@ -300,97 +354,51 @@
       ]
     },
     {
-      "name": "time"
+      "name": "US"
     },
     {
-      "name": "television"
-    },
-    {
-      "name": "solitary"
-    },
-    {
-      "name": "socializing"
-    },
-    {
-      "name": "offline"
-    },
-    {
-      "name": "activity"
-    },
-    {
-      "name": "reactivation"
-    },
-    {
-      "name": "compliance"
-    },
-    {
-      "name": "rate"
+      "name": "use"
     },
     {
       "name": "user"
     },
     {
-      "name": "surplus"
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
     },
     {
-      "name": "consumer",
+      "name": "video",
       "refs": [
         {
-          "name": "Consumer_surplus",
+          "name": "Video",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "watching"
+    },
+    {
+      "name": "weekday"
+    },
+    {
+      "name": "weekend"
+    },
+    {
+      "name": "Weinstein"
+    },
+    {
+      "name": "wellbeing",
+      "description": "how well a person's life is going for that person",
+      "refs": [
+        {
+          "name": "Well-being",
           "type": "wikipedia"
         }
       ]
     },
     {
       "name": "willingness"
-    },
-    {
-      "name": "accept"
-    },
-    {
-      "name": "offer"
-    },
-    {
-      "name": "price"
-    },
-    {
-      "name": "psychological"
-    },
-    {
-      "name": "intervention"
-    },
-    {
-      "name": "college"
-    },
-    {
-      "name": "completion"
-    },
-    {
-      "name": "income"
-    },
-    {
-      "name": "Allcott"
-    },
-    {
-      "name": "Braghieri"
-    },
-    {
-      "name": "Eichmeyer"
-    },
-    {
-      "name": "Gentzkow"
-    },
-    {
-      "name": "Bolier"
-    },
-    {
-      "name": "Boxell"
-    },
-    {
-      "name": "percent"
-    },
-    {
-      "name": "US dollar"
     }
   ],
   "triples": [
@@ -407,7 +415,6 @@
       "to": "exclusionary"
     },
     {
-      "name": "effect size on exclusionary attitude",
       "from": "effect size",
       "verb": "on",
       "to": "exclusionary attitude"
@@ -608,12 +615,6 @@
       "to": "news knowledge"
     },
     {
-      "name": "news consumption time",
-      "from": "time",
-      "verb": "of",
-      "to": "news consumption"
-    },
-    {
       "name": "news consumption",
       "from": "consumption",
       "verb": "of",
@@ -650,12 +651,6 @@
       "to": "treatment"
     },
     {
-      "name": "Facebook use time",
-      "from": "time",
-      "verb": "of",
-      "to": "Facebook use"
-    },
-    {
       "name": "Facebook use",
       "from": "use",
       "verb": "of",
@@ -672,12 +667,6 @@
       "from": "socializing",
       "verb": "kind of",
       "to": "offline"
-    },
-    {
-      "name": "offline activity count",
-      "from": "count",
-      "verb": "of",
-      "to": "offline activity"
     },
     {
       "name": "offline activity",
@@ -710,7 +699,6 @@
       "to": "consumer"
     },
     {
-      "name": "willingness to accept",
       "from": "willingness",
       "verb": "to",
       "to": "accept"
@@ -755,6 +743,36 @@
       "from": "Boxell",
       "verb": "name of",
       "to": "political polarization"
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "assumed"
+    },
+    {
+      "name": "US dollar",
+      "from": "dollar",
+      "verb": "kind of",
+      "to": "US"
+    },
+    {
+      "name": "news consumption time",
+      "from": "time",
+      "verb": "of",
+      "to": "news consumption"
+    },
+    {
+      "name": "Facebook use time",
+      "from": "time",
+      "verb": "of",
+      "to": "Facebook use"
+    },
+    {
+      "name": "offline activity count",
+      "from": "count",
+      "verb": "of",
+      "to": "offline activity"
     }
   ],
   "formulas": [

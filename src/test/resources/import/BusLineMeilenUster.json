@@ -35,13 +35,11 @@
   ],
   "triples": [
     {
-      "name": "",
       "from": "Meilen",
       "verb": "is a",
       "to": "Town"
     },
     {
-      "name": "",
       "from": "Uster",
       "verb": "is a",
       "to": "Town"

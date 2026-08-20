@@ -1,113 +1,244 @@
 {
   "words": [
     {
-      "id": "w_nerv_test",
-      "name": "Nerv-Test Republik",
-      "description": "Taktik: Verleger gezielt reizen, um Open-Source-Implementierung von Ein-Klick-Verbergen auszulösen"
+      "name": "angenommen"
     },
     {
-      "id": "w_ein_klick_verbergen",
+      "name": "Bus-Faktor",
+      "description": "Anzahl Personen, deren Ausfall das Projekt stoppen wuerde"
+    },
+    {
       "name": "Ein-Klick-Verbergen",
       "description": "Funktion, mit der ein Beitrag durch einen einzelnen reversiblen Klick verborgen wird"
     },
     {
-      "id": "w_platon_ziel",
-      "name": "Platon-Ziel",
-      "description": "Weitergabe der Idee an die naechste Generation als eigentlicher Adressat, nicht Mehrheitsueberzeugung"
+      "name": "Einbremsen",
+      "description": "ignorieren oder limitieren statt umsetzen"
     },
     {
-      "id": "w_p_verleger_bauen",
-      "name": "P(Verleger implementieren | genervt)",
-      "description": "Wahrscheinlichkeit, dass Verleger als Reaktion auf Reizung das Feature aufschalten"
+      "name": "Einzelversuch"
     },
     {
-      "id": "w_p_einbremsen",
-      "name": "P(Verleger bremsen ein | genervt)",
-      "description": "Wahrscheinlichkeit der konkurrierenden billigeren Reaktion: ignorieren oder limitieren"
+      "name": "genervt",
+      "description": "Zustand der Verleger nach gezielter Reizung"
     },
     {
-      "id": "w_implementierungskosten",
+      "name": "Implementierung"
+    },
+    {
       "name": "Implementierungskosten",
       "description": "Aufwand fuer Verleger, da Open-Source-PR von Timon geliefert wird"
     },
     {
-      "id": "w_scheiterrate_ensemble",
-      "name": "Scheiterrate Einzelversuch",
-      "description": "Anteil der Einzeltaktiken in einem Portfolio, die einzeln scheitern"
+      "name": "Konfidenz",
+      "description": "subjektive Wahrscheinlichkeit (0 bis 1), dass der angenommene Wertebereich den wahren Wert enthaelt"
     },
     {
-      "id": "w_bus_faktor",
-      "name": "Bus-Faktor zukunft.com",
-      "description": "Anzahl Personen, deren Ausfall das Projekt stoppen wuerde"
+      "name": "Nerv-Test",
+      "description": "Taktik: Verleger gezielt reizen"
+    },
+    {
+      "name": "Platon"
+    },
+    {
+      "name": "Republik",
+      "description": "die Online-Zeitung Republik"
+    },
+    {
+      "name": "Scheiterrate"
+    },
+    {
+      "name": "Verleger"
+    },
+    {
+      "name": "Wahrscheinlichkeit"
+    },
+    {
+      "name": "Wert",
+      "description": "eine gespeicherte Zahl; fuer die Herkunft das Qualifizierungs-Triple verwenden, nicht dieses Wort allein"
+    },
+    {
+      "name": "Ziel"
+    },
+    {
+      "name": "zukunft.com"
     }
   ],
   "values": [
     {
-      "word": "w_implementierungskosten",
+      "words": [
+        "Implementierungskosten",
+        "angenommener Wert"
+      ],
       "value": 1,
       "unit": "Klick (Merge eines fertigen PR)",
-      "type": "assumed value",
-      "confidence": 0.6,
-      "note_ref": "Annahme: PR ist mergebar und reversibel; reale Kosten umfassen Review, UX, Missbrauchspruefung"
+      "description": "Annahme: PR ist mergebar und reversibel; reale Kosten umfassen Review, UX, Missbrauchspruefung"
     },
     {
-      "word": "w_p_verleger_bauen",
+      "words": [
+        "Implementierungskosten",
+        "Konfidenzwert"
+      ],
+      "value": 0.6
+    },
+    {
+      "words": [
+        "P(Verleger implementieren | genervt)",
+        "angenommener Wert"
+      ],
       "value": 0.08,
       "unit": "Wahrscheinlichkeit",
-      "type": "assumed value",
-      "confidence": 0.3,
-      "note_ref": "Claudes Schaetzung; durch Open-Source-PR nach oben revidierbar, da Bauen nicht mehr teuerste Option"
+      "description": "Claudes Schaetzung; durch Open-Source-PR nach oben revidierbar, da Bauen nicht mehr teuerste Option"
     },
     {
-      "word": "w_p_einbremsen",
+      "words": [
+        "P(Verleger implementieren | genervt)",
+        "Konfidenzwert"
+      ],
+      "value": 0.3
+    },
+    {
+      "words": [
+        "P(Verleger bremsen ein | genervt)",
+        "angenommener Wert"
+      ],
       "value": 0.55,
       "unit": "Wahrscheinlichkeit",
-      "type": "assumed value",
-      "confidence": 0.3,
-      "note_ref": "Konkurrierende billigere Reaktion; Moos liefert Begruendung dafuer frei Haus"
+      "description": "Konkurrierende billigere Reaktion; Moos liefert Begruendung dafuer frei Haus"
     },
     {
-      "word": "w_scheiterrate_ensemble",
+      "words": [
+        "P(Verleger bremsen ein | genervt)",
+        "Konfidenzwert"
+      ],
+      "value": 0.3
+    },
+    {
+      "words": [
+        "Scheiterrate Einzelversuch",
+        "angenommener Wert"
+      ],
       "value": 0.9,
       "unit": "Anteil",
-      "type": "assumed value",
-      "confidence": 0.4,
-      "note_ref": "Timons eigene Einschaetzung: sehr hohe Scheiterwahrscheinlichkeit pro Einzelversuch, daher Portfolio noetig"
+      "description": "Timons eigene Einschaetzung: sehr hohe Scheiterwahrscheinlichkeit pro Einzelversuch, daher Portfolio noetig"
     },
     {
-      "word": "w_bus_faktor",
+      "words": [
+        "Scheiterrate Einzelversuch",
+        "Konfidenzwert"
+      ],
+      "value": 0.4
+    },
+    {
+      "words": [
+        "Bus-Faktor zukunft.com",
+        "angenommener Wert"
+      ],
       "value": 1,
       "unit": "Personen",
-      "type": "assumed value",
-      "confidence": 0.7,
-      "note_ref": "Vater-Sohn-Weitergabe erhoeht nominell auf 2, bleibt aber strukturell Single-Point-of-Failure bis externer Mitstreiter dazukommt"
+      "description": "Vater-Sohn-Weitergabe erhoeht nominell auf 2, bleibt aber strukturell Single-Point-of-Failure bis externer Mitstreiter dazukommt"
+    },
+    {
+      "words": [
+        "Bus-Faktor zukunft.com",
+        "Konfidenzwert"
+      ],
+      "value": 0.7
     }
   ],
   "triples": [
     {
-      "from": "w_nerv_test",
+      "name": "Nerv-Test Republik",
+      "from": "Nerv-Test",
+      "verb": "of",
+      "to": "Republik",
+      "description": "Taktik: Verleger gezielt reizen, um Open-Source-Implementierung von Ein-Klick-Verbergen auszulösen"
+    },
+    {
+      "name": "Platon-Ziel",
+      "from": "Ziel",
+      "verb": "of",
+      "to": "Platon",
+      "description": "Weitergabe der Idee an die naechste Generation als eigentlicher Adressat, nicht Mehrheitsueberzeugung"
+    },
+    {
+      "name": "Verleger-Implementierung",
+      "from": "Implementierung",
+      "verb": "of",
+      "to": "Verleger"
+    },
+    {
+      "name": "P(Verleger implementieren | genervt)",
+      "from": "Wahrscheinlichkeit",
+      "verb": "of",
+      "to": "Verleger-Implementierung",
+      "description": "Wahrscheinlichkeit, dass Verleger als Reaktion auf Reizung das Feature aufschalten, also unter der Bedingung genervt"
+    },
+    {
+      "name": "Verleger-Einbremsen",
+      "from": "Einbremsen",
+      "verb": "of",
+      "to": "Verleger"
+    },
+    {
+      "name": "P(Verleger bremsen ein | genervt)",
+      "from": "Wahrscheinlichkeit",
+      "verb": "of",
+      "to": "Verleger-Einbremsen",
+      "description": "Wahrscheinlichkeit der konkurrierenden billigeren Reaktion unter der Bedingung genervt: ignorieren oder limitieren"
+    },
+    {
+      "name": "Scheiterrate Einzelversuch",
+      "from": "Scheiterrate",
+      "verb": "of",
+      "to": "Einzelversuch",
+      "description": "Anteil der Einzeltaktiken in einem Portfolio, die einzeln scheitern"
+    },
+    {
+      "name": "Bus-Faktor zukunft.com",
+      "from": "Bus-Faktor",
+      "verb": "of",
+      "to": "zukunft.com",
+      "description": "Anzahl Personen, deren Ausfall das Projekt stoppen wuerde"
+    },
+    {
+      "name": "angenommener Wert",
+      "from": "Wert",
+      "verb": "kind of",
+      "to": "angenommen",
+      "description": "Fermi-Schaetzung der Autoren, nicht direkt aus einer Quelle uebernommen; traegt einen Konfidenzwert"
+    },
+    {
+      "name": "Konfidenzwert",
+      "from": "Wert",
+      "verb": "kind of",
+      "to": "Konfidenz",
+      "description": "der p-Wert eines angenommenen Wertes: die subjektive Wahrscheinlichkeit zwischen 0 und 1, dass die Schaetzung stimmt"
+    },
+    {
+      "from": "Nerv-Test Republik",
       "verb": "is single attempt in",
-      "to": "w_scheiterrate_ensemble"
+      "to": "Scheiterrate Einzelversuch"
     },
     {
-      "from": "w_nerv_test",
+      "from": "Nerv-Test Republik",
       "verb": "aims to trigger",
-      "to": "w_ein_klick_verbergen"
+      "to": "Ein-Klick-Verbergen"
     },
     {
-      "from": "w_implementierungskosten",
+      "from": "Implementierungskosten",
       "verb": "lowers barrier for",
-      "to": "w_p_verleger_bauen"
+      "to": "P(Verleger implementieren | genervt)"
     },
     {
-      "from": "w_p_einbremsen",
+      "from": "P(Verleger bremsen ein | genervt)",
       "verb": "competes with",
-      "to": "w_p_verleger_bauen"
+      "to": "P(Verleger implementieren | genervt)"
     },
     {
-      "from": "w_bus_faktor",
+      "from": "Bus-Faktor zukunft.com",
       "verb": "limits",
-      "to": "w_platon_ziel"
+      "to": "Platon-Ziel"
     }
   ]
 }

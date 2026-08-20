@@ -8,6 +8,26 @@
   ],
   "words": [
     {
+      "name": "2015",
+      "type": "time"
+    },
+    {
+      "name": "2016",
+      "type": "time"
+    },
+    {
+      "name": "2017",
+      "type": "time"
+    },
+    {
+      "name": "2018",
+      "type": "time"
+    },
+    {
+      "name": "2019",
+      "type": "time"
+    },
+    {
       "name": "ABB",
       "refs": [
         {
@@ -19,6 +39,15 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "activity"
+    },
+    {
+      "name": "administrative"
+    },
+    {
+      "name": "cash"
     },
     {
       "name": "CHF",
@@ -34,90 +63,82 @@
       ]
     },
     {
-      "name": "cash flow statement",
-      "refs": [
-        {
-          "name": "Cash_flow_statement",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cash flow statement investing activity",
-      "refs": [
-        {
-          "name": "Cash_flow_statement#Investing_activities",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "2019",
-      "type": "time"
-    },
-    {
-      "name": "2018",
-      "type": "time"
-    },
-    {
-      "name": "2017",
-      "type": "time"
-    },
-    {
-      "name": "2016",
-      "type": "time"
-    },
-    {
-      "name": "2015",
-      "type": "time"
-    },
-    {
-      "name": "USD"
-    },
-    {
-      "name": "million"
-    },
-    {
-      "name": "income"
-    },
-    {
-      "name": "statement"
-    },
-    {
-      "name": "sales"
-    },
-    {
-      "name": "revenues"
-    },
-    {
-      "name": "total"
+      "name": "continuing"
     },
     {
       "name": "cost"
     },
     {
-      "name": "gross"
+      "name": "credit"
     },
     {
-      "name": "profit"
+      "name": "development"
     },
     {
-      "name": "selling"
+      "name": "discontinued"
     },
     {
-      "name": "general"
-    },
-    {
-      "name": "administrative"
-    },
-    {
-      "name": "expenses"
+      "name": "dividend"
     },
     {
       "name": "expense"
     },
     {
+      "name": "expenses"
+    },
+    {
+      "name": "finance"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "general"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "interest"
+    },
+    {
+      "name": "interests"
+    },
+    {
+      "name": "investing"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "non-operational"
+    },
+    {
       "name": "non-order"
+    },
+    {
+      "name": "noncontrolling"
+    },
+    {
+      "name": "operations"
+    },
+    {
+      "name": "other"
+    },
+    {
+      "name": "pension"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "provision"
     },
     {
       "name": "related"
@@ -126,52 +147,25 @@
       "name": "research"
     },
     {
-      "name": "development"
+      "name": "revenues"
     },
     {
-      "name": "other"
+      "name": "sales"
     },
     {
-      "name": "net"
+      "name": "selling"
     },
     {
-      "name": "operations"
-    },
-    {
-      "name": "interest"
-    },
-    {
-      "name": "dividend"
-    },
-    {
-      "name": "finance"
-    },
-    {
-      "name": "non-operational"
-    },
-    {
-      "name": "pension"
-    },
-    {
-      "name": "credit"
-    },
-    {
-      "name": "continuing"
+      "name": "statement"
     },
     {
       "name": "taxes"
     },
     {
-      "name": "provision"
+      "name": "total"
     },
     {
-      "name": "discontinued"
-    },
-    {
-      "name": "noncontrolling"
-    },
-    {
-      "name": "interests"
+      "name": "USD"
     }
   ],
   "triples": [
@@ -552,6 +546,42 @@
       "from": "net income attributable to ABB",
       "verb": "is part of",
       "to": "income statement"
+    },
+    {
+      "name": "cash flow",
+      "from": "flow",
+      "verb": "of",
+      "to": "cash"
+    },
+    {
+      "name": "cash flow statement",
+      "from": "statement",
+      "verb": "of",
+      "to": "cash flow",
+      "refs": [
+        {
+          "name": "Cash_flow_statement",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "investing activity",
+      "from": "activity",
+      "verb": "kind of",
+      "to": "investing"
+    },
+    {
+      "name": "cash flow statement investing activity",
+      "from": "investing activity",
+      "verb": "of",
+      "to": "cash flow statement",
+      "refs": [
+        {
+          "name": "Cash_flow_statement#Investing_activities",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "formulas": [],
