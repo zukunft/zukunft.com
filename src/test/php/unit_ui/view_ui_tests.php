@@ -33,8 +33,10 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -44,8 +46,10 @@ use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -54,6 +58,7 @@ class view_ui_tests
 {
     function run(test_cleanup $t, frontend $ui): void
     {
+        global $mtr;
         $html = new html_base();
         $t_msk = new test_views($t);
         $msg = new user_message();
@@ -107,6 +112,45 @@ class view_ui_tests
         // a view without type, share and protection set shows no empty subtitle brackets
         $test_name = 'a view without a type shows no subtitle';
         $t->assert_text_not_contains($test_name, $sfm->title_named($msk, $msg), styles::SUBTITLE);
+
+        $t->subheader($ts . 'show fields');
+
+        // the view default page shows the name of the display style (see base_views.json
+        // view_default), so the api message of a view must carry the style id
+        $test_name = 'the style of a view is sent to the frontend';
+        $t->assert_true($test_name, $msk_filled->get_style_id() > 0);
+        $test_name = 'the style of a view is shown with its user-readable name';
+        $t->assert($test_name, $sfm->show_style($msk_filled), view_styles::COL_SM_4_NAME);
+        // a view without a style shows an empty text and never a php warning
+        $test_name = 'a view without a style shows an empty text';
+        $t->assert($test_name, $sfm->show_style($msk), '');
+
+        // the view default page shows the owner (the user who created the view and defines the
+        // standard values), which the page url resp. the api message carries as the user name
+        $test_name = 'the owner of a view is shown';
+        $msk_owned = new view();
+        $msk_owned->url_mapper([url_var::OWNER => users::SYSTEM_TEST_NAME], $msg);
+        $t->assert($test_name, $sfm->show_owner($msk_owned), users::SYSTEM_TEST_NAME);
+        $test_name = 'a view without a known owner shows an empty text';
+        $t->assert($test_name, $sfm->show_owner($msk), '');
+
+        $t->subheader($ts . 'view components');
+
+        // the view default page lists the components of the shown view sorted by their position;
+        // the components come from the request cache that also provides the views for the page
+        // rendering itself, because the page url only carries the view id
+        $list = new ui_list();
+        $cmp_html = $list->view_components($msk, $msg);
+        $test_name = 'the components of the start view are listed';
+        $t->assert_text_contains($test_name, $cmp_html, components::WORD_NAME);
+        $test_name = 'the listed components link to the component default page';
+        $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_DEFAULT_ID);
+
+        // a view that is not in the cache or has no components gets the no-components message
+        $test_name = 'a view without components shows the no-components message';
+        $msk_empty = new view($t_msk->view_add()->api_json());
+        $t->assert($test_name, $list->view_components($msk_empty, $msg),
+            $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS));
 
         $t->subheader($ts . 'link title');
 

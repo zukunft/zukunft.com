@@ -181,6 +181,7 @@ class url_var
     const string NUMERIC_VALUE = 'n';
     const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
+    const string OWNER = 'ow'; // the name of the user who owns the object, for display on the default page
     const string PHRASE = 'p'; // the id or name of one phrase
     const string PHRASE_CLASS = 'pc'; // word or triple class indicator of the phrase
     const string DIRECTION = 'pd'; // 'up' to get the parents and 'down' for the children

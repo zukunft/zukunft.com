@@ -468,6 +468,14 @@ class view extends sandbox_code_id
             if ($this->cmp_lnk_lst != null) {
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst, $msg);
             }
+            // the owner name is only added for a page request (and the load is skipped in the
+            // test mode), so the view default page can show the owner (see base_views.json)
+            if ($typ_lst->incl_related() and !$typ_lst->test_mode()) {
+                $owner_name = $this->owner_api_name($msg);
+                if ($owner_name != null) {
+                    $vars[json_fields::OWNER] = $owner_name;
+                }
+            }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;

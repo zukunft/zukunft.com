@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-20T14:04:36+00:00",
+    "timestamp": "2026-08-20T18:47:35+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9601,6 +9601,24 @@
                 "code_id": "title_of_link_with_edit_link",
                 "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
                 "id": 222
+            },
+            {
+                "name": "show style",
+                "code_id": "system_show_field_style",
+                "description": "show the name of the display style of a view or component without link or form field",
+                "id": 223
+            },
+            {
+                "name": "show owner",
+                "code_id": "system_show_field_owner",
+                "description": "show the name of the user who owns the object without link or form field",
+                "id": 224
+            },
+            {
+                "name": "view components",
+                "code_id": "components_of_view",
+                "description": "the components of the shown view sorted by their position with a link to each component",
+                "id": 225
             }
         ],
         "component_link_types": [
@@ -22019,6 +22037,47 @@
                         "code_id": "show_field_description",
                         "position": 2,
                         "position_type": 1
+                    },
+                    {
+                        "link_id": 1071,
+                        "id": 336,
+                        "name": "system show field owner",
+                        "description": "the name of the user who owns the object as read only",
+                        "type_id": 224,
+                        "code_id": "show_field_owner",
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1072,
+                        "id": 335,
+                        "name": "system show field style",
+                        "description": "the name of the display style of a view or component as read only",
+                        "type_id": 223,
+                        "code_id": "show_field_style",
+                        "position": 4,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1073,
+                        "id": 337,
+                        "name": "system sub title components",
+                        "description": "show the language specific sub title for a component list",
+                        "type_id": 145,
+                        "code_id": "system_sub_title_components",
+                        "ui_msg_code_id": "system_sub_title_components",
+                        "position": 5,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1074,
+                        "id": 338,
+                        "name": "view components",
+                        "description": "the components of the shown view sorted by their position with a link to each component",
+                        "type_id": 225,
+                        "code_id": "view_components",
+                        "position": 6,
+                        "position_type": 1
                     }
                 ]
             },
@@ -22030,7 +22089,7 @@
                 "code_id": "component_default",
                 "components": [
                     {
-                        "link_id": 1071,
+                        "link_id": 1075,
                         "id": 333,
                         "name": "Component title",
                         "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
@@ -22040,7 +22099,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1072,
+                        "link_id": 1076,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22059,7 +22118,7 @@
                 "code_id": "formula_link_default",
                 "components": [
                     {
-                        "link_id": 1073,
+                        "link_id": 1077,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22078,7 +22137,7 @@
                 "code_id": "term_view_default",
                 "components": [
                     {
-                        "link_id": 1074,
+                        "link_id": 1078,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22088,7 +22147,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1075,
+                        "link_id": 1079,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22107,7 +22166,7 @@
                 "code_id": "component_link_default",
                 "components": [
                     {
-                        "link_id": 1076,
+                        "link_id": 1080,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22126,7 +22185,7 @@
                 "code_id": "view_relation_default",
                 "components": [
                     {
-                        "link_id": 1077,
+                        "link_id": 1081,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22136,7 +22195,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1078,
+                        "link_id": 1082,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",

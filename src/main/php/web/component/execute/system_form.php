@@ -69,6 +69,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
@@ -107,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
@@ -691,6 +693,44 @@ class system_form extends component
     function show_plural_reverse(verb|db_object $dbo): string
     {
         return $this->esc($dbo->rev_plural ?? '');
+    }
+
+    /**
+     * @param view|component|db_object $dbo the view or component whose display style is shown
+     * @return string the user-readable name of the display style (empty if no style is set)
+     */
+    function show_style(view|component|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a view and a component have a display style and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof view or $dbo instanceof component) {
+            $style_id = $dbo->get_style_id();
+            if ($style_id != null) {
+                $result = $this->esc($ui_sys?->typ_lst_cache?->msk_sty?->name($style_id) ?? '');
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a display style');
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox|db_object $dbo the object whose owner is shown
+     * @return string the name of the user who owns the object (empty if the owner is not known)
+     */
+    function show_owner(sandbox|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a sandbox object has an owner and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof sandbox) {
+            $result = $this->esc($dbo->owner_name());
+        } else {
+            log_err($dbo::class . ' is not expected to have an owner');
+        }
+        return $result;
     }
 
     /**

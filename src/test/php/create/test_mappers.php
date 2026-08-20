@@ -2014,6 +2014,9 @@ class test_mappers
         $url_array[] = [url_var::DESCRIPTION, $msk->get_description()];
         $url_array[] = [url_var::TYPE, $msk->type_id($msg)];
         $url_array[] = [url_var::STYLE, $msk->get_style_id()];
+        // the user who has created a standard test object is its owner, so the url carries
+        // the creating user as the owner like the api message of a page request does
+        $url_array[] = [url_var::OWNER, $msk->get_user()->name()];
         $url_array[] = [url_var::SHARE, $msk->share_id()];
         $url_array[] = [url_var::PROTECTION, $msk->protection_id()];
         return $url_array;

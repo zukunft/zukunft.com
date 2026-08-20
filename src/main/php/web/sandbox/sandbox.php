@@ -133,6 +133,11 @@ class sandbox extends db_object
         } else {
             $this->excluded = null;
         }
+        if (array_key_exists(json_fields::OWNER, $json_array)) {
+            $this->set_owner_name($json_array[json_fields::OWNER]);
+        } else {
+            $this->owner = null;
+        }
         if (array_key_exists(json_fields::USER_OVERWRITES, $json_array)) {
             $this->user_overwrites = $json_array[json_fields::USER_OVERWRITES];
         } else {
@@ -172,6 +177,11 @@ class sandbox extends db_object
         } else {
             $this->excluded = null;
         }
+        if (array_key_exists(url_var::OWNER, $url_array)) {
+            $this->set_owner_name($url_array[url_var::OWNER]);
+        } else {
+            $this->owner = null;
+        }
         return $msg;
     }
 
@@ -183,7 +193,33 @@ class sandbox extends db_object
         $url_array = parent::to_url_array($msg);
         $url_array[url_var::SHARE] = $this->share_id;
         $url_array[url_var::PROTECTION] = $this->protection_id;
+        if ($this->owner_name() != '') {
+            $url_array[url_var::OWNER] = $this->owner_name();
+        }
         return $url_array;
+    }
+
+    /**
+     * set the owner by the user name e.g. as sent by the api message or the page url
+     * @param string|null $name the name of the user who owns the object
+     * @return void
+     */
+    function set_owner_name(?string $name): void
+    {
+        if ($name == null or $name == '') {
+            $this->owner = null;
+        } else {
+            $this->owner = new user();
+            $this->owner->name = $name;
+        }
+    }
+
+    /**
+     * @return string the name of the user who owns the object or an empty string if not known
+     */
+    function owner_name(): string
+    {
+        return $this->owner?->name() ?? '';
     }
 
     function view_id(): ?int

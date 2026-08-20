@@ -416,6 +416,14 @@ class component extends sandbox_code_id
      * @param type_lists|null $typ_lst
      * @return string
      */
+    /**
+     * @return int|null the id of the display style of this component or null if no style is set
+     */
+    function get_style_id(): ?int
+    {
+        return $this->style_id;
+    }
+
     function style_text(?type_lists $typ_lst): string
     {
         global $ui_sys;

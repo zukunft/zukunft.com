@@ -177,6 +177,9 @@ class json_fields
     const string SOURCE_ID = 'source_id';
     const string SOURCE = 'source'; // the source object as a sub array
     const string USER_ID = 'user_id';
+    // the name of the user who owns the object (created it and defines the standard values);
+    // only included for a page request (incl_related), so the default page can show the owner
+    const string OWNER = 'owner';
     //const string GROUP_ID = 'group_id';
     const string FORMULA_ID = 'formula_id';
     const string FORMULA = 'formula'; // the formula object as a sub array

@@ -93,6 +93,8 @@ messages:
   update: "aktualisieren"
   extends: "erweitert"
   info_not_used_for_values: "nicht für Werte verwendet"
+  info_view_has_no_components: "diese Ansicht hat keine Komponenten"
+  system_sub_title_components: "Komponenten"
   system_sub_title_no_usage: "Nicht verwendet"
   system_sub_title_my: "Meine"
   system_sub_title_others: "Andere"

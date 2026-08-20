@@ -34,11 +34,15 @@ namespace Zukunft\ZukunftCom\main\php\web\component;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::HELPER . 'config.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 class component_list extends sandbox_list_named
 {
@@ -55,6 +59,45 @@ class component_list extends sandbox_list_named
     function api_mapper(array $json_array): user_message
     {
         return parent::api_mapper_list($json_array, new component());
+    }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * the component names with a link to each component as a comma separated list, sorted by
+     * the position of the component in the view, so the list matches the page layout order
+     * (unlike the name-sorted parent, because for the components of a view the position order
+     * is the meaningful one)
+     *
+     * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of component names to add to the list
+     *                   (untyped like in the parent, because php does not allow a child
+     *                   to add a type to an untyped parent parameter)
+     * @param int $msk_id the id of the view used to show a single component
+     * @return string the linked component names
+     */
+    function name_link(
+        string $back = '',
+        $limit = config::LIMIT_NAME_LIST,
+        int    $msk_id = views::COMPONENT_DEFAULT_ID
+    ): string
+    {
+        // sorted by the position in the view and by the name for the components
+        // that share a position, so the html order never depends on the api row
+        // order (see docs/llm/frontend.md)
+        $lst = $this->lst();
+        usort($lst, fn(component $a, component $b) => $a->position <=> $b->position
+            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
+        $names = [];
+        foreach ($lst as $cmp) {
+            if (count($names) < $limit) {
+                $names[] = $cmp->name_link($back, '', $msk_id);
+            }
+        }
+        return implode(', ', $names);
     }
 
     /*

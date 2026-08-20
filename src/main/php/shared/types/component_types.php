@@ -551,6 +551,13 @@ class component_types
     const int SHOW_REVERSE_ID = 219;
     const string SHOW_PLURAL_REVERSE = "system_show_field_plural_reverse";
     const int SHOW_PLURAL_REVERSE_ID = 220;
+    const string SHOW_STYLE = "system_show_field_style";
+    const int SHOW_STYLE_ID = 223;
+    const string SHOW_OWNER = "system_show_field_owner";
+    const int SHOW_OWNER_ID = 224;
+    // the components of the shown view sorted by their position e.g. for the view default page
+    const string VIEW_COMPONENTS = "components_of_view";
+    const int VIEW_COMPONENTS_ID = 225;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -986,6 +993,9 @@ class component_types
         [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
         [self::SHOW_REVERSE, self::SHOW_REVERSE_ID],
         [self::SHOW_PLURAL_REVERSE, self::SHOW_PLURAL_REVERSE_ID],
+        [self::SHOW_STYLE, self::SHOW_STYLE_ID],
+        [self::SHOW_OWNER, self::SHOW_OWNER_ID],
+        [self::VIEW_COMPONENTS, self::VIEW_COMPONENTS_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

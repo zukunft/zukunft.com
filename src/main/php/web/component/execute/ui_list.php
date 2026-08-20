@@ -57,6 +57,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
@@ -89,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -400,6 +402,49 @@ class ui_list extends ui_base
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for triples', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the components of the given view as a comma separated list of the component names with a
+     * link to each component, sorted by the position in the view, used by the view default page
+     *
+     * @param db_object|null $dbo the view whose components should be listed
+     * @param user_message $msg to report a missing cache or an unexpected selection object
+     * @return string the linked component names or the message that the view has no components
+     */
+    function view_components(?db_object $dbo, user_message $msg): string
+    {
+        global $mtr;
+        global $ui_sys;
+
+        $result = '';
+        // without the view cache the list cannot be created, and showing the no-components
+        // message would tell the user that the view is empty, which is not known here
+        if ($dbo == null or $ui_sys?->typ_lst_cache == null) {
+            log_err_msg_ui('the view or the view cache is missing to list the components of a view', $msg);
+        } elseif ($dbo::class == view::class) {
+            // the shown view object of the url carries no components, so they are taken from
+            // the request cache that also provides the views for the page rendering itself
+            $msk = $ui_sys->typ_lst_cache->get_view_by_id($dbo->id());
+            $cmp_lst = $msk?->get_component_list();
+            if ($cmp_lst == null or $cmp_lst->is_empty()) {
+                $result = $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS);
+            } else {
+                // the number of components shown at once comes from the frontend config
+                // (config.yaml "user > frontend > lists > limit > name list")
+                if ($ui_sys?->cfg !== null) {
+                    $row_limit = (int)$ui_sys->cfg->get_by(
+                        [triples::NAME_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                        $msg, config::LIMIT_NAME_LIST);
+                } else {
+                    $row_limit = config::LIMIT_NAME_LIST;
+                }
+                $result = $cmp_lst->name_link('', $row_limit);
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to be a selection for components', $msg);
         }
         return $result;
     }

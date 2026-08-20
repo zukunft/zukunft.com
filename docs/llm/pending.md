@@ -2,8 +2,6 @@
 
 ## user default view
 
-add the database fields 'description', 'owner', 'type', 'style' and the list of components of the view to default view, so that src/test/resources/web/html/views_by_id/view/114_view_1.html shows the fields with useful sample data   
-
 add the database fields 'description', 'owner', 'type', 'style', 'formula', 'row phrase', 'column phrase', 'sub column phrase' and the list of views where the component is used to default component view, so that src/test/resources/web/html/views_by_id/component/115_component_1.html shows the fields with useful sample data
 
 show the names of the linked objects in the link title subtitle of the formula_link_default, term_view_default, component_link_default and view_relation_default views: the term view and view relation api messages carry only the ids of the linked objects (see web/view/term_view.php and web/view/view_relation.php api_mapper) and the url mappers of all four link classes resolve the linked ids without names, so the title subtitle links show no text yet
