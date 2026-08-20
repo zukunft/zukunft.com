@@ -48,7 +48,7 @@
       "name": "percent"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -116,7 +116,7 @@
         "annual",
         "GDP",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.0104",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)"

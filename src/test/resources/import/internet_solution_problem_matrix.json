@@ -12,24 +12,261 @@
     "coder": "LLM estimate (Claude), not inter-rater validated",
     "license": "CC BY-SA 4.0"
   },
-
   "words": [
-    {"name": "heise heatwave thread 2026-06", "type": "context", "note_disambig_via_words_only": "forum_thread"},
-    {"name": "social valence", "type": "measure", "scale": "-1 divisive to +1 connecting"},
-    {"name": "constructive orientation", "type": "measure", "scale": "-1 (emphasize problem + assign blame) to +1 (propose solution + call to action)"},
-    {"name": "reply count", "type": "measure", "unit": "replies"},
-    {"name": "divisive", "type": "pole", "parent": "social valence"},
+    {"name": "2026-06", "description": "June 2026"},
+    {"name": "action"},
+    {"name": "action-calling"},
+    {"name": "assignment"},
+    {"name": "assumed"},
+    {"name": "Benzinabscheider"},
+    {"name": "blame"},
+    {"name": "blame-assigning"},
+    {"name": "call"},
+    {"name": "confidence", "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."},
     {"name": "connecting", "type": "pole", "parent": "social valence"},
-    {"name": "problem-emphasizing blame-assigning", "type": "pole", "parent": "constructive orientation"},
-    {"name": "solution-proposing action-calling", "type": "pole", "parent": "constructive orientation"},
-    {"name": "solution proposal", "type": "marker", "indicates": "solution-proposing action-calling"},
-    {"name": "call to action", "type": "marker", "indicates": "solution-proposing action-calling"},
-    {"name": "problem emphasis", "type": "marker", "indicates": "problem-emphasizing blame-assigning"},
-    {"name": "blame assignment", "type": "marker", "indicates": "problem-emphasizing blame-assigning", "note": "has side effect on social valence (divisive) -> watch for X/Y coupling"},
-    {"name": "perspective taking", "type": "marker", "indicates": "connecting"},
-    {"name": "contempt", "type": "marker", "indicates": "divisive"}
+    {"name": "constructive"},
+    {"name": "contempt", "type": "marker", "indicates": "divisive"},
+    {"name": "count"},
+    {"name": "divisive", "type": "pole", "parent": "social valence"},
+    {"name": "emphasis"},
+    {"name": "foobar99"},
+    {"name": "heatwave"},
+    {"name": "heise", "description": "heise online, the news site hosting the forum"},
+    {"name": "Jochen Magnus"},
+    {"name": "MichaelFfm"},
+    {"name": "MmDGA"},
+    {"name": "noname8080"},
+    {"name": "notting"},
+    {"name": "orientation"},
+    {"name": "perspective"},
+    {"name": "problem"},
+    {"name": "problem-emphasizing"},
+    {"name": "proposal"},
+    {"name": "Racer4711"},
+    {"name": "RemindMeLater"},
+    {"name": "reply"},
+    {"name": "sensonu"},
+    {"name": "social"},
+    {"name": "solaire"},
+    {"name": "solution"},
+    {"name": "solution-proposing"},
+    {"name": "taking"},
+    {"name": "thread"},
+    {"name": "Tut nix zur Sache"},
+    {"name": "udolein"},
+    {"name": "valence"},
+    {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"},
+    {"name": "Whynodd"},
+    {"name": "Z3_M3"},
+    {"name": "zukunftcom"}
   ],
-
+  "triples": [
+    {
+      "name": "confidence value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "confidence",
+      "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
+    },
+    {"name": "heatwave thread", "from": "thread", "verb": "of", "to": "heatwave"},
+    {"name": "heise heatwave thread", "from": "heatwave thread", "verb": "of", "to": "heise"},
+    {
+      "name": "heise heatwave thread 2026-06",
+      "from": "heise heatwave thread",
+      "verb": "in",
+      "to": "2026-06",
+      "type": "context",
+      "note_disambig_via_words_only": "forum_thread"
+    },
+    {
+      "name": "social valence",
+      "from": "valence",
+      "verb": "kind of",
+      "to": "social",
+      "type": "measure",
+      "scale": "-1 divisive to +1 connecting"
+    },
+    {
+      "name": "constructive orientation",
+      "from": "orientation",
+      "verb": "kind of",
+      "to": "constructive",
+      "type": "measure",
+      "scale": "-1 (emphasize problem + assign blame) to +1 (propose solution + call to action)"
+    },
+    {"name": "reply count", "from": "count", "verb": "of", "to": "reply", "type": "measure", "unit": "replies"},
+    {
+      "name": "problem-emphasizing blame-assigning",
+      "from": "problem-emphasizing",
+      "verb": "and",
+      "to": "blame-assigning",
+      "type": "pole",
+      "parent": "constructive orientation"
+    },
+    {
+      "name": "solution-proposing action-calling",
+      "from": "solution-proposing",
+      "verb": "and",
+      "to": "action-calling",
+      "type": "pole",
+      "parent": "constructive orientation"
+    },
+    {
+      "name": "solution proposal",
+      "from": "proposal",
+      "verb": "of",
+      "to": "solution",
+      "type": "marker",
+      "indicates": "solution-proposing action-calling"
+    },
+    {"from": "call", "verb": "to", "to": "action", "type": "marker", "indicates": "solution-proposing action-calling"},
+    {
+      "name": "problem emphasis",
+      "from": "emphasis",
+      "verb": "of",
+      "to": "problem",
+      "type": "marker",
+      "indicates": "problem-emphasizing blame-assigning"
+    },
+    {
+      "name": "blame assignment",
+      "from": "assignment",
+      "verb": "of",
+      "to": "blame",
+      "type": "marker",
+      "indicates": "problem-emphasizing blame-assigning",
+      "note": "has side effect on social valence (divisive) -> watch for X/Y coupling"
+    },
+    {"name": "perspective taking", "from": "taking", "verb": "of", "to": "perspective", "type": "marker", "indicates": "connecting"},
+    {
+      "name": "thread by zukunftcom",
+      "from": "thread",
+      "verb": "of",
+      "to": "zukunftcom",
+      "description": "'Die Lösung?' (The solution?), 2026-06-26T11:57",
+      "type": "post"
+    },
+    {
+      "name": "thread by udolein",
+      "from": "thread",
+      "verb": "of",
+      "to": "udolein",
+      "description": "'Ich kann dieses deutsche Gejammer nicht mehr hören ....' (I can't stand this German whining anymore ....), 2026-06-27T15:31",
+      "type": "post"
+    },
+    {
+      "name": "thread by Z3_M3",
+      "from": "thread",
+      "verb": "of",
+      "to": "Z3_M3",
+      "description": "'Die Leute stellen sich hier so an bei grad mal etwas ueber 40 Grad' (People are making such a fuss over barely above 40 degrees), 2026-06-27T09:02",
+      "type": "post"
+    },
+    {
+      "name": "thread by Whynodd",
+      "from": "thread",
+      "verb": "of",
+      "to": "Whynodd",
+      "description": "'Zum Thema, wie Klimawandel persönlich ins Portemonnaie greift:' (On how climate change personally hits your wallet:), 2026-06-26T16:52",
+      "type": "post"
+    },
+    {
+      "name": "thread by Benzinabscheider",
+      "from": "thread",
+      "verb": "of",
+      "to": "Benzinabscheider",
+      "description": "'ab Montag wird es deutlich kühler' (starting Monday it'll be much cooler), 2026-06-26T18:46",
+      "type": "post"
+    },
+    {
+      "name": "thread by foobar99",
+      "from": "thread",
+      "verb": "of",
+      "to": "foobar99",
+      "description": "'In zwei Monaten ist das Thema wieder vom Tisch' (In two months the topic will be off the table again), 2026-06-26T14:25",
+      "type": "post"
+    },
+    {
+      "name": "thread by Racer4711",
+      "from": "thread",
+      "verb": "of",
+      "to": "Racer4711",
+      "description": "'Passt euch halt an' (Just adapt), 2026-06-27T22:08",
+      "type": "post"
+    },
+    {
+      "name": "thread by solaire",
+      "from": "thread",
+      "verb": "of",
+      "to": "solaire",
+      "description": "'Da kann mit Fakten kommen, aber' (You can come with facts, but), 2026-06-26T13:27",
+      "type": "post"
+    },
+    {
+      "name": "thread by RemindMeLater",
+      "from": "thread",
+      "verb": "of",
+      "to": "RemindMeLater",
+      "description": "'37°...', 2026-06-26T23:57",
+      "type": "post"
+    },
+    {
+      "name": "thread by noname8080",
+      "from": "thread",
+      "verb": "of",
+      "to": "noname8080",
+      "description": "'Realität oder Idealismus' (Reality or idealism), 2026-06-27T16:15",
+      "type": "post"
+    },
+    {
+      "name": "thread by MmDGA",
+      "from": "thread",
+      "verb": "of",
+      "to": "MmDGA",
+      "description": "'Wir brauchen einfach mehr Technologieoffenheit, Verbrenner und Gaskraftwerke' (We just need more technology openness, combustion engines and gas power plants), 2026-06-26T15:46",
+      "type": "post"
+    },
+    {
+      "name": "thread by notting",
+      "from": "thread",
+      "verb": "of",
+      "to": "notting",
+      "description": "'\"Forscher: Maßnahmen zur Luftverbesserung beschleunigen den Klimawandel\"' (\"Researchers: air-quality measures accelerate climate change\"), 2026-06-26T11:44",
+      "type": "post"
+    },
+    {
+      "name": "thread by Jochen Magnus",
+      "from": "thread",
+      "verb": "of",
+      "to": "Jochen Magnus",
+      "description": "'Frau Reiche ist in guten Gesprächen' (Ms. Reiche is in good talks), 2026-06-26T14:05",
+      "type": "post"
+    },
+    {
+      "name": "thread by Tut nix zur Sache",
+      "from": "thread",
+      "verb": "of",
+      "to": "Tut nix zur Sache",
+      "description": "'Damit wäre die Frage \"Wann wird's mal wieder richtig Sommer?\" beantwortet.' (That answers the question 'When will it finally be proper summer again?'), 2026-06-26T12:56",
+      "type": "post"
+    },
+    {
+      "name": "thread by sensonu",
+      "from": "thread",
+      "verb": "of",
+      "to": "sensonu",
+      "description": "'und die CxU hilft kräftig mit :-)' (and the CxU is helping out enthusiastically :-)), 2026-06-26T13:43",
+      "type": "post"
+    },
+    {
+      "name": "thread by MichaelFfm",
+      "from": "thread",
+      "verb": "of",
+      "to": "MichaelFfm",
+      "description": "'Alles kein Problem' (No problem at all), 2026-06-26T12:01",
+      "type": "post"
+    }
+  ],
   "axes_definition": {
     "x": {
       "word": "social valence",
@@ -42,207 +279,298 @@
       "rationale": "Negative pole unites two markers: (a) staying with the problem/affect and (b) assigning blame to others. Positive pole unites: (a) a concrete solution proposal and (b) a call to action.",
       "coupling_note": "The blame-assignment marker is by definition also divisive (X-). This produces a slight expected X/Y correlation: blame-assigning posts tend to fall in the lower-left quadrant. When analyzing, compute Pearson r between X and Y; if coupling is high, consider moving blame assignment onto X."
     },
-    "z_target": {
-      "word": "reply count",
-      "role": "engagement proxy (color/size of points)"
-    }
+    "z_target": {"word": "reply count", "role": "engagement proxy (color/size of points)"}
   },
-
   "data_points": [
     {
       "id": "thread_zukunftcom",
       "author": "zukunftcom",
+      "word": "thread by zukunftcom",
       "title": "Die Lösung?",
       "title_en": "The solution?",
-      "datetime": "2026-06-26T11:57",
-      "values": [
-        {"word": "reply count", "value": 0, "note": "only thread on the page with no reply counter"},
-        {"word": "social valence", "value": 0.7, "type": "assumed value", "confidence": 0.5, "note": "connecting, solution-oriented hook; full text not visible"},
-        {"word": "constructive orientation", "value": 0.9, "type": "assumed value", "confidence": 0.5}
-      ]
+      "datetime": "2026-06-26T11:57"
     },
     {
       "id": "thread_udolein",
       "author": "udolein",
+      "word": "thread by udolein",
       "title": "Ich kann dieses deutsche Gejammer nicht mehr hören ....",
       "title_en": "I can't stand this German whining anymore ....",
-      "datetime": "2026-06-27T15:31",
-      "values": [
-        {"word": "reply count", "value": 22},
-        {"word": "social valence", "value": -0.7, "type": "assumed value", "confidence": 0.7, "note": "contempt/whining frame, camp-building"},
-        {"word": "constructive orientation", "value": -0.6, "type": "assumed value", "confidence": 0.6}
-      ]
+      "datetime": "2026-06-27T15:31"
     },
     {
       "id": "thread_z3m3",
       "author": "Z3_M3",
+      "word": "thread by Z3_M3",
       "title": "Die Leute stellen sich hier so an bei grad mal etwas ueber 40 Grad",
       "title_en": "People are making such a fuss over barely above 40 degrees",
-      "datetime": "2026-06-27T09:02",
-      "values": [
-        {"word": "reply count", "value": 28},
-        {"word": "social valence", "value": -0.7, "type": "assumed value", "confidence": 0.7, "note": "contempt, trivialization"},
-        {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.6}
-      ]
+      "datetime": "2026-06-27T09:02"
     },
     {
       "id": "thread_whynodd",
       "author": "Whynodd",
+      "word": "thread by Whynodd",
       "title": "Zum Thema, wie Klimawandel persönlich ins Portemonnaie greift:",
       "title_en": "On how climate change personally hits your wallet:",
-      "datetime": "2026-06-26T16:52",
-      "values": [
-        {"word": "reply count", "value": 30, "note": "highest reply count on the page"},
-        {"word": "social valence", "value": 0.1, "type": "assumed value", "confidence": 0.4, "note": "factual, slightly concern-oriented"},
-        {"word": "constructive orientation", "value": -0.1, "type": "assumed value", "confidence": 0.4}
-      ]
+      "datetime": "2026-06-26T16:52"
     },
     {
       "id": "thread_benzinabscheider",
       "author": "Benzinabscheider",
+      "word": "thread by Benzinabscheider",
       "title": "ab Montag wird es deutlich kühler",
       "title_en": "starting Monday it'll be much cooler",
-      "datetime": "2026-06-26T18:46",
-      "values": [
-        {"word": "reply count", "value": 23},
-        {"word": "social valence", "value": -0.4, "type": "assumed value", "confidence": 0.45, "note": "presumably ironic downplaying/trollbait"},
-        {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.45}
-      ]
+      "datetime": "2026-06-26T18:46"
     },
     {
       "id": "thread_foobar99",
       "author": "foobar99",
+      "word": "thread by foobar99",
       "title": "In zwei Monaten ist das Thema wieder vom Tisch",
       "title_en": "In two months the topic will be off the table again",
-      "datetime": "2026-06-26T14:25",
-      "values": [
-        {"word": "reply count", "value": 22},
-        {"word": "social valence", "value": -0.3, "type": "assumed value", "confidence": 0.5, "note": "resignation/cynicism"},
-        {"word": "constructive orientation", "value": -0.7, "type": "assumed value", "confidence": 0.6}
-      ]
+      "datetime": "2026-06-26T14:25"
     },
     {
       "id": "thread_racer4711",
       "author": "Racer4711",
+      "word": "thread by Racer4711",
       "title": "Passt euch halt an",
       "title_en": "Just adapt",
-      "datetime": "2026-06-27T22:08",
-      "values": [
-        {"word": "reply count", "value": 21},
-        {"word": "social valence", "value": -0.5, "type": "assumed value", "confidence": 0.55, "note": "dismissive, but implicit action reference"},
-        {"word": "constructive orientation", "value": 0.0, "type": "assumed value", "confidence": 0.4}
-      ]
+      "datetime": "2026-06-27T22:08"
     },
     {
       "id": "thread_solaire",
       "author": "solaire",
+      "word": "thread by solaire",
       "title": "Da kann mit Fakten kommen, aber",
       "title_en": "You can come with facts, but",
-      "datetime": "2026-06-26T13:27",
-      "values": [
-        {"word": "reply count", "value": 16},
-        {"word": "social valence", "value": -0.2, "type": "assumed value", "confidence": 0.4},
-        {"word": "constructive orientation", "value": -0.2, "type": "assumed value", "confidence": 0.4}
-      ]
+      "datetime": "2026-06-26T13:27"
     },
     {
       "id": "thread_remindmelater",
       "author": "RemindMeLater",
+      "word": "thread by RemindMeLater",
       "title": "37°...",
       "title_en": "37°...",
-      "datetime": "2026-06-26T23:57",
-      "values": [
-        {"word": "reply count", "value": 13},
-        {"word": "social valence", "value": 0.0, "type": "assumed value", "confidence": 0.3, "note": "minimal hook, hard to code"},
-        {"word": "constructive orientation", "value": -0.3, "type": "assumed value", "confidence": 0.3}
-      ]
+      "datetime": "2026-06-26T23:57"
     },
     {
       "id": "thread_noname8080",
       "author": "noname8080",
+      "word": "thread by noname8080",
       "title": "Realität oder Idealismus",
       "title_en": "Reality or idealism",
-      "datetime": "2026-06-27T16:15",
-      "values": [
-        {"word": "reply count", "value": 10},
-        {"word": "social valence", "value": 0.2, "type": "assumed value", "confidence": 0.35},
-        {"word": "constructive orientation", "value": 0.3, "type": "assumed value", "confidence": 0.35}
-      ]
+      "datetime": "2026-06-27T16:15"
     },
     {
       "id": "thread_mmdga",
       "author": "MmDGA",
+      "word": "thread by MmDGA",
       "title": "Wir brauchen einfach mehr Technologieoffenheit, Verbrenner und Gaskraftwerke",
       "title_en": "We just need more technology openness, combustion engines and gas power plants",
-      "datetime": "2026-06-26T15:46",
-      "values": [
-        {"word": "reply count", "value": 9},
-        {"word": "social valence", "value": -0.4, "type": "assumed value", "confidence": 0.45, "note": "presumably ironic/polemic, camp slogan"},
-        {"word": "constructive orientation", "value": 0.2, "type": "assumed value", "confidence": 0.35, "note": "apparent solution proposal"}
-      ]
+      "datetime": "2026-06-26T15:46"
     },
     {
       "id": "thread_notting",
       "author": "notting",
+      "word": "thread by notting",
       "title": "\"Forscher: Maßnahmen zur Luftverbesserung beschleunigen den Klimawandel\"",
       "title_en": "\"Researchers: air-quality measures accelerate climate change\"",
-      "datetime": "2026-06-26T11:44",
-      "values": [
-        {"word": "reply count", "value": 6},
-        {"word": "social valence", "value": 0.1, "type": "assumed value", "confidence": 0.4, "note": "factual"},
-        {"word": "constructive orientation", "value": -0.1, "type": "assumed value", "confidence": 0.4}
-      ]
+      "datetime": "2026-06-26T11:44"
     },
     {
       "id": "thread_jochenmagnus",
       "author": "Jochen Magnus",
+      "word": "thread by Jochen Magnus",
       "title": "Frau Reiche ist in guten Gesprächen",
       "title_en": "Ms. Reiche is in good talks",
-      "datetime": "2026-06-26T14:05",
-      "values": [
-        {"word": "reply count", "value": 3},
-        {"word": "social valence", "value": -0.3, "type": "assumed value", "confidence": 0.4, "note": "sarcastic allusion"},
-        {"word": "constructive orientation", "value": -0.4, "type": "assumed value", "confidence": 0.4}
-      ]
+      "datetime": "2026-06-26T14:05"
     },
     {
       "id": "thread_tutnix",
       "author": "Tut nix zur Sache",
+      "word": "thread by Tut nix zur Sache",
       "title": "Damit wäre die Frage \"Wann wird's mal wieder richtig Sommer?\" beantwortet.",
       "title_en": "That answers the question 'When will it finally be proper summer again?'",
-      "datetime": "2026-06-26T12:56",
-      "values": [
-        {"word": "reply count", "value": 1},
-        {"word": "social valence", "value": -0.1, "type": "assumed value", "confidence": 0.35, "note": "gallows humor"},
-        {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.4}
-      ]
+      "datetime": "2026-06-26T12:56"
     },
     {
       "id": "thread_sensonu",
       "author": "sensonu",
+      "word": "thread by sensonu",
       "title": "und die CxU hilft kräftig mit :-)",
       "title_en": "and the CxU is helping out enthusiastically :-)",
-      "datetime": "2026-06-26T13:43",
-      "values": [
-        {"word": "reply count", "value": 1},
-        {"word": "social valence", "value": -0.5, "type": "assumed value", "confidence": 0.5, "note": "party-political blame assignment -> divisive"},
-        {"word": "constructive orientation", "value": -0.7, "type": "assumed value", "confidence": 0.5, "note": "pure blame assignment, no solution/action reference; example of X/Y coupling (lower-left quadrant)"}
-      ]
+      "datetime": "2026-06-26T13:43"
     },
     {
       "id": "thread_michaelffm",
       "author": "MichaelFfm",
+      "word": "thread by MichaelFfm",
       "title": "Alles kein Problem",
       "title_en": "No problem at all",
-      "datetime": "2026-06-26T12:01",
-      "values": [
-        {"word": "reply count", "value": 1},
-        {"word": "social valence", "value": -0.2, "type": "assumed value", "confidence": 0.35, "note": "presumably ironic downplaying"},
-        {"word": "constructive orientation", "value": -0.4, "type": "assumed value", "confidence": 0.35}
-      ]
+      "datetime": "2026-06-26T12:01"
     }
   ],
-
+  "values": [
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "reply count"],
+      "value": 0,
+      "description": "only thread on the page with no reply counter"
+    },
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "social valence", "assumed"],
+      "value": 0.7,
+      "description": "connecting, solution-oriented hook; full text not visible"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "social valence", "confidence value"], "value": 0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "constructive orientation", "assumed"], "value": 0.9},
+    {"words": ["heise heatwave thread 2026-06", "thread by zukunftcom", "constructive orientation", "confidence value"], "value": 0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by udolein", "reply count"], "value": 22},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by udolein", "social valence", "assumed"],
+      "value": -0.7,
+      "description": "contempt/whining frame, camp-building"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by udolein", "social valence", "confidence value"], "value": 0.7},
+    {"words": ["heise heatwave thread 2026-06", "thread by udolein", "constructive orientation", "assumed"], "value": -0.6},
+    {"words": ["heise heatwave thread 2026-06", "thread by udolein", "constructive orientation", "confidence value"], "value": 0.6},
+    {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "reply count"], "value": 28},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "social valence", "assumed"],
+      "value": -0.7,
+      "description": "contempt, trivialization"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "social valence", "confidence value"], "value": 0.7},
+    {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "constructive orientation", "assumed"], "value": -0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by Z3_M3", "constructive orientation", "confidence value"], "value": 0.6},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Whynodd", "reply count"],
+      "value": 30,
+      "description": "highest reply count on the page"
+    },
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Whynodd", "social valence", "assumed"],
+      "value": 0.1,
+      "description": "factual, slightly concern-oriented"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by Whynodd", "social valence", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by Whynodd", "constructive orientation", "assumed"], "value": -0.1},
+    {"words": ["heise heatwave thread 2026-06", "thread by Whynodd", "constructive orientation", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "reply count"], "value": 23},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "social valence", "assumed"],
+      "value": -0.4,
+      "description": "presumably ironic downplaying/trollbait"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "social valence", "confidence value"], "value": 0.45},
+    {"words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "constructive orientation", "assumed"], "value": -0.5},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Benzinabscheider", "constructive orientation", "confidence value"],
+      "value": 0.45
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "reply count"], "value": 22},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by foobar99", "social valence", "assumed"],
+      "value": -0.3,
+      "description": "resignation/cynicism"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "social valence", "confidence value"], "value": 0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "constructive orientation", "assumed"], "value": -0.7},
+    {"words": ["heise heatwave thread 2026-06", "thread by foobar99", "constructive orientation", "confidence value"], "value": 0.6},
+    {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "reply count"], "value": 21},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Racer4711", "social valence", "assumed"],
+      "value": -0.5,
+      "description": "dismissive, but implicit action reference"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "social valence", "confidence value"], "value": 0.55},
+    {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "constructive orientation", "assumed"], "value": 0},
+    {"words": ["heise heatwave thread 2026-06", "thread by Racer4711", "constructive orientation", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "reply count"], "value": 16},
+    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "social valence", "assumed"], "value": -0.2},
+    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "social valence", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "constructive orientation", "assumed"], "value": -0.2},
+    {"words": ["heise heatwave thread 2026-06", "thread by solaire", "constructive orientation", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "reply count"], "value": 13},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "social valence", "assumed"],
+      "value": 0,
+      "description": "minimal hook, hard to code"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "social valence", "confidence value"], "value": 0.3},
+    {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "constructive orientation", "assumed"], "value": -0.3},
+    {"words": ["heise heatwave thread 2026-06", "thread by RemindMeLater", "constructive orientation", "confidence value"], "value": 0.3},
+    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "reply count"], "value": 10},
+    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "social valence", "assumed"], "value": 0.2},
+    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "social valence", "confidence value"], "value": 0.35},
+    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "constructive orientation", "assumed"], "value": 0.3},
+    {"words": ["heise heatwave thread 2026-06", "thread by noname8080", "constructive orientation", "confidence value"], "value": 0.35},
+    {"words": ["heise heatwave thread 2026-06", "thread by MmDGA", "reply count"], "value": 9},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by MmDGA", "social valence", "assumed"],
+      "value": -0.4,
+      "description": "presumably ironic/polemic, camp slogan"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by MmDGA", "social valence", "confidence value"], "value": 0.45},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by MmDGA", "constructive orientation", "assumed"],
+      "value": 0.2,
+      "description": "apparent solution proposal"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by MmDGA", "constructive orientation", "confidence value"], "value": 0.35},
+    {"words": ["heise heatwave thread 2026-06", "thread by notting", "reply count"], "value": 6},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by notting", "social valence", "assumed"],
+      "value": 0.1,
+      "description": "factual"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by notting", "social valence", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by notting", "constructive orientation", "assumed"], "value": -0.1},
+    {"words": ["heise heatwave thread 2026-06", "thread by notting", "constructive orientation", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "reply count"], "value": 3},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "social valence", "assumed"],
+      "value": -0.3,
+      "description": "sarcastic allusion"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "social valence", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "constructive orientation", "assumed"], "value": -0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by Jochen Magnus", "constructive orientation", "confidence value"], "value": 0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "reply count"], "value": 1},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "social valence", "assumed"],
+      "value": -0.1,
+      "description": "gallows humor"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "social valence", "confidence value"], "value": 0.35},
+    {"words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "constructive orientation", "assumed"], "value": -0.5},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by Tut nix zur Sache", "constructive orientation", "confidence value"],
+      "value": 0.4
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by sensonu", "reply count"], "value": 1},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by sensonu", "social valence", "assumed"],
+      "value": -0.5,
+      "description": "party-political blame assignment -> divisive"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by sensonu", "social valence", "confidence value"], "value": 0.5},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by sensonu", "constructive orientation", "assumed"],
+      "value": -0.7,
+      "description": "pure blame assignment, no solution/action reference; example of X/Y coupling (lower-left quadrant)"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by sensonu", "constructive orientation", "confidence value"], "value": 0.5},
+    {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "reply count"], "value": 1},
+    {
+      "words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "social valence", "assumed"],
+      "value": -0.2,
+      "description": "presumably ironic downplaying"
+    },
+    {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "social valence", "confidence value"], "value": 0.35},
+    {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "constructive orientation", "assumed"], "value": -0.4},
+    {"words": ["heise heatwave thread 2026-06", "thread by MichaelFfm", "constructive orientation", "confidence value"], "value": 0.35}
+  ],
   "analysis_notes": {
     "hypothesis_precommit": "Divisive + problem-emphasizing/blame-assigning (lower-left quadrant) correlates positively with reply count; connecting + solution/action-calling (upper-right quadrant) correlates negatively. zukunftcom 'The solution?' sits upper-right with 0 replies and supports the hypothesis as a single case.",
     "axis_coupling_precommit": "Expected Pearson correlation r(X,Y) > 0 (positive), because the blame-assignment marker pulls both axes toward negative. If r > 0.7: axes carry redundant information, move blame assignment onto X and reduce Y purely to solution/complaint.",

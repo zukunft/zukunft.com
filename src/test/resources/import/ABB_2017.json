@@ -155,13 +155,11 @@
       "description": "sum of all revenue line items for the period"
     },
     {
-      "name": "cost of sales of products",
       "from": "cost",
       "verb": "of",
       "to": "sales of products"
     },
     {
-      "name": "cost of services and other",
       "from": "cost",
       "verb": "of",
       "to": "services and other"

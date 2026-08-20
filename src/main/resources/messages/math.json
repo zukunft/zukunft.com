@@ -1775,9 +1775,9 @@
     },
     {
       "name": "standard deviation",
-      "from": "standard",
-      "verb": "kind of",
-      "to": "deviation",
+      "from": "deviation",
+      "verb": "can be",
+      "to": "standard",
       "refs": [
         {
           "name": "Standard deviation",
@@ -1883,9 +1883,9 @@
     },
     {
       "name": "percent change",
-      "from": "percent",
-      "verb": "of",
-      "to": "change",
+      "from": "change",
+      "verb": "in",
+      "to": "percent",
       "refs": [
         {
           "name": "Relative change",

@@ -28,7 +28,7 @@
       "name": "percent"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -60,7 +60,7 @@
       "words": [
         "biased information",
         "decisions",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "0.3"
@@ -69,7 +69,7 @@
       "words": [
         "Delphi method",
         "biased information",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "-0.15"

@@ -89,8 +89,7 @@
     {
       "from": "global gdp",
       "verb": "in",
-      "to": "trillion",
-      "name": "global gdp in trillion"
+      "to": "trillion"
     },
     {
       "from": "global gdp in trillion",
@@ -149,56 +148,47 @@
     {
       "from": "mitigation cost",
       "verb": "of",
-      "to": "unabated scenario",
-      "name": "mitigation cost of unabated scenario"
+      "to": "unabated scenario"
     },
     {
       "from": "damage and adaptation cost",
       "verb": "of",
-      "to": "unabated scenario",
-      "name": "damage and adaptation cost of unabated scenario"
+      "to": "unabated scenario"
     },
     {
       "from": "total cost",
       "verb": "of",
-      "to": "unabated scenario",
-      "name": "total cost of unabated scenario"
+      "to": "unabated scenario"
     },
     {
       "from": "mitigation cost",
       "verb": "of",
-      "to": "cap and dividend scenario",
-      "name": "mitigation cost of cap and dividend scenario"
+      "to": "cap and dividend scenario"
     },
     {
       "from": "damage and adaptation cost",
       "verb": "of",
-      "to": "cap and dividend scenario",
-      "name": "damage and adaptation cost of cap and dividend scenario"
+      "to": "cap and dividend scenario"
     },
     {
       "from": "total cost",
       "verb": "of",
-      "to": "cap and dividend scenario",
-      "name": "total cost of cap and dividend scenario"
+      "to": "cap and dividend scenario"
     },
     {
       "from": "mitigation cost",
       "verb": "of",
-      "to": "regulatory mix scenario",
-      "name": "mitigation cost of regulatory mix scenario"
+      "to": "regulatory mix scenario"
     },
     {
       "from": "damage and adaptation cost",
       "verb": "of",
-      "to": "regulatory mix scenario",
-      "name": "damage and adaptation cost of regulatory mix scenario"
+      "to": "regulatory mix scenario"
     },
     {
       "from": "total cost",
       "verb": "of",
-      "to": "regulatory mix scenario",
-      "name": "total cost of regulatory mix scenario"
+      "to": "regulatory mix scenario"
     }
   ],
   "formulas": [

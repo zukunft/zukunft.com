@@ -152,7 +152,7 @@
       "description": "an individual or collaborative undertaking planned to achieve a particular aim."
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -302,7 +302,7 @@
       "words": [
         "post rate",
         "forum outreach",
-        "assumed value"
+        "assumed"
       ],
       "number": "12",
       "source": "thread engagement observation"
@@ -319,7 +319,7 @@
       "words": [
         "substantive reply rate",
         "forum outreach",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.005",
       "source": "thread engagement observation"
@@ -328,14 +328,14 @@
       "words": [
         "qualified share",
         "philosophy and informatics competence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.001"
     },
     {
       "words": [
         "collaboration probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     }
@@ -346,7 +346,7 @@
         "reader per post",
         "substantive reply rate",
         "forum outreach",
-        "assumed value"
+        "assumed"
       ],
       "formula": "substantive reply per post (formula)",
       "words": [
@@ -365,7 +365,7 @@
         "collaboration probability",
         "forum outreach",
         "philosophy and informatics competence",
-        "assumed value"
+        "assumed"
       ],
       "formula": "hour per qualified collaborator (formula)",
       "words": [

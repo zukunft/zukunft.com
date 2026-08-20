@@ -6,7 +6,7 @@
   "selection": [
     "EU software sovereignty"
   ],
-  "description": "Quantifies how independent the EU/EFTA could become from US-controlled software, per application sector, if digital-sovereignty policy is taken seriously after Trump v. Slaughter (2026). Independence is modelled on two separate axes: license sovereignty (is the code/model freely licensed and forkable, hence not US-switchable) and governance sovereignty (do stewardship, roadmap and funding sit in EU/EFTA hands). Current shares carry a source; 3- and 5-year min/likely/max projections and per-year market sizes carry 'assumed value' with a numeric confidence (0-1) so weak assumptions surface later. All content in English per project convention. Sector share = realistically-expectable share of non-US-controlled solutions (actual substitution reading, not mere technical replaceability).",
+  "description": "Quantifies how independent the EU/EFTA could become from US-controlled software, per application sector, if digital-sovereignty policy is taken seriously after Trump v. Slaughter (2026). Independence is modelled on two separate axes: license sovereignty (is the code/model freely licensed and forkable, hence not US-switchable) and governance sovereignty (do stewardship, roadmap and funding sit in EU/EFTA hands). Current shares carry a source; 3- and 5-year min/likely/max projections and per-year market sizes carry 'assumed' with a numeric confidence (0-1) so weak assumptions surface later. All content in English per project convention. Sector share = realistically-expectable share of non-US-controlled solutions (actual substitution reading, not mere technical replaceability).",
   "words": [
     {
       "name": "software",
@@ -231,16 +231,6 @@
     {
       "name": "assumed",
       "description": "estimated or projected rather than sourced; provenance qualifier marking a stored number as a conjecture carrying a confidence."
-    },
-    {
-      "name": "value",
-      "description": "a stored number in the graph; combined with 'measured'/'assumed' to mark its provenance.",
-      "refs": [
-        {
-          "name": "Value_(mathematics)",
-          "type": "wikipedia"
-        }
-      ]
     },
     {
       "name": "confidence",
@@ -1051,13 +1041,6 @@
       "description": "monetary measure: billions of euro per year."
     },
     {
-      "name": "assumed value",
-      "from": "assumed",
-      "verb": "of",
-      "to": "value",
-      "description": "provenance qualifier: the number is a projection/estimate carrying a confidence, not sourced."
-    },
-    {
       "name": "desktop operating system",
       "from": "operating",
       "verb": "and",
@@ -1327,7 +1310,7 @@
         "2029",
         "minimum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.06",
       "source": "StatCounter desktop OS Europe 2026"
@@ -1340,7 +1323,7 @@
         "2029",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.12"
     },
@@ -1352,7 +1335,7 @@
         "2029",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25"
     },
@@ -1364,7 +1347,7 @@
         "2031",
         "minimum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.08"
     },
@@ -1376,7 +1359,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     },
@@ -1388,7 +1371,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -1398,7 +1381,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "15"
     },
@@ -1410,7 +1393,7 @@
         "2029",
         "likely",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.5"
     },
@@ -1422,7 +1405,7 @@
         "2031",
         "maximum",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     },
@@ -1445,7 +1428,7 @@
         "2029",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.7"
     },
@@ -1457,7 +1440,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.75"
     },
@@ -1469,7 +1452,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.88"
     },
@@ -1479,7 +1462,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "18"
     },
@@ -1491,7 +1474,7 @@
         "2031",
         "likely",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     },
@@ -1514,7 +1497,7 @@
         "2029",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.03"
     },
@@ -1526,7 +1509,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.08"
     },
@@ -1538,7 +1521,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25"
     },
@@ -1548,7 +1531,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "20"
     },
@@ -1560,7 +1543,7 @@
         "2031",
         "maximum",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.15"
     },
@@ -1583,7 +1566,7 @@
         "2029",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     },
@@ -1595,7 +1578,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.3"
     },
@@ -1607,7 +1590,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.55"
     },
@@ -1617,7 +1600,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "12"
     },
@@ -1629,7 +1612,7 @@
         "2031",
         "likely",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -1652,7 +1635,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1"
     },
@@ -1662,7 +1645,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     },
@@ -1685,7 +1668,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.18"
     },
@@ -1697,7 +1680,7 @@
         "2031",
         "maximum",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25"
     },
@@ -1720,7 +1703,7 @@
         "2029",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25"
     },
@@ -1732,7 +1715,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.35"
     },
@@ -1744,7 +1727,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     },
@@ -1766,7 +1749,7 @@
         "2031",
         "likely",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.35"
     },
@@ -1777,7 +1760,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.05"
     },
@@ -1789,7 +1772,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.3"
     },
@@ -1799,7 +1782,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "5"
     },
@@ -1810,7 +1793,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1"
     },
@@ -1822,7 +1805,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.32"
     },
@@ -1832,7 +1815,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "8"
     },
@@ -1843,7 +1826,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     },
@@ -1855,7 +1838,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.42"
     },
@@ -1865,7 +1848,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "10"
     },
@@ -1888,7 +1871,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.4"
     },
@@ -1900,7 +1883,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     },
@@ -1910,7 +1893,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "40"
     },
@@ -1921,7 +1904,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.5"
     },
@@ -1933,7 +1916,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.7"
     },
@@ -1943,7 +1926,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "6"
     },
@@ -1954,7 +1937,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     },
@@ -1966,7 +1949,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -1976,7 +1959,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "10"
     },
@@ -1987,7 +1970,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.3"
     },
@@ -1999,7 +1982,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.55"
     },
@@ -2009,7 +1992,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -2020,7 +2003,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.4"
     },
@@ -2032,7 +2015,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.65"
     },
@@ -2042,7 +2025,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "25"
     },
@@ -2053,7 +2036,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.3"
     },
@@ -2065,7 +2048,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.52"
     },
@@ -2075,7 +2058,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "12"
     },
@@ -2086,7 +2069,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.05"
     },
@@ -2098,7 +2081,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.22"
     },
@@ -2110,7 +2093,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -2120,7 +2103,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "15"
     },
@@ -2132,7 +2115,7 @@
         "2031",
         "likely",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.3"
     },
@@ -2155,7 +2138,7 @@
         "2029",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -2167,7 +2150,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.58"
     },
@@ -2179,7 +2162,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.78"
     },
@@ -2189,7 +2172,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "10"
     },
@@ -2201,7 +2184,7 @@
         "2031",
         "likely",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.55"
     },
@@ -2212,7 +2195,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.55"
     },
@@ -2224,7 +2207,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.7"
     },
@@ -2234,7 +2217,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "4"
     },
@@ -2245,7 +2228,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -2257,7 +2240,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.65"
     },
@@ -2267,7 +2250,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     },
@@ -2278,7 +2261,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -2290,7 +2273,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.68"
     },
@@ -2300,7 +2283,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "20"
     },
@@ -2311,7 +2294,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.15"
     },
@@ -2323,7 +2306,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.42"
     },
@@ -2333,7 +2316,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "8"
     },
@@ -2344,7 +2327,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.08"
     },
@@ -2356,7 +2339,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.32"
     },
@@ -2366,7 +2349,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "6"
     },
@@ -2377,7 +2360,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.35"
     },
@@ -2389,7 +2372,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.58"
     },
@@ -2399,7 +2382,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "5"
     },
@@ -2410,7 +2393,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1"
     },
@@ -2422,7 +2405,7 @@
         "2029",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     },
@@ -2434,7 +2417,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.28"
     },
@@ -2446,7 +2429,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.52"
     },
@@ -2456,7 +2439,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "30"
     },
@@ -2468,7 +2451,7 @@
         "2031",
         "likely",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.3"
     },
@@ -2479,7 +2462,7 @@
         "governance sovereignty",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.05"
     },
@@ -2491,7 +2474,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.14"
     },
@@ -2503,7 +2486,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.28"
     },
@@ -2514,7 +2497,7 @@
         "license sovereignty",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     },
@@ -2524,7 +2507,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "8"
     },
@@ -2536,7 +2519,7 @@
         "2031",
         "maximum",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     },
@@ -2547,7 +2530,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.15"
     },
@@ -2559,7 +2542,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.45"
     },
@@ -2569,7 +2552,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "6"
     },
@@ -2580,7 +2563,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25"
     },
@@ -2592,7 +2575,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.5"
     },
@@ -2602,7 +2585,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "4"
     },
@@ -2613,7 +2596,7 @@
         "non-US control",
         "2026",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.02"
     },
@@ -2625,7 +2608,7 @@
         "2031",
         "likely",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1"
     },
@@ -2637,7 +2620,7 @@
         "2031",
         "maximum",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.25"
     },
@@ -2647,7 +2630,7 @@
         "market size",
         "euro billion",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "12"
     },
@@ -2659,7 +2642,7 @@
         "2031",
         "maximum",
         "confidence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.15"
     }

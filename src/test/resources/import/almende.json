@@ -1,83 +1,294 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "description": "Elinor Ostrom's conceptual distinction between a common-pool resource (a good type), a common property regime (a property regime) and open access. Captures what counts as a commons in her terminology and what does not.",
   "words": [
-    { "name": "good type", "description": "Classification of goods along subtractability of use and difficulty of exclusion (Ostrom & Ostrom 1977 typology)." },
-    { "name": "common-pool resource", "description": "Resource system with high subtractability of use and high cost of exclusion; a property of the good, not of its ownership." },
-    { "name": "private good", "description": "High subtractability, low exclusion cost." },
-    { "name": "public good", "description": "Low subtractability, high exclusion cost." },
-    { "name": "club good", "description": "Low subtractability, low exclusion cost; also called toll good." },
-    { "name": "subtractability", "description": "Degree to which one user's consumption reduces what remains available to others; defining criterion of a common-pool resource." },
-    { "name": "exclusion cost", "description": "Cost of preventing non-authorized persons from using the resource; defining criterion of a common-pool resource." },
-    { "name": "resource system", "description": "The stock that generates a flow, e.g. a fishery, an aquifer, an alpine pasture." },
-    { "name": "resource unit", "description": "What appropriators withdraw from the system, e.g. a caught fish; usually becomes private property upon withdrawal even under a common property regime." },
-    { "name": "property regime", "description": "Institutional arrangement assigning bundles of rights over a resource; independent of the good type." },
-    { "name": "common property regime", "description": "Property regime in which a defined group of co-owners holds rights and enforces rules; not the absence of property." },
-    { "name": "open access", "description": "Absence of enforced rights and of a defined user group; res nullius. Explicitly not a commons in Ostrom's terminology." },
-    { "name": "state property", "description": "Property regime with government as rights holder; nationalization of commons has repeatedly converted working common property regimes into de facto open access." },
-    { "name": "private property", "description": "Property regime with individual rights holders including alienation." },
-    { "name": "commons", "description": "A common-pool resource governed under a common property regime; requires both the good type and the institution." },
-    { "name": "knowledge commons", "description": "Shared knowledge or information resource; low subtractability, so the governance problem is provision and enclosure rather than overuse." },
-    { "name": "bundle of rights", "description": "Set of distinguishable rights over a resource; ownership is not binary." },
-    { "name": "access right", "description": "Right to enter a defined physical property." },
-    { "name": "withdrawal right", "description": "Right to obtain resource units." },
-    { "name": "management right", "description": "Right to regulate internal use patterns and transform the resource." },
-    { "name": "exclusion right", "description": "Right to determine who holds access and withdrawal rights." },
-    { "name": "alienation right", "description": "Right to sell or lease management and exclusion rights." },
-    { "name": "rights holder", "description": "Position defined by which subset of the bundle of rights is held." },
-    { "name": "authorized user", "description": "Holds access and withdrawal rights only." },
-    { "name": "claimant", "description": "Holds access, withdrawal and management rights." },
-    { "name": "proprietor", "description": "Holds access, withdrawal, management and exclusion rights, but not alienation." },
-    { "name": "owner", "description": "Holds the full bundle including alienation." },
-    { "name": "design principle", "description": "Regularity found in long-enduring self-governed common-pool resource institutions; diagnostic, not a recipe." },
-    { "name": "clearly defined boundaries", "description": "First design principle: both the resource and the set of authorized users must be defined; its absence marks open access rather than a commons." },
-    { "name": "tragedy of the commons", "description": "Hardin's 1968 model of inevitable degradation; it assumes open access, which is why Ostrom regarded the label as a misnomer." },
-    { "name": "Toerbel", "description": "Village in Valais, Switzerland; alpine meadows, forests, irrigation channels and paths held under a common property regime alongside private arable plots. Ostrom's paradigmatic long-enduring case." },
-    { "name": "count", "description": "Number of items." },
-    { "name": "year", "description": "Calendar year." },
-    { "name": "assumed value", "description": "Value estimated in this dataset, to be given a confidence." }
+    {"name": "access"},
+    {"name": "alienation"},
+    {"name": "assumed"},
+    {"name": "authorized"},
+    {"name": "boundary"},
+    {"name": "bundle"},
+    {"name": "claimant", "description": "Holds access, withdrawal and management rights."},
+    {"name": "clear"},
+    {"name": "club"},
+    {"name": "common"},
+    {"name": "common-pool"},
+    {
+      "name": "commons",
+      "description": "A common-pool resource governed under a common property regime; requires both the good type and the institution."
+    },
+    {"name": "cost"},
+    {"name": "count", "description": "Number of items."},
+    {"name": "defined"},
+    {"name": "design"},
+    {"name": "exclusion"},
+    {"name": "good"},
+    {"name": "holder"},
+    {"name": "knowledge"},
+    {"name": "management"},
+    {"name": "open"},
+    {"name": "owner", "description": "Holds the full bundle including alienation."},
+    {"name": "principle"},
+    {"name": "private"},
+    {"name": "property"},
+    {"name": "proprietor", "description": "Holds access, withdrawal, management and exclusion rights, but not alienation."},
+    {"name": "public"},
+    {"name": "regime"},
+    {"name": "resource"},
+    {"name": "right"},
+    {"name": "state"},
+    {
+      "name": "subtractability",
+      "description": "Degree to which one user's consumption reduces what remains available to others; defining criterion of a common-pool resource."
+    },
+    {"name": "system"},
+    {
+      "name": "Toerbel",
+      "description": "Village in Valais, Switzerland; alpine meadows, forests, irrigation channels and paths held under a common property regime alongside private arable plots. Ostrom's paradigmatic long-enduring case."
+    },
+    {"name": "tragedy"},
+    {"name": "type"},
+    {"name": "unit"},
+    {"name": "user"},
+    {"name": "withdrawal"},
+    {"name": "year", "description": "Calendar year."}
   ],
   "triples": [
-    { "name": "common-pool resource type", "from": "common-pool resource", "verb": "is a", "to": "good type" },
-    { "name": "private good type", "from": "private good", "verb": "is a", "to": "good type" },
-    { "name": "public good type", "from": "public good", "verb": "is a", "to": "good type" },
-    { "name": "club good type", "from": "club good", "verb": "is a", "to": "good type" },
-    { "name": "subtractability criterion", "from": "subtractability", "verb": "is part of", "to": "common-pool resource", "description": "High subtractability is one of the two defining criteria." },
-    { "name": "exclusion criterion", "from": "exclusion cost", "verb": "is part of", "to": "common-pool resource", "description": "High exclusion cost is the second defining criterion." },
-    { "name": "resource unit of system", "from": "resource unit", "verb": "is part of", "to": "resource system" },
-    { "name": "common-pool resource as system", "from": "common-pool resource", "verb": "is a", "to": "resource system" },
-    { "name": "common property as regime", "from": "common property regime", "verb": "is a", "to": "property regime" },
-    { "name": "open access as regime", "from": "open access", "verb": "is a", "to": "property regime", "description": "Listed as a regime for completeness; it is the null case, with no enforced rights." },
-    { "name": "state property as regime", "from": "state property", "verb": "is a", "to": "property regime" },
-    { "name": "private property as regime", "from": "private property", "verb": "is a", "to": "property regime" },
-    { "name": "commons needs regime", "from": "common property regime", "verb": "is part of", "to": "commons" },
-    { "name": "commons needs resource", "from": "common-pool resource", "verb": "is part of", "to": "commons" },
-    { "name": "knowledge commons as commons", "from": "knowledge commons", "verb": "is a", "to": "commons" },
-    { "name": "tragedy assumes open access", "from": "tragedy of the commons", "verb": "is part of", "to": "open access", "description": "The model describes open access; applying it to common property regimes is the confusion Ostrom set out to correct." },
-    { "name": "access in bundle", "from": "access right", "verb": "is part of", "to": "bundle of rights" },
-    { "name": "withdrawal in bundle", "from": "withdrawal right", "verb": "is part of", "to": "bundle of rights" },
-    { "name": "management in bundle", "from": "management right", "verb": "is part of", "to": "bundle of rights" },
-    { "name": "exclusion in bundle", "from": "exclusion right", "verb": "is part of", "to": "bundle of rights" },
-    { "name": "alienation in bundle", "from": "alienation right", "verb": "is part of", "to": "bundle of rights" },
-    { "name": "authorized user position", "from": "authorized user", "verb": "is a", "to": "rights holder" },
-    { "name": "claimant position", "from": "claimant", "verb": "is a", "to": "rights holder" },
-    { "name": "proprietor position", "from": "proprietor", "verb": "is a", "to": "rights holder" },
-    { "name": "owner position", "from": "owner", "verb": "is a", "to": "rights holder" },
-    { "name": "boundaries principle", "from": "clearly defined boundaries", "verb": "is a", "to": "design principle" },
-    { "name": "Toerbel case", "from": "Toerbel", "verb": "is a", "to": "common property regime" }
+    {
+      "name": "good type",
+      "from": "type",
+      "verb": "of",
+      "to": "good",
+      "description": "Classification of goods along subtractability of use and difficulty of exclusion (Ostrom & Ostrom 1977 typology)."
+    },
+    {
+      "name": "common-pool resource",
+      "from": "resource",
+      "verb": "kind of",
+      "to": "common-pool",
+      "description": "Resource system with high subtractability of use and high cost of exclusion; a property of the good, not of its ownership."
+    },
+    {"name": "private good", "from": "good", "verb": "kind of", "to": "private", "description": "High subtractability, low exclusion cost."},
+    {"name": "public good", "from": "good", "verb": "kind of", "to": "public", "description": "Low subtractability, high exclusion cost."},
+    {
+      "name": "club good",
+      "from": "good",
+      "verb": "kind of",
+      "to": "club",
+      "description": "Low subtractability, low exclusion cost; also called toll good."
+    },
+    {
+      "name": "exclusion cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "exclusion",
+      "description": "Cost of preventing non-authorized persons from using the resource; defining criterion of a common-pool resource."
+    },
+    {
+      "name": "resource system",
+      "from": "system",
+      "verb": "of",
+      "to": "resource",
+      "description": "The stock that generates a flow, e.g. a fishery, an aquifer, an alpine pasture."
+    },
+    {
+      "name": "resource unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "resource",
+      "description": "What appropriators withdraw from the system, e.g. a caught fish; usually becomes private property upon withdrawal even under a common property regime."
+    },
+    {
+      "name": "property regime",
+      "from": "regime",
+      "verb": "of",
+      "to": "property",
+      "description": "Institutional arrangement assigning bundles of rights over a resource; independent of the good type."
+    },
+    {"name": "common property", "from": "property", "verb": "kind of", "to": "common"},
+    {
+      "name": "common property regime",
+      "from": "regime",
+      "verb": "of",
+      "to": "common property",
+      "description": "Property regime in which a defined group of co-owners holds rights and enforces rules; not the absence of property."
+    },
+    {
+      "name": "open access",
+      "from": "access",
+      "verb": "kind of",
+      "to": "open",
+      "description": "Absence of enforced rights and of a defined user group; res nullius. Explicitly not a commons in Ostrom's terminology."
+    },
+    {
+      "name": "state property",
+      "from": "property",
+      "verb": "kind of",
+      "to": "state",
+      "description": "Property regime with government as rights holder; nationalization of commons has repeatedly converted working common property regimes into de facto open access."
+    },
+    {
+      "name": "private property",
+      "from": "property",
+      "verb": "kind of",
+      "to": "private",
+      "description": "Property regime with individual rights holders including alienation."
+    },
+    {
+      "name": "knowledge commons",
+      "from": "commons",
+      "verb": "of",
+      "to": "knowledge",
+      "description": "Shared knowledge or information resource; low subtractability, so the governance problem is provision and enclosure rather than overuse."
+    },
+    {
+      "name": "bundle of rights",
+      "from": "bundle",
+      "verb": "of",
+      "to": "right",
+      "description": "Set of distinguishable rights over a resource; ownership is not binary."
+    },
+    {"name": "access right", "from": "right", "verb": "of", "to": "access", "description": "Right to enter a defined physical property."},
+    {"name": "withdrawal right", "from": "right", "verb": "of", "to": "withdrawal", "description": "Right to obtain resource units."},
+    {
+      "name": "management right",
+      "from": "right",
+      "verb": "of",
+      "to": "management",
+      "description": "Right to regulate internal use patterns and transform the resource."
+    },
+    {
+      "name": "exclusion right",
+      "from": "right",
+      "verb": "of",
+      "to": "exclusion",
+      "description": "Right to determine who holds access and withdrawal rights."
+    },
+    {
+      "name": "alienation right",
+      "from": "right",
+      "verb": "of",
+      "to": "alienation",
+      "description": "Right to sell or lease management and exclusion rights."
+    },
+    {
+      "name": "rights holder",
+      "from": "holder",
+      "verb": "of",
+      "to": "right",
+      "description": "Position defined by which subset of the bundle of rights is held."
+    },
+    {
+      "name": "authorized user",
+      "from": "user",
+      "verb": "kind of",
+      "to": "authorized",
+      "description": "Holds access and withdrawal rights only."
+    },
+    {
+      "name": "design principle",
+      "from": "principle",
+      "verb": "of",
+      "to": "design",
+      "description": "Regularity found in long-enduring self-governed common-pool resource institutions; diagnostic, not a recipe."
+    },
+    {"name": "defined boundary", "from": "boundary", "verb": "kind of", "to": "defined"},
+    {
+      "name": "clearly defined boundaries",
+      "from": "defined boundary",
+      "verb": "kind of",
+      "to": "clear",
+      "description": "First design principle: both the resource and the set of authorized users must be defined; its absence marks open access rather than a commons."
+    },
+    {
+      "name": "tragedy of the commons",
+      "from": "tragedy",
+      "verb": "of",
+      "to": "commons",
+      "description": "Hardin's 1968 model of inevitable degradation; it assumes open access, which is why Ostrom regarded the label as a misnomer."
+    },
+    {"name": "common-pool resource type", "from": "common-pool resource", "verb": "is a", "to": "good type"},
+    {"name": "private good type", "from": "private good", "verb": "is a", "to": "good type"},
+    {"name": "public good type", "from": "public good", "verb": "is a", "to": "good type"},
+    {"name": "club good type", "from": "club good", "verb": "is a", "to": "good type"},
+    {
+      "name": "subtractability criterion",
+      "from": "subtractability",
+      "verb": "is part of",
+      "to": "common-pool resource",
+      "description": "High subtractability is one of the two defining criteria."
+    },
+    {
+      "name": "exclusion criterion",
+      "from": "exclusion cost",
+      "verb": "is part of",
+      "to": "common-pool resource",
+      "description": "High exclusion cost is the second defining criterion."
+    },
+    {"name": "resource unit of system", "from": "resource unit", "verb": "is part of", "to": "resource system"},
+    {"name": "common-pool resource as system", "from": "common-pool resource", "verb": "is a", "to": "resource system"},
+    {"name": "common property as regime", "from": "common property regime", "verb": "is a", "to": "property regime"},
+    {
+      "name": "open access as regime",
+      "from": "open access",
+      "verb": "is a",
+      "to": "property regime",
+      "description": "Listed as a regime for completeness; it is the null case, with no enforced rights."
+    },
+    {"name": "state property as regime", "from": "state property", "verb": "is a", "to": "property regime"},
+    {"name": "private property as regime", "from": "private property", "verb": "is a", "to": "property regime"},
+    {"name": "commons needs regime", "from": "common property regime", "verb": "is part of", "to": "commons"},
+    {"name": "commons needs resource", "from": "common-pool resource", "verb": "is part of", "to": "commons"},
+    {"name": "knowledge commons as commons", "from": "knowledge commons", "verb": "is a", "to": "commons"},
+    {
+      "name": "tragedy assumes open access",
+      "from": "tragedy of the commons",
+      "verb": "is part of",
+      "to": "open access",
+      "description": "The model describes open access; applying it to common property regimes is the confusion Ostrom set out to correct."
+    },
+    {"name": "access in bundle", "from": "access right", "verb": "is part of", "to": "bundle of rights"},
+    {"name": "withdrawal in bundle", "from": "withdrawal right", "verb": "is part of", "to": "bundle of rights"},
+    {"name": "management in bundle", "from": "management right", "verb": "is part of", "to": "bundle of rights"},
+    {"name": "exclusion in bundle", "from": "exclusion right", "verb": "is part of", "to": "bundle of rights"},
+    {"name": "alienation in bundle", "from": "alienation right", "verb": "is part of", "to": "bundle of rights"},
+    {"name": "authorized user position", "from": "authorized user", "verb": "is a", "to": "rights holder"},
+    {"name": "claimant position", "from": "claimant", "verb": "is a", "to": "rights holder"},
+    {"name": "proprietor position", "from": "proprietor", "verb": "is a", "to": "rights holder"},
+    {"name": "owner position", "from": "owner", "verb": "is a", "to": "rights holder"},
+    {"name": "boundaries principle", "from": "clearly defined boundaries", "verb": "is a", "to": "design principle"},
+    {"name": "Toerbel case", "from": "Toerbel", "verb": "is a", "to": "common property regime"}
   ],
   "sources": [
-    { "name": "ostrom-1990", "description": "Ostrom, E. (1990). Governing the Commons: The Evolution of Institutions for Collective Action. Cambridge University Press." },
-    { "name": "ostrom-et-al-1999", "description": "Ostrom, E., Burger, J., Field, C. B., Norgaard, R. B., Policansky, D. (1999). Revisiting the Commons: Local Lessons, Global Challenges. Science 284(5412), 278-282. DOI 10.1126/science.284.5412.278", "doi": "10.1126/science.284.5412.278" },
-    { "name": "schlager-ostrom-1992", "description": "Schlager, E., Ostrom, E. (1992). Property-Rights Regimes and Natural Resources: A Conceptual Analysis. Land Economics 68(3), 249-262. DOI 10.2307/3146375", "doi": "10.2307/3146375" },
-    { "name": "ostrom-2010", "description": "Ostrom, E. (2010). Beyond Markets and States: Polycentric Governance of Complex Economic Systems. American Economic Review 100(3), 641-672." },
-    { "name": "hardin-1968", "description": "Hardin, G. (1968). The Tragedy of the Commons. Science 162(3859), 1243-1248. DOI not verified in this session." }
+    {
+      "name": "ostrom-1990",
+      "description": "Ostrom, E. (1990). Governing the Commons: The Evolution of Institutions for Collective Action. Cambridge University Press."
+    },
+    {
+      "name": "ostrom-et-al-1999",
+      "description": "Ostrom, E., Burger, J., Field, C. B., Norgaard, R. B., Policansky, D. (1999). Revisiting the Commons: Local Lessons, Global Challenges. Science 284(5412), 278-282. DOI 10.1126/science.284.5412.278",
+      "doi": "10.1126/science.284.5412.278"
+    },
+    {
+      "name": "schlager-ostrom-1992",
+      "description": "Schlager, E., Ostrom, E. (1992). Property-Rights Regimes and Natural Resources: A Conceptual Analysis. Land Economics 68(3), 249-262. DOI 10.2307/3146375",
+      "doi": "10.2307/3146375"
+    },
+    {
+      "name": "ostrom-2010",
+      "description": "Ostrom, E. (2010). Beyond Markets and States: Polycentric Governance of Complex Economic Systems. American Economic Review 100(3), 641-672."
+    },
+    {
+      "name": "hardin-1968",
+      "description": "Hardin, G. (1968). The Tragedy of the Commons. Science 162(3859), 1243-1248. DOI not verified in this session."
+    }
   ],
   "values": [
-    { "words": ["design principle", "commons", "count"], "number": 8, "source": "ostrom-1990" },
-    { "words": ["bundle of rights", "count"], "number": 5, "source": "schlager-ostrom-1992" },
-    { "words": ["rights holder", "count"], "number": 4, "source": "schlager-ostrom-1992" },
-    { "words": ["Toerbel", "common property regime", "year"], "number": 1483, "source": "ostrom-1990" },
-    { "words": ["tragedy of the commons", "year"], "number": 1968, "source": "hardin-1968" }
+    {"words": ["design principle", "commons", "count"], "number": 8, "source": "ostrom-1990"},
+    {"words": ["bundle of rights", "count"], "number": 5, "source": "schlager-ostrom-1992"},
+    {"words": ["rights holder", "count"], "number": 4, "source": "schlager-ostrom-1992"},
+    {"words": ["Toerbel", "common property regime", "year"], "number": 1483, "source": "ostrom-1990"},
+    {"words": ["tragedy of the commons", "year"], "number": 1968, "source": "hardin-1968"}
   ]
 }

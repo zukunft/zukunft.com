@@ -11,80 +11,274 @@
   "description": "GDU (Gross Domestic Usage) as a benefit-based alternative to GDP: evidence that measurement concepts feed back into economic reality, and the GDP-B framework as methodological foundation. Draft to be validated against json_structure.md.",
   "words": [
     {
-      "name": "gross domestic usage",
-      "description": "GDU: period-over-period change in usage/benefit, measuring prevention of unhappiness rather than market turnover"
+      "name": "acceptance"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "bound"
+    },
+    {
+      "name": "camera"
+    },
+    {
+      "name": "contribution"
+    },
+    {
+      "name": "domestic"
+    },
+    {
+      "name": "encyclopedia"
+    },
+    {
+      "name": "EUR",
+      "description": "Is a symbol for euro"
+    },
+    {
+      "name": "example"
+    },
+    {
+      "name": "Facebook"
+    },
+    {
+      "name": "feedback"
     },
     {
       "name": "gdp-b",
       "description": "GDP extended by benefits of new and free goods, estimated via incentive-compatible choice experiments (Brynjolfsson et al.)"
     },
     {
-      "name": "measurement feedback",
-      "description": "the chosen metric changes the measured system: policy steering, Goodhart's law, performativity"
+      "name": "Goodhart"
     },
     {
-      "name": "goodharts law",
-      "description": "when a measure becomes a target, it ceases to be a good measure"
+      "name": "gross"
+    },
+    {
+      "name": "growth"
+    },
+    {
+      "name": "law"
+    },
+    {
+      "name": "lower"
+    },
+    {
+      "name": "measure"
+    },
+    {
+      "name": "measurement"
+    },
+    {
+      "name": "month"
+    },
+    {
+      "name": "percent",
+      "description": "ratio expressed per hundred"
+    },
+    {
+      "name": "percentage"
     },
     {
       "name": "performativity",
       "description": "economic models act as engines shaping markets, not cameras depicting them (MacKenzie)"
     },
     {
-      "name": "willingness to accept",
-      "description": "compensation demanded to give up access to a good; welfare measure for zero-price goods"
+      "name": "point"
     },
     {
-      "name": "facebook wta",
-      "description": "median monthly willingness to accept for giving up Facebook, US 2016-17"
+      "name": "policy"
     },
     {
-      "name": "gdp-b growth contribution facebook",
-      "description": "annual percentage-point addition to US GDP-B growth 2004-2017 from including Facebook"
+      "name": "pollution"
     },
     {
-      "name": "smartphone camera wta",
-      "description": "median monthly willingness to accept for giving up the smartphone camera, NL lab study 2017"
+      "name": "priority"
     },
     {
-      "name": "taxi example",
-      "description": "GDU illustration: app cuts taxi prices 20 percent, usage rises 10 percent, GDP falls while benefit rises"
+      "name": "smartphone"
     },
     {
-      "name": "encyclopedia example",
-      "description": "GDU illustration: Wikipedia replaces paid encyclopedias, GDP vanishes while usage explodes"
+      "name": "taxi"
     },
     {
-      "name": "air pollution example",
-      "description": "GDU illustration: GDP doubles while unpriced clean-up cost exceeds the gain, so GDU falls"
+      "name": "upper"
     },
     {
-      "name": "lower bound"
+      "name": "usage"
     },
     {
-      "name": "upper bound"
+      "name": "USD",
+      "description": "Is a symbol for US dollar"
     },
     {
-      "name": "USD per month"
+      "name": "welfare"
     },
     {
-      "name": "EUR per month"
+      "name": "willingness"
     },
     {
-      "name": "percentage point per year"
-    },
-    {
-      "name": "assumed value"
+      "name": "year"
     }
   ],
   "triples": [
     {
-      "from": "gross domestic usage",
+      "name": "policy priorities",
+      "from": "priority",
+      "verb": "of",
+      "to": "policy",
+      "description": "what a government steers for, shaped by the metric it measures"
+    },
+    {
+      "name": "welfare measure",
+      "from": "measure",
+      "verb": "of",
+      "to": "welfare",
+      "description": "a metric of welfare rather than of market turnover"
+    },
+    {
+      "from": "gdp-b",
       "verb": "is a",
       "to": "welfare measure"
     },
     {
-      "from": "gdp-b",
+      "name": "domestic usage",
+      "from": "usage",
+      "verb": "kind of",
+      "to": "domestic"
+    },
+    {
+      "name": "gross domestic usage",
+      "from": "domestic usage",
+      "verb": "kind of",
+      "to": "gross",
+      "description": "GDU: period-over-period change in usage/benefit, measuring prevention of unhappiness rather than market turnover"
+    },
+    {
+      "name": "measurement feedback",
+      "from": "feedback",
+      "verb": "of",
+      "to": "measurement",
+      "description": "the chosen metric changes the measured system: policy steering, Goodhart's law, performativity"
+    },
+    {
+      "name": "goodharts law",
+      "from": "law",
+      "verb": "of",
+      "to": "Goodhart",
+      "description": "when a measure becomes a target, it ceases to be a good measure"
+    },
+    {
+      "name": "willingness to accept",
+      "from": "willingness",
+      "verb": "to",
+      "to": "acceptance",
+      "description": "compensation demanded to give up access to a good; welfare measure for zero-price goods"
+    },
+    {
+      "name": "facebook wta",
+      "from": "willingness to accept",
+      "verb": "of",
+      "to": "Facebook",
+      "description": "median monthly willingness to accept for giving up Facebook, US 2016-17"
+    },
+    {
+      "name": "gdp-b growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "gdp-b"
+    },
+    {
+      "name": "gdp-b growth contribution",
+      "from": "contribution",
+      "verb": "of",
+      "to": "gdp-b growth"
+    },
+    {
+      "name": "gdp-b growth contribution facebook",
+      "from": "gdp-b growth contribution",
+      "verb": "of",
+      "to": "Facebook",
+      "description": "annual percentage-point addition to US GDP-B growth 2004-2017 from including Facebook"
+    },
+    {
+      "name": "smartphone camera",
+      "from": "camera",
+      "verb": "of",
+      "to": "smartphone"
+    },
+    {
+      "name": "smartphone camera wta",
+      "from": "willingness to accept",
+      "verb": "of",
+      "to": "smartphone camera",
+      "description": "median monthly willingness to accept for giving up the smartphone camera, NL lab study 2017"
+    },
+    {
+      "name": "taxi example",
+      "from": "example",
+      "verb": "of",
+      "to": "taxi",
+      "description": "GDU illustration: app cuts taxi prices 20 percent, usage rises 10 percent, GDP falls while benefit rises"
+    },
+    {
+      "name": "encyclopedia example",
+      "from": "example",
+      "verb": "of",
+      "to": "encyclopedia",
+      "description": "GDU illustration: Wikipedia replaces paid encyclopedias, GDP vanishes while usage explodes"
+    },
+    {
+      "name": "air pollution",
+      "from": "pollution",
+      "verb": "of",
+      "to": "air"
+    },
+    {
+      "name": "air pollution example",
+      "from": "example",
+      "verb": "of",
+      "to": "air pollution",
+      "description": "GDU illustration: GDP doubles while unpriced clean-up cost exceeds the gain, so GDU falls"
+    },
+    {
+      "name": "lower bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "lower"
+    },
+    {
+      "name": "upper bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "upper"
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "month"
+    },
+    {
+      "from": "EUR",
+      "verb": "per",
+      "to": "month"
+    },
+    {
+      "name": "percentage point",
+      "from": "point",
+      "verb": "of",
+      "to": "percentage"
+    },
+    {
+      "from": "percentage point",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "from": "gross domestic usage",
       "verb": "is a",
       "to": "welfare measure"
     },
@@ -180,7 +374,7 @@
         "taxi example",
         "gross domestic usage",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1",
       "source": "zukunft.com GDU text",
@@ -190,7 +384,7 @@
       "words": [
         "encyclopedia example",
         "gross domestic usage",
-        "assumed value"
+        "assumed"
       ],
       "number": "5000000000",
       "source": "zukunft.com GDU text",
@@ -200,7 +394,7 @@
       "words": [
         "air pollution example",
         "gross domestic usage",
-        "assumed value"
+        "assumed"
       ],
       "number": "-200000000",
       "source": "zukunft.com GDU text",

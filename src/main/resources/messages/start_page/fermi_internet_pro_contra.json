@@ -6,7 +6,7 @@
   "selection": [
     "Fermi estimates for every pro/contra argument of the RSI / overstimulation / zukunft.com discussion, with reproducible calc-validation chains"
   ],
-  "description": "Encodes the pro and contra arguments of the thread into the zukunft.com graph. A value taken from a source is marked only by that source, while a set Fermi input carries the 'assumed value' qualifier, so that a set assumption can never be mistaken for a measurement. v0.0.4 additions: the dominant 'overstimulation gap' is now decomposed into 'intensity gap' x 'vulnerability gap'; the upper-bound (gap 10) sign-flip scenario is encoded as reproducible values and calc chains rather than prose; the previously dead 'confidence' inputs now feed a confidence-discounted RSI expected harm; the empirical/normative split is attached to the normative value entries; and an enforcement false-positive (over-blocking) cost is added to the contra side of the rollback balance. Every calc-validation entry is reproduced by check.py and is order-independent of the input values. DNR 2026 additions: source-derived measured values for global news-consumption patterns across 48 markets were added separately from the existing Fermi assumptions. The DNR measures news-source use, not the share of all internet information that complies with the Press Code; no such compliance rate is inferred.",
+  "description": "Encodes the pro and contra arguments of the thread into the zukunft.com graph. A value taken from a source is marked only by that source, while a set Fermi input carries the 'assumed' qualifier, so that a set assumption can never be mistaken for a measurement. v0.0.4 additions: the dominant 'overstimulation gap' is now decomposed into 'intensity gap' x 'vulnerability gap'; the upper-bound (gap 10) sign-flip scenario is encoded as reproducible values and calc chains rather than prose; the previously dead 'confidence' inputs now feed a confidence-discounted RSI expected harm; the empirical/normative split is attached to the normative value entries; and an enforcement false-positive (over-blocking) cost is added to the contra side of the rollback balance. Every calc-validation entry is reproduced by check.py and is order-independent of the input values. DNR 2026 additions: source-derived measured values for global news-consumption patterns across 48 markets were added separately from the existing Fermi assumptions. The DNR measures news-source use, not the share of all internet information that complies with the Press Code; no such compliance rate is inferred.",
   "words": [
     {
       "name": "value"
@@ -245,34 +245,7 @@
       "name": "news"
     },
     {
-      "name": "news source"
-    },
-    {
-      "name": "social media"
-    },
-    {
-      "name": "video network"
-    },
-    {
-      "name": "news website"
-    },
-    {
-      "name": "news app"
-    },
-    {
-      "name": "AI chatbot"
-    },
-    {
       "name": "weekly"
-    },
-    {
-      "name": "main source"
-    },
-    {
-      "name": "third-party platform"
-    },
-    {
-      "name": "news video"
     },
     {
       "name": "market"
@@ -285,15 +258,45 @@
     },
     {
       "name": "misinformation"
+    },
+    {
+      "name": "source"
+    },
+    {
+      "name": "main"
+    },
+    {
+      "name": "app"
+    },
+    {
+      "name": "video"
+    },
+    {
+      "name": "website"
+    },
+    {
+      "name": "AI"
+    },
+    {
+      "name": "chatbot"
+    },
+    {
+      "name": "media"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "platform"
+    },
+    {
+      "name": "third-party"
+    },
+    {
+      "name": "network"
     }
   ],
   "triples": [
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed"
-    },
     {
       "name": "status quo",
       "from": "status",
@@ -412,7 +415,6 @@
       "description": "WHO budget conversion factor to HTP"
     },
     {
-      "name": "value of information",
       "from": "value",
       "verb": "of",
       "to": "information"
@@ -664,6 +666,60 @@
       "to": "overblocking"
     },
     {
+      "name": "news source",
+      "from": "source",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "main source",
+      "from": "source",
+      "verb": "kind of",
+      "to": "main"
+    },
+    {
+      "name": "news app",
+      "from": "app",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "news video",
+      "from": "video",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "news website",
+      "from": "website",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "AI chatbot",
+      "from": "chatbot",
+      "verb": "kind of",
+      "to": "AI"
+    },
+    {
+      "name": "social media",
+      "from": "media",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "third-party platform",
+      "from": "platform",
+      "verb": "kind of",
+      "to": "third-party"
+    },
+    {
+      "name": "video network",
+      "from": "network",
+      "verb": "of",
+      "to": "video"
+    },
+    {
       "name": "social video news source",
       "from": "news source",
       "verb": "kind of",
@@ -874,7 +930,7 @@
         "model harm weight",
         "DALY",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2",
       "source": "Christakis 2012 mouse overstimulation"
@@ -883,7 +939,7 @@
       "words": [
         "overstimulation gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "100"
     },
@@ -893,7 +949,7 @@
         "status quo",
         "year",
         "adult",
-        "assumed value"
+        "assumed"
       ],
       "number": "40"
     },
@@ -901,7 +957,7 @@
       "words": [
         "population",
         "adult",
-        "assumed value"
+        "assumed"
       ],
       "number": "80000000"
     },
@@ -912,7 +968,7 @@
         "DALY",
         "year",
         "normative",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.001",
       "note": "Normative value: the disutility of lost autonomy is a value judgement, not a measured quantity."
@@ -920,7 +976,7 @@
     {
       "words": [
         "misuse probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1"
     },
@@ -929,7 +985,7 @@
         "misuse harm",
         "HTP",
         "normative",
-        "assumed value"
+        "assumed"
       ],
       "number": "10000000",
       "note": "Normative value: the HTP cost assigned to misuse reflects a value judgement about its severity."
@@ -938,7 +994,7 @@
       "words": [
         "financial study cost",
         "CHF",
-        "assumed value"
+        "assumed"
       ],
       "number": "3500000"
     },
@@ -948,7 +1004,7 @@
         "factor",
         "CHF",
         "DALY",
-        "assumed value"
+        "assumed"
       ],
       "number": "50000",
       "source": "WHO cost-effectiveness threshold"
@@ -956,7 +1012,7 @@
     {
       "words": [
         "flip probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.5"
     },
@@ -964,7 +1020,7 @@
       "words": [
         "avoided wrong decision",
         "HTP",
-        "assumed value"
+        "assumed"
       ],
       "number": "5000000"
     },
@@ -998,7 +1054,7 @@
         "readiness effect",
         "coercion structure",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     },
@@ -1007,7 +1063,7 @@
         "readiness reach",
         "coercion structure",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     },
@@ -1016,7 +1072,7 @@
         "readiness effect",
         "identity group",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.5"
     },
@@ -1025,7 +1081,7 @@
         "readiness reach",
         "identity group",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -1034,7 +1090,7 @@
         "readiness effect",
         "direct incentive",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -1043,7 +1099,7 @@
         "readiness reach",
         "direct incentive",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -1052,7 +1108,7 @@
         "readiness effect",
         "friction reduction",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     },
@@ -1061,7 +1117,7 @@
         "readiness reach",
         "friction reduction",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     },
@@ -1069,7 +1125,7 @@
       "words": [
         "runaway probability",
         "RSI",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.05",
       "source": "Anthropic RSI warning (heise 2026)"
@@ -1078,7 +1134,7 @@
       "words": [
         "runaway harm",
         "HTP",
-        "assumed value"
+        "assumed"
       ],
       "number": "50000000"
     },
@@ -1086,7 +1142,7 @@
       "words": [
         "verification mitigation efficacy",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9"
     },
@@ -1094,7 +1150,7 @@
       "words": [
         "verification cost",
         "HTP",
-        "assumed value"
+        "assumed"
       ],
       "number": "200000"
     },
@@ -1102,7 +1158,7 @@
       "words": [
         "uncertainty",
         "overstimulation gap",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9"
     },
@@ -1110,7 +1166,7 @@
       "words": [
         "confidence",
         "model harm weight",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.7",
       "source": "Christakis 2012 mouse overstimulation"
@@ -1119,7 +1175,7 @@
       "words": [
         "confidence",
         "RSI runaway",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.3",
       "source": "Anthropic RSI warning (heise 2026)"
@@ -1128,7 +1184,7 @@
       "words": [
         "intensity gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
       "note": "Dose ratio component of the overstimulation gap."
@@ -1137,7 +1193,7 @@
       "words": [
         "vulnerability gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
       "note": "Developmental-window component. Product with intensity gap = 100, the lower-bound overstimulation gap."
@@ -1147,7 +1203,7 @@
         "overstimulation gap",
         "upper bound",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
       "note": "Upper-bound scenario: status-quo harm is 10x larger than the lower-bound case."
@@ -1156,7 +1212,7 @@
       "words": [
         "overblocking",
         "probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2",
       "note": "Assumed share of hide-actions that wrongly target legitimate content."
@@ -1167,7 +1223,7 @@
         "harm",
         "HTP",
         "normative",
-        "assumed value"
+        "assumed"
       ],
       "number": "5000000",
       "note": "Normative value: HTP cost of the suppressed legitimate information if over-blocking were certain."
@@ -1280,7 +1336,7 @@
         "overstimulation gap",
         "DALY",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "formula": "status quo harm weight formula",
       "words": [
@@ -1539,7 +1595,7 @@
         "intensity gap",
         "vulnerability gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "formula": "overstimulation gap formula",
       "words": [
@@ -1556,7 +1612,7 @@
         "upper bound",
         "DALY",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "formula": "status quo harm weight formula",
       "words": [

@@ -12,41 +12,11 @@
   "description": "Most relevant base data around global warming: the global mean surface temperature increase above the 1850-1900 pre-industrial baseline (2023 and 2024), the atmospheric CO2 concentration with the excess over the pre-industrial level derived by formula and reproduced in the calc-validation block, the annual fossil CO2 emissions, and the year-over-year CO2 growth derived by the system 'increase' formula through the time dimension (therefore not calc-validated). Base words owned by other files (Earth, degree Celsius, parts per million, tonne, year, percent, share) are re-declared name-only so the import does not overwrite their canonical description; the climate-specific words carry a Wikipedia ref plus the cleaned first sentence of the lead as the description.",
   "words": [
     {
-      "name": "global warming",
-      "description": "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.",
-      "refs": [
-        {
-          "name": "Global_warming",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "climate change",
-      "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
-      "refs": [
-        {
-          "name": "Climate_change",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "CO2",
       "description": "a colourless greenhouse gas with the formula CO2, the main driver of present-day global warming.",
       "refs": [
         {
           "name": "Carbon_dioxide",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "greenhouse gas",
-      "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
-      "refs": [
-        {
-          "name": "Greenhouse_gas",
           "type": "wikipedia"
         }
       ]
@@ -62,16 +32,6 @@
       ]
     },
     {
-      "name": "radiative forcing",
-      "description": "the change in the balance between incoming and outgoing energy in the atmosphere caused by a climate driver such as a greenhouse gas.",
-      "refs": [
-        {
-          "name": "Radiative_forcing",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "pre-industrial",
       "description": "the period before the Industrial Revolution (about 1850-1900), used as the baseline for measuring global warming"
     },
@@ -81,12 +41,6 @@
     },
     {
       "name": "Earth"
-    },
-    {
-      "name": "degree Celsius"
-    },
-    {
-      "name": "parts per million"
     },
     {
       "name": "tonne"
@@ -111,29 +65,42 @@
     {
       "name": "2024",
       "type": "time"
+    },
+    {
+      "name": "climate"
+    },
+    {
+      "name": "warmer"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "greenhouse"
+    },
+    {
+      "name": "forcing"
+    },
+    {
+      "name": "radiative"
+    },
+    {
+      "name": "celsius"
+    },
+    {
+      "name": "degree"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "parts"
     }
   ],
   "triples": [
-    {
-      "from": "global warming",
-      "verb": "is alias of",
-      "to": "climate change"
-    },
-    {
-      "from": "CO2",
-      "verb": "is a",
-      "to": "greenhouse gas"
-    },
-    {
-      "from": "greenhouse gas",
-      "verb": "can cause",
-      "to": "global warming"
-    },
-    {
-      "from": "greenhouse gas",
-      "verb": "can cause",
-      "to": "radiative forcing"
-    },
     {
       "name": "pre-industrial CO2",
       "from": "CO2",
@@ -169,6 +136,89 @@
       "from": "2024",
       "verb": "is follower of",
       "to": "2023"
+    },
+    {
+      "name": "global warming",
+      "from": "climate",
+      "verb": "can get",
+      "to": "warmer",
+      "description": "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.",
+      "refs": [
+        {
+          "name": "Global_warming",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "climate change",
+      "from": "change",
+      "verb": "of",
+      "to": "climate",
+      "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
+      "refs": [
+        {
+          "name": "Climate_change",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "greenhouse gas",
+      "from": "gas",
+      "verb": "of",
+      "to": "greenhouse",
+      "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
+      "refs": [
+        {
+          "name": "Greenhouse_gas",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "radiative forcing",
+      "from": "forcing",
+      "verb": "kind of",
+      "to": "radiative",
+      "description": "the change in the balance between incoming and outgoing energy in the atmosphere caused by a climate driver such as a greenhouse gas.",
+      "refs": [
+        {
+          "name": "Radiative_forcing",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "degree Celsius",
+      "from": "degree",
+      "verb": "of",
+      "to": "celsius"
+    },
+    {
+      "from": "parts",
+      "verb": "per",
+      "to": "million"
+    },
+    {
+      "from": "global warming",
+      "verb": "is alias of",
+      "to": "climate change"
+    },
+    {
+      "from": "CO2",
+      "verb": "is a",
+      "to": "greenhouse gas"
+    },
+    {
+      "from": "greenhouse gas",
+      "verb": "can cause",
+      "to": "global warming"
+    },
+    {
+      "from": "greenhouse gas",
+      "verb": "can cause",
+      "to": "radiative forcing"
     }
   ],
   "sources": [

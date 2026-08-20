@@ -5,43 +5,70 @@
   "description": "Affective political polarization time series from the V-Dem dataset (variable v2cacamps), the indicator underlying WTW Political Risk Index H1 2025 Figure 3. Built from the provided CSV sample. All data points are sourced, each retaining the V-Dem confidence interval.",
   "words": [
     {
-      "name": "affective polarization",
-      "description": "Degree to which a society is polarized into antagonistic political camps; V-Dem question for v2cacamps."
+      "name": "4"
     },
     {
-      "name": "polarization index value",
-      "description": "V-Dem v2cacamps expert-coded score."
+      "name": "affective"
     },
     {
-      "name": "measurement model estimate",
-      "description": "V-Dem point estimate on the interval (latent) scale, roughly -4..+4, higher = more polarized."
+      "name": "bound"
     },
     {
-      "name": "original scale 0 to 4",
-      "description": "V-Dem _osp rescaling onto the original ordinal 0..4 scale; matches the WTW Figure 3 axis."
+      "name": "coder"
     },
     {
-      "name": "confidence interval lower bound"
+      "name": "confidence",
+      "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
     },
     {
-      "name": "confidence interval upper bound"
+      "name": "estimate"
     },
     {
-      "name": "number of coders",
-      "description": "Count of country experts contributing to the estimate (v2cacamps_nr)."
+      "name": "index"
     },
     {
-      "name": "year"
+      "name": "interval"
+    },
+    {
+      "name": "lower"
+    },
+    {
+      "name": "measurement"
+    },
+    {
+      "name": "model"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "original"
+    },
+    {
+      "name": "polarization"
+    },
+    {
+      "name": "scale"
+    },
+    {
+      "name": "Senegal"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "upper"
     },
     {
       "name": "v2cacamps",
       "description": "V-Dem variable id for the political polarization (antagonistic camps) indicator."
     },
     {
-      "name": "Switzerland"
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
     },
     {
-      "name": "Senegal"
+      "name": "year"
     }
   ],
   "verbs": [
@@ -56,6 +83,89 @@
     }
   ],
   "triples": [
+    {
+      "name": "affective polarization",
+      "from": "polarization",
+      "verb": "kind of",
+      "to": "affective",
+      "description": "Degree to which a society is polarized into antagonistic political camps; V-Dem question for v2cacamps."
+    },
+    {
+      "name": "polarization index",
+      "from": "index",
+      "verb": "of",
+      "to": "polarization"
+    },
+    {
+      "name": "polarization index value",
+      "from": "value",
+      "verb": "of",
+      "to": "polarization index",
+      "description": "V-Dem v2cacamps expert-coded score."
+    },
+    {
+      "name": "measurement model",
+      "from": "model",
+      "verb": "of",
+      "to": "measurement"
+    },
+    {
+      "name": "measurement model estimate",
+      "from": "estimate",
+      "verb": "of",
+      "to": "measurement model",
+      "description": "V-Dem point estimate on the interval (latent) scale, roughly -4..+4, higher = more polarized."
+    },
+    {
+      "name": "original scale",
+      "from": "scale",
+      "verb": "kind of",
+      "to": "original"
+    },
+    {
+      "name": "original scale 0 to 4",
+      "from": "original scale",
+      "verb": "to",
+      "to": "4",
+      "description": "V-Dem _osp rescaling onto the original ordinal 0..4 scale; matches the WTW Figure 3 axis."
+    },
+    {
+      "name": "confidence interval",
+      "from": "interval",
+      "verb": "of",
+      "to": "confidence"
+    },
+    {
+      "name": "lower bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "lower"
+    },
+    {
+      "name": "confidence interval lower bound",
+      "from": "lower bound",
+      "verb": "of",
+      "to": "confidence interval"
+    },
+    {
+      "name": "upper bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "upper"
+    },
+    {
+      "name": "confidence interval upper bound",
+      "from": "upper bound",
+      "verb": "of",
+      "to": "confidence interval"
+    },
+    {
+      "name": "number of coders",
+      "from": "number",
+      "verb": "of",
+      "to": "coder",
+      "description": "Count of country experts contributing to the estimate (v2cacamps_nr)."
+    },
     {
       "from": "affective polarization",
       "verb": "is measured by",
@@ -96,7 +206,7 @@
           "osp": 1.777,
           "osp_codelow": 1.377,
           "osp_codehigh": 2.202,
-          "coders": 4.0
+          "coders": 4
         },
         {
           "year": 1901,
@@ -107,7 +217,7 @@
           "osp": 1.777,
           "osp_codelow": 1.377,
           "osp_codehigh": 2.202,
-          "coders": 4.0
+          "coders": 4
         },
         {
           "year": 1910,
@@ -118,7 +228,7 @@
           "osp": 1.777,
           "osp_codelow": 1.377,
           "osp_codehigh": 2.202,
-          "coders": 4.0
+          "coders": 4
         },
         {
           "year": 1920,
@@ -129,7 +239,7 @@
           "osp": 1.777,
           "osp_codelow": 1.377,
           "osp_codehigh": 2.202,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1930,
@@ -140,7 +250,7 @@
           "osp": 1.509,
           "osp_codelow": 1.114,
           "osp_codehigh": 1.903,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1940,
@@ -151,7 +261,7 @@
           "osp": 0.606,
           "osp_codelow": 0.248,
           "osp_codehigh": 0.894,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1950,
@@ -162,7 +272,7 @@
           "osp": 0.541,
           "osp_codelow": 0.152,
           "osp_codehigh": 0.775,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1951,
@@ -173,7 +283,7 @@
           "osp": 0.541,
           "osp_codelow": 0.152,
           "osp_codehigh": 0.775,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1952,
@@ -184,7 +294,7 @@
           "osp": 0.541,
           "osp_codelow": 0.152,
           "osp_codehigh": 0.775,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1953,
@@ -195,7 +305,7 @@
           "osp": 0.541,
           "osp_codelow": 0.152,
           "osp_codehigh": 0.775,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1954,
@@ -206,7 +316,7 @@
           "osp": 0.541,
           "osp_codelow": 0.152,
           "osp_codehigh": 0.775,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1955,
@@ -217,7 +327,7 @@
           "osp": 0.541,
           "osp_codelow": 0.152,
           "osp_codehigh": 0.775,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1956,
@@ -228,7 +338,7 @@
           "osp": 0.541,
           "osp_codelow": 0.152,
           "osp_codehigh": 0.775,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1957,
@@ -237,9 +347,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1958,
@@ -248,9 +358,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1959,
@@ -259,9 +369,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1960,
@@ -270,9 +380,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1961,
@@ -281,9 +391,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1962,
@@ -292,9 +402,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1963,
@@ -303,9 +413,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1964,
@@ -314,9 +424,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1965,
@@ -325,9 +435,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1966,
@@ -336,9 +446,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1967,
@@ -347,9 +457,9 @@
           "mm_codehigh": -2.608,
           "mm_sd": 0.747,
           "osp": 0.123,
-          "osp_codelow": 0.0,
+          "osp_codelow": 0,
           "osp_codehigh": 0.208,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1968,
@@ -360,7 +470,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1969,
@@ -371,7 +481,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1970,
@@ -382,7 +492,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1971,
@@ -393,7 +503,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1972,
@@ -404,7 +514,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1973,
@@ -415,7 +525,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1974,
@@ -426,7 +536,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1975,
@@ -437,7 +547,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1976,
@@ -448,7 +558,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1977,
@@ -459,7 +569,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1978,
@@ -470,7 +580,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1979,
@@ -481,7 +591,7 @@
           "osp": 0.637,
           "osp_codelow": 0.285,
           "osp_codehigh": 0.959,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1980,
@@ -492,7 +602,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1981,
@@ -503,7 +613,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1982,
@@ -514,7 +624,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1983,
@@ -525,7 +635,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1984,
@@ -536,7 +646,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1985,
@@ -547,7 +657,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1986,
@@ -558,7 +668,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1987,
@@ -569,7 +679,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1988,
@@ -580,7 +690,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1989,
@@ -591,7 +701,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1990,
@@ -602,7 +712,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1991,
@@ -613,7 +723,7 @@
           "osp": 0.482,
           "osp_codelow": 0.136,
           "osp_codehigh": 0.709,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1992,
@@ -624,7 +734,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1993,
@@ -635,7 +745,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1994,
@@ -646,7 +756,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1995,
@@ -657,7 +767,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1996,
@@ -668,7 +778,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1997,
@@ -679,7 +789,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1998,
@@ -690,7 +800,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 1999,
@@ -701,7 +811,7 @@
           "osp": 0.856,
           "osp_codelow": 0.472,
           "osp_codehigh": 1.174,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2000,
@@ -712,7 +822,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2001,
@@ -723,7 +833,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2002,
@@ -734,7 +844,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2003,
@@ -745,7 +855,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2004,
@@ -756,7 +866,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2005,
@@ -767,7 +877,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 6.0
+          "coders": 6
         },
         {
           "year": 2006,
@@ -778,7 +888,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 6.0
+          "coders": 6
         },
         {
           "year": 2007,
@@ -789,7 +899,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 6.0
+          "coders": 6
         },
         {
           "year": 2008,
@@ -800,7 +910,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 6.0
+          "coders": 6
         },
         {
           "year": 2009,
@@ -811,7 +921,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 6.0
+          "coders": 6
         },
         {
           "year": 2010,
@@ -822,7 +932,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2011,
@@ -833,7 +943,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2012,
@@ -844,7 +954,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2013,
@@ -855,7 +965,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2014,
@@ -866,7 +976,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2015,
@@ -877,7 +987,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2016,
@@ -888,7 +998,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2017,
@@ -899,7 +1009,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2018,
@@ -910,7 +1020,7 @@
           "osp": 0.841,
           "osp_codelow": 0.522,
           "osp_codehigh": 1.138,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2019,
@@ -921,7 +1031,7 @@
           "osp": 0.967,
           "osp_codelow": 0.682,
           "osp_codehigh": 1.302,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2020,
@@ -932,7 +1042,7 @@
           "osp": 0.967,
           "osp_codelow": 0.682,
           "osp_codehigh": 1.302,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2021,
@@ -943,7 +1053,7 @@
           "osp": 0.967,
           "osp_codelow": 0.682,
           "osp_codehigh": 1.302,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2022,
@@ -954,7 +1064,7 @@
           "osp": 1.177,
           "osp_codelow": 0.759,
           "osp_codehigh": 1.593,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2023,
@@ -965,7 +1075,7 @@
           "osp": 1.177,
           "osp_codelow": 0.759,
           "osp_codehigh": 1.593,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2024,
@@ -976,7 +1086,7 @@
           "osp": 1.023,
           "osp_codelow": 0.608,
           "osp_codehigh": 1.405,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2025,
@@ -987,7 +1097,7 @@
           "osp": 1.023,
           "osp_codelow": 0.608,
           "osp_codehigh": 1.405,
-          "coders": 5.0
+          "coders": 5
         }
       ]
     },
@@ -1011,7 +1121,7 @@
           "osp": 0.632,
           "osp_codelow": 0.075,
           "osp_codehigh": 0.908,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1941,
@@ -1022,7 +1132,7 @@
           "osp": 0.927,
           "osp_codelow": 0.426,
           "osp_codehigh": 1.451,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1950,
@@ -1033,7 +1143,7 @@
           "osp": 0.797,
           "osp_codelow": 0.22,
           "osp_codehigh": 1.186,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1951,
@@ -1044,7 +1154,7 @@
           "osp": 0.797,
           "osp_codelow": 0.22,
           "osp_codehigh": 1.186,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1959,
@@ -1055,7 +1165,7 @@
           "osp": 0.797,
           "osp_codelow": 0.22,
           "osp_codehigh": 1.186,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1960,
@@ -1066,7 +1176,7 @@
           "osp": 1.344,
           "osp_codelow": 0.658,
           "osp_codehigh": 1.88,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1970,
@@ -1077,7 +1187,7 @@
           "osp": 1.896,
           "osp_codelow": 1.123,
           "osp_codehigh": 2.463,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1980,
@@ -1088,7 +1198,7 @@
           "osp": 1.896,
           "osp_codelow": 1.123,
           "osp_codehigh": 2.463,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1981,
@@ -1099,7 +1209,7 @@
           "osp": 2.184,
           "osp_codelow": 1.536,
           "osp_codehigh": 2.895,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1982,
@@ -1110,7 +1220,7 @@
           "osp": 2.184,
           "osp_codelow": 1.536,
           "osp_codehigh": 2.895,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1983,
@@ -1121,7 +1231,7 @@
           "osp": 2.184,
           "osp_codelow": 1.536,
           "osp_codehigh": 2.895,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1984,
@@ -1132,7 +1242,7 @@
           "osp": 2.184,
           "osp_codelow": 1.536,
           "osp_codehigh": 2.895,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1985,
@@ -1143,7 +1253,7 @@
           "osp": 2.184,
           "osp_codelow": 1.536,
           "osp_codehigh": 2.895,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1986,
@@ -1154,7 +1264,7 @@
           "osp": 2.184,
           "osp_codelow": 1.536,
           "osp_codehigh": 2.895,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1987,
@@ -1165,7 +1275,7 @@
           "osp": 2.184,
           "osp_codelow": 1.536,
           "osp_codehigh": 2.895,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1988,
@@ -1176,7 +1286,7 @@
           "osp": 2.809,
           "osp_codelow": 2.275,
           "osp_codehigh": 3.53,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1989,
@@ -1187,7 +1297,7 @@
           "osp": 2.809,
           "osp_codelow": 2.275,
           "osp_codehigh": 3.53,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1990,
@@ -1198,7 +1308,7 @@
           "osp": 3.263,
           "osp_codelow": 2.848,
           "osp_codehigh": 3.86,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 1995,
@@ -1209,7 +1319,7 @@
           "osp": 1.734,
           "osp_codelow": 1.072,
           "osp_codehigh": 2.454,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2000,
@@ -1220,7 +1330,7 @@
           "osp": 1.245,
           "osp_codelow": 0.925,
           "osp_codehigh": 1.566,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2001,
@@ -1231,7 +1341,7 @@
           "osp": 1.245,
           "osp_codelow": 0.925,
           "osp_codehigh": 1.566,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2002,
@@ -1242,7 +1352,7 @@
           "osp": 1.245,
           "osp_codelow": 0.925,
           "osp_codehigh": 1.566,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2003,
@@ -1253,7 +1363,7 @@
           "osp": 1.245,
           "osp_codelow": 0.925,
           "osp_codehigh": 1.566,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2004,
@@ -1264,7 +1374,7 @@
           "osp": 1.245,
           "osp_codelow": 0.925,
           "osp_codehigh": 1.566,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2005,
@@ -1275,7 +1385,7 @@
           "osp": 1.245,
           "osp_codelow": 0.925,
           "osp_codehigh": 1.566,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2006,
@@ -1286,7 +1396,7 @@
           "osp": 1.245,
           "osp_codelow": 0.925,
           "osp_codehigh": 1.566,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2007,
@@ -1297,7 +1407,7 @@
           "osp": 1.314,
           "osp_codelow": 1.021,
           "osp_codehigh": 1.644,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2008,
@@ -1308,7 +1418,7 @@
           "osp": 1.314,
           "osp_codelow": 1.021,
           "osp_codehigh": 1.644,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2009,
@@ -1319,7 +1429,7 @@
           "osp": 1.26,
           "osp_codelow": 0.968,
           "osp_codehigh": 1.622,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2010,
@@ -1330,7 +1440,7 @@
           "osp": 1.26,
           "osp_codelow": 0.968,
           "osp_codehigh": 1.622,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2011,
@@ -1341,7 +1451,7 @@
           "osp": 1.37,
           "osp_codelow": 1.111,
           "osp_codehigh": 1.717,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2012,
@@ -1352,7 +1462,7 @@
           "osp": 1.439,
           "osp_codelow": 1.158,
           "osp_codehigh": 1.731,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2013,
@@ -1363,7 +1473,7 @@
           "osp": 1.346,
           "osp_codelow": 1.075,
           "osp_codehigh": 1.697,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2014,
@@ -1374,7 +1484,7 @@
           "osp": 1.346,
           "osp_codelow": 1.075,
           "osp_codehigh": 1.697,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2015,
@@ -1385,7 +1495,7 @@
           "osp": 1.346,
           "osp_codelow": 1.075,
           "osp_codehigh": 1.697,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2016,
@@ -1396,7 +1506,7 @@
           "osp": 1.527,
           "osp_codelow": 1.255,
           "osp_codehigh": 1.75,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2017,
@@ -1407,7 +1517,7 @@
           "osp": 1.527,
           "osp_codelow": 1.255,
           "osp_codehigh": 1.75,
-          "coders": 11.0
+          "coders": 11
         },
         {
           "year": 2018,
@@ -1418,7 +1528,7 @@
           "osp": 1.527,
           "osp_codelow": 1.255,
           "osp_codehigh": 1.75,
-          "coders": 12.0
+          "coders": 12
         },
         {
           "year": 2019,
@@ -1429,7 +1539,7 @@
           "osp": 1.527,
           "osp_codelow": 1.255,
           "osp_codehigh": 1.75,
-          "coders": 12.0
+          "coders": 12
         },
         {
           "year": 2020,
@@ -1440,7 +1550,7 @@
           "osp": 1.503,
           "osp_codelow": 1.254,
           "osp_codehigh": 1.746,
-          "coders": 12.0
+          "coders": 12
         },
         {
           "year": 2021,
@@ -1451,7 +1561,7 @@
           "osp": 2.194,
           "osp_codelow": 1.986,
           "osp_codehigh": 2.416,
-          "coders": 10.0
+          "coders": 10
         },
         {
           "year": 2022,
@@ -1462,7 +1572,7 @@
           "osp": 2.187,
           "osp_codelow": 1.958,
           "osp_codehigh": 2.381,
-          "coders": 8.0
+          "coders": 8
         },
         {
           "year": 2023,
@@ -1473,7 +1583,7 @@
           "osp": 2.312,
           "osp_codelow": 2.082,
           "osp_codehigh": 2.511,
-          "coders": 7.0
+          "coders": 7
         },
         {
           "year": 2024,
@@ -1484,7 +1594,7 @@
           "osp": 2.175,
           "osp_codelow": 1.895,
           "osp_codehigh": 2.471,
-          "coders": 5.0
+          "coders": 5
         },
         {
           "year": 2025,
@@ -1495,7 +1605,7 @@
           "osp": 2.175,
           "osp_codelow": 1.895,
           "osp_codehigh": 2.471,
-          "coders": 5.0
+          "coders": 5
         }
       ]
     }

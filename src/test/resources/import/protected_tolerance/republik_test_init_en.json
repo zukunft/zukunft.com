@@ -1,113 +1,273 @@
 {
   "words": [
     {
-      "id": "w_annoyance_test",
-      "name": "Annoyance Test Republik",
-      "description": "Tactic: deliberately irritate the publishers to trigger an open-source implementation of one-click-hide"
+      "name": "annoyance"
     },
     {
-      "id": "w_one_click_hide",
-      "name": "One-Click-Hide",
+      "name": "assumed"
+    },
+    {
+      "name": "attempt"
+    },
+    {
+      "name": "bus"
+    },
+    {
+      "name": "confidence",
+      "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "failure"
+    },
+    {
+      "name": "goal"
+    },
+    {
+      "name": "implementation"
+    },
+    {
+      "name": "one-click-hide",
       "description": "Feature that hides a contribution via a single reversible click"
     },
     {
-      "id": "w_plato_goal",
-      "name": "Plato Goal",
-      "description": "Transmission of the idea to the next generation as the actual addressee, not majority persuasion"
+      "name": "Plato"
     },
     {
-      "id": "w_p_publishers_build",
-      "name": "P(publishers implement | annoyed)",
-      "description": "Probability that publishers enable the feature in response to irritation"
+      "name": "probability"
     },
     {
-      "id": "w_p_throttle",
-      "name": "P(publishers throttle | annoyed)",
-      "description": "Probability of the competing cheaper reaction: ignore or limit the user"
+      "name": "publisher"
     },
     {
-      "id": "w_implementation_cost",
-      "name": "Implementation Cost",
-      "description": "Effort for publishers, given an open-source PR is supplied by Timon"
+      "name": "rate"
     },
     {
-      "id": "w_ensemble_failure_rate",
-      "name": "Single-Attempt Failure Rate",
-      "description": "Share of individual tactics in a portfolio that fail on their own"
+      "name": "Republik",
+      "description": "the online newspaper Republik"
     },
     {
-      "id": "w_bus_factor",
-      "name": "Bus Factor zukunft.com",
-      "description": "Number of people whose loss would halt the project"
+      "name": "single"
+    },
+    {
+      "name": "test"
+    },
+    {
+      "name": "throttling",
+      "description": "ignoring or limiting the user instead of implementing"
+    },
+    {
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
+    },
+    {
+      "name": "zukunft.com"
     }
   ],
   "values": [
     {
-      "word": "w_implementation_cost",
+      "words": [
+        "implementation cost",
+        "assumed"
+      ],
       "value": 1,
       "unit": "click (merge of a finished PR)",
-      "type": "assumed value",
-      "confidence": 0.6,
-      "note_ref": "Assumption: PR is mergeable and reversible; real cost includes review, UX, abuse vetting"
+      "description": "Assumption: PR is mergeable and reversible; real cost includes review, UX, abuse vetting"
     },
     {
-      "word": "w_p_publishers_build",
+      "words": [
+        "implementation cost",
+        "confidence value"
+      ],
+      "value": 0.6
+    },
+    {
+      "words": [
+        "P(publishers implement | annoyed)",
+        "assumed"
+      ],
       "value": 0.08,
       "unit": "probability",
-      "type": "assumed value",
-      "confidence": 0.3,
-      "note_ref": "Claude's estimate; revisable upward given the open-source PR, since building is no longer the most expensive option"
+      "description": "Claude's estimate; revisable upward given the open-source PR, since building is no longer the most expensive option"
     },
     {
-      "word": "w_p_throttle",
+      "words": [
+        "P(publishers implement | annoyed)",
+        "confidence value"
+      ],
+      "value": 0.3
+    },
+    {
+      "words": [
+        "P(publishers throttle | annoyed)",
+        "assumed"
+      ],
       "value": 0.55,
       "unit": "probability",
-      "type": "assumed value",
-      "confidence": 0.3,
-      "note_ref": "Competing cheaper reaction; Moos supplies the justification for it free of charge"
+      "description": "Competing cheaper reaction; Moos supplies the justification for it free of charge"
     },
     {
-      "word": "w_ensemble_failure_rate",
+      "words": [
+        "P(publishers throttle | annoyed)",
+        "confidence value"
+      ],
+      "value": 0.3
+    },
+    {
+      "words": [
+        "Single-Attempt Failure Rate",
+        "assumed"
+      ],
       "value": 0.9,
       "unit": "share",
-      "type": "assumed value",
-      "confidence": 0.4,
-      "note_ref": "Timon's own estimate: very high failure probability per single attempt, hence a portfolio is required"
+      "description": "Timon's own estimate: very high failure probability per single attempt, hence a portfolio is required"
     },
     {
-      "word": "w_bus_factor",
+      "words": [
+        "Single-Attempt Failure Rate",
+        "confidence value"
+      ],
+      "value": 0.4
+    },
+    {
+      "words": [
+        "Bus Factor zukunft.com",
+        "assumed"
+      ],
       "value": 1,
       "unit": "persons",
-      "type": "assumed value",
-      "confidence": 0.7,
-      "note_ref": "Father-son transmission nominally raises this to 2 but remains structurally a single point of failure until an external collaborator joins"
+      "description": "Father-son transmission nominally raises this to 2 but remains structurally a single point of failure until an external collaborator joins"
+    },
+    {
+      "words": [
+        "Bus Factor zukunft.com",
+        "confidence value"
+      ],
+      "value": 0.7
     }
   ],
   "triples": [
     {
-      "from": "w_annoyance_test",
+      "name": "bus factor",
+      "from": "factor",
+      "verb": "of",
+      "to": "bus"
+    },
+    {
+      "name": "implementation cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "implementation",
+      "description": "Effort for publishers, given an open-source PR is supplied by Timon"
+    },
+    {
+      "name": "annoyance test",
+      "from": "test",
+      "verb": "kind of",
+      "to": "annoyance"
+    },
+    {
+      "name": "Annoyance Test Republik",
+      "from": "annoyance test",
+      "verb": "of",
+      "to": "Republik",
+      "description": "Tactic: deliberately irritate the publishers to trigger an open-source implementation of one-click-hide"
+    },
+    {
+      "name": "Plato Goal",
+      "from": "goal",
+      "verb": "of",
+      "to": "Plato",
+      "description": "Transmission of the idea to the next generation as the actual addressee, not majority persuasion"
+    },
+    {
+      "name": "publisher implementation",
+      "from": "implementation",
+      "verb": "of",
+      "to": "publisher"
+    },
+    {
+      "name": "P(publishers implement | annoyed)",
+      "from": "probability",
+      "verb": "of",
+      "to": "publisher implementation",
+      "description": "Probability that publishers enable the feature in response to irritation, i.e. under the annoyed condition"
+    },
+    {
+      "name": "publisher throttling",
+      "from": "throttling",
+      "verb": "of",
+      "to": "publisher"
+    },
+    {
+      "name": "P(publishers throttle | annoyed)",
+      "from": "probability",
+      "verb": "of",
+      "to": "publisher throttling",
+      "description": "Probability of the competing cheaper reaction under the annoyed condition: ignore or limit the user"
+    },
+    {
+      "name": "single attempt",
+      "from": "attempt",
+      "verb": "kind of",
+      "to": "single"
+    },
+    {
+      "name": "single-attempt failure rate",
+      "from": "failure",
+      "verb": "of",
+      "to": "single attempt"
+    },
+    {
+      "name": "Single-Attempt Failure Rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "single-attempt failure rate",
+      "description": "Share of individual tactics in a portfolio that fail on their own"
+    },
+    {
+      "name": "Bus Factor zukunft.com",
+      "from": "bus factor",
+      "verb": "of",
+      "to": "zukunft.com",
+      "description": "Number of people whose loss would halt the project"
+    },
+    {
+      "name": "confidence value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "confidence",
+      "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
+    },
+    {
+      "from": "Annoyance Test Republik",
       "verb": "is single attempt in",
-      "to": "w_ensemble_failure_rate"
+      "to": "Single-Attempt Failure Rate"
     },
     {
-      "from": "w_annoyance_test",
+      "from": "Annoyance Test Republik",
       "verb": "aims to trigger",
-      "to": "w_one_click_hide"
+      "to": "one-click-hide"
     },
     {
-      "from": "w_implementation_cost",
+      "from": "implementation cost",
       "verb": "lowers barrier for",
-      "to": "w_p_publishers_build"
+      "to": "P(publishers implement | annoyed)"
     },
     {
-      "from": "w_p_throttle",
+      "from": "P(publishers throttle | annoyed)",
       "verb": "competes with",
-      "to": "w_p_publishers_build"
+      "to": "P(publishers implement | annoyed)"
     },
     {
-      "from": "w_bus_factor",
+      "from": "Bus Factor zukunft.com",
       "verb": "limits",
-      "to": "w_plato_goal"
+      "to": "Plato Goal"
     }
   ]
 }

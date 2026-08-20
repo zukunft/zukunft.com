@@ -34,7 +34,7 @@
       "name": "percent"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -83,7 +83,7 @@
         "poverty research",
         "extreme poverty",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "-0.01"
     }

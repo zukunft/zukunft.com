@@ -39,7 +39,7 @@
       "name": "count"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -110,7 +110,7 @@
       "words": [
         "argument position count",
         "fluid democracy",
-        "assumed value"
+        "assumed"
       ],
       "number": "20"
     },
@@ -118,7 +118,7 @@
       "words": [
         "solidarity compass",
         "citizen participation",
-        "assumed value"
+        "assumed"
       ],
       "number": "10"
     }

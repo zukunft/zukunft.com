@@ -3,104 +3,138 @@
   "version": "0.0.3",
   "data_version": "0.0.1",
   "time": "2026-07-11",
-  "selection": [
-    "cbam",
-    "carbon leakage",
-    "climate club"
-  ],
+  "selection": ["cbam", "carbon leakage", "climate club"],
   "description": "Why a carbon border adjustment mechanism (CBAM) is a prerequisite for effective climate policy: diverging national interests, carbon leakage evidence, and the climate club mechanism. Draft to be validated against json_structure.md.",
   "words": [
+    {"name": "2025"},
+    {"name": "2030"},
+    {"name": "adjustment"},
+    {"name": "applied"},
+    {"name": "assumed"},
+    {"name": "average"},
+    {"name": "border"},
+    {"name": "carbon"},
+    {"name": "cbam", "description": "carbon border adjustment mechanism: levy on embedded emissions of imports"},
+    {"name": "climate"},
+    {"name": "club"},
+    {"name": "CO2-eq", "description": "carbon dioxide equivalent"},
+    {"name": "coverage"},
+    {"name": "effectiveness"},
+    {"name": "free"},
+    {"name": "gap"},
+    {"name": "global"},
+    {"name": "good"},
+    {"name": "leakage"},
+    {"name": "omitted"},
+    {"name": "percent"},
+    {"name": "policy"},
+    {"name": "price"},
+    {"name": "production"},
+    {"name": "protection"},
+    {"name": "public"},
+    {"name": "rate"},
+    {"name": "riding"},
+    {"name": "ton"},
+    {"name": "USD", "description": "Is a symbol for US dollar"}
+  ],
+  "triples": [
+    {"name": "climate policy", "from": "policy", "verb": "of", "to": "climate"},
+    {"name": "policy effectiveness", "from": "effectiveness", "verb": "of", "to": "policy"},
     {
-      "name": "cbam",
-      "description": "carbon border adjustment mechanism: levy on embedded emissions of imports"
+      "name": "climate protection",
+      "from": "protection",
+      "verb": "of",
+      "to": "climate",
+      "description": "protecting the climate as the good that the policy aims at"
     },
     {
       "name": "carbon leakage",
+      "from": "leakage",
+      "verb": "of",
+      "to": "carbon",
       "description": "policy-induced shift of emissions to regions with weaker carbon regulation"
     },
     {
       "name": "carbon leakage rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "carbon leakage",
       "description": "share of avoided emissions that reappear outside the regulated region"
     },
     {
       "name": "climate club",
+      "from": "club",
+      "verb": "of",
+      "to": "climate",
       "description": "coalition with internal carbon price and trade penalties on non-participants (Nordhaus)"
     },
     {
       "name": "free riding",
+      "from": "riding",
+      "verb": "kind of",
+      "to": "free",
       "description": "benefiting from others' emission reductions without bearing abatement costs"
     },
+    {"name": "public good", "from": "good", "verb": "kind of", "to": "public"},
     {
       "name": "global public good",
+      "from": "public good",
+      "verb": "kind of",
+      "to": "global",
       "description": "good with local costs and globally distributed benefits"
     },
+    {"name": "carbon price", "from": "price", "verb": "of", "to": "carbon"},
     {
       "name": "carbon price coverage",
+      "from": "coverage",
+      "verb": "of",
+      "to": "carbon price",
       "description": "share of global GHG emissions subject to a direct carbon price"
     },
     {
       "name": "average carbon price",
+      "from": "carbon price",
+      "verb": "kind of",
+      "to": "average",
       "description": "average price of implemented direct carbon pricing instruments"
     },
     {
       "name": "production gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "production",
       "description": "excess of planned fossil fuel production over Paris-consistent pathways"
     },
-    {
-      "name": "without border adjustment",
-      "description": "scenario qualifier: no CBAM in place"
-    },
+    {"name": "border adjustment", "from": "adjustment", "verb": "of", "to": "border"},
     {
       "name": "with border adjustment",
+      "from": "border adjustment",
+      "verb": "kind of",
+      "to": "applied",
       "description": "scenario qualifier: CBAM in place"
     },
     {
-      "name": "2030"
+      "name": "without border adjustment",
+      "from": "border adjustment",
+      "verb": "kind of",
+      "to": "omitted",
+      "description": "scenario qualifier: no CBAM in place"
     },
+    {"name": "ton CO2-eq", "from": "ton", "verb": "of", "to": "CO2-eq"},
+    {"from": "USD", "verb": "per", "to": "ton CO2-eq"},
     {
-      "name": "2025"
+      "name": "climate policy effectiveness",
+      "from": "effectiveness",
+      "verb": "of",
+      "to": "climate policy",
+      "description": "share of the intended emission reduction that a climate policy actually achieves"
     },
-    {
-      "name": "percent"
-    },
-    {
-      "name": "USD per ton CO2-eq"
-    },
-    {
-      "name": "assumed value"
-    }
-  ],
-  "triples": [
-    {
-      "from": "climate protection",
-      "verb": "is a",
-      "to": "global public good"
-    },
-    {
-      "from": "global public good",
-      "verb": "can cause",
-      "to": "free riding"
-    },
-    {
-      "from": "carbon leakage",
-      "verb": "reduces",
-      "to": "climate policy effectiveness"
-    },
-    {
-      "from": "cbam",
-      "verb": "reduces",
-      "to": "carbon leakage"
-    },
-    {
-      "from": "cbam",
-      "verb": "enables",
-      "to": "climate club"
-    },
-    {
-      "from": "climate club",
-      "verb": "reduces",
-      "to": "free riding"
-    }
+    {"from": "climate protection", "verb": "is a", "to": "global public good"},
+    {"from": "global public good", "verb": "can cause", "to": "free riding"},
+    {"from": "carbon leakage", "verb": "reduces", "to": "climate policy effectiveness"},
+    {"from": "cbam", "verb": "reduces", "to": "carbon leakage"},
+    {"from": "cbam", "verb": "enables", "to": "climate club"},
+    {"from": "climate club", "verb": "reduces", "to": "free riding"}
   ],
   "sources": [
     {
@@ -131,49 +165,21 @@
   ],
   "values": [
     {
-      "words": [
-        "carbon leakage rate",
-        "without border adjustment",
-        "percent"
-      ],
+      "words": ["carbon leakage rate", "without border adjustment", "percent"],
       "number": "0.14",
       "source": "Branger Quirion 2014b",
       "description": "mean of model estimates; typical range 5-25"
     },
     {
-      "words": [
-        "carbon leakage rate",
-        "with border adjustment",
-        "percent"
-      ],
+      "words": ["carbon leakage rate", "with border adjustment", "percent"],
       "number": "0.06",
       "source": "Branger Quirion 2014b",
       "description": "mean of model estimates; typical range -5 to 15"
     },
+    {"words": ["carbon price coverage", "2025", "percent"], "number": "0.28", "source": "World Bank 2025"},
+    {"words": ["average carbon price", "2025", "USD per ton CO2-eq"], "number": "19", "source": "World Bank 2025"},
     {
-      "words": [
-        "carbon price coverage",
-        "2025",
-        "percent"
-      ],
-      "number": "0.28",
-      "source": "World Bank 2025"
-    },
-    {
-      "words": [
-        "average carbon price",
-        "2025",
-        "USD per ton CO2-eq"
-      ],
-      "number": "19",
-      "source": "World Bank 2025"
-    },
-    {
-      "words": [
-        "production gap",
-        "2030",
-        "percent"
-      ],
+      "words": ["production gap", "2030", "percent"],
       "number": "1.1",
       "source": "SEI et al. 2023",
       "description": "planned fossil fuel production above 1.5 C-consistent level; 69 above 2 C-consistent level"

@@ -261,6 +261,9 @@
     },
     {
       "name": "balance"
+    },
+    {
+      "name": "warmer"
     }
   ],
   "triples": [
@@ -365,12 +368,6 @@
       "to": "Giga"
     },
     {
-      "name": "GWh",
-      "from": "Gigawatt",
-      "verb": "per",
-      "to": "hour"
-    },
-    {
       "name": "GWh/a",
       "from": "GWh",
       "verb": "per",
@@ -438,8 +435,7 @@
     },
     {
       "name": "per year",
-      "from": "time",
-      "verb": "can be",
+      "verb": "per",
       "to": "year"
     },
     {
@@ -450,7 +446,7 @@
     },
     {
       "name": "climate gas",
-      "from": "climate",
+      "from": "gas",
       "verb": "can cause",
       "to": "warming"
     },
@@ -506,15 +502,15 @@
     },
     {
       "name": "global warming",
-      "from": "warming",
-      "verb": "kind of",
-      "to": "global"
+      "from": "climate",
+      "verb": "can get",
+      "to": "warmer"
     },
     {
       "name": "global warming potential",
-      "from": "potential",
-      "verb": "of",
-      "to": "global warming",
+      "from": "warming",
+      "verb": "can use",
+      "to": "potential",
       "description": "see Wikipedia: Global warming potential"
     },
     {
@@ -546,12 +542,6 @@
       "from": "climate gas emissions",
       "verb": "of",
       "to": "production"
-    },
-    {
-      "name": "metre per second",
-      "from": "metre",
-      "verb": "per",
-      "to": "second"
     }
   ],
   "formulas": [

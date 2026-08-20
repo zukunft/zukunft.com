@@ -3,75 +3,144 @@
     "version": "0.0.3",
     "description": "Evidence base on whether experiencing heatwaves and other extreme weather events shifts climate-change opinion, concern, pro-environmental behaviour, and support for climate policy. Central pattern: extreme weather tends to raise risk perception but rarely changes concern, behaviour, or policy support; effects are small, event-specific, and short-lived. What actually predicts policy support is perceived fairness and effectiveness, not experienced threat. All content in English per project convention. Person-neutral.",
     "pod": "zukunft.com",
-
     "words": [
+      {"name": "assumed", "type": "word"},
+      {"name": "attenuation", "type": "word"},
+      {"name": "behaviour", "type": "word"},
+      {"name": "bias", "type": "word"},
+      {"name": "climate", "type": "word"},
+      {"name": "compound", "type": "word"},
+      {"name": "concern", "type": "word"},
       {
-        "name": "extreme weather experience",
-        "description": "Direct personal exposure to an extreme weather event (heatwave, flood, fire, hurricane, severe storm) within a defined recent window before measurement.",
+        "name": "confidence",
+        "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value.",
         "type": "word"
       },
+      {"name": "disinformation", "type": "word"},
+      {"name": "effect", "type": "word"},
+      {"name": "effectiveness", "type": "word"},
+      {"name": "experience", "type": "word"},
+      {"name": "exposure", "type": "word"},
+      {"name": "extreme", "type": "word"},
+      {"name": "fairness", "type": "word"},
       {
         "name": "heatwave",
         "description": "Period of unusually hot weather persisting at least two consecutive days, defined relative to local climatological conditions (WMO). One empirical definition used: at least three consecutive days above 29 degrees Celsius daytime maximum.",
         "type": "word"
       },
+      {"name": "local", "type": "word"},
+      {"name": "optimism", "type": "word"},
+      {"name": "perceived", "type": "word"},
+      {"name": "perception", "type": "word"},
+      {"name": "policy", "type": "word"},
+      {"name": "pro-environmental", "type": "word"},
+      {"name": "reframing", "type": "word"},
+      {"name": "risk", "type": "word"},
+      {"name": "self", "type": "word"},
+      {"name": "support", "type": "word"},
+      {"name": "time", "type": "word"},
+      {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word", "type": "word"},
+      {"name": "warming", "type": "word"},
+      {"name": "weather", "type": "word"}
+    ],
+    "triples": [
+      {"name": "extreme weather", "from": "weather", "verb": "kind of", "to": "extreme"},
+      {
+        "name": "extreme weather experience",
+        "from": "experience",
+        "verb": "of",
+        "to": "extreme weather",
+        "description": "Direct personal exposure to an extreme weather event (heatwave, flood, fire, hurricane, severe storm) within a defined recent window before measurement."
+      },
       {
         "name": "risk perception",
-        "description": "A person's assessed likelihood and severity of climate-change impacts. Distinct from concern and from behaviour; can rise without either changing.",
-        "type": "word"
+        "from": "perception",
+        "verb": "of",
+        "to": "risk",
+        "description": "A person's assessed likelihood and severity of climate-change impacts. Distinct from concern and from behaviour; can rise without either changing."
       },
       {
         "name": "climate concern",
-        "description": "Degree of worry or felt seriousness about climate change. An attitudinal measure distinct from risk perception and from behaviour.",
-        "type": "word"
+        "from": "concern",
+        "verb": "of",
+        "to": "climate",
+        "description": "Degree of worry or felt seriousness about climate change. An attitudinal measure distinct from risk perception and from behaviour."
       },
       {
         "name": "pro-environmental behaviour",
-        "description": "Self-reported or observed individual actions intended to reduce environmental or climate impact.",
-        "type": "word"
+        "from": "behaviour",
+        "verb": "kind of",
+        "to": "pro-environmental",
+        "description": "Self-reported or observed individual actions intended to reduce environmental or climate impact."
       },
+      {"name": "climate policy", "from": "policy", "verb": "of", "to": "climate"},
       {
         "name": "climate policy support",
-        "description": "Stated support for climate taxes, laws, or the need for collective action. The outcome most relevant to a petition.",
-        "type": "word"
+        "from": "support",
+        "verb": "of",
+        "to": "climate policy",
+        "description": "Stated support for climate taxes, laws, or the need for collective action. The outcome most relevant to a petition."
       },
       {
         "name": "perceived fairness",
-        "description": "Belief that a climate policy distributes costs and benefits justly. Identified as a top determinant of policy support.",
-        "type": "word"
+        "from": "fairness",
+        "verb": "kind of",
+        "to": "perceived",
+        "description": "Belief that a climate policy distributes costs and benefits justly. Identified as a top determinant of policy support."
       },
       {
         "name": "perceived effectiveness",
-        "description": "Belief that a climate policy will actually achieve its intended outcome. Identified as a top determinant of policy support.",
-        "type": "word"
+        "from": "effectiveness",
+        "verb": "kind of",
+        "to": "perceived",
+        "description": "Belief that a climate policy will actually achieve its intended outcome. Identified as a top determinant of policy support."
       },
       {
         "name": "attenuation over time",
-        "description": "Tendency of any opinion effect from an extreme weather event to fade quickly after the event, rather than persist.",
-        "type": "word"
+        "from": "attenuation",
+        "verb": "in",
+        "to": "time",
+        "description": "Tendency of any opinion effect from an extreme weather event to fade quickly after the event, rather than persist."
       },
+      {"name": "optimism bias", "from": "bias", "verb": "of", "to": "optimism"},
       {
         "name": "optimism bias for self",
-        "description": "Pattern where people acknowledge rising heat risk for others while not seeing themselves as personally at risk, weakening personal motivation to act.",
-        "type": "word"
+        "from": "optimism bias",
+        "verb": "of",
+        "to": "self",
+        "description": "Pattern where people acknowledge rising heat risk for others while not seeing themselves as personally at risk, weakening personal motivation to act."
       },
+      {"name": "local warming", "from": "warming", "verb": "kind of", "to": "local"},
       {
         "name": "local warming effect",
-        "description": "Short-term tendency to believe more in global warming on days that feel unusually warm; a transient, weather-dependent belief shift rather than a durable one.",
-        "type": "word"
+        "from": "effect",
+        "verb": "of",
+        "to": "local warming",
+        "description": "Short-term tendency to believe more in global warming on days that feel unusually warm; a transient, weather-dependent belief shift rather than a durable one."
       },
       {
         "name": "compound exposure",
-        "description": "Having experienced more than one type of extreme event (e.g. both flood and heatwave), which in one study did raise concern and behaviour, unlike single-event exposure.",
-        "type": "word"
+        "from": "exposure",
+        "verb": "kind of",
+        "to": "compound",
+        "description": "Having experienced more than one type of extreme event (e.g. both flood and heatwave), which in one study did raise concern and behaviour, unlike single-event exposure."
       },
+      {"name": "climate disinformation", "from": "disinformation", "verb": "of", "to": "climate"},
       {
         "name": "climate disinformation reframing",
-        "description": "Coordinated narratives that reinterpret heatwaves as natural or exaggerated, neutralising their potential persuasive value; commonly conflates short-term weather with long-term climate.",
-        "type": "word"
+        "from": "reframing",
+        "verb": "of",
+        "to": "climate disinformation",
+        "description": "Coordinated narratives that reinterpret heatwaves as natural or exaggerated, neutralising their potential persuasive value; commonly conflates short-term weather with long-term climate."
+      },
+      {
+        "name": "confidence value",
+        "from": "value",
+        "verb": "kind of",
+        "to": "confidence",
+        "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
       }
     ],
-
     "sources": [
       {
         "name": "Lohmann & Kontoleon 2023",
@@ -110,12 +179,10 @@
         "url": "https://edmo.eu/publications/the-same-old-story-a-heat-wave-of-climate-disinformation/"
       }
     ],
-
     "values": [
       {
         "name": "heatwave experience raises risk perception",
         "words": ["heatwave", "extreme weather experience", "risk perception"],
-        
         "value": true,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is increased by",
@@ -124,17 +191,15 @@
       {
         "name": "heatwave experience does not raise climate concern on average",
         "words": ["heatwave", "climate concern"],
-        
         "value": false,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is not changed by",
         "triple": ["climate concern", "is not changed by", "heatwave experience"],
-        "notes_replaced_by_words": "No average effect on concern. The exception is compound exposure: experiencing both flood and heatwave did raise concern and behaviour. See word 'compound exposure'."
+        "notes_replaced_by_words": "No average effect on concern. The exception is compound exposure: experiencing both flood and heatwave did raise concern and behaviour. See the triple 'compound exposure'."
       },
       {
         "name": "heatwave experience does not raise pro-environmental behaviour on average",
         "words": ["heatwave", "pro-environmental behaviour"],
-        
         "value": false,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is not changed by",
@@ -143,7 +208,6 @@
       {
         "name": "compound flood-and-heatwave exposure does raise concern and behaviour",
         "words": ["compound exposure", "climate concern", "pro-environmental behaviour"],
-        
         "value": true,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is increased by",
@@ -152,28 +216,29 @@
       {
         "name": "heatwave risk-perception effect is driven by recent salient events",
         "words": ["heatwave", "risk perception", "attenuation over time"],
-        
         "value": true,
         "source": "Lohmann & Kontoleon 2023",
         "predicate": "is driven by",
         "triple": ["heatwave risk-perception effect", "is driven by", "recent salient heatwaves"],
-        "notes_replaced_by_words": "Effect attributed to the salient 2018 and 2019 summer heatwaves, indicating recency-dependence rather than a stable shift. See word 'attenuation over time'."
+        "notes_replaced_by_words": "Effect attributed to the salient 2018 and 2019 summer heatwaves, indicating recency-dependence rather than a stable shift. See the triple 'attenuation over time'."
       },
       {
         "name": "only fire exposure shifts climate belief and policy support",
         "words": ["extreme weather experience", "climate policy support"],
-        
         "value": true,
-        "confidence": 0.9,
         "source": "Visconti et al. 2024",
         "predicate": "is increased by",
         "triple": ["climate belief and need for action", "is weakly increased by", "fire exposure only"],
         "notes_replaced_by_words": "Of fires, floods, hurricanes and severe storms, only fire produced a small significant effect; the others produced none. Heatwaves were not separately tested in this study, so this is adjacent rather than direct evidence on heat."
       },
       {
+        "name": "confidence that only fire exposure shifts climate belief and policy support",
+        "words": ["extreme weather experience", "climate policy support", "confidence value"],
+        "value": 0.9
+      },
+      {
         "name": "the fire effect vanishes quickly",
         "words": ["climate policy support", "attenuation over time"],
-        
         "value": true,
         "source": "Visconti et al. 2024",
         "predicate": "is attenuated by",
@@ -182,7 +247,6 @@
       {
         "name": "flood, hurricane and severe storm exposure have no effect on opinion",
         "words": ["extreme weather experience", "climate policy support"],
-        
         "value": false,
         "source": "Visconti et al. 2024",
         "predicate": "is not changed by",
@@ -191,7 +255,6 @@
       {
         "name": "perceived fairness is a top determinant of policy support",
         "words": ["perceived fairness", "climate policy support"],
-        
         "value": true,
         "source": "Bergquist et al. 2022",
         "predicate": "is strongly predicted by",
@@ -200,7 +263,6 @@
       {
         "name": "perceived effectiveness is a top determinant of policy support",
         "words": ["perceived effectiveness", "climate policy support"],
-        
         "value": true,
         "source": "Bergquist et al. 2022",
         "predicate": "is strongly predicted by",
@@ -209,7 +271,6 @@
       {
         "name": "knowledge and demographics weakly predict policy support",
         "words": ["climate policy support"],
-        
         "value": true,
         "source": "Bergquist et al. 2022",
         "predicate": "is weakly predicted by",
@@ -219,7 +280,6 @@
       {
         "name": "warm days transiently increase belief in global warming",
         "words": ["local warming effect", "climate concern", "attenuation over time"],
-        
         "value": true,
         "source": "Zaval et al. 2014",
         "predicate": "is transiently increased by",
@@ -229,7 +289,6 @@
       {
         "name": "people see heat risk for others but not themselves",
         "words": ["optimism bias for self", "risk perception"],
-        
         "value": true,
         "source": "Howarth et al. 2025",
         "predicate": "is characterised by",
@@ -238,24 +297,25 @@
       {
         "name": "heatwaves are actively reframed by disinformation",
         "words": ["climate disinformation reframing", "heatwave"],
-        
         "value": true,
         "source": "EDMO 2025",
         "predicate": "is targeted by",
         "triple": ["heatwaves", "are targeted by", "climate disinformation reframing"],
         "notes_replaced_by_words": "Recurring narratives: scientists exaggerate, heatwaves always existed, no CO2 link. A common tactic conflates short-term weather with long-term climate. This actively neutralises the event's persuasive potential."
       },
-
       {
         "name": "experienced heat is a weak lever for climate policy compared to perceived fairness and effectiveness",
-        "words": ["heatwave", "climate policy support", "perceived fairness", "perceived effectiveness"],
-        "value_type": "assumed value",
+        "words": ["heatwave", "climate policy support", "perceived fairness", "perceived effectiveness", "assumed"],
         "value": true,
-        "confidence": 0.7,
         "source": null,
         "predicate": "is weaker than",
         "triple": ["experienced heat as a persuasion lever", "is weaker than", "perceived fairness and effectiveness"],
         "notes_replaced_by_words": "Synthesis across the measured findings: heat raises risk perception but not concern, behaviour or policy support; the strongest measured predictors of support are fairness and effectiveness. Held as an assumed value because it combines several studies into a strategic conclusion rather than resting on a single direct measurement."
+      },
+      {
+        "name": "confidence that experienced heat is a weak lever for climate policy",
+        "words": ["heatwave", "climate policy support", "perceived fairness", "perceived effectiveness", "confidence value"],
+        "value": 0.7
       }
     ]
   }

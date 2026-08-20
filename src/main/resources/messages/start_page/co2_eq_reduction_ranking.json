@@ -49,6 +49,9 @@
       "name": "climate"
     },
     {
+      "name": "warming"
+    },
+    {
       "name": "coal"
     },
     {
@@ -287,9 +290,6 @@
       "name": "utilization"
     },
     {
-      "name": "value"
-    },
-    {
       "name": "waste"
     },
     {
@@ -300,8 +300,8 @@
     {
       "name": "climate gas",
       "from": "gas",
-      "verb": "of",
-      "to": "climate",
+      "verb": "can cause",
+      "to": "warming",
       "description": "A gas that contributes to the greenhouse effect and thus to climate change."
     },
     {
@@ -349,7 +349,7 @@
     {
       "name": "expected return",
       "from": "return",
-      "verb": "kind of",
+      "verb": "can be",
       "to": "expected",
       "description": "Derived criterion: reduction potential multiplied by fulfillment probability. Unit: Gt CO2eq per year (expected value)."
     },
@@ -393,13 +393,6 @@
       "verb": "kind of",
       "to": "global",
       "description": "Global net anthropogenic greenhouse gas emissions in Gt CO2eq per year."
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed",
-      "description": "Fermi estimate by the authors, not directly taken from a source; carries a confidence value."
     },
     {
       "name": "coal phase-out",
@@ -1114,7 +1107,7 @@
         "coal phase-out",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.0
     },
@@ -1123,7 +1116,7 @@
         "coal phase-out",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 8.0
     },
@@ -1140,7 +1133,7 @@
         "coal phase-out",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2000
     },
@@ -1149,7 +1142,7 @@
         "coal phase-out",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5000
     },
@@ -1166,7 +1159,7 @@
         "coal phase-out",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -1175,7 +1168,7 @@
         "coal phase-out",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -1192,7 +1185,7 @@
         "coal phase-out",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -1201,7 +1194,7 @@
         "coal phase-out",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.4
     },
@@ -1210,7 +1203,7 @@
         "coal phase-out",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -1219,7 +1212,7 @@
         "coal phase-out",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.2
     },
@@ -1228,7 +1221,7 @@
         "methane reduction",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.0
     },
@@ -1254,7 +1247,7 @@
         "methane reduction",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -1263,7 +1256,7 @@
         "methane reduction",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -1280,7 +1273,7 @@
         "methane reduction",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -1289,7 +1282,7 @@
         "methane reduction",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -1306,7 +1299,7 @@
         "methane reduction",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.2
     },
@@ -1315,7 +1308,7 @@
         "methane reduction",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.5
     },
@@ -1324,7 +1317,7 @@
         "methane reduction",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.4
     },
@@ -1333,7 +1326,7 @@
         "methane reduction",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 35.0
     },
@@ -1342,7 +1335,7 @@
         "energy efficiency",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -1351,7 +1344,7 @@
         "energy efficiency",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5.0
     },
@@ -1368,7 +1361,7 @@
         "energy efficiency",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -1377,7 +1370,7 @@
         "energy efficiency",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3000
     },
@@ -1394,7 +1387,7 @@
         "energy efficiency",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -1403,7 +1396,7 @@
         "energy efficiency",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -1420,7 +1413,7 @@
         "energy efficiency",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -1429,7 +1422,7 @@
         "energy efficiency",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.0
     },
@@ -1438,7 +1431,7 @@
         "energy efficiency",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.33
     },
@@ -1447,7 +1440,7 @@
         "energy efficiency",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.0
     },
@@ -1456,7 +1449,7 @@
         "building renovation",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -1465,7 +1458,7 @@
         "building renovation",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -1482,7 +1475,7 @@
         "building renovation",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -1491,7 +1484,7 @@
         "building renovation",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4000
     },
@@ -1508,7 +1501,7 @@
         "building renovation",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -1517,7 +1510,7 @@
         "building renovation",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -1534,7 +1527,7 @@
         "building renovation",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.15
     },
@@ -1543,7 +1536,7 @@
         "building renovation",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.2
     },
@@ -1552,7 +1545,7 @@
         "building renovation",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.04
     },
@@ -1561,7 +1554,7 @@
         "building renovation",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.2
     },
@@ -1570,7 +1563,7 @@
         "heat pumps",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -1579,7 +1572,7 @@
         "heat pumps",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -1596,7 +1589,7 @@
         "heat pumps",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -1605,7 +1598,7 @@
         "heat pumps",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1500
     },
@@ -1622,7 +1615,7 @@
         "heat pumps",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -1631,7 +1624,7 @@
         "heat pumps",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -1648,7 +1641,7 @@
         "heat pumps",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.25
     },
@@ -1657,7 +1650,7 @@
         "heat pumps",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.2
     },
@@ -1666,7 +1659,7 @@
         "heat pumps",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.17
     },
@@ -1675,7 +1668,7 @@
         "heat pumps",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.4
     },
@@ -1684,7 +1677,7 @@
         "district heating",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -1693,7 +1686,7 @@
         "district heating",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -1710,7 +1703,7 @@
         "district heating",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 300
     },
@@ -1719,7 +1712,7 @@
         "district heating",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -1736,7 +1729,7 @@
         "district heating",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -1745,7 +1738,7 @@
         "district heating",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -1762,7 +1755,7 @@
         "district heating",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.08
     },
@@ -1771,7 +1764,7 @@
         "district heating",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.56
     },
@@ -1780,7 +1773,7 @@
         "district heating",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.08
     },
@@ -1789,7 +1782,7 @@
         "district heating",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.87
     },
@@ -1824,7 +1817,7 @@
         "solar energy",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -1833,7 +1826,7 @@
         "solar energy",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3000
     },
@@ -1850,7 +1843,7 @@
         "solar energy",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -1859,7 +1852,7 @@
         "solar energy",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.95
     },
@@ -1876,7 +1869,7 @@
         "solar energy",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.6
     },
@@ -1885,7 +1878,7 @@
         "solar energy",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.65
     },
@@ -1894,7 +1887,7 @@
         "solar energy",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.53
     },
@@ -1903,7 +1896,7 @@
         "solar energy",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.65
     },
@@ -1938,7 +1931,7 @@
         "wind energy",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1500
     },
@@ -1947,7 +1940,7 @@
         "wind energy",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3500
     },
@@ -1964,7 +1957,7 @@
         "wind energy",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -1973,7 +1966,7 @@
         "wind energy",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.9
     },
@@ -1990,7 +1983,7 @@
         "wind energy",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.47
     },
@@ -1999,7 +1992,7 @@
         "wind energy",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5.04
     },
@@ -2008,7 +2001,7 @@
         "wind energy",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.42
     },
@@ -2017,7 +2010,7 @@
         "wind energy",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.36
     },
@@ -2026,7 +2019,7 @@
         "hydropower",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -2035,7 +2028,7 @@
         "hydropower",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -2052,7 +2045,7 @@
         "hydropower",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -2061,7 +2054,7 @@
         "hydropower",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1500
     },
@@ -2078,7 +2071,7 @@
         "hydropower",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -2087,7 +2080,7 @@
         "hydropower",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -2104,7 +2097,7 @@
         "hydropower",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -2113,7 +2106,7 @@
         "hydropower",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -2122,7 +2115,7 @@
         "hydropower",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.07
     },
@@ -2131,7 +2124,7 @@
         "hydropower",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.6
     },
@@ -2140,7 +2133,7 @@
         "nuclear energy",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -2149,7 +2142,7 @@
         "nuclear energy",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.9
     },
@@ -2166,7 +2159,7 @@
         "nuclear energy",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -2175,7 +2168,7 @@
         "nuclear energy",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3000
     },
@@ -2192,7 +2185,7 @@
         "nuclear energy",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -2201,7 +2194,7 @@
         "nuclear energy",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -2218,7 +2211,7 @@
         "nuclear energy",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.03
     },
@@ -2227,7 +2220,7 @@
         "nuclear energy",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.54
     },
@@ -2236,7 +2229,7 @@
         "nuclear energy",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.01
     },
@@ -2245,7 +2238,7 @@
         "nuclear energy",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.54
     },
@@ -2254,7 +2247,7 @@
         "geothermal energy",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -2263,7 +2256,7 @@
         "geothermal energy",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -2280,7 +2273,7 @@
         "geothermal energy",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 200
     },
@@ -2289,7 +2282,7 @@
         "geothermal energy",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 800
     },
@@ -2306,7 +2299,7 @@
         "geothermal energy",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -2315,7 +2308,7 @@
         "geothermal energy",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -2332,7 +2325,7 @@
         "geothermal energy",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.04
     },
@@ -2341,7 +2334,7 @@
         "geothermal energy",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.49
     },
@@ -2350,7 +2343,7 @@
         "geothermal energy",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.05
     },
@@ -2359,7 +2352,7 @@
         "geothermal energy",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.45
     },
@@ -2368,7 +2361,7 @@
         "energy storage",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -2377,7 +2370,7 @@
         "energy storage",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -2394,7 +2387,7 @@
         "energy storage",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -2403,7 +2396,7 @@
         "energy storage",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1500
     },
@@ -2420,7 +2413,7 @@
         "energy storage",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -2429,7 +2422,7 @@
         "energy storage",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.9
     },
@@ -2446,7 +2439,7 @@
         "energy storage",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.21
     },
@@ -2455,7 +2448,7 @@
         "energy storage",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.35
     },
@@ -2464,7 +2457,7 @@
         "energy storage",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.14
     },
@@ -2473,7 +2466,7 @@
         "energy storage",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.7
     },
@@ -2482,7 +2475,7 @@
         "grid expansion",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -2491,7 +2484,7 @@
         "grid expansion",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -2508,7 +2501,7 @@
         "grid expansion",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -2517,7 +2510,7 @@
         "grid expansion",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3000
     },
@@ -2534,7 +2527,7 @@
         "grid expansion",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -2543,7 +2536,7 @@
         "grid expansion",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -2560,7 +2553,7 @@
         "grid expansion",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.25
     },
@@ -2569,7 +2562,7 @@
         "grid expansion",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.6
     },
@@ -2578,7 +2571,7 @@
         "grid expansion",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.08
     },
@@ -2587,7 +2580,7 @@
         "grid expansion",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.6
     },
@@ -2596,7 +2589,7 @@
         "electrification",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -2605,7 +2598,7 @@
         "electrification",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.0
     },
@@ -2622,7 +2615,7 @@
         "electrification",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1500
     },
@@ -2631,7 +2624,7 @@
         "electrification",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4000
     },
@@ -2648,7 +2641,7 @@
         "electrification",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -2657,7 +2650,7 @@
         "electrification",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -2674,7 +2667,7 @@
         "electrification",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -2683,7 +2676,7 @@
         "electrification",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.4
     },
@@ -2692,7 +2685,7 @@
         "electrification",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.12
     },
@@ -2701,7 +2694,7 @@
         "electrification",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.6
     },
@@ -2710,7 +2703,7 @@
         "public transport",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -2719,7 +2712,7 @@
         "public transport",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -2736,7 +2729,7 @@
         "public transport",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -2745,7 +2738,7 @@
         "public transport",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2000
     },
@@ -2762,7 +2755,7 @@
         "public transport",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -2771,7 +2764,7 @@
         "public transport",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -2788,7 +2781,7 @@
         "public transport",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.04
     },
@@ -2797,7 +2790,7 @@
         "public transport",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.35
     },
@@ -2806,7 +2799,7 @@
         "public transport",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.02
     },
@@ -2815,7 +2808,7 @@
         "public transport",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -2824,7 +2817,7 @@
         "cycling",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -2833,7 +2826,7 @@
         "cycling",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -2850,7 +2843,7 @@
         "cycling",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -2859,7 +2852,7 @@
         "cycling",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 200
     },
@@ -2876,7 +2869,7 @@
         "cycling",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -2885,7 +2878,7 @@
         "cycling",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -2902,7 +2895,7 @@
         "cycling",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.05
     },
@@ -2911,7 +2904,7 @@
         "cycling",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.24
     },
@@ -2920,7 +2913,7 @@
         "cycling",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.25
     },
@@ -2929,7 +2922,7 @@
         "cycling",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.8
     },
@@ -2938,7 +2931,7 @@
         "speed limit",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.02
     },
@@ -2947,7 +2940,7 @@
         "speed limit",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -2964,7 +2957,7 @@
         "speed limit",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1
     },
@@ -2973,7 +2966,7 @@
         "speed limit",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -2990,7 +2983,7 @@
         "speed limit",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -2999,7 +2992,7 @@
         "speed limit",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -3016,7 +3009,7 @@
         "speed limit",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.0
     },
@@ -3025,7 +3018,7 @@
         "speed limit",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.05
     },
@@ -3034,7 +3027,7 @@
         "speed limit",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -3043,7 +3036,7 @@
         "speed limit",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50.0
     },
@@ -3052,7 +3045,7 @@
         "carbon price",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -3061,7 +3054,7 @@
         "carbon price",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.0
     },
@@ -3078,7 +3071,7 @@
         "carbon price",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -3087,7 +3080,7 @@
         "carbon price",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 300
     },
@@ -3104,7 +3097,7 @@
         "carbon price",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -3113,7 +3106,7 @@
         "carbon price",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -3130,7 +3123,7 @@
         "carbon price",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -3139,7 +3132,7 @@
         "carbon price",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.6
     },
@@ -3148,7 +3141,7 @@
         "carbon price",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -3157,7 +3150,7 @@
         "carbon price",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 72.0
     },
@@ -3166,7 +3159,7 @@
         "climate dividend",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -3175,7 +3168,7 @@
         "climate dividend",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -3192,7 +3185,7 @@
         "climate dividend",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -3201,7 +3194,7 @@
         "climate dividend",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -3218,7 +3211,7 @@
         "climate dividend",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -3227,7 +3220,7 @@
         "climate dividend",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -3244,7 +3237,7 @@
         "climate dividend",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.08
     },
@@ -3253,7 +3246,7 @@
         "climate dividend",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -3262,7 +3255,7 @@
         "climate dividend",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.6
     },
@@ -3271,7 +3264,7 @@
         "climate dividend",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 70.0
     },
@@ -3280,7 +3273,7 @@
         "carbon border tariff",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -3289,7 +3282,7 @@
         "carbon border tariff",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -3306,7 +3299,7 @@
         "carbon border tariff",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -3315,7 +3308,7 @@
         "carbon border tariff",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -3332,7 +3325,7 @@
         "carbon border tariff",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -3341,7 +3334,7 @@
         "carbon border tariff",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -3358,7 +3351,7 @@
         "carbon border tariff",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -3367,7 +3360,7 @@
         "carbon border tariff",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.4
     },
@@ -3376,7 +3369,7 @@
         "carbon border tariff",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -3385,7 +3378,7 @@
         "carbon border tariff",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 140.0
     },
@@ -3394,7 +3387,7 @@
         "emissions trading",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -3403,7 +3396,7 @@
         "emissions trading",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.0
     },
@@ -3420,7 +3413,7 @@
         "emissions trading",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 20
     },
@@ -3429,7 +3422,7 @@
         "emissions trading",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 200
     },
@@ -3446,7 +3439,7 @@
         "emissions trading",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -3455,7 +3448,7 @@
         "emissions trading",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -3472,7 +3465,7 @@
         "emissions trading",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -3481,7 +3474,7 @@
         "emissions trading",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.2
     },
@@ -3490,7 +3483,7 @@
         "emissions trading",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.5
     },
@@ -3499,7 +3492,7 @@
         "emissions trading",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 160.0
     },
@@ -3508,7 +3501,7 @@
         "electric mobility",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -3517,7 +3510,7 @@
         "electric mobility",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.0
     },
@@ -3534,7 +3527,7 @@
         "electric mobility",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -3543,7 +3536,7 @@
         "electric mobility",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3000
     },
@@ -3560,7 +3553,7 @@
         "electric mobility",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -3569,7 +3562,7 @@
         "electric mobility",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.9
     },
@@ -3586,7 +3579,7 @@
         "electric mobility",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -3595,7 +3588,7 @@
         "electric mobility",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.7
     },
@@ -3604,7 +3597,7 @@
         "electric mobility",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.23
     },
@@ -3613,7 +3606,7 @@
         "electric mobility",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.7
     },
@@ -3622,7 +3615,7 @@
         "freight transport",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -3631,7 +3624,7 @@
         "freight transport",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.2
     },
@@ -3648,7 +3641,7 @@
         "freight transport",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -3657,7 +3650,7 @@
         "freight transport",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1500
     },
@@ -3674,7 +3667,7 @@
         "freight transport",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -3683,7 +3676,7 @@
         "freight transport",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -3700,7 +3693,7 @@
         "freight transport",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.12
     },
@@ -3709,7 +3702,7 @@
         "freight transport",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.84
     },
@@ -3718,7 +3711,7 @@
         "freight transport",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.08
     },
@@ -3727,7 +3720,7 @@
         "freight transport",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.68
     },
@@ -3736,7 +3729,7 @@
         "circular economy",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -3745,7 +3738,7 @@
         "circular economy",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.5
     },
@@ -3762,7 +3755,7 @@
         "circular economy",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 300
     },
@@ -3771,7 +3764,7 @@
         "circular economy",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -3788,7 +3781,7 @@
         "circular economy",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -3797,7 +3790,7 @@
         "circular economy",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -3814,7 +3807,7 @@
         "circular economy",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -3823,7 +3816,7 @@
         "circular economy",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.75
     },
@@ -3832,7 +3825,7 @@
         "circular economy",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -3841,7 +3834,7 @@
         "circular economy",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5.83
     },
@@ -3850,7 +3843,7 @@
         "recycling",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -3859,7 +3852,7 @@
         "recycling",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -3876,7 +3869,7 @@
         "recycling",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -3885,7 +3878,7 @@
         "recycling",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -3902,7 +3895,7 @@
         "recycling",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -3911,7 +3904,7 @@
         "recycling",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -3928,7 +3921,7 @@
         "recycling",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.05
     },
@@ -3937,7 +3930,7 @@
         "recycling",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -3946,7 +3939,7 @@
         "recycling",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -3955,7 +3948,7 @@
         "recycling",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.0
     },
@@ -3964,7 +3957,7 @@
         "material efficiency",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -3973,7 +3966,7 @@
         "material efficiency",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.9
     },
@@ -3990,7 +3983,7 @@
         "material efficiency",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -3999,7 +3992,7 @@
         "material efficiency",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -4016,7 +4009,7 @@
         "material efficiency",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -4025,7 +4018,7 @@
         "material efficiency",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -4042,7 +4035,7 @@
         "material efficiency",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.08
     },
@@ -4051,7 +4044,7 @@
         "material efficiency",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.63
     },
@@ -4060,7 +4053,7 @@
         "material efficiency",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.16
     },
@@ -4069,7 +4062,7 @@
         "material efficiency",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.3
     },
@@ -4078,7 +4071,7 @@
         "sufficiency",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -4087,7 +4080,7 @@
         "sufficiency",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -4104,7 +4097,7 @@
         "sufficiency",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -4113,7 +4106,7 @@
         "sufficiency",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -4130,7 +4123,7 @@
         "sufficiency",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -4139,7 +4132,7 @@
         "sufficiency",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -4156,7 +4149,7 @@
         "sufficiency",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -4165,7 +4158,7 @@
         "sufficiency",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -4174,7 +4167,7 @@
         "sufficiency",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -4183,7 +4176,7 @@
         "sufficiency",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100.0
     },
@@ -4192,7 +4185,7 @@
         "afforestation",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -4201,7 +4194,7 @@
         "afforestation",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.0
     },
@@ -4218,7 +4211,7 @@
         "afforestation",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -4227,7 +4220,7 @@
         "afforestation",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -4244,7 +4237,7 @@
         "afforestation",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -4253,7 +4246,7 @@
         "afforestation",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -4270,7 +4263,7 @@
         "afforestation",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -4279,7 +4272,7 @@
         "afforestation",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.8
     },
@@ -4288,7 +4281,7 @@
         "afforestation",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -4297,7 +4290,7 @@
         "afforestation",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 28.0
     },
@@ -4306,7 +4299,7 @@
         "peatland rewetting",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4315,7 +4308,7 @@
         "peatland rewetting",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.9
     },
@@ -4332,7 +4325,7 @@
         "peatland rewetting",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 30
     },
@@ -4341,7 +4334,7 @@
         "peatland rewetting",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 150
     },
@@ -4358,7 +4351,7 @@
         "peatland rewetting",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4367,7 +4360,7 @@
         "peatland rewetting",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -4384,7 +4377,7 @@
         "peatland rewetting",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.09
     },
@@ -4393,7 +4386,7 @@
         "peatland rewetting",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.54
     },
@@ -4402,7 +4395,7 @@
         "peatland rewetting",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -4411,7 +4404,7 @@
         "peatland rewetting",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 18.0
     },
@@ -4420,7 +4413,7 @@
         "soil carbon buildup",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -4429,7 +4422,7 @@
         "soil carbon buildup",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.5
     },
@@ -4446,7 +4439,7 @@
         "soil carbon buildup",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -4455,7 +4448,7 @@
         "soil carbon buildup",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 300
     },
@@ -4472,7 +4465,7 @@
         "soil carbon buildup",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4481,7 +4474,7 @@
         "soil carbon buildup",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -4498,7 +4491,7 @@
         "soil carbon buildup",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.15
     },
@@ -4507,7 +4500,7 @@
         "soil carbon buildup",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -4516,7 +4509,7 @@
         "soil carbon buildup",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -4525,7 +4518,7 @@
         "soil carbon buildup",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 30.0
     },
@@ -4534,7 +4527,7 @@
         "carbon capture and storage",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4543,7 +4536,7 @@
         "carbon capture and storage",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -4560,7 +4553,7 @@
         "carbon capture and storage",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -4569,7 +4562,7 @@
         "carbon capture and storage",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2000
     },
@@ -4586,7 +4579,7 @@
         "carbon capture and storage",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -4595,7 +4588,7 @@
         "carbon capture and storage",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -4612,7 +4605,7 @@
         "carbon capture and storage",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.06
     },
@@ -4621,7 +4614,7 @@
         "carbon capture and storage",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.75
     },
@@ -4630,7 +4623,7 @@
         "carbon capture and storage",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.03
     },
@@ -4639,7 +4632,7 @@
         "carbon capture and storage",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -4648,7 +4641,7 @@
         "carbon capture and utilization",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.05
     },
@@ -4657,7 +4650,7 @@
         "carbon capture and utilization",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4674,7 +4667,7 @@
         "carbon capture and utilization",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -4683,7 +4676,7 @@
         "carbon capture and utilization",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -4700,7 +4693,7 @@
         "carbon capture and utilization",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -4709,7 +4702,7 @@
         "carbon capture and utilization",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -4726,7 +4719,7 @@
         "carbon capture and utilization",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.01
     },
@@ -4735,7 +4728,7 @@
         "carbon capture and utilization",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.15
     },
@@ -4744,7 +4737,7 @@
         "carbon capture and utilization",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.02
     },
@@ -4753,7 +4746,7 @@
         "carbon capture and utilization",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -4762,7 +4755,7 @@
         "green hydrogen",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4771,7 +4764,7 @@
         "green hydrogen",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -4788,7 +4781,7 @@
         "green hydrogen",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -4797,7 +4790,7 @@
         "green hydrogen",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2000
     },
@@ -4814,7 +4807,7 @@
         "green hydrogen",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4823,7 +4816,7 @@
         "green hydrogen",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -4840,7 +4833,7 @@
         "green hydrogen",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.09
     },
@@ -4849,7 +4842,7 @@
         "green hydrogen",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.9
     },
@@ -4858,7 +4851,7 @@
         "green hydrogen",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.04
     },
@@ -4867,7 +4860,7 @@
         "green hydrogen",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.8
     },
@@ -4876,7 +4869,7 @@
         "sustainable agriculture",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -4885,7 +4878,7 @@
         "sustainable agriculture",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -4902,7 +4895,7 @@
         "sustainable agriculture",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 200
     },
@@ -4911,7 +4904,7 @@
         "sustainable agriculture",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 800
     },
@@ -4928,7 +4921,7 @@
         "sustainable agriculture",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -4937,7 +4930,7 @@
         "sustainable agriculture",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -4954,7 +4947,7 @@
         "sustainable agriculture",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.15
     },
@@ -4963,7 +4956,7 @@
         "sustainable agriculture",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.2
     },
@@ -4972,7 +4965,7 @@
         "sustainable agriculture",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.19
     },
@@ -4981,7 +4974,7 @@
         "sustainable agriculture",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.0
     },
@@ -4990,7 +4983,7 @@
         "reduced meat consumption",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -4999,7 +4992,7 @@
         "reduced meat consumption",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.7
     },
@@ -5016,7 +5009,7 @@
         "reduced meat consumption",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -5025,7 +5018,7 @@
         "reduced meat consumption",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -5042,7 +5035,7 @@
         "reduced meat consumption",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -5051,7 +5044,7 @@
         "reduced meat consumption",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5068,7 +5061,7 @@
         "reduced meat consumption",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -5077,7 +5070,7 @@
         "reduced meat consumption",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.35
     },
@@ -5086,7 +5079,7 @@
         "reduced meat consumption",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -5095,7 +5088,7 @@
         "reduced meat consumption",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 135.0
     },
@@ -5104,7 +5097,7 @@
         "food waste reduction",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5113,7 +5106,7 @@
         "food waste reduction",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -5130,7 +5123,7 @@
         "food waste reduction",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -5139,7 +5132,7 @@
         "food waste reduction",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 300
     },
@@ -5156,7 +5149,7 @@
         "food waste reduction",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -5165,7 +5158,7 @@
         "food waste reduction",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -5182,7 +5175,7 @@
         "food waste reduction",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -5191,7 +5184,7 @@
         "food waste reduction",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.4
     },
@@ -5200,7 +5193,7 @@
         "food waste reduction",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.67
     },
@@ -5209,7 +5202,7 @@
         "food waste reduction",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 28.0
     },
@@ -5218,7 +5211,7 @@
         "aviation emission reduction",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -5227,7 +5220,7 @@
         "aviation emission reduction",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -5244,7 +5237,7 @@
         "aviation emission reduction",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 200
     },
@@ -5253,7 +5246,7 @@
         "aviation emission reduction",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 800
     },
@@ -5270,7 +5263,7 @@
         "aviation emission reduction",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -5279,7 +5272,7 @@
         "aviation emission reduction",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5296,7 +5289,7 @@
         "aviation emission reduction",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.04
     },
@@ -5305,7 +5298,7 @@
         "aviation emission reduction",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5314,7 +5307,7 @@
         "aviation emission reduction",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.05
     },
@@ -5323,7 +5316,7 @@
         "aviation emission reduction",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -5332,7 +5325,7 @@
         "emission standards",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5341,7 +5334,7 @@
         "emission standards",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -5358,7 +5351,7 @@
         "emission standards",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5
     },
@@ -5367,7 +5360,7 @@
         "emission standards",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -5384,7 +5377,7 @@
         "emission standards",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -5393,7 +5386,7 @@
         "emission standards",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.85
     },
@@ -5410,7 +5403,7 @@
         "emission standards",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5419,7 +5412,7 @@
         "emission standards",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.7
     },
@@ -5428,7 +5421,7 @@
         "emission standards",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.0
     },
@@ -5437,7 +5430,7 @@
         "emission standards",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 340.0
     },
@@ -5446,7 +5439,7 @@
         "research",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5455,7 +5448,7 @@
         "research",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.0
     },
@@ -5472,7 +5465,7 @@
         "research",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -5481,7 +5474,7 @@
         "research",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 500
     },
@@ -5498,7 +5491,7 @@
         "research",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5507,7 +5500,7 @@
         "research",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -5524,7 +5517,7 @@
         "research",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.25
     },
@@ -5533,7 +5526,7 @@
         "research",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.4
     },
@@ -5542,7 +5535,7 @@
         "research",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5551,7 +5544,7 @@
         "research",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 24.0
     },
@@ -5560,7 +5553,7 @@
         "innovation",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5569,7 +5562,7 @@
         "innovation",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.0
     },
@@ -5586,7 +5579,7 @@
         "innovation",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 200
     },
@@ -5595,7 +5588,7 @@
         "innovation",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 800
     },
@@ -5612,7 +5605,7 @@
         "innovation",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5621,7 +5614,7 @@
         "innovation",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.8
     },
@@ -5638,7 +5631,7 @@
         "innovation",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.25
     },
@@ -5647,7 +5640,7 @@
         "innovation",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.4
     },
@@ -5656,7 +5649,7 @@
         "innovation",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.31
     },
@@ -5665,7 +5658,7 @@
         "innovation",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 12.0
     },
@@ -5674,7 +5667,7 @@
         "climate finance",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -5683,7 +5676,7 @@
         "climate finance",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.0
     },
@@ -5700,7 +5693,7 @@
         "climate finance",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 100
     },
@@ -5709,7 +5702,7 @@
         "climate finance",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1000
     },
@@ -5726,7 +5719,7 @@
         "climate finance",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5735,7 +5728,7 @@
         "climate finance",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -5752,7 +5745,7 @@
         "climate finance",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5761,7 +5754,7 @@
         "climate finance",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.4
     },
@@ -5770,7 +5763,7 @@
         "climate finance",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5779,7 +5772,7 @@
         "climate finance",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 24.0
     },
@@ -5788,7 +5781,7 @@
         "supply chain laws",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -5797,7 +5790,7 @@
         "supply chain laws",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5814,7 +5807,7 @@
         "supply chain laws",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5
     },
@@ -5823,7 +5816,7 @@
         "supply chain laws",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -5840,7 +5833,7 @@
         "supply chain laws",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5849,7 +5842,7 @@
         "supply chain laws",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -5866,7 +5859,7 @@
         "supply chain laws",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.03
     },
@@ -5875,7 +5868,7 @@
         "supply chain laws",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5884,7 +5877,7 @@
         "supply chain laws",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.6
     },
@@ -5893,7 +5886,7 @@
         "supply chain laws",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 60.0
     },
@@ -5902,7 +5895,7 @@
         "fossil subsidy removal",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -5911,7 +5904,7 @@
         "fossil subsidy removal",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.0
     },
@@ -5936,7 +5929,7 @@
         "fossil subsidy removal",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1
     },
@@ -5945,7 +5938,7 @@
         "fossil subsidy removal",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 20
     },
@@ -5962,7 +5955,7 @@
         "fossil subsidy removal",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -5971,7 +5964,7 @@
         "fossil subsidy removal",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.5
     },
@@ -5988,7 +5981,7 @@
         "fossil subsidy removal",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -5997,7 +5990,7 @@
         "fossil subsidy removal",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -6006,7 +5999,7 @@
         "fossil subsidy removal",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 15.0
     },
@@ -6015,7 +6008,7 @@
         "fossil subsidy removal",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1500.0
     },
@@ -6024,7 +6017,7 @@
         "education",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.3
     },
@@ -6033,7 +6026,7 @@
         "education",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2.0
     },
@@ -6050,7 +6043,7 @@
         "education",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 50
     },
@@ -6059,7 +6052,7 @@
         "education",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 300
     },
@@ -6076,7 +6069,7 @@
         "education",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -6085,7 +6078,7 @@
         "education",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -6102,7 +6095,7 @@
         "education",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.12
     },
@@ -6111,7 +6104,7 @@
         "education",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.4
     },
@@ -6120,7 +6113,7 @@
         "education",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -6129,7 +6122,7 @@
         "education",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 28.0
     },
@@ -6138,7 +6131,7 @@
         "digitalization",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.2
     },
@@ -6147,7 +6140,7 @@
         "digitalization",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.2
     },
@@ -6164,7 +6157,7 @@
         "digitalization",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 200
     },
@@ -6173,7 +6166,7 @@
         "digitalization",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 800
     },
@@ -6190,7 +6183,7 @@
         "digitalization",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -6199,7 +6192,7 @@
         "digitalization",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -6216,7 +6209,7 @@
         "digitalization",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.08
     },
@@ -6225,7 +6218,7 @@
         "digitalization",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.84
     },
@@ -6234,7 +6227,7 @@
         "digitalization",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.1
     },
@@ -6243,7 +6236,7 @@
         "digitalization",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4.2
     },
@@ -6252,7 +6245,7 @@
         "international agreements",
         "reduction potential",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.0
     },
@@ -6261,7 +6254,7 @@
         "international agreements",
         "reduction potential",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5.0
     },
@@ -6278,7 +6271,7 @@
         "international agreements",
         "initial effort",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1
     },
@@ -6287,7 +6280,7 @@
         "international agreements",
         "initial effort",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -6304,7 +6297,7 @@
         "international agreements",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -6313,7 +6306,7 @@
         "international agreements",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.7
     },
@@ -6330,7 +6323,7 @@
         "international agreements",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 0.4
     },
@@ -6339,7 +6332,7 @@
         "international agreements",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3.5
     },
@@ -6348,7 +6341,7 @@
         "international agreements",
         "effort return score",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 40.0
     },
@@ -6357,7 +6350,7 @@
         "international agreements",
         "effort return score",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3500.0
     },
@@ -6365,7 +6358,7 @@
       "words": [
         "coal phase-out",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 27
     },
@@ -6374,7 +6367,7 @@
         "coal phase-out",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 23
     },
@@ -6383,7 +6376,7 @@
         "coal phase-out",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 30
     },
@@ -6391,7 +6384,7 @@
       "words": [
         "methane reduction",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -6400,7 +6393,7 @@
         "methane reduction",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5
     },
@@ -6409,7 +6402,7 @@
         "methane reduction",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 12
     },
@@ -6417,7 +6410,7 @@
       "words": [
         "energy efficiency",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 24
     },
@@ -6426,7 +6419,7 @@
         "energy efficiency",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 21
     },
@@ -6435,7 +6428,7 @@
         "energy efficiency",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 27
     },
@@ -6443,7 +6436,7 @@
       "words": [
         "building renovation",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 43
     },
@@ -6452,7 +6445,7 @@
         "building renovation",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 42
     },
@@ -6461,7 +6454,7 @@
         "building renovation",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 44
     },
@@ -6469,7 +6462,7 @@
       "words": [
         "heat pumps",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 32
     },
@@ -6478,7 +6471,7 @@
         "heat pumps",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 29
     },
@@ -6487,7 +6480,7 @@
         "heat pumps",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 34
     },
@@ -6495,7 +6488,7 @@
       "words": [
         "district heating",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 36
     },
@@ -6504,7 +6497,7 @@
         "district heating",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 35
     },
@@ -6513,7 +6506,7 @@
         "district heating",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 36
     },
@@ -6521,7 +6514,7 @@
       "words": [
         "solar energy",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 21
     },
@@ -6530,7 +6523,7 @@
         "solar energy",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 15
     },
@@ -6539,7 +6532,7 @@
         "solar energy",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 21
     },
@@ -6547,7 +6540,7 @@
       "words": [
         "wind energy",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 23
     },
@@ -6556,7 +6549,7 @@
         "wind energy",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 18
     },
@@ -6565,7 +6558,7 @@
         "wind energy",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 29
     },
@@ -6573,7 +6566,7 @@
       "words": [
         "hydropower",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 39
     },
@@ -6582,7 +6575,7 @@
         "hydropower",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 38
     },
@@ -6591,7 +6584,7 @@
         "hydropower",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 39
     },
@@ -6599,7 +6592,7 @@
       "words": [
         "nuclear energy",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 46
     },
@@ -6608,7 +6601,7 @@
         "nuclear energy",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 46
     },
@@ -6617,7 +6610,7 @@
         "nuclear energy",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 46
     },
@@ -6625,7 +6618,7 @@
       "words": [
         "geothermal energy",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 35
     },
@@ -6634,7 +6627,7 @@
         "geothermal energy",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 33
     },
@@ -6643,7 +6636,7 @@
         "geothermal energy",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 39
     },
@@ -6651,7 +6644,7 @@
       "words": [
         "energy storage",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 31
     },
@@ -6660,7 +6653,7 @@
         "energy storage",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 31
     },
@@ -6669,7 +6662,7 @@
         "energy storage",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 31
     },
@@ -6677,7 +6670,7 @@
       "words": [
         "grid expansion",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 38
     },
@@ -6686,7 +6679,7 @@
         "grid expansion",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 35
     },
@@ -6695,7 +6688,7 @@
         "grid expansion",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 40
     },
@@ -6703,7 +6696,7 @@
       "words": [
         "electrification",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 34
     },
@@ -6712,7 +6705,7 @@
         "electrification",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 32
     },
@@ -6721,7 +6714,7 @@
         "electrification",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 38
     },
@@ -6729,7 +6722,7 @@
       "words": [
         "public transport",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 45
     },
@@ -6738,7 +6731,7 @@
         "public transport",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 44
     },
@@ -6747,7 +6740,7 @@
         "public transport",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 45
     },
@@ -6755,7 +6748,7 @@
       "words": [
         "cycling",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 26
     },
@@ -6764,7 +6757,7 @@
         "cycling",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 25
     },
@@ -6773,7 +6766,7 @@
         "cycling",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 26
     },
@@ -6781,7 +6774,7 @@
       "words": [
         "speed limit",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 15
     },
@@ -6790,7 +6783,7 @@
         "speed limit",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 11
     },
@@ -6799,7 +6792,7 @@
         "speed limit",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 19
     },
@@ -6807,7 +6800,7 @@
       "words": [
         "carbon price",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 8
     },
@@ -6816,7 +6809,7 @@
         "carbon price",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6
     },
@@ -6825,7 +6818,7 @@
         "carbon price",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 8
     },
@@ -6833,7 +6826,7 @@
       "words": [
         "climate dividend",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 7
     },
@@ -6842,7 +6835,7 @@
         "climate dividend",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 7
     },
@@ -6851,7 +6844,7 @@
         "climate dividend",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 9
     },
@@ -6859,7 +6852,7 @@
       "words": [
         "carbon border tariff",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 5
     },
@@ -6868,7 +6861,7 @@
         "carbon border tariff",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 5
     },
@@ -6877,7 +6870,7 @@
         "carbon border tariff",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 7
     },
@@ -6885,7 +6878,7 @@
       "words": [
         "emissions trading",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 4
     },
@@ -6894,7 +6887,7 @@
         "emissions trading",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4
     },
@@ -6903,7 +6896,7 @@
         "emissions trading",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 4
     },
@@ -6911,7 +6904,7 @@
       "words": [
         "electric mobility",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 29
     },
@@ -6920,7 +6913,7 @@
         "electric mobility",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 26
     },
@@ -6929,7 +6922,7 @@
         "electric mobility",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 32
     },
@@ -6937,7 +6930,7 @@
       "words": [
         "freight transport",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 37
     },
@@ -6946,7 +6939,7 @@
         "freight transport",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 37
     },
@@ -6955,7 +6948,7 @@
         "freight transport",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 37
     },
@@ -6963,7 +6956,7 @@
       "words": [
         "circular economy",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 22
     },
@@ -6972,7 +6965,7 @@
         "circular economy",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 22
     },
@@ -6981,7 +6974,7 @@
         "circular economy",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 27
     },
@@ -6989,7 +6982,7 @@
       "words": [
         "recycling",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 33
     },
@@ -6998,7 +6991,7 @@
         "recycling",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 28
     },
@@ -7007,7 +7000,7 @@
         "recycling",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 34
     },
@@ -7015,7 +7008,7 @@
       "words": [
         "material efficiency",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 28
     },
@@ -7024,7 +7017,7 @@
         "material efficiency",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 22
     },
@@ -7033,7 +7026,7 @@
         "material efficiency",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 30
     },
@@ -7041,7 +7034,7 @@
       "words": [
         "sufficiency",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 9
     },
@@ -7050,7 +7043,7 @@
         "sufficiency",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 7
     },
@@ -7059,7 +7052,7 @@
         "sufficiency",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -7067,7 +7060,7 @@
       "words": [
         "afforestation",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 12
     },
@@ -7076,7 +7069,7 @@
         "afforestation",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 11
     },
@@ -7085,7 +7078,7 @@
         "afforestation",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 14
     },
@@ -7093,7 +7086,7 @@
       "words": [
         "peatland rewetting",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 18
     },
@@ -7102,7 +7095,7 @@
         "peatland rewetting",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 13
     },
@@ -7111,7 +7104,7 @@
         "peatland rewetting",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 19
     },
@@ -7119,7 +7112,7 @@
       "words": [
         "soil carbon buildup",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 14
     },
@@ -7128,7 +7121,7 @@
         "soil carbon buildup",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 13
     },
@@ -7137,7 +7130,7 @@
         "soil carbon buildup",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 16
     },
@@ -7145,7 +7138,7 @@
       "words": [
         "carbon capture and storage",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 42
     },
@@ -7154,7 +7147,7 @@
         "carbon capture and storage",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 41
     },
@@ -7163,7 +7156,7 @@
         "carbon capture and storage",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 43
     },
@@ -7171,7 +7164,7 @@
       "words": [
         "carbon capture and utilization",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 44
     },
@@ -7180,7 +7173,7 @@
         "carbon capture and utilization",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 42
     },
@@ -7189,7 +7182,7 @@
         "carbon capture and utilization",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 45
     },
@@ -7197,7 +7190,7 @@
       "words": [
         "green hydrogen",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 40
     },
@@ -7206,7 +7199,7 @@
         "green hydrogen",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 36
     },
@@ -7215,7 +7208,7 @@
         "green hydrogen",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 41
     },
@@ -7223,7 +7216,7 @@
       "words": [
         "sustainable agriculture",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 25
     },
@@ -7232,7 +7225,7 @@
         "sustainable agriculture",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 23
     },
@@ -7241,7 +7234,7 @@
         "sustainable agriculture",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 28
     },
@@ -7249,7 +7242,7 @@
       "words": [
         "reduced meat consumption",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 6
     },
@@ -7258,7 +7251,7 @@
         "reduced meat consumption",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6
     },
@@ -7267,7 +7260,7 @@
         "reduced meat consumption",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 8
     },
@@ -7275,7 +7268,7 @@
       "words": [
         "food waste reduction",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 13
     },
@@ -7284,7 +7277,7 @@
         "food waste reduction",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 12
     },
@@ -7293,7 +7286,7 @@
         "food waste reduction",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 15
     },
@@ -7301,7 +7294,7 @@
       "words": [
         "aviation emission reduction",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 41
     },
@@ -7310,7 +7303,7 @@
         "aviation emission reduction",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 40
     },
@@ -7319,7 +7312,7 @@
         "aviation emission reduction",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 43
     },
@@ -7327,7 +7320,7 @@
       "words": [
         "emission standards",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 3
     },
@@ -7336,7 +7329,7 @@
         "emission standards",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3
     },
@@ -7345,7 +7338,7 @@
         "emission standards",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 3
     },
@@ -7353,7 +7346,7 @@
       "words": [
         "research",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 16
     },
@@ -7362,7 +7355,7 @@
         "research",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 16
     },
@@ -7371,7 +7364,7 @@
         "research",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 17
     },
@@ -7379,7 +7372,7 @@
       "words": [
         "innovation",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 19
     },
@@ -7388,7 +7381,7 @@
         "innovation",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 19
     },
@@ -7397,7 +7390,7 @@
         "innovation",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 22
     },
@@ -7405,7 +7398,7 @@
       "words": [
         "climate finance",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 20
     },
@@ -7414,7 +7407,7 @@
         "climate finance",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 18
     },
@@ -7423,7 +7416,7 @@
         "climate finance",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 24
     },
@@ -7431,7 +7424,7 @@
       "words": [
         "supply chain laws",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 11
     },
@@ -7440,7 +7433,7 @@
         "supply chain laws",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 10
     },
@@ -7449,7 +7442,7 @@
         "supply chain laws",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 14
     },
@@ -7457,7 +7450,7 @@
       "words": [
         "fossil subsidy removal",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 2
     },
@@ -7466,7 +7459,7 @@
         "fossil subsidy removal",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2
     },
@@ -7475,7 +7468,7 @@
         "fossil subsidy removal",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 2
     },
@@ -7483,7 +7476,7 @@
       "words": [
         "education",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 17
     },
@@ -7492,7 +7485,7 @@
         "education",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 16
     },
@@ -7501,7 +7494,7 @@
         "education",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 20
     },
@@ -7509,7 +7502,7 @@
       "words": [
         "digitalization",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 30
     },
@@ -7518,7 +7511,7 @@
         "digitalization",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 26
     },
@@ -7527,7 +7520,7 @@
         "digitalization",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 33
     },
@@ -7535,7 +7528,7 @@
       "words": [
         "international agreements",
         "effort return rank",
-        "assumed value"
+        "assumed"
       ],
       "number": 1
     },
@@ -7544,7 +7537,7 @@
         "international agreements",
         "effort return rank",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1
     },
@@ -7553,7 +7546,7 @@
         "international agreements",
         "effort return rank",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1
     }
@@ -7566,13 +7559,13 @@
         "reduction potential",
         "fulfillment probability",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "words": [
         "coal phase-out",
         "expected return",
         "minimum",
-        "assumed value"
+        "assumed"
       ],
       "number": 1.5
     },
@@ -7583,13 +7576,13 @@
         "reduction potential",
         "fulfillment probability",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "words": [
         "coal phase-out",
         "expected return",
         "maximum",
-        "assumed value"
+        "assumed"
       ],
       "number": 6.4
     }

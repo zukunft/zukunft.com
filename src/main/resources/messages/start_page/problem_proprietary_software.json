@@ -43,7 +43,7 @@
       "name": "percent"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -91,7 +91,7 @@
         "annual",
         "billion",
         "EUR",
-        "assumed value"
+        "assumed"
       ],
       "number": "10"
     },
@@ -99,7 +99,7 @@
       "words": [
         "free software",
         "licence spending",
-        "assumed value",
+        "assumed",
         "percent"
       ],
       "number": "-0.5"

@@ -8,17 +8,87 @@
   ],
   "words": [
     {
-      "name": "Switzerland",
+      "name": "Aargau",
       "refs": [
         {
-          "name": "Switzerland",
+          "name": "Aargau",
           "type": "wikipedia"
-        },
-        {
-          "name": "Q39",
-          "type": "wikidata"
         }
       ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "AG",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "AI",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Appenzell Ausserrhoden",
+      "refs": [
+        {
+          "name": "Appenzell Ausserrhoden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Appenzell Innerrhoden",
+      "refs": [
+        {
+          "name": "Appenzell Innerrhoden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "AR",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Basel-Landschaft",
+      "refs": [
+        {
+          "name": "Basel-Landschaft",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Basel-Stadt",
+      "refs": [
+        {
+          "name": "Basel-Stadt",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "BE",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Bern",
+      "refs": [
+        {
+          "name": "Bern",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "BL",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "BS",
       "protection": "admin_protection"
     },
     {
@@ -36,103 +106,25 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Ticino",
+      "name": "COVID-19",
+      "description": "the disease caused by the SARS-CoV-2 coronavirus"
+    },
+    {
+      "name": "Death",
       "refs": [
         {
-          "name": "Ticino",
+          "name": "Death",
           "type": "wikipedia"
         }
       ],
       "protection": "admin_protection"
     },
     {
-      "name": "Geneva",
-      "refs": [
-        {
-          "name": "Geneva",
-          "type": "wikipedia"
-        }
-      ],
+      "name": "FL",
       "protection": "admin_protection"
     },
     {
-      "name": "Grisons",
-      "refs": [
-        {
-          "name": "Grisons",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Aargau",
-      "refs": [
-        {
-          "name": "Aargau",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Zurich",
-      "refs": [
-        {
-          "name": "Zürich",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Vaud",
-      "refs": [
-        {
-          "name": "Vaud",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Basel-Stadt",
-      "refs": [
-        {
-          "name": "Basel-Stadt",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Bern",
-      "refs": [
-        {
-          "name": "Bern",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Basel-Landschaft",
-      "refs": [
-        {
-          "name": "Basel-Landschaft",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Valais",
-      "refs": [
-        {
-          "name": "Valais",
-          "type": "wikipedia"
-        }
-      ],
+      "name": "FR",
       "protection": "admin_protection"
     },
     {
@@ -146,113 +138,21 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Neuchâtel",
+      "name": "GE",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Geneva",
       "refs": [
         {
-          "name": "Neuchâtel",
+          "name": "Geneva",
           "type": "wikipedia"
         }
       ],
       "protection": "admin_protection"
     },
     {
-      "name": "Schwyz",
-      "refs": [
-        {
-          "name": "Schwyz",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Zug",
-      "refs": [
-        {
-          "name": "Zug",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "St. Gallen",
-      "refs": [
-        {
-          "name": "St. Gallen",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Lucerne",
-      "refs": [
-        {
-          "name": "Lucerne",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Appenzell Ausserrhoden",
-      "refs": [
-        {
-          "name": "Appenzell Ausserrhoden",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Jura",
-      "refs": [
-        {
-          "name": "Jura",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Thurgau",
-      "refs": [
-        {
-          "name": "Thurgau",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Schaffhausen",
-      "refs": [
-        {
-          "name": "Schaffhausen",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Solothurn",
-      "refs": [
-        {
-          "name": "Solothurn",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Nidwalden",
-      "refs": [
-        {
-          "name": "Nidwalden",
-          "type": "wikipedia"
-        }
-      ],
+      "name": "GL",
       "protection": "admin_protection"
     },
     {
@@ -266,83 +166,27 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Appenzell Innerrhoden",
+      "name": "GR",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Grisons",
       "refs": [
         {
-          "name": "Appenzell Innerrhoden",
+          "name": "Grisons",
           "type": "wikipedia"
         }
       ],
       "protection": "admin_protection"
     },
     {
-      "name": "Obwalden",
+      "name": "Health",
       "refs": [
         {
-          "name": "Obwalden",
+          "name": "Health",
           "type": "wikipedia"
         }
       ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Uri",
-      "refs": [
-        {
-          "name": "Uri",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "SARS-CoV-2",
-      "refs": [
-        {
-          "name": "SARS-CoV-2",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q82069695",
-          "type": "wikidata"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "RT-PCR",
-      "refs": [
-        {
-          "name": "Reverse-Transkriptase-Polymerase-Kettenreaktion",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q169526",
-          "type": "wikidata"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "sample",
-      "refs": [
-        {
-          "name": "Sample (statistics)",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "result",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "positive",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "negative",
       "protection": "admin_protection"
     },
     {
@@ -374,93 +218,17 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Mechanical ventilator",
+      "name": "JU",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Jura",
       "refs": [
         {
-          "name": "Ventilator",
+          "name": "Jura",
           "type": "wikipedia"
         }
       ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Health",
-      "refs": [
-        {
-          "name": "Health",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Death",
-      "refs": [
-        {
-          "name": "Death",
-          "type": "wikipedia"
-        }
-      ],
-      "protection": "admin_protection"
-    },
-    {
-      "name": "TI",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "GE",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "GR",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "AG",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "ZH",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "VD",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "BS",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "BE",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "BL",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "VS",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "FR",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "NE",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "SZ",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "ZG",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "SG",
       "protection": "admin_protection"
     },
     {
@@ -468,15 +236,132 @@
       "protection": "admin_protection"
     },
     {
-      "name": "AR",
+      "name": "Lucerne",
+      "refs": [
+        {
+          "name": "Lucerne",
+          "type": "wikipedia"
+        }
+      ],
       "protection": "admin_protection"
     },
     {
-      "name": "JU",
+      "name": "mechanical"
+    },
+    {
+      "name": "NE",
       "protection": "admin_protection"
     },
     {
-      "name": "TG",
+      "name": "negative",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Neuchâtel",
+      "refs": [
+        {
+          "name": "Neuchâtel",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Nidwalden",
+      "refs": [
+        {
+          "name": "Nidwalden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "NW",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Obwalden",
+      "refs": [
+        {
+          "name": "Obwalden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "OW",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "positive",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "result",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "RT-PCR",
+      "refs": [
+        {
+          "name": "Reverse-Transkriptase-Polymerase-Kettenreaktion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q169526",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "sample",
+      "refs": [
+        {
+          "name": "Sample (statistics)",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "SARS-CoV-2",
+      "refs": [
+        {
+          "name": "SARS-CoV-2",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82069695",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Schaffhausen",
+      "refs": [
+        {
+          "name": "Schaffhausen",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Schwyz",
+      "refs": [
+        {
+          "name": "Schwyz",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "SG",
       "protection": "admin_protection"
     },
     {
@@ -488,19 +373,69 @@
       "protection": "admin_protection"
     },
     {
-      "name": "NW",
+      "name": "Solothurn",
+      "refs": [
+        {
+          "name": "Solothurn",
+          "type": "wikipedia"
+        }
+      ],
       "protection": "admin_protection"
     },
     {
-      "name": "GL",
+      "name": "St. Gallen",
+      "refs": [
+        {
+          "name": "St. Gallen",
+          "type": "wikipedia"
+        }
+      ],
       "protection": "admin_protection"
     },
     {
-      "name": "AI",
+      "name": "Switzerland",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39",
+          "type": "wikidata"
+        }
+      ],
       "protection": "admin_protection"
     },
     {
-      "name": "OW",
+      "name": "SZ",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "TG",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Thurgau",
+      "refs": [
+        {
+          "name": "Thurgau",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "TI",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Ticino",
+      "refs": [
+        {
+          "name": "Ticino",
+          "type": "wikipedia"
+        }
+      ],
       "protection": "admin_protection"
     },
     {
@@ -508,11 +443,76 @@
       "protection": "admin_protection"
     },
     {
-      "name": "FL",
+      "name": "Uri",
+      "refs": [
+        {
+          "name": "Uri",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Valais",
+      "refs": [
+        {
+          "name": "Valais",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Vaud",
+      "refs": [
+        {
+          "name": "Vaud",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "VD",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ventilator"
+    },
+    {
+      "name": "VS",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ZG",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ZH",
       "protection": "admin_protection"
     },
     {
       "name": "ZU",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Zug",
+      "refs": [
+        {
+          "name": "Zug",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Zurich",
+      "refs": [
+        {
+          "name": "Zürich",
+          "type": "wikipedia"
+        }
+      ],
       "protection": "admin_protection"
     }
   ],
@@ -902,6 +902,18 @@
       "from": "UR",
       "verb": "is an acronym for",
       "to": "Uri"
+    },
+    {
+      "name": "Mechanical ventilator",
+      "from": "ventilator",
+      "verb": "kind of",
+      "to": "mechanical",
+      "refs": [
+        {
+          "name": "Ventilator",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "formulas": [],

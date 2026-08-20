@@ -107,7 +107,7 @@
       "name": "count"
     },
     {
-      "name": "assumed value"
+      "name": "assumed"
     },
     {
       "name": "2026-06-20",
@@ -448,7 +448,7 @@
         "star reaction count forecast",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -457,7 +457,7 @@
         "smile reaction count forecast",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     },
@@ -466,7 +466,7 @@
         "eyebrow reaction count forecast",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     },
@@ -475,7 +475,7 @@
         "substantive reply count forecast",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.01"
     },
@@ -484,7 +484,7 @@
         "substantive reply count forecast",
         "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.02"
     },
@@ -493,7 +493,7 @@
         "star reaction count forecast",
         "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     },
@@ -502,7 +502,7 @@
         "substantive reply count forecast",
         "zeit.de zukunftcom post 2026-07-25 insurance reply",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.04"
     },
@@ -511,7 +511,7 @@
         "star reaction count forecast",
         "zeit.de zukunftcom post 2026-07-25 insurance reply",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     }
@@ -523,7 +523,7 @@
         "star reaction count",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "formula": "star reaction calibration error (formula)",
       "words": [
@@ -539,7 +539,7 @@
         "smile reaction count",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "formula": "smile reaction calibration error (formula)",
       "words": [
@@ -555,7 +555,7 @@
         "astonished reaction count",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "formula": "astonished reaction calibration error (formula)",
       "words": [
@@ -571,7 +571,7 @@
         "frown reaction count",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "formula": "frown reaction calibration error (formula)",
       "words": [
@@ -587,7 +587,7 @@
         "eyebrow reaction count",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "formula": "eyebrow reaction calibration error (formula)",
       "words": [
@@ -603,7 +603,7 @@
         "substantive reply count",
         "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
-        "assumed value"
+        "assumed"
       ],
       "formula": "substantive reply calibration error (formula)",
       "words": [

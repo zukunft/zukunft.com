@@ -1196,10 +1196,16 @@
       "type": "measure"
     },
     {
+      "name": "time unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "time"
+    },
+    {
       "name": "second (time)",
       "from": "second",
       "verb": "must be one of",
-      "to": "time",
+      "to": "time unit",
       "type": "measure"
     },
     {

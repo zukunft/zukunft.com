@@ -34,6 +34,32 @@ Every import JSON has this top-level shape:
 }
 ```
 
+### Change as little as the task asks for
+
+An import file is seed data with pinned ids, not a document to tidy up. The
+import assigns the database id of every object in the order in which the files
+and their entries are read, so **one added or removed word, triple, view,
+component, formula or source shifts the id of every later object of that class**
+— across all following files, not only the edited one. Those ids are pinned in
+`word_names`, `triple_names`, `views`, `shared/const/*` and in the generated
+`src/test/resources/unit/<class>/list.csv` baselines, so a shift turns into a
+wave of failing tests that can only be repaired by a full reset and a
+re-baseline run (`docs/llm/testing.md`).
+
+Therefore, when the task is to fix one entry:
+
+- change that entry and nothing else — no reformatting, no re-indenting, no
+  re-ordering of entries, no "while I am here" cleanup;
+- do not add or remove a word, a triple or any other object unless the task
+  explicitly asks for it, and prefer the fix that keeps the object count equal
+  (rename a key, correct a `verb`, move a description);
+- if the requested fix cannot avoid adding or removing an object, say so in the
+  report together with the id shift it causes, so the developer can plan the
+  re-baseline; never absorb it silently.
+
+A reformat is a task of its own: run the repo's own formatter only when asked
+for it, never as a side effect of another change.
+
 ### Self-consistency
 
 Every assigned phrase, every triple `from`/`to`, every formula input, and every
@@ -157,9 +183,13 @@ that has no other finding:
   because the format has been migrated together with the program;
 - a file whose format version is **ahead** is only reported and never changed —
   its data may need a program version that is not installed yet, which is exactly
-  what `IMPORT_VERSION_NEWER` warns about (`version_newer_test.json` keeps its
-  `9.9.9` for that test);
+  what `IMPORT_VERSION_NEWER` warns about;
 - a file without a `data_version` gets the initial `0.0.1`.
+
+`src/test/resources/import/inconsistency_tests` is never scanned: every file
+there breaks a rule on purpose to test the import error handling, so a finding
+would be the expected result. `version_newer_test.json` lives there and keeps
+its `9.9.9` for the `IMPORT_VERSION_NEWER` test.
 
 The version is checked last on purpose: a file that breaks one of the other
 rules is not yet in the format of this program version, so raising its version
@@ -902,8 +932,8 @@ Because the namespaces are separate, a source name put into `words` is not a
 phrase and cannot resolve. Provenance goes in `source`; the phrase group names
 the **claim the number is about**.
 
-- **Wrong**: `{"words": ["confidence", "Berns paper", "assumed value"], "number": "0.7"}`
-- **Right**: `{"words": ["confidence", "model harm weight", "assumed value"], "number": "0.7", "source": "Berns paper"}`
+- **Wrong**: `{"words": ["confidence", "Berns paper", "assumed"], "number": "0.7"}`
+- **Right**: `{"words": ["confidence", "model harm weight", "assumed"], "number": "0.7", "source": "Berns paper"}`
 
 If two values would then share one phrase group, that is the signal that the
 group is under-qualified — name the distinct claim, do not fall back to the
@@ -1052,13 +1082,15 @@ that is not already implied, while it lengthens every phrase group, creates a
 word or triple that must be re-declared in every file that borrows it, and makes
 two otherwise identical groups look different.
 
-Only the **deviation** from the default is worth recording. Keep `assumed value`
-for a number that is *not* measured — a Fermi input, a policy parameter, an
-order-of-magnitude guess — so a reader can tell at a glance which numbers carry
-evidence and which do not.
+Only the **deviation** from the default is worth recording. Keep the word
+`assumed` for a number that is *not* measured — a Fermi input, a policy
+parameter, an order-of-magnitude guess — so a reader can tell at a glance which
+numbers carry evidence and which do not. The qualifier is the single word, not
+an `assumed value` triple: the phrases of a value are the words of that value,
+so the `... value` part only repeats what the group already is.
 
 - **Right**: `{"words": ["carbon leakage rate", "global warming", "percent"], "number": "14", "source": "Branger & Quirion (2014b)"}`
-- **Right**: `{"words": ["disinformation", "public discourse", "assumed value", "percent"], "number": "20"}`
+- **Right**: `{"words": ["disinformation", "public discourse", "assumed", "percent"], "number": "20"}`
 - **Wrong** — the qualifier only repeats the default:
   `{"words": ["carbon leakage rate", "global warming", "measured value", "percent"], "number": "14", "source": "..."}`
 
@@ -1067,7 +1099,7 @@ or triple itself: a file must not define a `measured value` word, nor a
 `value kind of measured` / `value must be one of measured` triple.
 
 A measured number without a `source` is a smell — either name the source or,
-if it really is an assumption, mark it `assumed value`.
+if it really is an assumption, mark it `assumed`.
 
 ## Calc-validation
 

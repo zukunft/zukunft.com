@@ -274,9 +274,10 @@
       "description": "large inland body of water"
     },
     {
-      "name": "carbon dioxide",
-      "type": "measure",
-      "description": "CO₂, main greenhouse gas"
+      "name": "carbon"
+    },
+    {
+      "name": "dioxide"
     },
     {
       "name": "tonne",
@@ -384,16 +385,12 @@
       "description": "travelling on foot"
     },
     {
-      "name": "age 0 to 19",
-      "description": "the population aged 0 to 19 years"
+      "name": "teenager",
+      "description": "a person below the age of 20"
     },
     {
-      "name": "age 20 to 64",
-      "description": "the population aged 20 to 64 years"
-    },
-    {
-      "name": "age 65 plus",
-      "description": "the population aged 65 years and older"
+      "name": "pensioner",
+      "description": "a person older than 64, the age of the ordinary retirement in Switzerland"
     },
     {
       "name": "square"
@@ -524,6 +521,40 @@
   ],
   "triples": [
     {
+      "from": "teenager",
+      "verb": "and",
+      "to": "pensioner"
+    },
+    {
+      "name": "age 0 to 19",
+      "from": "age",
+      "verb": "of",
+      "to": "teenager",
+      "description": "the population aged 0 to 19 years"
+    },
+    {
+      "name": "age 20 to 64",
+      "from": "age",
+      "verb": "between",
+      "to": "teenager and pensioner",
+      "description": "the population aged 20 to 64 years"
+    },
+    {
+      "name": "age 65 plus",
+      "from": "age",
+      "verb": "of",
+      "to": "pensioner",
+      "description": "the population aged 65 years and older"
+    },
+    {
+      "name": "carbon dioxide",
+      "from": "dioxide",
+      "verb": "of",
+      "to": "carbon",
+      "type": "measure",
+      "description": "CO₂, main greenhouse gas"
+    },
+    {
       "name": "Swiss franc",
       "from": "franc",
       "verb": "kind of",
@@ -608,7 +639,7 @@
       "to": "foreign"
     },
     {
-      "name": "number of nationalities present",
+      "name": "number of nationalities present in Zurich (canton)",
       "from": "nationality",
       "verb": "in",
       "to": "Zurich (canton)"
@@ -780,7 +811,7 @@
       "to": "Zurich (canton)"
     },
     {
-      "name": "full‑time equivalent jobs",
+      "name": "full‑time equivalent jobs in Zurich (canton)",
       "from": "full‑time equivalent",
       "verb": "in",
       "to": "Zurich (canton)"
@@ -876,16 +907,23 @@
       "to": "month"
     },
     {
+      "name": "square metre",
+      "from": "metre",
+      "verb": "can be",
+      "to": "square",
+      "type": "measure"
+    },
+    {
       "name": "apartment price per m²",
       "from": "price",
       "verb": "per",
-      "to": "square kilometre"
+      "to": "square metre"
     },
     {
       "name": "housing vacancy rate",
       "from": "vacancy",
       "verb": "of",
-      "to": "dwelling"
+      "to": "apartment"
     },
     {
       "name": "public road network length",
@@ -906,13 +944,13 @@
       "to": "sector"
     },
     {
-      "name": "number of primary schools",
+      "name": "number of primary schools in Zurich (canton)",
       "from": "school",
       "verb": "in",
       "to": "Zurich (canton)"
     },
     {
-      "name": "number of universities",
+      "name": "number of universities in Zurich (canton)",
       "from": "university",
       "verb": "in",
       "to": "Zurich (canton)"
@@ -945,7 +983,7 @@
       "name": "life expectancy at birth",
       "from": "expectancy",
       "verb": "of",
-      "to": "age"
+      "to": "birth"
     },
     {
       "name": "forest share of area",
@@ -1080,9 +1118,9 @@
       "to": "lowest"
     },
     {
-      "name": "infant mortality per 1000",
+      "name": "infant mortality per 1000 live births",
       "from": "mortality",
-      "verb": "of",
+      "verb": "per",
       "to": "birth"
     },
     {
@@ -1354,7 +1392,7 @@
     },
     {
       "words": [
-        "number of nationalities present",
+        "number of nationalities present in Zurich (canton)",
         "Zurich (canton)"
       ],
       "number": "180",
@@ -1388,6 +1426,26 @@
       ],
       "number": "0.504",
       "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "teenager",
+        "age",
+        "highest",
+        "year"
+      ],
+      "number": "19",
+      "description": "the age of a teenager is below 20"
+    },
+    {
+      "words": [
+        "pensioner",
+        "age",
+        "lowest",
+        "year"
+      ],
+      "number": "65",
+      "description": "a pensioner is older than 64"
     },
     {
       "words": [
@@ -1539,7 +1597,7 @@
     },
     {
       "words": [
-        "full‑time equivalent jobs",
+        "full‑time equivalent jobs in Zurich (canton)",
         "Zurich (canton)",
         "2023"
       ],
@@ -1832,7 +1890,7 @@
     },
     {
       "words": [
-        "number of primary schools",
+        "number of primary schools in Zurich (canton)",
         "Zurich (canton)",
         "2024"
       ],
@@ -1850,7 +1908,7 @@
     },
     {
       "words": [
-        "number of universities",
+        "number of universities in Zurich (canton)",
         "Zurich (canton)"
       ],
       "number": "4",
@@ -1933,7 +1991,7 @@
     },
     {
       "words": [
-        "infant mortality per 1000",
+        "infant mortality per 1000 live births",
         "Zurich (canton)",
         "2023"
       ],

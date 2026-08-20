@@ -3,178 +3,244 @@
   "data_version": "0.0.1",
   "description": "CO2-eq burden and cost breakdown for recycling aluminium (remelting scrap) using hydropower electricity, compared against primary production and the current market price. Sourced findings carry their source; conjectures are tagged 'assumed value' with numeric confidence.",
   "words": [
+    {"name": "3-month", "description": "the three-month forward contract of the London Metal Exchange"},
+    {"name": "aluminium"},
+    {"name": "assumed"},
+    {"name": "burden"},
+    {"name": "CO2-eq", "description": "carbon dioxide equivalent"},
+    {"name": "confidence", "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."},
+    {"name": "conversion"},
+    {"name": "cost"},
+    {"name": "demand"},
+    {"name": "electric"},
+    {"name": "electricity"},
+    {"name": "energy"},
+    {"name": "EUR", "description": "Is a symbol for euro"},
+    {"name": "EUR/t", "description": "Is a symbol for euros per metric tonne"},
+    {"name": "fraction", "description": "Unit basis: a dimensionless share between 0 and 1"},
+    {"name": "furnace"},
+    {"name": "g", "description": "Is a symbol for gram"},
+    {"name": "gas-fired"},
+    {"name": "gCO2eq/kWh", "description": "Is a symbol for grams of CO2 equivalent per kilowatt-hour"},
+    {"name": "hydropower"},
+    {"name": "input"},
+    {"name": "kg", "description": "Is a symbol for kilogram"},
+    {"name": "kgCO2eq/t", "description": "Is a symbol for kilograms of CO2 equivalent per tonne"},
+    {"name": "kWh", "description": "Is a symbol for kilowatt-hour"},
+    {"name": "LME", "description": "London Metal Exchange"},
+    {"name": "loss"},
+    {"name": "melt"},
+    {"name": "MWh", "description": "Is a symbol for megawatt-hour"},
+    {"name": "MWh/t", "description": "Is a symbol for megawatt-hours per tonne"},
+    {"name": "premium"},
+    {"name": "price"},
+    {"name": "primary"},
+    {"name": "ratio"},
+    {"name": "recycling"},
+    {"name": "regional"},
+    {"name": "scrap"},
+    {"name": "secondary"},
+    {"name": "specific"},
+    {"name": "t", "description": "Is a symbol for tonne"},
+    {"name": "tCO2eq/t", "description": "Is a symbol for tonnes of CO2 equivalent per tonne"},
+    {"name": "tonne"},
+    {"name": "USD", "description": "Is a symbol for US dollar"},
+    {"name": "USD/t", "description": "Is a symbol for US dollars per metric tonne"},
+    {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"}
+  ],
+  "triples": [
     {
       "name": "aluminium recycling",
+      "from": "recycling",
+      "verb": "of",
+      "to": "aluminium",
       "description": "Secondary aluminium production by remelting scrap, as opposed to primary smelting from bauxite"
     },
     {
       "name": "primary aluminium",
+      "from": "aluminium",
+      "verb": "kind of",
+      "to": "primary",
       "description": "Aluminium produced from bauxite via the Hall-Heroult electrolysis process"
     },
     {
       "name": "secondary aluminium",
+      "from": "aluminium",
+      "verb": "kind of",
+      "to": "secondary",
       "description": "Aluminium produced from scrap by remelting"
     },
     {
       "name": "hydropower electricity",
+      "from": "electricity",
+      "verb": "of",
+      "to": "hydropower",
       "description": "Electricity generated from hydroelectric plants, used here as the assumed sole electricity source"
     },
     {
       "name": "CO2-eq burden",
+      "from": "burden",
+      "verb": "of",
+      "to": "CO2-eq",
       "description": "Greenhouse gas emissions expressed as carbon dioxide equivalents"
     },
     {
       "name": "conversion cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "conversion",
       "description": "Cost of transforming scrap into finished secondary aluminium, excluding the metal value of the scrap input"
     },
+    {"name": "scrap input", "from": "input", "verb": "of", "to": "scrap"},
     {
       "name": "scrap input cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "scrap input",
       "description": "Purchase cost of aluminium scrap feedstock, indexed to the LME price"
     },
+    {"name": "electricity demand", "from": "demand", "verb": "of", "to": "electricity"},
     {
       "name": "specific electricity demand",
+      "from": "electricity demand",
+      "verb": "kind of",
+      "to": "specific",
       "description": "Electrical energy required per tonne of output"
     },
     {
       "name": "melt loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "melt",
       "description": "Material lost as dross and oxidation during remelting, expressed as a mass fraction"
     },
+    {"name": "LME price", "from": "price", "verb": "of", "to": "LME"},
     {
       "name": "LME 3-month price",
+      "from": "LME price",
+      "verb": "kind of",
+      "to": "3-month",
       "description": "London Metal Exchange three-month closing reference price for primary aluminium"
     },
     {
       "name": "regional premium",
+      "from": "premium",
+      "verb": "kind of",
+      "to": "regional",
       "description": "Surcharge on top of the LME base for physical delivery, e.g. duty-paid European billet premium"
     },
     {
       "name": "gas-fired furnace",
+      "from": "furnace",
+      "verb": "kind of",
+      "to": "gas-fired",
       "description": "Remelting furnace heated by natural gas combustion rather than electricity"
     },
     {
       "name": "electric furnace",
+      "from": "furnace",
+      "verb": "kind of",
+      "to": "electric",
       "description": "Remelting furnace where all process heat is supplied electrically"
     },
-    {
-      "name": "per tonne",
-      "description": "Unit basis: per metric tonne of output"
-    },
-    {
-      "name": "kg CO2-eq per tonne",
-      "description": "Kilograms of CO2 equivalent per tonne of aluminium output"
-    },
-    {
-      "name": "t CO2-eq per tonne",
-      "description": "Tonnes of CO2 equivalent per tonne of aluminium output"
-    },
-    {
-      "name": "MWh per tonne",
-      "description": "Megawatt-hours of electricity per tonne of output"
-    },
-    {
-      "name": "g CO2-eq per kWh",
-      "description": "Grams of CO2 equivalent per kilowatt-hour of electricity (lifecycle emission factor)"
-    },
-    {
-      "name": "USD per tonne",
-      "description": "US dollars per metric tonne"
-    },
-    {
-      "name": "EUR per tonne",
-      "description": "Euros per metric tonne"
-    },
+    {"name": "energy ratio", "from": "ratio", "verb": "of", "to": "energy"},
+    {"name": "recycling to primary", "from": "aluminium recycling", "verb": "to", "to": "primary aluminium"},
     {
       "name": "energy ratio recycling to primary",
+      "from": "energy ratio",
+      "verb": "of",
+      "to": "recycling to primary",
       "description": "Energy used for recycling as a fraction of energy used for primary production"
-    }
-  ],
-  "triples": [
+    },
+    {"name": "kg CO2-eq", "from": "kg", "verb": "of", "to": "CO2-eq"},
+    {"from": "kg CO2-eq", "verb": "per", "to": "tonne", "description": "Kilograms of CO2 equivalent per tonne of aluminium output"},
+    {"name": "kgCO2eq/t (unit symbol)", "from": "kgCO2eq/t", "verb": "is symbol for", "to": "kg CO2-eq per tonne"},
+    {"name": "t CO2-eq", "from": "t", "verb": "of", "to": "CO2-eq"},
+    {"from": "t CO2-eq", "verb": "per", "to": "tonne", "description": "Tonnes of CO2 equivalent per tonne of aluminium output"},
+    {"name": "tCO2eq/t (unit symbol)", "from": "tCO2eq/t", "verb": "is symbol for", "to": "t CO2-eq per tonne"},
+    {"from": "MWh", "verb": "per", "to": "tonne", "description": "Megawatt-hours of electricity per tonne of output"},
+    {"name": "MWh/t (unit symbol)", "from": "MWh/t", "verb": "is symbol for", "to": "MWh per tonne"},
+    {"name": "g CO2-eq", "from": "g", "verb": "of", "to": "CO2-eq"},
     {
-      "from": "aluminium recycling",
+      "from": "g CO2-eq",
+      "verb": "per",
+      "to": "kWh",
+      "description": "Grams of CO2 equivalent per kilowatt-hour of electricity (lifecycle emission factor)"
+    },
+    {"name": "gCO2eq/kWh (unit symbol)", "from": "gCO2eq/kWh", "verb": "is symbol for", "to": "g CO2-eq per kWh"},
+    {"from": "USD", "verb": "per", "to": "tonne", "description": "US dollars per metric tonne"},
+    {"name": "USD/t (unit symbol)", "from": "USD/t", "verb": "is symbol for", "to": "USD per tonne"},
+    {"from": "EUR", "verb": "per", "to": "tonne", "description": "Euros per metric tonne"},
+    {"name": "EUR/t (unit symbol)", "from": "EUR/t", "verb": "is symbol for", "to": "EUR per tonne"},
+    {
+      "name": "confidence value",
+      "from": "value",
       "verb": "kind of",
-      "to": "secondary aluminium"
+      "to": "confidence",
+      "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
     },
-    {
-      "from": "aluminium recycling",
-      "verb": "has a",
-      "to": "specific electricity demand"
-    },
-    {
-      "from": "aluminium recycling",
-      "verb": "has a",
-      "to": "CO2-eq burden"
-    },
-    {
-      "from": "aluminium recycling",
-      "verb": "has a",
-      "to": "conversion cost"
-    },
-    {
-      "from": "aluminium recycling",
-      "verb": "has a",
-      "to": "scrap input cost"
-    },
-    {
-      "from": "regional premium",
-      "verb": "adds to",
-      "to": "LME 3-month price"
-    }
+    {"from": "aluminium recycling", "verb": "kind of", "to": "secondary aluminium"},
+    {"from": "aluminium recycling", "verb": "has a", "to": "specific electricity demand"},
+    {"from": "aluminium recycling", "verb": "has a", "to": "CO2-eq burden"},
+    {"from": "aluminium recycling", "verb": "has a", "to": "conversion cost"},
+    {"from": "aluminium recycling", "verb": "has a", "to": "scrap input cost"},
+    {"from": "regional premium", "verb": "adds to", "to": "LME 3-month price"}
   ],
   "values": [
     {
-      "words": [
-        "energy ratio recycling to primary",
-        "aluminium recycling"
-      ],
+      "words": ["energy ratio recycling to primary", "aluminium recycling", "fraction"],
       "value": 0.05,
-      "unit": "fraction",
-      "source": {
-        "name": "metalcharts.org aluminium price reference",
-        "url": "https://metalcharts.org/aluminum-price",
-        "accessed": "2026-06-28"
-      },
-      "notes": "Recycling uses about 5% of the energy of primary production (Hall-Heroult ~14,000 kWh/t)."
+      "source": {"name": "metalcharts.org aluminium price reference", "url": "https://metalcharts.org/aluminum-price", "accessed": "2026-06-28"},
+      "description": "Recycling uses about 5% of the energy of primary production (Hall-Heroult ~14,000 kWh/t)."
     },
     {
-      "words": [
-        "specific electricity demand",
-        "aluminium recycling",
-        "MWh per tonne",
-        "per tonne"
-      ],
+      "words": ["specific electricity demand", "aluminium recycling", "MWh/t", "assumed"],
       "value": 0.65,
-      "unit": "MWh/t",
-      "type": "assumed value",
-      "confidence": 0.7,
-      "notes": "Derived from ~5% of ~14 MWh/t primary; remelting electricity typically 0.6-0.7 MWh/t. Range 0.6-0.7."
+      "description": "Derived from ~5% of ~14 MWh/t primary; remelting electricity typically 0.6-0.7 MWh/t. Range 0.6-0.7."
+    },
+    {
+      "words": ["specific electricity demand", "aluminium recycling", "MWh/t", "confidence value"],
+      "value": 0.7,
+      "description": "Subjective probability that the assumed 0.65 MWh/t is the right value within the range 0.6-0.7."
+    },
+    {
+      "words": ["specific electricity demand", "primary aluminium", "MWh/t"],
+      "value": 14,
+      "source": {"name": "metalcharts.org aluminium price reference", "url": "https://metalcharts.org/aluminum-price", "accessed": "2026-06-28"},
+      "description": "Hall-Heroult electrolysis requires approximately 14,000 kWh per tonne."
+    },
+    {
+      "words": ["CO2-eq burden", "hydropower electricity", "gCO2eq/kWh", "assumed"],
+      "value": 17,
+      "description": "Lifecycle emission factor for hydropower, typical range 10-24 gCO2eq/kWh; midpoint used."
+    },
+    {
+      "words": ["CO2-eq burden", "hydropower electricity", "gCO2eq/kWh", "confidence value"],
+      "value": 0.6,
+      "description": "Subjective probability that the assumed 17 gCO2eq/kWh is the right value within the range 10-24."
+    },
+    {
+      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "electric furnace", "kgCO2eq/t", "assumed"],
+      "value": 90,
+      "description": "Hypothetical case: ALL energy electric from hydropower, only material/dross losses remain. Range 50-150 kg/t."
+    },
+    {
+      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "electric furnace", "kgCO2eq/t", "confidence value"],
+      "value": 0.4,
+      "description": "Subjective probability that the assumed 90 kg CO2-eq/t is the right value within the range 50-150."
     },
     {
       "words": [
+        "CO2-eq burden",
+        "aluminium recycling",
+        "hydropower electricity",
+        "electric furnace",
+        "kgCO2eq/t",
         "specific electricity demand",
-        "primary aluminium",
-        "MWh per tonne",
-        "per tonne"
+        "assumed"
       ],
-      "value": 14.0,
-      "unit": "MWh/t",
-      "source": {
-        "name": "metalcharts.org aluminium price reference",
-        "url": "https://metalcharts.org/aluminum-price",
-        "accessed": "2026-06-28"
-      },
-      "notes": "Hall-Heroult electrolysis requires approximately 14,000 kWh per tonne."
-    },
-    {
-      "words": [
-        "CO2-eq burden",
-        "hydropower electricity",
-        "g CO2-eq per kWh"
-      ],
-      "value": 17.0,
-      "unit": "g CO2-eq/kWh",
-      "type": "assumed value",
-      "confidence": 0.6,
-      "notes": "Lifecycle emission factor for hydropower, typical range 10-24 gCO2eq/kWh; midpoint used."
+      "value": 12,
+      "description": "Electricity-only share at 0.65 MWh/t and 17 gCO2eq/kWh. Range ~7-16 kg/t. Excludes non-electric process emissions."
     },
     {
       "words": [
@@ -182,161 +248,100 @@
         "aluminium recycling",
         "hydropower electricity",
         "electric furnace",
-        "kg CO2-eq per tonne",
-        "per tonne"
+        "kgCO2eq/t",
+        "specific electricity demand",
+        "confidence value"
       ],
-      "value": 90.0,
-      "unit": "kg CO2-eq/t",
-      "type": "assumed value",
-      "confidence": 0.4,
-      "notes": "Hypothetical case: ALL energy electric from hydropower, only material/dross losses remain. Range 50-150 kg/t."
+      "value": 0.6,
+      "description": "Subjective probability that the assumed 12 kg CO2-eq/t is the right value within the range 7-16."
     },
     {
-      "words": [
-        "CO2-eq burden",
-        "aluminium recycling",
-        "hydropower electricity",
-        "electric furnace",
-        "kg CO2-eq per tonne",
-        "per tonne",
-        "specific electricity demand"
-      ],
-      "value": 12.0,
-      "unit": "kg CO2-eq/t",
-      "type": "assumed value",
-      "confidence": 0.6,
-      "notes": "Electricity-only share at 0.65 MWh/t and 17 gCO2eq/kWh. Range ~7-16 kg/t. Excludes non-electric process emissions."
+      "words": ["CO2-eq burden", "aluminium recycling", "gas-fired furnace", "kgCO2eq/t", "assumed"],
+      "value": 450,
+      "description": "Realistic full balance for secondary aluminium with gas-fired remelt furnace. Range ~300-600 kg/t. Contrast to the hydropower electric case."
     },
     {
-      "words": [
-        "CO2-eq burden",
-        "aluminium recycling",
-        "gas-fired furnace",
-        "kg CO2-eq per tonne",
-        "per tonne"
-      ],
-      "value": 450.0,
-      "unit": "kg CO2-eq/t",
-      "type": "assumed value",
-      "confidence": 0.5,
-      "notes": "Realistic full balance for secondary aluminium with gas-fired remelt furnace. Range ~300-600 kg/t. Contrast to the hydropower electric case."
+      "words": ["CO2-eq burden", "aluminium recycling", "gas-fired furnace", "kgCO2eq/t", "confidence value"],
+      "value": 0.5,
+      "description": "Subjective probability that the assumed 450 kg CO2-eq/t is the right value within the range 300-600."
     },
     {
-      "words": [
-        "CO2-eq burden",
-        "primary aluminium",
-        "t CO2-eq per tonne",
-        "per tonne"
-      ],
-      "value": 16.0,
-      "unit": "t CO2-eq/t",
-      "source": {
-        "name": "International Aluminium Institute global average (widely cited industry figure)",
-        "accessed": "2026-06-28"
-      },
-      "notes": "Global average primary aluminium footprint. Hydropower-based primary (Norway/Iceland) ~4-6 t/t."
+      "words": ["CO2-eq burden", "primary aluminium", "tCO2eq/t"],
+      "value": 16,
+      "source": {"name": "International Aluminium Institute global average (widely cited industry figure)", "accessed": "2026-06-28"},
+      "description": "Global average primary aluminium footprint. Hydropower-based primary (Norway/Iceland) ~4-6 t/t."
     },
     {
-      "words": [
-        "LME 3-month price",
-        "primary aluminium",
-        "USD per tonne",
-        "per tonne"
-      ],
+      "words": ["LME 3-month price", "primary aluminium", "USD/t"],
       "value": 3164.5,
-      "unit": "USD/t",
       "source": {
         "name": "London Metal Exchange LME Aluminium",
         "url": "https://www.lme.com/metals/non-ferrous/lme-aluminium",
         "accessed": "2026-06-28",
         "data_valid": "2026-06-26"
       },
-      "notes": "3-month closing price (day-delayed). Down ~12% over the preceding four weeks after Gulf de-escalation; early-June high was 3752 USD/t."
+      "description": "3-month closing price (day-delayed). Down ~12% over the preceding four weeks after Gulf de-escalation; early-June high was 3752 USD/t."
     },
     {
-      "words": [
-        "LME 3-month price",
-        "secondary aluminium",
-        "USD per tonne",
-        "per tonne"
-      ],
-      "value": 3510.0,
-      "unit": "USD/t",
+      "words": ["LME 3-month price", "secondary aluminium", "USD/t"],
+      "value": 3510,
       "source": {
         "name": "London Metal Exchange LME Aluminium Alloy",
         "url": "https://www.lme.com/metals/non-ferrous/lme-aluminium-alloy",
         "accessed": "2026-06-28",
         "data_valid": "2026-06-26"
       },
-      "notes": "LME Aluminium Alloy 3-month closing price; cast alloys can trade above primary due to tightness."
+      "description": "LME Aluminium Alloy 3-month closing price; cast alloys can trade above primary due to tightness."
     },
     {
-      "words": [
-        "regional premium",
-        "USD per tonne",
-        "per tonne"
-      ],
-      "value": 180.0,
-      "unit": "USD/t",
+      "words": ["regional premium", "USD/t"],
+      "value": 180,
       "source": {
         "name": "Worthwill LME aluminium price analysis",
         "url": "https://www.worthwillaluminium.com/aluminum-price/lme/",
         "accessed": "2026-06-28"
       },
-      "notes": "Regional premium typically 80-300 USD/t (e.g. ~210 US Midwest, ~180 Japan CIF). Midpoint used."
+      "description": "Regional premium typically 80-300 USD/t (e.g. ~210 US Midwest, ~180 Japan CIF). Midpoint used."
     },
     {
-      "words": [
-        "scrap input cost",
-        "aluminium recycling",
-        "USD per tonne",
-        "per tonne"
-      ],
-      "value": 2600.0,
-      "unit": "USD/t",
-      "type": "assumed value",
-      "confidence": 0.4,
-      "notes": "Scrap typically 70-95% of LME depending on quality. At LME ~3150 that is ~2200-3000 USD/t. Midpoint used."
+      "words": ["scrap input cost", "aluminium recycling", "USD/t", "assumed"],
+      "value": 2600,
+      "description": "Scrap typically 70-95% of LME depending on quality. At LME ~3150 that is ~2200-3000 USD/t. Midpoint used."
     },
     {
-      "words": [
-        "conversion cost",
-        "aluminium recycling",
-        "EUR per tonne",
-        "per tonne"
-      ],
-      "value": 275.0,
-      "unit": "EUR/t",
-      "type": "assumed value",
-      "confidence": 0.4,
-      "notes": "Total conversion margin excluding metal value: energy ~40-60, melt loss, labour, salts, pretreatment, maintenance. Range ~150-400 EUR/t."
+      "words": ["scrap input cost", "aluminium recycling", "USD/t", "confidence value"],
+      "value": 0.4,
+      "description": "Subjective probability that the assumed 2600 USD/t is the right value within the range 2200-3000."
     },
     {
-      "words": [
-        "CO2-eq burden",
-        "aluminium recycling",
-        "hydropower electricity",
-        "EUR per tonne",
-        "per tonne",
-        "specific electricity demand"
-      ],
-      "value": 50.0,
-      "unit": "EUR/t",
-      "type": "assumed value",
-      "confidence": 0.5,
-      "notes": "Electricity cost component of conversion: 0.65 MWh/t at ~60-100 EUR/MWh industrial. Small share of total conversion cost."
+      "words": ["conversion cost", "aluminium recycling", "EUR/t", "assumed"],
+      "value": 275,
+      "description": "Total conversion margin excluding metal value: energy ~40-60, melt loss, labour, salts, pretreatment, maintenance. Range ~150-400 EUR/t."
     },
     {
-      "words": [
-        "melt loss",
-        "aluminium recycling",
-        "fraction"
-      ],
+      "words": ["conversion cost", "aluminium recycling", "EUR/t", "confidence value"],
+      "value": 0.4,
+      "description": "Subjective probability that the assumed 275 EUR/t is the right value within the range 150-400."
+    },
+    {
+      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "EUR/t", "specific electricity demand", "assumed"],
+      "value": 50,
+      "description": "Electricity cost component of conversion: 0.65 MWh/t at ~60-100 EUR/MWh industrial. Small share of total conversion cost."
+    },
+    {
+      "words": ["CO2-eq burden", "aluminium recycling", "hydropower electricity", "EUR/t", "specific electricity demand", "confidence value"],
+      "value": 0.5,
+      "description": "Subjective probability that the assumed 50 EUR/t is the right value at 60-100 EUR/MWh industrial electricity."
+    },
+    {
+      "words": ["melt loss", "aluminium recycling", "fraction", "assumed"],
       "value": 0.05,
-      "unit": "fraction",
-      "type": "assumed value",
-      "confidence": 0.5,
-      "notes": "Dross and oxidation loss during remelting, typically 2-8%. Midpoint used; often the largest hidden cost block."
+      "description": "Dross and oxidation loss during remelting, typically 2-8%. Midpoint used; often the largest hidden cost block."
+    },
+    {
+      "words": ["melt loss", "aluminium recycling", "fraction", "confidence value"],
+      "value": 0.5,
+      "description": "Subjective probability that the assumed 5% melt loss is the right value within the range 2-8%."
     }
   ]
 }

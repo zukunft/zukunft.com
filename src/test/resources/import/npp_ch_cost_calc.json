@@ -9,6 +9,261 @@
   "description": "Monte-Carlo estimate of the expected accident (severe core damage) risk cost of a new large light-water reactor, expressed in Rappen per kWh, computed under four widths of the 95% confidence interval on the two dominant uncertain inputs: the core damage frequency per reactor-year and the total accident damage cost. Build cost, lifetime energy production, core damage frequency band and Fukushima-scale damage cost are sourced; the CI widths and the damage-cost median are modelling assumptions (assumed value with confidence). All derived per-kWh figures are tagged assumed value because they depend on the assumed CI widths.",
   "words": [
     {
+      "name": "95th",
+      "description": "the ninety-fifth ranking position in a percentile scale."
+    },
+    {
+      "name": "99th",
+      "description": "the ninety-ninth ranking position in a percentile scale."
+    },
+    {
+      "name": "accident",
+      "description": "an unintended, normally unwanted event that causes damage.",
+      "refs": [
+        {
+          "name": "Nuclear_and_radiation_accidents_and_incidents",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "build",
+      "description": "the construction of a structure or facility."
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum electric power output a plant is designed to deliver."
+    },
+    {
+      "name": "CHF",
+      "description": "the currency of Switzerland and Liechtenstein.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Swiss_franc",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25344",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "confidence",
+      "description": "the degree of certainty of a statistical estimate.",
+      "refs": [
+        {
+          "name": "Confidence_interval",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q623472",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "core",
+      "description": "the portion of a nuclear reactor containing the fuel components where the chain reaction takes place.",
+      "refs": [
+        {
+          "name": "Nuclear_reactor_core",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1378029",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cost",
+      "description": "the value of money that has been used up to produce something.",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q209894",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "damage",
+      "description": "physical harm that impairs the value or usefulness of something.",
+      "refs": [
+        {
+          "name": "Damage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "energy",
+      "description": "the quantitative property transferred to a body to perform work.",
+      "refs": [
+        {
+          "name": "Energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11379",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "eng",
+      "description": "narrow: the tightest of the four confidence-interval-width scenarios."
+    },
+    {
+      "name": "EPR",
+      "description": "a third-generation pressurised water reactor design.",
+      "refs": [
+        {
+          "name": "EPR_(nuclear_reactor)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q655605",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "expected",
+      "description": "anticipated as the probability-weighted average outcome."
+    },
+    {
+      "name": "factor",
+      "description": "a multiplicative element in a product."
+    },
+    {
+      "name": "frequency",
+      "description": "the number of occurrences of a repeating event per unit of time.",
+      "refs": [
+        {
+          "name": "Frequency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11652",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Fukushima",
+      "description": "site of the 2011 nuclear disaster at the Fukushima Daiichi plant in Japan.",
+      "refs": [
+        {
+          "name": "Fukushima_nuclear_accident",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131255",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Hinkley",
+      "description": "site of the Hinkley Point C EPR nuclear power station under construction in Somerset, England.",
+      "refs": [
+        {
+          "name": "Hinkley_Point_C_nuclear_power_station",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2237620",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "interval",
+      "description": "a range between a lower and an upper bound."
+    },
+    {
+      "name": "kWh",
+      "description": "kilowatt hour, a unit of energy equal to 3.6 megajoules.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25236",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lifetime",
+      "description": "the operational service duration of a facility."
+    },
+    {
+      "name": "mean",
+      "description": "the arithmetic average of a set of numbers.",
+      "refs": [
+        {
+          "name": "Mean",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2796622",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "median",
+      "description": "the value separating the higher half from the lower half of a distribution.",
+      "refs": [
+        {
+          "name": "Median",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q226995",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "middle",
+      "description": "the second, moderate confidence-interval-width scenario."
+    },
+    {
+      "name": "MW",
+      "description": "megawatt, a unit of power equal to one million watts.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Watt",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170065",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "net",
+      "description": "remaining after deductions; here electrical output after the plant's own consumption."
+    },
+    {
       "name": "nuclear",
       "description": "relating to the nucleus of an atom, in particular to nuclear energy released by fission.",
       "refs": [
@@ -23,15 +278,34 @@
       ]
     },
     {
-      "name": "reactor",
-      "description": "a device used to initiate and control a fission nuclear chain reaction.",
+      "name": "per",
+      "description": "division operator forming a quotient unit."
+    },
+    {
+      "name": "percent",
+      "description": "a ratio expressed as a fraction of 100.",
+      "type": "measure",
       "refs": [
         {
-          "name": "Nuclear_reactor",
+          "name": "Percentage",
           "type": "wikipedia"
         },
         {
-          "name": "Q40397",
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "percentile",
+      "description": "a value below which a given percentage of observations fall.",
+      "refs": [
+        {
+          "name": "Percentile",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q743937",
           "type": "wikidata"
         }
       ]
@@ -65,68 +339,45 @@
       ]
     },
     {
-      "name": "cost",
-      "description": "the value of money that has been used up to produce something.",
+      "name": "probability",
+      "description": "a numerical description of how likely an event is to occur.",
       "refs": [
         {
-          "name": "Cost",
+          "name": "Probability",
           "type": "wikipedia"
         },
         {
-          "name": "Q209894",
+          "name": "Q9492",
           "type": "wikidata"
         }
       ]
     },
     {
-      "name": "build",
-      "description": "the construction of a structure or facility."
+      "name": "production",
+      "description": "the act of generating a quantity of a good, here electrical energy."
     },
     {
-      "name": "damage",
-      "description": "physical harm that impairs the value or usefulness of something.",
+      "name": "Rappen",
+      "description": "the Swiss subunit equal to one hundredth of a Swiss franc.",
+      "type": "measure",
       "refs": [
         {
-          "name": "Damage",
+          "name": "Rappen",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "core",
-      "description": "the portion of a nuclear reactor containing the fuel components where the chain reaction takes place.",
+      "name": "reactor",
+      "description": "a device used to initiate and control a fission nuclear chain reaction.",
       "refs": [
         {
-          "name": "Nuclear_reactor_core",
+          "name": "Nuclear_reactor",
           "type": "wikipedia"
         },
         {
-          "name": "Q1378029",
+          "name": "Q40397",
           "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "frequency",
-      "description": "the number of occurrences of a repeating event per unit of time.",
-      "refs": [
-        {
-          "name": "Frequency",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11652",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "accident",
-      "description": "an unintended, normally unwanted event that causes damage.",
-      "refs": [
-        {
-          "name": "Nuclear_and_radiation_accidents_and_incidents",
-          "type": "wikipedia"
         }
       ]
     },
@@ -145,275 +396,23 @@
       ]
     },
     {
-      "name": "probability",
-      "description": "a numerical description of how likely an event is to occur.",
-      "refs": [
-        {
-          "name": "Probability",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q9492",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "expected",
-      "description": "anticipated as the probability-weighted average outcome."
-    },
-    {
       "name": "value",
       "description": "the numerical amount denoted by a quantity."
-    },
-    {
-      "name": "energy",
-      "description": "the quantitative property transferred to a body to perform work.",
-      "refs": [
-        {
-          "name": "Energy",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11379",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "production",
-      "description": "the act of generating a quantity of a good, here electrical energy."
-    },
-    {
-      "name": "lifetime",
-      "description": "the operational service duration of a facility."
-    },
-    {
-      "name": "capacity",
-      "description": "the maximum electric power output a plant is designed to deliver."
-    },
-    {
-      "name": "factor",
-      "description": "a multiplicative element in a product."
-    },
-    {
-      "name": "net",
-      "description": "remaining after deductions; here electrical output after the plant's own consumption."
-    },
-    {
-      "name": "confidence",
-      "description": "the degree of certainty of a statistical estimate.",
-      "refs": [
-        {
-          "name": "Confidence_interval",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q623472",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "interval",
-      "description": "a range between a lower and an upper bound."
-    },
-    {
-      "name": "width",
-      "description": "the extent of a range from its lower to its upper bound."
-    },
-    {
-      "name": "median",
-      "description": "the value separating the higher half from the lower half of a distribution.",
-      "refs": [
-        {
-          "name": "Median",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q226995",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "mean",
-      "description": "the arithmetic average of a set of numbers.",
-      "refs": [
-        {
-          "name": "Mean",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2796622",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "percentile",
-      "description": "a value below which a given percentage of observations fall.",
-      "refs": [
-        {
-          "name": "Percentile",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q743937",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "95th",
-      "description": "the ninety-fifth ranking position in a percentile scale."
-    },
-    {
-      "name": "99th",
-      "description": "the ninety-ninth ranking position in a percentile scale."
-    },
-    {
-      "name": "Fukushima",
-      "description": "site of the 2011 nuclear disaster at the Fukushima Daiichi plant in Japan.",
-      "refs": [
-        {
-          "name": "Fukushima_nuclear_accident",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q131255",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "Hinkley",
-      "description": "site of the Hinkley Point C EPR nuclear power station under construction in Somerset, England.",
-      "refs": [
-        {
-          "name": "Hinkley_Point_C_nuclear_power_station",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2237620",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "EPR",
-      "description": "a third-generation pressurised water reactor design.",
-      "refs": [
-        {
-          "name": "EPR_(nuclear_reactor)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q655605",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "eng",
-      "description": "narrow: the tightest of the four confidence-interval-width scenarios."
-    },
-    {
-      "name": "middle",
-      "description": "the second, moderate confidence-interval-width scenario."
-    },
-    {
-      "name": "wide",
-      "description": "the third, wide confidence-interval-width scenario."
     },
     {
       "name": "very",
       "description": "intensifier marking the widest scenario."
     },
     {
-      "name": "CHF",
-      "description": "the currency of Switzerland and Liechtenstein.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Swiss_franc",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q25344",
-          "type": "wikidata"
-        }
-      ]
+      "name": "wide",
+      "description": "the third, wide confidence-interval-width scenario."
     },
     {
-      "name": "Rappen",
-      "description": "the Swiss subunit equal to one hundredth of a Swiss franc.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Rappen",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "billion"
-    },
-    {
-      "name": "kWh",
-      "description": "kilowatt hour, a unit of energy equal to 3.6 megajoules.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Kilowatt-hour",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q25236",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "MW",
-      "description": "megawatt, a unit of power equal to one million watts.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Watt",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q170065",
-          "type": "wikidata"
-        }
-      ]
+      "name": "width",
+      "description": "the extent of a range from its lower to its upper bound."
     },
     {
       "name": "year"
-    },
-    {
-      "name": "percent",
-      "description": "a ratio expressed as a fraction of 100.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Percentage",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11229",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "per",
-      "description": "division operator forming a quotient unit."
-    },
-    {
-      "name": "assumed value",
-      "description": "a conjectured value not directly measured, carrying a numeric confidence."
     }
   ],
   "triples": [
@@ -424,22 +423,10 @@
       "to": "nuclear"
     },
     {
-      "name": "nuclear power plant",
-      "from": "plant",
-      "verb": "of",
-      "to": "nuclear power"
-    },
-    {
       "name": "nuclear power",
       "from": "power",
       "verb": "of",
       "to": "nuclear"
-    },
-    {
-      "name": "Hinkley Point C",
-      "from": "Hinkley",
-      "verb": "is a",
-      "to": "nuclear power plant"
     },
     {
       "name": "EPR reactor",
@@ -472,12 +459,6 @@
       "to": "capacity"
     },
     {
-      "name": "lifetime energy production",
-      "from": "production",
-      "verb": "of",
-      "to": "lifetime energy"
-    },
-    {
       "name": "lifetime energy",
       "from": "energy",
       "verb": "kind of",
@@ -508,12 +489,6 @@
       "to": "lifetime"
     },
     {
-      "name": "accident damage cost",
-      "from": "cost",
-      "verb": "of",
-      "to": "accident damage"
-    },
-    {
       "name": "accident damage",
       "from": "damage",
       "verb": "of",
@@ -526,22 +501,10 @@
       "to": "expected"
     },
     {
-      "name": "expected risk cost",
-      "from": "cost",
-      "verb": "of",
-      "to": "expected risk"
-    },
-    {
       "name": "expected risk",
       "from": "risk",
       "verb": "kind of",
       "to": "expected"
-    },
-    {
-      "name": "risk cost per kWh",
-      "from": "expected risk cost",
-      "verb": "per",
-      "to": "kWh"
     },
     {
       "name": "confidence interval",
@@ -610,8 +573,43 @@
       "to": "billion"
     },
     {
-      "name": "Rappen per kWh",
       "from": "Rappen",
+      "verb": "per",
+      "to": "kWh"
+    },
+    {
+      "name": "nuclear power plant",
+      "from": "plant",
+      "verb": "of",
+      "to": "nuclear power"
+    },
+    {
+      "name": "Hinkley Point C",
+      "from": "Hinkley",
+      "verb": "is a",
+      "to": "nuclear power plant"
+    },
+    {
+      "name": "lifetime energy production",
+      "from": "production",
+      "verb": "of",
+      "to": "lifetime energy"
+    },
+    {
+      "name": "accident damage cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "accident damage"
+    },
+    {
+      "name": "expected risk cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "expected risk"
+    },
+    {
+      "name": "risk cost per kWh",
+      "from": "expected risk cost",
       "verb": "per",
       "to": "kWh"
     }
@@ -706,7 +704,7 @@
         "EPR reactor",
         "capacity factor",
         "percent",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -716,7 +714,7 @@
         "EPR reactor",
         "lifetime",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "60",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -726,7 +724,7 @@
         "EPR reactor",
         "lifetime energy production",
         "kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "756864000000",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -745,7 +743,7 @@
         "nuclear reactor",
         "accident probability over lifetime",
         "median value",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.00598",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -766,7 +764,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2829",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -777,7 +775,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.237",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -788,7 +786,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6314",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -799,7 +797,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9461",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -810,7 +808,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.4936",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -821,7 +819,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2369",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -832,7 +830,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.7581",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -843,7 +841,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "3.9688",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -854,7 +852,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "1.0831",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -865,7 +863,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2367",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -876,7 +874,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "4.5484",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -887,7 +885,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "14.2102",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -898,7 +896,7 @@
         "risk cost per kWh",
         "mean value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.4423",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -909,7 +907,7 @@
         "risk cost per kWh",
         "median value",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2366",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -920,7 +918,7 @@
         "risk cost per kWh",
         "95th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "11.5677",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -931,7 +929,7 @@
         "risk cost per kWh",
         "99th percentile",
         "Rappen per kWh",
-        "assumed value"
+        "assumed"
       ],
       "number": "39.3714",
       "source": "zukunft.com Monte Carlo simulation 2026-07-05"
@@ -946,7 +944,7 @@
         "EPR reactor",
         "lifetime",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "formula": "accident probability over lifetime (formula)",
       "words": [

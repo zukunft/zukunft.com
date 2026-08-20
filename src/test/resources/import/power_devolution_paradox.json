@@ -1,48 +1,181 @@
 {
-  "pod": {
-    "version": "0.0.3",
-    "description": "Claim analysis: reducing the power of the powerful is usually a net benefit; revised premise: no actor can ensure even distribution of power, because relinquishing power removes the capacity to guarantee the outcome",
-    "time": "2026-08-04"
-  },
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "words": [
     {
+      "name": "assumed"
+    },
+    {
+      "name": "Boeckenfoerde",
+      "description": "Ernst-Wolfgang Boeckenfoerde, author of the dilemma that the liberal state lives on preconditions it cannot itself guarantee"
+    },
+    {
+      "name": "claim"
+    },
+    {
+      "name": "confidence",
+      "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
+    },
+    {
+      "name": "continuous"
+    },
+    {
+      "name": "dilemma"
+    },
+    {
+      "name": "distribution"
+    },
+    {
+      "name": "equilibrium"
+    },
+    {
+      "name": "failure"
+    },
+    {
+      "name": "historical"
+    },
+    {
+      "name": "impossibility"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "premise"
+    },
+    {
+      "name": "reconcentration"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "risk"
+    },
+    {
+      "name": "self-enforcing"
+    },
+    {
+      "name": "self-undermining"
+    },
+    {
+      "name": "strategy"
+    },
+    {
+      "name": "transfer"
+    },
+    {
+      "name": "transition"
+    },
+    {
+      "name": "vacuum"
+    },
+    {
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
+    }
+  ],
+  "triples": [
+    {
+      "name": "power reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "power"
+    },
+    {
       "name": "power reduction claim",
+      "from": "claim",
+      "verb": "of",
+      "to": "power reduction",
       "description": "reducing the power of powerful actors is usually a net benefit, not a harm"
     },
     {
+      "name": "distribution impossibility",
+      "from": "impossibility",
+      "verb": "of",
+      "to": "distribution"
+    },
+    {
       "name": "distribution impossibility premise",
+      "from": "premise",
+      "verb": "of",
+      "to": "distribution impossibility",
       "description": "no actor can ensure even distribution of power: the act of relinquishing power removes the capacity to guarantee the distribution's outcome"
     },
     {
       "name": "self-undermining transfer",
+      "from": "transfer",
+      "verb": "kind of",
+      "to": "self-undermining",
       "description": "logical structure in which executing the transfer destroys the enforcement capacity for the transfer's goal"
     },
     {
       "name": "boeckenfoerde dilemma",
+      "from": "dilemma",
+      "verb": "of",
+      "to": "Boeckenfoerde",
       "description": "the liberal state lives on preconditions it cannot itself guarantee; static analogue of the premise"
     },
     {
       "name": "self-enforcing equilibrium",
+      "from": "equilibrium",
+      "verb": "kind of",
+      "to": "self-enforcing",
       "description": "even distribution can persist only as a coordination equilibrium among many actors, not as a guaranteed state"
     },
     {
       "name": "power reconcentration",
+      "from": "reconcentration",
+      "verb": "of",
+      "to": "power",
       "description": "distributed power tends to reconcentrate over time (iron law of oligarchy)"
     },
     {
+      "name": "continuous reduction",
+      "from": "reduction",
+      "verb": "kind of",
+      "to": "continuous"
+    },
+    {
       "name": "continuous reduction strategy",
+      "from": "strategy",
+      "verb": "of",
+      "to": "continuous reduction",
       "description": "because even distribution is neither achievable in one act nor stable, ongoing marginal reduction of concentrated power is the second-best strategy"
     },
     {
+      "name": "power vacuum",
+      "from": "vacuum",
+      "verb": "of",
+      "to": "power"
+    },
+    {
       "name": "power vacuum risk",
+      "from": "risk",
+      "verb": "of",
+      "to": "power vacuum",
       "description": "abrupt power reduction can transfer power to worse actors instead of counterweights"
     },
     {
+      "name": "transition failure",
+      "from": "failure",
+      "verb": "of",
+      "to": "transition"
+    },
+    {
       "name": "historical transition failure",
+      "from": "transition failure",
+      "verb": "kind of",
+      "to": "historical",
       "description": "post-abdication collapse cases: Sulla's restored republic, Diocletian's tetrarchy"
-    }
-  ],
-  "triples": [
+    },
+    {
+      "name": "confidence value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "confidence",
+      "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
+    },
     {
       "from": "distribution impossibility premise",
       "verb": "supports",
@@ -93,8 +226,7 @@
     {
       "words": [
         "distribution impossibility premise",
-        "assumed value",
-        "confidence"
+        "confidence value"
       ],
       "number": 0.9,
       "description": "probability that no single actor can guarantee even power distribution, given the self-undermining structure of the transfer"
@@ -102,8 +234,7 @@
     {
       "words": [
         "power reduction claim",
-        "assumed value",
-        "confidence"
+        "confidence value"
       ],
       "number": 0.75,
       "description": "probability that marginal reduction of concentrated power toward counterweights yields net benefit; raised from 0.7 in v0.0.1 because the revised premise supports the second-best argument"
@@ -111,8 +242,7 @@
     {
       "words": [
         "power reconcentration",
-        "assumed value",
-        "confidence"
+        "confidence value"
       ],
       "number": 0.85,
       "description": "probability that distributed power reconcentrates absent active counterbalancing"
@@ -120,8 +250,7 @@
     {
       "words": [
         "historical transition failure",
-        "assumed value",
-        "confidence"
+        "confidence value"
       ],
       "number": 0.9,
       "description": "probability that the Sulla and Diocletian cases show abdication without outcome guarantee"

@@ -8,24 +8,133 @@
   ],
   "words": [
     {
+      "name": "100"
+    },
+    {
+      "name": "2013",
+      "type": "time"
+    },
+    {
+      "name": "2014",
+      "type": "time"
+    },
+    {
+      "name": "2015",
+      "type": "time"
+    },
+    {
       "name": "2020",
       "type": "time",
       "protection": "admin_protection"
     },
     {
-      "name": "costs"
+      "name": "car",
+      "protection": "admin_protection"
     },
     {
       "name": "CHF",
       "protection": "admin_protection"
     },
     {
+      "name": "CO2",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "consumed"
+    },
+    {
+      "name": "consumption",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Consumption_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "costs"
+    },
+    {
       "name": "currency"
     },
     {
-      "name": "metre",
+      "name": "day"
+    },
+    {
+      "name": "diesel",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Fuel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "electric"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "emission",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "fuel",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Fuel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "g",
       "type": "measure",
       "protection": "admin_protection"
+    },
+    {
+      "name": "gram",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hybrid"
+    },
+    {
+      "name": "insurance",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Insurance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kg",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kilogram",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Kilogram",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "kilometre",
@@ -43,98 +152,12 @@
       "protection": "admin_protection"
     },
     {
-      "name": "CO2",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "emission",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "insurance",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Insurance",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "tax",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Tax",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "fuel",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Fuel",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "diesel",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Fuel",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "consumption",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Consumption_(economics)",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "kilogram",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Kilogram",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "kg",
+      "name": "l",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "gram",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "g",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "tonne",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "t",
-      "type": "measure",
-      "protection": "admin_protection"
+      "name": "lifetime"
     },
     {
       "name": "litre",
@@ -148,74 +171,54 @@
       ]
     },
     {
-      "name": "l",
+      "name": "luxury"
+    },
+    {
+      "name": "maintenance"
+    },
+    {
+      "name": "max"
+    },
+    {
+      "name": "metre",
       "type": "measure",
       "protection": "admin_protection"
+    },
+    {
+      "name": "min"
+    },
+    {
+      "name": "product"
     },
     {
       "name": "production",
       "protection": "admin_protection"
     },
     {
-      "name": "car",
+      "name": "purchase"
+    },
+    {
+      "name": "t",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "tax",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Tax",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "tonne",
+      "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "year"
-    },
-    {
-      "name": "min"
-    },
-    {
-      "name": "max"
-    },
-    {
-      "name": "electricity"
-    },
-    {
-      "name": "consumed"
-    },
-    {
-      "name": "2013",
-      "type": "time"
-    },
-    {
-      "name": "2014",
-      "type": "time"
-    },
-    {
-      "name": "2015",
-      "type": "time"
-    },
-    {
-      "name": "day"
-    },
-    {
-      "name": "100"
-    },
-    {
-      "name": "maintenance"
-    },
-    {
-      "name": "luxury"
-    },
-    {
-      "name": "hybrid"
-    },
-    {
-      "name": "electric"
-    },
-    {
-      "name": "purchase"
-    },
-    {
-      "name": "factor"
-    },
-    {
-      "name": "product"
-    },
-    {
-      "name": "lifetime"
     }
   ],
   "triples": [
@@ -300,7 +303,6 @@
       "to": "electric"
     },
     {
-      "name": "min to max",
       "from": "min",
       "verb": "to",
       "to": "max"
@@ -345,6 +347,42 @@
       "from": "diesel",
       "verb": "is a",
       "to": "fuel"
+    },
+    {
+      "name": "per 100 km",
+      "from": "cost",
+      "verb": "per",
+      "to": "100 km"
+    },
+    {
+      "name": "per day",
+      "from": "cost",
+      "verb": "per",
+      "to": "day"
+    },
+    {
+      "name": "per km",
+      "from": "cost",
+      "verb": "per",
+      "to": "km"
+    },
+    {
+      "name": "per l",
+      "from": "cost",
+      "verb": "per",
+      "to": "l"
+    },
+    {
+      "name": "per t",
+      "from": "cost",
+      "verb": "per",
+      "to": "t"
+    },
+    {
+      "name": "per year",
+      "from": "cost",
+      "verb": "per",
+      "to": "year"
     }
   ],
   "formulas": [
