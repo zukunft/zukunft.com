@@ -35,8 +35,10 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -116,6 +118,25 @@ class component_ui_tests
         $test_name = 'a component without a type shows no subtitle';
         $cmp_plain = new component($t_cmp->component_add()->api_json());
         $t->assert_text_not_contains($test_name, $sfm->title_named($cmp_plain, $msg), styles::SUBTITLE);
+
+        $t->subheader($ts . 'link title');
+
+        // the component link default page shows the generated link name as the page title with
+        // the share and protection in the subtitle (see base_views.json component_link_default)
+        $lnk = new component_link_ui($t_cmp->component_link_filled_included()->api_json([api_types::INCL_PHRASES]));
+        $ttl_html = $sfm->title_link($lnk, $msg);
+        $test_name = 'the component link title links to the component link edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::COMPONENT_LINK_EDIT_ID);
+        $test_name = 'the component link title has a subtitle for the share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+
+        // a fresh component link of an add form shows no empty subtitle brackets and has an
+        // empty name, never a 'objects not set' placeholder as the page title
+        $test_name = 'a fresh component link shows no subtitle';
+        $lnk_new = new component_link_ui();
+        $t->assert_text_not_contains($test_name, $sfm->title_link($lnk_new, $msg), styles::SUBTITLE);
+        $test_name = 'a fresh component link has an empty name';
+        $t->assert($test_name, $lnk_new->name(), '');
     }
 
 }

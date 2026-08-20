@@ -220,3 +220,4 @@ component_type_id, type_name, description, code_id
 219, 'show reverse', 'show the reverse name of a verb without link or form field', 'system_show_field_reverse'
 220, 'show plural reverse', 'show the plural reverse name of a verb without link or form field', 'system_show_field_plural_reverse'
 221, 'source url link', 'show the url of a source as a link to the source', 'source_url_link'
+222, 'link title', 'show the generated name of a link object as the page title and the two linked objects with links in the subtitle', 'title_of_link_with_edit_link'

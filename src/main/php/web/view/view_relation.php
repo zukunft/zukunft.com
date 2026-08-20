@@ -220,37 +220,39 @@ class view_relation extends sandbox_link
      */
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name
+     * @return string|null the generated link name or an empty string e.g. for a new link of an add form
      */
     function name(): string|null
     {
         $result = '';
-
+        // a new view relation of an add form has no linked objects or names yet,
+        // which is a normal state and not an error
         if ($this->parent() != null and $this->child() != null) {
             if ($this->parent()->name() <> '' and $this->child()->name() <> '') {
-                $result .= '"' . $this->child()->name() . '" extends "'; // e.g. company details
-                $result .= $this->parent()->name() . '"';     // e.g. cash flow statement
+                $result .= '"' . $this->child()->name() . '" extends "'; // e.g. "Word Log" extends
+                $result .= $this->parent()->name() . '"';     // e.g. "Change word"
             }
-        } else {
-            $result .= 'view relation objects not set';
         }
         return $result;
     }
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
+     * @param string $back the back trace url for the undo functionality
+     * @return string the linked names or an empty string e.g. for a new link of an add form
      */
     function name_linked(string $back = ''): string
     {
         $result = '';
-
-        //$this->load_objects();
+        // a new view relation of an add form has no linked objects yet,
+        // which is a normal state and not an error
         if ($this->parent() != null and $this->child() != null) {
-            $result = $this->parent()->name_link(NULL, $back) . ' to ' . $this->child()->name_link(NULL, $back);
-        } else {
-            $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
+            global $mtr;
+            $result = $this->parent()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->child()->name_link(NULL, $back);
         }
-
         return $result;
     }
 

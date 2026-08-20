@@ -1132,6 +1132,11 @@ class test_mappers
                 $obj_array = $this->formula_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case formula_link::class:
+                $obj = $t_frm->formula_link_filled();
+                $obj_array = $this->formula_link_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case result::class:
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
@@ -1142,9 +1147,24 @@ class test_mappers
                 $obj_array = $this->view_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case term_view::class:
+                $obj = $t_msk->term_view_filled();
+                $obj_array = $this->term_view_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case view_relation::class:
+                $obj = $t_msk->view_relation_filled();
+                $obj_array = $this->view_relation_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case component::class:
                 $obj = $t_cmp->component_filled();
                 $obj_array = $this->component_url($obj, $msg, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case component_link::class:
+                $obj = $t_cmp->component_link_filled();
+                $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case language::class:

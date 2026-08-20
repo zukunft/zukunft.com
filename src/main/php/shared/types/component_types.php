@@ -83,6 +83,9 @@ class component_types
     const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
     const int TITLE_VALUE_EDIT_ID = 203;
     const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
+    const string TITLE_LINK_EDIT = "title_of_link_with_edit_link";
+    const int TITLE_LINK_EDIT_ID = 222;
+    const string TITLE_LINK_EDIT_COM = "show the generated name of a link object as the page title and the two linked objects with links in the subtitle, plus the edit link";
     // the page title of a phrase: the same title as TITLE_NAMED_EDIT for a word and the same
     // title as TITLE_TRIPLE_EDIT for a triple, each including its subheader, so that one view
     // can be used for a word and for a triple without a title component per phrase type
@@ -807,6 +810,7 @@ class component_types
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
         [self::TITLE_TRIPLE_EDIT, self::TITLE_TRIPLE_EDIT_ID],
+        [self::TITLE_LINK_EDIT, self::TITLE_LINK_EDIT_ID],
         [self::PHRASE_TITLE, self::PHRASE_TITLE_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],

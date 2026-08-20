@@ -447,6 +447,17 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view_relation with all fields set but not excluded, so that the api message carries
+     *         all fields e.g. to test the view relation default page title
+     */
+    function view_relation_filled_included(): view_relation
+    {
+        $mrl = $this->view_relation_filled();
+        $mrl->include();
+        return $mrl;
+    }
+
+    /**
      * @return view_relation with all fields set and a reserved test name for testing the db write function
      */
     function view_relation_filled_add(): view_relation
@@ -489,6 +500,17 @@ class test_views extends test_objects
         $trm_msk->exclude();
         $trm_msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $trm_msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $trm_msk;
+    }
+
+    /**
+     * @return term_view with all fields set but not excluded, so that the api message carries
+     *         all fields e.g. to test the term view default page title
+     */
+    function term_view_filled_included(): term_view
+    {
+        $trm_msk = $this->term_view_filled();
+        $trm_msk->include();
         return $trm_msk;
     }
 

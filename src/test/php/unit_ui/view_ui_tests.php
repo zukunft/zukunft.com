@@ -39,7 +39,9 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -105,6 +107,42 @@ class view_ui_tests
         // a view without type, share and protection set shows no empty subtitle brackets
         $test_name = 'a view without a type shows no subtitle';
         $t->assert_text_not_contains($test_name, $sfm->title_named($msk, $msg), styles::SUBTITLE);
+
+        $t->subheader($ts . 'link title');
+
+        // the term view default page shows the generated link name as the page title with the
+        // share and protection in the subtitle and the description below (see base_views.json
+        // term_view_default); the linked view and term arrive today as ids only, so the title
+        // shows the links without names until the term view api sends the linked objects
+        $trm_msk = new term_view_ui($t_msk->term_view_filled_included()->api_json([api_types::INCL_PHRASES]));
+        $ttl_html = $sfm->title_link($trm_msk, $msg);
+        $test_name = 'the term view title links to the term view edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::VIEW_LINK_EDIT_ID);
+        $test_name = 'the term view title has a subtitle for the share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+        $test_name = 'the description of a term view is sent to the frontend';
+        $t->assert_true($test_name, $sfm->show_description($trm_msk) != '');
+
+        // the view relation default page uses the same link title (see base_views.json
+        // view_relation_default)
+        $mrl = new view_relation_ui($t_msk->view_relation_filled_included()->api_json([api_types::INCL_PHRASES]));
+        $ttl_html = $sfm->title_link($mrl, $msg);
+        $test_name = 'the view relation title links to the view relation edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::VIEW_RELATION_EDIT_ID);
+        $test_name = 'the view relation title has a subtitle for the share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+        $test_name = 'the description of a view relation is sent to the frontend';
+        $t->assert_true($test_name, $sfm->show_description($mrl) != '');
+
+        // a fresh view relation of an add form shows no empty subtitle brackets and has an
+        // empty name, never a 'objects not set' placeholder as the page title
+        $test_name = 'a fresh view relation shows no subtitle';
+        $mrl_new = new view_relation_ui();
+        $t->assert_text_not_contains($test_name, $sfm->title_link($mrl_new, $msg), styles::SUBTITLE);
+        $test_name = 'a fresh view relation has an empty name';
+        $t->assert($test_name, $mrl_new->name(), '');
+        $test_name = 'a fresh term view has an empty name';
+        $t->assert($test_name, (new term_view_ui())->name(), '');
 
         // show a view with a side-or-below group where the columns
         // are shown side by side on wide screens and stacked on small screens

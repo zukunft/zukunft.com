@@ -496,6 +496,17 @@ class test_formulas extends test_objects
         return $lnk;
     }
 
+    /**
+     * @return formula_link with all fields set but not excluded, so that the api message carries
+     *         all fields e.g. to test the formula link default page title
+     */
+    function formula_link_filled_included(): formula_link
+    {
+        $lnk = $this->formula_link_filled();
+        $lnk->include();
+        return $lnk;
+    }
+
     function formula_link_filled_add(): formula_link
     {
         $t_wrd = new test_words($this->env);

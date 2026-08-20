@@ -45,10 +45,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::LOG . 'change_log_list.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -235,6 +238,31 @@ class formula_ui_tests
         } else {
             $ui_sys->usr = $usr_tab_keep;
         }
+
+        $t->subheader($ts . 'link title');
+
+        // the formula link default page shows the generated link name as the page title with the
+        // linked formula and phrase as links in the subtitle (see base_views.json
+        // formula_link_default); INCL_PHRASES so the api message carries the names of the
+        // linked objects and not only their ids
+        $lnk = new formula_link_ui($t_frm->formula_link_filled_included()->api_json([api_types::INCL_PHRASES]));
+        $sfm = new system_form();
+        $ttl_html = $sfm->title_link($lnk, $msg);
+        $test_name = 'the formula link title names the linked formula';
+        $t->assert_text_contains($test_name, $ttl_html, formula_names::SCALE_TO_SEC);
+        $test_name = 'the formula link title links to the formula link edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::FORMULA_LINK_EDIT_ID);
+        $test_name = 'the formula link title has a subtitle for the share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+
+        // a fresh formula link of an add form has no share and protection and no linked objects
+        // with names, so no empty subtitle brackets are shown
+        $test_name = 'a fresh formula link shows no subtitle';
+        $lnk_new = new formula_link_ui();
+        $t->assert_text_not_contains($test_name, $sfm->title_link($lnk_new, $msg), styles::SUBTITLE);
+        // ... and an empty name, never a 'objects not set' placeholder as the page title
+        $test_name = 'a fresh formula link has an empty name';
+        $t->assert($test_name, $lnk_new->name(), '');
 
         // TODO review
 

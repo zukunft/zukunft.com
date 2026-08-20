@@ -151,6 +151,25 @@ class sandbox_link extends sandbox
         return $result;
     }
 
+    /**
+     * the two linked objects as links, e.g. for the subtitle of the link default page;
+     * the children overwrite this with the wording specific to their link
+     * @param string $back the back trace url for the undo functionality
+     * @return string the html code with a link to each of the two linked objects
+     */
+    function name_linked(string $back = ''): string
+    {
+        global $mtr;
+        $result = '';
+        // an external key (a string to object) cannot be linked
+        if ($this->fob != null and $this->tob != null and !is_string($this->tob)) {
+            $result = $this->tob->name_link() . ' '
+                . $mtr->txt(msg_id::LINK_EXTENDS) . ' '
+                . $this->fob->name_link();
+        }
+        return $result;
+    }
+
 }
 
 

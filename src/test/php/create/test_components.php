@@ -528,6 +528,17 @@ class test_components extends test_objects
         return $lnk;
     }
 
+    /**
+     * @return component_link with all fields set but not excluded, so that the api message
+     *         carries all fields e.g. to test the component link default page title
+     */
+    function component_link_filled_included(): component_link
+    {
+        $lnk = $this->component_link_filled();
+        $lnk->include();
+        return $lnk;
+    }
+
     function component_link_filled_add(): component_link
     {
         $t_msk = new test_views($this->env);

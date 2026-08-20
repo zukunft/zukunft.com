@@ -2,11 +2,11 @@
 
 ## user default view
 
-add a formula_link_default, term_view, component_link and view_relation default view that contains a title / subtitle similar to the word_default view and the main fields of the database tables to system views
+add the database fields 'description', 'owner', 'type', 'style' and the list of components of the view to default view, so that src/test/resources/web/html/views_by_id/view/114_view_1.html shows the fields with useful sample data   
 
-add a view and component default view to system views
+add the database fields 'description', 'owner', 'type', 'style', 'formula', 'row phrase', 'column phrase', 'sub column phrase' and the list of views where the component is used to default component view, so that src/test/resources/web/html/views_by_id/component/115_component_1.html shows the fields with useful sample data
 
-add a title with subtitle similar to the triple title / subtitle to the formula_link_default, term_view, component_link and view_relation views
+show the names of the linked objects in the link title subtitle of the formula_link_default, term_view_default, component_link_default and view_relation_default views: the term view and view relation api messages carry only the ids of the linked objects (see web/view/term_view.php and web/view/view_relation.php api_mapper) and the url mappers of all four link classes resolve the linked ids without names, so the title subtitle links show no text yet
 
 fill the formula_link_default view with the missing fields including the my tab for the user_changes
 
@@ -41,7 +41,7 @@ repeat the check of the fields in the default page, the my tab and the fill of '
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
 
 
-in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the ttoltip of the term so that the user can check if she (or he) has selected the correct term
+in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the tooltip of the term so that the user can check if she (or he) has selected the correct term
 
 in the formula edit (and add) view add an icon near the formula expression and latex formula input field that the user can use to update the latex based on the expression or the other way round
 

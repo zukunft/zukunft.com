@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-20T11:12:14+00:00",
+    "timestamp": "2026-08-20T14:04:36+00:00",
     "body": {
         "user_profiles": [
             {
@@ -8197,6 +8197,30 @@
                 "code_id": "component",
                 "description": "only expected to be used for component objects",
                 "id": 21
+            },
+            {
+                "name": "for formula links only",
+                "code_id": "formula_link",
+                "description": "only expected to be used for formula link objects",
+                "id": 22
+            },
+            {
+                "name": "for term views only",
+                "code_id": "term_view",
+                "description": "only expected to be used for term view objects",
+                "id": 23
+            },
+            {
+                "name": "for component links only",
+                "code_id": "component_link",
+                "description": "only expected to be used for component link objects",
+                "id": 24
+            },
+            {
+                "name": "for view relations only",
+                "code_id": "view_relation",
+                "description": "only expected to be used for view relation objects",
+                "id": 25
             }
         ],
         "view_styles": [
@@ -9571,6 +9595,12 @@
                 "code_id": "source_url_link",
                 "description": "show the url of a source as a link to the source",
                 "id": 221
+            },
+            {
+                "name": "link title",
+                "code_id": "title_of_link_with_edit_link",
+                "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+                "id": 222
             }
         ],
         "component_link_types": [
@@ -22011,6 +22041,102 @@
                     },
                     {
                         "link_id": 1072,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 2,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 116,
+                "name": "Formula link",
+                "description": "the default view for formula links",
+                "type_id": 22,
+                "code_id": "formula_link_default",
+                "components": [
+                    {
+                        "link_id": 1073,
+                        "id": 334,
+                        "name": "Link title",
+                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+                        "type_id": 222,
+                        "code_id": "title_of_link_with_edit_link",
+                        "position": 1,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 117,
+                "name": "Term view",
+                "description": "the default view for term views",
+                "type_id": 23,
+                "code_id": "term_view_default",
+                "components": [
+                    {
+                        "link_id": 1074,
+                        "id": 334,
+                        "name": "Link title",
+                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+                        "type_id": 222,
+                        "code_id": "title_of_link_with_edit_link",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1075,
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 2,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 118,
+                "name": "Component link",
+                "description": "the default view for component links",
+                "type_id": 24,
+                "code_id": "component_link_default",
+                "components": [
+                    {
+                        "link_id": 1076,
+                        "id": 334,
+                        "name": "Link title",
+                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+                        "type_id": 222,
+                        "code_id": "title_of_link_with_edit_link",
+                        "position": 1,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 119,
+                "name": "View relation",
+                "description": "the default view for view relations",
+                "type_id": 25,
+                "code_id": "view_relation_default",
+                "components": [
+                    {
+                        "link_id": 1077,
+                        "id": 334,
+                        "name": "Link title",
+                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+                        "type_id": 222,
+                        "code_id": "title_of_link_with_edit_link",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1078,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",

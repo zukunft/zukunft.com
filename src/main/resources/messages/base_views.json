@@ -396,6 +396,12 @@
       "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
       "type": "title_of_named_with_edit_link",
       "code_id": "title_of_named_with_edit_link_component"
+    },
+    {
+      "name": "Link title",
+      "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+      "type": "title_of_link_with_edit_link",
+      "code_id": "title_of_link_with_edit_link"
     }
   ],
   "views": [
@@ -977,6 +983,62 @@
         {
           "position": "1",
           "name": "Component title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        }
+      ]
+    },
+    {
+      "name": "Formula link",
+      "description": "the default view for formula links",
+      "code_id": "formula_link_default",
+      "type": "formula_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        }
+      ]
+    },
+    {
+      "name": "Term view",
+      "description": "the default view for term views",
+      "code_id": "term_view_default",
+      "type": "term_view",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        }
+      ]
+    },
+    {
+      "name": "Component link",
+      "description": "the default view for component links",
+      "code_id": "component_link_default",
+      "type": "component_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        }
+      ]
+    },
+    {
+      "name": "View relation",
+      "description": "the default view for view relations",
+      "code_id": "view_relation_default",
+      "type": "view_relation",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
         },
         {
           "position": "2",

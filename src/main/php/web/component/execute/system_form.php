@@ -57,6 +57,7 @@ include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'type_list.php';
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
@@ -197,6 +199,31 @@ class system_form extends component
             }
         }
         return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, $from_verb_to, $url_array);
+    }
+
+    /**
+     * the page title for a link object (formula link, term view, component link or view relation):
+     * show the generated link name big as the title and the two linked objects with a link to each
+     * in the subtitle, with the same edit link and share and protection subtitle as the named title
+     * (like the triple title, where the from, verb and to move to the subtitle)
+     *
+     * @param sandbox_link|db_object $dbo the link whose name is the title and whose linked objects are the subtitle
+     * @param int $max to limit the number of related entries shown before a "..." link
+     * @return string the html code for the link page title
+     */
+    function title_link(
+        sandbox_link|db_object $dbo,
+        user_message           $msg,
+        int                    $max = def::LIMIT_RELATED_PER_VERB,
+        array                  $url_array = []
+    ): string
+    {
+        // the links to the two linked objects move to the subtitle like the triple from/verb/to
+        $from_to = '';
+        if ($dbo instanceof sandbox_link) {
+            $from_to = $dbo->name_linked();
+        }
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, $from_to, $url_array);
     }
 
     /**

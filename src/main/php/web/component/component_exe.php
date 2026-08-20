@@ -193,6 +193,7 @@ class component_exe extends component
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
             component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
+            component_types::TITLE_LINK_EDIT => $form->title_link($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::PHRASE_TITLE => $form->title_phrase($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::TITLE_FORMULA_EDIT => $form->title_formula($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::TITLE_VALUE_EDIT => $form->title_value($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
