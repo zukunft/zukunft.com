@@ -56,6 +56,20 @@ what is left:
   must never share a name", the value qualifier rules - are still only prose and can be added as
   further check functions to the same class
 
+## change log object names of the link classes
+
+the formula link is done: change_log_list::name_lists() has the formula_links entry, formula_link_list can load by ids with both linked names joined and formula_link::row_mapper_sandbox reads them, so the all user overwrites column of the user page names the changed formula link
+
+the view relation is done the same way (view_relation_list::load_sql_by_ids joins both view names, view_relation::row_mapper_sandbox reads them and name_lists has the view_relations entry)
+
+the component link is done the same way (component_link_list::load_sql_by_ids joins the view and the component name, component_link::row_mapper_sandbox reads them, component_link::name() is new and name_lists has the component_links entry)
+
+the term view is done too: term_view_list has a load_sql and load_sql_by_ids that join the view name and the term name (via the terms database view that unions the term classes), term_view::row_mapper_sandbox reads them, term_view::name() is new, change_tables::VIEW_TERM_LINK_USR is no longer commented out and is in USER_TABLES, and name_lists has the term_views entry
+
+so all four link classes name the changed object in the all user overwrites column; a link class added later needs the same four parts: a list load_by_ids, the names of the linked objects in the list query, a row mapper that reads the joined names and a name() that combines both
+
+sql_format inserts no space before END when the column name is long: the postgres fixtures view_relation_list_by_ids.sql (ul2.descriptionEND) and the component link probe (ul4.component_type_idEND) show it; the raw sql is correct, so this is a pretty printer bug that makes the committed fixtures hard to read
+
 ## code cleanup
 The cleanup deleted 14 snapshots and the blast radius is wider than the orphan case. delete_unused_files() removes every .html under views_by_object/ that this run did not write. That is correct for a full run, but a partial run — test_part.php, a single test class, or
 a test group temporarily commented out — writes only a subset, so with AUTO_UPDATE_TEST_FILES = true it silently deletes the rest. The pre-existing views_by_id loop has the same property; I extended it to a second folder without adding a guard against a partial run. A     

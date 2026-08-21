@@ -183,6 +183,8 @@ class test_log
     // which must not contain the formula name, so that a test can tell the object name that the
     // what column puts in front of the change from the change text itself
     const string FORMULA_OVERWRITE_COM = 'my own text for this calculation';
+    // the user value of the formula link order number overwrite of log_formula_link_order_overwrite
+    const int FORMULA_LINK_OVERWRITE_ORDER_NBR = 7;
 
 
     /*
@@ -647,6 +649,24 @@ class test_log
     }
 
     /**
+     * @return change log entry created by overwriting the order number of the filled formula link
+     *         in the user sandbox (user_formula_links)
+     */
+    function log_formula_link_order_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_frm = new test_formulas($this->env);
+        $chg = $this->log_formula_link_order();
+        $chg->set_table(change_tables::FORMULA_LINK_USR, $msg);
+        // set the field after the table, because the field id is unique per table
+        $chg->set_field(formula_link::FLD_ORDER, $msg);
+        $chg->new_value = self::FORMULA_LINK_OVERWRITE_ORDER_NBR;
+        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        $chg->row_name = $t_frm->formula_link()->name();
+        return $chg;
+    }
+
+    /**
      * @return change_log_list the changes of the filled formula link
      */
     function log_list_formula_link(): change_log_list
@@ -981,10 +1001,10 @@ class test_log
     }
 
     /**
-     * the changes of one user on more than one object type: the word, the triple and the formula
-     * overwrites written to the user sandbox (overlay) tables plus a change of the shared standard
-     * object, so that a test can check that the all user overwrites column lists the overwrites of
-     * every object type but never a change of the standard object
+     * the changes of one user on more than one object type: the word, the triple, the formula and
+     * the formula link overwrites written to the user sandbox (overlay) tables plus a change of the
+     * shared standard object, so that a test can check that the all user overwrites column lists
+     * the overwrites of every object type but never a change of the standard object
      * @return change_log_list the sandbox overwrites of one user and one standard change
      */
     function log_list_user_overwrites(): change_log_list
@@ -997,6 +1017,7 @@ class test_log
         $log_lst->add($wrd_chg);
         $log_lst->add($this->log_triple_add_description());
         $log_lst->add($this->log_formula_increase_description());
+        $log_lst->add($this->log_formula_link_order_overwrite());
         // a change of the shared standard word, which the column must never list as an overwrite;
         // the renamed-from value is unique to this change, so a test can detect it
         $log_lst->add($this->log_word_update());

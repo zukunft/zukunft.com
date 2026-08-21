@@ -61,7 +61,11 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_VIEW . 'term_view_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -75,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -82,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
@@ -94,7 +100,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -188,6 +196,10 @@ class change_log_list extends list_db_read
             change_tables::WORD => new word_list($usr),
             change_tables::TRIPLE => new triple_list($usr),
             change_tables::FORMULA => new formula_list($usr),
+            change_tables::FORMULA_LINK => new formula_link_list($usr),
+            change_tables::VIEW_LINK => new component_link_list($usr),
+            change_tables::VIEW_TERM_LINK => new term_view_list($usr),
+            change_tables::VIEW_RELATION => new view_relation_list($usr),
         ];
     }
 

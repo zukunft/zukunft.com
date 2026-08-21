@@ -131,6 +131,10 @@ class formula_link extends sandbox_link
     const string FLD_TYPE = 'formula_link_type_id';
     const string FLD_ORDER = fields::FLD_ORDER_NBR;
     const sql_par_type FLD_ORDER_SQL_TYP = sql_par_type::INT;
+    // the names of the linked objects as the list query joins them; the suffix is the position
+    // of the join, so both must match the join order of formula_link_list::load_sql
+    const string FLD_PHRASE_NAME_JOINED = phrase::FLD_NAME . '1';
+    const string FLD_FORMULA_NAME_JOINED = formula_fields::FLD_NAME . '2';
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
@@ -260,6 +264,14 @@ class formula_link extends sandbox_link
                 $this->phrase()->set_obj_from_id($db_row[phrase::FLD_ID]);
                 $this->predicate_id = $db_row[formula_link_type::FLD_ID];
                 $this->order_nbr = $db_row[formula_link::FLD_ORDER];
+                // the list query joins the names of both linked objects, so that the link can
+                // name them e.g. in the change log; a load by id has no join and no names
+                if (array_key_exists(self::FLD_FORMULA_NAME_JOINED, $db_row)) {
+                    $msg->merge($this->formula()->set_name($db_row[self::FLD_FORMULA_NAME_JOINED]));
+                }
+                if (array_key_exists(self::FLD_PHRASE_NAME_JOINED, $db_row)) {
+                    $this->phrase()->set_name($db_row[self::FLD_PHRASE_NAME_JOINED]);
+                }
             } else {
                 log_warning('formula id missing for ' . $this->dsp_id());
             }
@@ -1136,7 +1148,8 @@ class formula_link extends sandbox_link
             $result = $this->formula()->name();
         }
         if ($this->phrase_id() != 0) {
-            $result = ' to ' . $this->phrase()->name();
+            // append, because the name of a link is the name of both linked objects
+            $result .= ' to ' . $this->phrase()->name();
         }
 
         return $result;

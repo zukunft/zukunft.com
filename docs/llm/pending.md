@@ -2,8 +2,6 @@
 
 ## user default view
 
-add the formula_link overwrites to the 'all_user_overwrites' component used in the user_default view
-
 add a 'views', 'changes' and 'my' tabs to the value_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
 
 add the value overwrites to the 'all_user_overwrites' component used in the user_default view

@@ -66,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -80,6 +81,7 @@ class user_ui_tests
 
         $t_sys = new test_sys_log($t);
         $t_log = new test_log($t);
+        $t_frm = new test_formulas($t);
         $t_usr = new test_users();
         $log = new ui_log();
         $msg = new user_message();
@@ -134,6 +136,9 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $all_html, triple_names::MATH_CONST_COM);
         $test_name = 'the formula overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, test_log::FORMULA_OVERWRITE_COM);
+        $test_name = 'the formula link overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html,
+            (string)test_log::FORMULA_LINK_OVERWRITE_ORDER_NBR);
         $test_name = 'the standard table change is not listed beside the overwrites';
         $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
 
@@ -149,6 +154,13 @@ class user_ui_tests
         $test_name = 'the what column names the changed formula';
         $t->assert_text_contains($test_name, $all_html,
             formula_names::INCREASE . change_log_named_ui::OBJECT_SEPARATOR);
+        // a link has no name column, so its name is built from both linked objects; the formula
+        // name is asserted separately, because it was dropped by the link name before
+        $test_name = 'the what column names the changed formula link';
+        $t->assert_text_contains($test_name, $all_html,
+            $t_frm->formula_link()->name() . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = '... including the linked formula';
+        $t->assert_text_contains($test_name, $all_html, formula_names::SCALE_TO_SEC);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,

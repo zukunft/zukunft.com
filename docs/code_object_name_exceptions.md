@@ -126,7 +126,7 @@ export_type_list: $exp_typ
 expression: $exp, $exp_db, $exp_pe, $exp_scale, $exp_sector
 figure_list: $fig_lst, $fig_lst_ui, $lst
 formula_dsp: $frm_html
-formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $frm_usr, $lnk, $lnk_fld_url, $lnk_new, $lnk_plain, $lnk_tab, $lnk_url, $obj
+formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $frm_usr, $lnk, $lnk_fld_url, $lnk_id_only, $lnk_new, $lnk_plain, $lnk_row, $lnk_tab, $lnk_url, $obj
 formula_link_list: $frm_lnk_lst, $lnk_lst, $lst
 formula_link_type: $frm_lnk_typ
 formula_list: $add_lst, $calc_blocks, $db_lst, $db_lst_all, $frm, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
@@ -196,6 +196,7 @@ system_time_type: $sys_exe_typ, $sys_script
 term_list: $cache, $col_lst, $del_lst, $empty_lst, $found_lst, $lst, $phr_lst, $remain_lst, $search_lst, $trm_lst, $trm_lst_back, $trm_lst_ui
 term_list_dsp: $trm_lst_ui
 term_view: $dbo, $dbo_ui, $lnk, $msk_lnk, $new_lnk, $obj, $trm_lnk_ui, $trm_msk, $trm_msk_url
+term_view_list: $lnk_lst
 test_api: $t_api
 test_components: $t_cmp
 test_db_caches: $t_db_cache

@@ -114,6 +114,10 @@ class term_view extends sandbox_link
     const string TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const string FLD_ID = 'term_view_id';
     const string FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+    // the names of the linked objects as the list query joins them; the suffix is the position
+    // of the join, so both must match the join order of term_view_list::load_sql_by_ids
+    const string FLD_VIEW_NAME_JOINED = view_fields::FLD_NAME . '1';
+    const string FLD_TERM_NAME_JOINED = term::FLD_NAME . '2';
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
@@ -214,6 +218,14 @@ class term_view extends sandbox_link
                 $this->set_term($trm);
                 $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
                 $this->description = $db_row[fields::FLD_DESCRIPTION];
+                // the list query joins the names of both linked objects, so that the link can
+                // name them e.g. in the change log; a load by id has no join and no names
+                if (array_key_exists(self::FLD_VIEW_NAME_JOINED, $db_row)) {
+                    $msg->merge($msk->set_name($db_row[self::FLD_VIEW_NAME_JOINED]));
+                }
+                if (array_key_exists(self::FLD_TERM_NAME_JOINED, $db_row)) {
+                    $trm->set_name($db_row[self::FLD_TERM_NAME_JOINED]);
+                }
             } else {
                 log_warning('view id missing for ' . $this->dsp_id());
             }
@@ -867,6 +879,29 @@ class term_view extends sandbox_link
             msg_id::VAR_TERM_NAME => $this->term()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string|null the name of the two linked objects e.g. for the change log
+     */
+    function name(): string|null
+    {
+        $result = null;
+
+        if ($this->get_view() != null) {
+            $result = $this->get_view()->name();
+        }
+        if ($this->term() != null) {
+            // append, because the name of a link is the name of both linked objects
+            $result .= ' to ' . $this->term()->name();
+        }
+
+        return $result;
     }
 
 }

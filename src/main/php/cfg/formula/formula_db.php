@@ -110,6 +110,10 @@ class formula_db
     // actually empty because all formula fields are user-specific
     // TODO check if last_update must be user-specific
     const array FLD_NAMES = array();
+    // the user-specific name field alone, e.g. to join the formula name to a formula link
+    const array FLD_NAMES_USR_NAME = array(
+        formula_fields::FLD_NAME
+    );
     // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
         formula_fields::FLD_FORMULA_TEXT,

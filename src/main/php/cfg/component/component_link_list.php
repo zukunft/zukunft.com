@@ -50,24 +50,30 @@ include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
@@ -215,6 +221,40 @@ class component_link_list extends sandbox_link_list
         }
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of component links by the component link ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of component link ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        if (count($ids) > 0) {
+            $sc->add_where(component_link::FLD_ID, $ids, sql_par_type::INT_LIST);
+            // also load the names of both linked objects, so that the link can name them
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_fields::FLD_ID, '', true);
+            $sc->set_join_usr_fields(component_db::FLD_NAMES_USR_ALL, component::class, component_fields::FLD_ID, '', true);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * load a list of component links by the given component link ids
+     * @param array $ids an array of component link ids which should be loaded
+     * @return bool true if at least one component link found
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp, $msg);
     }
 
     /**
