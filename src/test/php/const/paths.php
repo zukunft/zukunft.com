@@ -82,9 +82,15 @@ class paths
     const string IMPORT = self::RESOURCE . 'import' . DIRECTORY_SEPARATOR;
     const string IMPORT_UNIT = self::IMPORT . 'unit_tests' . DIRECTORY_SEPARATOR;
     const string IMPORT_INCONSISTENCY = self::IMPORT . 'inconsistency_tests' . DIRECTORY_SEPARATOR;
+    const string IMPORT_EDGE_CASES = self::IMPORT . 'import_test_edge_cases' . DIRECTORY_SEPARATOR;
+    const string IMPORT_PROTECTED_TOLERANCE = self::IMPORT . 'protected_tolerance' . DIRECTORY_SEPARATOR;
+    const string IMPORT_V_DEM = self::IMPORT . 'v_dem' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIPEDIA = self::IMPORT . 'wikipedia' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIDATA = self::IMPORT . 'wikidata' . DIRECTORY_SEPARATOR;
+    // the json as received from wikidata
     const string IMPORT_WIKIDATA_CACHE = self::IMPORT_WIKIDATA . 'cache' . DIRECTORY_SEPARATOR;
+    // the json converted from the wikidata cache that can be imported into the database
+    const string IMPORT_WIKIDATA_TO_IMPORT = self::IMPORT_WIKIDATA . 'to_import' . DIRECTORY_SEPARATOR;
     const string IMPORT_XBRL = self::IMPORT . 'xbrl' . DIRECTORY_SEPARATOR;
     const string IMPORT_XBRL_ZIP = self::IMPORT_XBRL . 'zip' . DIRECTORY_SEPARATOR;
     const string UNIT_RES = self::RESOURCE . 'unit' . DIRECTORY_SEPARATOR;

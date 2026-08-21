@@ -695,6 +695,9 @@ enum messages: string
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END
         . '" is missing in the import message '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case IMPORT_SOURCE_NOT_A_NAME = 'the source of a value must be the name of a source'
+        . ' declared in the "sources" section of the file, but is '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case PHRASE_MISSING_IMPORT = 'phrase "'
         . self::VAR_START . self::VAR_PHRASE . self::VAR_END
         . '" is missing in the import message '

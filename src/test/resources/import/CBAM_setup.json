@@ -23,19 +23,17 @@
     {
       "name": "CO2",
       "description": "Carbon dioxide, greenhouse gas",
-      "type": "substance",
       "refs": [{"name": "Carbon_dioxide", "type": "wikipedia"}, {"name": "Q2062", "type": "wikidata"}]
     },
     {"name": "credit"},
     {"name": "default"},
     {"name": "direct"},
     {"name": "duty"},
-    {"name": "electricity", "description": "Electrical energy, indirect emission source", "type": "energy"},
+    {"name": "electricity", "description": "Electrical energy, indirect emission source"},
     {"name": "emission"},
     {
       "name": "eq",
       "description": "Equivalent, used to express global warming potential relative to CO2",
-      "type": "modifier",
       "refs": [{"name": "Carbon_dioxide_equivalent", "type": "wikipedia"}]
     },
     {"name": "EU ETS", "description": "European Union Emissions Trading System"},
@@ -191,6 +189,16 @@
       "name": "KBOB Emission Factors",
       "description": "Swiss Federal Coordination Body for Construction and Infrastructure",
       "url": "https://www.kbob.ch/en/ecological-assessment"
+    },
+    {
+      "name": "EU Emissions Trading System",
+      "description": "the emission allowance market of the European Union",
+      "url": "https://climate.ec.europa.eu/eu-action/eu-emissions-trading-system-eu-ets_en"
+    },
+    {
+      "name": "Federal Office for the Environment FOEN",
+      "description": "Bundesamt fuer Umwelt BAFU, the Swiss authority for the emission trading scheme",
+      "url": "https://www.bafu.admin.ch/bafu/en/home/topics/climate/info-specialists/climate--market-based-instruments/emissions-trading-scheme.html"
     }
   ],
   "values": [

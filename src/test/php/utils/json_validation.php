@@ -43,11 +43,15 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -64,9 +68,39 @@ class json_validation
         'test data' => test_paths::IMPORT,
     ];
 
-    // the folder with the json files that break a rule on purpose to test the import error
-    // handling, so a finding there is the expected result and never reported
-    const string SKIP_PATH = test_paths::IMPORT_INCONSISTENCY;
+    // the folders whose json files are not zukunft.com import files, so that the import rules
+    // do not apply: the files of the inconsistency tests break a rule on purpose to test the
+    // import error handling and the wikidata cache holds the json as received from wikidata;
+    // the converted json of test_paths::IMPORT_WIKIDATA_TO_IMPORT is checked as any other file
+    const array SKIP_PATHS = [
+        test_paths::IMPORT_INCONSISTENCY,
+        test_paths::IMPORT_WIKIDATA_CACHE,
+    ];
+
+    // the classes that name a json file with a const, checked to tell a file that no const names
+    // from one that is only missing in an import list
+    const array FILE_CONST_CLASSES = [
+        'files' => cfg_files::class,
+        'test_files' => test_files::class,
+    ];
+
+    // the const arrays of the json files that test/test.php and test/test_full_load.php import
+    // by the file name only, so that the message path is added by the importer
+    const array LOAD_LISTS_MESSAGE = [
+        'files::SYSTEM_DATA_FILES' => cfg_files::SYSTEM_DATA_FILES,
+        'files::POD_CONFIG_FILES_DIRECT' => cfg_files::POD_CONFIG_FILES_DIRECT,
+        'files::BASE_DATA_FILES' => cfg_files::BASE_DATA_FILES,
+    ];
+
+    // the const arrays of the json files that the same two scripts import by the complete path
+    const array LOAD_LISTS_PATH = [
+        'files::SAMPLE_VIEW_DATA_FILES' => cfg_files::SAMPLE_VIEW_DATA_FILES,
+        'files::BASE_DATA_PATH_FILES' => cfg_files::BASE_DATA_PATH_FILES,
+        'files::FULL_LOAD_FILES' => cfg_files::FULL_LOAD_FILES,
+        'test_files::TEST_DATA_FILES' => test_files::TEST_DATA_FILES,
+        'test_files::TEST_DATA_FILES_DIRECT' => test_files::TEST_DATA_FILES_DIRECT,
+        'test_files::TEST_DATA_FILES_NOT_REVIEWED' => test_files::TEST_DATA_FILES_NOT_REVIEWED,
+    ];
 
     // the qualifier that only repeats the default, see docs/llm/json_structure.md
     const string MEASURED_VALUE = 'measured value';
@@ -90,6 +124,7 @@ class json_validation
     const string CHK_CROSS_NAME = 'triple name with different keys across the main data';
     const string CHK_CROSS_KEY = 'triple key with different names across the main data';
     const string CHK_CROSS_DESC = 'description differs across the main data';
+    const string CHK_NOT_LOADED = 'file not named by an import const array';
     const string CHK_VERSION = 'format version';
 
     // the top level lists whose entries the import merges by name, mapped to the namespace of
@@ -133,8 +168,8 @@ class json_validation
         $md_txt .= "\n";
         $md_txt .= $file_cnt . ' json files checked, '
             . $this->hit_count($find_lst) . ' findings'
-            . ' (' . self::SKIP_PATH . ' is not checked, because these files'
-            . ' break a rule on purpose)' . "\n";
+            . ' (' . implode(' and ', self::SKIP_PATHS) . ' are not checked, because these files'
+            . ' are no zukunft.com import json)' . "\n";
 
         $md_txt .= $this->section_md(self::CHK_SYNTAX, $find_lst,
             'a file that cannot be decoded is skipped by every other check,'
@@ -186,6 +221,12 @@ class json_validation
             . ' descriptions and stops the whole file with "description is ... instead of ...";'
             . ' the description belongs in the home file (the one imported first, see'
             . ' docs/llm/json_structure.md) and every other file repeats the name without it');
+        $md_txt .= $this->section_md(self::CHK_NOT_LOADED, $find_lst,
+            'the import loads a json file only if a const of cfg/const/files.php or'
+            . ' test/php/const/files.php names it and that const is part of one of the arrays'
+            . ' used by test/test.php and test/test_full_load.php (' . $this->load_list_names()
+            . '), so a file that is in none of them is never imported and never tested:'
+            . ' add it to the matching list or delete the file');
         $md_txt .= $this->section_md(self::CHK_VERSION, $find_lst,
             '"version" is the version of the json format and not of the data, so it is matched'
             . ' against def::PRG_VERSION ("' . def::PRG_VERSION . '"); a file that is behind is'
@@ -345,6 +386,15 @@ class json_validation
     private function check_file(string $sec, string $file_path, array &$find_lst, bool $update): void
     {
         $name = basename($file_path);
+        if (!in_array($file_path, $this->loaded_file_list())) {
+            $const_name = $this->file_const_name($file_path);
+            if ($const_name == '') {
+                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - named by no const';
+            } else {
+                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - ' . $const_name
+                    . ' is in no import list';
+            }
+        }
         $json_array = json_decode(file_get_contents($file_path), true);
         if (!is_array($json_array)) {
             $find_lst[self::CHK_SYNTAX][$sec][] = $name . ' - ' . json_last_error_msg();
@@ -907,9 +957,96 @@ class json_validation
     }
 
     /**
+     * the json files that an import const array names, so that a scan of the folders can tell
+     * which file no import loads; the message path is added to the lists that name the file only
+     *
+     * @return array the path of every json file that test/test.php or test/test_full_load.php loads
+     */
+    function loaded_file_list(): array
+    {
+        $result = [];
+        foreach (self::LOAD_LISTS_MESSAGE as $file_lst) {
+            foreach ($file_lst as $file_name) {
+                $result[] = files::MESSAGE_PATH . $file_name;
+            }
+        }
+        foreach (self::LOAD_LISTS_PATH as $file_lst) {
+            $result = array_merge($result, $file_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * the const that names the given json file, so that the report can tell a file that no
+     * const names at all from one that only misses the entry in an import list
+     *
+     * @param string $file_path the path of the json file as the folder scan has returned it
+     * @return string the class and the name of the const or an empty string if none names the file
+     */
+    private function file_const_name(string $file_path): string
+    {
+        $result = '';
+        foreach (self::FILE_CONST_CLASSES as $class_name => $class) {
+            $ref = new ReflectionClass($class);
+            foreach ($ref->getConstants() as $const_name => $value) {
+                if (is_string($value) and $value != '') {
+                    if ($this->const_names_file($value, $file_path)) {
+                        $result = $class_name . '::' . $const_name;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if the given const value names the given json file
+     *
+     * a const holds the complete path, the path below the message folder or just the file name,
+     * with or without the json extension, and the update and the undo file of an import test are
+     * composed of the base const and an extension const, so all these forms are matched
+     *
+     * @param string $value the value of a file name const
+     * @param string $file_path the path of the json file as the folder scan has returned it
+     * @return bool false if the const value names another file
+     */
+    private function const_names_file(string $value, string $file_path): bool
+    {
+        $result = false;
+        $base = $value;
+        if (str_ends_with($base, files::JSON)) {
+            $base = substr($base, 0, -strlen(files::JSON));
+        }
+        $names = [
+            $base . files::JSON,
+            $base . test_files::IMPORT_UPDATE_EXT . files::JSON,
+            $base . test_files::IMPORT_UNDO_EXT . files::JSON
+        ];
+        foreach ($names as $name) {
+            if ($file_path == $name) {
+                $result = true;
+            }
+            if (str_ends_with($file_path, DIRECTORY_SEPARATOR . $name)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the const names of the import lists for the report description
+     */
+    private function load_list_names(): string
+    {
+        $names = array_keys(self::LOAD_LISTS_MESSAGE);
+        $names = array_merge($names, array_keys(self::LOAD_LISTS_PATH));
+        return implode(', ', $names);
+    }
+
+    /**
      * @param string $path the folder to scan for json import files
      * @return array the path of every json file below the given folder except the files of
-     *               self::SKIP_PATH, which are broken on purpose
+     *               self::SKIP_PATHS, which are no zukunft.com import json
      */
     function json_file_list(string $path): array
     {
@@ -917,11 +1054,26 @@ class json_validation
         $dir_iterator = new RecursiveDirectoryIterator($path);
         foreach (new RecursiveIteratorIterator($dir_iterator) as $file) {
             if (str_ends_with($file->getFilename(), files::JSON)
-                && !str_starts_with($file->getPathname(), self::SKIP_PATH)) {
+                && !$this->is_skipped($file->getPathname())) {
                 $result[] = $file->getPathname();
             }
         }
         sort($result);
+        return $result;
+    }
+
+    /**
+     * @param string $file_path the path of a json file as the folder scan has returned it
+     * @return bool true if the file is in a folder that is not checked
+     */
+    private function is_skipped(string $file_path): bool
+    {
+        $result = false;
+        foreach (self::SKIP_PATHS as $skip_path) {
+            if (str_starts_with($file_path, $skip_path)) {
+                $result = true;
+            }
+        }
         return $result;
     }
 

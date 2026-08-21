@@ -13,6 +13,10 @@
       "name": "bus"
     },
     {
+      "name": "click",
+      "description": "a mouse click as a measure of effort, here the merge of a finished pull request"
+    },
+    {
       "name": "confidence",
       "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
     },
@@ -39,6 +43,9 @@
       "name": "Plato"
     },
     {
+      "name": "person"
+    },
+    {
       "name": "probability"
     },
     {
@@ -50,6 +57,10 @@
     {
       "name": "Republik",
       "description": "the online newspaper Republik"
+    },
+    {
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "single"
@@ -73,10 +84,10 @@
     {
       "words": [
         "implementation cost",
-        "assumed"
+        "assumed",
+        "click"
       ],
-      "value": 1,
-      "unit": "click (merge of a finished PR)",
+      "number": 1,
       "description": "Assumption: PR is mergeable and reversible; real cost includes review, UX, abuse vetting"
     },
     {
@@ -84,15 +95,15 @@
         "implementation cost",
         "confidence value"
       ],
-      "value": 0.6
+      "number": 0.6
     },
     {
       "words": [
         "P(publishers implement | annoyed)",
-        "assumed"
+        "assumed",
+        "probability"
       ],
-      "value": 0.08,
-      "unit": "probability",
+      "number": 0.08,
       "description": "Claude's estimate; revisable upward given the open-source PR, since building is no longer the most expensive option"
     },
     {
@@ -100,15 +111,15 @@
         "P(publishers implement | annoyed)",
         "confidence value"
       ],
-      "value": 0.3
+      "number": 0.3
     },
     {
       "words": [
         "P(publishers throttle | annoyed)",
-        "assumed"
+        "assumed",
+        "probability"
       ],
-      "value": 0.55,
-      "unit": "probability",
+      "number": 0.55,
       "description": "Competing cheaper reaction; Moos supplies the justification for it free of charge"
     },
     {
@@ -116,15 +127,15 @@
         "P(publishers throttle | annoyed)",
         "confidence value"
       ],
-      "value": 0.3
+      "number": 0.3
     },
     {
       "words": [
         "Single-Attempt Failure Rate",
-        "assumed"
+        "assumed",
+        "share"
       ],
-      "value": 0.9,
-      "unit": "share",
+      "number": 0.9,
       "description": "Timon's own estimate: very high failure probability per single attempt, hence a portfolio is required"
     },
     {
@@ -132,15 +143,15 @@
         "Single-Attempt Failure Rate",
         "confidence value"
       ],
-      "value": 0.4
+      "number": 0.4
     },
     {
       "words": [
         "Bus Factor zukunft.com",
-        "assumed"
+        "assumed",
+        "person"
       ],
-      "value": 1,
-      "unit": "persons",
+      "number": 1,
       "description": "Father-son transmission nominally raises this to 2 but remains structurally a single point of failure until an external collaborator joins"
     },
     {
@@ -148,7 +159,7 @@
         "Bus Factor zukunft.com",
         "confidence value"
       ],
-      "value": 0.7
+      "number": 0.7
     }
   ],
   "triples": [

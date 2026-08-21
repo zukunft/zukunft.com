@@ -651,6 +651,25 @@ When adding such a test: (1) add a reserved test entry to `words.php` (or the
 matching `*_const` file) if none fits, (2) build the import file's name from that
 const, and (3) use the same const for cleanup and for any regeneration script.
 
+## The full load never contains data that needs a system user
+
+`test/test_full_load.php` imports with the normal test user (`import_base_data($t->usr1)`
+and `import_test_data($t->usr1)`), so **no file of `files::BASE_DATA_FILES`,
+`BASE_DATA_PATH_FILES`, `SAMPLE_VIEW_DATA_FILES` or of the `test_files::TEST_DATA_*`
+lists may contain data that only a system user may write.** That is `code_id` and
+`ui_msg_code_id`: `sandbox_code_id::set_code_id()` and the component setters check
+`user::can_set_code_id()` / `can_set_ui_msg_id()`, which pass only for the system, the
+system-test and the developer profile. A `protection` needs no privilege and is fine.
+
+The refusal is not a single message: the import stops at the object whose code id it
+cannot write, so every later object of that file is reported as missing
+("component with name … missing when importing json part …") and the real cause sits
+in the first line of a very long error.
+
+Data that needs a code id belongs in `files::SYSTEM_DATA_FILES`, which
+`import_file::import_system_data()` imports as the system user. Keep it out of the full
+load, and if a sample file mixes both, split the code-id part into the system data.
+
 ## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
 
 `src/test/php/const/{word,triple,verb}_names.php` pin the **seed database ids**

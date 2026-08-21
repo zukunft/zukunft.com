@@ -175,7 +175,10 @@ class system_view_ui_tests
         // shared frontend instance for all page tests
         $ui = new frontend('unit test');
         $cac_msg = new user_message();
-        $dto = $tl->ui_test_cache($t->usr1, $t, $cac_msg);
+        // the cache is created by the dev user, because the system views set a code id,
+        // which the normal test user is not permitted to do (see user::can_set_code_id)
+        // TODO Prio 2 check if a user with less permissions can be used
+        $dto = $tl->ui_test_cache($t->usr_dev, $t, $cac_msg);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($msg);

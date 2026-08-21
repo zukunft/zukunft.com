@@ -6,15 +6,15 @@
   "selection": [
     "sample references"
   ],
-  "refs": [
+  "references": [
     {
-      "name": "Zurich (City)",
-      "external_key": "Q72",
+      "from_phrase": "Zurich (city)",
+      "name": "Q72",
       "type": "wikidata"
     },
     {
-      "name": "Zurich (Canton)",
-      "external_key": "Q11943",
+      "from_phrase": "Zurich (canton)",
+      "name": "Q11943",
       "type": "wikidata"
     }
   ]

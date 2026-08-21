@@ -4,6 +4,10 @@
       "name": "angenommen"
     },
     {
+      "name": "Anteil",
+      "description": "Teil eines Ganzen, 0..1"
+    },
+    {
       "name": "Bus-Faktor",
       "description": "Anzahl Personen, deren Ausfall das Projekt stoppen wuerde"
     },
@@ -30,12 +34,19 @@
       "description": "Aufwand fuer Verleger, da Open-Source-PR von Timon geliefert wird"
     },
     {
+      "name": "Klick",
+      "description": "ein Mausklick als Aufwandsmass, hier der Merge eines fertigen Pull Requests"
+    },
+    {
       "name": "Konfidenz",
       "description": "subjektive Wahrscheinlichkeit (0 bis 1), dass der angenommene Wertebereich den wahren Wert enthaelt"
     },
     {
       "name": "Nerv-Test",
       "description": "Taktik: Verleger gezielt reizen"
+    },
+    {
+      "name": "Person"
     },
     {
       "name": "Platon"
@@ -68,10 +79,10 @@
     {
       "words": [
         "Implementierungskosten",
-        "angenommener Wert"
+        "angenommener Wert",
+        "Klick"
       ],
-      "value": 1,
-      "unit": "Klick (Merge eines fertigen PR)",
+      "number": 1,
       "description": "Annahme: PR ist mergebar und reversibel; reale Kosten umfassen Review, UX, Missbrauchspruefung"
     },
     {
@@ -79,15 +90,15 @@
         "Implementierungskosten",
         "Konfidenzwert"
       ],
-      "value": 0.6
+      "number": 0.6
     },
     {
       "words": [
         "P(Verleger implementieren | genervt)",
-        "angenommener Wert"
+        "angenommener Wert",
+        "Wahrscheinlichkeit"
       ],
-      "value": 0.08,
-      "unit": "Wahrscheinlichkeit",
+      "number": 0.08,
       "description": "Claudes Schaetzung; durch Open-Source-PR nach oben revidierbar, da Bauen nicht mehr teuerste Option"
     },
     {
@@ -95,15 +106,15 @@
         "P(Verleger implementieren | genervt)",
         "Konfidenzwert"
       ],
-      "value": 0.3
+      "number": 0.3
     },
     {
       "words": [
         "P(Verleger bremsen ein | genervt)",
-        "angenommener Wert"
+        "angenommener Wert",
+        "Wahrscheinlichkeit"
       ],
-      "value": 0.55,
-      "unit": "Wahrscheinlichkeit",
+      "number": 0.55,
       "description": "Konkurrierende billigere Reaktion; Moos liefert Begruendung dafuer frei Haus"
     },
     {
@@ -111,15 +122,15 @@
         "P(Verleger bremsen ein | genervt)",
         "Konfidenzwert"
       ],
-      "value": 0.3
+      "number": 0.3
     },
     {
       "words": [
         "Scheiterrate Einzelversuch",
-        "angenommener Wert"
+        "angenommener Wert",
+        "Anteil"
       ],
-      "value": 0.9,
-      "unit": "Anteil",
+      "number": 0.9,
       "description": "Timons eigene Einschaetzung: sehr hohe Scheiterwahrscheinlichkeit pro Einzelversuch, daher Portfolio noetig"
     },
     {
@@ -127,15 +138,15 @@
         "Scheiterrate Einzelversuch",
         "Konfidenzwert"
       ],
-      "value": 0.4
+      "number": 0.4
     },
     {
       "words": [
         "Bus-Faktor zukunft.com",
-        "angenommener Wert"
+        "angenommener Wert",
+        "Person"
       ],
-      "value": 1,
-      "unit": "Personen",
+      "number": 1,
       "description": "Vater-Sohn-Weitergabe erhoeht nominell auf 2, bleibt aber strukturell Single-Point-of-Failure bis externer Mitstreiter dazukommt"
     },
     {
@@ -143,7 +154,7 @@
         "Bus-Faktor zukunft.com",
         "Konfidenzwert"
       ],
-      "value": 0.7
+      "number": 0.7
     }
   ],
   "triples": [

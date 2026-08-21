@@ -58,7 +58,10 @@ class reference_list_ui_tests
         $t_ref = new test_refs($t);
         $msg = new user_message();
         $cac_msg = new user_message();
-        $dto = $tl->ui_test_cache($t->usr1, $t, $cac_msg);
+        // the cache is created by the dev user, because the system views set a code id,
+        // which the normal test user is not permitted to do (see user::can_set_code_id)
+        // TODO Prio 2 check if a user with less permissions can be used
+        $dto = $tl->ui_test_cache($t->usr_dev, $t, $cac_msg);
         $ui->set_cache($dto);
 
         // start the test section (ts)

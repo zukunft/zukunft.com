@@ -252,14 +252,22 @@ class test_lib
         // an empty config so that the getters return the shared defaults
         $dto_ui->cfg = new config_ui();
 
+        // a cache that is silently incomplete lets every later test fail for the wrong reason,
+        // so the creation problems are reported here and not only handed to the caller;
+        // each import buffer is asserted before the merge and with its file name, because a
+        // missing permission or a missing component names the object, but never the file it
+        // comes from, and the reader would have to guess which of the two imports has failed
+        $cache_name = 'the frontend test cache of ' . $usr->name();
+        $t->assert_msg($cache_name . ' is created without errors', $msg);
+        $t->assert_msg($cache_name . ' is created from ' . files::SYSTEM_VIEWS_FILE
+            . ' without errors', $imp_msg);
+        $t->assert_msg($cache_name . ' is created from ' . files::BASE_VIEWS_FILE
+            . ' without errors', $base_msg);
+
         // the two imports and the value list load report to a backend message,
         // so both buffers reach the caller with the frontend messages collected above
         $msg->merge($imp_msg);
         $msg->merge($base_msg);
-
-        // a cache that is silently incomplete lets every later test fail for the wrong reason,
-        // so the creation problems are reported here and not only handed to the caller
-        $t->assert_msg('the frontend test cache of ' . $usr->name() . ' is created without errors', $msg);
 
         // set the global cache var
         $ui_sys = $dto_ui;

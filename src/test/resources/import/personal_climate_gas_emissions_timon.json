@@ -152,7 +152,7 @@
   "views": [
     {
       "name": "personal climate gas emission",
-      "comment": "overview over the climate gas emissions of the current user",
+      "description": "overview over the climate gas emissions of the current user",
       "type": "detail_view",
       "components": [
         {

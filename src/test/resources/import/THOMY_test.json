@@ -161,7 +161,7 @@
   "views": [
     {
       "name": "Food ingredients",
-      "comment": "List the ingredients of one product",
+      "description": "List the ingredients of one product",
       "type": "detail_view",
       "components": [
         {

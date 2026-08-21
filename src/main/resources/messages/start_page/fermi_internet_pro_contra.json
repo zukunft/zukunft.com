@@ -971,7 +971,7 @@
         "assumed"
       ],
       "number": "0.001",
-      "note": "Normative value: the disutility of lost autonomy is a value judgement, not a measured quantity."
+      "description": "Normative value: the disutility of lost autonomy is a value judgement, not a measured quantity."
     },
     {
       "words": [
@@ -988,7 +988,7 @@
         "assumed"
       ],
       "number": "10000000",
-      "note": "Normative value: the HTP cost assigned to misuse reflects a value judgement about its severity."
+      "description": "Normative value: the HTP cost assigned to misuse reflects a value judgement about its severity."
     },
     {
       "words": [
@@ -1187,7 +1187,7 @@
         "assumed"
       ],
       "number": "10",
-      "note": "Dose ratio component of the overstimulation gap."
+      "description": "Dose ratio component of the overstimulation gap."
     },
     {
       "words": [
@@ -1196,7 +1196,7 @@
         "assumed"
       ],
       "number": "10",
-      "note": "Developmental-window component. Product with intensity gap = 100, the lower-bound overstimulation gap."
+      "description": "Developmental-window component. Product with intensity gap = 100, the lower-bound overstimulation gap."
     },
     {
       "words": [
@@ -1206,7 +1206,7 @@
         "assumed"
       ],
       "number": "10",
-      "note": "Upper-bound scenario: status-quo harm is 10x larger than the lower-bound case."
+      "description": "Upper-bound scenario: status-quo harm is 10x larger than the lower-bound case."
     },
     {
       "words": [
@@ -1215,7 +1215,7 @@
         "assumed"
       ],
       "number": "0.2",
-      "note": "Assumed share of hide-actions that wrongly target legitimate content."
+      "description": "Assumed share of hide-actions that wrongly target legitimate content."
     },
     {
       "words": [
@@ -1226,7 +1226,7 @@
         "assumed"
       ],
       "number": "5000000",
-      "note": "Normative value: HTP cost of the suppressed legitimate information if over-blocking were certain."
+      "description": "Normative value: HTP cost of the suppressed legitimate information if over-blocking were certain."
     },
     {
       "words": [
@@ -1238,7 +1238,7 @@
       ],
       "number": "54%",
       "source": "Digital News Report 2026",
-      "note": "Share of respondents across 48 markets who used social media and video networks for news in the last week."
+      "description": "Share of respondents across 48 markets who used social media and video networks for news in the last week."
     },
     {
       "words": [
@@ -1250,7 +1250,7 @@
       ],
       "number": "51%",
       "source": "Digital News Report 2026",
-      "note": "Share of respondents across 48 markets who used news organisations' own websites and apps for news in the last week."
+      "description": "Share of respondents across 48 markets who used news organisations' own websites and apps for news in the last week."
     },
     {
       "words": [
@@ -1262,7 +1262,7 @@
       ],
       "number": "30%",
       "source": "Digital News Report 2026",
-      "note": "Share of respondents globally identifying social media and video networks as their main source of news; 22% five years earlier."
+      "description": "Share of respondents globally identifying social media and video networks as their main source of news; 22% five years earlier."
     },
     {
       "words": [
@@ -1274,7 +1274,7 @@
       ],
       "number": "12%",
       "source": "Digital News Report 2026",
-      "note": "Share of respondents who now use only social media and video networks for news; 6% in 2020."
+      "description": "Share of respondents who now use only social media and video networks for news; 6% in 2020."
     },
     {
       "words": [
@@ -1285,7 +1285,7 @@
       ],
       "number": "10%",
       "source": "Digital News Report 2026",
-      "note": "Weekly use of AI chatbots for news, up from 7% the previous year."
+      "description": "Weekly use of AI chatbots for news, up from 7% the previous year."
     },
     {
       "words": [
@@ -1297,7 +1297,7 @@
       ],
       "number": "52%",
       "source": "Digital News Report 2026",
-      "note": "Share of respondents aged 18–24 whose main way of getting news is social media, video networks, or AI chatbots."
+      "description": "Share of respondents aged 18–24 whose main way of getting news is social media, video networks, or AI chatbots."
     },
     {
       "words": [
@@ -1307,7 +1307,7 @@
       ],
       "number": "77%",
       "source": "Digital News Report 2026",
-      "note": "Share of respondents globally consuming online news video each week."
+      "description": "Share of respondents globally consuming online news video each week."
     },
     {
       "words": [
@@ -1317,7 +1317,7 @@
       ],
       "number": "37%",
       "source": "Digital News Report 2026",
-      "note": "Overall global trust in news in 2026, the lowest level recorded by the report since it began measuring trust in 2015."
+      "description": "Overall global trust in news in 2026, the lowest level recorded by the report since it began measuring trust in 2015."
     },
     {
       "words": [
@@ -1326,7 +1326,7 @@
       ],
       "number": "62%",
       "source": "Digital News Report 2026",
-      "note": "Share of respondents globally concerned about fake news online; up 4 percentage points in 2026."
+      "description": "Share of respondents globally concerned about fake news online; up 4 percentage points in 2026."
     }
   ],
   "calc-validation": [

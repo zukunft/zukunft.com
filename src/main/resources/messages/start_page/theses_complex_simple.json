@@ -499,40 +499,35 @@
       "description": "keyword for system internal triples such as the column definitions",
       "from": "zukunft.com",
       "verb": "is a",
-      "to": "system",
-      "code_id": "zukunft_com_system"
+      "to": "system"
     },
     {
       "name": "column (system)",
       "description": "keyword for columns used by the system components",
       "from": "column",
       "verb": "can be",
-      "to": "zukunft.com system",
-      "code_id": "system_column"
+      "to": "zukunft.com system"
     },
     {
       "name": "mayor column (system)",
       "description": "keyword for columns that should be shown in a table even if the screen is small",
       "from": "column (system)",
       "verb": "can be",
-      "to": "mayor",
-      "code_id": "system_column_mayor"
+      "to": "mayor"
     },
     {
       "name": "main column (system)",
       "description": "keyword for columns that should always be shown if the screen not small",
       "from": "column (system)",
       "verb": "can be",
-      "to": "main",
-      "code_id": "system_column_main"
+      "to": "main"
     },
     {
       "name": "minor column (system)",
       "description": "keyword for columns that should always be shown if the screen wide",
       "from": "column (system)",
       "verb": "can be",
-      "to": "minor",
-      "code_id": "system_column_minor"
+      "to": "minor"
     },
     {
       "name": "column low",
@@ -1115,15 +1110,11 @@
     {
       "name": "Title theses",
       "type": "system_title",
-      "code_id": "fermi_theses_title",
-      "ui_msg_code_id": "fermi_theses_title",
       "description": "page title: the thesis being weighed against its anti-theses"
     },
     {
       "name": "table theses probability and anti theses probability",
       "type": "system_table",
-      "code_id": "fermi_theses_channel_table",
-      "ui_msg_code_id": "fermi_theses_channel_table",
       "description": "one row per competing cause of the trust decline: attributed share, causal direction, strength, evidence grade, source; the thesis channel (complexity) is the last row. Renders the 'Causal direction and evidence grade per channel' table of the markdown.",
       "phrases": [
         "complexity share",
@@ -1136,8 +1127,6 @@
     {
       "name": "table chain links and result",
       "type": "system_table",
-      "code_id": "fermi_chain_link_table",
-      "ui_msg_code_id": "fermi_chain_link_table",
       "description": "one row per multiplicative chain link with low/centre/high columns; last row is the chain result. Renders the 'Chain links and result' table of the markdown.",
       "phrases": [
         "bad steering loss",
@@ -1150,8 +1139,6 @@
     {
       "name": "table sensitivity of the sign determining assumption",
       "type": "system_table",
-      "code_id": "fermi_sensitivity_table",
-      "ui_msg_code_id": "fermi_sensitivity_table",
       "description": "one column per scenario variant of the sign-determining link s_komplex: base (centre), evidence-adjusted and strong; one row per chain link that a variant changes. Renders the 'Sensitivity' table of the markdown with the variants as the columns.",
       "phrases": [
         "complexity share",
@@ -1164,7 +1151,6 @@
     {
       "name": "theses/antitheses",
       "description": "overview of the probability of a thesis with the anti theses",
-      "code_id": "fermi_theses_overview",
       "type": "word",
       "components": [
         {

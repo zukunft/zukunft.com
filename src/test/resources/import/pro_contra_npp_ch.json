@@ -1289,7 +1289,7 @@
       ],
       "number": "120",
       "source": "BAFU CO2 levy 2025",
-      "note": "Swiss CO2 levy 2025, capped at CHF 120/t; used as the low anchor of the carbon shadow price. Study scenarios reach 210-760 CHF/t, hence the wide lower/upper band on the carbon benefit adder."
+      "description": "Swiss CO2 levy 2025, capped at CHF 120/t; used as the low anchor of the carbon shadow price. Study scenarios reach 210-760 CHF/t, hence the wide lower/upper band on the carbon benefit adder."
     },
     {
       "words": [
@@ -1300,7 +1300,7 @@
       ],
       "number": "0.1625",
       "source": "Lazard LCOE+ 2025",
-      "note": "Lazard nuclear LCOE midpoint (141+220)/2 = 180.5 USD/MWh, converted at ~0.90 USD/CHF -> 0.1625 CHF/kWh. Positive (cost)."
+      "description": "Lazard nuclear LCOE midpoint (141+220)/2 = 180.5 USD/MWh, converted at ~0.90 USD/CHF -> 0.1625 CHF/kWh. Positive (cost)."
     },
     {
       "words": [
@@ -1311,7 +1311,7 @@
       ],
       "number": "0.1225",
       "source": "Lazard LCOE+ 2025",
-      "note": "mean minus one sigma (0.04, the 141-220 USD/MWh band plus FX uncertainty)."
+      "description": "mean minus one sigma (0.04, the 141-220 USD/MWh band plus FX uncertainty)."
     },
     {
       "words": [
@@ -1322,7 +1322,7 @@
       ],
       "number": "0.2025",
       "source": "Lazard LCOE+ 2025",
-      "note": "mean plus one sigma (0.04, the 141-220 USD/MWh band plus FX uncertainty)."
+      "description": "mean plus one sigma (0.04, the 141-220 USD/MWh band plus FX uncertainty)."
     },
     {
       "words": [
@@ -1333,7 +1333,7 @@
       ],
       "number": "0.0208",
       "source": "Wikipedia Kernenergie in der Schweiz",
-      "note": "CHF 23.9 bn over ~1150 TWh lifetime fleet generation (23 TWh/a x 50 a). Positive (cost)."
+      "description": "CHF 23.9 bn over ~1150 TWh lifetime fleet generation (23 TWh/a x 50 a). Positive (cost)."
     },
     {
       "words": [
@@ -1344,7 +1344,7 @@
       ],
       "number": "0.0128",
       "source": "Wikipedia Kernenergie in der Schweiz",
-      "note": "mean minus one sigma (0.008, cost-overrun and lifetime-output uncertainty)."
+      "description": "mean minus one sigma (0.008, cost-overrun and lifetime-output uncertainty)."
     },
     {
       "words": [
@@ -1355,7 +1355,7 @@
       ],
       "number": "0.0288",
       "source": "Wikipedia Kernenergie in der Schweiz",
-      "note": "mean plus one sigma (0.008; disposal estimates have historically risen)."
+      "description": "mean plus one sigma (0.008; disposal estimates have historically risen)."
     },
     {
       "words": [
@@ -1366,7 +1366,7 @@
       ],
       "number": "-0.003",
       "source": "BAFU CO2 levy 2025",
-      "note": "Avoided emissions vs a partly-fossil marginal alternative (~25 g CO2eq/kWh net benefit) at ~120 CHF/t -> ~0.003 CHF/kWh saved. Negative (benefit). Small because Swiss grid is already low-carbon."
+      "description": "Avoided emissions vs a partly-fossil marginal alternative (~25 g CO2eq/kWh net benefit) at ~120 CHF/t -> ~0.003 CHF/kWh saved. Negative (benefit). Small because Swiss grid is already low-carbon."
     },
     {
       "words": [
@@ -1377,7 +1377,7 @@
       ],
       "number": "-0.007",
       "source": "BAFU CO2 levy 2025",
-      "note": "mean minus one sigma (0.004); larger avoided-emission benefit at the upper carbon price (up to 760 CHF/t)."
+      "description": "mean minus one sigma (0.004); larger avoided-emission benefit at the upper carbon price (up to 760 CHF/t)."
     },
     {
       "words": [
@@ -1388,7 +1388,7 @@
       ],
       "number": "0.001",
       "source": "BAFU CO2 levy 2025",
-      "note": "mean plus one sigma (0.004); sign flips to a small cost if PV/wind is the true counterfactual."
+      "description": "mean plus one sigma (0.004); sign flips to a small cost if PV/wind is the true counterfactual."
     },
     {
       "words": [
@@ -1399,7 +1399,7 @@
       ],
       "number": "-0.02",
       "source": "FuW Energiezukunft Schweiz 2026",
-      "note": "Imputed value of firm winter baseload (avoided import-price spikes / scarcity). Negative (benefit). Highly uncertain shadow value, not a market price."
+      "description": "Imputed value of firm winter baseload (avoided import-price spikes / scarcity). Negative (benefit). Highly uncertain shadow value, not a market price."
     },
     {
       "words": [
@@ -1410,7 +1410,7 @@
       ],
       "number": "-0.04",
       "source": "FuW Energiezukunft Schweiz 2026",
-      "note": "mean minus one sigma (0.02); high imputed value of firm winter baseload."
+      "description": "mean minus one sigma (0.02); high imputed value of firm winter baseload."
     },
     {
       "words": [
@@ -1421,7 +1421,7 @@
       ],
       "number": "0.0",
       "source": "FuW Energiezukunft Schweiz 2026",
-      "note": "mean plus one sigma (0.02); least market-grounded estimate, the band reaches near-zero benefit."
+      "description": "mean plus one sigma (0.02); least market-grounded estimate, the band reaches near-zero benefit."
     },
     {
       "words": [
@@ -1432,7 +1432,7 @@
       ],
       "number": "0.005",
       "source": "GRS Swiss nuclear overview 2024",
-      "note": "Monetised geopolitical risk premium of 100% imported fuel. Positive (cost). Fuel is a small share of nuclear LCOE, so the premium is modest."
+      "description": "Monetised geopolitical risk premium of 100% imported fuel. Positive (cost). Fuel is a small share of nuclear LCOE, so the premium is modest."
     },
     {
       "words": [
@@ -1443,7 +1443,7 @@
       ],
       "number": "0.0",
       "source": "GRS Swiss nuclear overview 2024",
-      "note": "mean minus one sigma (0.005); geopolitical premia are hard to price, band kept as wide as the mean."
+      "description": "mean minus one sigma (0.005); geopolitical premia are hard to price, band kept as wide as the mean."
     },
     {
       "words": [
@@ -1454,7 +1454,7 @@
       ],
       "number": "0.01",
       "source": "GRS Swiss nuclear overview 2024",
-      "note": "mean plus one sigma (0.005); geopolitical premia are hard to price, band kept as wide as the mean."
+      "description": "mean plus one sigma (0.005); geopolitical premia are hard to price, band kept as wide as the mean."
     },
     {
       "words": [
@@ -1465,7 +1465,7 @@
       ],
       "number": "0.015",
       "source": "bluewin Swiss reactor build 2026",
-      "note": "Monetised cost of long build + delay risk (Flamanville/OL3-type overruns, capital tied up, gap bridged meanwhile). Positive (cost), partly overlapping LCOE."
+      "description": "Monetised cost of long build + delay risk (Flamanville/OL3-type overruns, capital tied up, gap bridged meanwhile). Positive (cost), partly overlapping LCOE."
     },
     {
       "words": [
@@ -1476,7 +1476,7 @@
       ],
       "number": "0.0",
       "source": "bluewin Swiss reactor build 2026",
-      "note": "mean minus one sigma (0.015); overrun distribution is heavily right-skewed, sigma set equal to mean as a rough proxy."
+      "description": "mean minus one sigma (0.015); overrun distribution is heavily right-skewed, sigma set equal to mean as a rough proxy."
     },
     {
       "words": [
@@ -1487,7 +1487,7 @@
       ],
       "number": "0.03",
       "source": "bluewin Swiss reactor build 2026",
-      "note": "mean plus one sigma (0.015); overrun distribution is heavily right-skewed, sigma set equal to mean as a rough proxy."
+      "description": "mean plus one sigma (0.015); overrun distribution is heavily right-skewed, sigma set equal to mean as a rough proxy."
     }
   ],
   "formulas": [

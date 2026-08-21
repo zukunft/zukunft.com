@@ -13,7 +13,7 @@
   ],
   "references": [
     {
-      "phrase": "universe",
+      "from_phrase": "universe",
       "name": "Q1",
       "type": "wikidata"
     }
