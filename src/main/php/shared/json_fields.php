@@ -114,6 +114,16 @@ class json_fields
     // the digital object identifier of a source used to create the url to doi.org
     const string DOI = 'doi';
 
+    // who has written, who has published and when has published a source
+    // TODO Prio 2 save these fields in the database instead of dropping them after the import:
+    //      the author and the publisher are phrases and the date is a time phrase, so the
+    //      value of the field can be a text value (values_text) resp. a time value linked to
+    //      the source by a system triple e.g. "<source> has author <author>", which also allows
+    //      to select the sources of an author without adding a field to the source table
+    const string AUTHOR = 'author';
+    const string PUBLISHER = 'publisher';
+    const string PUBLISH_DATE = 'date';
+
     // the pre-rendered html page of a cached view-only request
     const string HTML_PAGE = 'html_page';
 
