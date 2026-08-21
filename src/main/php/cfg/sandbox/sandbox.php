@@ -102,6 +102,7 @@ include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -157,6 +158,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -279,6 +281,9 @@ class sandbox extends db_object_seq_id_user
      * or the formula type to link special behavior to special formulas like "this" or "next"
      */
     public ?int $type_id = null;
+
+    // the recent changes for the changes tab, filled by load_changes_related()
+    public ?change_log_list $changes_related = null;
 
 
     /*
@@ -495,6 +500,63 @@ class sandbox extends db_object_seq_id_user
             $vars[json_fields::EXCLUDED] = true;
         }
 
+        return $vars;
+    }
+
+    /**
+     * the changes of this object for the changes tab of the object page
+     * @param api_type_list $typ_lst the test mode keeps the list set by the caller instead of loading
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the change entries of the api json array
+     */
+    protected function api_changes_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        if ($this->changes_related == null and !$typ_lst->test_mode()) {
+            $this->load_changes_related($msg);
+        }
+        if ($this->changes_related != null and !$this->changes_related->is_empty()) {
+            $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
+                new api_type_list(), $msg, $usr);
+        }
+        return $vars;
+    }
+
+    /**
+     * fill changes_related for api_changes_array()
+     * @param user_message $msg to collect any problem while loading the changes
+     * @return void
+     */
+    function load_changes_related(user_message $msg): void
+    {
+        $chg_lst = new change_log_list();
+        $chg_lst->load_obj_last($this, $this->get_user(), $msg);
+        $this->changes_related = $chg_lst;
+    }
+
+    /**
+     * the user sandbox overwrites of this object for the 'my' and 'others' tab
+     * @param api_type_list $typ_lst the test mode reads no overlay rows
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the overwrite entries of the api json array
+     */
+    protected function api_overwrites_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        if (!$typ_lst->test_mode()) {
+            $ovr_msg = new user_message($usr); // a buffer for the api user, merged back below
+            $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
+            if ($usr_ovr != []) {
+                $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
+            }
+            $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
+            if ($oth_ovr != []) {
+                $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
+            }
+            $msg->merge($ovr_msg);
+        }
         return $vars;
     }
 

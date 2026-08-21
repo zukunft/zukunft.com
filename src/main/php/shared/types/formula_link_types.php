@@ -40,5 +40,7 @@ class formula_link_types
     const string DEFAULT_NAME = "default";
     const string DEFAULT_COM = "default";
     const string TIME_PERIOD = "time_period_based"; // for time based links
+    const int TIME_PERIOD_ID = 2;
+    const string TIME_PERIOD_NAME = "time period based";
 
 }

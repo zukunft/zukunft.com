@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1192 of 5584 public functions have at least 2 unit test calls; the 4392 functions below do not
+1193 of 5587 public functions have at least 2 unit test calls; the 4394 functions below do not
 
 ## main backend
 
@@ -571,7 +571,6 @@ so same-named functions of several classes share their test calls
     \-- get_res_lst - 0 unit test calls
     \-- load_all_terms - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
-    \-- load_changes_related - 0 unit test calls
     \-- load_data_for_calc - 0 unit test calls
     \-- load_latex_terms - 0 unit test calls
     \-- load_phrases_related - 0 unit test calls
@@ -1326,6 +1325,7 @@ so same-named functions of several classes share their test calls
     \-- is_same - 1 unit test calls
     \-- is_similar_std - 0 unit test calls
     \-- is_value_obj - 0 unit test calls
+    \-- load_changes_related - 0 unit test calls
     \-- load_owner - 0 unit test calls
     \-- load_sql_changer - 0 unit test calls
     \-- load_sql_fields - 0 unit test calls
@@ -2402,7 +2402,6 @@ so same-named functions of several classes share their test calls
     \-- load_by_link_id - 0 unit test calls
     \-- load_by_name - 0 unit test calls
     \-- load_by_name_generated - 0 unit test calls
-    \-- load_changes_related - 0 unit test calls
     \-- load_formulas_related - 0 unit test calls
     \-- load_references_related - 0 unit test calls
     \-- load_sql - 0 unit test calls
@@ -2965,7 +2964,6 @@ so same-named functions of several classes share their test calls
     \-- link_types - 0 unit test calls
     \-- load_by_formula_name - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
-    \-- load_changes_related - 0 unit test calls
     \-- load_formulas_related - 0 unit test calls
     \-- load_parent_formulas_related - 0 unit test calls
     \-- load_phrases_related - 0 unit test calls
@@ -3557,10 +3555,12 @@ so same-named functions of several classes share their test calls
     \-- view_selector - 0 unit test calls
 \-- formula_link
     \-- api_array - 1 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- formula_link_type_selector - 0 unit test calls
     \-- formula_name - 0 unit test calls
     \-- formula_selector - 0 unit test calls
     \-- get_description - 0 unit test calls
+    \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- phrase_name - 0 unit test calls
     \-- set_formula - 0 unit test calls
@@ -3979,6 +3979,7 @@ so same-named functions of several classes share their test calls
     \-- input_valid - 1 unit test calls
 \-- sandbox_link
     \-- api_array - 1 unit test calls
+    \-- link_type - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- url_mapper - 1 unit test calls
@@ -4168,8 +4169,10 @@ so same-named functions of several classes share their test calls
     \-- show_description - 0 unit test calls
     \-- show_formula - 0 unit test calls
     \-- show_language_symbol - 0 unit test calls
+    \-- show_link_type - 0 unit test calls
     \-- show_name - 0 unit test calls
     \-- show_name_big - 0 unit test calls
+    \-- show_order_nbr - 0 unit test calls
     \-- show_owner - 0 unit test calls
     \-- show_parent_view - 0 unit test calls
     \-- show_phrase_type - 0 unit test calls
@@ -4179,7 +4182,6 @@ so same-named functions of several classes share their test calls
     \-- show_ref_source - 0 unit test calls
     \-- show_ref_type - 0 unit test calls
     \-- show_ref_url - 0 unit test calls
-    \-- show_relation_type - 0 unit test calls
     \-- show_reverse - 0 unit test calls
     \-- show_row_phrase - 0 unit test calls
     \-- show_start_pos - 0 unit test calls
@@ -4663,9 +4665,9 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- child - 1 unit test calls
     \-- get_description - 0 unit test calls
+    \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- parent - 1 unit test calls
-    \-- relation_type - 0 unit test calls
     \-- set_child_view - 0 unit test calls
     \-- set_child_view_id - 0 unit test calls
     \-- set_parent_view - 0 unit test calls

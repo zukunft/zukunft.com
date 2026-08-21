@@ -187,6 +187,11 @@ class view_ui_tests
         $t->assert_text_contains($test_name, $url_html, views::START_NAME);
         $t->assert_text_contains($test_name . ' and the term', $url_html, word_names::MATH);
 
+        // the view link edit form shows an order number field, which the term_view has not yet,
+        // so it shows an empty text instead of writing a log error (see the TODO in term_view)
+        $test_name = 'a term view shows an empty order number';
+        $t->assert($test_name, $sfm->show_order_nbr($trm_msk_url), '');
+
         // the view relation default page uses the same link title (see base_views.json
         // view_relation_default)
         $mrl = new view_relation_ui($t_msk->view_relation_filled_included()->api_json(

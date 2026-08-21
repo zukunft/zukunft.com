@@ -39,6 +39,7 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::USER . 'user.php';
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -279,12 +281,9 @@ class ui_log
         ?user           $overwrites_of = null
     ): change_log_list
     {
-        // a word, triple or formula loaded for its page carries its recent changes directly (like
-        // the related values, formulas and references); otherwise use the given change log or, if
-        // that is empty, the global request cache
-        if (($dbo::class == word::class
-                or $dbo::class == triple::class
-                or $dbo::class == formula::class)
+        // an object loaded for its page carries its recent changes directly,
+        // else use the given change log or, if that is empty, the request cache
+        if ($dbo instanceof sandbox
             and $dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
             $log_lst = $dbo->chg_log;
         } elseif ($log_lst->is_empty()) {

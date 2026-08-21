@@ -142,11 +142,6 @@ class formula extends formula_map
     // "expression_latex_link" component can turn each latex token into a link to the term
     public ?term_list $latex_terms = null;
 
-    // the most recent change log entries of this formula; populated lazily by
-    // load_changes_related() and only emitted via api_json_array() under the INCL_RELATED flag,
-    // so the changes tab of the default formula view can show them, latest first
-    public ?change_log_list $changes_related = null;
-
     // the views that can show this formula: its own default view or, if none is set, the system
     // default formula view; populated lazily by load_views_related() and only emitted via
     // api_json_array() under the INCL_RELATED flag, so the views tab of the default formula
@@ -583,19 +578,6 @@ class formula extends formula_map
     }
 
     /**
-     * load the most recent change log entries of this formula into the in-memory
-     * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
-     * @param user_message $msg to collect any problem while loading the changes
-     * @return void
-     */
-    function load_changes_related(user_message $msg): void
-    {
-        $chg_lst = new change_log_list();
-        $chg_lst->load_obj_last($this, $this->get_user(), $msg);
-        $this->changes_related = $chg_lst;
-    }
-
-    /**
      * load the views related to this formula into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; currently the formula's own
      * default view, loaded by id so that it carries the name the api and frontend name_link need
@@ -700,13 +682,7 @@ class formula extends formula_map
             $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
                 new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
         }
-        if ($this->changes_related == null and !$typ_lst->test_mode()) {
-            $this->load_changes_related($msg);
-        }
-        if ($this->changes_related != null and !$this->changes_related->is_empty()) {
-            $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
-                new api_type_list(), $msg, $usr);
-        }
+        $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
         if ($this->views_related == null and !$typ_lst->test_mode()) {
             $this->load_views_related($msg);
         }
@@ -717,33 +693,6 @@ class formula extends formula_map
                 new api_type_list(), $msg, $usr);
         }
         return array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
-    }
-
-    /**
-     * the fields that the requesting user and the other users have overwritten in user_formulas,
-     * each with the user value and the standard value, so the 'my' and the 'others' tab of the
-     * "view tab box" component can show them; the test mode reads no overlay rows
-     * @param api_type_list $typ_lst configuration for the api message
-     * @param user_message $msg to collect the mapping problems for the requesting user
-     * @param user|null $usr the user for whom the api message should be created
-     * @return array the overwrite entries of the api json array
-     */
-    private function api_overwrites_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
-    {
-        $vars = [];
-        if (!$typ_lst->test_mode()) {
-            $ovr_msg = new user_message($usr); // a buffer for the user of this api call, which can differ from the user of the request message, merged back below
-            $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
-            if ($usr_ovr != []) {
-                $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
-            }
-            $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
-            if ($oth_ovr != []) {
-                $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
-            }
-            $msg->merge($ovr_msg);
-        }
-        return $vars;
     }
 
     /**

@@ -23,7 +23,6 @@
     \-- assign_phr_ulst_direct - section for function assign_phr_ulst_direct not yet defined that it should be assign in /formula/formula.php
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /formula/formula.php
     \-- load_latex_terms - section for function load_latex_terms is expected to be load in /formula/formula.php
-    \-- load_changes_related - section for function load_changes_related is expected to be load in /formula/formula.php
     \-- load_views_related - section for function load_views_related is expected to be load in /formula/formula.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formula.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
@@ -358,7 +357,6 @@
     \-- load_values_related - section for function load_values_related is expected to be load in /word/triple.php
     \-- load_formulas_related - section for function load_formulas_related is expected to be load in /word/triple.php
     \-- load_references_related - section for function load_references_related is expected to be load in /word/triple.php
-    \-- load_changes_related - section for function load_changes_related is expected to be load in /word/triple.php
     \-- load_views_related - section for function load_views_related is expected to be load in /word/triple.php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /word/triple.php
     \-- name_given - section for function name_given not yet defined that it should be set and get in /word/triple.php
@@ -392,7 +390,6 @@
     \-- load_formulas_related - section for function load_formulas_related is expected to be load in /word/word.php
     \-- load_parent_formulas_related - section for function load_parent_formulas_related is expected to be load in /word/word.php
     \-- load_references_related - section for function load_references_related is expected to be load in /word/word.php
-    \-- load_changes_related - section for function load_changes_related is expected to be load in /word/word.php
     \-- load_views_related - section for function load_views_related is expected to be load in /word/word.php
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /word/word.php
     \-- select_phrases_related - section for function select_phrases_related not yet defined that it should be related in /word/word.php
@@ -833,8 +830,6 @@
         \-- formula - load the phrases this formula is assigned to into the in-memory phrases_related list so
     \-- load_latex_terms
         \-- formula - load the terms shown in the latex format into the in-memory latex_terms list so that
-    \-- load_changes_related
-        \-- formula - load the most recent change log entries of this formula into the in-memory
     \-- load_views_related
         \-- formula - load the views related to this formula into the in-memory views_related list so that
     \-- load_by_id_with_related
@@ -2279,6 +2274,7 @@
 \-- sandbox
     \-- row_mapper_usr - section for function row_mapper_usr not yet defined that it should be construct and map in /sandbox/sandbox.php
     \-- row_mapper_std - section for function row_mapper_std not yet defined that it should be construct and map in /sandbox/sandbox.php
+    \-- load_changes_related - section for function load_changes_related is expected to be load in /sandbox/sandbox.php
     \-- user_overwrites_api_array - section for function user_overwrites_api_array not yet defined that it should be api in /sandbox/sandbox.php
     \-- other_overwrites_api_array - section for function other_overwrites_api_array not yet defined that it should be api in /sandbox/sandbox.php
     \-- exclude - section for function exclude not yet defined that it should be set and get in /sandbox/sandbox.php
@@ -4974,8 +4970,9 @@
     \-- show_usage - section for function show_usage not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_parent_view - section for function show_parent_view not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_child_view - section for function show_child_view not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
-    \-- show_relation_type - section for function show_relation_type not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
+    \-- show_link_type - section for function show_link_type not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- show_start_pos - section for function show_start_pos not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
+    \-- show_order_nbr - section for function show_order_nbr not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- result - section for function result not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- used_as_text - section for function used_as_text not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- used_as_text_link - section for function used_as_text_link not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
@@ -5235,10 +5232,13 @@
     \-- name_linked - section for function name_linked not yet defined that it should be object vars in /formula/formula_link.php
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /formula/formula_link.php
     \-- api_array - section for function api_array not yet defined that it should be api in /formula/formula_link.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be url in /formula/formula_link.php
+    \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be url in /formula/formula_link.php
     \-- set_formula - section for function set_formula is expected to be set and get in /formula/formula_link.php
     \-- formula - section for function formula not yet defined that it should be interface in /formula/formula_link.php
     \-- set_phrase - section for function set_phrase is expected to be set and get in /formula/formula_link.php
     \-- phrase - section for function phrase is expected to be cast in /formula/formula_link.php
+    \-- link_type - section for function link_type is expected to be link in /formula/formula_link.php
     \-- get_description - section for function get_description is expected to be set and get in /formula/formula_link.php
     \-- formula_name - section for function formula_name not yet defined that it should be interface in /formula/formula_link.php
     \-- phrase_name - section for function phrase_name not yet defined that it should be interface in /formula/formula_link.php
@@ -5801,8 +5801,9 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_link.php
     \-- display - section for function display not yet defined that it should be display in /sandbox/sandbox_link.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /sandbox/sandbox_link.php
+    \-- link_type - section for function link_type is expected to be link in /sandbox/sandbox_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /sandbox/sandbox_link.php
-    \-- order error - order of section display has difference at name_linked should be before display of display,load_by_id_with_related,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,load_by_id_with_related,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,load_by_id_with_related,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old
+    \-- order error - order of section display has difference at name_linked should be before display of display,load_by_id_with_related,link_type,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,load_by_id_with_related,link_type,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,load_by_id_with_related,link_type,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,load_by_id_with_related,link_type,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old
 \-- sandbox_list
     \-- sort_by_relevance - section for function sort_by_relevance not yet defined that it should be sort in /sandbox/sandbox_list.php
     \-- name_pur - section for function name_pur not yet defined that it should be debug in /sandbox/sandbox_list.php
@@ -6121,7 +6122,7 @@
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view_relation.php
     \-- parent - section for function parent not yet defined that it should be interface in /view/view_relation.php
     \-- child - section for function child not yet defined that it should be interface in /view/view_relation.php
-    \-- relation_type - section for function relation_type not yet defined that it should be interface in /view/view_relation.php
+    \-- link_type - section for function link_type is expected to be link in /view/view_relation.php
 \-- triple
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /word/triple.php
     \-- input_valid - section for function input_valid not yet defined that it should be construct and map in /word/triple.php
@@ -6551,13 +6552,18 @@
         \-- log - @return array the json message array to send the updated data to the backend
         \-- combine_named - @return array the json message array to send the updated data to the backend
     \-- set_formula
-        \-- formula_link - create an api json array for the backend based on this frontend object
+        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo links
     \-- formula
-        \-- formula_link - create an api json array for the backend based on this frontend object
+        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo links
     \-- set_phrase
-        \-- formula_link - create an api json array for the backend based on this frontend object
+        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo links
     \-- phrase
-        \-- formula_link - create an api json array for the backend based on this frontend object
+        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo links
+    \-- 2
+        \-- view_relation - TODO Prio 1 review and add else error message
+    \-- link_type
+        \-- formula_link - @return type_object|null the formula link type object from the preloaded cache
+        \-- view_relation - @return type_object|null the view relation type object from the preloaded cache
     \-- get_description
         \-- formula_link - TODO Prio 1 check if the formula description is needed
         \-- term_view - @return string the description of this term view link or an empty string if not set
@@ -6577,12 +6583,6 @@
         \-- term_view - @return string the description of this term view link or an empty string if not set
     \-- term_linked
         \-- term_view - get the term that is linked to the view (or the other way round)
-    \-- parent
-        \-- view_relation - TODO Prio 1 review and add else error message
-    \-- child
-        \-- view_relation - TODO Prio 1 review and add else error message
-    \-- relation_type
-        \-- view_relation - @return type_object|null the view relation type object from the preloaded cache
 \-- set and get
     \-- 1
         \-- phrase_list - set the vars of this phrase list frontend object based on the url array
@@ -7060,7 +7060,7 @@
     \-- views_related
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
-        \-- ui_list - HTML for the col-4 tab box of the word, triple or formula page: a "Views" tab with the
+        \-- ui_list - HTML for the col-4 tab box of a sandbox object page: a "Views" tab with the related views
     \-- link_list_word
         \-- ui_list - @param db_object $dbo the word, triple or formula object that should be shown to the user
     \-- num_list
@@ -7266,10 +7266,12 @@
         \-- system_form - @param view_relation|db_object $dbo the object
     \-- show_child_view
         \-- system_form - @param view_relation|db_object $dbo the object
-    \-- show_relation_type
-        \-- system_form - @param view_relation|db_object $dbo the object
+    \-- show_link_type
+        \-- system_form - @param sandbox_link|db_object $dbo the link whose link type is shown
     \-- show_start_pos
-        \-- system_form - @param view_relation|db_object $dbo the object
+        \-- system_form - @param view_relation|db_object $dbo the view relation whose start position is shown
+    \-- show_order_nbr
+        \-- system_form - used by the link default page and as the current value of the link form field
     \-- result
         \-- system_form - TODO Prio 1 fill with the correct field
     \-- used_as_text
@@ -7307,13 +7309,13 @@
     \-- form_field_source_group_or_phrases
         \-- system_form - @return string the html code to request the group name or a list of phrases
     \-- form_field_formula_link_priority
-        \-- system_form - @return string the html code to request the formula link priority
+        \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_field_view_link_priority
         \-- system_form - @return string the html code to request the view link priority
     \-- form_field_component_link_order_number
-        \-- system_form - @return string the html code to request the component position
+        \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_view_relation_pos
-        \-- system_form - @return string the html code to request the view modification start position
+        \-- system_form - @param view_relation|db_object $dbo the view relation that is added or changed
     \-- form_field_selection_name
         \-- system_form - @return string the html code to request the selection name from the user
     \-- form_field_selection_description
@@ -7475,6 +7477,11 @@
         \-- formula_link - TODO Prio 1 review and add else error message
     \-- name_linked
         \-- formula_link - TODO Prio 1 review and add else error message
+\-- url
+    \-- to_url_array
+        \-- formula_link - @return array parent url array extended with the order number, without empty strings
+    \-- db_fld_to_url
+        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo links
 \-- related
     \-- get_phrase_list
         \-- formula_link_list - get the phrases from this list

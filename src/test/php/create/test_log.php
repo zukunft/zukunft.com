@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_table.php';
@@ -87,6 +88,7 @@ include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_formulas.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -94,6 +96,7 @@ include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
@@ -625,6 +628,31 @@ class test_log
         $log_lst = new change_log_list();
         $log_lst->add($this->log_formula_increase_add());
         $log_lst->add($this->log_formula_increase_exp());
+        return $log_lst;
+    }
+
+    /**
+     * @return change log entry created by setting the order number of the filled formula link
+     */
+    function log_formula_link_order(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_frm = new test_formulas($this->env);
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::FORMULA_LINK, $msg);
+        $chg->set_field(formula_link::FLD_ORDER, $msg);
+        $chg->new_value = test_const::FORMULA_LINK_ORDER_NBR;
+        $chg->row_id = $t_frm->formula_link()->id();
+        return $chg;
+    }
+
+    /**
+     * @return change_log_list the changes of the filled formula link
+     */
+    function log_list_formula_link(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->log_formula_link_order());
         return $log_lst;
     }
 

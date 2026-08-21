@@ -127,7 +127,8 @@ class term_view extends sandbox_link
     );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
-    // TODO Prio 2 maybe add a priority
+    // TODO Prio 2 add an order number like the formula link and the component link,
+    //      because the view link edit form already shows an order number field
     const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
         fields::FLD_DESCRIPTION,

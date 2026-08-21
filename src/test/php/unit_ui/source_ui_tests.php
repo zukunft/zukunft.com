@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -61,6 +62,10 @@ class source_ui_tests
         $t_val = new test_values($t);
         $msg = new user_message();
 
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+
         // start the test section (ts)
         $ts = 'unit ui html source ';
         $t->header($ts);
@@ -78,7 +83,7 @@ class source_ui_tests
         $base = new ui_base();
         $test_page .= $html->text_h2('source url link');
         $test_page .= $base->source_url_link($src);
-        $t->html_page_test($test_page, 'source', 'source', $msg);
+        $t->html_page_test($test_page, 'source', 'source', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'title');
 

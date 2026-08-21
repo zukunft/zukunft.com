@@ -38,24 +38,28 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class formula_link extends sandbox_link
 {
@@ -152,6 +156,9 @@ class formula_link extends sandbox_link
                 $phr->set_id($url_array[url_var::PHRASE]);
                 $this->set_phrase($this->named_from_cache($phr, $dto?->phrase_list()));
             }
+            if (array_key_exists(url_var::FORMULA_LINK_PRIO, $url_array)) {
+                $this->order_nbr = $url_array[url_var::FORMULA_LINK_PRIO];
+            }
         }
         return $msg;
     }
@@ -186,14 +193,10 @@ class formula_link extends sandbox_link
             // TODO Prio 2 get from cache (or api)
             $this->set_phrase($phr);
         }
-        // TODO Prio 1 activate
-        /*
-        if (array_key_exists(json_fields::N, $json_array)) {
-            $this->order_nbr = $json_array[json_fields::REF_TEXT];
-        } else {
-            $this->order_nbr = null;
+        // priority is the api name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $json_array)) {
+            $this->order_nbr = $json_array[json_fields::PRIORITY];
         }
-        */
         return $msg->is_ok();
     }
 
@@ -213,8 +216,37 @@ class formula_link extends sandbox_link
 
         $vars[json_fields::FORMULA_ID] = $this->formula()?->id();
         $vars[json_fields::PHRASE_ID] = $this->phrase()?->id();
-        $vars[json_fields::POSITION] = $this->order_nbr;
+        // priority is the api name of the order_nbr db field
+        $vars[json_fields::PRIORITY] = $this->order_nbr;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * @return array parent url array extended with the order number, without empty strings
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::FORMULA_LINK_PRIO] = $this->order_nbr;
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
+     * @return array the db field names mapped to their url var for the change preview and undo links
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            fields::FLD_ORDER_NBR => url_var::FORMULA_LINK_PRIO,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
 
@@ -240,6 +272,19 @@ class formula_link extends sandbox_link
     function phrase(): phrase
     {
         return $this->tob;
+    }
+
+    /**
+     * @return type_object|null the formula link type object from the preloaded cache
+     */
+    function link_type(): ?type_object
+    {
+        global $ui_sys;
+        $result = null;
+        if ($this->predicate_id != null) {
+            $result = $ui_sys->typ_lst_cache->frm_lnk_typ->get($this->predicate_id);
+        }
+        return $result;
     }
 
     /**

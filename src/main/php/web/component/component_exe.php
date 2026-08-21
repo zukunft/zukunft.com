@@ -426,6 +426,8 @@ class component_exe extends component
             component_types::SHOW_PHRASE_COL => $form->show_col_phrase($dbo, $cfg->phrase_list()),
             component_types::SHOW_PHRASE_COL_SUB => $form->show_col_sub_phrase($dbo, $cfg->phrase_list()),
             component_types::COMPONENT_VIEWS => $list->component_views($dbo, $msg),
+            component_types::SHOW_LINK_TYPE => $form->show_link_type($dbo),
+            component_types::SHOW_ORDER_NBR => $form->show_order_nbr($dbo),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo, $msg),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),
@@ -452,7 +454,7 @@ class component_exe extends component
             // view relation only -
             component_types::SYSTEM_FIELD_PARENT_VIEW => $form->show_parent_view($dbo),
             component_types::SYSTEM_FIELD_CHILD_VIEW => $form->show_child_view($dbo),
-            component_types::SHOW_FIELD_RELATION_TYPE => $form->show_relation_type($dbo),
+            component_types::SHOW_FIELD_RELATION_TYPE => $form->show_link_type($dbo),
             component_types::SHOW_FIELD_START_POS => $form->show_start_pos($dbo),
 
             // base

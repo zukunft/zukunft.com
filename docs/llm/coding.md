@@ -12,11 +12,13 @@ terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar co
 
 ## The three rules above all others
 
-1. **Reduce to the max.** Prefer the smallest change that does the job: fewer
-   lines, functions, assertions, parameters. When in doubt, leave it out — every
-   rule below is subordinate to this one, correctness excepted: shorter is never
-   worth a wrong answer. (Saint-Exupéry: perfection is reached not when there is
-   nothing left to add, but when there is nothing left to remove.)
+1. **Reduce to the max.** This is about the **resulting code**, so that a human
+   reads it easily: fewer lines, functions, assertions, parameters. When in
+   doubt, leave it out — every rule below is subordinate to this one,
+   correctness excepted: shorter is never worth a wrong answer. (Saint-Exupéry:
+   perfection is reached not when there is nothing left to add, but when there
+   is nothing left to remove.) The size of the **change** is a separate rule,
+   see "smallest diff" under "Understanding the request".
 2. **One logical element per line — three at most** (one assignment, one call,
    one condition). When a line packs more, split it into named steps or push a
    chain behind a well-named helper; but don't pad a simple expression across
@@ -63,8 +65,10 @@ detail file. Order is by how often they fire, not importance.
 ### Understanding the request
 - If the request's target is ambiguous ("here", "this", a name that matches several places), name the candidates and ask which is meant before changing anything; a pasted error trace, file path or line number counts as unambiguous. Investigating to narrow the candidates is fine, but the question comes before the fix — stating the chosen reading in the final report is not a substitute.
 - The target is error-free code, not just the reported issue gone: when fixing a defect, apply the corrected rule to every place that shares the same structure — the symmetric branch, the sibling class, the same pattern in the other list — in the same change. A fix that leaves an unexplained asymmetry (the from side checked, the to side not) is a latent copy of the bug; if a counterpart is deliberately left different, the code comment says why. → `docs/llm/structure.md`
+- Deliver the **smallest diff** that fulfils the task: never rename, move or delete an existing function, const, variable, db field, code_id or file that the task did not ask about, and never tidy up code the task merely touched — a better name found while working nearby goes into the final report or `docs/llm/pending_prio_2.md`, not into the diff. "Nothing references it any more" is not proof that a url var, code_id, message id or json field is dead; those are external contracts and retiring one is the developer's decision. This never weakens the rule above: a *defect* travels to every place sharing the broken structure, an *improvement* does not travel at all. → `docs/llm/structure.md`
 
 ### Structure & style
+- Comments are short: the best one is a single line saying **why** the code is there, because the *what* is in the code below it. A comment that restates the next line is deleted; a rule that holds for the whole class goes into the class docblock and a decision goes into `docs/` with one line pointing there. → `docs/llm/structure.md`
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Whatever happens (corrupted db, bad input, missing config), an uncaught PHP fatal is avoided — guard the value before the call that would fatal and catch exceptions at the layer boundary — because a fatal prevents the three duties of error handling: sys_log entry, admin info, user message. → `docs/llm/structure.md`

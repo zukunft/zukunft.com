@@ -42,8 +42,10 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::CONST . 'def.php';
@@ -69,6 +71,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
@@ -86,8 +89,10 @@ include_once html_paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\component_link;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -108,6 +113,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\view\term_view;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
@@ -910,21 +916,53 @@ class system_form extends component
     }
 
     /**
-     * @param view_relation|db_object $dbo the object
-     * @return string|null the html code to show the object name to the user
+     * @param sandbox_link|db_object $dbo the link whose link type is shown
+     * @return string the user-readable name of the link type (empty if no type is set)
      */
-    function show_relation_type(view_relation|db_object $dbo): string|null
+    function show_link_type(sandbox_link|db_object $dbo): string
     {
-        return $this->esc($dbo->relation_type()?->name());
+        $result = '';
+        // guarded by class so that a mis-assigned seed component cannot fatal
+        if ($dbo instanceof sandbox_link) {
+            $result = $this->esc($dbo->link_type()?->name());
+        } else {
+            log_err($dbo::class . ' is not expected to have a link type');
+        }
+        return $result;
     }
 
     /**
-     * @param view_relation|db_object $dbo the object
-     * @return string|null the html code to show the object name to the user
+     * @param view_relation|db_object $dbo the view relation whose start position is shown
+     * @return string the start position of the relation (empty if no start position is set)
      */
-    function show_start_pos(view_relation|db_object $dbo): string|null
+    function show_start_pos(view_relation|db_object $dbo): string
     {
-        return $dbo->start_pos;
+        $result = '';
+        // guarded by class so that a mis-assigned seed component cannot fatal
+        if ($dbo instanceof view_relation) {
+            $result = (string)($dbo->start_pos ?? '');
+        } else {
+            log_err($dbo::class . ' is not expected to have a start position');
+        }
+        return $result;
+    }
+
+    /**
+     * used by the link default page and as the current value of the link form field
+     * @param formula_link|component_link|term_view|db_object $dbo the link whose order number is shown
+     * @return string the order number of the link (empty if no order number is set)
+     */
+    function show_order_nbr(formula_link|component_link|term_view|db_object $dbo): string
+    {
+        $result = '';
+        // TODO Prio 2 add an order number to term_view, until then it shows an empty text
+        // guarded by class so that a mis-assigned seed component cannot fatal
+        if ($dbo instanceof formula_link or $dbo instanceof component_link) {
+            $result = (string)($dbo->order_nbr ?? '');
+        } elseif (!$dbo instanceof term_view) {
+            log_err($dbo::class . ' is not expected to have an order number');
+        }
+        return $result;
     }
 
     /**
@@ -1257,15 +1295,18 @@ class system_form extends component
     }
 
     /**
+     * shows the current order number, so that saving the form does not drop it
+     * @param formula_link|db_object $dbo the formula link that is added or changed
      * @return string the html code to request the formula link priority
      */
-    function form_field_formula_link_priority(db_object $dbo): string
+    function form_field_formula_link_priority(formula_link|db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
             url_var::FORMULA_LINK_PRIO,
-            msg_id::FORM_FIELD_GROUP,
-            'priority missing'
+            msg_id::FORM_FIELD_FORMULA_LINK_PRIO,
+            $this->show_order_nbr($dbo),
+            html_base::INPUT_INT
         );
     }
 
@@ -1284,28 +1325,32 @@ class system_form extends component
     }
 
     /**
+     * shows the current order number, so that saving the form does not drop it
+     * @param component_link|db_object $dbo the component link that is added or changed
      * @return string the html code to request the component position
      */
-    function form_field_component_link_order_number(db_object $dbo): string
-    {
-        $html = new html_base();
-        return $html->form_field(
-            url_var::COMPONENT_LINK,
-            msg_id::FORM_FIELD_COMPONENT_LINK,
-            'order number missing'
-        );
-    }
-
-    /**
-     * @return string the html code to request the view modification start position
-     */
-    function form_view_relation_pos(db_object $dbo): string
+    function form_field_component_link_order_number(component_link|db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
             url_var::POSITION,
             msg_id::FORM_FIELD_COMPONENT_LINK,
-            'position missing missing',
+            $this->show_order_nbr($dbo),
+            html_base::INPUT_INT
+        );
+    }
+
+    /**
+     * @param view_relation|db_object $dbo the view relation that is added or changed
+     * @return string the html code to request the view modification start position
+     */
+    function form_view_relation_pos(view_relation|db_object $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::POSITION,
+            msg_id::FORM_FIELD_COMPONENT_LINK,
+            $this->show_start_pos($dbo),
             html_base::INPUT_INT,
             '',
             view_styles::COL_SM_1

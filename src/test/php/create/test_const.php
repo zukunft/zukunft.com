@@ -49,6 +49,8 @@ class test_const
     const int DUMMY_USAGE_FORMULA = 7;
     const int DUMMY_USAGE_VIEW = 1;
     const int DUMMY_USAGE_COMPONENT = 2;
+    // the order number of the filled formula link
+    const int FORMULA_LINK_ORDER_NBR = 2;
     // impact used for unit testing
     const float DUMMY_IMPACT = 3.4;
     const float DUMMY_IMPACT_VERB = 123.4;

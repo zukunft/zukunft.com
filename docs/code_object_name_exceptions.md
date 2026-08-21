@@ -126,7 +126,7 @@ export_type_list: $exp_typ
 expression: $exp, $exp_db, $exp_pe, $exp_scale, $exp_sector
 figure_list: $fig_lst, $fig_lst_ui, $lst
 formula_dsp: $frm_html
-formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $frm_usr, $lnk, $lnk_new, $lnk_url, $obj
+formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $frm_usr, $lnk, $lnk_fld_url, $lnk_new, $lnk_plain, $lnk_tab, $lnk_url, $obj
 formula_link_list: $frm_lnk_lst, $lnk_lst, $lst
 formula_link_type: $frm_lnk_typ
 formula_list: $add_lst, $calc_blocks, $db_lst, $db_lst_all, $frm, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst

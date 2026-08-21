@@ -83,6 +83,10 @@ class fields
     // the change log rows of these cached internal fields are only shown to admin or system users
     const array LOG_ADMIN_ONLY = [self::FLD_USAGE, self::FLD_IMPACT];
 
+    // links
+    const string FLD_ORDER_NBR_COM = 'to set the priority of the links of one object e.g. the formulas of a phrase';
+    const string FLD_ORDER_NBR = 'order_nbr'; // field name for the order number (link objects)
+
     // all sandbox
     const string FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
     const string FLD_EXCLUDED = 'excluded';    // field name to delete the object only for one user (all sandbox objects)

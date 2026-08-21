@@ -63,6 +63,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_table_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -128,7 +129,7 @@ class formula_link extends sandbox_link
     // the database and JSON object field names used only for formula links
     const string FLD_ID = 'formula_link_id';
     const string FLD_TYPE = 'formula_link_type_id';
-    const string FLD_ORDER = 'order_nbr';
+    const string FLD_ORDER = fields::FLD_ORDER_NBR;
     const sql_par_type FLD_ORDER_SQL_TYP = sql_par_type::INT;
 
     // all database field names excluding the id
@@ -438,10 +439,24 @@ class formula_link extends sandbox_link
             }
         }
 
+        // priority is the api name of the order_nbr db field
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+
         // a page request needs the names of the linked objects for the link title subtitle
         if ($typ_lst->incl_related()) {
             $vars = $this->api_json_array_linked(
                 $vars, json_fields::FORMULA, json_fields::PHRASE, $msg, $usr);
+            // the owner, changes and overwrites of the formula link default page
+            if (!$typ_lst->test_mode()) {
+                $owner_name = $this->owner_api_name($msg);
+                if ($owner_name != null) {
+                    $vars[json_fields::OWNER] = $owner_name;
+                }
+            }
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
         return $vars;

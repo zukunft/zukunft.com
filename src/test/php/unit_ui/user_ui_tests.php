@@ -33,6 +33,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -81,6 +83,10 @@ class user_ui_tests
         $t_usr = new test_users();
         $log = new ui_log();
         $msg = new user_message();
+
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'unit ui html user ';
@@ -244,7 +250,7 @@ class user_ui_tests
         $test_name = 'without an object the popup form class is empty';
         $t->assert($test_name, $preview->popup_class(), '');
 
-        $t->html_page_test($test_page, 'user', 'user', $msg);
+        $t->html_page_test($test_page, 'user', 'user', $msg, $base_url, $lan);
     }
 
 }

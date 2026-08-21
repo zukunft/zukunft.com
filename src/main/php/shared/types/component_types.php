@@ -569,6 +569,11 @@ class component_types
     // the views that use the shown component e.g. for the component default page
     const string COMPONENT_VIEWS = "views_of_component";
     const int COMPONENT_VIEWS_ID = 230;
+    // the type and the order number of a link e.g. for the formula link default page
+    const string SHOW_LINK_TYPE = "system_show_field_link_type";
+    const int SHOW_LINK_TYPE_ID = 231;
+    const string SHOW_ORDER_NBR = "system_show_field_order_nbr";
+    const int SHOW_ORDER_NBR_ID = 232;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -1012,6 +1017,8 @@ class component_types
         [self::SHOW_PHRASE_COL, self::SHOW_PHRASE_COL_ID],
         [self::SHOW_PHRASE_COL_SUB, self::SHOW_PHRASE_COL_SUB_ID],
         [self::COMPONENT_VIEWS, self::COMPONENT_VIEWS_ID],
+        [self::SHOW_LINK_TYPE, self::SHOW_LINK_TYPE_ID],
+        [self::SHOW_ORDER_NBR, self::SHOW_ORDER_NBR_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

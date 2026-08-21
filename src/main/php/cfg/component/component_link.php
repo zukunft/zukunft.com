@@ -132,7 +132,7 @@ class component_link extends sandbox_link
     const string TBL_COMMENT = 'to link components to views with an n:m relation';
     const string FLD_ID = 'component_link_id';
     const string FLD_LINK_TYPE_COM = 'if null the default type always is used';
-    const string FLD_ORDER_NBR = 'order_nbr';
+    const string FLD_ORDER_NBR = fields::FLD_ORDER_NBR;
     const sql_field_type FLD_ORDER_NBR_SQL_TYP = sql_field_type::INT;
     const string FLD_POS_COM = 'the position of the component e.g. right or below';
     const string FLD_POS_TYPE = 'position_type_id';

@@ -2,11 +2,7 @@
 
 ## user default view
 
-fill the formula_link_default view with the missing fields including the 'changes' and 'my' tabs for the user_changes
-
 add the formula_link overwrites to the 'all_user_overwrites' component used in the user_default view
-
-write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show 
 
 add a 'views', 'changes' and 'my' tabs to the value_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
 
@@ -33,6 +29,9 @@ check if any functionality or information from src/main/php/web/user/user_displa
 repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
 
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
+
+
+write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
 
 
 in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the tooltip of the term so that the user can check if she (or he) has selected the correct term
@@ -109,6 +108,14 @@ The budget can overshoot by design. A group renders whole once started, so the l
 impact_group no longer defaults to the configured limit. Its $budget is now required and it uses max(0, $budget). Every caller passes a real value today, but a future caller that passes 0 gets a section with no rows and a tail counting everything — silently correct-looking, easy to get wrong. A ?int $budget = null defaulting to configured_limit() would be safer.
 The per-group cap re-reads the config per section. time_groups() and relevant_phrase_groups() each call configured_limit() for $per_group, and group_block() calls it again per group. Correct, just repeated work on a hot path; passing it down with the budget would do.
 The word pages moved too — word.html, word_api.html, word_default_word_1/197, word_del, word_edit, value_list.html all changed. Expected (the same renderer), but they are the pages to eyeball for over-truncation, since the fixtures there are small and now render against a limit of 6 in tests.
+The owner is still not rendered — the task is incomplete. No snapshot anywhere contains ow=. url_mapper::url_par() drops null values, so $obj->get_user()->name() is null when the test url is built, and the system show field owner component renders nothing on both 116_formula_link_1.html and 115_component_1.html. The transport chain exists end to end; the test fixture just never supplies the name.
+view_relation start position is now an empty field. Removing the 'position missing missing' placeholder was right, but test_mappers::view_relation_url doesn't carry url_var::POSITION (and view_relation has no to_url_array override), so 43_view_relation_update_1.html renders the field with no value. Component link works (value="1"), formula link is fully wired. That is exactly the "unexplained asymmetry" the fix-the-pattern rule warns about — one of the three is wired, one reads from an existing url var, one can't.
+Empty "Changes" tab on the formula link page. change_log_table_pure returns a table with when / who / what headers even with zero rows, so tab_box doesn't drop it. 116_formula_link_1.html shows a Changes tab containing only headers.
+form_field_formula_link_prio has no German translation. I changed the en text to "Priority"; de.yaml has no entry for it at all (nor for form_field_view_term_link_prio / form_field_component_link). Pre-existing, but the rule is en and de.
+Seed component ids shifted. The three new components in base_views.json pushed Cash Flow Statement 344→347 and company with ratios 345→348. list.csv is regenerated and no *_ID const pins either, so nothing broke — reporting it rather than absorbing it silently, as the json rules require.
+Two include_once lines commented out (yours): sandbox_named.php no longer includes its own parent sandbox.php, and type_list.php drops change_table_field.php. Same shape in web/sandbox/sandbox.php, where change_log_list.php is commented out while api_mapper does new change_log_list(). All load today, but each now depends on some other file loading the class first — the same class of fragility as the sandbox_link fatal.
+Minor: $url_arr is declared but unused in source_ui_tests.php and user_ui_tests.php (used 4× in component_ui_tests.php). And code_object_name_exceptions.md grew for formula_link — my test vars $lnk_fld_url, $lnk_plain, $lnk_tab — against the rule that the list stays short.
+Not a defect: the coverage doc lists show_link_type, show_order_nbr and link_type as "0 unit test calls". They are tested, but in unit_ui/, which that generator doesn't count.     
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.
@@ -195,6 +202,10 @@ add the missing db field to the view link add and edit views: the description fi
 ### formula link
 
 the formula link add and edit views show a description field, but the formula_link table has no description column; either add the description column to the formula_link table or remove the description field from both forms
+
+the label of the component link order number and of the view relation start position is the same msg_id FORM_FIELD_COMPONENT_LINK, so both fields are labelled 'Component link' instead of naming the field; give each its own msg_id with en/de translations
+
+the term_view (view link) has no priority or order column, so form_field_view_link_priority submits url_var::VIEW_TERM_LINK_PRIO with the fallback text 'prio missing' and no mapper reads it; this is the open decision of the 'view link' section above (add the column or remove the form field)
 
 ## workflows
 

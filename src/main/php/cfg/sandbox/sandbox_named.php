@@ -57,7 +57,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';

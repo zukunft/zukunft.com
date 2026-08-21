@@ -457,6 +457,24 @@
       "description": "the views that use the shown component with a link to each view",
       "type": "views_of_component",
       "code_id": "component_views"
+    },
+    {
+      "name": "system show field link type",
+      "description": "the name of the link type of a link as read only",
+      "type": "system_show_field_link_type",
+      "code_id": "show_field_link_type"
+    },
+    {
+      "name": "system show field order number",
+      "description": "the order number of a link as read only",
+      "type": "system_show_field_order_nbr",
+      "code_id": "show_field_order_nbr"
+    },
+    {
+      "name": "link tab box",
+      "description": "tab box with the change log and the user overwrites of this link",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_link"
     }
   ],
   "views": [
@@ -1102,6 +1120,22 @@
         {
           "position": "1",
           "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field owner"
+        },
+        {
+          "position": "5",
+          "name": "link tab box"
         }
       ]
     },

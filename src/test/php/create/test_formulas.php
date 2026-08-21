@@ -453,7 +453,7 @@ class test_formulas extends test_objects
         $lnk = new formula_link($this->env->usr1);
         $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
         $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::TIME_PERIOD));
-        $lnk->order_nbr = 2;
+        $lnk->order_nbr = test_const::FORMULA_LINK_ORDER_NBR;
         return $lnk;
     }
 

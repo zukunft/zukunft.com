@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -59,6 +60,10 @@ class component_ui_tests
     {
         $html = new html_base();
         $msg = new user_message();
+
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'unit ui html component ';
@@ -99,7 +104,11 @@ class component_ui_tests
         $t_cmp = new test_components($t);
         $cmp_filled = new component($t_cmp->component_filled_included()->api_json());
         $test_page .= $t->dsp_title_named_edit($cmp_filled, $msg);
-        $t->html_page_test($test_page, 'component', 'component', $msg);
+        $test_page .= $html->text_h2('buttons');
+        $test_page .= 'add button: ' . $cmp->btn_add($url_arr, $base_url) . '<br>';
+        $test_page .= 'edit button: ' . $cmp->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $cmp->btn_del($url_arr, $base_url) . '<br>';
+        $t->html_page_test($test_page, 'component', 'component', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'title');
 

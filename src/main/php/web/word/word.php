@@ -189,7 +189,6 @@ class word extends sandbox_code_id
     // each entry ['phrase' => phrase, 'formulas' => formula_list] to render 'assigned to <ancestor>'
     public ?array $parent_formulas = null;
     public ?ref_list $ref_lst = null;
-    public ?change_log_list $chg_log = null;
     public ?view_list $view_lst = null;
 
 
@@ -426,18 +425,6 @@ class word extends sandbox_code_id
             }
         } else {
             $this->ref_lst = null;
-        }
-        if (array_key_exists(json_fields::CHANGES, $json_array)) {
-            $change = $json_array[json_fields::CHANGES];
-            if (is_array($change)) {
-                $lst = new change_log_list();
-                $lst->api_mapper($change);
-                $this->chg_log = $lst;
-            } else {
-                $this->chg_log = null;
-            }
-        } else {
-            $this->chg_log = null;
         }
         if (array_key_exists(json_fields::VIEWS, $json_array)) {
             $view = $json_array[json_fields::VIEWS];

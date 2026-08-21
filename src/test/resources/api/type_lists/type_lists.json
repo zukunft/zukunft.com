@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-08-21T06:24:07+00:00",
+    "timestamp": "2026-08-21T16:55:57+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9553,6 +9553,18 @@
                 "code_id": "views_of_component",
                 "description": "the views that use the shown component with a link to each view",
                 "id": 230
+            },
+            {
+                "name": "show link type",
+                "code_id": "system_show_field_link_type",
+                "description": "show the name of the link type of a link without link or form field",
+                "id": 231
+            },
+            {
+                "name": "show order number",
+                "code_id": "system_show_field_order_nbr",
+                "description": "show the order number of a link without link or form field",
+                "id": 232
             }
         ],
         "component_link_types": [
@@ -22141,6 +22153,46 @@
                         "code_id": "title_of_link_with_edit_link",
                         "position": 1,
                         "position_type": 1
+                    },
+                    {
+                        "link_id": 1086,
+                        "id": 344,
+                        "name": "system show field link type",
+                        "description": "the name of the link type of a link as read only",
+                        "type_id": 231,
+                        "code_id": "show_field_link_type",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1087,
+                        "id": 345,
+                        "name": "system show field order number",
+                        "description": "the order number of a link as read only",
+                        "type_id": 232,
+                        "code_id": "show_field_order_nbr",
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1088,
+                        "id": 336,
+                        "name": "system show field owner",
+                        "description": "the name of the user who owns the object as read only",
+                        "type_id": 224,
+                        "code_id": "show_field_owner",
+                        "position": 4,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1089,
+                        "id": 346,
+                        "name": "link tab box",
+                        "description": "tab box with the change log and the user overwrites of this link",
+                        "type_id": 199,
+                        "code_id": "view_tab_box_link",
+                        "position": 5,
+                        "position_type": 1
                     }
                 ]
             },
@@ -22152,7 +22204,7 @@
                 "code_id": "term_view_default",
                 "components": [
                     {
-                        "link_id": 1086,
+                        "link_id": 1090,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22162,7 +22214,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1087,
+                        "link_id": 1091,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22181,7 +22233,7 @@
                 "code_id": "component_link_default",
                 "components": [
                     {
-                        "link_id": 1088,
+                        "link_id": 1092,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22200,7 +22252,7 @@
                 "code_id": "view_relation_default",
                 "components": [
                     {
-                        "link_id": 1089,
+                        "link_id": 1093,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22210,7 +22262,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1090,
+                        "link_id": 1094,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",

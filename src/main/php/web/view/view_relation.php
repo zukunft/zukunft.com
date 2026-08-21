@@ -288,7 +288,7 @@ class view_relation extends sandbox_link
     /**
      * @return type_object|null the view relation type object from the preloaded cache
      */
-    function relation_type(): ?type_object
+    function link_type(): ?type_object
     {
         global $ui_sys;
         $result = null;
