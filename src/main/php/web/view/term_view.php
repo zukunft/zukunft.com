@@ -102,11 +102,15 @@ class term_view extends sandbox_link
     {
         parent::url_mapper($url_array, $msg, $dto);
         if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked objects, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 $this->set_view_id($url_array[url_var::VIEW]);
+                $this->set_view($this->view_named_from_cache($this->view(), $dto));
             }
             if (array_key_exists(url_var::TERM, $url_array)) {
                 $this->set_term_id($url_array[url_var::TERM]);
+                $this->set_term($this->term_named($this->term_linked(), $dto));
             }
             if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
                 $this->description = $url_array[url_var::DESCRIPTION];
@@ -129,10 +133,20 @@ class term_view extends sandbox_link
         $json_array = $api_msg->validate($json_array);
 
         parent::api_mapper($json_array, $msg);
-        if (array_key_exists(json_fields::VIEW_ID, $json_array)) {
+        // a page request carries the linked objects with their names, so that the link title
+        // can show a link to each; the id only version is the fallback for the other requests
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $msk = new view();
+            $msk->api_mapper($json_array[json_fields::VIEW], $msg);
+            $this->set_view($msk);
+        } elseif (array_key_exists(json_fields::VIEW_ID, $json_array)) {
             $this->set_view_id($json_array[json_fields::VIEW_ID]);
         }
-        if (array_key_exists(json_fields::TERM_ID, $json_array)) {
+        if (array_key_exists(json_fields::TERM, $json_array)) {
+            $trm = new term();
+            $trm->api_mapper($json_array[json_fields::TERM], $msg);
+            $this->set_term($trm);
+        } elseif (array_key_exists(json_fields::TERM_ID, $json_array)) {
             $this->set_term_id($json_array[json_fields::TERM_ID]);
         }
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
@@ -183,6 +197,37 @@ class term_view extends sandbox_link
         $trm = new term();
         $trm->set_id($trm_id);
         $this->set_term($trm);
+    }
+
+    /**
+     * the linked term with its name taken from the request cache; a page url carries only the
+     * term id, so without the cache the link title would show a link without a text
+     * the frontend cache has no term list, so the name of a word, triple or formula term is
+     * taken from the matching cached list; a verb term keeps its id, because the frontend
+     * cache has no verb list
+     *
+     * @param term|null $trm the term with only the id set as created from the page url
+     * @param data_object|null $dto the request cache with the preloaded words, triples and formulas
+     * @return term|null the term with the name of the cached object or the given id only term
+     */
+    private function term_named(?term $trm, ?data_object $dto): ?term
+    {
+        $result = $trm;
+        if ($trm != null and $dto != null) {
+            $named = null;
+            if ($trm->is_word()) {
+                $named = $dto->wrd_lst->get($trm->obj_id());
+            } elseif ($trm->is_triple()) {
+                $named = $dto->trp_lst->get($trm->obj_id());
+            } elseif ($trm->is_formula()) {
+                $named = $dto->formula_list()->get($trm->obj_id());
+            }
+            if ($named != null) {
+                $result = new term();
+                $result->set_term_obj($named);
+            }
+        }
+        return $result;
     }
 
     function set_term(?term $trm): void
@@ -249,37 +294,39 @@ class term_view extends sandbox_link
      */
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name
+     * @return string|null the generated link name or an empty string e.g. for a new link of an add form
      */
     function name(): string|null
     {
         $result = '';
-
+        // a new term view link of an add form has no linked objects or names yet,
+        // which is a normal state and not an error
         if ($this->view() != null and $this->term_linked() != null) {
             if ($this->view()->name() <> null and $this->term_linked()->name() <> null) {
-                $result .= '"' . $this->term_linked()->name() . '" extends "'; // e.g. company details
-                $result .= $this->view()->name() . '"';     // e.g. cash flow statement
+                $result .= '"' . $this->term_linked()->name() . '" extends "'; // e.g. "company" extends
+                $result .= $this->view()->name() . '"';     // e.g. "company details"
             }
-        } else {
-            $result .= 'view link objects not set';
         }
         return $result;
     }
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
+     * @param string $back the back trace url for the undo functionality
+     * @return string the linked names or an empty string e.g. for a new link of an add form
      */
     function name_linked(string $back = ''): string
     {
         $result = '';
-
-        //$this->load_objects();
+        // a new term view link of an add form has no linked objects yet,
+        // which is a normal state and not an error
         if ($this->view() != null and $this->term_linked() != null) {
-            $result = $this->view()->name_link(NULL, $back) . ' to ' . $this->term_linked()->name_link(NULL, $back);
-        } else {
-            $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
+            global $mtr;
+            $result = $this->view()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->term_linked()->name_link(NULL, $back);
         }
-
         return $result;
     }
 
@@ -287,6 +334,18 @@ class term_view extends sandbox_link
     /*
      * interface
      */
+
+    /**
+     * @return string the description of this term view link or an empty string if not set
+     */
+    function get_description(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
 
     function view(): ?view
     {

@@ -744,6 +744,26 @@ class sandbox extends db_object_seq_id_user
         return $this->owner_id;
     }
 
+    /**
+     * the name of the user who owns this object (created it and defines the standard values),
+     * loaded by the owner id; used by the api message of a default page request (incl_related),
+     * so the page can show the owner without an own user api request
+     * @param user_message $msg to collect a problem while loading the owner
+     * @return string|null the owner user name or null if no owner is set or the load failed
+     */
+    function owner_api_name(user_message $msg): ?string
+    {
+        $result = null;
+        if ($this->owner_id != null) {
+            $usr = new user();
+            $usr->load_by_id($this->owner_id, $msg);
+            if ($usr->id() > 0) {
+                $result = $usr->name();
+            }
+        }
+        return $result;
+    }
+
     function set_share_id(?int $id): void
     {
         $this->share_id = $id;

@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_RESULT . 'result.php';
@@ -68,6 +69,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -254,6 +256,12 @@ class horizontal_tests
             } elseif ($class == view_relation::class) {
                 $dto->add_view($filled_obj->parent(), $msg);
                 $dto->add_view($filled_obj->child(), $msg);
+            } elseif ($class == component::class) {
+                // TODO Prion 1 review and at least prevent the potential polymorph warning in the IDE
+                // the import resolves the row and column phrase names via the import cache
+                $dto->add_phrase($filled_obj->row_phrase, $msg);
+                $dto->add_phrase($filled_obj->col_phrase, $msg);
+                $dto->add_phrase($filled_obj->col_sub_phrase, $msg);
             } elseif ($class == component_link::class) {
                 $dto->add_view($filled_obj->get_view(), $msg);
                 $dto->add_component($filled_obj->get_component(), $msg);

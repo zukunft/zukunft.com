@@ -45,10 +45,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::LOG . 'change_log_list.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -56,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -235,6 +239,46 @@ class formula_ui_tests
         } else {
             $ui_sys->usr = $usr_tab_keep;
         }
+
+        $t->subheader($ts . 'link title');
+
+        // the formula link default page shows the generated link name as the page title with the
+        // linked formula and phrase as links in the subtitle (see base_views.json
+        // formula_link_default); a page request (INCL_RELATED) carries the names of the linked
+        // objects, so that the subtitle links have a text and not only a target
+        $lnk = new formula_link_ui($t_frm->formula_link_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $sfm = new system_form();
+        $ttl_html = $sfm->title_link($lnk, $msg);
+        $test_name = 'the formula link title names the linked formula';
+        $t->assert_text_contains($test_name, $ttl_html, formula_names::SCALE_TO_SEC);
+        $test_name = '... and the linked phrase in the subtitle';
+        $t->assert_text_contains($test_name, $ttl_html, word_names::MINUTE);
+        $test_name = 'the formula link title links to the formula link edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::FORMULA_LINK_EDIT_ID);
+        $test_name = 'the formula link title has a subtitle for the share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+
+        // the page url carries only the ids of the linked objects, so the names of the subtitle
+        // links come from the request cache
+        $test_name = 'the formula link title of a page url names the linked objects';
+        $lnk_url = new formula_link_ui();
+        $lnk_url->url_mapper([
+            url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID,
+            url_var::PHRASE => (string)word_names::MINUTE_ID
+        ], $msg, $ui_sys);
+        $url_html = $sfm->title_link($lnk_url, $msg);
+        $t->assert_text_contains($test_name, $url_html, formula_names::SCALE_TO_SEC);
+        $t->assert_text_contains($test_name . ' and the phrase', $url_html, word_names::MINUTE);
+
+        // a fresh formula link of an add form has no share and protection and no linked objects
+        // with names, so no empty subtitle brackets are shown
+        $test_name = 'a fresh formula link shows no subtitle';
+        $lnk_new = new formula_link_ui();
+        $t->assert_text_not_contains($test_name, $sfm->title_link($lnk_new, $msg), styles::SUBTITLE);
+        // ... and an empty name, never a 'objects not set' placeholder as the page title
+        $test_name = 'a fresh formula link has an empty name';
+        $t->assert($test_name, $lnk_new->name(), '');
 
         // TODO review
 

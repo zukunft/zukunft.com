@@ -266,6 +266,14 @@ class system_view_ui_tests
         $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_EDIT_ID) == views::VIEW_DEFAULT_ID);
         $test_name = 'a blocked component edit shows the component default view';
         $t->assert_true($test_name, $msk->change_to_show_id(views::COMPONENT_EDIT_ID) == views::COMPONENT_DEFAULT_ID);
+        $test_name = 'a blocked formula link edit shows the formula link default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::FORMULA_LINK_EDIT_ID) == views::FORMULA_LINK_DEFAULT_ID);
+        $test_name = 'a blocked view link edit shows the term view default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_LINK_EDIT_ID) == views::TERM_VIEW_DEFAULT_ID);
+        $test_name = 'a blocked component link edit shows the component link default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::COMPONENT_LINK_EDIT_ID) == views::COMPONENT_LINK_DEFAULT_ID);
+        $test_name = 'a blocked view relation edit shows the view relation default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_RELATION_EDIT_ID) == views::VIEW_RELATION_DEFAULT_ID);
         $test_name = 'a blocked mask without an object view falls back to the start view';
         $t->assert_true($test_name, $msk->change_to_show_id(views::UNDO_ID) == views::START_ID);
 
@@ -275,6 +283,14 @@ class system_view_ui_tests
         $t->assert($test_name, $msk->system_to_base(views::VIEW_EDIT), views::VIEW);
         $test_name = 'the base view of the component edit mask is the component default view';
         $t->assert($test_name, $msk->system_to_base(views::COMPONENT_EDIT), views::COMPONENT);
+        $test_name = 'the base view of the formula link edit mask is the formula link default view';
+        $t->assert($test_name, $msk->system_to_base(views::FORMULA_LINK_EDIT), views::FORMULA_LINK_DEFAULT);
+        $test_name = 'the base view of the view link edit mask is the term view default view';
+        $t->assert($test_name, $msk->system_to_base(views::VIEW_LINK_EDIT), views::TERM_VIEW_DEFAULT);
+        $test_name = 'the base view of the component link edit mask is the component link default view';
+        $t->assert($test_name, $msk->system_to_base(views::COMPONENT_LINK_EDIT), views::COMPONENT_LINK_DEFAULT);
+        $test_name = 'the base view of the view relation edit mask is the view relation default view';
+        $t->assert($test_name, $msk->system_to_base(views::VIEW_RELATION_EDIT), views::VIEW_RELATION_DEFAULT);
         $test_name = 'a mask without a base view returns an empty code id';
         $t->assert($test_name, $msk->system_to_base(views::UNDO), '');
 

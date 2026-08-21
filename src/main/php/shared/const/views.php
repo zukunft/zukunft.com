@@ -52,7 +52,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 115;
+    const int MAX_TEST_ID = 119;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -292,6 +292,14 @@ class views
     const int VIEW_DEFAULT_ID = 114;
     const string COMPONENT = 'component_default';
     const int COMPONENT_DEFAULT_ID = 115;
+    const string FORMULA_LINK_DEFAULT = 'formula_link_default';
+    const int FORMULA_LINK_DEFAULT_ID = 116;
+    const string TERM_VIEW_DEFAULT = 'term_view_default';
+    const int TERM_VIEW_DEFAULT_ID = 117;
+    const string COMPONENT_LINK_DEFAULT = 'component_link_default';
+    const int COMPONENT_LINK_DEFAULT_ID = 118;
+    const string VIEW_RELATION_DEFAULT = 'view_relation_default';
+    const int VIEW_RELATION_DEFAULT_ID = 119;
 
     // base views for users
     const string RANKING = 'ranking';
@@ -608,28 +616,32 @@ class views
     const array VIEW_LINK_MASKS_IDS = [
         self::VIEW_LINK_ADD_ID,
         self::VIEW_LINK_EDIT_ID,
-        self::VIEW_LINK_DEL_ID
+        self::VIEW_LINK_DEL_ID,
+        self::TERM_VIEW_DEFAULT_ID,
     ];
 
     // system masks that have a component to view link as the main object
     const array COMPONENT_LINK_MASKS_IDS = [
         self::COMPONENT_LINK_ADD_ID,
         self::COMPONENT_LINK_EDIT_ID,
-        self::COMPONENT_LINK_DEL_ID
+        self::COMPONENT_LINK_DEL_ID,
+        self::COMPONENT_LINK_DEFAULT_ID,
     ];
 
     // system masks that have a phrase to formula link as the main object
     const array FORMULA_LINK_MASKS_IDS = [
         self::FORMULA_LINK_ADD_ID,
         self::FORMULA_LINK_EDIT_ID,
-        self::FORMULA_LINK_DEL_ID
+        self::FORMULA_LINK_DEL_ID,
+        self::FORMULA_LINK_DEFAULT_ID,
     ];
 
     // system masks that have a view to view link as the main object
     const array VIEW_RELATION_MASKS_IDS = [
         self::VIEW_RELATION_ADD_ID,
         self::VIEW_RELATION_EDIT_ID,
-        self::VIEW_RELATION_DEL_ID
+        self::VIEW_RELATION_DEL_ID,
+        self::VIEW_RELATION_DEFAULT_ID,
     ];
 
     // system masks that have a language as the main object
@@ -758,6 +770,10 @@ class views
         self::TABLE_ID,
         self::VIEW_DEFAULT_ID,
         self::COMPONENT_DEFAULT_ID,
+        self::FORMULA_LINK_DEFAULT_ID,
+        self::TERM_VIEW_DEFAULT_ID,
+        self::COMPONENT_LINK_DEFAULT_ID,
+        self::VIEW_RELATION_DEFAULT_ID,
     ];
 
     // system masks that add a sandbox object
@@ -1023,6 +1039,10 @@ class views
         self::CURRENCY_ID => self::CURRENCY,
         self::VIEW_DEFAULT_ID => self::VIEW,
         self::COMPONENT_DEFAULT_ID => self::COMPONENT,
+        self::FORMULA_LINK_DEFAULT_ID => self::FORMULA_LINK_DEFAULT,
+        self::TERM_VIEW_DEFAULT_ID => self::TERM_VIEW_DEFAULT,
+        self::COMPONENT_LINK_DEFAULT_ID => self::COMPONENT_LINK_DEFAULT,
+        self::VIEW_RELATION_DEFAULT_ID => self::VIEW_RELATION_DEFAULT,
     ];
 
     const array SYSTEM_VIEWS = [
@@ -1142,6 +1162,10 @@ class views
             self::FORMULA_ADD, self::FORMULA_EDIT, self::FORMULA_DEL => self::FORMULA,
             self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
             self::COMPONENT_ADD, self::COMPONENT_EDIT, self::COMPONENT_DEL => self::COMPONENT,
+            self::FORMULA_LINK_ADD, self::FORMULA_LINK_EDIT, self::FORMULA_LINK_DEL => self::FORMULA_LINK_DEFAULT,
+            self::VIEW_LINK_ADD, self::VIEW_LINK_EDIT, self::VIEW_LINK_DEL => self::TERM_VIEW_DEFAULT,
+            self::COMPONENT_LINK_ADD, self::COMPONENT_LINK_EDIT, self::COMPONENT_LINK_DEL => self::COMPONENT_LINK_DEFAULT,
+            self::VIEW_RELATION_ADD, self::VIEW_RELATION_EDIT, self::VIEW_RELATION_DEL => self::VIEW_RELATION_DEFAULT,
             default => ''
         };
     }
@@ -1283,6 +1307,10 @@ class views
             self::LANGUAGE_ADD_ID, self::LANGUAGE_EDIT_ID, self::LANGUAGE_DEL_ID => self::LANGUAGE_ID,
             self::VIEW_ADD_ID, self::VIEW_EDIT_ID, self::VIEW_DEL_ID => self::VIEW_DEFAULT_ID,
             self::COMPONENT_ADD_ID, self::COMPONENT_EDIT_ID, self::COMPONENT_DEL_ID => self::COMPONENT_DEFAULT_ID,
+            self::FORMULA_LINK_ADD_ID, self::FORMULA_LINK_EDIT_ID, self::FORMULA_LINK_DEL_ID => self::FORMULA_LINK_DEFAULT_ID,
+            self::VIEW_LINK_ADD_ID, self::VIEW_LINK_EDIT_ID, self::VIEW_LINK_DEL_ID => self::TERM_VIEW_DEFAULT_ID,
+            self::COMPONENT_LINK_ADD_ID, self::COMPONENT_LINK_EDIT_ID, self::COMPONENT_LINK_DEL_ID => self::COMPONENT_LINK_DEFAULT_ID,
+            self::VIEW_RELATION_ADD_ID, self::VIEW_RELATION_EDIT_ID, self::VIEW_RELATION_DEL_ID => self::VIEW_RELATION_DEFAULT_ID,
             default => self::START_ID
         };
     }

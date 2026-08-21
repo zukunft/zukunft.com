@@ -396,6 +396,67 @@
       "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
       "type": "title_of_named_with_edit_link",
       "code_id": "title_of_named_with_edit_link_component"
+    },
+    {
+      "name": "Link title",
+      "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+      "type": "title_of_link_with_edit_link",
+      "code_id": "title_of_link_with_edit_link"
+    },
+    {
+      "name": "system show field style",
+      "description": "the name of the display style of a view or component as read only",
+      "type": "system_show_field_style",
+      "code_id": "show_field_style"
+    },
+    {
+      "name": "system show field owner",
+      "description": "the name of the user who owns the object as read only",
+      "type": "system_show_field_owner",
+      "code_id": "show_field_owner"
+    },
+    {
+      "name": "system sub title components",
+      "description": "show the language specific sub title for a component list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_components",
+      "ui_msg_code_id": "system_sub_title_components"
+    },
+    {
+      "name": "view components",
+      "description": "the components of the shown view sorted by their position with a link to each component",
+      "type": "components_of_view",
+      "code_id": "view_components"
+    },
+    {
+      "name": "system show field formula",
+      "description": "the name of the calculation formula of a component with a link to the formula",
+      "type": "system_show_field_formula",
+      "code_id": "show_field_formula"
+    },
+    {
+      "name": "system show field row phrase",
+      "description": "the name of the row phrase of a component with a link to the phrase",
+      "type": "system_show_field_phrase_row",
+      "code_id": "show_field_phrase_row"
+    },
+    {
+      "name": "system show field column phrase",
+      "description": "the name of the column phrase of a component with a link to the phrase",
+      "type": "system_show_field_phrase_col",
+      "code_id": "show_field_phrase_col"
+    },
+    {
+      "name": "system show field sub column phrase",
+      "description": "the name of the sub column phrase of a component with a link to the phrase",
+      "type": "system_show_field_phrase_col_sub",
+      "code_id": "show_field_phrase_col_sub"
+    },
+    {
+      "name": "component views",
+      "description": "the views that use the shown component with a link to each view",
+      "type": "views_of_component",
+      "code_id": "component_views"
     }
   ],
   "views": [
@@ -965,6 +1026,22 @@
         {
           "position": "2",
           "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field owner"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system sub title components"
+        },
+        {
+          "position": "6",
+          "name": "view components"
         }
       ]
     },
@@ -977,6 +1054,94 @@
         {
           "position": "1",
           "name": "Component title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field owner"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system show field formula"
+        },
+        {
+          "position": "6",
+          "name": "system show field row phrase"
+        },
+        {
+          "position": "7",
+          "name": "system show field column phrase"
+        },
+        {
+          "position": "8",
+          "name": "system show field sub column phrase"
+        },
+        {
+          "position": "9",
+          "name": "system sub title views"
+        },
+        {
+          "position": "10",
+          "name": "component views"
+        }
+      ]
+    },
+    {
+      "name": "Formula link",
+      "description": "the default view for formula links",
+      "code_id": "formula_link_default",
+      "type": "formula_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        }
+      ]
+    },
+    {
+      "name": "Term view",
+      "description": "the default view for term views",
+      "code_id": "term_view_default",
+      "type": "term_view",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        }
+      ]
+    },
+    {
+      "name": "Component link",
+      "description": "the default view for component links",
+      "code_id": "component_link_default",
+      "type": "component_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        }
+      ]
+    },
+    {
+      "name": "View relation",
+      "description": "the default view for view relations",
+      "code_id": "view_relation_default",
+      "type": "view_relation",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
         },
         {
           "position": "2",

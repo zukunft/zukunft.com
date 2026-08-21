@@ -438,6 +438,12 @@ class formula_link extends sandbox_link
             }
         }
 
+        // a page request needs the names of the linked objects for the link title subtitle
+        if ($typ_lst->incl_related()) {
+            $vars = $this->api_json_array_linked(
+                $vars, json_fields::FORMULA, json_fields::PHRASE, $msg, $usr);
+        }
+
         return $vars;
     }
 

@@ -59,6 +59,10 @@ class view_types
     const string RESULT = "result";
     const string VIEW = "view";
     const string COMPONENT = "component";
+    const string FORMULA_LINK = "formula_link";
+    const string TERM_VIEW = "term_view";
+    const string COMPONENT_LINK = "component_link";
+    const string VIEW_RELATION = "view_relation";
 
 
     // list of view types that are used by the system
@@ -82,6 +86,10 @@ class view_types
         self::RESULT,
         self::VIEW,
         self::COMPONENT,
+        self::FORMULA_LINK,
+        self::TERM_VIEW,
+        self::COMPONENT_LINK,
+        self::VIEW_RELATION,
     );
 
     // list of view types that can be used for values and results

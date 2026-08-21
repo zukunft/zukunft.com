@@ -329,6 +329,20 @@ class system_tests
         $empty_msg = new user_message($t->usr1); // a message that has nothing to say
         $t->assert($test_name, $empty_msg->text(), '');
 
+        // a report of several message parts joins them with a separator and never repeats a
+        // part (a doubled part like 'donedone' has hidden the reset db fail message)
+        $two_msg = new user_message($t->usr1); // a message of this positive report test block
+        $two_msg->add_info_id(msg_id::DONE);
+        $two_msg->add_info_with_vars(msg_id::IMPORT_DONE, [msg_id::VAR_SUMMARY => '2 words']);
+        $all_text = $two_msg->all_message_text();
+        $test_name = 'a report with an id and a var message shows the id part once';
+        $t->assert($test_name, substr_count($all_text, msg_id::DONE->value), 1);
+        $test_name = '... and also the var message';
+        $t->assert_text_contains($test_name, $all_text, '2 words imported');
+        // an info message must never set the message to not ok
+        $test_name = 'info messages keep the message ok';
+        $t->assert_true($test_name, $two_msg->is_ok());
+
 
         $t->subheader($ts . 'system config sql');
 

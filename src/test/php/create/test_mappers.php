@@ -1132,6 +1132,11 @@ class test_mappers
                 $obj_array = $this->formula_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case formula_link::class:
+                $obj = $t_frm->formula_link_filled();
+                $obj_array = $this->formula_link_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case result::class:
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
@@ -1142,9 +1147,25 @@ class test_mappers
                 $obj_array = $this->view_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case term_view::class:
+                $obj = $t_msk->term_view_filled();
+                $obj_array = $this->term_view_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case view_relation::class:
+                $obj = $t_msk->view_relation_filled();
+                $obj_array = $this->view_relation_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case component::class:
-                $obj = $t_cmp->component_filled();
+                // with the formula set, so the component default page shows all fields
+                $obj = $t_cmp->component_filled_all();
                 $obj_array = $this->component_url($obj, $msg, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case component_link::class:
+                $obj = $t_cmp->component_link_filled();
+                $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case language::class:
@@ -1994,6 +2015,9 @@ class test_mappers
         $url_array[] = [url_var::DESCRIPTION, $msk->get_description()];
         $url_array[] = [url_var::TYPE, $msk->type_id($msg)];
         $url_array[] = [url_var::STYLE, $msk->get_style_id()];
+        // the user who has created a standard test object is its owner, so the url carries
+        // the creating user as the owner like the api message of a page request does
+        $url_array[] = [url_var::OWNER, $msk->get_user()->name()];
         $url_array[] = [url_var::SHARE, $msk->share_id()];
         $url_array[] = [url_var::PROTECTION, $msk->protection_id()];
         return $url_array;
@@ -2035,6 +2059,10 @@ class test_mappers
         $url_array[] = [url_var::PHRASE_COL, $cmp->col_phrase->id()];
         $url_array[] = [url_var::PHRASE_COL_SUB, $cmp->col_sub_phrase->id()];
         $url_array[] = [url_var::LINK_TYPE, $cmp->link_type_id];
+        $url_array[] = [url_var::FORMULA, $cmp->get_formula_id()];
+        // the user who has created a standard test object is its owner, so the url carries
+        // the creating user as the owner like the api message of a page request does
+        $url_array[] = [url_var::OWNER, $cmp->get_user()->name()];
         $url_array[] = [url_var::SHARE, $cmp->share_id()];
         $url_array[] = [url_var::PROTECTION, $cmp->protection_id()];
         return $url_array;

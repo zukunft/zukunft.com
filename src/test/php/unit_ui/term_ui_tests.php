@@ -32,9 +32,15 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -70,6 +76,58 @@ class term_ui_tests
         $test_page .= 'formula term with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'formula term with link: ' . $frm->name_link() . '<br>';
         $t->html_page_test($test_page, 'term', 'term', $msg);
+
+        $t->subheader($ts . 'term id');
+
+        // the term id encodes the class and the id of the term object: an odd id is a phrase
+        // (positive a word, negative a triple) and an even id is a formula (positive) resp. a
+        // verb (negative); so set_id must create the object of the matching class, set its
+        // object id and id() must return the same term id again (see web/phrase/term.php)
+        $id_cases = [
+            [1, word::class, 1],
+            [3, word::class, 2],
+            [-1, triple::class, 1],
+            [-3, triple::class, 2],
+            [2, formula::class, 1],
+            [4, formula::class, 2],
+            [-2, verb::class, 1],
+            [-4, verb::class, 2],
+        ];
+        foreach ($id_cases as [$trm_id, $class, $obj_id]) {
+            $trm_case = new term();
+            $trm_case->set_id($trm_id);
+            $test_name = 'the term id ' . $trm_id . ' is a ' . library::class_to_name($class);
+            $t->assert($test_name, $trm_case->obj()::class, $class);
+            $test_name = '... with the object id ' . $obj_id;
+            $t->assert($test_name, $trm_case->obj_id(), $obj_id);
+            $test_name = '... and id() returns the term id ' . $trm_id . ' again';
+            $t->assert($test_name, $trm_case->id(), $trm_id);
+        }
+
+        // an already loaded term object is kept, so that setting the term id of the same object
+        // again does not drop the name that the api message has delivered
+        $test_name = 'setting the same term id keeps the loaded object';
+        $trm_wrd = new term($t_wrd->word()->term()->api_json());
+        $trm_wrd->set_id($trm_wrd->id());
+        $t->assert($test_name, $trm_wrd->name(), word_names::MATH);
+
+        // a term id of another class replaces the loaded object, because the loaded object is
+        // not the object of the given term id any more
+        $test_name = 'a term id of another class replaces the loaded object';
+        $trm_wrd = new term($t_wrd->word()->term()->api_json());
+        $trm_wrd->set_id(-1);
+        $t->assert($test_name, $trm_wrd->obj()::class, triple::class);
+        $test_name = '... and drops the name of the replaced object';
+        $t->assert($test_name, $trm_wrd->name() ?? '', '');
+
+        // zero is the term id of no object, so the object id stays zero and id() returns zero
+        // again instead of the term id of a not existing object
+        $test_name = 'the term id zero has the object id zero';
+        $trm_zero = new term();
+        $trm_zero->set_id(0);
+        $t->assert($test_name, $trm_zero->obj_id(), 0);
+        $test_name = '... and id() returns zero again';
+        $t->assert($test_name, $trm_zero->id(), 0);
     }
 
 }

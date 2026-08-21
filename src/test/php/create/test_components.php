@@ -102,12 +102,14 @@ class test_components extends test_objects
      */
 
     /**
+     * the included copy of the filled component is used, because an excluded component
+     * has an empty api message, so that the frontend list would have no usable entry
      * @return component_list with a list of suggested components for a word
      */
     function component_list_word(): component_list
     {
         $lst = new component_list($this->env->usr1);
-        $lst->add($this->component_filled());
+        $lst->add($this->component_filled_included());
         return $lst;
     }
 
@@ -525,6 +527,17 @@ class test_components extends test_objects
         $lnk->exclude();
         $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $lnk;
+    }
+
+    /**
+     * @return component_link with all fields set but not excluded, so that the api message
+     *         carries all fields e.g. to test the component link default page title
+     */
+    function component_link_filled_included(): component_link
+    {
+        $lnk = $this->component_link_filled();
+        $lnk->include();
         return $lnk;
     }
 

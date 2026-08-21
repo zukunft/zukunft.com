@@ -33,14 +33,23 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -116,6 +125,93 @@ class component_ui_tests
         $test_name = 'a component without a type shows no subtitle';
         $cmp_plain = new component($t_cmp->component_add()->api_json());
         $t->assert_text_not_contains($test_name, $sfm->title_named($cmp_plain, $msg), styles::SUBTITLE);
+
+        $t->subheader($ts . 'show fields');
+        global $ui_sys;
+        global $mtr;
+
+        // the component default page shows the style, the owner, the calculation formula and the
+        // three layout phrases (see base_views.json component_default); the names are resolved
+        // from the request caches, because the page url only carries the ids
+        $test_name = 'the style of a component is shown with its user-readable name';
+        $t->assert($test_name, $sfm->show_style($cmp_filled), view_styles::COL_SM_4_NAME);
+        $test_name = 'a component without a style shows an empty text';
+        $t->assert($test_name, $sfm->show_style($cmp_plain), '');
+
+        $test_name = 'the owner of a component is shown';
+        $cmp_owned = new component();
+        $cmp_owned->url_mapper([url_var::OWNER => users::SYSTEM_TEST_NAME], $msg);
+        $t->assert($test_name, $sfm->show_owner($cmp_owned), users::SYSTEM_TEST_NAME);
+        $test_name = 'a component without a known owner shows an empty text';
+        $t->assert($test_name, $sfm->show_owner($cmp_plain), '');
+
+        $test_name = 'the calculation formula of a component is shown with a link';
+        $cmp_frm = new component();
+        $cmp_frm->url_mapper([url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID], $msg);
+        $t->assert_text_contains($test_name, $sfm->show_formula($cmp_frm), formula_names::SCALE_TO_SEC);
+        $test_name = 'a component without a formula shows an empty text';
+        $t->assert($test_name, $sfm->show_formula($cmp_plain), '');
+
+        $test_name = 'the row phrase of a component is shown with a link';
+        $t->assert_text_contains($test_name, $sfm->show_row_phrase($cmp_filled, $ui_sys->phr_lst), words::YEAR_CAP);
+        $test_name = 'the column phrase of a component is shown with a link';
+        $t->assert_text_contains($test_name, $sfm->show_col_phrase($cmp_filled, $ui_sys->phr_lst), word_names::CANTON);
+        $test_name = 'the sub column phrase of a component is shown with a link';
+        $t->assert_text_contains($test_name, $sfm->show_col_sub_phrase($cmp_filled, $ui_sys->phr_lst), word_names::CITY);
+        $test_name = 'a component without a row phrase shows an empty text';
+        $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst), '');
+
+        $t->subheader($ts . 'component views');
+
+        // the component default page lists the views that use the component; the views come from
+        // the request cache that also provides the views for the page rendering itself
+        $list = new ui_list();
+        $views_html = $list->component_views($cmp_filled, $msg);
+        $test_name = 'the views that use the component are listed';
+        $t->assert_text_contains($test_name, $views_html, views::START_NAME);
+        $test_name = 'the listed views link to the view default page';
+        $t->assert_text_contains($test_name, $views_html, url_var::MASK . '=' . views::VIEW_DEFAULT_ID);
+        $test_name = 'an unused component shows the not used message';
+        $t->assert($test_name, $list->component_views($cmp_plain, $msg),
+            $mtr->txt(msg_id::INFO_NOT_USED_IN_VIEWS));
+
+        $t->subheader($ts . 'link title');
+
+        // the component link default page shows the generated link name as the page title with
+        // the linked view and component as links in the subtitle (see base_views.json
+        // component_link_default); a page request (INCL_RELATED) carries the names of the linked
+        // objects, so that the subtitle links have a text and not only a target
+        $lnk = new component_link_ui($t_cmp->component_link_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $ttl_html = $sfm->title_link($lnk, $msg);
+        $test_name = 'the component link title names the linked view';
+        $t->assert_text_contains($test_name, $ttl_html, views::START_NAME);
+        $test_name = '... and the linked component';
+        $t->assert_text_contains($test_name, $ttl_html, components::WORD_NAME);
+        $test_name = 'the component link title links to the component link edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::COMPONENT_LINK_EDIT_ID);
+        $test_name = 'the component link title has a subtitle for the share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+
+        // the page url carries only the ids of the linked objects, so the names of the subtitle
+        // links come from the request cache
+        $test_name = 'the component link title of a page url names the linked objects';
+        $lnk_url = new component_link_ui();
+        $lnk_url->url_mapper([
+            url_var::VIEW => (string)views::START_ID,
+            url_var::COMPONENT => (string)components::WORD_ID
+        ], $msg, $ui_sys);
+        $url_html = $sfm->title_link($lnk_url, $msg);
+        $t->assert_text_contains($test_name, $url_html, views::START_NAME);
+        $t->assert_text_contains($test_name . ' and the component', $url_html, components::WORD_NAME);
+
+        // a fresh component link of an add form shows no empty subtitle brackets and has an
+        // empty name, never a 'objects not set' placeholder as the page title
+        $test_name = 'a fresh component link shows no subtitle';
+        $lnk_new = new component_link_ui();
+        $t->assert_text_not_contains($test_name, $sfm->title_link($lnk_new, $msg), styles::SUBTITLE);
+        $test_name = 'a fresh component link has an empty name';
+        $t->assert($test_name, $lnk_new->name(), '');
     }
 
 }

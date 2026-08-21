@@ -1135,22 +1135,22 @@ class sandbox_list_named extends sandbox_list
             foreach ($this->lst() as $sbx) {
                 $dbo = $db_lst->get_by_name($sbx->name(), $msg);
                 if ($dbo != null) {
-                    // create and fill import object to check the diff without fill up
+                    // the import object with its empty fields filled up from the database
                     $sbc = $sbx->clone_all();
                     $sbc->fill($dbo, $imp->usr);
-                    $diff = $dbo->diff_msg($sbc, true);
-                    // if thee would be an overwrite
-                    // remember the error message
-                    // add remove the overwrites from the import object
+                    // the database object with its empty fields filled up from the import
+                    $dbc = $dbo->clone_all();
+                    $dbc->fill($sbx, $imp->usr);
+                    // the two filled up objects differ exactly where the import and the database
+                    // have set the same field to a different value, which is the overwrite that a
+                    // no update import must not do; a field that only one of the two has set is a
+                    // fill up (e.g. a component that gets its row phrase from a later import file)
+                    // and no overwrite, so comparing the database object directly would report it
+                    $diff = $dbc->diff_msg($sbc, true);
                     if (!$diff->is_ok()) {
+                        // report the overwrite and import the database object with the filled up
+                        // empty fields instead, so that the database values are kept
                         $msg->merge($diff);
-                        // create an import object based on the database object
-                        // so that the database based are not overwritten
-                        $dbc = $dbo->clone_all();
-                        // fill up the import object with the database values
-                        // e.g. if the description has been empty set it
-                        $dbc->fill($sbx, $imp->usr);
-                        // if there is a difference, report it
                         $this->update_object($dbc);
                     }
                 }

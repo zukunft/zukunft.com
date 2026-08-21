@@ -20,3 +20,7 @@ view_type_id, type_name, description, code_id
 19, 'for results only', 'only expected to be used for result objects', 'result'
 20, 'for views only', 'only expected to be used for view objects', 'view'
 21, 'for components only', 'only expected to be used for component objects', 'component'
+22, 'for formula links only', 'only expected to be used for formula link objects', 'formula_link'
+23, 'for term views only', 'only expected to be used for term view objects', 'term_view'
+24, 'for component links only', 'only expected to be used for component link objects', 'component_link'
+25, 'for view relations only', 'only expected to be used for view relation objects', 'view_relation'

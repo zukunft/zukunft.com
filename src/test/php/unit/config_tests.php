@@ -38,8 +38,10 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
@@ -51,8 +53,11 @@ include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -91,6 +96,14 @@ class config_tests
         $cfg->code_id = config::VERSION_DB;
         $cfg->value = def::FIRST_VERSION;
         $t->assert_sql_insert($sc, $cfg, [sql_type::LOG]);
+        // an unrelated problem that the request message already carries must never cut the body
+        // of the generated sql function (a cut body has broken the forced database reset with an
+        // empty 'BEGIN RETURN' function); the sql build skips steps only on own build problems
+        $test_name = 'a pre-filled request message does not cut the sql function body';
+        $msg_nok = new user_message($t->usr1); // a pre-filled message of this negative test block
+        $msg_nok->add(msg_id::ID_AND_NAME_MISSING, []);
+        $qp = $cfg->sql_insert($sc, $msg_nok, new sql_type_list([sql_type::LOG]));
+        $t->assert_text_contains($test_name, $qp->sql, sql::INSERT);
         $cfg_db = clone $cfg;
         $cfg->value = def::PRG_VERSION;
         $cfg->name = config::VERSION_DB_NAME;

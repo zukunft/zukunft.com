@@ -57,6 +57,7 @@ include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'type_list.php';
@@ -68,6 +69,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
@@ -95,6 +97,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
@@ -105,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
@@ -197,6 +201,31 @@ class system_form extends component
             }
         }
         return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, $from_verb_to, $url_array);
+    }
+
+    /**
+     * the page title for a link object (formula link, term view, component link or view relation):
+     * show the generated link name big as the title and the two linked objects with a link to each
+     * in the subtitle, with the same edit link and share and protection subtitle as the named title
+     * (like the triple title, where the from, verb and to move to the subtitle)
+     *
+     * @param sandbox_link|db_object $dbo the link whose name is the title and whose linked objects are the subtitle
+     * @param int $max to limit the number of related entries shown before a "..." link
+     * @return string the html code for the link page title
+     */
+    function title_link(
+        sandbox_link|db_object $dbo,
+        user_message           $msg,
+        int                    $max = def::LIMIT_RELATED_PER_VERB,
+        array                  $url_array = []
+    ): string
+    {
+        // the links to the two linked objects move to the subtitle like the triple from/verb/to
+        $from_to = '';
+        if ($dbo instanceof sandbox_link) {
+            $from_to = $dbo->name_linked();
+        }
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, $from_to, $url_array);
     }
 
     /**
@@ -664,6 +693,134 @@ class system_form extends component
     function show_plural_reverse(verb|db_object $dbo): string
     {
         return $this->esc($dbo->rev_plural ?? '');
+    }
+
+    /**
+     * @param view|component|db_object $dbo the view or component whose display style is shown
+     * @return string the user-readable name of the display style (empty if no style is set)
+     */
+    function show_style(view|component|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a view and a component have a display style and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof view or $dbo instanceof component) {
+            $style_id = $dbo->get_style_id();
+            if ($style_id != null) {
+                $result = $this->esc($ui_sys?->typ_lst_cache?->msk_sty?->name($style_id) ?? '');
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a display style');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose calculation formula is shown
+     * @return string the linked name of the formula (empty if no formula is set or known)
+     */
+    function show_formula(component|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a component links a calculation formula and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof component) {
+            if ($dbo->formula_id != null) {
+                // resolve the name from the request cache, because the page url and the
+                // api message only carry the formula id
+                $frm = $ui_sys?->frm_lst?->get($dbo->formula_id);
+                $result = $frm?->name_link() ?? '';
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a calculation formula');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose row phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked name of the row phrase (empty if not set or not known)
+     */
+    function show_row_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->row_phrase, $phr_lst);
+        } else {
+            log_err($dbo::class . ' is not expected to have a row phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose column phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked name of the column phrase (empty if not set or not known)
+     */
+    function show_col_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->col_phrase, $phr_lst);
+        } else {
+            log_err($dbo::class . ' is not expected to have a column phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose sub column phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked name of the sub column phrase (empty if not set or not known)
+     */
+    function show_col_sub_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->col_sub_phrase, $phr_lst);
+        } else {
+            log_err($dbo::class . ' is not expected to have a sub column phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * the linked name of one layout phrase (row, column or sub column) of a component; the
+     * shared part of show_row_phrase, show_col_phrase and show_col_sub_phrase
+     * @param int|null $phr_id the id of the layout phrase or null if the field is not set
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked phrase name (empty if the phrase is not set or not known)
+     */
+    private function component_phrase(?int $phr_id, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($phr_id != null) {
+            // resolve the name from the request cache, because the page url and the api
+            // message only carry the phrase id
+            $phr = $phr_lst->get($phr_id);
+            $result = $phr?->name_link() ?? '';
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox|db_object $dbo the object whose owner is shown
+     * @return string the name of the user who owns the object (empty if the owner is not known)
+     */
+    function show_owner(sandbox|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a sandbox object has an owner and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof sandbox) {
+            $result = $this->esc($dbo->owner_name());
+        } else {
+            log_err($dbo::class . ' is not expected to have an owner');
+        }
+        return $result;
     }
 
     /**

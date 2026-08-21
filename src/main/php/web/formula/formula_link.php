@@ -39,6 +39,7 @@ include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -57,6 +59,24 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class formula_link extends sandbox_link
 {
+
+    /*
+     * const
+     */
+
+    // crud views
+    const string VIEW_ADD = views::FORMULA_LINK_ADD;
+    const string VIEW_EDIT = views::FORMULA_LINK_EDIT;
+    const string VIEW_DEL = views::FORMULA_LINK_DEL;
+    const int VIEW_ADD_ID = views::FORMULA_LINK_ADD_ID;
+    const int VIEW_EDIT_ID = views::FORMULA_LINK_EDIT_ID;
+    const int VIEW_DEL_ID = views::FORMULA_LINK_DEL_ID;
+
+    // crud message id
+    const msg_id MSG_ADD = msg_id::FORMULA_LINK_ADD;
+    const msg_id MSG_EDIT = msg_id::FORMULA_LINK_EDIT;
+    const msg_id MSG_DEL = msg_id::FORMULA_LINK_DEL;
+
 
     /*
      * object vars
@@ -67,37 +87,39 @@ class formula_link extends sandbox_link
 
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name
+     * @return string|null the generated link name or an empty string e.g. for a new link of an add form
      */
     function name(): string|null
     {
         $result = '';
-
+        // a new formula link of an add form has no linked objects or names yet,
+        // which is a normal state and not an error
         if ($this->formula() != null and $this->phrase() != null) {
             if ($this->formula()->name() <> null and $this->phrase()->name() <> null) {
-                $result .= '"' . $this->phrase()->name() . '" in "'; // e.g. company details
-                $result .= $this->formula()->name() . '"';     // e.g. cash flow statement
+                $result .= '"' . $this->phrase()->name() . '" in "'; // e.g. "minute" in
+                $result .= $this->formula()->name() . '"';     // e.g. "scale minute to sec"
             }
-        } else {
-            $result .= 'formula link objects not set';
         }
         return $result;
     }
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
+     * @param string $back the back trace url for the undo functionality
+     * @return string the linked names or an empty string e.g. for a new link of an add form
      */
     function name_linked(string $back = ''): string
     {
         $result = '';
-
+        // a new formula link of an add form has no linked objects yet,
+        // which is a normal state and not an error
         if ($this->formula() != null and $this->phrase() != null) {
             global $mtr;
             $result = $this->formula()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link(NULL, $back);
-        } else {
-            $result .= log_err("The formula name or the phrase name cannot be loaded.", "component_link->name");
         }
-
         return $result;
     }
 
@@ -118,17 +140,17 @@ class formula_link extends sandbox_link
     {
         parent::url_mapper($url_array, $msg, $dto);
         if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked objects, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::FORMULA, $url_array)) {
                 $frm = new formula();
                 $frm->set_id($url_array[url_var::FORMULA]);
-                // TODO Prio 2 get from cache (or api)
-                $this->set_formula($frm);
+                $this->set_formula($this->named_from_cache($frm, $dto?->formula_list()));
             }
             if (array_key_exists(url_var::PHRASE, $url_array)) {
                 $phr = new phrase();
                 $phr->set_id($url_array[url_var::PHRASE]);
-                // TODO Prio 2 get from cache (or api)
-                $this->set_phrase($phr);
+                $this->set_phrase($this->named_from_cache($phr, $dto?->phrase_list()));
             }
         }
         return $msg;

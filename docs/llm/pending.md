@@ -2,27 +2,21 @@
 
 ## user default view
 
-add a formula_link_default, term_view, component_link and view_relation default view that contains a title / subtitle similar to the word_default view and the main fields of the database tables to system views
-
-add a view and component default view to system views
-
-add a title with subtitle similar to the triple title / subtitle to the formula_link_default, term_view, component_link and view_relation views
-
-fill the formula_link_default view with the missing fields including the my tab for the user_changes
+fill the formula_link_default view with the missing fields including the 'changes' and 'my' tabs for the user_changes
 
 add the formula_link overwrites to the 'all_user_overwrites' component used in the user_default view
 
 write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show 
 
-add a 'my' tab to the value_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'views', 'changes' and 'my' tabs to the value_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
 
 add the value overwrites to the 'all_user_overwrites' component used in the user_default view
 
-add a 'my' tab to the component_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'changes' and 'my' tabs to the component_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
 
 add the component overwrites to the 'all_user_overwrites' component used in the user_default view
 
-add a 'my' tab to the view_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'changes' and 'my' tabs to the view_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
 
 add the view overwrites to the 'all_user_overwrites' component used in the user_default view
 
@@ -30,7 +24,7 @@ fill the component_link_default view with the missing fields including the my ta
 
 add the component_link overwrites to the 'all_user_overwrites' component used in the user_default view
 
-add a 'my' tab to the source_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'views', 'changes' and 'my' tabs to the source_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
 
 add the source overwrites to the 'all_user_overwrites' component used in the user_default view
 
@@ -41,7 +35,7 @@ repeat the check of the fields in the default page, the my tab and the fill of '
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
 
 
-in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the ttoltip of the term so that the user can check if she (or he) has selected the correct term
+in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the tooltip of the term so that the user can check if she (or he) has selected the correct term
 
 in the formula edit (and add) view add an icon near the formula expression and latex formula input field that the user can use to update the latex based on the expression or the other way round
 
@@ -56,6 +50,14 @@ create a script loops over the resources that lists all queries '*.sql' that doe
 fix the view selector link in the word_default page
 
 ## cleanup
+
+find and fix the silent not-ok on the fresh-database reset path: during reset_db_forced the request message reached the config check of db_check with status NOK but without any error text (only the DONE and 'finished successful' infos), so a sub step of the fresh-db startup (user creation, type fill or base import) returns a failed message without recording the reason - a 'never fail silently' violation; the broken-sql side effect is fixed (db_object_seq_id::sql_write now uses a build-scoped message), so the next forced reset should surface which step it is
+
+review Message::add_err: it passes ok=true to add(), so an error added via add_err never sets the message to not ok (is_ok() stays true), which inverts the intent of the plain add() that flips to not ok even for infos; decide the intended contract and align add, add_err, add_id and add_info_id
+
+decide how a no update import should treat the object type: sandbox_typed::diff_msg skips the type when $ex_def is set, so a re-declaration with another type is never reported and the later import file silently wins; company.json declares the components "Cash Flow Statement" and "company with ratios" as calc_sheet and companies.json declares the same names as values_related resp. word_value_list, so today companies.json overwrites the type of company.json without a message; either report the type like the other fields or give the two files their own component names resp. one code_id to merge (see docs/llm/json_views.md)
+
+thread the two fill() results of the no update import in sandbox_list_named::update: both $sbc->fill($dbo, ...) and $dbc->fill($sbx, ...) drop the returned user_message, so a permission problem of a fill setter (e.g. component::set_ui_msg_code_id for a user without can_set_ui_msg_id) is lost instead of being reported
 
 review buttons
 

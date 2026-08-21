@@ -273,6 +273,38 @@ class sandbox_link extends sandbox
     }
 
 
+    /**
+     * add the two linked objects with their names to the api message of a page request, so that
+     * the link default page can show the generated link name and a link to each linked object
+     * (see the "Link title" component of base_views.json); a fresh api_type_list is used, so
+     * each linked object emits only its own fields and never recurses back into its relations
+     *
+     * @param array $vars the api json array of this link object created until now
+     * @param string $from_fld the json field name of the from object e.g. json_fields::VIEW
+     * @param string $to_fld the json field name of the to object e.g. json_fields::TERM
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the api json array with the two linked objects added
+     */
+    protected function api_json_array_linked(
+        array        $vars,
+        string       $from_fld,
+        string       $to_fld,
+        user_message $msg,
+        user|null    $usr = null
+    ): array
+    {
+        if ($this->fob != null and $this->fob->id() != 0) {
+            $vars[$from_fld] = $this->fob->api_json_array(new api_type_list(), $msg, $usr);
+        }
+        // an external key (a string to object e.g. of a reference) has no api json array
+        if ($this->tob != null and !is_string($this->tob) and $this->tob->id() != 0) {
+            $vars[$to_fld] = $this->tob->api_json_array(new api_type_list(), $msg, $usr);
+        }
+        return $vars;
+    }
+
+
     /*
      * set and get
      */

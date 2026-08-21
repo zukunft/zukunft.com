@@ -83,6 +83,9 @@ class component_types
     const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
     const int TITLE_VALUE_EDIT_ID = 203;
     const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
+    const string TITLE_LINK_EDIT = "title_of_link_with_edit_link";
+    const int TITLE_LINK_EDIT_ID = 222;
+    const string TITLE_LINK_EDIT_COM = "show the generated name of a link object as the page title and the two linked objects with links in the subtitle, plus the edit link";
     // the page title of a phrase: the same title as TITLE_NAMED_EDIT for a word and the same
     // title as TITLE_TRIPLE_EDIT for a triple, each including its subheader, so that one view
     // can be used for a word and for a triple without a title component per phrase type
@@ -548,6 +551,24 @@ class component_types
     const int SHOW_REVERSE_ID = 219;
     const string SHOW_PLURAL_REVERSE = "system_show_field_plural_reverse";
     const int SHOW_PLURAL_REVERSE_ID = 220;
+    const string SHOW_STYLE = "system_show_field_style";
+    const int SHOW_STYLE_ID = 223;
+    const string SHOW_OWNER = "system_show_field_owner";
+    const int SHOW_OWNER_ID = 224;
+    // the components of the shown view sorted by their position e.g. for the view default page
+    const string VIEW_COMPONENTS = "components_of_view";
+    const int VIEW_COMPONENTS_ID = 225;
+    const string SHOW_FORMULA = "system_show_field_formula";
+    const int SHOW_FORMULA_ID = 226;
+    const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
+    const int SHOW_PHRASE_ROW_ID = 227;
+    const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
+    const int SHOW_PHRASE_COL_ID = 228;
+    const string SHOW_PHRASE_COL_SUB = "system_show_field_phrase_col_sub";
+    const int SHOW_PHRASE_COL_SUB_ID = 229;
+    // the views that use the shown component e.g. for the component default page
+    const string COMPONENT_VIEWS = "views_of_component";
+    const int COMPONENT_VIEWS_ID = 230;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -807,6 +828,7 @@ class component_types
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
         [self::TITLE_TRIPLE_EDIT, self::TITLE_TRIPLE_EDIT_ID],
+        [self::TITLE_LINK_EDIT, self::TITLE_LINK_EDIT_ID],
         [self::PHRASE_TITLE, self::PHRASE_TITLE_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
@@ -982,6 +1004,14 @@ class component_types
         [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
         [self::SHOW_REVERSE, self::SHOW_REVERSE_ID],
         [self::SHOW_PLURAL_REVERSE, self::SHOW_PLURAL_REVERSE_ID],
+        [self::SHOW_STYLE, self::SHOW_STYLE_ID],
+        [self::SHOW_OWNER, self::SHOW_OWNER_ID],
+        [self::VIEW_COMPONENTS, self::VIEW_COMPONENTS_ID],
+        [self::SHOW_FORMULA, self::SHOW_FORMULA_ID],
+        [self::SHOW_PHRASE_ROW, self::SHOW_PHRASE_ROW_ID],
+        [self::SHOW_PHRASE_COL, self::SHOW_PHRASE_COL_ID],
+        [self::SHOW_PHRASE_COL_SUB, self::SHOW_PHRASE_COL_SUB_ID],
+        [self::COMPONENT_VIEWS, self::COMPONENT_VIEWS_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],
