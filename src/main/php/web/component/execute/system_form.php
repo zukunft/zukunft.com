@@ -717,6 +717,96 @@ class system_form extends component
     }
 
     /**
+     * @param component|db_object $dbo the component whose calculation formula is shown
+     * @return string the linked name of the formula (empty if no formula is set or known)
+     */
+    function show_formula(component|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a component links a calculation formula and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof component) {
+            if ($dbo->formula_id != null) {
+                // resolve the name from the request cache, because the page url and the
+                // api message only carry the formula id
+                $frm = $ui_sys?->frm_lst?->get($dbo->formula_id);
+                $result = $frm?->name_link() ?? '';
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a calculation formula');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose row phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked name of the row phrase (empty if not set or not known)
+     */
+    function show_row_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->row_phrase, $phr_lst);
+        } else {
+            log_err($dbo::class . ' is not expected to have a row phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose column phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked name of the column phrase (empty if not set or not known)
+     */
+    function show_col_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->col_phrase, $phr_lst);
+        } else {
+            log_err($dbo::class . ' is not expected to have a column phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose sub column phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked name of the sub column phrase (empty if not set or not known)
+     */
+    function show_col_sub_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->col_sub_phrase, $phr_lst);
+        } else {
+            log_err($dbo::class . ' is not expected to have a sub column phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * the linked name of one layout phrase (row, column or sub column) of a component; the
+     * shared part of show_row_phrase, show_col_phrase and show_col_sub_phrase
+     * @param int|null $phr_id the id of the layout phrase or null if the field is not set
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the linked phrase name (empty if the phrase is not set or not known)
+     */
+    private function component_phrase(?int $phr_id, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($phr_id != null) {
+            // resolve the name from the request cache, because the page url and the api
+            // message only carry the phrase id
+            $phr = $phr_lst->get($phr_id);
+            $result = $phr?->name_link() ?? '';
+        }
+        return $result;
+    }
+
+    /**
      * @param sandbox|db_object $dbo the object whose owner is shown
      * @return string the name of the user who owns the object (empty if the owner is not known)
      */

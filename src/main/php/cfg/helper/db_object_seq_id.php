@@ -1229,11 +1229,17 @@ class db_object_seq_id extends db_object
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::LIST);
 
+        // the next build steps must only be skipped if a *previous build step* has failed, never
+        // because the request message already carries an unrelated problem - otherwise an
+        // unrelated earlier message would let this function return a broken sql function without
+        // a body (see docs/llm/dependent-errors.md)
+        $sql_msg = new user_message($msg->usr); // a buffer of this sql build that is merged into the request message below
+
         // create sql to set the prime key upfront to get the sequence id
         $qp_id = clone $qp;
         if ($sc_par_lst->is_insert()) {
-            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $msg, $sc_par_lst_sub);
-            if ($msg->is_ok()) {
+            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $sql_msg, $sc_par_lst_sub);
+            if ($sql_msg->is_ok()) {
                 $par_lst_out->add($qp_id->par_fld);
                 $sql .= $qp_id->sql;
             }
@@ -1252,20 +1258,23 @@ class db_object_seq_id extends db_object
         );
 
         // create the query parameters for the log entries for the single fields
-        if ($msg->is_ok()) {
-            $qp_log = $this->sql_write_log($sc, $msg, $fvt_lst, $fld_lst_chg, $sc_par_lst_sub);
+        if ($sql_msg->is_ok()) {
+            $qp_log = $this->sql_write_log($sc, $sql_msg, $fvt_lst, $fld_lst_chg, $sc_par_lst_sub);
             $sql .= ' ' . $qp_log->sql;
             $par_lst_out->add_list($qp_log->par_fld_lst);
         }
 
         // add the update row SQL to the function body
-        if ($msg->is_ok()) {
+        if ($sql_msg->is_ok()) {
             $sql_upd = $this->sql_write_update(
-                $sc, $msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_chg, $sc_par_lst);
+                $sc, $sql_msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_chg, $sc_par_lst);
             if ($sql_upd != '') {
                 $sql .= ' ' . $sql_upd . ' ';
             }
         }
+
+        // report the problems of this sql build to the caller
+        $msg->merge($sql_msg);
 
         // create the call sql statement
         return $this->sql_write_call($sc, $qp, $sql, $id_fld_new, $par_lst_out, $sc_par_lst);

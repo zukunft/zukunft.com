@@ -376,13 +376,16 @@ class component extends sandbox_code_id
             $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
         if (array_key_exists(json_fields::PHRASE_ROW, $api_json)) {
-            $this->reload_row_phrase($msg, $api_json[json_fields::PHRASE_ROW]);
+            // TODO Prio 1 review and probly add $msg again or at least make sure that the missing phrases are created and added to the cache upfront and that here missing phrases are reported with a error message
+            // set by id without a database load, because the api message carries only the id
+            // and e.g. the save path needs only the id (the name is reloaded when needed)
+            $this->set_row_phrase_by_id($api_json[json_fields::PHRASE_ROW]);
         }
         if (array_key_exists(json_fields::PHRASE_COL, $api_json)) {
-            $this->reload_col_phrase($msg, $api_json[json_fields::PHRASE_COL]);
+            $this->set_col_phrase_by_id($api_json[json_fields::PHRASE_COL]);
         }
         if (array_key_exists(json_fields::PHRASE_COL_SUB, $api_json)) {
-            $this->reload_col_sub_phrase($msg, $api_json[json_fields::PHRASE_COL_SUB]);
+            $this->set_col_sub_phrase_by_id($api_json[json_fields::PHRASE_COL_SUB]);
         }
         if (array_key_exists(json_fields::LINK_TYPE, $api_json)) {
             $this->set_link_type_by_id($api_json[json_fields::LINK_TYPE]);
@@ -441,8 +444,55 @@ class component extends sandbox_code_id
                 $this->set_type_id($this->type_id_by_code_id($type_name), $msg);
             }
         }
+        if (key_exists(json_fields::ROW, $in_ex_json)) {
+            $phr = $this->import_layout_phrase($in_ex_json[json_fields::ROW], $msg, $dto);
+            if ($phr != null) {
+                $this->set_row_phrase($phr);
+            }
+        }
+        if (key_exists(json_fields::COLUMN, $in_ex_json)) {
+            $phr = $this->import_layout_phrase($in_ex_json[json_fields::COLUMN], $msg, $dto);
+            if ($phr != null) {
+                $this->set_col_phrase($phr);
+            }
+        }
+        if (key_exists(json_fields::COLUMN2, $in_ex_json)) {
+            $phr = $this->import_layout_phrase($in_ex_json[json_fields::COLUMN2], $msg, $dto);
+            if ($phr != null) {
+                $this->set_col_sub_phrase($phr);
+            }
+        }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * get one layout phrase (row, column or sub column) of an import json by its name from the
+     * import cache; the shared part of the row, column and sub column mapping of import_mapper,
+     * which maps from the $dto only and never reads the database (see docs/llm/coding.md)
+     *
+     * @param string $name the phrase name of the import json e.g. "year"
+     * @param user_message $msg to report a phrase that is neither imported nor ready to be written
+     * @param data_object|null $dto the import cache with the phrases imported until now
+     * @return phrase|null the phrase of the import cache or null if the name cannot be resolved
+     */
+    private function import_layout_phrase(string $name, user_message $msg, ?data_object $dto): ?phrase
+    {
+        $result = null;
+        if ($name != '') {
+            $phr = $dto?->get_phrase_by_name($name, $msg);
+            if ($phr == null) {
+                // create a phrase without saving to and without reading from the database
+                $phr = new phrase($this->get_user());
+                $phr->set_name($name, word::class);
+                if (!$phr->db_ready($msg)) {
+                    $msg->add_type_message($name, msg_id::PHRASE_MISSING->value);
+                    $phr = null;
+                }
+            }
+            $result = $phr;
+        }
+        return $result;
     }
 
 
@@ -483,6 +533,23 @@ class component extends sandbox_code_id
             }
             if ($this->frm != null) {
                 $vars[json_fields::FORMULA_ID] = $this->get_formula_id();
+            }
+            if ($this->row_phrase?->id() != null) {
+                $vars[json_fields::PHRASE_ROW] = $this->row_phrase->id();
+            }
+            if ($this->col_phrase?->id() != null) {
+                $vars[json_fields::PHRASE_COL] = $this->col_phrase->id();
+            }
+            if ($this->col_sub_phrase?->id() != null) {
+                $vars[json_fields::PHRASE_COL_SUB] = $this->col_sub_phrase->id();
+            }
+            // the owner name is only added for a page request (and the load is skipped in the
+            // test mode), so the component default page can show the owner (see base_views.json)
+            if ($typ_lst->incl_related() and !$typ_lst->test_mode()) {
+                $owner_name = $this->owner_api_name($msg);
+                if ($owner_name != null) {
+                    $vars[json_fields::OWNER] = $owner_name;
+                }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -654,11 +721,49 @@ class component extends sandbox_code_id
         $this->row_phrase = $phr;
     }
 
-    // TODO Prio 0 use $dto or and load
-    function set_row_phrase_by_id(int $id): void
+    /**
+     * set the phrase that defines the row names by its id e.g. based on an api message, without
+     * loading the phrase from the database (the name is reloaded only when needed e.g. by
+     * reload_phrases for the export)
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null to unset
+     * @return void
+     */
+    function set_row_phrase_by_id(?int $id): void
     {
-        $phr = new phrase();
-        $this->row_phrase = $phr;
+        $this->row_phrase = $this->phrase_by_id($id);
+    }
+
+    /**
+     * set the phrase that defines the column names by its id without a database load
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null to unset
+     * @return void
+     */
+    function set_col_phrase_by_id(?int $id): void
+    {
+        $this->col_phrase = $this->phrase_by_id($id);
+    }
+
+    /**
+     * set the phrase that defines the sub column names by its id without a database load
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null to unset
+     * @return void
+     */
+    function set_col_sub_phrase_by_id(?int $id): void
+    {
+        $this->col_sub_phrase = $this->phrase_by_id($id);
+    }
+
+    /**
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null
+     * @return phrase|null an id-only phrase without a database load or null if the id is not set
+     */
+    private function phrase_by_id(?int $id): ?phrase
+    {
+        $result = null;
+        if ($id != null and $id != 0) {
+            $result = new phrase($this->get_user(), $id);
+        }
+        return $result;
     }
 
     function get_row_phrase_id(): int

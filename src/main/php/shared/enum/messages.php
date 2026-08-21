@@ -1681,6 +1681,7 @@ enum messages: string
     case INFO_NOT_USED_FOR_FORMULAS = 'info_not_used_for_formulas';
     case INFO_NOT_USED_FOR_VALUES = 'info_not_used_for_values';
     case INFO_VIEW_HAS_NO_COMPONENTS = 'info_view_has_no_components';
+    case INFO_NOT_USED_IN_VIEWS = 'info_not_used_in_views';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';

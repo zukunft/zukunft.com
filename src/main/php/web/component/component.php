@@ -141,6 +141,8 @@ class component extends sandbox_code_id
     public ?int $col_phrase = null;
     public ?int $col_sub_phrase = null;
     public ?int $link_type_id = null;
+    // the id of the formula used to calculate the component content e.g. for a chart
+    public ?int $formula_id = null;
 
 
     /*
@@ -171,6 +173,9 @@ class component extends sandbox_code_id
         }
         if (array_key_exists(url_var::LINK_TYPE, $url_array)) {
             $this->link_type_id = $url_array[url_var::LINK_TYPE];
+        }
+        if (array_key_exists(url_var::FORMULA, $url_array)) {
+            $this->formula_id = $url_array[url_var::FORMULA];
         }
         return $msg;
     }
@@ -261,6 +266,11 @@ class component extends sandbox_code_id
         } else {
             $this->link_type_id = null;
         }
+        if (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
+            $this->formula_id = $json_array[json_fields::FORMULA_ID];
+        } else {
+            $this->formula_id = null;
+        }
         return $msg->is_ok();
     }
 
@@ -304,6 +314,9 @@ class component extends sandbox_code_id
         }
         if ($this->link_type_id != 0) {
             $vars[json_fields::LINK_TYPE] = $this->link_type_id;
+        }
+        if ($this->formula_id != 0) {
+            $vars[json_fields::FORMULA_ID] = $this->formula_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

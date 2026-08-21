@@ -66,7 +66,7 @@ if ($db_con->is_open()) {
     if ($start_usr->id() > 0) {
         if ($start_usr->is_admin() or getenv(ENVIRONMENT) == ENV_DEV) {
             echo 'forced reset: dropping the ' . words::CONFIG . ' table before the database reset' . "\n";
-            $db_con->drop_table(words::CONFIG);
+            $db_con->drop_table(words::CONFIG, $msg);
             $db_con->close();
 
             // delegate to reset_db.php so that the forced reset loads exactly the same

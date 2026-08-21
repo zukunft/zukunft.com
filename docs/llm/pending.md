@@ -2,8 +2,6 @@
 
 ## user default view
 
-add the database fields 'description', 'owner', 'type', 'style', 'formula', 'row phrase', 'column phrase', 'sub column phrase' and the list of views where the component is used to default component view, so that src/test/resources/web/html/views_by_id/component/115_component_1.html shows the fields with useful sample data
-
 show the names of the linked objects in the link title subtitle of the formula_link_default, term_view_default, component_link_default and view_relation_default views: the term view and view relation api messages carry only the ids of the linked objects (see web/view/term_view.php and web/view/view_relation.php api_mapper) and the url mappers of all four link classes resolve the linked ids without names, so the title subtitle links show no text yet
 
 fill the formula_link_default view with the missing fields including the my tab for the user_changes
@@ -54,6 +52,14 @@ create a script loops over the resources that lists all queries '*.sql' that doe
 fix the view selector link in the word_default page
 
 ## cleanup
+
+find and fix the silent not-ok on the fresh-database reset path: during reset_db_forced the request message reached the config check of db_check with status NOK but without any error text (only the DONE and 'finished successful' infos), so a sub step of the fresh-db startup (user creation, type fill or base import) returns a failed message without recording the reason - a 'never fail silently' violation; the broken-sql side effect is fixed (db_object_seq_id::sql_write now uses a build-scoped message), so the next forced reset should surface which step it is
+
+review Message::add_err: it passes ok=true to add(), so an error added via add_err never sets the message to not ok (is_ok() stays true), which inverts the intent of the plain add() that flips to not ok even for infos; decide the intended contract and align add, add_err, add_id and add_info_id
+
+decide how a no update import should treat the object type: sandbox_typed::diff_msg skips the type when $ex_def is set, so a re-declaration with another type is never reported and the later import file silently wins; company.json declares the components "Cash Flow Statement" and "company with ratios" as calc_sheet and companies.json declares the same names as values_related resp. word_value_list, so today companies.json overwrites the type of company.json without a message; either report the type like the other fields or give the two files their own component names resp. one code_id to merge (see docs/llm/json_views.md)
+
+thread the two fill() results of the no update import in sandbox_list_named::update: both $sbc->fill($dbo, ...) and $dbc->fill($sbx, ...) drop the returned user_message, so a permission problem of a fill setter (e.g. component::set_ui_msg_code_id for a user without can_set_ui_msg_id) is lost instead of being reported
 
 review buttons
 

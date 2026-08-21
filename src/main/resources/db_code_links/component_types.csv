@@ -224,3 +224,8 @@ component_type_id, type_name, description, code_id
 223, 'show style', 'show the name of the display style of a view or component without link or form field', 'system_show_field_style'
 224, 'show owner', 'show the name of the user who owns the object without link or form field', 'system_show_field_owner'
 225, 'view components', 'the components of the shown view sorted by their position with a link to each component', 'components_of_view'
+226, 'show formula', 'show the name of the calculation formula of a component with a link to the formula', 'system_show_field_formula'
+227, 'show row phrase', 'show the name of the row phrase of a component with a link to the phrase', 'system_show_field_phrase_row'
+228, 'show column phrase', 'show the name of the column phrase of a component with a link to the phrase', 'system_show_field_phrase_col'
+229, 'show sub column phrase', 'show the name of the sub column phrase of a component with a link to the phrase', 'system_show_field_phrase_col_sub'
+230, 'component views', 'the views that use the shown component with a link to each view', 'views_of_component'

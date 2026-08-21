@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1183 of 5576 public functions have at least 2 unit test calls; the 4393 functions below do not
+1192 of 5583 public functions have at least 2 unit test calls; the 4391 functions below do not
 
 ## main backend
 
@@ -182,13 +182,15 @@ so same-named functions of several classes share their test calls
     \-- reload_wrd_col2 - 0 unit test calls
     \-- row_mapper_sandbox - 0 unit test calls
     \-- set_col_phrase - 0 unit test calls
+    \-- set_col_phrase_by_id - 0 unit test calls
     \-- set_col_sub_phrase - 0 unit test calls
+    \-- set_col_sub_phrase_by_id - 0 unit test calls
     \-- set_formula - 0 unit test calls
     \-- set_formula_by_id - 0 unit test calls
     \-- set_join - 0 unit test calls
     \-- set_link_type - 0 unit test calls
     \-- set_link_type_by_id - 0 unit test calls
-    \-- set_row_phrase - 0 unit test calls
+    \-- set_row_phrase - 1 unit test calls
     \-- set_row_phrase_by_id - 0 unit test calls
     \-- set_style - 0 unit test calls
     \-- set_style_by_id - 0 unit test calls
@@ -441,7 +443,6 @@ so same-named functions of several classes share their test calls
     \-- sql_delete - 0 unit test calls
     \-- sql_foreign_key - 0 unit test calls
     \-- sql_index - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_insert_key_field - 0 unit test calls
     \-- sql_table - 0 unit test calls
     \-- sql_write - 0 unit test calls
@@ -475,7 +476,6 @@ so same-named functions of several classes share their test calls
     \-- set_object_by_id - 0 unit test calls
     \-- set_type - 1 unit test calls
     \-- sql_delete - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_prepare - 0 unit test calls
     \-- trm_id - 0 unit test calls
     \-- type - 0 unit test calls
@@ -778,7 +778,6 @@ so same-named functions of several classes share their test calls
     \-- set_saved - 1 unit test calls
     \-- sql_foreign_key - 0 unit test calls
     \-- sql_index - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_table - 0 unit test calls
     \-- sql_truncate - 0 unit test calls
     \-- table_extension - 0 unit test calls
@@ -1383,7 +1382,6 @@ so same-named functions of several classes share their test calls
     \-- sql_extension - 0 unit test calls
     \-- sql_foreign_key - 0 unit test calls
     \-- sql_index - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_insert_key_field - 0 unit test calls
     \-- sql_insert_switch - 0 unit test calls
     \-- sql_insert_with_log - 0 unit test calls
@@ -1462,7 +1460,6 @@ so same-named functions of several classes share their test calls
     \-- set_link_objects - 0 unit test calls
     \-- set_predicate_id - 0 unit test calls
     \-- set_tob - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_insert_key_field - 0 unit test calls
     \-- sql_key_fields_id - 0 unit test calls
     \-- sql_key_fields_id_old - 0 unit test calls
@@ -1533,7 +1530,6 @@ so same-named functions of several classes share their test calls
     \-- sort_by_name - 0 unit test calls
     \-- sql_delete - 0 unit test calls
     \-- sql_delete_call_with_par - 1 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_update_call_with_par - 0 unit test calls
     \-- update - 0 unit test calls
     \-- update_list - 0 unit test calls
@@ -1637,7 +1633,6 @@ so same-named functions of several classes share their test calls
     \-- source_id - 0 unit test calls
     \-- sql_delete - 0 unit test calls
     \-- sql_field_type - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_insert_key_field - 0 unit test calls
     \-- sql_insert_switch - 0 unit test calls
     \-- sql_update_multi - 0 unit test calls
@@ -1764,7 +1759,6 @@ so same-named functions of several classes share their test calls
     \-- sql_delete - 0 unit test calls
     \-- sql_foreign_key - 0 unit test calls
     \-- sql_index - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_table - 0 unit test calls
     \-- sql_update_fields - 0 unit test calls
     \-- sql_update_value - 0 unit test calls
@@ -2608,7 +2602,6 @@ so same-named functions of several classes share their test calls
     \-- set_profile_id - 0 unit test calls
     \-- set_type - 1 unit test calls
     \-- source_id - 0 unit test calls
-    \-- sql_insert - 1 unit test calls
     \-- sql_insert_key_field - 0 unit test calls
     \-- status_name - 0 unit test calls
     \-- term_id - 0 unit test calls
@@ -4169,7 +4162,10 @@ so same-named functions of several classes share their test calls
     \-- row_right - 0 unit test calls
     \-- row_start - 0 unit test calls
     \-- show_child_view - 0 unit test calls
+    \-- show_col_phrase - 0 unit test calls
+    \-- show_col_sub_phrase - 0 unit test calls
     \-- show_description - 0 unit test calls
+    \-- show_formula - 0 unit test calls
     \-- show_language_symbol - 0 unit test calls
     \-- show_name - 0 unit test calls
     \-- show_name_big - 0 unit test calls
@@ -4184,6 +4180,7 @@ so same-named functions of several classes share their test calls
     \-- show_ref_url - 0 unit test calls
     \-- show_relation_type - 0 unit test calls
     \-- show_reverse - 0 unit test calls
+    \-- show_row_phrase - 0 unit test calls
     \-- show_start_pos - 0 unit test calls
     \-- show_style - 0 unit test calls
     \-- show_usage - 0 unit test calls
@@ -4417,6 +4414,7 @@ so same-named functions of several classes share their test calls
     \-- phrase_link - 0 unit test calls
 \-- ui_list
     \-- children_of_word - 0 unit test calls
+    \-- component_views - 0 unit test calls
     \-- formulas - 0 unit test calls
     \-- formulas_of_parents - 0 unit test calls
     \-- link_list_word - 0 unit test calls

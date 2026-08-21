@@ -33,16 +33,23 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -118,6 +125,55 @@ class component_ui_tests
         $test_name = 'a component without a type shows no subtitle';
         $cmp_plain = new component($t_cmp->component_add()->api_json());
         $t->assert_text_not_contains($test_name, $sfm->title_named($cmp_plain, $msg), styles::SUBTITLE);
+
+        $t->subheader($ts . 'show fields');
+        global $ui_sys;
+        global $mtr;
+
+        // the component default page shows the style, the owner, the calculation formula and the
+        // three layout phrases (see base_views.json component_default); the names are resolved
+        // from the request caches, because the page url only carries the ids
+        $test_name = 'the style of a component is shown with its user-readable name';
+        $t->assert($test_name, $sfm->show_style($cmp_filled), view_styles::COL_SM_4_NAME);
+        $test_name = 'a component without a style shows an empty text';
+        $t->assert($test_name, $sfm->show_style($cmp_plain), '');
+
+        $test_name = 'the owner of a component is shown';
+        $cmp_owned = new component();
+        $cmp_owned->url_mapper([url_var::OWNER => users::SYSTEM_TEST_NAME], $msg);
+        $t->assert($test_name, $sfm->show_owner($cmp_owned), users::SYSTEM_TEST_NAME);
+        $test_name = 'a component without a known owner shows an empty text';
+        $t->assert($test_name, $sfm->show_owner($cmp_plain), '');
+
+        $test_name = 'the calculation formula of a component is shown with a link';
+        $cmp_frm = new component();
+        $cmp_frm->url_mapper([url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID], $msg);
+        $t->assert_text_contains($test_name, $sfm->show_formula($cmp_frm), formula_names::SCALE_TO_SEC);
+        $test_name = 'a component without a formula shows an empty text';
+        $t->assert($test_name, $sfm->show_formula($cmp_plain), '');
+
+        $test_name = 'the row phrase of a component is shown with a link';
+        $t->assert_text_contains($test_name, $sfm->show_row_phrase($cmp_filled, $ui_sys->phr_lst), words::YEAR_CAP);
+        $test_name = 'the column phrase of a component is shown with a link';
+        $t->assert_text_contains($test_name, $sfm->show_col_phrase($cmp_filled, $ui_sys->phr_lst), word_names::CANTON);
+        $test_name = 'the sub column phrase of a component is shown with a link';
+        $t->assert_text_contains($test_name, $sfm->show_col_sub_phrase($cmp_filled, $ui_sys->phr_lst), word_names::CITY);
+        $test_name = 'a component without a row phrase shows an empty text';
+        $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst), '');
+
+        $t->subheader($ts . 'component views');
+
+        // the component default page lists the views that use the component; the views come from
+        // the request cache that also provides the views for the page rendering itself
+        $list = new ui_list();
+        $views_html = $list->component_views($cmp_filled, $msg);
+        $test_name = 'the views that use the component are listed';
+        $t->assert_text_contains($test_name, $views_html, views::START_NAME);
+        $test_name = 'the listed views link to the view default page';
+        $t->assert_text_contains($test_name, $views_html, url_var::MASK . '=' . views::VIEW_DEFAULT_ID);
+        $test_name = 'an unused component shows the not used message';
+        $t->assert($test_name, $list->component_views($cmp_plain, $msg),
+            $mtr->txt(msg_id::INFO_NOT_USED_IN_VIEWS));
 
         $t->subheader($ts . 'link title');
 

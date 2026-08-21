@@ -543,7 +543,7 @@ class user_message extends Message
             $part .= $key . ': ' . implode(", ", $sub_lst) . '; ';
         }
         if ($msg != '' and $part <> '') {
-            $msg .= $msg . '; ' . $part;
+            $msg = $msg . '; ' . $part;
         } else {
             $msg .= $part;
         }
@@ -555,7 +555,7 @@ class user_message extends Message
             $part .= $mtr->txt($msg_id);
         }
         if ($msg != '' and $part <> '') {
-            $msg .= $msg . '; ' . $part;
+            $msg = $msg . '; ' . $part;
         } else {
             $msg .= $part;
         }
@@ -564,7 +564,7 @@ class user_message extends Message
         $part = $this->var_message_text();
 
         if ($msg != '' and $part <> '') {
-            $msg .= $msg . '; ' . $part;
+            $msg = $msg . '; ' . $part;
         } else {
             $msg .= $part;
         }

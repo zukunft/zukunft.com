@@ -558,6 +558,17 @@ class component_types
     // the components of the shown view sorted by their position e.g. for the view default page
     const string VIEW_COMPONENTS = "components_of_view";
     const int VIEW_COMPONENTS_ID = 225;
+    const string SHOW_FORMULA = "system_show_field_formula";
+    const int SHOW_FORMULA_ID = 226;
+    const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
+    const int SHOW_PHRASE_ROW_ID = 227;
+    const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
+    const int SHOW_PHRASE_COL_ID = 228;
+    const string SHOW_PHRASE_COL_SUB = "system_show_field_phrase_col_sub";
+    const int SHOW_PHRASE_COL_SUB_ID = 229;
+    // the views that use the shown component e.g. for the component default page
+    const string COMPONENT_VIEWS = "views_of_component";
+    const int COMPONENT_VIEWS_ID = 230;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -996,6 +1007,11 @@ class component_types
         [self::SHOW_STYLE, self::SHOW_STYLE_ID],
         [self::SHOW_OWNER, self::SHOW_OWNER_ID],
         [self::VIEW_COMPONENTS, self::VIEW_COMPONENTS_ID],
+        [self::SHOW_FORMULA, self::SHOW_FORMULA_ID],
+        [self::SHOW_PHRASE_ROW, self::SHOW_PHRASE_ROW_ID],
+        [self::SHOW_PHRASE_COL, self::SHOW_PHRASE_COL_ID],
+        [self::SHOW_PHRASE_COL_SUB, self::SHOW_PHRASE_COL_SUB_ID],
+        [self::COMPONENT_VIEWS, self::COMPONENT_VIEWS_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

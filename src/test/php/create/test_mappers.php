@@ -1158,7 +1158,8 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case component::class:
-                $obj = $t_cmp->component_filled();
+                // with the formula set, so the component default page shows all fields
+                $obj = $t_cmp->component_filled_all();
                 $obj_array = $this->component_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
@@ -2058,6 +2059,10 @@ class test_mappers
         $url_array[] = [url_var::PHRASE_COL, $cmp->col_phrase->id()];
         $url_array[] = [url_var::PHRASE_COL_SUB, $cmp->col_sub_phrase->id()];
         $url_array[] = [url_var::LINK_TYPE, $cmp->link_type_id];
+        $url_array[] = [url_var::FORMULA, $cmp->get_formula_id()];
+        // the user who has created a standard test object is its owner, so the url carries
+        // the creating user as the owner like the api message of a page request does
+        $url_array[] = [url_var::OWNER, $cmp->get_user()->name()];
         $url_array[] = [url_var::SHARE, $cmp->share_id()];
         $url_array[] = [url_var::PROTECTION, $cmp->protection_id()];
         return $url_array;

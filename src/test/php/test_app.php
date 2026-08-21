@@ -164,16 +164,18 @@ class test_app
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
             $sys_msg = new user_message(user::system());
-            if (!$db_chk->db_check($db_con, $sys_msg)) {
-                echo '\n';
+            $db_ok = $db_chk->db_check($db_con, $sys_msg);
+            if (!$db_ok) {
+                echo "\n";
                 echo $sys_msg->all_message_text();
+                // close the connection but keep the sql_db object, so that the callers can
+                // detect the failed check via is_open() instead of crashing on a null return
                 $db_con->close();
-                $db_con = null;
             }
 
             // skip the start-up loading if the database check has failed and the connection has been closed,
             // because continuing without a database would end in a fatal crash that hides the fail message
-            if ($db_con != null) {
+            if ($db_ok) {
 
                 // create a virtual one-time system user to load the system users
                 $usr_sys = new user();
