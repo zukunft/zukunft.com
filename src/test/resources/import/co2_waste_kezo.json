@@ -1,11 +1,12 @@
 {
-  "schema_version": "0.0.4",
-  "title": "KEZO Hinwil: waste management capacity, Swiss recycling rates, and CO2 capture",
-  "description": "Claims, sources and values compiled for a public guided tour of the KEZO waste-to-energy plant in Hinwil (organised by Arbeitsgruppe Energie und Umwelt Uetikon am See, 5 September 2026). Covers plant capacity (current vs. new build), Swiss national recycling rates (BAFU 2024), and the history of direct air capture at the site (Climeworks). All sourced figures carry their source; forward-looking or uncertain items are tagged 'assumed value' with a numeric confidence.",
+  "version": "0.0.3",
+  "description": "KEZO Hinwil: waste management capacity, Swiss recycling rates, and CO2 capture - Claims, sources and values compiled for a public guided tour of the KEZO waste-to-energy plant in Hinwil (organised by Arbeitsgruppe Energie und Umwelt Uetikon am See, 5 September 2026). Covers plant capacity (current vs. new build), Swiss national recycling rates (BAFU 2024), and the history of direct air capture at the site (Climeworks). All sourced figures carry their source; forward-looking or uncertain items are tagged 'assumed value' with a numeric confidence.",
   "language": "en",
   "created": "2026-06-30",
   "words": [
     {"name": "air"},
+    {"name": "answer"},
+    {"name": "answered", "description": "of a question, settled by at least one source of this file"},
     {"name": "assumed"},
     {"name": "capture"},
     {"name": "carbon"},
@@ -13,12 +14,17 @@
       "name": "Climeworks",
       "description": "ETH Zurich spin-off company that operated the world's first commercial direct air capture plant on the roof of the KEZO in Hinwil from 2017 to 2022"
     },
+    {"name": "CO2", "description": "carbon dioxide"},
     {"name": "collection"},
     {"name": "confidence", "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."},
+    {"name": "count"},
     {"name": "direct"},
     {"name": "discharge"},
     {"name": "dry"},
+    {"name": "EUR", "description": "Is a symbol for euro"},
+    {"name": "fee", "description": "Gebuehr; the charge levied for the disposal of waste"},
     {"name": "flue-gas", "description": "the combustion exhaust of the incinerator"},
+    {"name": "import", "description": "waste delivered to the plant from outside its own catchment area"},
     {"name": "incineration"},
     {
       "name": "KEZO",
@@ -28,16 +34,26 @@
       "name": "KEZO Masterplan 2026",
       "description": "Masterplan 'Staedtebauliche Neuordnung KEZO-Gesamtareal', approved by the KEZO board on 23 January 2026, prepared by EBP Schweiz AG"
     },
+    {"name": "kilogram", "description": "Is a symbol for kilogram"},
     {"name": "KVA", "description": "Kehrichtverwertungsanlage; Swiss term for a municipal solid waste incineration / waste-to-energy plant"},
+    {"name": "maximum", "description": "the value given by the source is the upper bound of the range"},
+    {"name": "minimum", "description": "the value given by the source is the lower bound of the range"},
     {"name": "municipal"},
+    {"name": "open", "description": "of a question, not settled by any source of this file"},
+    {"name": "percent", "type": "percent"},
+    {"name": "person"},
+    {"name": "question"},
     {"name": "rate"},
     {"name": "recovery"},
     {"name": "recycling"},
     {"name": "separate"},
+    {"name": "share", "description": "attributable proportion of a whole, 0..1"},
     {"name": "slag"},
     {"name": "solid"},
+    {"name": "tonne", "description": "Is a symbol for metric tonne"},
     {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"},
     {"name": "waste"},
+    {"name": "year", "type": "time"},
     {
       "name": "ZAVRe",
       "description": "ZAV Recycling AG slag treatment / processing facility adjacent to the KEZO site, recovering metals from incineration slag"
@@ -87,7 +103,7 @@
       "from": "discharge",
       "verb": "of",
       "to": "dry slag",
-      "description": "Schlacken-Trockenaustrag; process of extracting incineration slag dry rather than quenched in water, which increases the yield of recoverable metals"
+      "description": "Schlacken-Trockenaustrag; process of extracting incineration slag dry rather than quenched in water, which increases the yield of recoverable metals (Masterplan; no numeric percentage given in the source). Slag is processed at the adjacent ZAVRe facility."
     },
     {"name": "carbon capture", "from": "capture", "verb": "of", "to": "carbon"},
     {
@@ -111,282 +127,300 @@
       "verb": "kind of",
       "to": "confidence",
       "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
+    },
+    {"name": "tonne per year", "from": "tonne", "verb": "per", "to": "year"},
+    {"name": "tonne of CO2", "from": "tonne", "verb": "of", "to": "CO2"},
+    {"name": "tonne of CO2 per year", "from": "tonne of CO2", "verb": "per", "to": "year"},
+    {"name": "kilogram per person", "from": "kilogram", "verb": "per", "to": "person"},
+    {"name": "kilogram per person per year", "from": "kilogram per person", "verb": "per", "to": "year"},
+    {"name": "waste fee", "from": "fee", "verb": "of", "to": "waste", "description": "Abfallgebuehr; the fee charged for the disposal of the waste delivered to the plant"},
+    {"name": "waste import", "from": "import", "verb": "of", "to": "waste", "description": "combustible waste delivered to the plant from outside its own catchment area to fill the capacity"},
+    {
+      "name": "open question",
+      "from": "question",
+      "verb": "kind of",
+      "to": "open",
+      "description": "a question that this file raises but that none of its sources settles; each one below names the phrase it is about and carries the question as its description"
+    },
+    {
+      "name": "answered question",
+      "from": "question",
+      "verb": "kind of",
+      "to": "answered",
+      "description": "a question that at least one source of this file settles"
+    },
+    {"name": "answer count", "from": "count", "verb": "of", "to": "answer"},
+    {"name": "open question count", "from": "count", "verb": "of", "to": "open question"},
+    {"name": "answered question count", "from": "count", "verb": "of", "to": "answered question"},
+    {"name": "answered question share", "from": "share", "verb": "of", "to": "answered question"},
+    {"from": "open question", "verb": "of", "to": "flue-gas carbon capture"},
+    {"from": "open question", "verb": "of", "to": "waste fee"},
+    {"from": "open question", "verb": "of", "to": "waste import"},
+    {"from": "open question", "verb": "of", "to": "incineration slag"}
+  ],
+  "formulas": [
+    {
+      "name": "answered question share (formula)",
+      "expression": "\"answered question share\" = \"answered question count\" / ( \"answered question count\" + \"open question count\" )",
+      "description": "share of the questions raised by this file that at least one of its sources settles",
+      "assigned": [
+        "answered question count",
+        "open question count"
+      ]
     }
   ],
   "sources": [
     {
       "name": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal",
-      "type": "document",
       "author": "KEZO / EBP Schweiz AG",
       "publisher": "Kehrichtverwertung Zuercher Oberland (KEZO), Hinwil",
       "date": "2026-01-23",
       "url": "",
-      "note": "Primary source document provided by the user. Approved by KEZO board 23 Jan 2026; noted by Hinwil municipal council 4 Mar 2026. No public URL on file."
+      "description": "Primary source document provided by the user. Approved by KEZO board 23 Jan 2026; noted by Hinwil municipal council 4 Mar 2026. No public URL on file."
     },
     {
       "name": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt",
-      "type": "press_release",
       "author": "Bundesamt fuer Umwelt (BAFU)",
       "publisher": "BAFU, Bern",
       "date": "2025-11-25",
       "url": "https://www.bafu.admin.ch/de/newnsb/EcpWws7Ra2HcYI1J88uP4",
-      "note": "Official Swiss federal waste statistics for 2024. Verified by direct fetch of the BAFU page on 2026-06-30."
+      "description": "Official Swiss federal waste statistics for 2024. Verified by direct fetch of the BAFU page on 2026-06-30."
     },
     {
       "name": "Kennzahlen - Leistungsbericht 2025",
-      "type": "webpage",
       "author": "Swiss Recycle",
       "publisher": "Swiss Recycle",
       "date": "2025",
       "url": "https://swissrecycle.ch/de/wertstoffe-wissen/leistungsbericht-2025/kennzahlen",
-      "note": "Industry association figures: 52 percent separate collection rate 2024, kehrichtsack recycling potential, cost figures. Secondary source, partly drawing on BAFU."
+      "description": "Industry association figures: 52 percent separate collection rate 2024, kehrichtsack recycling potential, cost figures. Secondary source, partly drawing on BAFU."
     },
     {
       "name": "Climeworks completes commercial operations in Hinwil",
-      "type": "press_release",
       "author": "Climeworks",
       "publisher": "Climeworks AG",
       "date": "2022-11-07",
       "url": "https://climeworks.com/press-release/climeworks-completes-commercial-operations-in-hinwil",
-      "note": "Confirms operation 2017-2022, partners (KEZO, Gebrueder Meier, Coca-Cola HBC), and end of demonstration phase."
+      "description": "Confirms operation 2017-2022, partners (KEZO, Gebrueder Meier, Coca-Cola HBC), and end of demonstration phase."
     },
     {
       "name": "CO2-Duenger - komplett aus der Luft gegriffen",
-      "type": "webpage",
       "author": "Naturschutz.ch",
       "publisher": "Naturschutz.ch",
       "date": "2019-05-15",
       "url": "https://naturschutz.ch/news/gesellschaft/co2-duenger-komplett-aus-der-luft-gegriffen/115931",
-      "note": "Reports 18 collectors, 900 t CO2/yr, ~100 C desorption, greenhouse 37632 m2, up to 20 percent yield increase."
+      "description": "Reports 18 collectors, 900 t CO2/yr, ~100 C desorption, greenhouse 37632 m2, up to 20 percent yield increase."
     },
     {
       "name": "Climeworks AG builds first commercial scale CO2 Capture Plant",
-      "type": "press_release",
       "author": "Climeworks (via Renewable Carbon News)",
       "publisher": "Renewable Carbon News / nova-Institut",
       "date": "2015-10-26",
       "url": "https://renewable-carbon.eu/news/climeworks-ag-builds-first-commercial-scale-co2-capture-plant/",
-      "note": "Original announcement: 900 t/yr capacity, KEZO supplies heat and electricity, ~90 percent of energy as process heat with ~50 percent renewable fraction."
+      "description": "Original announcement: 900 t/yr capacity, KEZO supplies heat and electricity, ~90 percent of energy as process heat with ~50 percent renewable fraction."
     },
     {
       "name": "Climeworks: Baut erste industrielle Anlage zur CO2-Filterung aus der Luft",
-      "type": "webpage",
       "author": "ee-news.ch / Climeworks",
       "publisher": "ee-news.ch",
       "date": "2015-10-22",
       "url": "https://www.ee-news.ch/de/article/32229/climeworks-baut-erste-industrielle-anlage-zur-co2-filterung-aus-der-luft",
-      "note": "States 90 percent of energy demand can come from low-temperature heat; development and build cost 3-4 million EUR."
+      "description": "States 90 percent of energy demand can come from low-temperature heat; development and build cost 3-4 million EUR."
     }
   ],
   "values": [
     {
-      "claim": "The existing KEZO incineration plant processes about 190,000 tonnes of waste per year",
-      "value": 190000,
-      "unit": "t/yr",
-      "words": ["KVA", "KEZO"],
+      "number": 190000,
+      "words": ["KVA", "KEZO", "tonne per year"],
       "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal",
       "description": "Plant dates from 1971; expanded incrementally; has reached end of life per masterplan."
     },
     {
-      "claim": "The new KEZO plant is to be built with a reduced capacity of 120,000 tonnes of waste per year",
-      "value": 120000,
-      "unit": "t/yr",
-      "words": ["KVA", "KEZO"],
+      "number": 120000,
+      "words": ["KVA", "KEZO", "tonne per year"],
       "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal",
       "description": "Set by Canton Zurich structure plan entry (Richtplaneintrag) 2022, same parcel no. 8333. Represents a reduction of about one third versus the current 190,000 t/yr."
     },
     {
-      "claim": "The new incineration plant is expected to have a service life of about 40 to 50 years, implying a replacement build around 2080",
-      "value_min": 40,
-      "value_max": 50,
-      "unit": "years",
-      "words": ["KVA"],
+      "number": 45,
+      "words": ["KVA", "year"],
       "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal",
-      "description": "Replacement new-build foreseen around 2080 on the reserved future area in the north of the site."
+      "description": "Replacement new-build foreseen around 2080 on the reserved future area in the north of the site. Midpoint of the range given by the source."
     },
     {
-      "claim": "Dry slag discharge in the new plant increases the yield of recoverable metals from incineration slag",
-      "value": null,
-      "unit": "qualitative",
-      "words": ["dry slag discharge", "incineration slag", "ZAVRe"],
-      "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal",
-      "description": "Masterplan states the metal yield is raised; no numeric percentage given in the source. Slag is processed at the adjacent ZAVRe facility."
+      "number": 40,
+      "words": ["KVA", "year", "minimum"],
+      "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal"
     },
     {
-      "claim": "A building plot is reserved at the KEZO site for capturing CO2 from the incinerator's flue gas, planned from around 2035",
-      "value": 2035,
-      "unit": "year (planned start)",
-      "words": ["flue-gas carbon capture", "KEZO", "assumed"],
+      "number": 50,
+      "words": ["KVA", "year", "maximum"],
+      "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal"
+    },
+    {
+      "number": 2035,
+      "words": ["flue-gas carbon capture", "KEZO", "assumed", "year"],
       "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal",
       "description": "Masterplan explicitly states the technology and timing are not yet defined; plot is dimensioned to remain future-proof and could alternatively host biomass / energy conversion. Low confidence reflects open technology and schedule."
     },
     {
-      "claim": "Subjective probability that the planned start of flue-gas carbon capture at the KEZO site is around 2035",
-      "value": 0.4,
+      "number": 0.4,
       "words": ["flue-gas carbon capture", "KEZO", "confidence value"],
       "source": "Masterplan - Staedtebauliche Neuordnung KEZO-Gesamtareal"
     },
     {
-      "claim": "In 2024 each person in Switzerland produced about 670 kg of municipal solid waste, roughly three times the per-capita figure of 50 years earlier",
-      "value": 670,
-      "unit": "kg/person/yr",
-      "words": ["municipal solid waste"],
+      "number": 670,
+      "words": ["municipal solid waste", "kilogram per person per year"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt",
       "description": "BAFU national waste statistics, reporting year 2024, published 25 Nov 2025."
     },
     {
-      "claim": "Switzerland generated about 6 million tonnes of municipal solid waste in 2024",
-      "value": 6000000,
-      "unit": "t/yr",
-      "words": ["municipal solid waste"],
+      "number": 6000000,
+      "words": ["municipal solid waste", "tonne per year"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt"
     },
     {
-      "claim": "Of the 2024 municipal solid waste, about 2.9 million tonnes were incinerated",
-      "value": 2900000,
-      "unit": "t/yr",
-      "words": ["municipal solid waste", "KVA"],
+      "number": 2900000,
+      "words": ["municipal solid waste", "KVA", "tonne per year"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt"
     },
     {
-      "claim": "Of the 2024 municipal solid waste, about 3.1 million tonnes were separately collected and recycled",
-      "value": 3100000,
-      "unit": "t/yr",
-      "words": ["municipal solid waste", "recycling rate"],
+      "number": 3100000,
+      "words": ["municipal solid waste", "recycling rate", "tonne per year"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt"
     },
     {
-      "claim": "Switzerland's municipal solid waste recycling rate was 52 percent in 2024",
-      "value": 52,
-      "unit": "percent",
-      "words": ["recycling rate", "municipal solid waste"],
+      "number": 52,
+      "words": ["recycling rate", "municipal solid waste", "percent"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt",
       "description": "Swiss Recycle reports the same 52 percent as a separate collection rate for 2024 (src_swissrecycle)."
     },
     {
-      "claim": "The recovery rate for glass beverage packaging was at least 100 percent in 2024",
-      "value": 100,
-      "unit": "percent",
-      "words": ["recovery rate"],
+      "number": 100,
+      "words": ["recovery rate", "percent"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt",
       "description": "BAFU reports an exceptionally high rate above 100 percent for glass, attributable to time lag between sale and disposal and moisture gain in collected glass. Treat 100 percent as a floor, not an exact ratio."
     },
     {
-      "claim": "The recovery rate for aluminium beverage cans was 90 percent in 2024",
-      "value": 90,
-      "unit": "percent",
-      "words": ["recovery rate"],
+      "number": 90,
+      "words": ["recovery rate", "percent"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt"
     },
     {
-      "claim": "The recovery rate for PET beverage bottles was 84 percent in 2024",
-      "value": 84,
-      "unit": "percent",
-      "words": ["recovery rate"],
+      "description": "The recovery rate for PET beverage bottles was 84 percent in 2024",
+      "number": 84,
+      "words": ["recovery rate", "percent"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt"
     },
     {
-      "claim": "The legal minimum recovery rate for glass, aluminium and PET beverage packaging is 75 percent",
-      "value": 75,
-      "unit": "percent",
-      "words": ["recovery rate"],
+      "number": 75,
+      "words": ["recovery rate", "percent"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt",
       "description": "Set by the Swiss Beverage Packaging Ordinance (Getraenkeverpackungsverordnung, VGV). Below this, a deposit can be introduced."
     },
     {
-      "claim": "The recycling rate for paper and cardboard was 85 percent in 2024, about 130 kg per person",
-      "value": 85,
-      "unit": "percent",
-      "words": ["recycling rate"],
+      "number": 85,
+      "words": ["recycling rate", "percent"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt",
       "description": "About 130 kg recycled per person in 2024."
     },
     {
-      "claim": "The recycling rate for batteries fell to 35 percent in 2024 (from 38 percent in 2023)",
-      "value": 35,
-      "unit": "percent",
-      "words": ["recycling rate"],
+      "number": 35,
+      "words": ["recycling rate", "percent"],
       "source": "Abfallstatistik: In der Schweiz wird mehr als die Haelfte der Siedlungsabfaelle recycelt",
       "description": "Decline attributed to rising sales of longer-lived lithium-ion batteries that reach recycling only with a delay. Batteries are classed as hazardous waste, not municipal solid waste."
     },
     {
-      "claim": "About one fifth of the contents of the Swiss residual waste bag could still be recycled, with the largest potential in biogenic waste and plastics",
-      "value": 20,
-      "unit": "percent (approx)",
-      "words": ["municipal solid waste", "recycling rate"],
+      "number": 20,
+      "words": ["municipal solid waste", "recycling rate", "percent"],
       "source": "Kennzahlen - Leistungsbericht 2025",
       "description": "Based on kehrichtsack composition analysis; Swiss Recycle attributes the underlying data to BAFU."
     },
     {
-      "claim": "Climeworks began operating the world's first commercial direct air capture plant on the KEZO roof in 2017",
-      "value": 2017,
-      "unit": "year",
-      "words": ["direct air capture", "Climeworks", "KEZO"],
+      "number": 2017,
+      "words": ["direct air capture", "Climeworks", "KEZO", "year"],
       "source": "Climeworks completes commercial operations in Hinwil",
       "description": "Launched as a demonstration project with partners Gebrueder Meier and KEZO, with SFOE support."
     },
     {
-      "claim": "The Climeworks DAC plant in Hinwil captured about 900 tonnes of CO2 per year from ambient air using 18 collectors",
-      "value": 900,
-      "unit": "t CO2/yr",
-      "words": ["direct air capture", "Climeworks"],
+      "number": 900,
+      "words": ["direct air capture", "Climeworks", "tonne of CO2 per year"],
       "source": "CO2-Duenger - komplett aus der Luft gegriffen",
       "description": "18 collectors in three shipping containers on the KEZO roof; same figure given in the original 2015 announcement (src_renewablecarbon_build)."
     },
     {
-      "claim": "Roughly 80 to 90 percent of the DAC plant's energy demand was met by low-temperature (waste) heat from the KEZO",
-      "value_min": 80,
-      "value_max": 90,
-      "unit": "percent",
-      "words": ["direct air capture", "Climeworks", "KEZO"],
+      "number": 85,
+      "words": ["direct air capture", "Climeworks", "KEZO", "percent"],
       "source": "Climeworks: Baut erste industrielle Anlage zur CO2-Filterung aus der Luft",
-      "description": "ee-news / Climeworks state about 90 percent from low-temperature heat; a 2017 secondary source states 80 percent. Range retained to reflect the spread. Filter desorption occurs at about 100 C."
+      "description": "Midpoint of the spread between the sources. Filter desorption occurs at about 100 C."
     },
     {
-      "claim": "The captured CO2 was fed to neighbouring Gebrueder Meier greenhouses, increasing vegetable yield by up to 20 percent",
-      "value": 20,
-      "unit": "percent (max)",
-      "words": ["direct air capture", "Climeworks"],
+      "number": 80,
+      "words": ["direct air capture", "Climeworks", "KEZO", "percent", "minimum"],
+      "description": "Stated by a 2017 secondary source; which of the sources of this file it is, is not recorded."
+    },
+    {
+      "number": 90,
+      "words": ["direct air capture", "Climeworks", "KEZO", "percent", "maximum"],
+      "source": "Climeworks: Baut erste industrielle Anlage zur CO2-Filterung aus der Luft",
+      "description": "ee-news / Climeworks state about 90 percent of the energy demand from low-temperature heat."
+    },
+    {
+      "number": 20,
+      "words": ["direct air capture", "Climeworks", "percent", "maximum"],
       "source": "CO2-Duenger - komplett aus der Luft gegriffen",
       "description": "Greenhouse growing area about 37,632 m2. Crops include tomatoes, cucumbers, lettuce."
     },
     {
-      "claim": "Development and build costs of the Hinwil DAC plant were 3 to 4 million EUR",
-      "value_min": 3000000,
-      "value_max": 4000000,
-      "unit": "EUR",
-      "words": ["direct air capture", "Climeworks"],
+      "number": 3500000,
+      "words": ["direct air capture", "Climeworks", "EUR"],
       "source": "Climeworks: Baut erste industrielle Anlage zur CO2-Filterung aus der Luft",
-      "description": "A stated project goal was to determine the plant's operating costs, then controversial in the research community."
+      "description": "A stated project goal was to determine the plant's operating costs, then controversial in the research community. Midpoint of the range given by the source."
     },
     {
-      "claim": "Climeworks completed the commercial demonstration phase of its first-generation DAC technology in Hinwil in 2022",
-      "value": 2022,
-      "unit": "year",
-      "words": ["direct air capture", "Climeworks"],
+      "number": 3000000,
+      "words": ["direct air capture", "Climeworks", "EUR", "minimum"],
+      "source": "Climeworks: Baut erste industrielle Anlage zur CO2-Filterung aus der Luft"
+    },
+    {
+      "number": 4000000,
+      "words": ["direct air capture", "Climeworks", "EUR", "maximum"],
+      "source": "Climeworks: Baut erste industrielle Anlage zur CO2-Filterung aus der Luft"
+    },
+    {
+      "number": 2022,
+      "words": ["direct air capture", "Climeworks", "year"],
       "source": "Climeworks completes commercial operations in Hinwil",
       "description": "Company shifted focus to permanent carbon dioxide removal via direct air capture and storage internationally. The Hinwil DAC plant is therefore no longer in operation."
-    }
-  ],
-  "open_questions": [
-    {
-      "question": "What share of CO2 can be captured from the new KEZO plant's flue gas now and in future, and at what cost per tonne with and without permanent storage?",
-      "status": "unanswered",
-      "note": "Not addressed by available sources; flue-gas CCS technology and timing undefined in the masterplan."
     },
     {
-      "question": "Are KEZO waste fees fully cost-covering, and which areas run a deficit? What does the new build cost and who bears it?",
-      "status": "unanswered",
-      "note": "Masterplan is an urban-planning document, not a financial report. Candidate question for the guided tour."
+      "words": ["open question of flue-gas carbon capture", "answer count"],
+      "number": 0,
+      "description": "What share of CO2 can be captured from the new KEZO plant's flue gas now and in future, and at what cost per tonne with and without permanent storage? Not addressed by available sources; flue-gas CCS technology and timing undefined in the masterplan."
     },
     {
-      "question": "How much additional combustible waste must be imported to the plant, and can this share be reduced in future?",
-      "status": "unanswered"
+      "words": ["open question of waste fee", "answer count"],
+      "number": 0,
+      "description": "Are KEZO waste fees fully cost-covering, and which areas run a deficit? What does the new build cost and who bears it? Masterplan is an urban-planning document, not a financial report. Candidate question for the guided tour."
     },
     {
-      "question": "How much slag and filter-ash residue remains after incineration and metal recovery, and where does it ultimately go?",
-      "status": "unanswered",
-      "note": "Slag is processed at ZAVRe; residual disposal not quantified in sources."
+      "words": ["open question of waste import", "answer count"],
+      "number": 0,
+      "description": "How much additional combustible waste must be imported to the plant, and can this share be reduced in future?"
+    },
+    {
+      "words": ["open question of incineration slag", "answer count"],
+      "number": 0,
+      "description": "How much slag and filter-ash residue remains after incineration and metal recovery, and where does it ultimately go? Slag is processed at ZAVRe; residual disposal not quantified in sources."
+    },
+    {
+      "words": ["open question count"],
+      "number": 4,
+      "description": "the questions this file raises and none of its sources settles, one value each above"
+    },
+    {
+      "words": ["answered question count"],
+      "number": 0,
+      "description": "no question of the list above is settled by a source of this file yet"
     }
   ]
 }

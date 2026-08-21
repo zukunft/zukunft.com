@@ -670,7 +670,7 @@
       ],
       "number": "1",
       "source": "Gneezy Rustichini 2000",
-      "note": "Boolean: empirically observed that the fine increased the penalised behaviour (crowding out). 1 = effect observed."
+      "description": "Boolean: empirically observed that the fine increased the penalised behaviour (crowding out). 1 = effect observed."
     },
     {
       "words": [
@@ -679,7 +679,7 @@
       ],
       "number": "1",
       "source": "Titmuss 1970",
-      "note": "Crowding-out of intrinsic motivation by monetary incentive; supported by Titmuss (blood) and Gneezy/Rustichini (fines)."
+      "description": "Crowding-out of intrinsic motivation by monetary incentive; supported by Titmuss (blood) and Gneezy/Rustichini (fines)."
     },
     {
       "words": [
@@ -688,7 +688,7 @@
       ],
       "number": "1",
       "source": "Ostrom 1990",
-      "note": "User-governed commons sustained for centuries (Toerbel/Wallis from the 13th c.) without market or state."
+      "description": "User-governed commons sustained for centuries (Toerbel/Wallis from the 13th c.) without market or state."
     },
     {
       "words": [
@@ -697,7 +697,7 @@
       ],
       "number": "1",
       "source": "Galor Oezak 2016",
-      "note": "Pre-industrial agro-climatic return to investment predicts present long-term orientation; selection/adaptation/learning over long horizons."
+      "description": "Pre-industrial agro-climatic return to investment predicts present long-term orientation; selection/adaptation/learning over long horizons."
     },
     {
       "words": [
@@ -706,7 +706,7 @@
       ],
       "number": "1",
       "source": "Mehlum Moene Torvik 2006",
-      "note": "Resource curse mediated by institutional quality (grabber- vs producer-friendly)."
+      "description": "Resource curse mediated by institutional quality (grabber- vs producer-friendly)."
     },
     {
       "words": [
@@ -715,7 +715,7 @@
         "qualitative"
       ],
       "number": "0.4",
-      "note": "CONJECTURE of the dialogue. ~0.4 = weak-to-moderate subjective confidence. Partially backed by Galor/Oezak but confounded by latitude and contradicted by the Russia counter-case (harsh seasons, no fund-mentality). Candidate for closer testing."
+      "description": "CONJECTURE of the dialogue. ~0.4 = weak-to-moderate subjective confidence. Partially backed by Galor/Oezak but confounded by latitude and contradicted by the Russia counter-case (harsh seasons, no fund-mentality). Candidate for closer testing."
     },
     {
       "words": [
@@ -724,7 +724,7 @@
         "qualitative"
       ],
       "number": "0.7",
-      "note": "Methodological caveat: latitude co-varies with almost everything, so a seasonality-patience correlation is likely partly spurious. ~0.7 subjective confidence that confounding is material."
+      "description": "Methodological caveat: latitude co-varies with almost everything, so a seasonality-patience correlation is likely partly spurious. ~0.7 subjective confidence that confounding is material."
     },
     {
       "words": [
@@ -733,7 +733,7 @@
         "qualitative"
       ],
       "number": "0.5",
-      "note": "CONJECTURE: eroded (not merely suppressed) trust does not recover by restoring the prior incentive. Cuba (suppressed -> fast recovery) does NOT confirm it; Russia/1990s and Nauru are the candidate confirming cases. Distinguishing measure to watch: state of intermediary trust networks, not 'apathy yes/no'. High-leverage assumption to verify."
+      "description": "CONJECTURE: eroded (not merely suppressed) trust does not recover by restoring the prior incentive. Cuba (suppressed -> fast recovery) does NOT confirm it; Russia/1990s and Nauru are the candidate confirming cases. Distinguishing measure to watch: state of intermediary trust networks, not 'apathy yes/no'. High-leverage assumption to verify."
     },
     {
       "words": [
@@ -742,7 +742,7 @@
         "supported"
       ],
       "number": "0.6",
-      "note": "Stronger than a bare conjecture because crowding-out evidence (Titmuss, Gneezy/Rustichini) backs the mechanism; but its scaling to society-wide incentive reduction is untested. ~0.6 subjective confidence."
+      "description": "Stronger than a bare conjecture because crowding-out evidence (Titmuss, Gneezy/Rustichini) backs the mechanism; but its scaling to society-wide incentive reduction is untested. ~0.6 subjective confidence."
     },
     {
       "words": [
@@ -751,7 +751,7 @@
         "supported"
       ],
       "number": "0.65",
-      "note": "Diagnosis that speed/sequence, not liberalisation per se, drove the post-Soviet failure; firsthand and 'Red Notice' as qualitative testimony. Supports gradualism. ~0.65 subjective confidence."
+      "description": "Diagnosis that speed/sequence, not liberalisation per se, drove the post-Soviet failure; firsthand and 'Red Notice' as qualitative testimony. Supports gradualism. ~0.65 subjective confidence."
     },
     {
       "words": [
@@ -760,7 +760,7 @@
         "contested"
       ],
       "number": "0.5",
-      "note": "OPEN: whether small-unit reciprocity scales to anonymous mass societies. Transparency-as-substitute-for-acquaintance is the proposed but unproven bridge — the locus where the zukunft.com infrastructure would act."
+      "description": "OPEN: whether small-unit reciprocity scales to anonymous mass societies. Transparency-as-substitute-for-acquaintance is the proposed but unproven bridge — the locus where the zukunft.com infrastructure would act."
     }
   ]
 }

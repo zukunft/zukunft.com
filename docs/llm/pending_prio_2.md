@@ -1,5 +1,42 @@
 # pending prio 2
 
+## temp
+
+add a field 'last_update' to source
+
+add a 'source_status' table and add a status field to source
+
+1. files::FULL_LOAD_FILES is dead — nothing imports it (src/main/php/cfg/const/files.php:299)
+
+The only reference outside its own declaration is json_validation.php:99. all_unit_write_tests::import_base_data() (src/test/php/unit_write/all_unit_write_tests.php:286-293) still loops over BASE_DATA_FILES and BASE_DATA_PATH_FILES only, and import_test_data() over the    
+three test_files::TEST_DATA_* arrays. So refs.json, the three start-page estimates, theses_complex_simple.json and zurich_htp_impact.json are still loaded by nothing — and worse, the new check now счит counts them as loaded, so the one check that would have caught it stays
+silent. Needs a third loop over files::FULL_LOAD_FILES in import_base_data().
+
+2. The new "file not named by an import const array" check reports ~50 false findings (docs/json_findings.md:218)
+
+53 entries, of which two are real. The rest — words.json, triples.json, values.json, users.json, sources.json, verbs.json, views.json, components.json, formulas.json plus their _update/_undo siblings, the merge/rename/no_update/warning fixtures — are imported, by an       
+individual test through its own const (e.g. import_write_tests.php:132 uses test_files::IMPORT_WORDS). The report text asserts they are "never imported and never tested", which is wrong for all of them. The check needs a third category (a const a test references directly,
+findable by reflection over the test classes or as an explicit allow-list), otherwise the two real findings drown.
+
+3. heat_and_climate_politics.json is still wrapped in a zukunft.com top-level key
+
+It is now the only such file — ai_mediated_communication.json was unwrapped in this change (the 810-line diff is that re-indent, semantically the same data one level up). The wrapper is not a json field the importer reads, so the whole file imports as empty, and it was    
+just added to TEST_DATA_FILES_NOT_REVIEWED. The sibling with the identical structure was left unfixed.
+
+4. CBAM_setup.json and THOMY_test.json are now orphaned
+
+Both were dropped from TEST_DATA_FILES_NOT_REVIEWED because they set a code_id, with a comment saying so. But the doc section added in the same change (docs/llm/testing.md:654) prescribes moving such data to files::SYSTEM_DATA_FILES — that step is missing. Their consts    
+IMPORT_CBAM_SETUP / IMPORT_THOMY_TEST are now referenced nowhere, and both files are permanent findings in the report.
+
+5. Five triple names in co2_waste_kezo.json repeat the auto-generated name — mine, from the unit-field conversion
+
+tonne per year, tonne of CO2, tonne of CO2 per year, kilogram per person, kilogram per person per year each carry an explicit "name" equal to <from> <verb> <to>, which coding.md:160 forbids (the importer builds it).
+
+6. The new IMPORT_SOURCE_NOT_A_NAME branch has no test
+
+value_base.php:521 guards the object-valued source and reports a new msg_id; no fixture exercises it. src/test/resources/import/inconsistency_tests/ is the established home for exactly this (a value_source_not_a_name.json next to triple_has_a_word_name.json).
+
+
 ## data validation
 
 `test/json_validation.php` checks every json of `src/main/resources/messages` and

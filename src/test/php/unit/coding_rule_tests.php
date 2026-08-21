@@ -144,6 +144,7 @@ class coding_rule_tests
         // TODO Prio 3 maybe switch it on as a warning
         //$this->json_no_measured_value_tests($t);
         $this->json_view_component_defined_tests($t);
+        $this->json_section_covered_tests($t);
 
         $t->subheader($ts . 'verb consistency');
         $this->verb_group_tests($t);
@@ -290,6 +291,27 @@ class coding_rule_tests
         sort($names);
 
         $test_name = 'every verb used by an import json is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that the field check of json_validation covers every top level section of the import:
+     * the check reads the allowed fields out of the php source of the mapper of the section, so it
+     * needs to know the mapper class of each section, and a section that the import has added
+     * without an entry here would be checked against no field at all
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_section_covered_tests(test_cleanup $t): void
+    {
+        // the difference detection is shared with test/json_validation.php, which lists it as a
+        // finding, while this rule check lets the test run fail as soon as the two drift apart
+        $chk = new json_validation();
+        $names = $chk->section_check_list();
+        sort($names);
+
+        $test_name = 'every import section has a mapper class in ' . json_validation::class;
         $t->assert($test_name, implode(', ', $names), '');
     }
 

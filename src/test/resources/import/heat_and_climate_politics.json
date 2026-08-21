@@ -4,44 +4,42 @@
     "description": "Evidence base on whether experiencing heatwaves and other extreme weather events shifts climate-change opinion, concern, pro-environmental behaviour, and support for climate policy. Central pattern: extreme weather tends to raise risk perception but rarely changes concern, behaviour, or policy support; effects are small, event-specific, and short-lived. What actually predicts policy support is perceived fairness and effectiveness, not experienced threat. All content in English per project convention. Person-neutral.",
     "pod": "zukunft.com",
     "words": [
-      {"name": "assumed", "type": "word"},
-      {"name": "attenuation", "type": "word"},
-      {"name": "behaviour", "type": "word"},
-      {"name": "bias", "type": "word"},
-      {"name": "climate", "type": "word"},
-      {"name": "compound", "type": "word"},
-      {"name": "concern", "type": "word"},
+      {"name": "assumed"},
+      {"name": "attenuation"},
+      {"name": "behaviour"},
+      {"name": "bias"},
+      {"name": "climate"},
+      {"name": "compound"},
+      {"name": "concern"},
       {
         "name": "confidence",
-        "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value.",
-        "type": "word"
+        "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
       },
-      {"name": "disinformation", "type": "word"},
-      {"name": "effect", "type": "word"},
-      {"name": "effectiveness", "type": "word"},
-      {"name": "experience", "type": "word"},
-      {"name": "exposure", "type": "word"},
-      {"name": "extreme", "type": "word"},
-      {"name": "fairness", "type": "word"},
+      {"name": "disinformation"},
+      {"name": "effect"},
+      {"name": "effectiveness"},
+      {"name": "experience"},
+      {"name": "exposure"},
+      {"name": "extreme"},
+      {"name": "fairness"},
       {
         "name": "heatwave",
-        "description": "Period of unusually hot weather persisting at least two consecutive days, defined relative to local climatological conditions (WMO). One empirical definition used: at least three consecutive days above 29 degrees Celsius daytime maximum.",
-        "type": "word"
+        "description": "Period of unusually hot weather persisting at least two consecutive days, defined relative to local climatological conditions (WMO). One empirical definition used: at least three consecutive days above 29 degrees Celsius daytime maximum."
       },
-      {"name": "local", "type": "word"},
-      {"name": "optimism", "type": "word"},
-      {"name": "perceived", "type": "word"},
-      {"name": "perception", "type": "word"},
-      {"name": "policy", "type": "word"},
-      {"name": "pro-environmental", "type": "word"},
-      {"name": "reframing", "type": "word"},
-      {"name": "risk", "type": "word"},
-      {"name": "self", "type": "word"},
-      {"name": "support", "type": "word"},
-      {"name": "time", "type": "word"},
-      {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word", "type": "word"},
-      {"name": "warming", "type": "word"},
-      {"name": "weather", "type": "word"}
+      {"name": "local"},
+      {"name": "optimism"},
+      {"name": "perceived"},
+      {"name": "perception"},
+      {"name": "policy"},
+      {"name": "pro-environmental"},
+      {"name": "reframing"},
+      {"name": "risk"},
+      {"name": "self"},
+      {"name": "support"},
+      {"name": "time"},
+      {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"},
+      {"name": "warming"},
+      {"name": "weather"}
     ],
     "triples": [
       {"name": "extreme weather", "from": "weather", "verb": "kind of", "to": "extreme"},
@@ -145,38 +143,32 @@
       {
         "name": "Lohmann & Kontoleon 2023",
         "description": "Lohmann, P. M., & Kontoleon, A. (2023). Do Flood and Heatwave Experiences Shape Climate Opinion? Causal Evidence from Flooding and Heatwaves in England and Wales. Environmental and Resource Economics, 86(1), 263-304. Difference-in-differences matching on geo-referenced panel data.",
-        "type": "source",
-        "doi": "10.1007/s10640-023-00796-0"
+          "doi": "10.1007/s10640-023-00796-0"
       },
       {
         "name": "Visconti et al. 2024",
         "description": "Visconti, G., Young, K., & Weis Kintziger, K. (2024). The effect of different extreme weather events on attitudes toward climate change. PLOS ONE, 19(5), e0300967. Three-wave US panel, dynamic difference-in-differences. Tested fires, floods, hurricanes, severe storms (heatwaves not separately tested).",
-        "type": "source",
-        "doi": "10.1371/journal.pone.0300967"
+          "doi": "10.1371/journal.pone.0300967"
       },
       {
         "name": "Bergquist et al. 2022",
         "description": "Bergquist, M., Nilsson, A., Harring, N., & Jagers, S. C. (2022). Meta-analyses of fifteen determinants of public opinion about climate change taxes and laws. Nature Climate Change, 12(3), 235-240. 89 datasets, 51 articles, 33 countries, N=119,465.",
-        "type": "source",
-        "doi": "10.1038/s41558-022-01297-6"
+          "doi": "10.1038/s41558-022-01297-6"
       },
       {
         "name": "Zaval et al. 2014",
         "description": "Zaval, L., Keenan, E. A., Johnson, E. J., & Weber, E. U. (2014). How warm days increase belief in global warming. Nature Climate Change, 4(2), 143-147. Demonstrates transient, weather-dependent belief shifts (local-warming effect).",
-        "type": "source",
-        "doi": "10.1038/nclimate2093"
+          "doi": "10.1038/nclimate2093"
       },
       {
         "name": "Howarth et al. 2025",
         "description": "Nationally representative UK survey (N=1750, summer 2023) on public perceptions of extreme heat, identifying gaps between acknowledged risk to others and perceived personal risk. Published in Climate Risk Management / related outlet.",
-        "type": "source",
-        "url": "https://www.sciencedirect.com/science/article/pii/S1462901125001170"
+          "url": "https://www.sciencedirect.com/science/article/pii/S1462901125001170"
       },
       {
         "name": "EDMO 2025",
         "description": "European Digital Media Observatory (2025). The same old story - a heat wave of climate disinformation. Documents recurring narratives that reframe heatwaves as natural or exaggerated.",
-        "type": "source",
-        "url": "https://edmo.eu/publications/the-same-old-story-a-heat-wave-of-climate-disinformation/"
+          "url": "https://edmo.eu/publications/the-same-old-story-a-heat-wave-of-climate-disinformation/"
       }
     ],
     "values": [

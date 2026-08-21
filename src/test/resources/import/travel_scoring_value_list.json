@@ -2447,7 +2447,7 @@
   "views": [
     {
       "name": "Personal Travel Score",
-      "comment": "view the personal travel score",
+      "description": "view the personal travel score",
       "type": "detail_view",
       "components": [{"position": "1", "name": "Word"}]
     }

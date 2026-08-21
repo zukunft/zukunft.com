@@ -189,68 +189,68 @@
       "words": ["public discount rate", "percent", "assumed"],
       "number": "0.03",
       "source": "Wikipedia LCOE",
-      "note": "comparisons assuming public funding, subsidies and social cost of capital tend to choose a low discount rate of about 3 percent, favouring high-capital nuclear and renewable projects."
+      "description": "comparisons assuming public funding, subsidies and social cost of capital tend to choose a low discount rate of about 3 percent, favouring high-capital nuclear and renewable projects."
     },
     {
       "words": ["private discount rate", "lower bound estimate", "percent", "assumed"],
       "number": "0.07",
       "source": "Wikipedia LCOE",
-      "note": "private investment banks tend to assume higher discount rates of 7 to 15 percent for commercial for-profit funding."
+      "description": "private investment banks tend to assume higher discount rates of 7 to 15 percent for commercial for-profit funding."
     },
     {"words": ["private discount rate", "upper bound estimate", "percent", "assumed"], "number": "0.15", "source": "Wikipedia LCOE"},
     {
       "words": ["value cost ratio", "threshold", "times", "assumed"],
       "number": "1",
       "source": "EIA LCOE LACE methodology",
-      "note": "when LACE (value) exceeds LCOE (cost) the value-cost ratio is greater than 1 and the project is considered economically feasible."
+      "description": "when LACE (value) exceeds LCOE (cost) the value-cost ratio is greater than 1 and the project is considered economically feasible."
     },
     {
       "words": ["discounted investment cost", "USD", "assumed"],
       "number": "60000",
       "source": "NREL LCOE calculator",
-      "note": "illustrative worked example (not from the article): discounted lifetime investment expenditure."
+      "description": "illustrative worked example (not from the article): discounted lifetime investment expenditure."
     },
     {
       "words": ["discounted operation and maintenance cost", "USD", "assumed"],
       "number": "30000",
       "source": "NREL LCOE calculator",
-      "note": "illustrative worked example: discounted lifetime operations and maintenance expenditure."
+      "description": "illustrative worked example: discounted lifetime operations and maintenance expenditure."
     },
     {
       "words": ["discounted fuel cost", "USD", "assumed"],
       "number": "10000",
       "source": "NREL LCOE calculator",
-      "note": "illustrative worked example: discounted lifetime fuel expenditure."
+      "description": "illustrative worked example: discounted lifetime fuel expenditure."
     },
     {
       "words": ["discounted lifetime cost", "USD", "assumed"],
       "number": "100000",
       "source": "NREL LCOE calculator",
-      "note": "illustrative worked example: the discounted lifetime total expenditure, 60000 + 30000 + 10000."
+      "description": "illustrative worked example: the discounted lifetime total expenditure, 60000 + 30000 + 10000."
     },
     {
       "words": ["discounted electricity generation", "MWh", "assumed"],
       "number": "2000",
       "source": "NREL LCOE calculator",
-      "note": "illustrative worked example: discounted lifetime electricity generated."
+      "description": "illustrative worked example: discounted lifetime electricity generated."
     },
     {
       "words": ["levelized cost of electricity", "USD per MWh", "assumed"],
       "number": "50",
       "source": "NREL LCOE calculator",
-      "note": "illustrative worked example: 100000 USD / 2000 MWh = 50 USD per MWh."
+      "description": "illustrative worked example: 100000 USD / 2000 MWh = 50 USD per MWh."
     },
     {
       "words": ["levelized avoided cost of electricity", "USD per MWh", "assumed"],
       "number": "60",
       "source": "EIA AEO 2014 LACE",
-      "note": "illustrative worked example: the value the generator provides to the grid, here above its LCOE so the project is feasible."
+      "description": "illustrative worked example: the value the generator provides to the grid, here above its LCOE so the project is feasible."
     },
     {
       "words": ["value cost ratio", "times", "assumed"],
       "number": "1.2",
       "source": "EIA LCOE LACE methodology",
-      "note": "illustrative worked example: LACE 60 / LCOE 50 = 1.2, greater than 1, so feasible."
+      "description": "illustrative worked example: LACE 60 / LCOE 50 = 1.2, greater than 1, so feasible."
     }
   ],
   "formulas": [

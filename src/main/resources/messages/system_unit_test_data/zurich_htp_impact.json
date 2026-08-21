@@ -59,9 +59,9 @@
     { "name": "World Happiness Report", "url": "https://worldhappiness.report" }
   ],
   "references": [
-    { "phrase": "city of Zurich", "name": "Q72", "type": "wikidata" },
-    { "phrase": "canton of Zurich", "name": "Q11943", "type": "wikidata" },
-    { "phrase": "Zurich Insurance", "name": "Q680524", "type": "wikidata" }
+    { "from_phrase": "city of Zurich", "name": "Q72", "type": "wikidata" },
+    { "from_phrase": "canton of Zurich", "name": "Q11943", "type": "wikidata" },
+    { "from_phrase": "Zurich Insurance", "name": "Q680524", "type": "wikidata" }
   ],
   "values": [
     {

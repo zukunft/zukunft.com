@@ -176,7 +176,6 @@
   "sources": [
     {
       "name": "V-Dem Country-Year Full+Others",
-      "type": "dataset",
       "publisher": "Varieties of Democracy (V-Dem) Institute, University of Gothenburg",
       "variable": "v2cacamps (Political polarization)",
       "codebook": "https://www.v-dem.net/documents/70/codebook_v16.pdf",

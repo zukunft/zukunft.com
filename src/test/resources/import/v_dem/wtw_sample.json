@@ -17,6 +17,7 @@
     {"name": "ideological"},
     {"name": "index"},
     {"name": "marriage"},
+    {"name": "percent", "type": "percent"},
     {"name": "polarization", "description": "Division of a society or its political elite into mutually antagonistic groups."},
     {"name": "political"},
     {"name": "Republicans"},
@@ -136,7 +137,6 @@
   "sources": [
     {
       "name": "WTW Political Risk Index H1 2025",
-      "type": "report",
       "publisher": "Willis Towers Watson (WTW), with Oxford Analytica",
       "title": "Political Risk Index H1 2025 - Mapping political polarization around the world",
       "url": "https://willistowerswatson.turtl.co/story/political-risk-index-h1-2025-gated/",
@@ -146,7 +146,6 @@
     },
     {
       "name": "Iyengar Sood Lelkes 2012",
-      "type": "article",
       "title": "Affect, Not Ideology: A Social Identity Perspective on Polarization",
       "note_for_user_not_in_schema": "Cited by WTW as the now-classic 2012 reframing; DOI not printed in the PDF and not verified here."
     }
@@ -158,31 +157,28 @@
         "United States",
         "share of voters",
         "displeased if child married across party lines",
-        "1960"
+        "1960",
+        "percent"
       ],
       "number": 5,
-      "unit": "percent",
       "source": "WTW Political Risk Index H1 2025",
       "description": "US share of voters displeased by cross-party marriage, 1960 (~5%)"
     },
     {
-      "phrases": ["share of voters", "Republicans", "displeased if child married across party lines", "2010"],
+      "phrases": ["share of voters", "Republicans", "displeased if child married across party lines", "2010", "percent"],
       "number": 40,
-      "unit": "percent",
       "source": "WTW Political Risk Index H1 2025",
       "description": "Republican voters, above 40% by 2010"
     },
     {
-      "phrases": ["share of voters", "Democrats", "displeased if child married across party lines", "2010"],
+      "phrases": ["share of voters", "Democrats", "displeased if child married across party lines", "2010", "percent"],
       "number": 30,
-      "unit": "percent",
       "source": "WTW Political Risk Index H1 2025",
       "description": "Democratic voters, ~30% by 2010"
     },
     {
-      "phrases": ["share of voters", "displeased if child married across party lines", "2016"],
+      "phrases": ["share of voters", "displeased if child married across party lines", "2016", "percent"],
       "number": 60,
-      "unit": "percent",
       "source": "WTW Political Risk Index H1 2025",
       "description": "Both parties exceeded 60% in 2016"
     },

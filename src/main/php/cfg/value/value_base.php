@@ -517,21 +517,32 @@ class value_base extends sandbox_value
 
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = $dto->source_list()?->get_by_name($src_name, $msg);
-            if ($src == null) {
-                if ($db_con->is_open()) {
-                    $msg->add(msg_id::SOURCE_MISSING_IMPORT,
-                        [
-                            msg_id::VAR_SOURCE_NAME => $src_name,
-                            msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
-                        ],
-                    );
+            // a null source simply names no source; guard any other non-string type before the
+            // calls that expect a name, because a source given as a json object would otherwise
+            // end the whole import with an uncaught fatal
+            if (!is_string($src_name)) {
+                if ($src_name !== null) {
+                    $msg->add(msg_id::IMPORT_SOURCE_NOT_A_NAME, [
+                        msg_id::VAR_JSON_TEXT => json_encode($src_name)
+                    ]);
                 }
-                $src = new source($this->get_user());
-                $src->set_name($src_name);
-                $dto->source_list()->add_by_key($src);
+            } else {
+                $src = $dto->source_list()?->get_by_name($src_name, $msg);
+                if ($src == null) {
+                    if ($db_con->is_open()) {
+                        $msg->add(msg_id::SOURCE_MISSING_IMPORT,
+                            [
+                                msg_id::VAR_SOURCE_NAME => $src_name,
+                                msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                            ],
+                        );
+                    }
+                    $src = new source($this->get_user());
+                    $src->set_name($src_name);
+                    $dto->source_list()->add_by_key($src);
+                }
+                $this->source = $src;
             }
-            $this->source = $src;
         }
 
         if (key_exists(json_fields::TIMESTAMP, $in_ex_json)) {

@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-21T09:20:53+00:00",
+    "timestamp": "2026-08-21T06:09:03+00:00",
     "body": {
         "user_profiles": [
             {
@@ -8197,30 +8197,6 @@
                 "code_id": "component",
                 "description": "only expected to be used for component objects",
                 "id": 21
-            },
-            {
-                "name": "for formula links only",
-                "code_id": "formula_link",
-                "description": "only expected to be used for formula link objects",
-                "id": 22
-            },
-            {
-                "name": "for term views only",
-                "code_id": "term_view",
-                "description": "only expected to be used for term view objects",
-                "id": 23
-            },
-            {
-                "name": "for component links only",
-                "code_id": "component_link",
-                "description": "only expected to be used for component link objects",
-                "id": 24
-            },
-            {
-                "name": "for view relations only",
-                "code_id": "view_relation",
-                "description": "only expected to be used for view relation objects",
-                "id": 25
             }
         ],
         "view_styles": [
@@ -9595,60 +9571,6 @@
                 "code_id": "source_url_link",
                 "description": "show the url of a source as a link to the source",
                 "id": 221
-            },
-            {
-                "name": "link title",
-                "code_id": "title_of_link_with_edit_link",
-                "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
-                "id": 222
-            },
-            {
-                "name": "show style",
-                "code_id": "system_show_field_style",
-                "description": "show the name of the display style of a view or component without link or form field",
-                "id": 223
-            },
-            {
-                "name": "show owner",
-                "code_id": "system_show_field_owner",
-                "description": "show the name of the user who owns the object without link or form field",
-                "id": 224
-            },
-            {
-                "name": "view components",
-                "code_id": "components_of_view",
-                "description": "the components of the shown view sorted by their position with a link to each component",
-                "id": 225
-            },
-            {
-                "name": "show formula",
-                "code_id": "system_show_field_formula",
-                "description": "show the name of the calculation formula of a component with a link to the formula",
-                "id": 226
-            },
-            {
-                "name": "show row phrase",
-                "code_id": "system_show_field_phrase_row",
-                "description": "show the name of the row phrase of a component with a link to the phrase",
-                "id": 227
-            },
-            {
-                "name": "show column phrase",
-                "code_id": "system_show_field_phrase_col",
-                "description": "show the name of the column phrase of a component with a link to the phrase",
-                "id": 228
-            },
-            {
-                "name": "show sub column phrase",
-                "code_id": "system_show_field_phrase_col_sub",
-                "description": "show the name of the sub column phrase of a component with a link to the phrase",
-                "id": 229
-            },
-            {
-                "name": "component views",
-                "code_id": "views_of_component",
-                "description": "the views that use the shown component with a link to each view",
-                "id": 230
             }
         ],
         "component_link_types": [
@@ -22067,47 +21989,6 @@
                         "code_id": "show_field_description",
                         "position": 2,
                         "position_type": 1
-                    },
-                    {
-                        "link_id": 1071,
-                        "id": 336,
-                        "name": "system show field owner",
-                        "description": "the name of the user who owns the object as read only",
-                        "type_id": 224,
-                        "code_id": "show_field_owner",
-                        "position": 3,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1072,
-                        "id": 335,
-                        "name": "system show field style",
-                        "description": "the name of the display style of a view or component as read only",
-                        "type_id": 223,
-                        "code_id": "show_field_style",
-                        "position": 4,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1073,
-                        "id": 337,
-                        "name": "system sub title components",
-                        "description": "show the language specific sub title for a component list",
-                        "type_id": 145,
-                        "code_id": "system_sub_title_components",
-                        "ui_msg_code_id": "system_sub_title_components",
-                        "position": 5,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1074,
-                        "id": 338,
-                        "name": "view components",
-                        "description": "the components of the shown view sorted by their position with a link to each component",
-                        "type_id": 225,
-                        "code_id": "view_components",
-                        "position": 6,
-                        "position_type": 1
                     }
                 ]
             },
@@ -22119,7 +22000,7 @@
                 "code_id": "component_default",
                 "components": [
                     {
-                        "link_id": 1075,
+                        "link_id": 1071,
                         "id": 333,
                         "name": "Component title",
                         "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
@@ -22129,184 +22010,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1076,
-                        "id": 197,
-                        "name": "system show field description",
-                        "description": "the object description as read only",
-                        "type_id": 147,
-                        "code_id": "show_field_description",
-                        "position": 2,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1077,
-                        "id": 336,
-                        "name": "system show field owner",
-                        "description": "the name of the user who owns the object as read only",
-                        "type_id": 224,
-                        "code_id": "show_field_owner",
-                        "position": 3,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1078,
-                        "id": 335,
-                        "name": "system show field style",
-                        "description": "the name of the display style of a view or component as read only",
-                        "type_id": 223,
-                        "code_id": "show_field_style",
-                        "position": 4,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1079,
-                        "id": 339,
-                        "name": "system show field formula",
-                        "description": "the name of the calculation formula of a component with a link to the formula",
-                        "type_id": 226,
-                        "code_id": "show_field_formula",
-                        "position": 5,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1080,
-                        "id": 340,
-                        "name": "system show field row phrase",
-                        "description": "the name of the row phrase of a component with a link to the phrase",
-                        "type_id": 227,
-                        "code_id": "show_field_phrase_row",
-                        "position": 6,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1081,
-                        "id": 341,
-                        "name": "system show field column phrase",
-                        "description": "the name of the column phrase of a component with a link to the phrase",
-                        "type_id": 228,
-                        "code_id": "show_field_phrase_col",
-                        "position": 7,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1082,
-                        "id": 342,
-                        "name": "system show field sub column phrase",
-                        "description": "the name of the sub column phrase of a component with a link to the phrase",
-                        "type_id": 229,
-                        "code_id": "show_field_phrase_col_sub",
-                        "position": 8,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1083,
-                        "id": 317,
-                        "name": "system sub title views",
-                        "description": "show the language specific sub title for the related views",
-                        "type_id": 145,
-                        "code_id": "system_sub_title_views",
-                        "ui_msg_code_id": "system_sub_title_views",
-                        "position": 9,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1084,
-                        "id": 343,
-                        "name": "component views",
-                        "description": "the views that use the shown component with a link to each view",
-                        "type_id": 230,
-                        "code_id": "component_views",
-                        "position": 10,
-                        "position_type": 1
-                    }
-                ]
-            },
-            {
-                "id": 116,
-                "name": "Formula link",
-                "description": "the default view for formula links",
-                "type_id": 22,
-                "code_id": "formula_link_default",
-                "components": [
-                    {
-                        "link_id": 1085,
-                        "id": 334,
-                        "name": "Link title",
-                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
-                        "type_id": 222,
-                        "code_id": "title_of_link_with_edit_link",
-                        "position": 1,
-                        "position_type": 1
-                    }
-                ]
-            },
-            {
-                "id": 117,
-                "name": "Term view",
-                "description": "the default view for term views",
-                "type_id": 23,
-                "code_id": "term_view_default",
-                "components": [
-                    {
-                        "link_id": 1086,
-                        "id": 334,
-                        "name": "Link title",
-                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
-                        "type_id": 222,
-                        "code_id": "title_of_link_with_edit_link",
-                        "position": 1,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1087,
-                        "id": 197,
-                        "name": "system show field description",
-                        "description": "the object description as read only",
-                        "type_id": 147,
-                        "code_id": "show_field_description",
-                        "position": 2,
-                        "position_type": 1
-                    }
-                ]
-            },
-            {
-                "id": 118,
-                "name": "Component link",
-                "description": "the default view for component links",
-                "type_id": 24,
-                "code_id": "component_link_default",
-                "components": [
-                    {
-                        "link_id": 1088,
-                        "id": 334,
-                        "name": "Link title",
-                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
-                        "type_id": 222,
-                        "code_id": "title_of_link_with_edit_link",
-                        "position": 1,
-                        "position_type": 1
-                    }
-                ]
-            },
-            {
-                "id": 119,
-                "name": "View relation",
-                "description": "the default view for view relations",
-                "type_id": 25,
-                "code_id": "view_relation_default",
-                "components": [
-                    {
-                        "link_id": 1089,
-                        "id": 334,
-                        "name": "Link title",
-                        "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
-                        "type_id": 222,
-                        "code_id": "title_of_link_with_edit_link",
-                        "position": 1,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1090,
+                        "link_id": 1072,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",

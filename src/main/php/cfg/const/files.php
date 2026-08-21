@@ -162,8 +162,19 @@ class files
     const string PROBLEM_GDP_MISMEASUREMENT_FILE = self::DATA_START_PAGE_PATH . 'problem_gdp_mismeasurement' . self::JSON;
     const string PROBLEM_PROPRIETARY_SOFTWARE_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software' . self::JSON;
 
+    // the Fermi estimates and thesis chains of the start page, loaded by the full load
+    const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
+    const string FORUM_OUTREACH_ESTIMATE_FILE = self::DATA_START_PAGE_PATH . 'forum_outreach_estimate' . self::JSON;
+    const string FORUM_REACTION_ESTIMATE_FILE = self::DATA_START_PAGE_PATH . 'forum_reaction_estimate' . self::JSON;
+    const string THESES_COMPLEX_SIMPLE_FILE = self::DATA_START_PAGE_PATH . 'theses_complex_simple' . self::JSON;
+
+    // sample references
+    const string REFS_FILE = self::MESSAGE_PATH . 'refs' . self::JSON;
+
     // initial data just to add some sample data and for system testing
     const string ZURICH_HTP_IMPACT_FILE = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'zurich_htp_impact' . self::JSON;
+    // the same file with the complete path for the lists that name the file without the message path
+    const string ZURICH_HTP_IMPACT_PATH_FILE = self::SYSTEM_UNIT_TEST_DATA_PATH . 'zurich_htp_impact' . self::JSON;
 
     // temp setup files that are loaded at the end not to change the id of objects used by the system tests
     const string MATH_FILE = 'math' . self::JSON;
@@ -280,6 +291,18 @@ class files
         self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
         self::PROBLEM_GDP_MISMEASUREMENT_FILE,
         self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
+    ];
+
+    // sample data that only test/test_full_load.php imports, loaded after the data of a pod,
+    // so that the id of the objects used by the system tests does not change
+    // TODO Prio 1 group the files mainly into 2 groups: loaded during full test and loaded after test
+    const array FULL_LOAD_FILES = [
+        self::FERMI_INTERNET_PRO_CONTRA_FILE,
+        self::FORUM_OUTREACH_ESTIMATE_FILE,
+        self::FORUM_REACTION_ESTIMATE_FILE,
+        self::THESES_COMPLEX_SIMPLE_FILE,
+        self::REFS_FILE,
+        self::ZURICH_HTP_IMPACT_PATH_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

@@ -43,11 +43,19 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
+// only the name of the import class is used (::class needs no include)
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\shared\const\def as shared_def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -58,15 +66,54 @@ use ReflectionClass;
 class json_validation
 {
 
+    // the php source of a class by its name, filled by class_source on the first request
+    private array $class_src = [];
+
+    // the file of a php class by its name, filled by class_file_list on the first request
+    private array $class_files = [];
+
+    // the fields that the mapper of a section reads by the section name, filled by section_fields
+    private array $sec_fld = [];
+
     // the folders with the import json files: the data of the pod and the data used for testing
     const array SCAN_PATHS = [
         'main data' => files::MESSAGE_PATH,
         'test data' => test_paths::IMPORT,
     ];
 
-    // the folder with the json files that break a rule on purpose to test the import error
-    // handling, so a finding there is the expected result and never reported
-    const string SKIP_PATH = test_paths::IMPORT_INCONSISTENCY;
+    // the folders whose json files are not zukunft.com import files, so that the import rules
+    // do not apply: the files of the inconsistency tests break a rule on purpose to test the
+    // import error handling and the wikidata cache holds the json as received from wikidata;
+    // the converted json of test_paths::IMPORT_WIKIDATA_TO_IMPORT is checked as any other file
+    const array SKIP_PATHS = [
+        test_paths::IMPORT_INCONSISTENCY,
+        test_paths::IMPORT_WIKIDATA_CACHE,
+    ];
+
+    // the classes that name a json file with a const, checked to tell a file that no const names
+    // from one that is only missing in an import list
+    const array FILE_CONST_CLASSES = [
+        'files' => cfg_files::class,
+        'test_files' => test_files::class,
+    ];
+
+    // the const arrays of the json files that test/test.php and test/test_full_load.php import
+    // by the file name only, so that the message path is added by the importer
+    const array LOAD_LISTS_MESSAGE = [
+        'files::SYSTEM_DATA_FILES' => cfg_files::SYSTEM_DATA_FILES,
+        'files::POD_CONFIG_FILES_DIRECT' => cfg_files::POD_CONFIG_FILES_DIRECT,
+        'files::BASE_DATA_FILES' => cfg_files::BASE_DATA_FILES,
+    ];
+
+    // the const arrays of the json files that the same two scripts import by the complete path
+    const array LOAD_LISTS_PATH = [
+        'files::SAMPLE_VIEW_DATA_FILES' => cfg_files::SAMPLE_VIEW_DATA_FILES,
+        'files::BASE_DATA_PATH_FILES' => cfg_files::BASE_DATA_PATH_FILES,
+        'files::FULL_LOAD_FILES' => cfg_files::FULL_LOAD_FILES,
+        'test_files::TEST_DATA_FILES' => test_files::TEST_DATA_FILES,
+        'test_files::TEST_DATA_FILES_DIRECT' => test_files::TEST_DATA_FILES_DIRECT,
+        'test_files::TEST_DATA_FILES_NOT_REVIEWED' => test_files::TEST_DATA_FILES_NOT_REVIEWED,
+    ];
 
     // the qualifier that only repeats the default, see docs/llm/json_structure.md
     const string MEASURED_VALUE = 'measured value';
@@ -77,6 +124,10 @@ class json_validation
     // the max length of the sample of a finding, so that one finding stays on one report line
     // this limit is for the report only: a comparison always uses the complete value
     const int SAMPLE_LENGTH = 120;
+
+    // the sample of a finding is shown as it stands in the file, so no \u and no \/ escaping,
+    // because the reader searches the file for the text that the finding shows
+    const int SAMPLE_ENCODING = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
 
     // the check names used as the section names of the report
     const string CHK_SYNTAX = 'not a valid json';
@@ -90,7 +141,25 @@ class json_validation
     const string CHK_CROSS_NAME = 'triple name with different keys across the main data';
     const string CHK_CROSS_KEY = 'triple key with different names across the main data';
     const string CHK_CROSS_DESC = 'description differs across the main data';
+    const string CHK_CMP_PHRASE = 'component uses a phrase that no main data file defines';
+    const string CHK_NOT_LOADED = 'file not named by an import const array';
+    const string CHK_SECTION = 'import section not covered by this check';
     const string CHK_VERSION = 'format version';
+
+    // the name of the report part of the findings about the check itself, which belong to no
+    // scanned folder, because they are about the php code and not about a json file
+    const string SEC_CHECK = 'the import code';
+
+    // the fields of a component that name a phrase, checked because an undefined name here
+    // selects nothing and the component shows an empty table
+    const array COMPONENT_PHRASE_FIELDS = [
+        json_fields::ROW,
+        json_fields::COLUMN,
+        json_fields::COLUMN2,
+    ];
+
+    // the finding of a file whose top level is a list, so that the import reads nothing at all
+    const string TOP_LEVEL_NO_OBJECT = 'top level: a json list and not an import object';
 
     // the top level lists whose entries the import merges by name, mapped to the namespace of
     // that name: a word and a triple are one phrase, while a source, a formula, a view and a
@@ -102,6 +171,62 @@ class json_validation
         json_fields::FORMULAS => 'formula',
         json_fields::VIEWS => 'view',
         json_fields::COMPONENTS => 'component',
+    ];
+
+    // the top level keys that are not a list of objects, so that they have no entry fields
+    const array TOP_LEVEL_FIELDS = [
+        json_fields::VERSION,
+        json_fields::DATA_VERSION,
+        json_fields::POD,
+        json_fields::TIME,
+        json_fields::SELECTION,
+        json_fields::DESCRIPTION,
+        json_fields::USER_NAME,
+    ];
+
+    // the class whose import mapper reads the entries of a top level list, so that the allowed
+    // fields are the fields that this class and its parents really read: the field list is never
+    // written down here, because a copy of it would silently age with the next mapper change
+    // (see mapper_fields); an empty class name is a section whose entries are no objects e.g.
+    // the names of json_fields::WORD_LIST
+    const array SECTION_MAPPER = [
+        json_fields::USERS => 'user',
+        json_fields::LIST_VERBS => 'verb',
+        json_fields::WORDS => 'word',
+        json_fields::WORD_LIST => '',
+        json_fields::TRIPLES => 'triple',
+        json_fields::FORMULAS => 'formula',
+        json_fields::SOURCES => 'source',
+        json_fields::REFS => 'ref',
+        json_fields::REFERENCES => 'ref',
+        json_fields::PHRASE_VALUES => '',
+        json_fields::VALUES => 'value',
+        json_fields::VALUE_LIST => 'value_list',
+        json_fields::VIEWS => 'view',
+        json_fields::COMPONENTS => 'component',
+        json_fields::CALC_VALIDATION => 'result',
+        json_fields::RESULTS => 'result',
+        json_fields::VIEW_VALIDATION => 'view',
+        json_fields::IP_BLACKLIST => 'ip_range',
+    ];
+
+    // the functions that read the fields of one entry of a top level list, so that a field that
+    // only import_obj reads (e.g. the name forms of a verb) is allowed as well
+    const array MAPPER_FUNCTIONS = ['import_mapper', 'import_obj'];
+
+    // the prefix of the const of a database field name, which a mapper uses as a json key too
+    const string DB_FIELD_PREFIX = 'FLD_';
+
+    // the folders with the php classes that the mappers use, scanned to read their source
+    const array CLASS_PATHS = [paths::MODEL, paths::SHARED];
+
+    // the fields that a section may use although no mapper stores them yet, so that the todo is
+    // in the code of the field and not a finding repeated for every file
+    const array SECTION_FIELDS_EXTRA = [
+        // see the TODO Prio 2 of json_fields::AUTHOR
+        json_fields::SOURCES => [
+            json_fields::AUTHOR, json_fields::PUBLISHER, json_fields::PUBLISH_DATE
+        ],
     ];
 
 
@@ -133,8 +258,8 @@ class json_validation
         $md_txt .= "\n";
         $md_txt .= $file_cnt . ' json files checked, '
             . $this->hit_count($find_lst) . ' findings'
-            . ' (' . self::SKIP_PATH . ' is not checked, because these files'
-            . ' break a rule on purpose)' . "\n";
+            . ' (' . implode(' and ', self::SKIP_PATHS) . ' are not checked, because these files'
+            . ' are no zukunft.com import json)' . "\n";
 
         $md_txt .= $this->section_md(self::CHK_SYNTAX, $find_lst,
             'a file that cannot be decoded is skipped by every other check,'
@@ -148,10 +273,16 @@ class json_validation
             . ' is unknown (see triple::import_mapper), so a typo silently grows the shared verb'
             . ' vocabulary; a file may propose its own verb in its "verbs" section');
         $md_txt .= $this->section_md(self::CHK_FIELD, $find_lst,
-            'the import mapper reads a field by its json_fields const, so a field name that is'
-            . ' not one of them is silently dropped: the data of the field is never imported and'
-            . ' nothing is reported, because an unknown key is simply not looked at; checked are'
-            . ' the top level keys and the keys of the entries of a top level list');
+            'each top level section has its own import mapper that reads a field by its'
+            . ' json_fields const, so a field that the mapper of that section does not read is'
+            . ' silently dropped: the data of the field is never imported and nothing is'
+            . ' reported, because a key that is not read is simply not looked at; the section'
+            . ' decides, so "description" is read for a word and dropped for a value; the allowed'
+            . ' fields are read out of the php source of the mapper and of its parents, so this'
+            . ' list never ages; checked are the top level keys and the keys of the entries of a'
+            . ' top level list. a finding does not say that the file is wrong: where the export'
+            . ' writes the field (e.g. "row" and "column" of a component), the file is right and'
+            . ' the mapper is the side that does not read it yet');
         $md_txt .= $this->section_md(self::CHK_WORD_SPACE, $find_lst,
             'a word is the smallest reusable unit of meaning, so a name with a space usually'
             . ' hides a composition that belongs in a triple: define the single word atoms and'
@@ -186,6 +317,22 @@ class json_validation
             . ' descriptions and stops the whole file with "description is ... instead of ...";'
             . ' the description belongs in the home file (the one imported first, see'
             . ' docs/llm/json_structure.md) and every other file repeats the name without it');
+        $md_txt .= $this->section_md(self::CHK_CMP_PHRASE, $find_lst,
+            'a component selects its rows and columns by the phrase name, so a name that no file'
+            . ' of the pod defines can never be resolved and the component stays empty; define'
+            . ' the phrase in the file of the component (see docs/llm/json_structure.md) or use'
+            . ' the name of the phrase that is meant');
+        $md_txt .= $this->section_md(self::CHK_NOT_LOADED, $find_lst,
+            'the import loads a json file only if a const of cfg/const/files.php or'
+            . ' test/php/const/files.php names it and that const is part of one of the arrays'
+            . ' used by test/test.php and test/test_full_load.php (' . $this->load_list_names()
+            . '), so a file that is in none of them is never imported and never tested:'
+            . ' add it to the matching list or delete the file');
+        $md_txt .= $this->section_md(self::CHK_SECTION, $find_lst,
+            'the field check reads the allowed fields out of the mapper of the section, so it'
+            . ' needs to know the mapper class of every top level key that the import reads:'
+            . ' a section that is missing here is checked against no field at all and a mapper'
+            . ' class that has been renamed would report every field of that section');
         $md_txt .= $this->section_md(self::CHK_VERSION, $find_lst,
             '"version" is the version of the json format and not of the data, so it is matched'
             . ' against def::PRG_VERSION ("' . def::PRG_VERSION . '"); a file that is behind is'
@@ -212,6 +359,8 @@ class json_validation
         }
         $this->cross_file_hits($result);
         $this->cross_description_hits($result);
+        $this->component_phrase_hits($result);
+        $this->section_check_hits($result);
         foreach ($result as $chk => $sec_lst) {
             foreach ($sec_lst as $sec => $hits) {
                 sort($hits);
@@ -308,6 +457,67 @@ class json_validation
     }
 
     /**
+     * check that the row and the column phrase of a component are defined
+     *
+     * a component names its row and column phrase by name, so an undefined name selects nothing
+     * and the component shows an empty table; only the main data, because these files are all
+     * imported into the same pod, so a phrase of another file is a correct re-declaration, while
+     * a name that no file of the pod defines can never be resolved
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
+     */
+    private function component_phrase_hits(array &$find_lst): void
+    {
+        $sec = array_key_first(self::SCAN_PATHS);
+        $file_lst = $this->json_file_list(self::SCAN_PATHS[$sec]);
+        $known = [];
+        foreach ($file_lst as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                $known = array_merge($known, $this->phrase_names($json_array));
+            }
+        }
+        foreach ($file_lst as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                foreach ($json_array[json_fields::COMPONENTS] ?? [] as $cmp) {
+                    if (is_array($cmp)) {
+                        foreach (self::COMPONENT_PHRASE_FIELDS as $fld) {
+                            $name = $cmp[$fld] ?? '';
+                            if ($name != '' and !in_array($name, $known)) {
+                                $find_lst[self::CHK_CMP_PHRASE][$sec][] = basename($file_path)
+                                    . ' - component "' . ($cmp[json_fields::NAME] ?? '')
+                                    . '" - ' . $fld . ' "' . $name . '"';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $json_array the decoded json file
+     * @return array the name of every word and triple that the file defines
+     */
+    private function phrase_names(array $json_array): array
+    {
+        $result = [];
+        foreach ($json_array[json_fields::WORDS] ?? [] as $wrd) {
+            if (is_array($wrd)) {
+                $result[] = $wrd[json_fields::NAME] ?? '';
+            }
+        }
+        foreach ($json_array[json_fields::TRIPLES] ?? [] as $trp) {
+            if (is_array($trp)) {
+                $result[] = $this->triple_name($trp);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * add the descriptions of one file to the given map of the name to its descriptions
      *
      * an entry without a description is the correct re-declaration of a borrowed name, so only
@@ -345,6 +555,15 @@ class json_validation
     private function check_file(string $sec, string $file_path, array &$find_lst, bool $update): void
     {
         $name = basename($file_path);
+        if (!in_array($file_path, $this->loaded_file_list())) {
+            $const_name = $this->file_const_name($file_path);
+            if ($const_name == '') {
+                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - named by no const';
+            } else {
+                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - ' . $const_name
+                    . ' is in no import list';
+            }
+        }
         $json_array = json_decode(file_get_contents($file_path), true);
         if (!is_array($json_array)) {
             $find_lst[self::CHK_SYNTAX][$sec][] = $name . ' - ' . json_last_error_msg();
@@ -736,7 +955,26 @@ class json_validation
      */
     private function sample(array $entry): string
     {
-        return $this->cut(json_encode($entry));
+        return $this->cut(json_encode($entry, self::SAMPLE_ENCODING));
+    }
+
+    /**
+     * the entry that breaks a rule with the field that the finding names in the first place
+     *
+     * the field is moved to the front, because the cut of a long entry would else hide exactly
+     * the field that the finding is about: the reader of e.g. 'components: "column"' would see
+     * the name, the description and the type of the component, but never the column itself;
+     * the order of the fields in the file is not shown, but it does not matter for any rule
+     *
+     * @param array $entry the json entry e.g. the value or the component that has the finding
+     * @param string $fld the field of the entry that the finding names
+     * @return string the entry as a json string starting with the named field
+     */
+    private function sample_field(array $entry, string $fld): string
+    {
+        $first = [$fld => $entry[$fld]];
+        unset($entry[$fld]);
+        return $this->cut(json_encode(array_merge($first, $entry), self::SAMPLE_ENCODING));
     }
 
     /**
@@ -760,54 +998,64 @@ class json_validation
     }
 
     /**
-     * the fields of the given file that the import mapper does not read
+     * the fields of the given file that the import mapper of their section does not read
      *
-     * every field that an import mapper reads is a const of json_fields, so a key that is not
-     * one of them is dropped without any message: array_key_exists simply never matches it
+     * a field is read by the mapper of one section only, so the section decides: "description"
+     * is read for a word and dropped for a value, because a value has no description of its own
+     * (the description of a value belongs to its phrase group) and the mapper of the section
+     * never looks at a key that it does not read
      *
      * checked are the top level keys and the keys of the entries of a top level list, because
      * that is where the mappers read named fields; a deeper structure can use data as keys
      * (e.g. a compact value list), which would create false positives
      *
      * @param array $json_array the decoded json file
-     * @return array map of the section and the unknown field to the first entry that uses it
+     * @return array map of the section and the unread field to the first entry that uses it
      */
     function field_unknown_hits(array $json_array): array
     {
-        $known = $this->fields_known();
         $hits = [];
-        foreach ($json_array as $key => $value) {
-            if (!array_key_exists($key, $known)) {
-                $hits['top level: "' . $key . '"'] ??= $this->sample([$key => $value]);
-            }
-            if (is_array($value)) {
-                $this->entry_field_hits($key, $value, $known, $hits);
+        if (array_is_list($json_array)) {
+            // the position of an entry is no field name, so naming each of them would only
+            // repeat the one thing that is wrong: the file is a list and not an import object
+            $hits[self::TOP_LEVEL_NO_OBJECT] = $this->sample($json_array);
+        } else {
+            foreach ($json_array as $key => $value) {
+                if (array_key_exists($key, self::SECTION_MAPPER)) {
+                    if (is_array($value)) {
+                        $this->entry_field_hits($key, $value, $this->section_fields($key), $hits);
+                    }
+                } elseif (!in_array($key, self::TOP_LEVEL_FIELDS)) {
+                    // the entries are not checked, because a section that the import does not
+                    // know is dropped as a whole, so naming its fields would repeat this finding
+                    $hits['top level: "' . $key . '"'] ??= $this->sample([$key => $value]);
+                }
             }
         }
         return $hits;
     }
 
     /**
-     * add the unknown fields of the entries of one top level list to the given hit list
+     * add the unread fields of the entries of one top level list to the given hit list
      *
      * @param string $sec_name the name of the top level list e.g. 'values'
      * @param array $entry_lst the entries of the top level list
-     * @param array $known the field names that an import mapper reads as the keys
-     * @param array $hits (in/out) map of the section and the unknown field to the first sample
+     * @param array $sec_fld_lst the field names that the mapper of this section reads
+     * @param array $hits (in/out) map of the section and the unread field to the first sample
      * @return void
      */
     private function entry_field_hits(
         string $sec_name,
         array  $entry_lst,
-        array  $known,
+        array  $sec_fld_lst,
         array  &$hits
     ): void
     {
         foreach ($entry_lst as $entry) {
             if (is_array($entry)) {
                 foreach ($entry as $fld => $val) {
-                    if (is_string($fld) and !array_key_exists($fld, $known)) {
-                        $hits[$sec_name . ': "' . $fld . '"'] ??= $this->sample($entry);
+                    if (is_string($fld) and !in_array($fld, $sec_fld_lst)) {
+                        $hits[$sec_name . ': "' . $fld . '"'] ??= $this->sample_field($entry, $fld);
                     }
                 }
             }
@@ -815,18 +1063,317 @@ class json_validation
     }
 
     /**
-     * @return array the field names that an import mapper can read as the keys
+     * check that this check knows every top level key of the import and the mapper of each
+     *
+     * without this the field check would silently pass a section that the import has added
+     * (nothing knows its fields, so nothing is reported) or drop all fields of a section whose
+     * mapper class has been renamed (everything is reported), so it guards the two lists that
+     * are written by hand: SECTION_MAPPER and TOP_LEVEL_FIELDS
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
      */
-    private function fields_known(): array
+    private function section_check_hits(array &$find_lst): void
+    {
+        foreach ($this->section_check_list() as $hit) {
+            $find_lst[self::CHK_SECTION][self::SEC_CHECK][] = $hit;
+        }
+    }
+
+    /**
+     * the differences between the import and the two lists that this check writes by hand
+     *
+     * shared with the coding rule test, which asserts that there is none, so that a section
+     * added to the import fails the test run and does not only sit in the findings report
+     *
+     * @return array one text per difference, empty if the check covers the import completely
+     */
+    function section_check_list(): array
     {
         $result = [];
-        $fld_lst = new ReflectionClass(json_fields::class)->getConstants();
-        foreach ($fld_lst as $fld) {
-            if (is_string($fld)) {
-                $result[$fld] = true;
+        $import_lst = $this->import_section_list();
+        foreach ($import_lst as $key) {
+            if (!array_key_exists($key, self::SECTION_MAPPER)
+                and !in_array($key, self::TOP_LEVEL_FIELDS)) {
+                $result[] = '"' . $key . '" - read by ' . $this->short_name(import::class)
+                    . ', but in no list of ' . $this->short_name(self::class);
+            }
+        }
+        foreach (self::SECTION_MAPPER as $key => $class_name) {
+            if (!in_array($key, $import_lst)) {
+                $result[] = '"' . $key . '" - named by ' . $this->short_name(self::class)
+                    . ', but not read by ' . $this->short_name(import::class);
+            }
+            if ($class_name != '' and $this->class_source($class_name) == '') {
+                $result[] = '"' . $key . '" - the mapper class "' . $class_name
+                    . '" has no php file';
+            } elseif ($class_name != '' and $this->section_fields($key) == []) {
+                $result[] = '"' . $key . '" - the mapper class "' . $class_name
+                    . '" reads no field';
             }
         }
         return $result;
+    }
+
+    /**
+     * the top level keys that the import reads
+     *
+     * both import loops select the part of a json by comparing the key with a json_fields const,
+     * so these comparisons are the complete list of the top level keys that the import knows
+     *
+     * @return array the value of every json_fields const that the import compares with a key
+     */
+    private function import_section_list(): array
+    {
+        $result = [];
+        $src = $this->class_source($this->short_name(import::class));
+        $matches = [];
+        preg_match_all('/\$key\s*==\s*json_fields::(\w+)'
+            . '|key_exists\(\s*json_fields::(\w+)\s*,\s*\$json_array\s*\)/', $src, $matches,
+            PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $const_name = $match[1] == '' ? $match[2] : $match[1];
+            $value = $this->class_const_value($this->short_name(json_fields::class), $const_name);
+            if ($value != '') {
+                $result[] = $value;
+            }
+        }
+        return array_unique($result);
+    }
+
+    /**
+     * the json field names that the import of the given section reads
+     *
+     * the list is derived from the php source of the mapper, so that it cannot age: a field that
+     * a mapper stops reading disappears here with the same commit
+     *
+     * @param string $sec the top level list e.g. 'values'
+     * @return array the field names that the mapper of the section reads plus the allowed extras
+     */
+    private function section_fields(string $sec): array
+    {
+        if (!array_key_exists($sec, $this->sec_fld)) {
+            $fld_lst = [];
+            $class_name = self::SECTION_MAPPER[$sec] ?? '';
+            if ($class_name != '') {
+                $fld_lst = $this->mapper_fields($class_name);
+            }
+            $this->sec_fld[$sec] = array_merge($fld_lst, self::SECTION_FIELDS_EXTRA[$sec] ?? []);
+        }
+        return $this->sec_fld[$sec];
+    }
+
+    /**
+     * the json field names that the import mapper of the given class and of its parents read
+     *
+     * the parents are included, because a mapper first calls the mapper of its parent
+     * (word -> sandbox_code_id -> sandbox_typed -> sandbox_named -> sandbox)
+     *
+     * @param string $class_name the name of the class that maps one entry e.g. 'word'
+     * @return array the field names that the mappers of the class chain read
+     */
+    private function mapper_fields(string $class_name): array
+    {
+        $result = [];
+        $src = $this->class_source($class_name);
+        while ($src != '') {
+            foreach (self::MAPPER_FUNCTIONS as $fn_name) {
+                $result = array_merge($result, $this->function_fields($src, $fn_name));
+            }
+            $class_name = $this->parent_name($src);
+            $src = $class_name == '' ? '' : $this->class_source($class_name);
+        }
+        return array_unique($result);
+    }
+
+    /**
+     * the json field names that one function of the given class source reads
+     *
+     * a mapper hands the complete entry to a helper of the same class (e.g. common_mapper of a
+     * verb or json_mapper of a user), so the helpers that get the entry as the first parameter
+     * are read as well; a helper that gets a single field (e.g. link_assigned_phrase) reads no
+     * field name of its own
+     *
+     * @param string $src the php source of the class without the comments
+     * @param string $fn_name the name of the function e.g. 'import_mapper'
+     * @return array the field names that the function and its helpers read
+     */
+    private function function_fields(string $src, string $fn_name): array
+    {
+        $result = [];
+        $body = $this->function_body($src, $fn_name);
+        if ($body != '') {
+            $result = $this->field_const_values($body);
+            $matches = [];
+            preg_match_all('/\$this->(\w+)\(\s*\$in_ex_json/', $body, $matches);
+            foreach ($matches[1] as $helper_name) {
+                $helper_body = $this->function_body($src, $helper_name);
+                $result = array_merge($result, $this->field_const_values($helper_body));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the field names that the given php code uses as a json key
+     *
+     * a json key is either a const of json_fields or a FLD_ const of a db field class, which
+     * e.g. verb::import_obj uses, so both are resolved to the name in the json
+     *
+     * @param string $php_code the body of a function without the comments
+     * @return array the value of every field const that the code names
+     */
+    private function field_const_values(string $php_code): array
+    {
+        $result = [];
+        $matches = [];
+        preg_match_all('/(\w+)::([A-Z][A-Z_0-9]*)/', $php_code, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $is_json_fld = $match[1] == $this->short_name(json_fields::class);
+            if ($is_json_fld or str_starts_with($match[2], self::DB_FIELD_PREFIX)) {
+                $value = $this->class_const_value($match[1], $match[2]);
+                if ($value != '') {
+                    $result[] = $value;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the php source of the given class without the comments
+     *
+     * the comments are removed with the php tokenizer, so that a mapper that is commented out
+     * (e.g. the term, view and source of a user) does not allow a field that nothing reads
+     *
+     * @param string $class_name the name of the class without the namespace e.g. 'word'
+     * @return string the source of the class or an empty string if no file declares it
+     */
+    private function class_source(string $class_name): string
+    {
+        if (!array_key_exists($class_name, $this->class_src)) {
+            $file_path = $this->class_file_list()[$class_name] ?? '';
+            $src = $file_path == '' ? '' : file_get_contents($file_path);
+            $this->class_src[$class_name] = $src == '' ? '' : $this->strip_comments($src);
+        }
+        return $this->class_src[$class_name];
+    }
+
+    /**
+     * @param string $php_code the php source of a file
+     * @return string the same code without the comments
+     */
+    private function strip_comments(string $php_code): string
+    {
+        $result = '';
+        foreach (token_get_all($php_code) as $token) {
+            if (is_array($token)) {
+                if ($token[0] != T_COMMENT and $token[0] != T_DOC_COMMENT) {
+                    $result .= $token[1];
+                }
+            } else {
+                $result .= $token;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the file of every php class of the model and the shared code by the class name
+     *
+     * @return array map of the class name without the namespace to the path of its file
+     */
+    private function class_file_list(): array
+    {
+        if ($this->class_files == []) {
+            foreach (self::CLASS_PATHS as $path) {
+                $dir_iterator = new RecursiveDirectoryIterator($path);
+                foreach (new RecursiveIteratorIterator($dir_iterator) as $file) {
+                    if (str_ends_with($file->getFilename(), shared_def::FILE_PHP)) {
+                        $matches = [];
+                        $src = file_get_contents($file->getPathname());
+                        if (preg_match('/^\s*(?:abstract\s+)?class\s+(\w+)/m', $src, $matches)) {
+                            $this->class_files[$matches[1]] ??= $file->getPathname();
+                        }
+                    }
+                }
+            }
+        }
+        return $this->class_files;
+    }
+
+    /**
+     * @param string $src the php source of a class without the comments
+     * @return string the name of the parent class or an empty string if the class has no parent
+     */
+    private function parent_name(string $src): string
+    {
+        $result = '';
+        $matches = [];
+        if (preg_match('/^\s*(?:abstract\s+)?class\s+\w+\s+extends\s+(\w+)/m', $src, $matches)) {
+            $result = $matches[1];
+        }
+        return $result;
+    }
+
+    /**
+     * the body of one function of the given php source
+     *
+     * the braces are counted instead of matching the end with a regex, because the body of a
+     * mapper contains blocks and a regex would stop at the first closing brace
+     *
+     * @param string $src the php source of a class without the comments
+     * @param string $fn_name the name of the function e.g. 'import_mapper'
+     * @return string the body of the function or an empty string if the class has no such function
+     */
+    private function function_body(string $src, string $fn_name): string
+    {
+        $result = '';
+        $matches = [];
+        if (preg_match('/function\s+' . preg_quote($fn_name, '/') . '\s*\(/', $src, $matches,
+            PREG_OFFSET_CAPTURE)) {
+            $start = strpos($src, '{', $matches[0][1]);
+            if ($start !== false) {
+                $depth = 0;
+                $pos = $start;
+                while ($pos < strlen($src) and ($depth > 0 or $pos == $start)) {
+                    if ($src[$pos] == '{') {
+                        $depth++;
+                    } elseif ($src[$pos] == '}') {
+                        $depth--;
+                    }
+                    $pos++;
+                }
+                $result = substr($src, $start, $pos - $start);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $class_name the name of the const class e.g. 'json_fields'
+     * @param string $const_name the name of the const e.g. 'NAME'
+     * @return string the value of the const or an empty string if it is not a simple text
+     */
+    private function class_const_value(string $class_name, string $const_name): string
+    {
+        $result = '';
+        $matches = [];
+        $pattern = '/const\s+string\s+' . preg_quote($const_name, '/') . '\s*=\s*\'([^\']*)\'\s*;/';
+        if (preg_match($pattern, $this->class_source($class_name), $matches)) {
+            $result = $matches[1];
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $class the class name with the namespace e.g. from ::class
+     * @return string the class name without the namespace, which the php source uses
+     */
+    private function short_name(string $class): string
+    {
+        $parts = explode('\\', $class);
+        return end($parts);
     }
 
     /**
@@ -907,9 +1454,96 @@ class json_validation
     }
 
     /**
+     * the json files that an import const array names, so that a scan of the folders can tell
+     * which file no import loads; the message path is added to the lists that name the file only
+     *
+     * @return array the path of every json file that test/test.php or test/test_full_load.php loads
+     */
+    function loaded_file_list(): array
+    {
+        $result = [];
+        foreach (self::LOAD_LISTS_MESSAGE as $file_lst) {
+            foreach ($file_lst as $file_name) {
+                $result[] = files::MESSAGE_PATH . $file_name;
+            }
+        }
+        foreach (self::LOAD_LISTS_PATH as $file_lst) {
+            $result = array_merge($result, $file_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * the const that names the given json file, so that the report can tell a file that no
+     * const names at all from one that only misses the entry in an import list
+     *
+     * @param string $file_path the path of the json file as the folder scan has returned it
+     * @return string the class and the name of the const or an empty string if none names the file
+     */
+    private function file_const_name(string $file_path): string
+    {
+        $result = '';
+        foreach (self::FILE_CONST_CLASSES as $class_name => $class) {
+            $ref = new ReflectionClass($class);
+            foreach ($ref->getConstants() as $const_name => $value) {
+                if (is_string($value) and $value != '') {
+                    if ($this->const_names_file($value, $file_path)) {
+                        $result = $class_name . '::' . $const_name;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if the given const value names the given json file
+     *
+     * a const holds the complete path, the path below the message folder or just the file name,
+     * with or without the json extension, and the update and the undo file of an import test are
+     * composed of the base const and an extension const, so all these forms are matched
+     *
+     * @param string $value the value of a file name const
+     * @param string $file_path the path of the json file as the folder scan has returned it
+     * @return bool false if the const value names another file
+     */
+    private function const_names_file(string $value, string $file_path): bool
+    {
+        $result = false;
+        $base = $value;
+        if (str_ends_with($base, files::JSON)) {
+            $base = substr($base, 0, -strlen(files::JSON));
+        }
+        $names = [
+            $base . files::JSON,
+            $base . test_files::IMPORT_UPDATE_EXT . files::JSON,
+            $base . test_files::IMPORT_UNDO_EXT . files::JSON
+        ];
+        foreach ($names as $name) {
+            if ($file_path == $name) {
+                $result = true;
+            }
+            if (str_ends_with($file_path, DIRECTORY_SEPARATOR . $name)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the const names of the import lists for the report description
+     */
+    private function load_list_names(): string
+    {
+        $names = array_keys(self::LOAD_LISTS_MESSAGE);
+        $names = array_merge($names, array_keys(self::LOAD_LISTS_PATH));
+        return implode(', ', $names);
+    }
+
+    /**
      * @param string $path the folder to scan for json import files
      * @return array the path of every json file below the given folder except the files of
-     *               self::SKIP_PATH, which are broken on purpose
+     *               self::SKIP_PATHS, which are no zukunft.com import json
      */
     function json_file_list(string $path): array
     {
@@ -917,11 +1551,26 @@ class json_validation
         $dir_iterator = new RecursiveDirectoryIterator($path);
         foreach (new RecursiveIteratorIterator($dir_iterator) as $file) {
             if (str_ends_with($file->getFilename(), files::JSON)
-                && !str_starts_with($file->getPathname(), self::SKIP_PATH)) {
+                && !$this->is_skipped($file->getPathname())) {
                 $result[] = $file->getPathname();
             }
         }
         sort($result);
+        return $result;
+    }
+
+    /**
+     * @param string $file_path the path of a json file as the folder scan has returned it
+     * @return bool true if the file is in a folder that is not checked
+     */
+    private function is_skipped(string $file_path): bool
+    {
+        $result = false;
+        foreach (self::SKIP_PATHS as $skip_path) {
+            if (str_starts_with($file_path, $skip_path)) {
+                $result = true;
+            }
+        }
         return $result;
     }
 

@@ -254,6 +254,8 @@ class source extends sandbox_code_id
         if (key_exists(json_fields::DOI, $in_ex_json)) {
             $this->doi = $in_ex_json[json_fields::DOI];
         }
+        // json_fields::AUTHOR, PUBLISHER and PUBLISH_DATE are allowed in the import json, but
+        // the source object has no field for them, see the TODO Prio 2 of json_fields::AUTHOR
 
         return $msg->is_ok();
     }

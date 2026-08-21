@@ -357,13 +357,27 @@
       "name": "zeit.de zukunftcom post 2026-07-25 insurance reply",
       "from": "zeit.de zukunftcom post 2026-07-25",
       "verb": "has a",
-      "to": "insurance reply"
+      "to": "insurance reply",
+      "description": "building-block post of 25 July 2026: reply to a wildfire/insurability comment, reframing the premium as a mispriced carbon-damage price and inviting collaborators on the carbon-tariff platform. Replace ref URL with the real post URL and platform.",
+      "refs": [
+        {
+          "name": "https://REPLACE-with-real-post-url#insurance-reply",
+          "ref_type": "general"
+        }
+      ]
     },
     {
       "name": "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
       "from": "zeit.de zukunftcom post 2026-07-25",
       "verb": "has a",
-      "to": "sarcasm reply"
+      "to": "sarcasm reply",
+      "description": "building-block post of 25 July 2026: reply to an ironic wildfire comment, reframing climate protection as a carbon-tariff calculability problem and inviting collaborators. Replace ref URL with the real post URL and platform.",
+      "refs": [
+        {
+          "name": "https://REPLACE-with-real-post-url#sarcasm-reply",
+          "ref_type": "general"
+        }
+      ]
     }
   ],
   "formulas": [
@@ -413,32 +427,6 @@
       "assigned": [
         "substantive reply count forecast",
         "substantive reply count"
-      ]
-    },
-    {
-      "name": "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
-      "from": "zeit.de zukunftcom post",
-      "verb": "of",
-      "to": "2026-07-25",
-      "description": "building-block post of 25 July 2026: reply to an ironic wildfire comment, reframing climate protection as a carbon-tariff calculability problem and inviting collaborators. Replace ref URL with the real post URL and platform.",
-      "refs": [
-        {
-          "name": "https://REPLACE-with-real-post-url#sarcasm-reply",
-          "ref_type": "general"
-        }
-      ]
-    },
-    {
-      "name": "zeit.de zukunftcom post 2026-07-25 insurance reply",
-      "from": "zeit.de zukunftcom post",
-      "verb": "of",
-      "to": "2026-07-25",
-      "description": "building-block post of 25 July 2026: reply to a wildfire/insurability comment, reframing the premium as a mispriced carbon-damage price and inviting collaborators on the carbon-tariff platform. Replace ref URL with the real post URL and platform.",
-      "refs": [
-        {
-          "name": "https://REPLACE-with-real-post-url#insurance-reply",
-          "ref_type": "general"
-        }
       ]
     }
   ],

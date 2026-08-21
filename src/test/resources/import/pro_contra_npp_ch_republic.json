@@ -1149,7 +1149,7 @@
       ],
       "number": "474",
       "source": "Umweltbundesamt CO2 Strom",
-      "note": "German electricity is well over double as carbon-intensive as British electricity."
+      "description": "German electricity is well over double as carbon-intensive as British electricity."
     },
     {
       "words": [
@@ -1159,7 +1159,7 @@
       ],
       "number": "0.125",
       "source": "Statista Atomstrom DE",
-      "note": "about one eighth of German electricity comes from nuclear power."
+      "description": "about one eighth of German electricity comes from nuclear power."
     },
     {
       "words": [
@@ -1207,7 +1207,7 @@
       ],
       "number": "6000",
       "source": "State of Green Denmark 2018",
-      "note": "over 6000 turbines; the French Chooz B2 generated over 5000 times more than one Danish turbine."
+      "description": "over 6000 turbines; the French Chooz B2 generated over 5000 times more than one Danish turbine."
     },
     {
       "words": [
@@ -1218,7 +1218,7 @@
       ],
       "number": "5143",
       "source": "Republik Atomkraft 2019",
-      "note": "12 TWh / (14 TWh / 6000 turbines) = 5143; the article rounds this to over 5000 times."
+      "description": "12 TWh / (14 TWh / 6000 turbines) = 5143; the article rounds this to over 5000 times."
     },
     {
       "words": [
@@ -1229,7 +1229,7 @@
       ],
       "number": "0.06",
       "source": "BP Statistical Review 2019",
-      "note": "the peak share of nuclear power in the global primary energy mix, around the turn of the millennium."
+      "description": "the peak share of nuclear power in the global primary energy mix, around the turn of the millennium."
     },
     {
       "words": [
@@ -1240,7 +1240,7 @@
       ],
       "number": "0.05",
       "source": "BP Statistical Review 2019",
-      "note": "two years before the 2019 article the share had fallen below 5 percent."
+      "description": "two years before the 2019 article the share had fallen below 5 percent."
     },
     {
       "words": [
@@ -1250,7 +1250,7 @@
       ],
       "number": "449",
       "source": "IAEA PRIS reactor age",
-      "note": "about 449 operational reactors worldwide, half of them in the US and Europe, most 30-40 years old."
+      "description": "about 449 operational reactors worldwide, half of them in the US and Europe, most 30-40 years old."
     },
     {
       "words": [
@@ -1260,7 +1260,7 @@
       ],
       "number": "20",
       "source": "Guardian Hinkley Point cost",
-      "note": "over 20 billion pounds, more than double the 2012 London Olympics."
+      "description": "over 20 billion pounds, more than double the 2012 London Olympics."
     },
     {
       "words": [
@@ -1271,7 +1271,7 @@
       ],
       "number": "10",
       "source": "Reuters Olkiluoto",
-      "note": "projects in Finland and France each cost around 10 billion euro."
+      "description": "projects in Finland and France each cost around 10 billion euro."
     },
     {
       "words": [
@@ -1294,7 +1294,7 @@
       ],
       "number": "10",
       "source": "Republik Atomkraft 2019",
-      "note": "build times are mostly under 10 years, but the trend is rising."
+      "description": "build times are mostly under 10 years, but the trend is rising."
     },
     {
       "words": [
@@ -1304,7 +1304,7 @@
       ],
       "number": "7",
       "source": "Guardian Hinkley delay",
-      "note": "Hinkley Point will feed in power at least seven years late."
+      "description": "Hinkley Point will feed in power at least seven years late."
     },
     {
       "words": [
@@ -1324,7 +1324,7 @@
       ],
       "number": "2",
       "source": "Republik Atomkraft 2019",
-      "note": "during the 15-year Olkiluoto III build, nearly 2 GW of wind was installed in Finland, more than the reactor will deliver."
+      "description": "during the 15-year Olkiluoto III build, nearly 2 GW of wind was installed in Finland, more than the reactor will deliver."
     },
     {
       "words": [
@@ -1336,7 +1336,7 @@
       ],
       "number": "30",
       "source": "OECD NEA carbon pricing 2011",
-      "note": "a CO2 price of 30 to 50 euro per tonne would let nuclear compete on the market."
+      "description": "a CO2 price of 30 to 50 euro per tonne would let nuclear compete on the market."
     },
     {
       "words": [
@@ -1357,7 +1357,7 @@
       ],
       "number": "10",
       "source": "Framatome Gösgen flexibility",
-      "note": "at high load the output can be changed by up to 10 percent of nominal power per minute."
+      "description": "at high load the output can be changed by up to 10 percent of nominal power per minute."
     },
     {
       "words": [
@@ -1367,7 +1367,7 @@
       ],
       "number": "4000",
       "source": "Republik Atomkraft 2019",
-      "note": "Chernobyl claimed about 4000 deaths according to the World Health Organization."
+      "description": "Chernobyl claimed about 4000 deaths according to the World Health Organization."
     },
     {
       "words": [
@@ -1378,7 +1378,7 @@
       ],
       "number": "230000",
       "source": "Republik Atomkraft 2019",
-      "note": "the 1975 Banqiao dam failures in China killed about 230,000 people."
+      "description": "the 1975 Banqiao dam failures in China killed about 230,000 people."
     },
     {
       "words": [
@@ -1388,7 +1388,7 @@
       ],
       "number": "100",
       "source": "Republik Atomkraft 2019",
-      "note": "radiation exposure from coal power is about 100 times greater than from nuclear power."
+      "description": "radiation exposure from coal power is about 100 times greater than from nuclear power."
     },
     {
       "words": [
@@ -1398,7 +1398,7 @@
       ],
       "number": "250000",
       "source": "Republik Atomkraft 2019",
-      "note": "highly radioactive waste accumulated worldwide over 70 years, about 250,000 tonnes."
+      "description": "highly radioactive waste accumulated worldwide over 70 years, about 250,000 tonnes."
     },
     {
       "words": [
@@ -1408,7 +1408,7 @@
       ],
       "number": "0.9",
       "source": "Republik Atomkraft 2019",
-      "note": "of the decommissioning material, 90 percent is only weakly radioactive."
+      "description": "of the decommissioning material, 90 percent is only weakly radioactive."
     },
     {
       "words": [
@@ -1419,7 +1419,7 @@
       ],
       "number": "80",
       "source": "IEA WEO 2018 electricity",
-      "note": "the IEA estimates photovoltaic waste at almost 80 million tonnes by 2050."
+      "description": "the IEA estimates photovoltaic waste at almost 80 million tonnes by 2050."
     },
     {
       "words": [
@@ -1429,7 +1429,7 @@
       ],
       "number": "15",
       "source": "Republik Atomkraft 2019",
-      "note": "if two thirds of global energy came from solar panels the waste could be fifteen times higher."
+      "description": "if two thirds of global energy came from solar panels the waste could be fifteen times higher."
     },
     {
       "words": [
@@ -1439,7 +1439,7 @@
       ],
       "number": "0.04",
       "source": "Republik Atomkraft 2019",
-      "note": "current reactors fission only about 4 percent of the uranium in the fuel rods."
+      "description": "current reactors fission only about 4 percent of the uranium in the fuel rods."
     },
     {
       "words": [
@@ -1449,7 +1449,7 @@
       ],
       "number": "0.01",
       "source": "Republik Atomkraft 2019",
-      "note": "uranium 235 makes up less than 1 percent of natural uranium."
+      "description": "uranium 235 makes up less than 1 percent of natural uranium."
     },
     {
       "words": [
@@ -1459,7 +1459,7 @@
       ],
       "number": "0.05",
       "source": "Republik Atomkraft 2019",
-      "note": "enriched reactor fuel is about 5 percent uranium 235."
+      "description": "enriched reactor fuel is about 5 percent uranium 235."
     },
     {
       "words": [
@@ -1469,7 +1469,7 @@
       ],
       "number": "0.9",
       "source": "Republik Atomkraft 2019",
-      "note": "weapons need over 90 percent uranium 235."
+      "description": "weapons need over 90 percent uranium 235."
     },
     {
       "words": [
@@ -1480,7 +1480,7 @@
       ],
       "number": "130",
       "source": "Republik Atomkraft 2019",
-      "note": "known uranium reserves last over 130 years at a constant consumption rate (OECD)."
+      "description": "known uranium reserves last over 130 years at a constant consumption rate (OECD)."
     },
     {
       "words": [
@@ -1490,7 +1490,7 @@
       ],
       "number": "400",
       "source": "Republik Atomkraft 2019",
-      "note": "over 400 reactor-years of fast-reactor operation have been collected in 20 reactors."
+      "description": "over 400 reactor-years of fast-reactor operation have been collected in 20 reactors."
     },
     {
       "words": [
@@ -1500,7 +1500,7 @@
       ],
       "number": "30",
       "source": "Republik Atomkraft 2019",
-      "note": "30 of those years were at the US EBR-II reactor."
+      "description": "30 of those years were at the US EBR-II reactor."
     },
     {
       "words": [
@@ -1511,7 +1511,7 @@
       ],
       "number": "300",
       "source": "Republik Atomkraft 2019",
-      "note": "no extra pressure is needed to keep the salt liquid at over 300 degrees Celsius."
+      "description": "no extra pressure is needed to keep the salt liquid at over 300 degrees Celsius."
     },
     {
       "words": [
@@ -1522,7 +1522,7 @@
       ],
       "number": "150000000",
       "source": "Republik Atomkraft 2019",
-      "note": "fusion requires temperatures around 150 million degrees Celsius."
+      "description": "fusion requires temperatures around 150 million degrees Celsius."
     },
     {
       "words": [
@@ -1534,7 +1534,7 @@
       ],
       "number": "2025",
       "source": "Republik Atomkraft 2019",
-      "note": "fusion experiments are to begin in France in 2025, with an uncertain outcome."
+      "description": "fusion experiments are to begin in France in 2025, with an uncertain outcome."
     },
     {
       "words": [
@@ -1545,7 +1545,7 @@
       ],
       "number": "2.5",
       "source": "World Nuclear IPCC 1.5C",
-      "note": "the IPCC 1.5C scenario sketches two and a half times as much nuclear energy as today."
+      "description": "the IPCC 1.5C scenario sketches two and a half times as much nuclear energy as today."
     },
     {
       "words": [
@@ -1556,7 +1556,7 @@
       ],
       "number": "3",
       "source": "IPCC SR15 Chapter 2",
-      "note": "the current path leads to a roughly 3 degrees Celsius hotter world by the end of the 21st century."
+      "description": "the current path leads to a roughly 3 degrees Celsius hotter world by the end of the 21st century."
     }
   ],
   "formulas": [
