@@ -102,12 +102,14 @@ class test_components extends test_objects
      */
 
     /**
+     * the included copy of the filled component is used, because an excluded component
+     * has an empty api message, so that the frontend list would have no usable entry
      * @return component_list with a list of suggested components for a word
      */
     function component_list_word(): component_list
     {
         $lst = new component_list($this->env->usr1);
-        $lst->add($this->component_filled());
+        $lst->add($this->component_filled_included());
         return $lst;
     }
 

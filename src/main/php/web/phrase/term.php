@@ -137,18 +137,29 @@ class term extends combine_named
     }
 
     /**
-     * set the object id based on the given term id
+     * set the object class and the object id based on the given term id
      * must have the same logic as the database view and the api
-     * @param int $id the term id that is converted to the object id
+     * all cases are covered by the "term id" block of unit_ui/term_ui_tests.php
+     * @param int $id the term id that is converted to the object class and id
      * @return void
      */
     function set_id(int $id): void
     {
+        // the term id encodes the class of the term object: an odd id is a phrase (positive a
+        // word, negative a triple) and an even id is a formula (positive) or a verb (negative),
+        // so without setting the class every term of a bare id would be read as a word (see id())
         if ($id % 2 == 0) {
-            $this->set_obj_id(abs($id) / 2);
+            $class = $id > 0 ? formula::class : verb::class;
+            $obj_id = abs($id) / 2;
         } else {
-            $this->set_obj_id((abs($id) + 1) / 2);
+            $class = $id > 0 ? word::class : triple::class;
+            $obj_id = (abs($id) + 1) / 2;
         }
+        // an already loaded object of the same class is kept, so that its name is not lost
+        if ($this->obj() == null or $this->obj()::class != $class) {
+            $this->set_obj_from_class($class);
+        }
+        $this->set_obj_id($obj_id);
     }
 
     /**

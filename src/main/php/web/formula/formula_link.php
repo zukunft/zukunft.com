@@ -140,17 +140,17 @@ class formula_link extends sandbox_link
     {
         parent::url_mapper($url_array, $msg, $dto);
         if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked objects, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::FORMULA, $url_array)) {
                 $frm = new formula();
                 $frm->set_id($url_array[url_var::FORMULA]);
-                // TODO Prio 2 get from cache (or api)
-                $this->set_formula($frm);
+                $this->set_formula($this->named_from_cache($frm, $dto?->formula_list()));
             }
             if (array_key_exists(url_var::PHRASE, $url_array)) {
                 $phr = new phrase();
                 $phr->set_id($url_array[url_var::PHRASE]);
-                // TODO Prio 2 get from cache (or api)
-                $this->set_phrase($phr);
+                $this->set_phrase($this->named_from_cache($phr, $dto?->phrase_list()));
             }
         }
         return $msg;

@@ -395,6 +395,12 @@ class term_view extends sandbox_link
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
 
+        // a page request needs the names of the linked objects for the link title subtitle
+        if ($typ_lst->incl_related()) {
+            $vars = $this->api_json_array_linked(
+                $vars, json_fields::VIEW, json_fields::TERM, $msg, $usr);
+        }
+
         return $vars;
     }
 

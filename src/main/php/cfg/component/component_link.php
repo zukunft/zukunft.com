@@ -576,6 +576,11 @@ class component_link extends sandbox_link
             if ($this->get_style_id() != null) {
                 $vars[json_fields::STYLE] = $this->get_style_id();
             }
+            // a page request needs the names of the linked objects for the link title subtitle
+            if ($typ_lst->incl_related()) {
+                $vars = $this->api_json_array_linked(
+                    $vars, json_fields::VIEW, json_fields::COMPONENT, $msg, $usr);
+            }
 
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             if ($this->id() != 0) {

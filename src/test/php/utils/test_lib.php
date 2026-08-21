@@ -125,6 +125,7 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -238,6 +239,7 @@ class test_lib
         $t_ref = new test_refs($t);
         $t_val = new test_values($t);
         $t_frm = new test_formulas($t);
+        $t_cmp = new test_components($t);
         $t_log = new test_log($t);
 
         // set the value cache list based
@@ -248,6 +250,8 @@ class test_lib
         $dto_ui->val_lst = $t_val->list_all_ui($base_msg);
         $dto_ui->frm_lst = $t_frm->formula_list_ui();
         $dto_ui->frm_lnk_lst = $t_frm->formula_link_list_ui();
+        // the components are needed to show the linked component name of a component link page
+        $dto_ui->set_component_list($t_cmp->component_list_ui());
         $dto_ui->chg_log = $t_log->log_list_named_ui();
         // an empty config so that the getters return the shared defaults
         $dto_ui->cfg = new config_ui();

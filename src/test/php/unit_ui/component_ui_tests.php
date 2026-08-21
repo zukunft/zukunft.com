@@ -178,13 +178,32 @@ class component_ui_tests
         $t->subheader($ts . 'link title');
 
         // the component link default page shows the generated link name as the page title with
-        // the share and protection in the subtitle (see base_views.json component_link_default)
-        $lnk = new component_link_ui($t_cmp->component_link_filled_included()->api_json([api_types::INCL_PHRASES]));
+        // the linked view and component as links in the subtitle (see base_views.json
+        // component_link_default); a page request (INCL_RELATED) carries the names of the linked
+        // objects, so that the subtitle links have a text and not only a target
+        $lnk = new component_link_ui($t_cmp->component_link_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
         $ttl_html = $sfm->title_link($lnk, $msg);
+        $test_name = 'the component link title names the linked view';
+        $t->assert_text_contains($test_name, $ttl_html, views::START_NAME);
+        $test_name = '... and the linked component';
+        $t->assert_text_contains($test_name, $ttl_html, components::WORD_NAME);
         $test_name = 'the component link title links to the component link edit view';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::COMPONENT_LINK_EDIT_ID);
         $test_name = 'the component link title has a subtitle for the share and protection';
         $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+
+        // the page url carries only the ids of the linked objects, so the names of the subtitle
+        // links come from the request cache
+        $test_name = 'the component link title of a page url names the linked objects';
+        $lnk_url = new component_link_ui();
+        $lnk_url->url_mapper([
+            url_var::VIEW => (string)views::START_ID,
+            url_var::COMPONENT => (string)components::WORD_ID
+        ], $msg, $ui_sys);
+        $url_html = $sfm->title_link($lnk_url, $msg);
+        $t->assert_text_contains($test_name, $url_html, views::START_NAME);
+        $t->assert_text_contains($test_name . ' and the component', $url_html, components::WORD_NAME);
 
         // a fresh component link of an add form shows no empty subtitle brackets and has an
         // empty name, never a 'objects not set' placeholder as the page title

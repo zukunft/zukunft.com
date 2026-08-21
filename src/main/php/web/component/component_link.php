@@ -108,11 +108,16 @@ class component_link extends sandbox_link
     {
         parent::url_mapper($url_array, $msg, $dto);
         if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked objects, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 $this->set_view_id($url_array[url_var::VIEW]);
+                $this->set_view($this->view_named_from_cache($this->get_view(), $dto));
             }
             if (array_key_exists(url_var::COMPONENT, $url_array)) {
                 $this->set_component_id($url_array[url_var::COMPONENT]);
+                $this->set_component(
+                    $this->named_from_cache($this->get_component(), $dto?->component_list()));
             }
             if (array_key_exists(url_var::POSITION, $url_array)) {
                 $this->order_nbr = $url_array[url_var::POSITION];
@@ -169,22 +174,24 @@ class component_link extends sandbox_link
             }
         } else {
             // the full object detail version
-            if (array_key_exists(json_fields::VIEW, $json_array)) {
-                $msk = new view();
-                $msk->api_mapper($json_array[json_fields::VIEW], $msg);
-                $this->set_view($msk);
-            }
             if (array_key_exists(json_fields::VIEW_ID, $json_array)) {
                 $this->set_view_id($json_array[json_fields::VIEW_ID]);
-            }
-            if (array_key_exists(json_fields::COMPONENT, $json_array)) {
-                $cmp = new component();
-                $cmp->api_mapper($json_array[json_fields::COMPONENT], $msg);
-                $this->set_component($cmp);
             }
             if (array_key_exists(json_fields::COMPONENT_ID, $json_array)) {
                 $this->set_component_id($json_array[json_fields::COMPONENT_ID]);
             }
+        }
+        // a page request adds the two linked objects with their names for the link title, so
+        // they win over the id only version of both json layouts above
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $msk = new view();
+            $msk->api_mapper($json_array[json_fields::VIEW], $msg);
+            $this->set_view($msk);
+        }
+        if (array_key_exists(json_fields::COMPONENT, $json_array)) {
+            $cmp = new component();
+            $cmp->api_mapper($json_array[json_fields::COMPONENT], $msg);
+            $this->set_component($cmp);
         }
         return $msg->is_ok();
     }

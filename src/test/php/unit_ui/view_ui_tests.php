@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -155,11 +156,16 @@ class view_ui_tests
         $t->subheader($ts . 'link title');
 
         // the term view default page shows the generated link name as the page title with the
-        // share and protection in the subtitle and the description below (see base_views.json
-        // term_view_default); the linked view and term arrive today as ids only, so the title
-        // shows the links without names until the term view api sends the linked objects
-        $trm_msk = new term_view_ui($t_msk->term_view_filled_included()->api_json([api_types::INCL_PHRASES]));
+        // linked view and term as links in the subtitle and the description below (see
+        // base_views.json term_view_default); a page request (INCL_RELATED) carries the names of
+        // the linked objects, so that the subtitle links have a text and not only a target
+        $trm_msk = new term_view_ui($t_msk->term_view_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
         $ttl_html = $sfm->title_link($trm_msk, $msg);
+        $test_name = 'the term view title names the linked view';
+        $t->assert_text_contains($test_name, $ttl_html, views::START_NAME);
+        $test_name = '... and the linked term';
+        $t->assert_text_contains($test_name, $ttl_html, word_names::MATH);
         $test_name = 'the term view title links to the term view edit view';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::VIEW_LINK_EDIT_ID);
         $test_name = 'the term view title has a subtitle for the share and protection';
@@ -167,16 +173,47 @@ class view_ui_tests
         $test_name = 'the description of a term view is sent to the frontend';
         $t->assert_true($test_name, $sfm->show_description($trm_msk) != '');
 
+        // the page url carries only the ids of the linked objects, so the names of the subtitle
+        // links come from the request cache; the term id of a word is its doubled id minus one;
+        // the word name needs the word list of the request cache, so the rich test cache is used
+        $test_name = 'the term view title of a page url names the linked objects';
+        global $ui_sys;
+        $trm_msk_url = new term_view_ui();
+        $trm_msk_url->url_mapper([
+            url_var::VIEW => (string)views::START_ID,
+            url_var::TERM => (string)(word_names::MATH_ID * 2 - 1)
+        ], $msg, $ui_sys);
+        $url_html = $sfm->title_link($trm_msk_url, $msg);
+        $t->assert_text_contains($test_name, $url_html, views::START_NAME);
+        $t->assert_text_contains($test_name . ' and the term', $url_html, word_names::MATH);
+
         // the view relation default page uses the same link title (see base_views.json
         // view_relation_default)
-        $mrl = new view_relation_ui($t_msk->view_relation_filled_included()->api_json([api_types::INCL_PHRASES]));
+        $mrl = new view_relation_ui($t_msk->view_relation_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
         $ttl_html = $sfm->title_link($mrl, $msg);
+        $test_name = 'the view relation title names the linked parent view';
+        $t->assert_text_contains($test_name, $ttl_html, views::WORD_EDIT);
+        $test_name = '... and the linked child view';
+        $t->assert_text_contains($test_name, $ttl_html, views::WORD_LOG);
         $test_name = 'the view relation title links to the view relation edit view';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::VIEW_RELATION_EDIT_ID);
         $test_name = 'the view relation title has a subtitle for the share and protection';
         $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
         $test_name = 'the description of a view relation is sent to the frontend';
         $t->assert_true($test_name, $sfm->show_description($mrl) != '');
+
+        // the page url of a view relation also carries only the ids of the two linked views;
+        // both are system views, so the names come from the type list cache of the page frontend
+        $test_name = 'the view relation title of a page url names the linked views';
+        $mrl_url = new view_relation_ui();
+        $mrl_url->url_mapper([
+            url_var::VIEW_PARENT => (string)views::START_ID,
+            url_var::VIEW_CHILD => (string)views::WORD_ID
+        ], $msg, $ui->dto);
+        $url_html = $sfm->title_link($mrl_url, $msg);
+        $t->assert_text_contains($test_name, $url_html, views::START_NAME);
+        $t->assert_text_contains($test_name . ' and the child view', $url_html, views::WORD_NAME);
 
         // a fresh view relation of an add form shows no empty subtitle brackets and has an
         // empty name, never a 'objects not set' placeholder as the page title

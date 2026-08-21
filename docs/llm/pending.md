@@ -2,23 +2,21 @@
 
 ## user default view
 
-show the names of the linked objects in the link title subtitle of the formula_link_default, term_view_default, component_link_default and view_relation_default views: the term view and view relation api messages carry only the ids of the linked objects (see web/view/term_view.php and web/view/view_relation.php api_mapper) and the url mappers of all four link classes resolve the linked ids without names, so the title subtitle links show no text yet
-
-fill the formula_link_default view with the missing fields including the my tab for the user_changes
+fill the formula_link_default view with the missing fields including the 'changes' and 'my' tabs for the user_changes
 
 add the formula_link overwrites to the 'all_user_overwrites' component used in the user_default view
 
 write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show 
 
-add a 'my' tab to the value_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'views', 'changes' and 'my' tabs to the value_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
 
 add the value overwrites to the 'all_user_overwrites' component used in the user_default view
 
-add a 'my' tab to the component_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'changes' and 'my' tabs to the component_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
 
 add the component overwrites to the 'all_user_overwrites' component used in the user_default view
 
-add a 'my' tab to the view_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'changes' and 'my' tabs to the view_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
 
 add the view overwrites to the 'all_user_overwrites' component used in the user_default view
 
@@ -26,7 +24,7 @@ fill the component_link_default view with the missing fields including the my ta
 
 add the component_link overwrites to the 'all_user_overwrites' component used in the user_default view
 
-add a 'my' tab to the source_default view that shows tha user overwrites similar to the 'my' tab in the word default page
+add a 'views', 'changes' and 'my' tabs to the source_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
 
 add the source overwrites to the 'all_user_overwrites' component used in the user_default view
 

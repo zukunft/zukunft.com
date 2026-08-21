@@ -93,6 +93,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
@@ -135,6 +136,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -466,7 +468,13 @@ class view extends sandbox_code_id
                 $vars[json_fields::STYLE] = $this->get_style_id();
             }
             if ($this->cmp_lnk_lst != null) {
-                $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst, $msg);
+                // the component links of a view are not the requested main object, so the page
+                // request flag is removed for them: without it a component link emits only its
+                // own fields and not additionally the two linked objects that only the component
+                // link default page needs (see sandbox_link::api_json_array_linked)
+                $cmp_typ_lst = clone $typ_lst;
+                $cmp_typ_lst->remove(api_types::INCL_RELATED);
+                $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($cmp_typ_lst, $msg);
             }
             // the owner name is only added for a page request (and the load is skipped in the
             // test mode), so the view default page can show the owner (see base_views.json)

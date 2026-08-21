@@ -315,6 +315,11 @@ class view_relation extends sandbox_link
             if ($this->description != null) {
                 $vars[json_fields::DESCRIPTION] = $this->description;
             }
+            // a page request needs the names of the linked objects for the link title subtitle
+            if ($typ_lst->incl_related()) {
+                $vars = $this->api_json_array_linked(
+                    $vars, json_fields::PARENT, json_fields::CHILD, $msg, $usr);
+            }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             if ($this->id() != 0) {
                 $vars[json_fields::ID] = $this->id();

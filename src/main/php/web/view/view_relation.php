@@ -107,11 +107,15 @@ class view_relation extends sandbox_link
     {
         parent::url_mapper($url_array, $msg, $dto);
         if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked views, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::VIEW_PARENT, $url_array)) {
                 $this->set_parent_view_id($url_array[url_var::VIEW_PARENT]);
+                $this->set_parent_view($this->view_named_from_cache($this->parent(), $dto));
             }
             if (array_key_exists(url_var::VIEW_CHILD, $url_array)) {
                 $this->set_child_view_id($url_array[url_var::VIEW_CHILD]);
+                $this->set_child_view($this->view_named_from_cache($this->child(), $dto));
             }
             if (array_key_exists(url_var::POSITION, $url_array)) {
                 $this->start_pos = $url_array[url_var::POSITION];
@@ -137,10 +141,20 @@ class view_relation extends sandbox_link
         $json_array = $api_msg->validate($json_array);
 
         parent::api_mapper($json_array, $msg);
-        if (array_key_exists(json_fields::PARENT_ID, $json_array)) {
+        // a page request carries the linked views with their names, so that the link title
+        // can show a link to each; the id only version is the fallback for the other requests
+        if (array_key_exists(json_fields::PARENT, $json_array)) {
+            $msk = new view();
+            $msk->api_mapper($json_array[json_fields::PARENT], $msg);
+            $this->set_parent_view($msk);
+        } elseif (array_key_exists(json_fields::PARENT_ID, $json_array)) {
             $this->set_parent_view_id($json_array[json_fields::PARENT_ID]);
         }
-        if (array_key_exists(json_fields::CHILD_ID, $json_array)) {
+        if (array_key_exists(json_fields::CHILD, $json_array)) {
+            $msk = new view();
+            $msk->api_mapper($json_array[json_fields::CHILD], $msg);
+            $this->set_child_view($msk);
+        } elseif (array_key_exists(json_fields::CHILD_ID, $json_array)) {
             $this->set_child_view_id($json_array[json_fields::CHILD_ID]);
         }
         if (array_key_exists(json_fields::POSITION, $json_array)) {

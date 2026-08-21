@@ -51,6 +51,7 @@ include_once html_paths::SANDBOX . 'sandbox.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -148,6 +150,60 @@ class sandbox_link extends sandbox
         $from_name = $this->fob?->name() ?? '';
         $to_name = is_string($this->tob) ? $this->tob : ($this->tob?->name() ?? '');
         $result = $to_name . ' ' . $mtr->txt(msg_id::LINK_EXTENDS) . ' ' . $from_name;
+        return $result;
+    }
+
+    /**
+     * load the link incl. its two linked objects by adding the ?incl_related=1 url flag, so that
+     * the api handler sets api_types::INCL_RELATED and the backend adds the linked objects with
+     * their names (see the cfg sandbox_link::api_json_array_linked); the link default page needs
+     * the names for the links of the link title subtitle
+     *
+     * @param int|string $id the database id of the link to load
+     * @param user_message $msg to collect the load problems for the requesting user
+     * @param int $usr_id the id of the session user to load the link for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id);
+    }
+
+    /**
+     * the linked object with its name taken from the request cache; a page url carries only the
+     * id of the linked objects, so without the cache the link title would show a link without a
+     * text (see the "Link title" component of base_views.json)
+     *
+     * @param object|null $dbo the linked object with only the id set as created from the page url
+     * @param ListOfIdObjects|null $lst the cached list of the class of the linked object
+     * @return object|null the cached object with its name or the given id only object
+     */
+    protected function named_from_cache(?object $dbo, ?ListOfIdObjects $lst): ?object
+    {
+        $result = $dbo;
+        if ($dbo != null and $lst != null and $dbo->id() != 0) {
+            $cached = $lst->get($dbo->id());
+            if ($cached != null) {
+                $result = $cached;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the view with its name from the request cache based on the id of the given view;
+     * the system views are in the type list cache that is filled for every page rendering
+     * and the user views are in the view list of the request cache, so check both
+     * @param object|null $msk the id only view created from the url or the api message
+     * @param data_object|null $dto the request cache
+     * @return object|null the cached view with its name or the given id only view
+     */
+    protected function view_named_from_cache(?object $msk, ?data_object $dto): ?object
+    {
+        $result = $this->named_from_cache($msk, $dto?->typ_lst_cache?->msk_sys);
+        if ($result === $msk) {
+            $result = $this->named_from_cache($msk, $dto?->view_list());
+        }
         return $result;
     }
 

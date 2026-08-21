@@ -5800,8 +5800,9 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/sandbox_link.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_link.php
     \-- display - section for function display not yet defined that it should be display in /sandbox/sandbox_link.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /sandbox/sandbox_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /sandbox/sandbox_link.php
-    \-- order error - order of section display has difference at name_linked should be before display of display,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old
+    \-- order error - order of section display has difference at name_linked should be before display of display,load_by_id_with_related,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,load_by_id_with_related,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old,order of section display has difference at name_linked should be before display of display,load_by_id_with_related,name_linked does not match dsp_entries,name,name_linked,name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,display_old
 \-- sandbox_list
     \-- sort_by_relevance - section for function sort_by_relevance not yet defined that it should be sort in /sandbox/sandbox_list.php
     \-- name_pur - section for function name_pur not yet defined that it should be debug in /sandbox/sandbox_list.php
@@ -6732,7 +6733,7 @@
     \-- set_description
         \-- combine_named - @param string|null $description the description of the word, triple, formula or verb
     \-- 4
-        \-- term_view - create an api json array for the backend based on this frontend object
+        \-- term_view - the linked term with its name taken from the request cache; a page url carries only the
         \-- view_relation - create an api json array for the backend based on this frontend object
     \-- get_description
         \-- combine_named - @return string|null the description of the word, triple, formula or verb
@@ -6742,7 +6743,7 @@
     \-- set_type_id
         \-- combine_named - TODO review and use only frontend objects
         \-- sandbox_typed - @return array the json message array to send the updated data to the backend
-        \-- term_view - create an api json array for the backend based on this frontend object
+        \-- term_view - the linked term with its name taken from the request cache; a page url carries only the
     \-- type_id
         \-- combine_named - @return int|null the type id of the word, triple, formula or verb
         \-- sandbox_typed - @return array the json message array to send the updated data to the backend
