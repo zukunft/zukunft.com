@@ -39,6 +39,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -238,6 +240,20 @@ class term_view extends sandbox_link
     function set_type_id(?int $type_id = null): void
     {
         $this->predicate_id = $type_id;
+    }
+
+    /**
+     * @return type_object|null the view link type object from the preloaded cache, which says how
+     *         the term is linked to the view, or null if the link uses the default type
+     */
+    function link_type(): ?type_object
+    {
+        global $ui_sys;
+        $result = null;
+        if ($this->predicate_id != null) {
+            $result = $ui_sys->typ_lst_cache->msk_lnk_typ->get($this->predicate_id);
+        }
+        return $result;
     }
 
 

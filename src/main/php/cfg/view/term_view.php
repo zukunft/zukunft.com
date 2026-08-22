@@ -412,6 +412,15 @@ class term_view extends sandbox_link
         if ($typ_lst->incl_related()) {
             $vars = $this->api_json_array_linked(
                 $vars, json_fields::VIEW, json_fields::TERM, $msg, $usr);
+            // the owner, changes and overwrites of the term view default page
+            if (!$typ_lst->test_mode()) {
+                $owner_name = $this->owner_api_name($msg);
+                if ($owner_name != null) {
+                    $vars[json_fields::OWNER] = $owner_name;
+                }
+            }
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
         return $vars;

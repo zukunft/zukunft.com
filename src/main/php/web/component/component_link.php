@@ -42,6 +42,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_CONST . 'views.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -250,6 +252,31 @@ class component_link extends sandbox_link
     function set_predicate_id(?int $predicate_id = null): void
     {
         $this->predicate_id = $predicate_id;
+    }
+
+
+    /**
+     * the link type of a component link is the position type, which says where the component is
+     * shown within the view e.g. below or right of the previous component
+     *
+     * @return type_object|null the position type or null if the link uses the default position
+     */
+    function link_type(): ?type_object
+    {
+        global $ui_sys;
+        $result = null;
+        if ($this->pos_type_id != null) {
+            $result = $ui_sys->typ_lst_cache->pos_typ->get($this->pos_type_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @return int|null the style of this link, which overwrites the style of the linked component
+     */
+    function get_style_id(): ?int
+    {
+        return $this->style_id;
     }
 
 

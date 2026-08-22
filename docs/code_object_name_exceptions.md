@@ -50,7 +50,7 @@ value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr
 verb: $dbo, $dbo_ui, $obj, $vrb_empty, $vrb_filled, $vrb_id, $vrb_is, $vrb_time_step, $vrb_unused
 view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_empty, $msk_filled, $msk_new, $msk_no_ovr, $msk_old, $msk_owned, $msk_plain, $msk_reloaded, $msk_renamed, $msk_tab, $msk_ui, $msk_usr2, $msk_usr2_reloaded, $obj, $prt, $result, $sc, $trp_view, $usr_ui, $view_obj, $wrd_view
 view_link_type_list: $lst
-view_relation: $dbo, $dbo_ui, $mrl_new, $mrl_url, $obj
+view_relation: $dbo, $dbo_ui, $mrl_del_ui, $mrl_new, $mrl_tab, $mrl_url, $obj
 view_type_list: $lst
 word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $from, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_auto, $wrd_back, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del_ui, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
@@ -102,7 +102,7 @@ code_test_coverage: $md_txt
 code_user_message_exceptions: $md_txt
 coding_rule_tests: $t_code
 component_exe: $cmp, $cmp_ui, $dbo_ui
-component_link: $cmp_lnk, $cmp_lnk_ui, $dbo, $dbo_ui, $lnk, $lnk_new, $lnk_url, $new_lnk, $obj, $usr_ui, $vcl
+component_link: $cmp_lnk, $cmp_lnk_ui, $dbo, $dbo_ui, $lnk, $lnk_new, $lnk_tab, $lnk_url, $new_lnk, $obj, $usr_ui, $vcl
 component_link_list: $lnk_lst, $lst
 component_link_type: $cmp_lnk_typ, $lnk_typ_ui
 component_list: $add_lst, $cmp_lst, $db_lst, $db_lst_all, $lst, $phr_lst, $wrd_lst
@@ -195,7 +195,7 @@ system_time: $sys_exe
 system_time_type: $sys_exe_typ, $sys_script
 term_list: $cache, $col_lst, $del_lst, $empty_lst, $found_lst, $lst, $phr_lst, $remain_lst, $search_lst, $trm_lst, $trm_lst_back, $trm_lst_ui
 term_list_dsp: $trm_lst_ui
-term_view: $dbo, $dbo_ui, $lnk, $msk_lnk, $new_lnk, $obj, $trm_lnk_ui, $trm_msk, $trm_msk_url
+term_view: $dbo, $dbo_ui, $lnk, $msk_lnk, $new_lnk, $obj, $trm_lnk_ui, $trm_msk, $trm_msk_sel_ui, $trm_msk_url
 term_view_list: $lnk_lst
 test_api: $t_api
 test_components: $t_cmp

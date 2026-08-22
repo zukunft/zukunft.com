@@ -2,13 +2,7 @@
 
 ## user default view
 
-fill the component_link_default view with the missing fields including the 'changes' and 'my' tab for the user_changes
-
-add the component_link overwrites to the 'all_user_overwrites' component used in the user_default view
-
-check if any functionality or information from src/main/php/web/user/user_display_old.php has not yet been part of the default and user views and report missing parts in /docs/llm/pending.md
-
-repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
+check if any functionality or information from src/main/php/web/user/user_display_old.php has not yet been part of the default and user views and report missing parts on top of /docs/llm/pending.md
 
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
 
@@ -32,6 +26,10 @@ create a script loops over the resources that lists all queries '*.sql' that doe
 
 
 ## cleanup
+
+change the script that generates docs/code_functions_all.md and limit the length of each line
+
+add the check of the open_api specification to /test/test.php
 
 if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default page
 
@@ -80,6 +78,8 @@ decprecate http_old
 review $back
 
 review $msg
+
+repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
 
 Worth fixing
 formula button tooltips lost their object name

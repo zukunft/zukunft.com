@@ -49,7 +49,10 @@ class view_styles
     const string COL_SM_6_COM = 'use half of the width (col-md-6)';
     const string COL_SM_6 = 'col-md-6';
     const string COL_SM_7 = 'col-md-7';
+    const string COL_SM_8_COM = 'use 2/3 of the width (col-md-8)';
     const string COL_SM_8 = 'col-md-8';
+    const string COL_SM_8_NAME = '2/3 width';
+    const int COL_SM_8_ID = 2;
     const string COL_SM_10 = 'col-md-10';
     const string COL_SM_12 = 'col-md-12';
     const string COL_SM_1 = 'col-md-1';

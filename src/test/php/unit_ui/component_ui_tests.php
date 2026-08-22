@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
@@ -55,7 +56,9 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -312,6 +315,75 @@ class component_ui_tests
         $t->assert_text_not_contains($test_name, $sfm->title_link($lnk_new, $msg), styles::SUBTITLE);
         $test_name = 'a fresh component link has an empty name';
         $t->assert($test_name, $lnk_new->name(), '');
+
+
+        $t->subheader($ts . 'link fields');
+
+        // the component link default page shows the fields that the user can change on the link
+        // itself: where the component is placed within the view, in which order, with which style
+        // and who owns the link (see base_views.json component_link_default)
+        $test_name = 'the component link page shows the position type as the link type';
+        $t->assert($test_name, $sfm->show_link_type($lnk), position_types::SIDE_NAME);
+        $test_name = 'the component link page shows the order number';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk), (string)$lnk->order_nbr);
+        $test_name = 'the component link page shows the style that overwrites the component style';
+        $t->assert($test_name, $sfm->show_style($lnk), view_styles::COL_SM_8_NAME);
+
+        // a fresh link has no position type and no style of its own, so the fields stay empty
+        // instead of showing a wrong default
+        $test_name = 'a fresh component link shows no link type';
+        $t->assert($test_name, $sfm->show_link_type($lnk_new), '');
+        $test_name = 'a fresh component link shows no style';
+        $t->assert($test_name, $sfm->show_style($lnk_new), '');
+
+
+        $t->subheader($ts . 'link tab box');
+
+        // the component link default page shows the change log and the user overwrites in the tab
+        // box; a link has no related views, so the tab box of a link page has no views tab
+        $lnk_related = $t_cmp->component_link_filled_included();
+        $lnk_related->changes_related = $t_log->log_list_component_link();
+        // test mode so the backend emits the given list without loading it from the database
+        $lnk_json = json_decode($lnk_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the changes of a component link are sent to the frontend';
+        $t->assert_true($test_name, ($lnk_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' rows are added here like on the word and the formula link page
+        $lnk_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => component_link::FLD_ORDER_NBR,
+                json_fields::USR_VALUE => (string)test_const::COMPONENT_LINK_ORDER_NBR,
+                json_fields::STD_VALUE => '1',
+            ],
+        ];
+        $lnk_tab = new component_link_ui(json_encode($lnk_json));
+
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($lnk_tab, $msg, true);
+
+        $test_name = 'the component link page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the changed order number';
+        $t->assert_text_contains($test_name, $tab_html, (string)test_const::COMPONENT_LINK_ORDER_NBR);
+
+        $test_name = 'the user with component link overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+
+        // a link has no views of its own, so the tab box of a link page never has a views tab
+        $test_name = 'the component link page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
     }
 
 }

@@ -499,6 +499,12 @@
       "description": "tab box with the views that can show this source, the change log and the user overwrites of this source",
       "type": "view_tab_box",
       "code_id": "view_tab_box_source"
+    },
+    {
+      "name": "system show field start position",
+      "description": "the position in the parent view where the child view of a view relation starts as read only",
+      "type": "system_show_view_start_pos",
+      "code_id": "show_field_start_pos"
     }
   ],
   "views": [
@@ -1191,7 +1197,19 @@
         },
         {
           "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
           "name": "system show field description"
+        },
+        {
+          "position": "4",
+          "name": "system show field owner"
+        },
+        {
+          "position": "5",
+          "name": "link tab box"
         }
       ]
     },
@@ -1204,6 +1222,26 @@
         {
           "position": "1",
           "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
         }
       ]
     },
@@ -1219,7 +1257,23 @@
         },
         {
           "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field start position"
+        },
+        {
+          "position": "4",
           "name": "system show field description"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
         }
       ]
     }

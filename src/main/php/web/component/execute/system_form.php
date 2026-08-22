@@ -702,16 +702,17 @@ class system_form extends component
     }
 
     /**
-     * @param view|component|db_object $dbo the view or component whose display style is shown
+     * @param view|component|component_link|db_object $dbo the object whose display style is shown
      * @return string the user-readable name of the display style (empty if no style is set)
      */
-    function show_style(view|component|db_object $dbo): string
+    function show_style(view|component|component_link|db_object $dbo): string
     {
         global $ui_sys;
         $result = '';
-        // guarded by class, because only a view and a component have a display style and a
-        // mis-assigned seed component must not stop the page with a fatal
-        if ($dbo instanceof view or $dbo instanceof component) {
+        // guarded by class, because only a view, a component and a component link have a display
+        // style (the link style overwrites the style of the linked component) and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof view or $dbo instanceof component or $dbo instanceof component_link) {
             $style_id = $dbo->get_style_id();
             if ($style_id != null) {
                 $result = $this->esc($ui_sys?->typ_lst_cache?->msk_sty?->name($style_id) ?? '');

@@ -56,12 +56,14 @@ include_once paths::MODEL_LOG . 'change_values_time_norm.php';
 include_once paths::MODEL_LOG . 'change_values_time_prime.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_VALUE . 'value_text.php';
 include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VIEW . 'view_relation_db.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
@@ -96,7 +98,9 @@ include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_db;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
@@ -734,6 +738,52 @@ class test_log
         $chg->new_value = test_const::FORMULA_LINK_ORDER_NBR;
         $chg->row_id = $t_frm->formula_link()->id();
         return $chg;
+    }
+
+    /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the filled
+     * component link that the component link page test shows
+     *
+     * @return change_log_list the changes of the component link shown by the changes tab of the
+     *         component link page
+     */
+    function log_list_component_link(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_cmp = new test_components($this->env);
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_LINK, $msg);
+        $chg->set_field(component_link::FLD_ORDER_NBR, $msg);
+        $chg->new_value = test_const::COMPONENT_LINK_ORDER_NBR;
+        $chg->row_id = $t_cmp->component_link_filled()->id();
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
+    }
+
+    /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the filled view
+     * relation that the view relation page test shows
+     *
+     * @return change_log_list the changes of the view relation shown by the changes tab of the
+     *         view relation page
+     */
+    function log_list_view_relation(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_msk = new test_views($this->env);
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_RELATION, $msg);
+        $chg->set_field(view_relation_db::FLD_START_POS, $msg);
+        $chg->new_value = test_const::VIEW_RELATION_START_POS;
+        $chg->row_id = $t_msk->view_relation()->id();
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
     }
 
     /**

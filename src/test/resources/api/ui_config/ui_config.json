@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-22T21:01:26+00:00",
+    "timestamp": "2026-08-22T21:51:28+00:00",
     "body": {
         "user_profiles": [
             {
@@ -22351,12 +22351,42 @@
                     },
                     {
                         "link_id": 1095,
+                        "id": 344,
+                        "name": "system show field link type",
+                        "description": "the name of the link type of a link as read only",
+                        "type_id": 231,
+                        "code_id": "show_field_link_type",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1096,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",
                         "type_id": 147,
                         "code_id": "show_field_description",
-                        "position": 2,
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1097,
+                        "id": 336,
+                        "name": "system show field owner",
+                        "description": "the name of the user who owns the object as read only",
+                        "type_id": 224,
+                        "code_id": "show_field_owner",
+                        "position": 4,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1098,
+                        "id": 346,
+                        "name": "link tab box",
+                        "description": "tab box with the change log and the user overwrites of this link",
+                        "type_id": 199,
+                        "code_id": "view_tab_box_link",
+                        "position": 5,
                         "position_type": 1
                     }
                 ]
@@ -22369,13 +22399,63 @@
                 "code_id": "component_link_default",
                 "components": [
                     {
-                        "link_id": 1096,
+                        "link_id": 1099,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
                         "type_id": 222,
                         "code_id": "title_of_link_with_edit_link",
                         "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1100,
+                        "id": 344,
+                        "name": "system show field link type",
+                        "description": "the name of the link type of a link as read only",
+                        "type_id": 231,
+                        "code_id": "show_field_link_type",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1101,
+                        "id": 345,
+                        "name": "system show field order number",
+                        "description": "the order number of a link as read only",
+                        "type_id": 232,
+                        "code_id": "show_field_order_nbr",
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1102,
+                        "id": 335,
+                        "name": "system show field style",
+                        "description": "the name of the display style of a view or component as read only",
+                        "type_id": 223,
+                        "code_id": "show_field_style",
+                        "position": 4,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1103,
+                        "id": 336,
+                        "name": "system show field owner",
+                        "description": "the name of the user who owns the object as read only",
+                        "type_id": 224,
+                        "code_id": "show_field_owner",
+                        "position": 5,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1104,
+                        "id": 346,
+                        "name": "link tab box",
+                        "description": "tab box with the change log and the user overwrites of this link",
+                        "type_id": 199,
+                        "code_id": "view_tab_box_link",
+                        "position": 6,
                         "position_type": 1
                     }
                 ]
@@ -22388,7 +22468,7 @@
                 "code_id": "view_relation_default",
                 "components": [
                     {
-                        "link_id": 1097,
+                        "link_id": 1105,
                         "id": 334,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22398,13 +22478,53 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1098,
+                        "link_id": 1106,
+                        "id": 344,
+                        "name": "system show field link type",
+                        "description": "the name of the link type of a link as read only",
+                        "type_id": 231,
+                        "code_id": "show_field_link_type",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1107,
+                        "id": 351,
+                        "name": "system show field start position",
+                        "description": "the position in the parent view where the child view of a view relation starts as read only",
+                        "type_id": 178,
+                        "code_id": "show_field_start_pos",
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1108,
                         "id": 197,
                         "name": "system show field description",
                         "description": "the object description as read only",
                         "type_id": 147,
                         "code_id": "show_field_description",
-                        "position": 2,
+                        "position": 4,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1109,
+                        "id": 336,
+                        "name": "system show field owner",
+                        "description": "the name of the user who owns the object as read only",
+                        "type_id": 224,
+                        "code_id": "show_field_owner",
+                        "position": 5,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1110,
+                        "id": 346,
+                        "name": "link tab box",
+                        "description": "tab box with the change log and the user overwrites of this link",
+                        "type_id": 199,
+                        "code_id": "view_tab_box_link",
+                        "position": 6,
                         "position_type": 1
                     }
                 ]
