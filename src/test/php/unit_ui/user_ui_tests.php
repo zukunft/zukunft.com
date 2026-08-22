@@ -42,6 +42,7 @@ include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -146,6 +148,8 @@ class user_ui_tests
             (string)test_log::FORMULA_LINK_OVERWRITE_ORDER_NBR);
         $test_name = 'the value overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, (string)values::SAMPLE_INT);
+        $test_name = 'the component overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::COMPONENT_OVERWRITE_COM);
         $test_name = 'the standard table change is not listed beside the overwrites';
         $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
 
@@ -172,6 +176,9 @@ class user_ui_tests
         $test_name = 'the what column names the changed value';
         $t->assert_text_contains($test_name, $all_html,
             $t_grp->group()->name() . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed component';
+        $t->assert_text_contains($test_name, $all_html,
+            components::MATRIX_NAME . change_log_named_ui::OBJECT_SEPARATOR);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,

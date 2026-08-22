@@ -185,6 +185,10 @@ class test_log
     const string FORMULA_OVERWRITE_COM = 'my own text for this calculation';
     // the user value of the formula link order number overwrite of log_formula_link_order_overwrite
     const int FORMULA_LINK_OVERWRITE_ORDER_NBR = 7;
+    // the user value of the component description overwrite of log_component_overwrite, which
+    // must not contain the component name, so that a test can tell the object name that the what
+    // column puts in front of the change from the change text itself
+    const string COMPONENT_OVERWRITE_COM = 'my own text for this component';
 
 
     /*
@@ -744,6 +748,23 @@ class test_log
     }
 
     /**
+     * @return change the log entry created by overwriting the description of the matrix component
+     *         in the user sandbox (user_components)
+     */
+    function log_component_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_component_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_COMPONENT_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = self::COMPONENT_OVERWRITE_COM;
+        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        $chg->row_name = components::MATRIX_NAME;
+        return $chg;
+    }
+
+    /**
      * the changes tab of an object page shows only the changes of the object that the page shows
      * (change_log_list::filter compares the row id), so the row id is the id of the word component
      * that the component page test shows and not the matrix component of log_component_add
@@ -1069,9 +1090,10 @@ class test_log
 
     /**
      * the changes of one user on more than one object type: the word, the triple, the formula, the
-     * formula link and the value overwrites written to the user sandbox (overlay) tables plus a
-     * change of the shared standard object, so that a test can check that the all user overwrites
-     * column lists the overwrites of every object type but never a change of the standard object
+     * formula link, the value and the component overwrites written to the user sandbox (overlay)
+     * tables plus a change of the shared standard object, so that a test can check that the all
+     * user overwrites column lists the overwrites of every object type but never a change of the
+     * standard object
      * @return change_log_list the sandbox overwrites of one user and one standard change
      */
     function log_list_user_overwrites(): change_log_list
@@ -1086,6 +1108,7 @@ class test_log
         $log_lst->add($this->log_formula_increase_description());
         $log_lst->add($this->log_formula_link_order_overwrite());
         $log_lst->add($this->log_value_overwrite());
+        $log_lst->add($this->log_component_overwrite());
         // a change of the shared standard word, which the column must never list as an overwrite;
         // the renamed-from value is unique to this change, so a test can detect it
         $log_lst->add($this->log_word_update());

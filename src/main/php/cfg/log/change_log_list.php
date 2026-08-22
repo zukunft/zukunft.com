@@ -62,6 +62,7 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_COMPONENT . 'component_list.php';
 include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -96,6 +97,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -218,6 +220,7 @@ class change_log_list extends list_db_read
             change_tables::VALUE => new value_list($usr),
             change_tables::FORMULA => new formula_list($usr),
             change_tables::FORMULA_LINK => new formula_link_list($usr),
+            change_tables::VIEW_COMPONENT => new component_list($usr),
             change_tables::VIEW_LINK => new component_link_list($usr),
             change_tables::VIEW_TERM_LINK => new term_view_list($usr),
             change_tables::VIEW_RELATION => new view_relation_list($usr),

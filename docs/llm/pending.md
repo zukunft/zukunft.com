@@ -2,19 +2,17 @@
 
 ## user default view
 
-add the component overwrites to the 'all_user_overwrites' component used in the user_default view
-
 add a 'changes' and 'my' tabs to the view_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
 
 add the view overwrites to the 'all_user_overwrites' component used in the user_default view
 
-fill the component_link_default view with the missing fields including the my tab for the user_changes
-
-add the component_link overwrites to the 'all_user_overwrites' component used in the user_default view
-
 add a 'views', 'changes' and 'my' tabs to the source_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
 
 add the source overwrites to the 'all_user_overwrites' component used in the user_default view
+
+fill the component_link_default view with the missing fields including the 'changes' and 'my' tab for the user_changes
+
+add the component_link overwrites to the 'all_user_overwrites' component used in the user_default view
 
 check if any functionality or information from src/main/php/web/user/user_display_old.php has not yet been part of the default and user views and report missing parts in /docs/llm/pending.md
 
@@ -42,8 +40,6 @@ create a script loops over the resources that lists all queries '*.sql' that doe
 
 
 ## cleanup
-
-check why the user default page http://localhost/http/view.php?m=74&id=1 is not shown
 
 if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default page
 
