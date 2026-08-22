@@ -481,6 +481,12 @@
       "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
       "type": "view_tab_box",
       "code_id": "view_tab_box_value"
+    },
+    {
+      "name": "component tab box",
+      "description": "tab box with the change log and the user overwrites of this component",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_component"
     }
   ],
   "views": [
@@ -1118,6 +1124,10 @@
         {
           "position": "10",
           "name": "component views"
+        },
+        {
+          "position": "11",
+          "name": "component tab box"
         }
       ]
     },

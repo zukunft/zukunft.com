@@ -543,13 +543,18 @@ class component extends sandbox_code_id
             if ($this->col_sub_phrase?->id() != null) {
                 $vars[json_fields::PHRASE_COL_SUB] = $this->col_sub_phrase->id();
             }
-            // the owner name is only added for a page request (and the load is skipped in the
-            // test mode), so the component default page can show the owner (see base_views.json)
-            if ($typ_lst->incl_related() and !$typ_lst->test_mode()) {
-                $owner_name = $this->owner_api_name($msg);
-                if ($owner_name != null) {
-                    $vars[json_fields::OWNER] = $owner_name;
+            // a page request carries the owner, the changes and the overwrites, so that the
+            // component default page can show them (see base_views.json)
+            if ($typ_lst->incl_related()) {
+                // the owner load is skipped in the test mode
+                if (!$typ_lst->test_mode()) {
+                    $owner_name = $this->owner_api_name($msg);
+                    if ($owner_name != null) {
+                        $vars[json_fields::OWNER] = $owner_name;
+                    }
                 }
+                $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+                $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();

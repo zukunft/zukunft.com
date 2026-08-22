@@ -33,6 +33,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SYSTEM . 'back_trace.php';
@@ -59,6 +61,10 @@ class change_log_ui_tests
         $html = new html_base();
         $t_log = new test_log($t);
         $msg = new user_message();
+
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'unit ui change log ';
@@ -122,7 +128,7 @@ class change_log_ui_tests
         $test_name = 'the condensed changes table shows the remove user overwrite text';
         $t->assert_text_contains($test_name, $rem_tbl_cond, 'remove user overwrite for view');
 
-        $t->html_page_test($test_page, 'change_log', 'change_log', $msg);
+        $t->html_page_test($test_page, 'change_log', 'change_log', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'filter and limit');
 

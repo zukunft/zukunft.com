@@ -2,8 +2,6 @@
 
 ## user default view
 
-add a 'changes' and 'my' tabs to the component_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
-
 add the component overwrites to the 'all_user_overwrites' component used in the user_default view
 
 add a 'changes' and 'my' tabs to the view_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
@@ -25,6 +23,11 @@ repeat the check of the fields in the default page, the my tab and the fill of '
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
 
 
+for the headline of the add component view 'element' is used. A view component should always be named 'component' not element . Note this change in the rules and check that 'element' is nowhere used to decribe a component 
+
+in the view and component default view in the title add the translated word "view" / "component" before the view / component name, so that the title is e.g. view "Word" or component "Word"
+
+
 write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
 
 
@@ -40,6 +43,10 @@ create a script loops over the resources that lists all queries '*.sql' that doe
 
 ## cleanup
 
+check why the user default page http://localhost/http/view.php?m=74&id=1 is not shown
+
+if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default page
+
 fix the view selector link in the word_default page
 
 ### value page tabs
@@ -51,6 +58,18 @@ the 'my' tab of the value page lists the overwritten fields but has no undo icon
 the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
 
 adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
+
+## component page tabs
+
+the component default view now has the 'component tab box' component with the changes and the my tab; it has no views tab, because the views that use the component are listed by the separate 'component views' component of the same page
+
+api/component/index.php did not read the url flags at all, so it always sent api_json([]) and the owner of a component was never sent either although component::api_json_array emits it under incl_related; the endpoint now uses api_type_list::from_url_array like the triple and formula endpoint
+
+web/component/component.php has a load_by_id_with_related and a db_fld_to_url, both only on the component: view_base and source extend the same web sandbox_code_id, so adding either to the parent would also change the view and the source page, which are separate pending items
+
+change_log_list::table_field_to_query_name returns '_of_cmp' for a component changes tab (leading underscore) and logs 'field name not expected' although an empty field name is the normal case of load_obj_last; the same wart exists for the formula ('_of_frm'), view, source, verb, group and value branches, whereas the ref and the type branch handle the empty field name properly - fixing all of them renames the prepared statements and churns the committed fixtures, so it needs its own change
+
+adding the 'component tab box' to base_views.json shifts the database id of every component imported after it, like the value tab box did before
 
 ### more
 

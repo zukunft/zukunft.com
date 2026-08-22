@@ -42,6 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -61,6 +63,8 @@ if ($db_con->is_open()) {
     // get the parameters
     $cmp_id = $_GET[url_var::ID] ?? 0;
     $cmp_name = $_GET[url_var::NAME] ?? '';
+    // e.g. ir=1 to include the owner, the changes and the overwrites of the component page tabs
+    $typ_lst = api_type_list::from_url_array($_GET);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -72,10 +76,10 @@ if ($db_con->is_open()) {
         $cmp = new component($load_usr);
         if ($cmp_id > 0) {
             $cmp->load_by_id($cmp_id, $msg);
-            $result = $cmp->api_json([], $msg);
+            $result = $cmp->api_json($typ_lst, $msg, $load_usr);
         } elseif ($cmp_name != '') {
             $cmp->load_by_name($cmp_name, $msg);
-            $result = $cmp->api_json([], $msg);
+            $result = $cmp->api_json($typ_lst, $msg, $load_usr);
         } else {
             $msg->add_message_text('component id or name is missing');
         }

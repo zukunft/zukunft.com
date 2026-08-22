@@ -744,6 +744,28 @@ class test_log
     }
 
     /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the word component
+     * that the component page test shows and not the matrix component of log_component_add
+     *
+     * @return change_log_list the changes of the word component shown by the changes tab of the
+     *         component page
+     */
+    function log_list_component(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_COMPONENT, $msg);
+        $chg->set_field(change_fields::FLD_COMPONENT_NAME, $msg);
+        $chg->new_value = components::WORD_NAME;
+        $chg->row_id = components::WORD_ID;
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
+    }
+
+    /**
      * @return changes_norm a change log entry of a group where the id is a 512bit field and not an id
      */
     function log_norm(): changes_norm

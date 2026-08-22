@@ -33,31 +33,39 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $ui_sys;
+
         $html = new html_base();
         $msg = new user_message();
 
@@ -183,6 +191,89 @@ class component_ui_tests
         $test_name = 'an unused component shows the not used message';
         $t->assert($test_name, $list->component_views($cmp_plain, $msg),
             $mtr->txt(msg_id::INFO_NOT_USED_IN_VIEWS));
+
+
+        $t->subheader($ts . 'view tab box');
+
+        // the component default page shows the change log and the user overwrites in the tab box
+        // (see the 'component tab box' of base_views.json); a component has no related views of
+        // its own, because the views that use it are listed by the 'component views' component
+        $t_log = new test_log($t);
+        $t_usr = new test_users();
+        $cmp_related = $t_cmp->component_filled_included();
+        $cmp_related->changes_related = $t_log->log_list_component();
+        // test mode so the backend emits the given list without loading it from the database
+        $cmp_json = json_decode($cmp_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the changes of a component are sent to the frontend';
+        $t->assert_true($test_name, ($cmp_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' rows are added here like on the word and the formula page
+        $cmp_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_DESCRIPTION,
+                json_fields::USR_VALUE => 'my component description',
+                json_fields::STD_VALUE => components::WORD_COM,
+            ],
+        ];
+        $cmp_tab = new component(json_encode($cmp_json));
+
+        $test_name = 'the changes of a component reach the frontend component object';
+        $t->assert_true($test_name, $cmp_tab->chg_log != null and !$cmp_tab->chg_log->is_empty());
+
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        $log_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"';
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($cmp_tab, $msg, true);
+
+        $test_name = 'the component page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the change that added the component';
+        $t->assert_text_contains($test_name, $tab_html, components::WORD_NAME);
+
+        $test_name = 'the user with component overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = '... with the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, 'my component description');
+        $t->assert_text_contains($test_name, $tab_html, components::WORD_COM);
+
+        // like on the word page the undo icon links to the confirm page of the component edit view
+        // that sets the field back to the standard value (see component::db_fld_to_url)
+        $test_name = '... and an undo link to the confirm page for the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, icons::UNDO);
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::MASK . '=' . views::COMPONENT_EDIT_ID);
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::DESCRIPTION . '=' . urlencode(components::WORD_COM));
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::PRE . url_var::DESCRIPTION . '=' . urlencode('my component description'));
+        $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
+
+        // the views that use the component are shown by their own component, so the tab box of a
+        // component page never has a views tab
+        $test_name = 'the component page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        $test_name = 'a component without overwrites shows no my tab';
+        $cmp_no_ovr = new component($t_cmp->component_filled_included()->api_json());
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($cmp_no_ovr, $msg, true), $my_tab_ref);
+
+        $test_name = 'without a logged in user the component page shows no my tab';
+        unset($ui_sys->usr);
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($cmp_tab, $msg, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
+
 
         $t->subheader($ts . 'link title');
 
