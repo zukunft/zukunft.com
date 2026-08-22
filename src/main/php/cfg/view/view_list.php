@@ -278,6 +278,26 @@ class view_list extends sandbox_list_named
     }
 
     /**
+     * set the SQL query parameters to load a list of views by the view ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of view ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        if (count($ids) > 0) {
+            $sc->add_where(view_fields::FLD_ID, $ids);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load the views that have a component linked from the database selected by id
      * @param int $id the id of the component
      * @return bool true if at least one component has been loaded
@@ -314,6 +334,19 @@ class view_list extends sandbox_list_named
         global $db_con;
 
         $qp = $this->load_sql_by_type($db_con->sql_creator(), $type_id);
+        return parent::load($qp, $msg);
+    }
+
+    /**
+     * load a list of views by the given view ids e.g. to name the changed views of a user
+     * @param array $ids an array of view ids which should be loaded
+     * @return bool true if at least one view has been loaded
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
         return parent::load($qp, $msg);
     }
 

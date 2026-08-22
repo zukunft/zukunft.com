@@ -80,8 +80,10 @@ include_once paths::MODEL_LOG . 'change_values_text_big.php';
 include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
 include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
 include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
@@ -113,6 +115,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -122,6 +125,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
@@ -220,6 +224,8 @@ class change_log_list extends list_db_read
             change_tables::VALUE => new value_list($usr),
             change_tables::FORMULA => new formula_list($usr),
             change_tables::FORMULA_LINK => new formula_link_list($usr),
+            change_tables::SOURCE => new source_list($usr),
+            change_tables::VIEW => new view_list($usr),
             change_tables::VIEW_COMPONENT => new component_list($usr),
             change_tables::VIEW_LINK => new component_link_list($usr),
             change_tables::VIEW_TERM_LINK => new term_view_list($usr),

@@ -57,6 +57,8 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -78,6 +80,8 @@ use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -107,6 +111,47 @@ class view extends view_exe
     const msg_id MSG_ADD = msg_id::VIEW_ADD;
     const msg_id MSG_EDIT = msg_id::VIEW_EDIT;
     const msg_id MSG_DEL = msg_id::VIEW_DEL;
+
+
+    /*
+     * api
+     */
+
+    /**
+     * load the view by id AND ask the backend to include the owner, the change log and the user
+     * overwrites, which the tabs of the view page show
+     *
+     * the api handler sets api_types::INCL_RELATED and view::api_json_array() emits the changes
+     * and overwrites that the frontend api_mapper picks up into chg_log, user_overwrites and
+     * other_overwrites
+     *
+     * @param int|string $id the view id to load
+     * @param int $usr_id the id of the session user to load the view for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
+     * @return array all sandbox view db field names mapped to their url var key so that the undo
+     *              link of the 'my' tab can change any overwritten field (see
+     *              ui_preview::overwrite_confirm_link); the keys match view_fields::ALL_NAMES
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            view_fields::FLD_NAME => url_var::NAME,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            view_fields::FLD_TYPE => url_var::VIEW_TYPE,
+            fields::FLD_STYLE => url_var::STYLE,
+            fields::FLD_USAGE => url_var::USAGE,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
+    }
 
 
     /**

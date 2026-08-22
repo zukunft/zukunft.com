@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -62,6 +63,8 @@ if ($db_con->is_open()) {
     $dsp_id = $_GET[url_var::ID] ?? 0;
     $dsp_name = $_GET[url_var::NAME] ?? '';
     $cmp_lvl = $_GET[url_var::LEVELS] ?? 0;
+    // e.g. ir=1 to include the owner, the changes and the overwrites of the view page tabs
+    $typ_lst = api_type_list::from_url_array($_GET);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -76,13 +79,13 @@ if ($db_con->is_open()) {
             if ($cmp_lvl > 0) {
                 $msk->load_components($msg);
             }
-            $result = $msk->api_json([], $msg);
+            $result = $msk->api_json($typ_lst, $msg, $load_usr);
         } elseif ($dsp_name != '') {
             $msk->load_by_name($dsp_name, $msg);
             if ($cmp_lvl > 0) {
                 $msk->load_components($msg);
             }
-            $result = $msk->api_json([], $msg);
+            $result = $msk->api_json($typ_lst, $msg, $load_usr);
         } else {
             $msg->add_message_text('view id or name is missing');
         }

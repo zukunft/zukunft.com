@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1232 of 5617 public functions have at least 2 unit test calls; the 4385 functions below do not
+1233 of 5623 public functions have at least 2 unit test calls; the 4390 functions below do not
 
 ## main backend
 
@@ -1796,6 +1796,7 @@ so same-named functions of several classes share their test calls
     \-- delta - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_user_changes - 0 unit test calls
+    \-- load_views_related - 0 unit test calls
     \-- name_field - 0 unit test calls
     \-- not_changed - 0 unit test calls
     \-- not_changed_sql - 0 unit test calls
@@ -2869,6 +2870,7 @@ so same-named functions of several classes share their test calls
     \-- get_user - 1 unit test calls
     \-- import_obj - 0 unit test calls
     \-- load_by_component_id - 0 unit test calls
+    \-- load_by_ids - 0 unit test calls
     \-- load_by_pattern - 0 unit test calls
     \-- load_by_type - 0 unit test calls
     \-- load_names - 0 unit test calls
@@ -4028,6 +4030,7 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- db_fld_to_url - 1 unit test calls
     \-- doi - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_tip - 1 unit test calls
     \-- sandbox_fld_order - 1 unit test calls
@@ -4608,6 +4611,7 @@ so same-named functions of several classes share their test calls
     \-- default_id - 0 unit test calls
     \-- selector - 0 unit test calls
 \-- view
+    \-- db_fld_to_url - 1 unit test calls
     \-- dsp_edit - 0 unit test calls
     \-- dsp_hist - 0 unit test calls
     \-- dsp_hist_links - 0 unit test calls
@@ -4615,6 +4619,7 @@ so same-named functions of several classes share their test calls
     \-- dsp_navbar_html_no_view - 0 unit test calls
     \-- dsp_navbar_no_view - 0 unit test calls
     \-- dsp_navbar_simple - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- log_err - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- open_link - 0 unit test calls

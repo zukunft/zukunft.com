@@ -43,6 +43,7 @@ include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -150,6 +152,10 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $all_html, (string)values::SAMPLE_INT);
         $test_name = 'the component overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, test_log::COMPONENT_OVERWRITE_COM);
+        $test_name = 'the view overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::VIEW_OVERWRITE_COM);
+        $test_name = 'the source overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::SOURCE_OVERWRITE_COM);
         $test_name = 'the standard table change is not listed beside the overwrites';
         $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
 
@@ -179,6 +185,12 @@ class user_ui_tests
         $test_name = 'the what column names the changed component';
         $t->assert_text_contains($test_name, $all_html,
             components::MATRIX_NAME . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed view';
+        $t->assert_text_contains($test_name, $all_html,
+            views::START_NAME . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed source';
+        $t->assert_text_contains($test_name, $all_html,
+            sources::SIB . change_log_named_ui::OBJECT_SEPARATOR);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,

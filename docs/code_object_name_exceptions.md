@@ -36,7 +36,7 @@ phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_filled, $ref_new, $ref_obj, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_ui, $res_upd, $result, $rst
-source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_filled, $src_no_url, $src_ui, $src_unused, $src_usr2, $src_usr2_reloaded, $usr_ui
+source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_filled, $src_no_url, $src_plain, $src_tab, $src_ui, $src_unused, $src_usr2, $src_usr2_reloaded, $usr_ui
 sql_message: $msg
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
 term: $frm, $msk, $result, $term, $trm_back, $trm_by_obj_id, $trm_case, $trm_wrd, $trm_zero, $trp, $vrb, $wrd
@@ -48,7 +48,7 @@ user_status_list: $lst
 user_type_list: $lst
 value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $std_val, $std_val_missing, $val_add1, $val_add2, $val_added, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_city, $val_city_ui, $val_grp, $val_id, $val_phr, $val_plain, $val_protected, $val_tab, $val_ui, $val_usr, $val_usr2, $wrd_val
 verb: $dbo, $dbo_ui, $obj, $vrb_empty, $vrb_filled, $vrb_id, $vrb_is, $vrb_time_step, $vrb_unused
-view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_empty, $msk_filled, $msk_new, $msk_old, $msk_owned, $msk_plain, $msk_reloaded, $msk_renamed, $msk_ui, $msk_usr2, $msk_usr2_reloaded, $obj, $prt, $result, $sc, $trp_view, $usr_ui, $view_obj, $wrd_view
+view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_empty, $msk_filled, $msk_new, $msk_no_ovr, $msk_old, $msk_owned, $msk_plain, $msk_reloaded, $msk_renamed, $msk_tab, $msk_ui, $msk_usr2, $msk_usr2_reloaded, $obj, $prt, $result, $sc, $trp_view, $usr_ui, $view_obj, $wrd_view
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $mrl_new, $mrl_url, $obj
 view_type_list: $lst

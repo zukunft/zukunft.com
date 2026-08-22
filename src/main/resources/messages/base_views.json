@@ -487,6 +487,18 @@
       "description": "tab box with the change log and the user overwrites of this component",
       "type": "view_tab_box",
       "code_id": "view_tab_box_component"
+    },
+    {
+      "name": "view page tab box",
+      "description": "tab box with the change log and the user overwrites of this view; named view page tab box, because view tab box is the name of the tab box of the word, triple and formula page",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_view"
+    },
+    {
+      "name": "source tab box",
+      "description": "tab box with the views that can show this source, the change log and the user overwrites of this source",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_source"
     }
   ],
   "views": [
@@ -723,6 +735,10 @@
         {
           "position": "6",
           "name": "source values"
+        },
+        {
+          "position": "7",
+          "name": "source tab box"
         }
       ]
     },
@@ -1076,6 +1092,10 @@
         {
           "position": "6",
           "name": "view components"
+        },
+        {
+          "position": "7",
+          "name": "view page tab box"
         }
       ]
     },
