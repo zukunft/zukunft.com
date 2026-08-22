@@ -946,6 +946,18 @@ class value_list extends sandbox_value_list
         }
     }
 
+    /**
+     * a value has no name of its own: value_base::name() uses the group name, which falls back to
+     * the phrase names of the group, so the phrases are what the name of a value needs
+     *
+     * @param user_message $msg to collect any problem while loading the phrases
+     * @return void
+     */
+    function load_names_related(user_message $msg): void
+    {
+        $this->load_phrases($msg);
+    }
+
 
     /*
      * modify

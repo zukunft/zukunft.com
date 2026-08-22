@@ -44,6 +44,11 @@ include_once paths::MODEL_LOG . 'changes_norm.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_log_link_list.php';
+// the value change classes of VALUE_CHANGE_CASES, one per value and group id type case
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
@@ -68,8 +73,11 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -93,6 +101,17 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class change_log_tests
 {
+
+    // the twelve classes of change_value::CHANGE_CLASSES are the value types crossed with the
+    // group id types and their queries differ only in the table name, so the sql is checked with
+    // one class per case instead of one per combination to keep the number of sql files low
+    const array VALUE_CHANGE_CASES = [
+        change_values_prime::class,     // the numeric value type and the prime group id
+        change_values_time_norm::class, // the time value type and the standard group id
+        change_values_text_big::class,  // the text value type and the big group id
+        change_values_geo_prime::class, // the geo value type
+    ];
+
     function run(test_cleanup $t): void
     {
 
@@ -215,6 +234,24 @@ class change_log_tests
         $t->assert_sql_by_user($sc, $log);
         $log = new change_link($t->usr1);
         $t->assert_sql_by_user($sc, $log);
+
+        // a value change is never logged to the changes table of the named objects, so the
+        // overwrites of a user are read with one query per value change table
+        $t->subheader($ts . 'load value changes by user');
+        $log_lst = new change_log_list();
+        foreach (self::VALUE_CHANGE_CASES as $class) {
+            $this->assert_sql_by_user_value($t, $sc, $log_lst, new $class($t->usr1));
+        }
+
+        // the query name is the only part that differs per class, so it is checked for all of
+        // them, which needs no sql file
+        $test_name = 'every value change table has its own query name';
+        $names = [];
+        foreach (change_value::CHANGE_CLASSES as $class) {
+            $sc->reset(sql_db::POSTGRES);
+            $names[] = $log_lst->load_sql_by_user_value($sc, $t->usr1, new $class($t->usr1))->name;
+        }
+        $t->assert($test_name, count(array_unique($names)), count(change_value::CHANGE_CLASSES));
 
         $t->subheader($ts . 'load list');
         $log_lst = new change_log_list();
@@ -592,6 +629,36 @@ class change_log_tests
                 $class,
                 $id,
                 $t->usr1);
+            $t->assert_qp($qp, $sc->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get the value overwrites of a user from one value change
+     * table for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param change_log_list $log_lst the change log list object for the sql creation
+     * @param change_value $log_val an empty log object of the value change class to read
+     * @return void
+     */
+    private function assert_sql_by_user_value(
+        test_cleanup    $t,
+        sql_creator     $sc,
+        change_log_list $log_lst,
+        change_value    $log_val
+    ): void
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $log_lst->load_sql_by_user_value($sc, $t->usr1, $log_val);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $log_lst->load_sql_by_user_value($sc, $t->usr1, $log_val);
             $t->assert_qp($qp, $sc->db_type);
         }
     }

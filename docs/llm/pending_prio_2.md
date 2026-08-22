@@ -70,6 +70,14 @@ so all four link classes name the changed object in the all user overwrites colu
 
 sql_format inserts no space before END when the column name is long: the postgres fixtures view_relation_list_by_ids.sql (ul2.descriptionEND) and the component link probe (ul4.component_type_idEND) show it; the raw sql is correct, so this is a pretty printer bug that makes the committed fixtures hard to read
 
+## value overwrites in the all user overwrites column
+
+the value overwrites are now listed: a value change is never written to the changes table (see its table comment), so change_log_list::load_by_user reads the twelve change_values_* tables of change_value::CHANGE_CLASSES with one query each, merges them, sorts by time and cuts to the page limit
+
+so a user page load runs thirteen change log queries instead of one; if that becomes too slow, the alternative is one union query per group id type (prime, norm, big), which needs the same column count in every union arm and is why value_list::load_by_ids splits by type today
+
+a value is named by the phrases of its group, so change_log_list::load_row_names calls the new sandbox_list::load_names_related after load_by_ids, which value_list overrides with load_phrases; that is one extra query per listed value, so a list of many value changes is worth revisiting once value_list can load the phrases of all its groups with one query
+
 ## code cleanup
 The cleanup deleted 14 snapshots and the blast radius is wider than the orphan case. delete_unused_files() removes every .html under views_by_object/ that this run did not write. That is correct for a full run, but a partial run — test_part.php, a single test class, or
 a test group temporarily commented out — writes only a subset, so with AUTO_UPDATE_TEST_FILES = true it silently deletes the rest. The pre-existing views_by_id loop has the same property; I extended it to a second folder without adding a guard against a partial run. A     

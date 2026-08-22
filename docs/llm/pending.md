@@ -1,18 +1,6 @@
 # pending - list of planned llm prompts with prio 1
 
-## value page tabs
-
-the value default view now has the 'value tab box' component, so the value page shows the views that can show a value (all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
-
-the 'my' tab of the value page lists the overwritten fields but has no undo icon: ui_preview::overwrite_confirm_link needs a db field to url var mapping and web/value/value.php has no db_fld_to_url() override yet, so $fld_var stays empty and the link is skipped; the same applies to the apply icon of the 'others' tab
-
-the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
-
-adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
-
 ## user default view
-
-add the value overwrites to the 'all_user_overwrites' component used in the user_default view
 
 add a 'changes' and 'my' tabs to the component_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
 
@@ -50,11 +38,21 @@ create a script that checks that all fields of the main classes are shown on the
 create a script loops over the resources that lists all queries '*.sql' that does not have a limit and that does not have a unique db id in the where condition.
 
 
-## temp
+## cleanup
 
 fix the view selector link in the word_default page
 
-## cleanup
+### value page tabs
+
+the value default view now has the 'value tab box' component, so the value page shows the views that can show a value (all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
+
+the 'my' tab of the value page lists the overwritten fields but has no undo icon: ui_preview::overwrite_confirm_link needs a db field to url var mapping and web/value/value.php has no db_fld_to_url() override yet, so $fld_var stays empty and the link is skipped; the same applies to the apply icon of the 'others' tab
+
+the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
+
+adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
+
+### more
 
 find and fix the silent not-ok on the fresh-database reset path: during reset_db_forced the request message reached the config check of db_check with status NOK but without any error text (only the DONE and 'finished successful' infos), so a sub step of the fresh-db startup (user creation, type fill or base import) returns a failed message without recording the reason - a 'never fail silently' violation; the broken-sql side effect is fixed (db_object_seq_id::sql_write now uses a build-scoped message), so the next forced reset should surface which step it is
 
@@ -122,6 +120,12 @@ Seed component ids shifted. The three new components in base_views.json pushed C
 Two include_once lines commented out (yours): sandbox_named.php no longer includes its own parent sandbox.php, and type_list.php drops change_table_field.php. Same shape in web/sandbox/sandbox.php, where change_log_list.php is commented out while api_mapper does new change_log_list(). All load today, but each now depends on some other file loading the class first — the same class of fragility as the sandbox_link fatal.
 Minor: $url_arr is declared but unused in source_ui_tests.php and user_ui_tests.php (used 4× in component_ui_tests.php). And code_object_name_exceptions.md grew for formula_link — my test vars $lnk_fld_url, $lnk_plain, $lnk_tab — against the rule that the list stays short.
 Not a defect: the coverage doc lists show_link_type, show_order_nbr and link_type as "0 unit test calls". They are tested, but in unit_ui/, which that generator doesn't count.     
+api/ui_config/ui_config.json — timestamp-only diff. Only the header timestamp changed. Consider reverting; it's pure churn.
+load_sql_by_user_value() is public but has no external caller. load_by_user() is the only user. Its sibling load_sql_by_user() is public too, and the test calls it directly, so this matches the local convention — just noting it.
+sort_by_time_and_cut() duplicates the web twin. The frontend web/log/change_log_list already has sort_by_time_and_what() + head(). The two apps are deliberately independent (docs/llm/frontend.md), so this is the accepted pattern rather than a DRY violation — but the backend now sorts and the frontend re-sorts the same list.
+The changes table comment is the load contract. load_by_user() reading 13 tables rests entirely on that comment ("all tables except value and link changes"). If a value change ever lands in changes, it would be listed twice. Not currently possible, but nothing asserts it.
+version.txt correctly untouched — no json format or db structure change.
+Generated docs: code_user_message_exceptions.md only shifts a line number, doesn't grow. code_test_coverage.md adds the three new functions.
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.

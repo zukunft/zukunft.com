@@ -65,6 +65,21 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
+// the value change classes of change_value::CHANGE_CLASSES, which load_by_user reads one by one
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::MODEL_WORD . 'word_list.php';
@@ -175,6 +190,8 @@ class change_log_list extends list_db_read
             $row_ids = $ids[$table] ?? [];
             if ($row_ids != []) {
                 $obj_lst->load_by_ids($row_ids, $msg);
+                // a value has no name of its own, so its list loads the phrases of the group
+                $obj_lst->load_names_related($msg);
                 $names[$table] = $this->names_by_id($obj_lst->lst());
             }
         }
@@ -197,6 +214,7 @@ class change_log_list extends list_db_read
         return [
             change_tables::WORD => new word_list($usr),
             change_tables::TRIPLE => new triple_list($usr),
+            change_tables::VALUE => new value_list($usr),
             change_tables::FORMULA => new formula_list($usr),
             change_tables::FORMULA_LINK => new formula_link_list($usr),
             change_tables::VIEW_LINK => new component_link_list($usr),
@@ -217,10 +235,13 @@ class change_log_list extends list_db_read
         $result = [];
         foreach ($this->lst() as $chg) {
             $table = $this->std_table($chg->table());
+            // the id of a value is its group id, which is a text for a group of more than four
+            // phrases, so only a numeric id is used as an int
+            $row_id = is_numeric($chg->row_id) ? (int)$chg->row_id : $chg->row_id;
             // the same object is usually changed more than once, so load each id only once
-            if ($chg->row_id != null and $chg->row_id != 0
-                and !in_array((int)$chg->row_id, $result[$table] ?? [], true)) {
-                $result[$table][] = (int)$chg->row_id;
+            if ($row_id != null and $row_id != 0
+                and !in_array($row_id, $result[$table] ?? [], true)) {
+                $result[$table][] = $row_id;
             }
         }
         return $result;
@@ -258,7 +279,11 @@ class change_log_list extends list_db_read
      */
 
     /**
-     * load the changes of one user
+     * load the changes of one user including the value changes, which are logged in one table per
+     * value type and group id type and can therefore not be read with the query of the named
+     * objects; the lists are merged, sorted by time and cut to the page limit, because each query
+     * returns its own newest rows (same reason as in value_list::load_by_ids)
+     *
      * @param user $usr the user sandbox object
      * @return bool true if at least one change found
      */
@@ -267,7 +292,31 @@ class change_log_list extends list_db_read
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_user($sc, $usr);
-        return $this->load($qp, $usr, $msg);
+        $result = $this->load($qp, $usr, $msg);
+        foreach (change_value::CHANGE_CLASSES as $class) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_user_value($sc, $usr, new $class($usr));
+            if ($this->load($qp, $usr, $msg)) {
+                $result = true;
+            }
+        }
+        $this->sort_by_time_and_cut();
+        return $result;
+    }
+
+    /**
+     * sort the merged changes of load_by_user by the change time, newest first, and keep only the
+     * page limit, because every single query has selected its own newest rows
+     * @return void
+     */
+    private function sort_by_time_and_cut(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(change $a, change $b) => [$b->time(), $b->id()] <=> [$a->time(), $a->id()]);
+        if ($this->limit > 0) {
+            $lst = array_slice($lst, 0, $this->limit);
+        }
+        $this->set_lst($lst);
     }
 
     /**
@@ -509,6 +558,34 @@ class change_log_list extends list_db_read
         $sc->add_where(change_field::FLD_TABLE, $this->user_table_ids(), sql_par_type::INT_LIST, 'l2');
         // the page limit set by the caller, so that a user page never reads the complete change
         // log of the user just to show the newest rows
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve the value overwrites done by the given user from one of
+     * the value change tables; the same selection as load_sql_by_user, but built from the given
+     * value change class, because a value change is logged per value type and group id type
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user $usr the user sandbox object
+     * @param change_value $log_val an empty log object of the value change class to read
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_user_value(sql_creator $sc, user $usr, change_value $log_val): sql_par
+    {
+        $lib = new library();
+        $qp = $log_val->load_sql($sc, 'user_last');
+        // the three numeric value change classes share the query base name of change_value,
+        // so the name is set from the class to keep one prepared statement name per table
+        $qp->name = $lib->class_to_name($log_val::class) . sql::NAME_SEP . 'user_last';
+        $sc->set_name($qp->name);
+
+        $sc->add_where(user_db::FLD_ID, $usr->id);
+        // TODO replace 'l2' with a var or const (like load_sql_by_obj_fld)
+        $sc->add_where(change_field::FLD_TABLE, $this->user_table_ids(), sql_par_type::INT_LIST, 'l2');
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

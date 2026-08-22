@@ -42,11 +42,13 @@ include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_groups.php';
 include_once test_paths::CREATE . 'test_log.php';
 include_once test_paths::CREATE . 'test_sys_log.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
@@ -59,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -67,6 +70,7 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -82,6 +86,7 @@ class user_ui_tests
         $t_sys = new test_sys_log($t);
         $t_log = new test_log($t);
         $t_frm = new test_formulas($t);
+        $t_grp = new test_groups($t);
         $t_usr = new test_users();
         $log = new ui_log();
         $msg = new user_message();
@@ -139,6 +144,8 @@ class user_ui_tests
         $test_name = 'the formula link overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html,
             (string)test_log::FORMULA_LINK_OVERWRITE_ORDER_NBR);
+        $test_name = 'the value overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, (string)values::SAMPLE_INT);
         $test_name = 'the standard table change is not listed beside the overwrites';
         $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
 
@@ -161,6 +168,10 @@ class user_ui_tests
             $t_frm->formula_link()->name() . change_log_named_ui::OBJECT_SEPARATOR);
         $test_name = '... including the linked formula';
         $t->assert_text_contains($test_name, $all_html, formula_names::SCALE_TO_SEC);
+        // a value has no name column either, so the what column names it by the group of phrases
+        $test_name = 'the what column names the changed value';
+        $t->assert_text_contains($test_name, $all_html,
+            $t_grp->group()->name() . change_log_named_ui::OBJECT_SEPARATOR);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,

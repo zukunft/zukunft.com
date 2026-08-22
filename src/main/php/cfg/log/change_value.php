@@ -104,6 +104,24 @@ class change_value extends change_log
         change::FLD_NEW_ID,
     );
 
+    // the classes that write the value changes, one per value type and group id type, because
+    // a value change is never logged to the change table of the named objects (see the comment
+    // of the changes table); used to read the value changes of a user with one query per class
+    const array CHANGE_CLASSES = [
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
+        change_values_time_prime::class,
+        change_values_time_norm::class,
+        change_values_time_big::class,
+        change_values_text_prime::class,
+        change_values_text_norm::class,
+        change_values_text_big::class,
+        change_values_geo_prime::class,
+        change_values_geo_norm::class,
+        change_values_geo_big::class,
+    ];
+
     // field list to log the actual change of the value with a standard group id
     const array FLD_LST_CHANGE = array(
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],

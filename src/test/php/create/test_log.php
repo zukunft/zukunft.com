@@ -623,6 +623,25 @@ class test_log
     }
 
     /**
+     * @return change the log entry created by overwriting the pi value in the user sandbox
+     *         (user_values); a value has no name of its own, so the row name is the group name
+     *         that change_log_list::load_row_names reads from the phrases of the group
+     */
+    function log_value_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_grp = new test_groups($this->env);
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VALUE_USR, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->new_value = values::SAMPLE_INT;
+        $chg->row_id = values::PI_ID;
+        $chg->row_name = $t_grp->group()->name();
+        return $chg;
+    }
+
+    /**
      * @return change_log_list the changes of creating the increase formula (name and expression)
      */
     function log_list_formula_increase(): change_log_list
@@ -1027,10 +1046,10 @@ class test_log
     }
 
     /**
-     * the changes of one user on more than one object type: the word, the triple, the formula and
-     * the formula link overwrites written to the user sandbox (overlay) tables plus a change of the
-     * shared standard object, so that a test can check that the all user overwrites column lists
-     * the overwrites of every object type but never a change of the standard object
+     * the changes of one user on more than one object type: the word, the triple, the formula, the
+     * formula link and the value overwrites written to the user sandbox (overlay) tables plus a
+     * change of the shared standard object, so that a test can check that the all user overwrites
+     * column lists the overwrites of every object type but never a change of the standard object
      * @return change_log_list the sandbox overwrites of one user and one standard change
      */
     function log_list_user_overwrites(): change_log_list
@@ -1044,6 +1063,7 @@ class test_log
         $log_lst->add($this->log_triple_add_description());
         $log_lst->add($this->log_formula_increase_description());
         $log_lst->add($this->log_formula_link_order_overwrite());
+        $log_lst->add($this->log_value_overwrite());
         // a change of the shared standard word, which the column must never list as an overwrite;
         // the renamed-from value is unique to this change, so a test can detect it
         $log_lst->add($this->log_word_update());
