@@ -298,7 +298,7 @@ class word_tests
         // these tests cover the url_array -> api_type_list translation (api_type_list::from_url_array)
         // since reading $_GET inside a function is forbidden by the unit-testability rule
         $base = [api_types::HEADER];
-        $with = api_type_list::from_url_array([url_var::INCL_RELATED => '1'], $base);
+        $with = api_type_list::from_url_array([url_var::INCL_RELATED => url_var::TRUE], $base);
         $without = api_type_list::from_url_array([], $base);
         $test_name = 'api/word ?incl_related=1 enables api_types::INCL_RELATED';
         $t->assert_true($t->name . $test_name, $with->incl_related());

@@ -637,10 +637,10 @@ class view extends view_exe
      * the 'view' button that opens the given object rendered with this view
      * TODO Prio 3 add the back trace url so the user can return after opening the view
      *
-     * @param int $dbo_id the id of the word, triple or formula to open in this view
+     * @param int|string $dbo_id the id of the object to open in this view, a string for a value
      * @return string the html link of the open button
      */
-    function open_link(int $dbo_id): string
+    function open_link(int|string $dbo_id): string
     {
         global $mtr;
         $html = new html_base();
@@ -657,11 +657,11 @@ class view extends view_exe
      *      so the switch is again a one-click action as it was in the retired http_old/word_edit.php
      *      (see docs/llm/pending_next_launch.md)
      *
-     * @param int $dbo_id the id of the object whose default view should be set to this view
+     * @param int|string $dbo_id the id of the object whose default view should be set to this view
      * @param int $edit_msk_id the id of the edit view of the object e.g. word::VIEW_EDIT_ID
      * @return string the html link of the switch button
      */
-    function switch_link(int $dbo_id, int $edit_msk_id): string
+    function switch_link(int|string $dbo_id, int $edit_msk_id): string
     {
         global $mtr;
         $html = new html_base();

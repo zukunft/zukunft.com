@@ -1,8 +1,16 @@
 # pending - list of planned llm prompts with prio 1
 
-## user default view
+## value page tabs
 
-add a 'views', 'changes' and 'my' tabs to the value_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
+the value default view now has the 'value tab box' component, so the value page shows the views that can show a value (all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
+
+the 'my' tab of the value page lists the overwritten fields but has no undo icon: ui_preview::overwrite_confirm_link needs a db field to url var mapping and web/value/value.php has no db_fld_to_url() override yet, so $fld_var stays empty and the link is skipped; the same applies to the apply icon of the 'others' tab
+
+the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
+
+adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
+
+## user default view
 
 add the value overwrites to the 'all_user_overwrites' component used in the user_default view
 
@@ -156,8 +164,6 @@ show the missing db fields in the triple default view: the weight, the condition
 extend the verb default view, which today only shows the verb name and the related triples, with the missing db fields: the description, the plural (name_plural), the reverse (name_reverse), the plural reverse (name_plural_reverse), the name used in formulas (formula_name) and the usage
 
 ### values
-
-add change log to value default view
 
 show the missing db fields in the value default view: the source of the value, the timestamp of the last update and the share and protection status
 

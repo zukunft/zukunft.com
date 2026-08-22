@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1232 of 5598 public functions have at least 2 unit test calls; the 4366 functions below do not
+1232 of 5611 public functions have at least 2 unit test calls; the 4379 functions below do not
 
 ## main backend
 
@@ -909,7 +909,7 @@ so same-named functions of several classes share their test calls
     \-- load_by_status - 0 unit test calls
     \-- load_by_type - 0 unit test calls
     \-- load_sql_by_status - 0 unit test calls
-    \-- load_sql_by_type - 0 unit test calls
+    \-- load_sql_by_type - 1 unit test calls
 \-- job_runner
     \-- run - 0 unit test calls
     \-- run_job - 0 unit test calls
@@ -1570,6 +1570,7 @@ so same-named functions of several classes share their test calls
     \-- is_time_value - 0 unit test calls
     \-- is_value_obj - 0 unit test calls
     \-- load - 0 unit test calls
+    \-- load_changes_related - 0 unit test calls
     \-- load_objects - 0 unit test calls
     \-- load_owner - 0 unit test calls
     \-- load_sql_fields - 0 unit test calls
@@ -1597,6 +1598,7 @@ so same-named functions of several classes share their test calls
     \-- no_non_id_diff - 0 unit test calls
     \-- not_changed - 0 unit test calls
     \-- not_used - 0 unit test calls
+    \-- other_overwrites_api_array - 0 unit test calls
     \-- owner - 0 unit test calls
     \-- owner_id - 0 unit test calls
     \-- protection_type_code_id - 0 unit test calls
@@ -1630,6 +1632,7 @@ so same-named functions of several classes share their test calls
     \-- take_ownership - 0 unit test calls
     \-- type_name - 0 unit test calls
     \-- used_by_someone_else - 0 unit test calls
+    \-- user_overwrites_api_array - 0 unit test calls
     \-- usr_cfg_cleanup - 0 unit test calls
     \-- value_type - 0 unit test calls
 \-- sandbox_named
@@ -1672,6 +1675,13 @@ so same-named functions of several classes share their test calls
 \-- sandbox_predicated_link
     \-- is_link_type_obj - 0 unit test calls
     \-- predicate_name - 0 unit test calls
+\-- sandbox_related
+    \-- changes_array - 0 unit test calls
+    \-- load_changes - 0 unit test calls
+    \-- other_overwrites - 0 unit test calls
+    \-- overwrites_array - 0 unit test calls
+    \-- user_overwrites - 0 unit test calls
+    \-- views_array - 0 unit test calls
 \-- sandbox_typed
     \-- delta - 0 unit test calls
     \-- fill_api_obj - 0 unit test calls
@@ -2655,6 +2665,7 @@ so same-named functions of several classes share their test calls
 \-- value
     \-- delta - 0 unit test calls
     \-- get_value - 0 unit test calls
+    \-- load_views_related - 0 unit test calls
     \-- set_value - 0 unit test calls
     \-- sql_field_type - 0 unit test calls
 \-- value_base
@@ -2855,11 +2866,13 @@ so same-named functions of several classes share their test calls
     \-- import_obj - 0 unit test calls
     \-- load_by_component_id - 0 unit test calls
     \-- load_by_pattern - 0 unit test calls
+    \-- load_by_type - 0 unit test calls
     \-- load_names - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_by_component_id - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_pattern - 0 unit test calls
+    \-- load_sql_by_type - 1 unit test calls
     \-- load_sql_names - 0 unit test calls
     \-- set_user - 0 unit test calls
 \-- view_relation
@@ -3012,7 +3025,7 @@ so same-named functions of several classes share their test calls
     \-- load_names - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
-    \-- load_sql_by_type - 0 unit test calls
+    \-- load_sql_by_type - 1 unit test calls
     \-- load_sql_like - 0 unit test calls
     \-- load_sql_linked_words - 0 unit test calls
     \-- load_sql_names - 0 unit test calls
@@ -4539,6 +4552,7 @@ so same-named functions of several classes share their test calls
     \-- is_id_set - 0 unit test calls
     \-- links_and_measure - 0 unit test calls
     \-- load_by_id - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- match_all - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_tip - 1 unit test calls

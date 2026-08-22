@@ -634,6 +634,26 @@ class test_log
     }
 
     /**
+     * the changes of a value as change_log_list::load creates them: a loaded list holds plain
+     * change entries for every table, whereas the change_values_* classes are the writers of
+     * the value tables and are siblings of change, not children
+     *
+     * @return change_log_list the changes of the pi value shown by the changes tab of the value page
+     */
+    function log_list_value(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->new_value = values::PI_SHORT;
+        $chg->row_id = values::PI_ID;
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
+    }
+
+    /**
      * @return change log entry created by setting the order number of the filled formula link
      */
     function log_formula_link_order(): change
@@ -909,11 +929,14 @@ class test_log
     function log_value_prime(): change_values_prime
     {
         $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_grp = new test_groups($this->env);
         $chg = new change_values_prime($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD, $msg);
-        $chg->set_table(change_tables::WORD, $msg);
-        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->group_id = $t_grp->group_prime_3()->id();
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
@@ -925,11 +948,14 @@ class test_log
     function log_value_big(): change_values_big
     {
         $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_grp = new test_groups($this->env);
         $chg = new change_values_big($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD, $msg);
-        $chg->set_table(change_tables::WORD, $msg);
-        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->group_id = $t_grp->group_17_plus()->id();
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;

@@ -165,10 +165,6 @@ class formula extends sandbox_code_id
     // the term links of the "expression_latex_link" component (web has no direct db access)
     public ?term_list $trm_lst = null;
 
-    // the views suggested for this formula; filled from the INCL_RELATED api message and
-    // shown by the views tab of the "view tab box" component
-    public ?view_list $view_lst = null;
-
 
     /*
      * construct and map
@@ -340,18 +336,6 @@ class formula extends sandbox_code_id
             }
         } else {
             $this->trm_lst = null;
-        }
-        if (array_key_exists(json_fields::VIEWS, $json_array)) {
-            $value = $json_array[json_fields::VIEWS];
-            if (is_array($value)) {
-                $lst = new view_list();
-                $lst->api_mapper($value);
-                $this->view_lst = $lst;
-            } else {
-                $this->view_lst = null;
-            }
-        } else {
-            $this->view_lst = null;
         }
         return $msg->is_ok();
     }
@@ -549,7 +533,7 @@ class formula extends sandbox_code_id
      */
     function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id);
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
     /**

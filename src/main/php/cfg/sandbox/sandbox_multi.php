@@ -92,6 +92,7 @@ include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_value.php';
 include_once paths::MODEL_LOG . 'change_values_big.php';
 include_once paths::MODEL_LOG . 'change_values_time_big.php';
@@ -111,6 +112,7 @@ include_once paths::MODEL_LOG . 'changes_norm.php';
 //include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
@@ -168,6 +170,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
@@ -303,6 +306,9 @@ class sandbox_multi extends db_object_multi_user
      * or the formula type to link special behavior to special formulas like "this" or "next"
      */
     public ?int $type_id = null;
+
+    // the recent changes for the changes tab, filled by load_changes_related()
+    public ?change_log_list $changes_related = null;
 
 
     /*
@@ -516,6 +522,69 @@ class sandbox_multi extends db_object_multi_user
         }
 
         return $vars;
+    }
+
+    /**
+     * the changes of this object for the changes tab of the object page
+     * @param api_type_list $typ_lst the test mode keeps the list set by the caller instead of loading
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the change entries of the api json array
+     */
+    protected function api_changes_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        return new sandbox_related()->changes_array($this, $typ_lst, $msg, $usr);
+    }
+
+    /**
+     * fill changes_related for api_changes_array()
+     * @param user_message $msg to collect any problem while loading the changes
+     * @return void
+     */
+    function load_changes_related(user_message $msg): void
+    {
+        new sandbox_related()->load_changes($this, $msg);
+    }
+
+    /**
+     * the user sandbox overwrites of this object for the 'my' and 'others' tab
+     * @param api_type_list $typ_lst the test mode reads no overlay rows
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the overwrite entries of the api json array
+     */
+    protected function api_overwrites_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        return new sandbox_related()->overwrites_array($this, $typ_lst, $msg, $usr);
+    }
+
+    /**
+     * the fields that the user of this object has overwritten in the user sandbox (overlay)
+     * table e.g. user_values, each with the user value and the value of the standard object;
+     * used by the 'my' tab of the object page (see the web ui_preview::user_overwrites_table)
+     *
+     * @param user_message $msg to collect the error messages for the calling user
+     * @return array one entry per overwritten field with the db field name, the user value
+     *               and the standard value
+     */
+    function user_overwrites_api_array(user_message $msg): array
+    {
+        return new sandbox_related()->user_overwrites($this, $msg);
+    }
+
+    /**
+     * the fields that users other than the user of this object have overwritten in the user
+     * sandbox (overlay) table e.g. user_values, each with the name of the overwriting user, the
+     * user value and the value of the standard object; overwrites that the other user does not
+     * share (the personal and private share types) are never included; used by the 'others'
+     * tab of the object page (see the web ui_preview::other_overwrites_table)
+     *
+     * @param user_message $msg to collect the error messages for the calling user
+     * @return array one entry per overwritten field and user, sorted by user name and field
+     */
+    function other_overwrites_api_array(user_message $msg): array
+    {
+        return new sandbox_related()->other_overwrites($this, $msg);
     }
 
 
@@ -1639,21 +1708,35 @@ class sandbox_multi extends db_object_multi_user
      */
     function load_sql_of_users_that_changed(sql_creator $sc): sql_par
     {
-        $lib = new library();
+        // a value or result is stored in one table per id field count and value type,
+        // so both select the user sandbox table e.g. user_values_prime
+        $sc_par_lst = new sql_type_list([$this->table_type(), $this->value_type()]);
 
-        $qp = new sql_par($this::class);
+        // a prime value has one id field per phrase, whereas every group is selected by its
+        // group id, so the id fields decide the query name, the select and the where condition
+        $id_flds = $this->id_field();
+        $id_ext = is_array($id_flds) ? $this->table_extension() : '';
+
+        // the query name ends with 'user_list' like the sandbox query of the same name, so the
+        // user table is added to the parameters only after the name has been created
+        $qp = new sql_par($this::class, $sc_par_lst, '', $id_ext);
         $qp->name .= 'user_list';
+        $sc_par_lst->add(sql_type::USER);
 
-        $class = $lib->class_to_name($this::class);
-        $sc->set_class($class, new sql_type_list([sql_type::USER]));
+        $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
+        $sc->set_id_field($id_flds);
         $sc->set_join_fields(
             array_merge(array(user_db::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
             user::class,
             user_db::FLD_ID,
             user_db::FLD_ID);
-        $sc->add_where($this->id_field(), $this->id());
+        if (is_array($id_flds)) {
+            $this->load_sql_where_id($qp, $sc, true);
+        } else {
+            $sc->add_where($id_flds, $this->id());
+        }
         $sc->add_where(fields::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
 
         $qp->sql = $sc->sql();

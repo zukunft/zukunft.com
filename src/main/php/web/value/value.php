@@ -287,6 +287,23 @@ class value extends sandbox_value
         return parent::load_by_id($id, $msg, $data, $usr_id);
     }
 
+    /**
+     * load the value by id AND ask the backend to include the views that can show this value,
+     * the change log and the user overwrites, which the tabs of the value page show
+     *
+     * the api handler sets api_types::INCL_RELATED and value::api_json_array() emits the
+     * views, changes and overwrites that the frontend api_mapper picks up into view_lst,
+     * chg_log, user_overwrites and other_overwrites
+     *
+     * @param int|string $id the value id to load
+     * @param int $usr_id the id of the session user to load the value for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
 
     /*
      * select

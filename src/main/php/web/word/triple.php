@@ -173,9 +173,6 @@ class triple extends sandbox_code_id
     // shown by the "ref list word" component
     public ?ref_list $ref_lst = null;
 
-    // the views suggested for this triple; filled from the INCL_RELATED api message
-    public ?view_list $view_lst = null;
-
 
     /*
      * construct and map
@@ -328,7 +325,7 @@ class triple extends sandbox_code_id
      */
     function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id);
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
     /**
@@ -456,18 +453,6 @@ class triple extends sandbox_code_id
             }
         } else {
             $this->ref_lst = null;
-        }
-        if (array_key_exists(json_fields::VIEWS, $json_array)) {
-            $view = $json_array[json_fields::VIEWS];
-            if (is_array($view)) {
-                $lst = new view_list();
-                $lst->api_mapper($view);
-                $this->view_lst = $lst;
-            } else {
-                $this->view_lst = null;
-            }
-        } else {
-            $this->view_lst = null;
         }
         return $msg->is_ok();
     }

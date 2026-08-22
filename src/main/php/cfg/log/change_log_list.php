@@ -50,6 +50,7 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -92,6 +93,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -270,12 +272,12 @@ class change_log_list extends list_db_read
 
     /**
      * load the latest changes of one object
-     * @param sandbox $sbx e.g. the word with id set
+     * @param sandbox|sandbox_multi $sbx e.g. the word with id set or the value with the group id set
      * @param user $usr who has requested to see the changed
      * @param user_message $msg to collect any problem while loading the changes
      * @return bool true if at least one change found
      */
-    function load_obj_last(sandbox $sbx, user $usr, user_message $msg): bool
+    function load_obj_last(sandbox|sandbox_multi $sbx, user $usr, user_message $msg): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();

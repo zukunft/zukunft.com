@@ -101,6 +101,7 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -157,6 +158,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -592,12 +594,8 @@ class word extends sandbox_code_id
                     if ($this->views_related == null and !$typ_lst->test_mode()) {
                         $this->load_views_related($msg);
                     }
-                    if ($this->views_related != null and !$this->views_related->is_empty()) {
-                        // drop the related views the requester may not read (idor)
-                        $this->views_related->filter_readable_by($usr);
-                        $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
-                            [], $msg, $usr);
-                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_array($this->views_related, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }

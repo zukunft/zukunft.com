@@ -104,6 +104,7 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -512,15 +513,7 @@ class sandbox extends db_object_seq_id_user
      */
     protected function api_changes_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
     {
-        $vars = [];
-        if ($this->changes_related == null and !$typ_lst->test_mode()) {
-            $this->load_changes_related($msg);
-        }
-        if ($this->changes_related != null and !$this->changes_related->is_empty()) {
-            $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
-                new api_type_list(), $msg, $usr);
-        }
-        return $vars;
+        return new sandbox_related()->changes_array($this, $typ_lst, $msg, $usr);
     }
 
     /**
@@ -530,9 +523,7 @@ class sandbox extends db_object_seq_id_user
      */
     function load_changes_related(user_message $msg): void
     {
-        $chg_lst = new change_log_list();
-        $chg_lst->load_obj_last($this, $this->get_user(), $msg);
-        $this->changes_related = $chg_lst;
+        new sandbox_related()->load_changes($this, $msg);
     }
 
     /**
@@ -544,20 +535,7 @@ class sandbox extends db_object_seq_id_user
      */
     protected function api_overwrites_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
     {
-        $vars = [];
-        if (!$typ_lst->test_mode()) {
-            $ovr_msg = new user_message($usr); // a buffer for the api user, merged back below
-            $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
-            if ($usr_ovr != []) {
-                $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
-            }
-            $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
-            if ($oth_ovr != []) {
-                $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
-            }
-            $msg->merge($ovr_msg);
-        }
-        return $vars;
+        return new sandbox_related()->overwrites_array($this, $typ_lst, $msg, $usr);
     }
 
     /**
@@ -571,13 +549,7 @@ class sandbox extends db_object_seq_id_user
      */
     function user_overwrites_api_array(user_message $msg): array
     {
-        $result = [];
-        if ($this->has_usr_cfg()) {
-            $std = clone $this;
-            $std->load_standard($this->id(), $msg);
-            $result = $this->overwrite_rows($std, $msg);
-        }
-        return $result;
+        return new sandbox_related()->user_overwrites($this, $msg);
     }
 
     /**
@@ -592,64 +564,7 @@ class sandbox extends db_object_seq_id_user
      */
     function other_overwrites_api_array(user_message $msg): array
     {
-        $result = [];
-        $std = null;
-        // the user list of changed_by() stays null if no other user has changed the object
-        foreach ($this->changed_by($msg)->lst() ?? [] as $other) {
-            if ($other->id() != $this->get_user()->id()) {
-                $other_obj = clone $this;
-                $other_obj->set_user($other);
-                $other_obj->load_by_id($this->id(), $msg);
-                // a null share id is the default public share (the default of a nullable field is
-                // resolved at the point of use), so only a set share type can restrict the listing
-                $shr = share_type_shared::PUBLIC;
-                if ($other_obj->share_id() != null) {
-                    $shr = $other_obj->share_type_code_id();
-                }
-                if ($other_obj->has_usr_cfg()
-                    and $shr != share_type_shared::PERSONAL and $shr != share_type_shared::PRIVATE) {
-                    if ($std == null) {
-                        $std = clone $this;
-                        $std->load_standard($this->id(), $msg);
-                    }
-                    foreach ($other_obj->overwrite_rows($std, $msg) as $row) {
-                        $row[json_fields::USER_NAME] = $other->name();
-                        $result[] = $row;
-                    }
-                }
-            }
-        }
-        // sort by user name and field so the html order never depends on the db row order
-        usort($result, fn($a, $b) => [$a[json_fields::USER_NAME], $a[json_fields::FIELD]]
-            <=> [$b[json_fields::USER_NAME], $b[json_fields::FIELD]]);
-        return $result;
-    }
-
-    /**
-     * the overwrite rows of this object compared to the given standard object: one entry per
-     * field that differs with the db field name, the value of this object and the standard
-     * value; the shared row builder of the 'my' and the 'others' overwrite api arrays
-     *
-     * @param sandbox $std the standard object of this object as loaded via load_standard
-     * @param user_message $msg to collect the error messages for the calling user
-     * @return array one entry per overwritten field
-     */
-    private function overwrite_rows(sandbox $std, user_message $msg): array
-    {
-        $result = [];
-        $fvt_lst = $this->db_fields_changed($std, $msg);
-        foreach ($fvt_lst->names() as $name) {
-            // the object id and the changing user are keys, not field overwrites
-            if ($name != $this::FLD_ID and $name != user_db::FLD_ID) {
-                $fld = $fvt_lst->get($name, $msg);
-                $result[] = [
-                    json_fields::FIELD => $name,
-                    json_fields::USR_VALUE => $fld?->value,
-                    json_fields::STD_VALUE => $fld?->old,
-                ];
-            }
-        }
-        return $result;
+        return new sandbox_related()->other_overwrites($this, $msg);
     }
 
 

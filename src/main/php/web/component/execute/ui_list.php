@@ -711,25 +711,24 @@ class ui_list extends ui_base
     }
 
     /**
-     * the "Views" tab of the view tab box; only a word, triple and formula carry related views
-     * @param db_object $dbo the sandbox object that should be shown to the user
+     * the "Views" tab of the view tab box; the list stays empty for an object whose api message
+     * carries no related views, which drops the tab
+     * @param sandbox $dbo the sandbox object that should be shown to the user
      * @return string the html code of the view previews or an empty string if there is none
      */
-    private function view_previews(db_object $dbo): string
+    private function view_previews(sandbox $dbo): string
     {
         $result = '';
-        if ($dbo instanceof word or $dbo instanceof triple or $dbo instanceof formula) {
-            $html = new html_base();
-            foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
-                $preview = $html->div('view preview', view_styles::COL_SM_12);
-                // the switch button opens the edit view of the shown object, which differs
-                // per class, so the edit view id of the object is passed to the link builder
-                $buttons = $msk->open_link($dbo->id())
-                    . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID);
-                // escape the view name (div emits its body raw and the name is user input); the
-                // preview and buttons around it are already-built html (stored xss via view name)
-                $result .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
-            }
+        $html = new html_base();
+        foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
+            $preview = $html->div('view preview', view_styles::COL_SM_12);
+            // the switch button opens the edit view of the shown object, which differs
+            // per class, so the edit view id of the object is passed to the link builder
+            $buttons = $msk->open_link($dbo->id())
+                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID);
+            // escape the view name (div emits its body raw and the name is user input); the
+            // preview and buttons around it are already-built html (stored xss via view name)
+            $result .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
         }
         return $result;
     }

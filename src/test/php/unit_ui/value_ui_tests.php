@@ -40,19 +40,27 @@ include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -63,6 +71,9 @@ class value_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $mtr;
+        global $ui_sys;
+
         $html = new html_base();
         $t_val = new test_values($t);
         $t_wrd = new test_words($t);
@@ -161,6 +172,92 @@ class value_ui_tests
             html_base::TITLE_HTML . '="' . word_names::MIO_COM . '"');
         $test_name = '... and the symbol itself is still shown and linked';
         $t->assert_text_contains($test_name, $lam_dto, '>' . word_names::MIO_SHORT . '</a>');
+
+
+        $t->subheader($ts . 'view tab box');
+
+        // the value default page shows the views that can show a value, the change log and the
+        // user overwrites in the tab box (see the 'value tab box' of base_views.json)
+        $t_msk = new test_views($t);
+        $t_log = new test_log($t);
+        $t_usr = new test_users();
+        $list = new ui_list();
+        $val_related = $t_val->value($msg);
+        $val_related->views_related = $t_msk->view_list_word();
+        $val_related->changes_related = $t_log->log_list_value();
+        // test mode so the backend emits the two given lists without loading them from the database
+        $val_json = json_decode($val_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+
+        $test_name = 'the views of a value are sent to the frontend';
+        $t->assert_true($test_name, ($val_json[json_fields::VIEWS] ?? []) != []);
+        $test_name = 'the changes of a value are sent to the frontend';
+        $t->assert_true($test_name, ($val_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' rows are added here like on the word and the formula page
+        $val_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => value_fields::FLD_VALUE,
+                json_fields::USR_VALUE => (string)values::SAMPLE_INT,
+                json_fields::STD_VALUE => (string)values::PI_SHORT,
+            ],
+        ];
+        $val_tab = new value(json_encode($val_json));
+
+        $test_name = 'the views of a value reach the frontend value object';
+        $t->assert_true($test_name, $val_tab->view_lst != null and !$val_tab->view_lst->is_empty());
+        $test_name = 'the changes of a value reach the frontend value object';
+        $t->assert_true($test_name, $val_tab->chg_log != null and !$val_tab->chg_log->is_empty());
+
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        $log_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"';
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($val_tab, $msg_ui, true);
+
+        $test_name = 'the value page shows the views tab';
+        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... with the name of a view that can show the value';
+        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the switch button must open the edit view of the shown object, so on a value page the
+        // value edit view and never the word edit view (see view::switch_link)
+        $test_name = '... and a switch button that opens the value edit view';
+        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VALUE_EDIT_ID);
+
+        $test_name = 'the value page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the change that added the value';
+        $t->assert_text_contains($test_name, $tab_html, (string)values::PI_SHORT);
+
+        $test_name = 'the user with value overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = '... with the your and instead columns';
+        $t->assert_text_contains($test_name, $tab_html, $mtr->txt(msg_id::MY_TBL_YOUR));
+        $t->assert_text_contains($test_name, $tab_html, $mtr->txt(msg_id::MY_TBL_INSTEAD));
+        $test_name = '... and the translated name of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, $mtr->text_db_field(value_fields::FLD_VALUE));
+
+        // a value loaded without the related data has neither a views nor a my tab
+        $val_plain = new value($t_val->value($msg)->api_json());
+        $plain_html = $list->view_tab_box($val_plain, $msg_ui, true);
+        $test_name = 'a value without views shows no views tab';
+        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
+        $test_name = 'a value without overwrites shows no my tab';
+        $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
+
+        $test_name = 'without a logged in user the value page shows no my tab';
+        unset($ui_sys->usr);
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($val_tab, $msg_ui, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
 
 
         // TODO review

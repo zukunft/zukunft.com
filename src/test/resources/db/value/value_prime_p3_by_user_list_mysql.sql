@@ -1,0 +1,23 @@
+PREPARE value_prime_p3_by_user_list FROM
+   'SELECT     s.phrase_id_1,
+               s.phrase_id_2,
+               s.phrase_id_3,
+               s.phrase_id_4,
+               l.user_id,
+               l.user_name,
+               l.code_id,
+               l.ip_address,
+               l.email,
+               l.first_name,
+               l.last_name,
+               l.term_id,
+               l.view_id,
+               l.source_id,
+               l.user_profile_id
+          FROM user_values_prime s
+     LEFT JOIN users l ON s.user_id = l.user_id
+         WHERE s.phrase_id_1 = ?
+           AND s.phrase_id_2 = ?
+           AND s.phrase_id_3 = ?
+           AND s.phrase_id_4 = ?
+           AND ( s.excluded <> ? OR s.excluded IS NULL )';

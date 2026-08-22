@@ -238,6 +238,10 @@ class value_tests
         $t->assert_sql_user_changes($sc, $val_txt_4);
         $t->assert_sql_changer($sc, $val_3);
         $t->assert_sql_changer($sc, $val_17);
+        // a prime value has one id field per phrase, so the queries that select it by its key
+        // must use every id field and the table of that id field count (see load_sql_where_id)
+        $t->assert_sql_changing_users($sc, $val_3);
+        $t->assert_sql_changing_users($sc, $val_17);
         $t->assert_sql_median_user($sc, $val_3);
         $t->assert_sql_median_user($sc, $val_16);
         $t->assert_sql_standard($sc, $val);

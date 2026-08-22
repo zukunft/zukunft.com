@@ -94,6 +94,9 @@ class sandbox extends db_object
     // the recent changes from the api message, rendered by the 'changes' tab
     public ?change_log_list $chg_log = null;
 
+    // the views that can show this object from the api message, rendered by the 'views' tab
+    public ?view_list $view_lst = null;
+
     // the user that has created the standard object
     protected ?user $owner = null;
 
@@ -158,6 +161,12 @@ class sandbox extends db_object
             $this->chg_log->api_mapper($json_array[json_fields::CHANGES]);
         } else {
             $this->chg_log = null;
+        }
+        if (is_array($json_array[json_fields::VIEWS] ?? null)) {
+            $this->view_lst = new view_list();
+            $this->view_lst->api_mapper($json_array[json_fields::VIEWS]);
+        } else {
+            $this->view_lst = null;
         }
         return $msg->is_ok();
     }

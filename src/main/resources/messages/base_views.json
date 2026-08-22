@@ -475,6 +475,12 @@
       "description": "tab box with the change log and the user overwrites of this link",
       "type": "view_tab_box",
       "code_id": "view_tab_box_link"
+    },
+    {
+      "name": "value tab box",
+      "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_value"
     }
   ],
   "views": [
@@ -759,6 +765,10 @@
         {
           "position": "2",
           "name": "main value"
+        },
+        {
+          "position": "3",
+          "name": "value tab box"
         }
       ]
     },
