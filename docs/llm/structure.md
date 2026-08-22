@@ -436,6 +436,48 @@ entry, and give every `match()` a default arm that logs the unexpected case.
 Failing loudly is right — but through the logging and `$msg` channels above,
 never by letting the language kill the process.
 
+### A `Throwable` never travels
+
+The target is that **no `Throwable` is part of the program flow**: an exception
+is not a return value, not a control-flow tool and never a way to hand a problem
+to the caller. A function neither throws to signal a result nor declares
+`@throws` so that somebody further out deals with it — it reports through
+`user_message` and returns.
+
+That means an exception is caught **as early as possible**: the `try` wraps the
+single statement that can raise one (the `new DateTime($txt)`, the json decode,
+the third-party call), not a whole block and not a wrapper three layers up. The
+handler then does two things and the exception is gone:
+
+1. turn it into a **translatable message** — a `msg_id` case with en/de
+   translations added to `$msg`, never the raw exception text, which is english,
+   internal and often contains a file path (see `docs/llm/state-and-messages.md`);
+2. if the cause is **unexpected** — something the user cannot have caused and
+   cannot fix — call `log_err_msg($txt, $msg)`, which writes the error to the
+   system log for the admin *and* puts the generic internal notice with the log
+   link on `$msg`, so all three duties above are done in one call.
+
+A cause the user *can* fix (a malformed date they typed, a value out of range)
+needs no `log_err_msg`: it is a normal user message with the specific `msg_id`
+that says what to do, because an entry in the admin log that nobody has to act
+on only hides the real errors.
+
+- **Right** — the `try` around the single `new DateTime($time_str)` in
+  `change_log::set_time_str`: the one statement that can raise is wrapped, so
+  the exception never leaves the setter. What is still missing there is the
+  second half of the rule — the `catch` only calls `log_err(...)`, so the user
+  learns nothing; with a `user_message $msg` parameter it becomes a
+  `log_err_msg()` (or a specific `msg_id` if the string came from user input).
+- **Wrong** — letting the `DateTime` constructor throw out of the mapper so that
+  the api entry point (or nothing at all) catches it: the response ends
+  mid-json, the user gets a white page and the reason is only in the web server
+  log, which the pod admin cannot read.
+
+The exception handlers registered at the entry points (`api/api_const.php`,
+`test/*`) are the **last** safety net for the case this rule was missed, not the
+place where exceptions are meant to be handled. A `Throwable` arriving there is
+a defect in the layer that let it travel.
+
 A function body should fit on **one screen page** (~50 lines) whenever possible —
 short enough that a reader sees the whole control flow without scrolling. When a
 function grows past that, extract a private helper named after *what* the block

@@ -116,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -876,7 +877,10 @@ class change_log_list extends list_db_read
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);
                     $chg->row_mapper($db_row, $msg, '', $usr);
-                    $this->add_obj($chg);
+                    // allow duplicates, because the change id is unique per change table only:
+                    // a list that merges the changes of the named objects with the changes of
+                    // the value tables (see load_by_user) always has repeated ids
+                    $this->add_obj($chg, true);
                     $result = true;
                 }
             }
