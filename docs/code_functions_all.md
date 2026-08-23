@@ -4415,7 +4415,8 @@
             hp
     \-- add - section for function add not yet defined that it should be load in /log/change_log_link_list.php
 \-- change_log_list
-    \-- load_row_names - section for function load_row_names is expected to be load in /log/change_log_list.php
+    \-- load_changed_objects - section for function load_changed_objects is expected to be load in /log/change_log_list.
+            php
     \-- load_sql_obj_fld - section for function load_sql_obj_fld is expected to be load sql in /log/change_log_list.php
     \-- load_sql_obj_last - section for function load_sql_obj_last is expected to be load sql in /log/change_log_list.ph
             p
@@ -10977,9 +10978,9 @@
         \-- change_link - display the last change related to one object (word, formula, value, verb, ...)
     \-- add
         \-- change_link - similar to add_link, but additional fix the references as a text for fast displaying
-    \-- load_row_names
-        \-- change_log_list - set the name of the changed object on each change of this list,
-                 e.g. the word name of a word
+    \-- load_changed_objects
+        \-- change_log_list - set on each change of this list what the change log itself does not contain: the name of t
+                he
     \-- views_array
         \-- sandbox_related - the views that can show the object for the views tab of the object page; the list is
     \-- changes_array
@@ -13238,6 +13239,8 @@
             ox/db_object.php
     \-- field_change_confirm_url - section for function field_change_confirm_url not yet defined that it should be const
             ruct and map in /sandbox/db_object.php
+    \-- default_page_url - section for function default_page_url not yet defined that it should be construct and map in 
+            /sandbox/db_object.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/db_object.php
     \-- id - section for function id not yet defined that it should be set and get in /sandbox/db_object.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /sandbox/db_object.php
@@ -13285,40 +13288,44 @@
             erwritten by the child objects in /sandbox/db_object.php
     \-- order error - order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section construct and map has difference at url_mapper should be before __construct,
              db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
-            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,
-            field_change_confirm_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
+            order of section construct and map has difference at url_mapper should be before __construct,
+             db_fld_to_url should be before __construct of __construct,url_mapper,pre_value,input_valid,
+            url_is_add_action,to_url_array,sandbox_fld_order,db_fld_to_url,field_change_confirm_url,
+            default_page_url does not match db_fld_to_url,url_mapper,api_mapper,__construct,reset,
             order of section set and get has difference at api_mapper should be before set_from_json,
              id should be before set_from_json of set_from_json,api_mapper,set_id,id does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,

@@ -174,24 +174,28 @@ class change_log_list extends list_db_read
     }
 
     /**
-     * set the name of the changed object on each change of this list, e.g. the word name of a word
-     * change, so that a change log listing the changes of more than one object can name the changed
-     * object (see web/log/change_log_named::object_prefix); the names are loaded with one query per
-     * object type, because a change log page can contain many changes
+     * set on each change of this list what the change log itself does not contain: the name of the
+     * changed object, e.g. the word name of a word change, and the value of the shared standard
+     * object of the changed field, so that a change log listing the changes of more than one object
+     * can name the object (see web/log/change_log_named::object_prefix) and can show the user value
+     * beside the common value like the 'my' tab of an object page
      *
-     * called by the api controller only for a change log that spans objects (the changes of one
-     * user), because an object page already names the object it shows; an object type that is not
-     * (yet) included here keeps an empty name and the frontend then shows the change without the
-     * object, so a missing type never hides a change
+     * the changed objects are loaded with one query per object type, because a change log page can
+     * contain many changes; the standard object however has to be read per changed object, so this
+     * is called by the api controller only for the row-limited change log that spans the objects of
+     * one user, because an object page already names the object it shows and its 'my' tab reads the
+     * standard object anyway; an object type that is not (yet) in name_lists keeps an empty name and
+     * the frontend then shows the change without the object, so a missing type never hides a change
      *
      * @param user $usr the user who has requested the change log, so that the names are the ones
      *                  this user may see
      * @param user_message $msg to collect the problems of loading the changed objects
      * @return void
      */
-    function load_row_names(user $usr, user_message $msg): void
+    function load_changed_objects(user $usr, user_message $msg): void
     {
         $names = [];
+        $std_values = [];
         $ids = $this->row_ids_by_table();
         foreach ($this->name_lists($usr) as $table => $obj_lst) {
             $row_ids = $ids[$table] ?? [];
@@ -200,11 +204,40 @@ class change_log_list extends list_db_read
                 // a value has no name of its own, so its list loads the phrases of the group
                 $obj_lst->load_names_related($msg);
                 $names[$table] = $this->names_by_id($obj_lst->lst());
+                $std_values[$table] = $this->std_values_by_id($obj_lst->lst(), $msg);
             }
         }
         foreach ($this->lst() as $chg) {
-            $chg->row_name = $names[$this->std_table($chg->table())][$chg->row_id] ?? null;
+            $table = $this->std_table($chg->table());
+            $chg->row_name = $names[$table][$chg->row_id] ?? null;
+            $chg->std_value = $std_values[$table][$chg->row_id][$chg->field()] ?? null;
         }
+    }
+
+    /**
+     * the value of the shared standard object per changed field and object id, for the objects that
+     * the user still overwrites; a field that the user has meanwhile reset has no entry, because
+     * there is nothing left to compare (the same diff as the 'my' tab, see
+     * sandbox_related::user_overwrites)
+     *
+     * @param array $lst the loaded objects of one type, each as the user of the change log sees it
+     * @param user_message $msg to collect the problems of loading the standard objects
+     * @return array the standard value by the db field name, by the object id
+     */
+    private function std_values_by_id(array $lst, user_message $msg): array
+    {
+        $result = [];
+        foreach ($lst as $sbx) {
+            if ($sbx->has_usr_cfg()) {
+                $std = clone $sbx;
+                $std->load_standard($sbx->id(), $msg);
+                $fvt_lst = $sbx->db_fields_changed($std, $msg);
+                foreach ($fvt_lst->names() as $name) {
+                    $result[$sbx->id()][$name] = $fvt_lst->get($name, $msg)?->old;
+                }
+            }
+        }
+        return $result;
     }
 
     /**

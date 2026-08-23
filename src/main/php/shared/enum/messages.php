@@ -1634,6 +1634,9 @@ enum messages: string
     // shown when a user sandbox change adds an empty field, i.e. removes the user overwrite for a
     // field, so 'added user view id ""' becomes 'remove user overwrite for view'
     case LOG_REMOVE_USER_OVERWRITE = 'remove user overwrite for';
+    // shown after the user value of an overwrite to name the value of the shared standard object,
+    // e.g. 'added user description "my text" instead of "the common text"'
+    case LOG_INSTEAD_OF = 'instead of';
     // the change preview table column headers and the impact label
     case CHANGE_TBL_FIELD = 'change_tbl_field';
     case CHANGE_TBL_FROM = 'change_tbl_from';

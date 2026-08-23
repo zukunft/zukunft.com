@@ -4,10 +4,6 @@
 
 the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
 
-link the changed object in the 'all_user_overwrites' column to its default page: change_log_named::tr_when_who_what puts the object name into the what cell as plain text (see change_log_named::object_prefix), so the user page names the changed object but the user cannot click through to it; the old page linked the first cell to the object and the user value to the edit view (value_edit.php, view_edit.php, component_edit.php, source_edit.php)
-
-show the standard value beside the user value in the 'all_user_overwrites' column: the old page had the header "Your name vs. | common name" and showed both values side by side, whereas the what column shows only the change text; the your / instead comparison exists today only in the 'my' tab of the object page
-
 add the overwrites of the other users to the user page: the old page had an 'other user' column per row (a link to user_triple.php, user_value.php, user_view.php, ...) that showed what other users have set for the same object; today this is only the 'others' tab of each object page
 
 group the 'all_user_overwrites' rows by object type or add an object type column: the old page had one table per object type with its own header, so the user could see at a glance how many words resp. values were overwritten; today all types are merged into one when / who / what list that does not name the type

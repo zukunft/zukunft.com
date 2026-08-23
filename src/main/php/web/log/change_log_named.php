@@ -146,10 +146,14 @@ class change_log_named extends change_log
     public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
     public ?string $new_value = null;      // the field value after the user change
     public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
-    public ?string $std_value = null;  // the standard field value for all users that does not have changed it
-    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+    // the value resp. the reference id of the shared standard object, which the change log itself
+    // does not contain and which the backend adds only for a change log that spans the objects of
+    // one user (see cfg/log/change_log_list::load_changed_objects), so that the all user overwrites
+    // column can show the user value beside the common value
+    public ?string $std_value = null;
+    public ?int $std_id = null;
     // the name of the changed object e.g. the word name of a word change, set by the backend from
-    // the row id (see cfg/log/change_log_list::load_row_names) and null if the backend has not
+    // the row id (see cfg/log/change_log_list::load_changed_objects) and null if the backend has not
     // resolved a name for this change; used to name the object in a change log that lists the
     // changes of more than one object e.g. the all user overwrites column of the user page
     public ?string $row_name = null;
@@ -187,6 +191,16 @@ class change_log_named extends change_log
             $this->new_id = $json_array[json_fields::NEW_ID];
         } else {
             $this->new_id = null;
+        }
+        if (array_key_exists(json_fields::STD_VALUE, $json_array)) {
+            $this->std_value = $json_array[json_fields::STD_VALUE];
+        } else {
+            $this->std_value = null;
+        }
+        if (array_key_exists(json_fields::STD_ID, $json_array)) {
+            $this->std_id = $json_array[json_fields::STD_ID];
+        } else {
+            $this->std_id = null;
         }
         if (array_key_exists(json_fields::ROW_NAME, $json_array)) {
             $this->row_name = $json_array[json_fields::ROW_NAME];
@@ -556,7 +570,13 @@ class change_log_named extends change_log
         if ($max_chars > 0 and mb_strlen($what) > $max_chars) {
             $what = mb_substr($what, 0, $max_chars) . self::MORE_INDICATOR;
         }
-        return $html->esc($what);
+        $result = $html->esc($what);
+        // the link is added after the shortening, so that the char limit counts the visible chars
+        // and never the html of the link
+        if ($with_object) {
+            $result = $this->object_link($result);
+        }
+        return $result;
     }
 
     /**
@@ -593,7 +613,8 @@ class change_log_named extends change_log
                     // show the new value first because it is the more relevant one:
                     // 'changed description to "new" from "old"'
                     $result = $this->action_txt(msg_id::LOG_UPDATE) . ' ' . $fld . $mtr->txt(msg_id::LOG_TO)
-                        . ' "' . $new . '" ' . $mtr->txt(msg_id::SIDE_FROM) . ' "' . $old . '"';
+                        . ' "' . $new . '" ' . $mtr->txt(msg_id::SIDE_FROM) . ' "' . $old . '"'
+                        . $this->std_value_txt($new);
                 } else {
                     $result = $this->action_txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
                 }
@@ -602,7 +623,8 @@ class change_log_named extends change_log
                 // field, so instead of 'added user view id ""' show 'remove user overwrite for view'
                 $result = $this->user_overwrite_removal_txt();
             } else {
-                $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
+                $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"'
+                    . $this->std_value_txt($new);
             }
         }
         if ($with_object) {
@@ -623,11 +645,59 @@ class change_log_named extends change_log
      * @return string the name of the changed object and the separator,
      *                or '' if the backend has not sent a name for this change
      */
+    /**
+     * the value of the shared standard object shown after the user value of an overwrite, e.g.
+     * ' instead of "the common description"', so that the user page shows the user value beside
+     * the common value like the 'my' tab of an object page does in its two columns
+     *
+     * the standard value is empty for a change log of one object, because the backend adds it only
+     * for the change log that spans the objects of one user (see change_log_list::load_changed_objects)
+     *
+     * @param string $new the shown user value, to skip a standard value that says the same
+     * @return string the leading space and the standard value, or '' if there is nothing to compare
+     */
+    private function std_value_txt(string $new): string
+    {
+        global $mtr;
+        $result = '';
+        $std = $this->value_to_show($this->std_id, $this->std_value);
+        if ($std != '' and $std != $new) {
+            $result = ' ' . $mtr->txt(msg_id::LOG_INSTEAD_OF) . ' "' . $std . '"';
+        }
+        return $result;
+    }
+
     private function object_prefix(): string
     {
         $result = '';
         if ($this->row_name != null and $this->row_name != '') {
             $result = $this->row_name . self::OBJECT_SEPARATOR;
+        }
+        return $result;
+    }
+
+    /**
+     * replace the name of the changed object at the start of the what text with a link to the
+     * default page of the object, so that the user can open the object that has been changed
+     * from the all user overwrites column instead of having to search it by name
+     *
+     * @param string $esc_what the escaped and shortened what text starting with the object name
+     * @return string the what text with the object name as a link, or unchanged if no link can
+     *                be built for this change
+     */
+    private function object_link(string $esc_what): string
+    {
+        $html = new html_base();
+        $result = $esc_what;
+        $prefix = $html->esc($this->object_prefix());
+        // link only if the whole name has survived the shortening of the what column, because a
+        // link on a cut name would look like the complete name of the object
+        if ($prefix != '' and str_starts_with($esc_what, $prefix)) {
+            $url = $this->changed_object()?->default_page_url() ?? '';
+            if ($url != '') {
+                $result = $html->ref($url, $this->row_name)
+                    . self::OBJECT_SEPARATOR . substr($esc_what, strlen($prefix));
+            }
         }
         return $result;
     }

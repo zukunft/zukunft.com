@@ -89,8 +89,9 @@ if ($db_con->is_open()) {
             }
             $lst->load_by_user($chg_usr, $msg);
             // this change log spans the objects of the user, so unlike the change log of one object
-            // it must name the changed object; the names are the ones the requesting user may see
-            $lst->load_row_names($usr, $msg);
+            // it must name the changed object and show the value of the shared standard object;
+            // the names are the ones the requesting user may see
+            $lst->load_changed_objects($usr, $msg);
             $result = $lst->api_json([], $msg);
         } elseif ($class != '') {
             $lib = new library();

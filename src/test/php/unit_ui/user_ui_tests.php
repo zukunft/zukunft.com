@@ -165,39 +165,64 @@ class user_ui_tests
         // the column lists the changes of more than one object, so the change text alone does not
         // tell the user which object has been changed and the what column names the object first;
         // the name comes first, so that it survives the shortening of the what column
+        // the name is a link to the default page of the object, so the name and the separator are
+        // not adjacent in the html but separated by the end of the link (see object_link)
+        $name_end = '>';
+        $link_end = '</a>' . change_log_named_ui::OBJECT_SEPARATOR;
         $test_name = 'the what column names the changed triple';
         $t->assert_text_contains($test_name, $all_html,
-            triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . triple_names::MATH_CONST . $link_end);
         $test_name = 'the what column names the changed word';
         $t->assert_text_contains($test_name, $all_html,
-            word_names::MATH . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . word_names::MATH . $link_end);
         $test_name = 'the what column names the changed formula';
         $t->assert_text_contains($test_name, $all_html,
-            formula_names::INCREASE . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . formula_names::INCREASE . $link_end);
         // a link has no name column, so its name is built from both linked objects; the formula
         // name is asserted separately, because it was dropped by the link name before
         $test_name = 'the what column names the changed formula link';
         $t->assert_text_contains($test_name, $all_html,
-            $t_frm->formula_link()->name() . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . $t_frm->formula_link()->name() . $link_end);
         $test_name = '... including the linked formula';
         $t->assert_text_contains($test_name, $all_html, formula_names::SCALE_TO_SEC);
         // a value has no name column either, so the what column names it by the group of phrases
         $test_name = 'the what column names the changed value';
         $t->assert_text_contains($test_name, $all_html,
-            $t_grp->group()->name() . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . $t_grp->group()->name() . $link_end);
         $test_name = 'the what column names the changed component';
         $t->assert_text_contains($test_name, $all_html,
-            components::MATRIX_NAME . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . components::MATRIX_NAME . $link_end);
         $test_name = 'the what column names the changed view';
         $t->assert_text_contains($test_name, $all_html,
-            views::START_NAME . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . views::START_NAME . $link_end);
         $test_name = 'the what column names the changed source';
         $t->assert_text_contains($test_name, $all_html,
-            sources::SIB . change_log_named_ui::OBJECT_SEPARATOR);
+            $name_end . sources::SIB . $link_end);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,
-            triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR . $mtr->txt(msg_id::LOG_ADD));
+            $name_end . triple_names::MATH_CONST . $link_end . $mtr->txt(msg_id::LOG_ADD));
+
+        // the name of the changed object links to the default page of the object, so that the user
+        // can open it from the user page instead of having to search it by name
+        $test_name = 'the name of the changed word links to the word default page';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::MASK . '=' . views::WORD_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID
+            . '"' . $name_end . word_names::MATH . $link_end);
+        $test_name = 'the name of the changed value links to the value default page';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;' . url_var::ID . '=' . values::PI_ID);
+
+        // like the two columns of the 'my' tab of an object page the column shows the user value
+        // beside the value of the shared standard object, so that the user sees what the overwrite
+        // changes (the standard value is added by change_log_list::load_changed_objects)
+        // esc() escapes with ENT_NOQUOTES, so the quotes around a value stay plain in the html
+        $test_name = 'the what column shows the standard value beside the user value';
+        $t->assert_text_contains($test_name, $all_html,
+            $mtr->txt(msg_id::LOG_INSTEAD_OF) . ' "' . components::WORD_COM . '"');
+        $test_name = 'a change without a standard value shows no comparison';
+        $t->assert_text_not_contains($test_name, $all_html,
+            test_log::VIEW_OVERWRITE_COM . '" ' . $mtr->txt(msg_id::LOG_INSTEAD_OF));
 
         // each row that can be undone gets an undo icon, so that the user can reset an overwrite
         // from the user page instead of having to open the 'my' tab of each object; the link is

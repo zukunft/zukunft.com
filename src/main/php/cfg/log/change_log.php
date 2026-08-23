@@ -245,7 +245,7 @@ class change_log extends db_object_seq_id_user
     protected ?int $field_id = null;       // database id for the field text
     public int|string|null $row_id = null; // the reference id of the row in the database table
     // the name of the changed object (the row id resolved e.g. to the word name), not read from the
-    // change log itself but set by change_log_list::load_row_names for a change log that spans
+    // change log itself but set by change_log_list::load_changed_objects for a change log that spans
     // objects, so that the frontend can name the changed object; null if not (yet) resolved
     public ?string $row_name = null;
 
@@ -704,7 +704,7 @@ class change_log extends db_object_seq_id_user
         $vars[json_fields::TABLE_ID] = $this->table_id;
         $vars[json_fields::FIELD_ID] = $this->field_id;
         $vars[json_fields::ROW_ID] = $this->row_id;
-        // only sent if the changed object has been named (see change_log_list::load_row_names), so
+        // only sent if the changed object has been named (see change_log_list::load_changed_objects), so
         // that a change log of one object does not repeat the object name in every entry
         if ($this->row_name != null) {
             $vars[json_fields::ROW_NAME] = $this->row_name;
