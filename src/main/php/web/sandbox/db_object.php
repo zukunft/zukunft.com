@@ -276,8 +276,12 @@ class db_object extends TextIdObject
     {
         $result = '';
         $fld_var = $this->db_fld_to_url()[$fld] ?? '';
+        // the id of a value is its group id, which is a text for a group of more than four phrases,
+        // so a text id is checked for an empty text and never compared with a number
+        $id = $this->id();
+        $id_set = is_string($id) ? $id != '' : $id > 0;
         // not every class has an edit view, so guard the const to avoid a fatal
-        if ($fld_var != '' and $this->id() > 0 and defined($this::class . '::VIEW_EDIT_ID')) {
+        if ($fld_var != '' and $id_set and defined($this::class . '::VIEW_EDIT_ID')) {
             // keep all entries of the current url except the entry (and the '8'-prefixed opening
             // value) of the field to change, which is replaced by the given values below
             $url_pars = $url_array;

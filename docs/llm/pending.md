@@ -4,10 +4,6 @@
 
 the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
 
-the undo icon of the 'all_user_overwrites' component is missing for a text, time or geo value: the column has an undo icon per row (change_log_named::undo_link) and every object type of change_log_named::CLASS_BY_TABLE has a db_fld_to_url(), but only the numeric value has a url var, so an overwrite of value_fields::FLD_VALUE_TEXT, _TIME or _GEO gets no icon; the ref overwrites have no icon either, because 'refs' is not in CLASS_BY_TABLE (see the missing ref entry of change_log_list::name_lists below)
-
-the undo icon of the 'all_user_overwrites' component resets the change and not the overwrite: the change log records the old and the new value of a change but not the value of the shared standard object, so the icon sets the field back to the value before this change (which for the first overwrite of a field is the standard value), whereas the undo icon of the 'my' tab of an object page knows the standard value and therefore always removes the overwrite
-
 link the changed object in the 'all_user_overwrites' column to its default page: change_log_named::tr_when_who_what puts the object name into the what cell as plain text (see change_log_named::object_prefix), so the user page names the changed object but the user cannot click through to it; the old page linked the first cell to the object and the user value to the edit view (value_edit.php, view_edit.php, component_edit.php, source_edit.php)
 
 show the standard value beside the user value in the 'all_user_overwrites' column: the old page had the header "Your name vs. | common name" and showed both values side by side, whereas the what column shows only the change text; the your / instead comparison exists today only in the 'my' tab of the object page
@@ -17,8 +13,6 @@ add the overwrites of the other users to the user page: the old page had an 'oth
 group the 'all_user_overwrites' rows by object type or add an object type column: the old page had one table per object type with its own header, so the user could see at a glance how many words resp. values were overwritten; today all types are merged into one when / who / what list that does not name the type
 
 add the ref overwrites to the 'all_user_overwrites' component: change_tables::REF_USR is in change_tables::USER_TABLES, so a ref overwrite is listed today, but change_log_list::name_lists has no ref entry, so the what column cannot name the changed ref (the old page had no ref table either, so this is a gap of both)
-
-three things of the old page are deliberately not restored: the display functions wrote to the database while rendering (del_usr_cfg resp. del of a source when the user record equals the standard record), the tables had no row limit and no message when nothing was found, and the sql was built as a raw string with the user id inlined; the current column has the configured row limit, the ALL_USER_OVERWRITES_NONE message and the prepared statements of change_log_list
 
 ## user default view
 
@@ -151,6 +145,8 @@ sort_by_time_and_cut() duplicates the web twin. The frontend web/log/change_log_
 The changes table comment is the load contract. load_by_user() reading 13 tables rests entirely on that comment ("all tables except value and link changes"). If a value change ever lands in changes, it would be listed twice. Not currently possible, but nothing asserts it.
 version.txt correctly untouched — no json format or db structure change.
 Generated docs: code_user_message_exceptions.md only shifts a line number, doesn't grow. code_test_coverage.md adds the three new functions.
+The fold is duplicated verbatim in the backend and the frontend std_table* function. That mirrors the existing prefix-strip duplication rather than adding a new pattern, so it is consistent, but both copies now have to move together.
+Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.  
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.

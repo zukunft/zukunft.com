@@ -645,6 +645,11 @@ class change_log_named extends change_log
         if (str_starts_with($result, change_tables::USER_PREFIX)) {
             $result = substr($result, strlen(change_tables::USER_PREFIX));
         }
+        // a value is stored in the table that matches its type and the size of its group id, but
+        // all of them name a value, so 'values_prime' or 'user_values_text' name the value class
+        if (in_array($result, change_tables::VALUE_TABLES, true)) {
+            $result = change_tables::VALUE;
+        }
         return $result;
     }
 

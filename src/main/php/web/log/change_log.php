@@ -59,7 +59,10 @@ class change_log extends sandbox
     public ?int $action_id = null;   // database id for the change type (add, change or del)
     public ?int $table_id = null;    // database id of the table used to get the name from the preloaded hash
     public ?int $field_id = null;    // database id of the table used to get the name from the preloaded hash
-    public ?int $row_id = null;      // prime database key of the row that has been changed
+    // the database key of the row that has been changed; a text for a value, because the id of a
+    // value is its group id, which is a text for a group of more than four phrases (like the
+    // backend change_log::$row_id, so that a big value id survives the api mapping)
+    public int|string|null $row_id = null;
     public DateTime $change_time;    // the time of the change
 
 
