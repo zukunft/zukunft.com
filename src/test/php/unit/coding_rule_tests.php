@@ -71,6 +71,15 @@ class coding_rule_tests
     private const string AREA_FRONTEND = 'frontend';
     private const string AREA_BOTH = 'both';
 
+    // the max number of chars of a line of docs/code_functions_all.md; a longer line is wrapped,
+    // never cut, because the file is the complete list of the function order errors and a cut line
+    // would hide the function that has to be moved (see md_wrap)
+    const int MD_MAX_LINE_LEN = 120;
+
+    // the continuation lines of a wrapped md line start with this marker plus the indent of the
+    // line that is continued, so that a wrapped line is not read as an own entry of the tree
+    const string MD_WRAP_MARKER = '    ';
+
     // use path that does not need to be included
     const array PATH_NO_INCLUDE = [
         'PgSql\Connection',
@@ -762,12 +771,46 @@ class coding_rule_tests
         return $md_txt;
     }
 
+    /**
+     * split one line of docs/code_functions_all.md into lines of at most MD_MAX_LINE_LEN chars,
+     * because a function order error names every function of the section, which for a big class
+     * is a line of thousands of chars that no editor and no diff shows in a readable way
+     *
+     * the line is split after a comma of the function lists whenever one is within the limit and
+     * only otherwise at the limit itself, so that a function name is never torn apart; the
+     * continuation lines keep the indent of the first line plus MD_WRAP_MARKER
+     *
+     * @param string $line the complete line including the tree indent and the trailing line break
+     * @param string $intent the tree indent of the line, repeated on each continuation line
+     * @return string the line or the wrapped lines, each closed with a line break
+     */
+    private function md_wrap(string $line, string $intent): string
+    {
+        $result = '';
+        $rest = $line;
+        // the continuation lines repeat the indent as spaces, so they have less room for the text
+        $next_indent = str_repeat(' ', strlen($intent)) . self::MD_WRAP_MARKER;
+        while (strlen($rest) > self::MD_MAX_LINE_LEN) {
+            $cut = strrpos(substr($rest, 0, self::MD_MAX_LINE_LEN), ',');
+            if ($cut === false or $cut < strlen($next_indent)) {
+                // no comma within the limit, so split at the limit
+                $cut = self::MD_MAX_LINE_LEN;
+            } else {
+                // keep the comma at the end of the line, so that the list stays readable
+                $cut = $cut + 1;
+            }
+            $result .= substr($rest, 0, $cut) . "\n";
+            $rest = $next_indent . substr($rest, $cut);
+        }
+        return $result . $rest . "\n";
+    }
+
     function php_function_list_to_md_row(array $fnc_lst, string $intent = '### ', string $code_maker = ''): string
     {
         $md_txt = '';
         foreach ($fnc_lst as $child => $info_lst) {
             if (is_string($info_lst)) {
-                $md_txt .= $intent . $child . ' - ' . $info_lst . "\n";
+                $md_txt .= $this->md_wrap($intent . $child . ' - ' . $info_lst, $intent);
             } else {
                 $before = '';
                 $after = '';
