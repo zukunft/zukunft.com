@@ -98,19 +98,6 @@
       "name": "warmer"
     },
     {
-      "name": "climate",
-      "refs": [
-        {
-          "name": "Climate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7937",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "System Test Word"
     },
     {

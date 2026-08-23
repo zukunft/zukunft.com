@@ -300,7 +300,7 @@ class files
         self::IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON,
         self::IMPORT_PRO_CONTRA_NPP_CH,
         self::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
-        // THOMY_test.json is not loaded here, because it sets a code id, which needs a system user
+        self::IMPORT_THOMY_TEST,
         self::IMPORT_BASE_TEST_DATA,
         self::IMPORT_BUS_LINE_MEILEN_USTER,
         self::IMPORT_CAR_COSTS,
@@ -316,7 +316,7 @@ class files
         self::IMPORT_ALMENDE,
         self::IMPORT_ANSER_TRUST_VS_FEAR,
         self::IMPORT_CARBON_LEAKAGE_EFFECT,
-        // CBAM_setup.json is not loaded here, because it sets a code id, which needs a system user
+        self::IMPORT_CBAM_SETUP,
         self::IMPORT_CBAM_PREREQUISITE,
         self::IMPORT_CBAM_ALU,
         self::IMPORT_CBAM_COSTS,
@@ -341,6 +341,7 @@ class files
         self::IMPORT_CURRENCY_WIKIPEDIA,
         self::IMPORT_WIKIDATA_TO_IMPORT_Q4917,
         self::IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS,
+        self::IMPORT_XBRL_SAMPLE_JSON,
     ];
 
 
