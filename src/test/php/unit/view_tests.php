@@ -87,6 +87,10 @@ class view_tests
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $msk);
+        $t->assert_sql_changing_users_by_ids($sc, $msk);
 
         $t->subheader($ts . 'sql read standard and user changes by name');
         $msk = new view($t->usr1);
@@ -238,6 +242,10 @@ class view_tests
         $t->subheader($ts . 'sql read');
         $mrl = new view_relation($t->usr1);
         $t->assert_sql_by_id($sc, $mrl);
+        // the two queries that read many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $mrl);
+        $t->assert_sql_changing_users_by_ids($sc, $mrl);
 
         $t->subheader($ts . 'sql write insert');
         $mrl = $t_msk->view_relation_filled_add();

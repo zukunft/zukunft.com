@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1233 of 5632 public functions have at least 2 unit test calls; the 4399 functions below do not
+1233 of 5642 public functions have at least 2 unit test calls; the 4409 functions below do not
 
 ## main backend
 
@@ -1276,6 +1276,7 @@ so same-named functions of several classes share their test calls
     \-- val_upd_lst - 0 unit test calls
 \-- sandbox
     \-- changed_by - 0 unit test calls
+    \-- changed_by_ids - 0 unit test calls
     \-- changer - 0 unit test calls
     \-- chk_owner - 0 unit test calls
     \-- db_changed_sandbox_list - 0 unit test calls
@@ -1321,10 +1322,13 @@ so same-named functions of several classes share their test calls
     \-- load_sql_fields - 0 unit test calls
     \-- load_sql_median_user - 0 unit test calls
     \-- load_sql_of_users_that_changed - 0 unit test calls
+    \-- load_sql_of_users_that_changed_by_ids - 0 unit test calls
     \-- load_sql_standard - 0 unit test calls
+    \-- load_sql_standard_by_ids - 0 unit test calls
     \-- load_sql_user_changes - 0 unit test calls
     \-- load_sql_usr_num - 0 unit test calls
     \-- load_standard - 0 unit test calls
+    \-- load_standard_rows_by_ids - 0 unit test calls
     \-- load_user_changes - 0 unit test calls
     \-- log_add - 0 unit test calls
     \-- log_del - 0 unit test calls
@@ -1523,6 +1527,7 @@ so same-named functions of several classes share their test calls
     \-- update_list - 0 unit test calls
 \-- sandbox_multi
     \-- changed_by - 0 unit test calls
+    \-- changed_by_ids - 0 unit test calls
     \-- changer - 0 unit test calls
     \-- changer_sql - 0 unit test calls
     \-- chk_owner - 0 unit test calls
@@ -1579,10 +1584,13 @@ so same-named functions of several classes share their test calls
     \-- load_sql_median_user - 0 unit test calls
     \-- load_sql_obj_vars - 0 unit test calls
     \-- load_sql_of_users_that_changed - 0 unit test calls
+    \-- load_sql_of_users_that_changed_by_ids - 0 unit test calls
     \-- load_sql_standard - 0 unit test calls
     \-- load_sql_standard_by - 0 unit test calls
+    \-- load_sql_standard_by_ids - 0 unit test calls
     \-- load_sql_usr_num - 0 unit test calls
     \-- load_standard - 0 unit test calls
+    \-- load_standard_rows_by_ids - 0 unit test calls
     \-- log_add - 0 unit test calls
     \-- log_del - 0 unit test calls
     \-- log_del_big - 0 unit test calls
@@ -2698,6 +2706,7 @@ so same-named functions of several classes share their test calls
     \-- load_source - 0 unit test calls
     \-- load_sql_multi - 0 unit test calls
     \-- load_sql_standard - 0 unit test calls
+    \-- load_sql_standard_by_ids - 0 unit test calls
     \-- log_add_link - 0 unit test calls
     \-- log_del - 0 unit test calls
     \-- log_del_link - 0 unit test calls
@@ -3731,6 +3740,7 @@ so same-named functions of several classes share their test calls
     \-- span - 0 unit test calls
     \-- sup - 0 unit test calls
     \-- tab_box - 0 unit test calls
+    \-- tab_id - 0 unit test calls
     \-- tbl - 0 unit test calls
     \-- tbl_start_borderless_grey - 0 unit test calls
     \-- tbl_start_half - 0 unit test calls

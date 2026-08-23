@@ -1653,6 +1653,9 @@ enum messages: string
     case OTHERS_TBL_VALUE = 'others_tbl_value';
     // the tooltip of the apply icon link that takes over the overwrite of another user
     case OTHERS_TBL_APPLY = 'others_tbl_apply';
+    // the tooltip of the icon link of the all user overwrites column that opens the 'others' tab
+    // of the changed object
+    case OTHERS_TBL_SHOW = 'others_tbl_show';
     case POPUP_IMPACT = 'popup_impact';
     // the fallback unit for the impact of a change if no other impact unit is set
     case POPUP_IMPACT_UNIT_FALLBACK = 'happy_time_points';

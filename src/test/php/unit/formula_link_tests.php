@@ -101,6 +101,10 @@ class formula_link_tests
         $lnk->id = 1;
         $t->assert_sql_standard($sc, $lnk);
         $t->assert_sql_not_changed($sc, $lnk);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $lnk);
+        $t->assert_sql_changing_users_by_ids($sc, $lnk);
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;

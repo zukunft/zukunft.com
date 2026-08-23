@@ -135,7 +135,7 @@ formula_type_list: $lst
 group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj, $typ
 group_link: $grp_lnk
 group_list: $grp_lst, $lst, $phr_grp_lst_val
-html_base: $html, $html_base, $url
+html_base: $html, $html_base, $others_tab, $url
 id: $grp_id
 import_file: $imf, $import
 import_wikidata: $imp
@@ -169,6 +169,7 @@ ref_type_list: $lst, $ref_type_list
 rest_call: $api, $ctrl, $rest
 result_id: $res_id
 result_list: $lst, $res_lst, $res_to_validate
+sandbox_related: $rel
 share_type: $shr_typ
 share_type_list: $lst
 source_list: $lst, $src_lst
@@ -178,7 +179,7 @@ sql_creator: $sc
 sql_db: $db, $db_con, $qp, $used_db_con
 sql_field: $fvt, $sql_fld
 sql_field_list: $lst
-sql_par: $qp, $qp_log
+sql_par: $qp, $qp_log, $qp_tbl
 sql_par_field_list: $fvt_insert_list, $fvt_lst, $fvt_lst_log, $fvt_lst_out, $fvt_lst_write, $fvt_split_list, $lst, $par_lst_out, $result, $update_fvt_lst
 sql_par_list: $result, $sql_list
 sql_sync_sequences: $sql_seq
@@ -241,7 +242,7 @@ ui_rank: $rank
 ui_select: $select
 unit_env: $u_env
 url_mapper: $url_map
-user_list: $result, $system_users, $test_usr_list, $usr_lst
+user_list: $result, $row_lst, $system_users, $test_usr_list, $usr_lst
 user_log_display: $log, $log_ui
 user_official_type: $usr_idt
 user_profile: $usr_prf

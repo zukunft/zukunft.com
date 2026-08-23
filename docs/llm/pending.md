@@ -4,8 +4,6 @@
 
 the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
 
-add the overwrites of the other users to the user page: the old page had an 'other user' column per row (a link to user_triple.php, user_value.php, user_view.php, ...) that showed what other users have set for the same object; today this is only the 'others' tab of each object page
-
 group the 'all_user_overwrites' rows by object type or add an object type column: the old page had one table per object type with its own header, so the user could see at a glance how many words resp. values were overwritten; today all types are merged into one when / who / what list that does not name the type
 
 add the ref overwrites to the 'all_user_overwrites' component: change_tables::REF_USR is in change_tables::USER_TABLES, so a ref overwrite is listed today, but change_log_list::name_lists has no ref entry, so the what column cannot name the changed ref (the old page had no ref table either, so this is a gap of both)

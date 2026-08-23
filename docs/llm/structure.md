@@ -44,6 +44,33 @@ as the always-on "a 3+ step call chain belongs behind a function on the owning
 class" rule in `docs/llm/dry.md`; it costs a method but each call site reads at a
 glance.)
 
+### `and` / `or` with brackets, never `&&` / `||`
+
+A condition uses the word operators `and` and `or`, which read like the sentence
+the condition is. Never rely on operator precedence: wherever it decides the
+result, brackets say what binds to what. A plain `if ($a and $b)` needs none, an
+assignment and a mix of the two operators always do.
+
+`and` and `or` bind looser than `=`, so an assignment without brackets keeps only
+the first operand and silently drops the rest:
+
+```php
+$prime = $this->is_prime() or $this->is_main();   // wrong: $prime is is_prime()
+```
+
+Brackets fix it and stay in the reading style of the rest of the code:
+
+```php
+$prime = ($this->is_prime() or $this->is_main());
+```
+
+`||` would also work here, but it is the exception in this code base, so a reader
+stops at it and wonders what is special about this line. Use it only where a
+value expression really needs the tighter binding, and then still bracket it.
+
+The same holds for a condition that mixes both operators: `if ($a and ($b or $c))`
+says what it means, `if ($a and $b or $c)` needs the reader to look up the rules.
+
 ## One exit per function and loop — no `break` or `continue`
 
 Every function has exactly one `return`, at the end. Assign the result to a

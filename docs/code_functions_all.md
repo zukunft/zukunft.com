@@ -6514,6 +6514,10 @@
     \-- load_standard - section for function load_standard is expected to be load in /sandbox/sandbox.php
     \-- load_user_changes - section for function load_user_changes is expected to be load in /sandbox/sandbox.php
     \-- load_sql_standard - section for function load_sql_standard is expected to be load sql in /sandbox/sandbox.php
+    \-- load_sql_standard_by_ids - section for function load_sql_standard_by_ids is expected to be load sql in /sandbox/
+            sandbox.php
+    \-- load_standard_rows_by_ids - section for function load_standard_rows_by_ids is expected to be load in /sandbox/sa
+            ndbox.php
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /sandbox/sandbo
             x.php
     \-- load_sql_usr_num - section for function load_sql_usr_num is expected to be load sql in /sandbox/sandbox.php
@@ -6537,6 +6541,10 @@
             box.php
     \-- load_sql_of_users_that_changed - section for function load_sql_of_users_that_changed is expected to be load sql 
             in /sandbox/sandbox.php
+    \-- load_sql_of_users_that_changed_by_ids - section for function load_sql_of_users_that_changed_by_ids is expected t
+            o be load sql in /sandbox/sandbox.php
+    \-- changed_by_ids - section for function changed_by_ids not yet defined that it should be owner and access in /sand
+            box/sandbox.php
     \-- used_by_someone_else - section for function used_by_someone_else not yet defined that it should be owner and acc
             ess in /sandbox/sandbox.php
     \-- can_change - section for function can_change is expected to be sandbox in /sandbox/sandbox.php
@@ -7306,6 +7314,12 @@
     \-- is_exclusion_set - section for function is_exclusion_set is expected to be info in /sandbox/sandbox_multi.php
     \-- load_sql_standard - section for function load_sql_standard is expected to be load sql in /sandbox/sandbox_multi.
             php
+    \-- load_sql_standard_by_ids - section for function load_sql_standard_by_ids is expected to be load sql in /sandbox/
+            sandbox_multi.php
+    \-- load_sql_of_users_that_changed_by_ids - section for function load_sql_of_users_that_changed_by_ids is expected t
+            o be load sql in /sandbox/sandbox_multi.php
+    \-- changed_by_ids - section for function changed_by_ids not yet defined that it should be load in /sandbox/sandbox_
+            multi.php
     \-- load_sql_standard_by - section for function load_sql_standard_by is expected to be load sql in /sandbox/sandbox_
             multi.php
     \-- load_sql_fields - section for function load_sql_fields is expected to be load sql in /sandbox/sandbox_multi.php
@@ -8915,6 +8929,8 @@
             p
     \-- load_sql_multi - section for function load_sql_multi is expected to be load sql in /value/value_base.php
     \-- load_sql_standard - section for function load_sql_standard is expected to be load sql in /value/value_base.php
+    \-- load_sql_standard_by_ids - section for function load_sql_standard_by_ids is expected to be load sql in /value/va
+            lue_base.php
     \-- load_objects - section for function load_objects is expected to be load in /value/value_base.php
     \-- load_phrases - section for function load_phrases is expected to be load in /value/value_base.php
     \-- load_source - section for function load_source is expected to be load in /value/value_base.php
@@ -10979,8 +10995,7 @@
     \-- add
         \-- change_link - similar to add_link, but additional fix the references as a text for fast displaying
     \-- load_changed_objects
-        \-- change_log_list - set on each change of this list what the change log itself does not contain: the name of t
-                he
+        \-- change_log_list - TODO Prio 2 instead of using an array for $other_values create a helper class with vars
     \-- views_array
         \-- sandbox_related - the views that can show the object for the views tab of the object page; the list is
     \-- changes_array
@@ -12638,6 +12653,8 @@
             e in /html/html_base.php
     \-- tab_box - section for function tab_box not yet defined that it should be to dismiss / replace in /html/html_base
             .php
+    \-- tab_id - section for function tab_id not yet defined that it should be to dismiss / replace in /html/html_base.p
+            hp
     \-- dsp_tbl_start - section for function dsp_tbl_start not yet defined that it should be to dismiss / replace in /ht
             ml/html_base.php
     \-- dsp_tbl_start_half - section for function dsp_tbl_start_half not yet defined that it should be to dismiss / repl
@@ -17047,20 +17064,22 @@
         \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- tab_box
         \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+    \-- tab_id
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_tbl_start
-        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_tbl_start_half
-        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_tbl_start_hist
-        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_tbl_start_select
-        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_tbl_end
-        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_form_start
-        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_form_end
-        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
+        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- div_center
         \-- html_base - centre a html page
     \-- dsp_form_center

@@ -46,6 +46,7 @@ include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_ENUM . 'change_log_actions.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'api.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -407,8 +409,9 @@ class change_log_list extends ListBase
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object e.g. the all
      *                          user overwrites column of the user page
-     * @param bool $with_undo true to add the undo icon column, which needs the changes to be the
-     *                        user overwrites of the session user e.g. the all user overwrites column
+     * @param array $actions the change_log_actions that the table adds beside when, who and what;
+     *                       an empty list adds nothing, which is what the change log of one object
+     *                       shows, because there the tabs of the same page offer the actions
      * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the borderless when / who / what table
      */
@@ -417,7 +420,7 @@ class change_log_list extends ListBase
         int   $max_rows = 0,
         bool  $test_mode = false,
         bool  $with_object = false,
-        bool  $with_undo = false,
+        array $actions = [],
         array $url_array = []
     ): string
     {
@@ -426,16 +429,21 @@ class change_log_list extends ListBase
         $head = $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHEN))
             . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHO))
             . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHAT));
-        // the undo column shows only the icons, so like the 'my' tab it has no header text
-        if ($with_undo) {
-            $head .= $html->th('');
+        // an icon column shows only the icons, so like the 'my' tab it has no header text, whereas
+        // the inline values of the other users are a normal column with the 'user' header
+        foreach ($actions as $action) {
+            if ($action == change_log_actions::OTHERS_INLINE) {
+                $head .= $html->th($mtr->txt(msg_id::OTHERS_TBL_USER));
+            } else {
+                $head .= $html->th('');
+            }
         }
         $rows = $html->tr($head);
         // show only the most recent changes up to the configured row limit (the list is already
         // sorted newest first by ui_log::prepared_change_log resp. the test)
         $lst = $max_rows > 0 ? $this->head($max_rows) : $this;
         foreach ($lst->lst() as $chg) {
-            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode, $with_object, $with_undo, $url_array);
+            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode, $with_object, $actions, $url_array);
         }
         // the forward button appears when more changes exist than the row limit shows; the back
         // button is prepared for the paging implementation (see docs/llm/pending.md) but stays hidden
@@ -443,7 +451,7 @@ class change_log_list extends ListBase
         // change, so the first page is always shown
         $more_rows = ($max_rows > 0 and $this->count() > $max_rows);
         $first_page = true;
-        $rows .= $this->tr_page_nav($more_rows, $first_page, $with_undo);
+        $rows .= $this->tr_page_nav($more_rows, $first_page, $actions);
         // borderless table with the standard zukunft.com grey text
         return $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
     }
@@ -455,10 +463,10 @@ class change_log_list extends ListBase
      *
      * @param bool $more_rows true if the list has more changes than the shown row limit
      * @param bool $first_page true if the first (newest) page is shown, so no back button is needed
-     * @param bool $with_undo true if the table has the additional undo icon column
+     * @param array $actions the change_log_actions of the table, which each add an own column
      * @return string the html of the footer row, or '' if neither button is needed
      */
-    private function tr_page_nav(bool $more_rows, bool $first_page, bool $with_undo = false): string
+    private function tr_page_nav(bool $more_rows, bool $first_page, array $actions = []): string
     {
         $html = new html_base();
         $result = '';
@@ -467,7 +475,7 @@ class change_log_list extends ListBase
             $forward = $more_rows ? $html->icon(icons::PAGE_FORWARD) : '';
             // back button on the left, forward button right-aligned at the end of the table
             $cells = $html->td($back) . $html->td('');
-            if ($with_undo) {
+            foreach ($actions as $ignored) {
                 $cells .= $html->td('');
             }
             $result = $html->tr($cells . $html->td($forward, styles::TEXT_RIGHT));

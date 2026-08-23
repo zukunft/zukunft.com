@@ -835,6 +835,276 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
+     * create the SQL to load the default values of many rows of one table at once
+     *
+     * all given ids must be of the same table as this object, because a value is stored in the
+     * table that matches its value type and the size of its group id; the caller therefore groups
+     * the ids and calls this once per table (see change_log_list::values_by_id)
+     *
+     * a group id that fits into the prime table is a composite of up to four phrase ids and cannot
+     * be selected with one id list, so each prime id gets an own sub-query and the sub-queries are
+     * combined with UNION, like value_list::load_sql_by_ids does
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids the group ids of the rows to select, all of the table of this object
+     * @param array $fld_lst the fields to select, empty for the default fields of the table
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_standard_by_ids(sql_creator $sc, array $ids, array $fld_lst = []): sql_par
+    {
+        $sc_par_lst = new sql_type_list();
+        $sc_par_lst->add($this->table_type());
+        // the value type selects the table of the value e.g. values_text (see sandbox_value)
+        $sc_par_lst->add($this->value_type());
+        $sc_par_lst->add(sql_type::NORM);
+        $id_ext = $this::class == group::class ? '' : $this->table_extension();
+
+        $qp = new sql_par($this::class, $sc_par_lst, '', $id_ext);
+        $qp->name .= 'ids' . sql::NAME_SEP . count($ids);
+
+        return $this->load_sql_by_ids_union($sc, $qp, $sc_par_lst, $ids, $fld_lst);
+    }
+
+    /**
+     * create an SQL statement to get the users that have ever changed one of the given rows of one
+     * table; the same query as load_sql_of_users_that_changed but for many rows at once
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids the group ids of the rows to select, all of the table of this object
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_of_users_that_changed_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $sc_par_lst = new sql_type_list([$this->table_type(), $this->value_type()]);
+        $id_ext = is_array($this->id_field()) ? $this->table_extension() : '';
+
+        // the query name ends like the sandbox query of the same name, so the user table is added
+        // to the parameters only after the name has been created
+        $qp = new sql_par($this::class, $sc_par_lst, '', $id_ext);
+        $qp->name .= 'user_list_by_ids' . sql::NAME_SEP . count($ids);
+        $sc_par_lst->add(sql_type::USER);
+
+        // the excluded flag is selected and not used as a where condition, because one parameter
+        // per sub-query for the same value is not what the sql creator builds for a union
+        return $this->load_sql_by_ids_union($sc, $qp, $sc_par_lst, $ids, [fields::FLD_EXCLUDED], true);
+    }
+
+    /**
+     * the shared union builder of the two by ids queries: one sub-query per prime id and one
+     * sub-query with an id list for a table that is selected by the group id
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_par $qp the query parameters with the class and the name already set
+     * @param sql_type_list $sc_par_lst the table parameters of the query
+     * @param array $ids the group ids of the rows to select
+     * @param array $fld_lst the fields to select, empty for the default fields of the table
+     * @param bool $with_user true to join the user that has changed the row
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    private function load_sql_by_ids_union(
+        sql_creator   $sc,
+        sql_par       $qp,
+        sql_type_list $sc_par_lst,
+        array         $ids,
+        array         $fld_lst = [],
+        bool          $with_user = false
+    ): sql_par
+    {
+        $grp_id = new group_id();
+        $par_offset = 0;
+        $par_types = array();
+        // a prime row is selected by its phrase id fields, so each id needs an own sub-query,
+        // whereas all other rows of one table are selected by one group id list
+        $prime = ($this->is_prime() or $this->is_main());
+        $sub_id_lst = $prime ? $ids : [$ids];
+        foreach ($sub_id_lst as $sub_ids) {
+            $sc->set_class($this::class, $sc_par_lst);
+            $sc->set_name($qp->name);
+            $sc->set_id_field($this->id_field());
+            $sc->set_fields($fld_lst);
+            if ($with_user) {
+                // only the user table query needs the user, the standard query reads the row that
+                // is the same for all users (see sandbox_value::load_sql_standard)
+                $sc->set_usr($this->get_user()->id);
+                $sc->set_join_fields(
+                    array(user_db::FLD_ID, user_db::FLD_NAME),
+                    user::class,
+                    user_db::FLD_ID,
+                    user_db::FLD_ID);
+            }
+            if ($prime) {
+                $this->add_where_prime_id($sc, $grp_id, $sub_ids, $par_offset);
+            } else {
+                $sc->add_where(group_fields::FLD_ID, $sub_ids,
+                    sql_par_type::TEXT_LIST, null, '', $par_offset);
+            }
+            $qp_tbl = new sql_par($this::class, $sc_par_lst);
+            $qp_tbl->sql = $sc->sql($par_offset, true, false);
+            $qp_tbl->par = $sc->get_par();
+            $par_offset = $par_offset + count($qp_tbl->par);
+            $par_types = array_merge($par_types, $sc->get_par_types());
+            $qp->merge($qp_tbl, false, $sc_par_lst);
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * the database rows with the standard values of the given ids of one table, by group id
+     *
+     * @param array $ids the group ids of the rows to select, all of the table of this object
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return array the database row with the standard values by the group id
+     */
+    function load_standard_rows_by_ids(array $ids, user_message $msg): array
+    {
+        global $db_con;
+
+        if ($ids == []) {
+            return [];
+        }
+        $qp = $this->load_sql_standard_by_ids($db_con->sql_creator(), $ids);
+        $db_rows = $db_con->get($qp, $msg, 'standard by ids');
+        $result = [];
+        foreach ($this->rows_by_group_id($db_rows, $ids) as $id => $rows) {
+            $result[$id] = reset($rows);
+        }
+        return $result;
+    }
+
+    /**
+     * the users that have changed one of the given rows of one table, by group id
+     *
+     * @param array $ids the group ids of the rows to select, all of the table of this object
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return array the user_list of the users that have changed the row, by group id
+     */
+    function changed_by_ids(array $ids, user_message $msg): array
+    {
+        global $db_con;
+
+        $result = [];
+        if ($ids == []) {
+            return $result;
+        }
+        $qp = $this->load_sql_of_users_that_changed_by_ids($db_con->sql_creator(), $ids);
+        $db_rows = $db_con->get($qp, $msg, 'sandbox user list by ids');
+        $usr_ids = [];
+        $usr_ids_by_row = [];
+        foreach ($this->rows_by_group_id($db_rows, $ids) as $id => $rows) {
+            foreach ($rows as $db_row) {
+                // a row that the other user has excluded is not an overwrite any more, which the
+                // single query excludes in the where condition
+                $excluded = $db_row[fields::FLD_EXCLUDED] ?? null;
+                $usr_id = $db_row[user_db::FLD_ID] ?? 0;
+                if ($usr_id > 0 and ($excluded == null or $excluded == 0)) {
+                    $usr_ids[] = $usr_id;
+                    $usr_ids_by_row[$id][] = $usr_id;
+                }
+            }
+        }
+        // load the users of all rows with one query instead of one query per row
+        $usr_lst = new user_list($this->get_user());
+        $usr_lst->load_by_ids($db_con, array_unique($usr_ids), $msg);
+        foreach ($usr_ids_by_row as $id => $row_usr_ids) {
+            $row_lst = new user_list($this->get_user());
+            foreach ($usr_lst->lst() as $usr) {
+                if (in_array($usr->id(), $row_usr_ids)) {
+                    $row_lst->add($usr);
+                }
+            }
+            $result[$id] = $row_lst;
+        }
+        return $result;
+    }
+
+    /**
+     * group the rows of a by ids query by the group id that has been requested
+     *
+     * a prime row carries its phrase ids and not the group id, so the rows are matched by the
+     * phrase ids of the requested group id and never by re-encoding them
+     *
+     * @param array|bool $db_rows the rows as the database has returned them
+     * @param array $ids the requested group ids
+     * @return array the list of rows by the requested group id
+     */
+    private function rows_by_group_id(array|bool $db_rows, array $ids): array
+    {
+        $result = [];
+        if (!is_array($db_rows)) {
+            return $result;
+        }
+        $grp_id = new group_id();
+        $prime = ($this->is_prime() or $this->is_main());
+        // the phrase id signature of each requested id, so that a row is matched without a lookup
+        $id_by_signature = [];
+        if ($prime) {
+            foreach ($ids as $id) {
+                $id_by_signature[$this->phrase_signature($grp_id->get_array($id, true))] = $id;
+            }
+        }
+        foreach ($db_rows as $db_row) {
+            if ($prime) {
+                $phr_ids = [];
+                foreach ($this->id_names(true) as $field) {
+                    $phr_ids[] = $db_row[$field] ?? 0;
+                }
+                $id = $id_by_signature[$this->phrase_signature($phr_ids)] ?? null;
+            } else {
+                $id = $db_row[group_fields::FLD_ID] ?? null;
+            }
+            if ($id !== null) {
+                $result[$id][] = $db_row;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $phr_ids the phrase ids of a prime group
+     * @return string the phrase ids as one text, so that two prime groups can be compared
+     */
+    private function phrase_signature(array $phr_ids): string
+    {
+        $clean = [];
+        foreach ($phr_ids as $phr_id) {
+            $clean[] = ($phr_id == '' or $phr_id == null) ? '0' : (string)$phr_id;
+        }
+        return implode(',', $clean);
+    }
+
+    /**
+     * add the where condition of one prime group id, which is a composite of up to four phrase ids
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param group_id $grp_id the helper that splits a group id into its phrase ids
+     * @param int|string $id the group id of the row to select
+     * @param int $par_offset the number of parameters of the sub-queries before this one
+     * @return void
+     */
+    private function add_where_prime_id(
+        sql_creator $sc,
+        group_id    $grp_id,
+        int|string  $id,
+        int         $par_offset
+    ): void
+    {
+        $phr_ids = $grp_id->get_array($id);
+        $fields = $this->id_names(true);
+        $pos = 0;
+        foreach ($fields as $field) {
+            // a group of less than four phrases fills the remaining id fields with zero
+            $phr_id = $phr_ids[$pos] ?? 0;
+            if ($phr_id == '') {
+                $phr_id = 0;
+            }
+            $sc->add_where($field, $phr_id, sql_par_type::INT, null, '', $par_offset);
+            $pos++;
+        }
+    }
+
+    /**
      * set the where condition and the final query parameters
      * for a value, result or group query
      *

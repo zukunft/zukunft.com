@@ -82,6 +82,10 @@ class component_link_tests
         $vcl = new component_link($t->usr1);
         $t->assert_sql_by_id($sc, $vcl);
         $t->assert_sql_by_link($sc, $vcl);
+        // the two queries that read many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $vcl);
+        $t->assert_sql_changing_users_by_ids($sc, $vcl);
         $this->assert_sql_link_and_pos($t, $db_con, $vcl);
         $this->assert_sql_max_pos($t, $db_con, $vcl);
 

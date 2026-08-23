@@ -47,6 +47,7 @@ include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'change_log_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -245,7 +247,63 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $all_html,
             url_var::NUMERIC_VALUE . '=&amp;' . url_var::PRE . url_var::NUMERIC_VALUE
             . '=' . values::SAMPLE_INT);
+
+        // beside the undo icon each row has an icon that opens the 'others' tab of the changed
+        // object, which lists what the other users have set for the same object; the fragment is
+        // the tab id that html_base::tab_box gives the tab, so both must use tab_id
+        $others_tab = new html_base()->tab_id($mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS));
+        $test_name = 'the overwrite rows have an icon to the overwrites of the other users';
+        $t->assert_text_contains($test_name, $all_html, icons::OTHERS);
+        $test_name = 'the others icon of the word overwrite opens the others tab of the word page';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::MASK . '=' . views::WORD_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID
+            . '#' . $others_tab);
         $test_page .= $all_html . '<br>';
+
+        // the column can add the undo icon, the icon to the values of the other users, these values
+        // inline or nothing at all, so each case gets an own html snapshot to show the difference
+        // (see change_log_actions and change_log_list::tbl_when_who_what)
+        $usr_sys_ui->chg_log = $t_log->log_list_user_overwrites_ui();
+        $plain_page = $log->all_user_overwrites(
+            $usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES,
+            $url_arr, []);
+        $test_name = 'without an action the column shows no undo icon';
+        $t->assert_text_not_contains($test_name, $plain_page, icons::UNDO);
+        $test_name = '... and no icon to the values of the other users';
+        $t->assert_text_not_contains($test_name, $plain_page, icons::OTHERS);
+        $t->html_page_test($plain_page, 'user', 'user_log_plain', $msg, $base_url, $lan);
+
+        $undo_page = $log->all_user_overwrites(
+            $usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES,
+            $url_arr, [change_log_actions::UNDO]);
+        $test_name = 'with the undo action the column shows the undo icon';
+        $t->assert_text_contains($test_name, $undo_page, icons::UNDO);
+        $test_name = '... but no icon to the values of the other users';
+        $t->assert_text_not_contains($test_name, $undo_page, icons::OTHERS);
+        $t->html_page_test($undo_page, 'user', 'user_log_undo', $msg, $base_url, $lan);
+
+        $others_page = $log->all_user_overwrites(
+            $usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES,
+            $url_arr, [change_log_actions::OTHERS_LINK]);
+        $test_name = 'with the others link action the column shows the icon of the other users';
+        $t->assert_text_contains($test_name, $others_page, icons::OTHERS);
+        $test_name = '... but no undo icon';
+        $t->assert_text_not_contains($test_name, $others_page, icons::UNDO);
+        $t->html_page_test($others_page, 'user', 'user_log_others_link', $msg, $base_url, $lan);
+
+        // only the word overwrite carries the values of the other users, so the inline column shows
+        // them on that row and stays empty on the others; more users than OTHERS_MAX_INLINE are set
+        // (see test_log::OTHER_VALUES), so that the snapshot also shows how the column indicates
+        // the users that it does not name
+        $inline_page = $log->all_user_overwrites(
+            $usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES,
+            $url_arr, [change_log_actions::OTHERS_INLINE]);
+        $test_name = 'with the others inline action the column names the other users and the values';
+        $t->assert_text_contains($test_name, $inline_page, array_key_first(test_log::OTHER_VALUES));
+        $t->assert_text_contains($test_name, $inline_page, test_log::OTHER_VALUES[array_key_first(test_log::OTHER_VALUES)]);
+        $test_name = '... and indicates the users above the inline limit';
+        $t->assert_text_contains($test_name, $inline_page, change_log_named_ui::MORE_INDICATOR);
+        $t->html_page_test($inline_page, 'user', 'user_log_others_inline', $msg, $base_url, $lan);
 
         // a user can have far more overwrites than a page should show (over 15'000 for the system
         // user), so the list is cut to the configured number of rows before the rows are prepared

@@ -199,6 +199,15 @@ class test_log
     // the user value of the source description overwrite of log_source_overwrite, which must not
     // contain the source name for the same reason as the component overwrite above
     const string SOURCE_OVERWRITE_COM = 'my own text for this publication';
+    // the value that each other user has set for a changed field, used to show the inline column of
+    // change_log_actions::OTHERS_INLINE; one user more than change_log_named::OTHERS_MAX_INLINE, so
+    // that a test can also check how the column indicates the users that it does not name
+    const array OTHER_VALUES = [
+        'linus' => 'the text of linus',
+        'lea' => 'the text of lea',
+        'julian' => 'the text of julian',
+        'mia' => 'the text of mia',
+    ];
 
 
     /*
@@ -1236,6 +1245,10 @@ class test_log
         // the column can name the object of every change (see change_log_list::load_changed_objects)
         $wrd_chg = $this->log_word_add_view();
         $wrd_chg->row_name = word_names::MATH;
+        // only the word overwrite carries the values of the other users, which the same function
+        // adds from the changed object, so that a test can check that the icon to the values of the
+        // other users is shown for this change and not for a change that no other user has touched
+        $wrd_chg->other_values = self::OTHER_VALUES;
         $log_lst = new change_log_list();
         $log_lst->add($wrd_chg);
         $log_lst->add($this->log_triple_add_description());

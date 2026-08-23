@@ -549,14 +549,12 @@ class library
             // the parameter list is optional e.g. the count queries prepare without a parameter
             $params = ($prt[2] ?? '') != '' ? ' (' . implode(', ', $this->sql_split($prt[2])) . ')' : '';
             $result = 'PREPARE ' . $prt[1] . $params . " AS\n"
-                . $this->sql_format_select_fields($this->sql_split($prt[3])) . "\n"
-                . $this->sql_format_select_tail($prt[4]) . ';';
+                . $this->sql_format_select_union($prt[3], $prt[4]) . ';';
         } elseif (preg_match($my_select, $sql, $prt)) {
-            $fields = $this->sql_format_select_fields($this->sql_split($prt[2]));
+            $body = $this->sql_format_select_union($prt[2], $prt[3]);
             // the opening quote of the mariadb query replaces part of the select indent
             $result = 'PREPARE ' . $prt[1] . " FROM\n"
-                . "   '" . substr($fields, 4) . "\n"
-                . $this->sql_format_select_tail($prt[3]) . "';";
+                . "   '" . substr($body, 4) . "';";
         } elseif (preg_match('/^(-- -+ )?(?:-- -- .+? -- |CREATE (?:UNIQUE )?INDEX |CREATE TABLE |ALTER TABLE )/', $sql)) {
             $result = $this->sql_format_setup($sql);
         }
@@ -1196,7 +1194,10 @@ class library
      * @param array $fld_lst the select fields e.g. ['s.word_id', 'CASE WHEN (u.word_name ...']
      * @return string the field lines starting with the select keyword
      */
-    private function sql_format_select_fields(array $fld_lst): string
+    private function sql_format_select_fields(
+        array  $fld_lst,
+        string $first_prefix = '    SELECT     '
+    ): string
     {
         // collect the widths of the case or if fields for the alignment
         $case_text_u = 0; // the longest user field checked as text e.g. u.description
@@ -1237,10 +1238,73 @@ class library
             } else {
                 $line = $fld;
             }
-            $prefix = $i == 0 ? '    SELECT     ' : str_pad('', 15);
+            $prefix = $i == 0 ? $first_prefix : str_pad('', 15);
             $lines[] = $prefix . $line;
         }
         return implode(",\n", $lines);
+    }
+
+    /**
+     * split a select tail at the UNION keywords that combine the selects of the statement itself
+     *
+     * a UNION inside brackets belongs to a sub query e.g. the counted user tables of the user
+     * change count, which has its own formatting, so only a UNION outside of all brackets splits
+     *
+     * @param string $tail the part of the query after the first FROM keyword
+     * @return array the tail of each select of the union
+     */
+    private function sql_split_union(string $tail): array
+    {
+        $result = [];
+        $needle = ' UNION SELECT ';
+        $depth = 0;
+        $start = 0;
+        $pos = 0;
+        while ($pos < strlen($tail)) {
+            $chr = $tail[$pos];
+            if ($chr == '(') {
+                $depth++;
+            }
+            if ($chr == ')') {
+                $depth--;
+            }
+            if ($depth == 0 and substr($tail, $pos, strlen($needle)) == $needle) {
+                $result[] = substr($tail, $start, $pos - $start);
+                $pos = $pos + strlen($needle);
+                $start = $pos;
+            } else {
+                $pos++;
+            }
+        }
+        $result[] = substr($tail, $start);
+        return $result;
+    }
+
+    /**
+     * format a select that may be a union of selects: each branch is formatted like a single
+     * select and the branches are separated by an empty line with the UNION right aligned, so
+     * that the fields of every branch start in the same column
+     *
+     * @param string $fields the fields of the first select
+     * @param string $tail the part after the first FROM keyword incl. the union branches
+     * @return string the formatted select, one branch after the other
+     */
+    private function sql_format_select_union(string $fields, string $tail): string
+    {
+        $branches = $this->sql_split_union($tail);
+        $result = $this->sql_format_select_fields($this->sql_split($fields)) . "\n"
+            . $this->sql_format_select_tail(array_shift($branches));
+        foreach ($branches as $branch) {
+            // the fields of a branch end at its own FROM keyword
+            $from_pos = strpos($branch, ' FROM ');
+            $branch_fields = substr($branch, 0, $from_pos);
+            $branch_tail = substr($branch, $from_pos + strlen(' FROM '));
+            $result .= "\n\n"
+                . $this->sql_format_select_fields(
+                    $this->sql_split($branch_fields), '  UNION SELECT ') . "\n"
+                . $this->sql_format_select_tail($branch_tail);
+        }
+        return $result;
     }
 
     /**
@@ -1271,7 +1335,14 @@ class library
             }
         }
         if (($prt[7] ?? '') != '') {
-            $result .= "\n" . '         WHERE ' . $prt[8];
+            $where_line = '         WHERE ';
+            $conds = explode(' AND ', $prt[8]);
+            $result .= "\n" . $where_line . $conds[0];
+            // the AND of a where condition is right aligned to the WHERE like the one of a join
+            $and_off = strlen($where_line) - 4;
+            for ($i = 1; $i < count($conds); $i++) {
+                $result .= "\n" . str_pad('', $and_off) . 'AND ' . $conds[$i];
+            }
         }
         return $result;
     }

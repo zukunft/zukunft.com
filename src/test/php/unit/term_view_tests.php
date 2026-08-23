@@ -78,6 +78,10 @@ class term_view_tests
         $t->assert_sql_by_id($sc, $lnk);
         $lnk = $t_lnk->term_view();
         $t->assert_sql_standard($sc, $lnk);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $lnk);
+        $t->assert_sql_changing_users_by_ids($sc, $lnk);
         // TODO check if all links have the check
         $t->assert_sql_by_link($sc, $lnk);
         $t->assert_sql_user_changes($sc, $lnk);

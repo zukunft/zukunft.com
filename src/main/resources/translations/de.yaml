@@ -102,6 +102,7 @@ messages:
   others_tbl_user: "Benutzer"
   others_tbl_value: "Wert"
   others_tbl_apply: "diese Überschreibung für deine Werte übernehmen"
+  others_tbl_show: "zeigen was andere Benutzer für dieses Objekt gesetzt haben"
   my_tbl_your: "deine"
   my_tbl_instead: "anstatt"
   my_tbl_undo: "deine Überschreibung rückgängig machen"

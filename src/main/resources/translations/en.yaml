@@ -73,6 +73,7 @@ messages:
   others_tbl_user: "user"
   others_tbl_value: "value"
   others_tbl_apply: "apply this overwrite to your values"
+  others_tbl_show: "show what other users have set for this object"
   system_title_about: "About"
   system_title_setup: "Setup"
   system_title_signup: "Signup"

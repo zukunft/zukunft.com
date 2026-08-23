@@ -1820,7 +1820,7 @@ class html_base
         if ($tabs != []) {
             $sections = '';
             foreach ($tabs as $label => $content) {
-                $tab_id = str_replace(' ', '_', strtolower($label));
+                $tab_id = $this->tab_id($label);
                 // one section per tab: the label link sets the '#<tab_id>' fragment and the css :target
                 // rule on the section then shows this content and highlights this label (style_html.css)
                 $label_link = $this->ref('#' . $tab_id, $label, '', self::CLASS_TAB_LABEL);
@@ -1830,6 +1830,20 @@ class html_base
             $result = $this->div($sections, self::CLASS_TABS);
         }
         return $result;
+    }
+
+    /**
+     * the html id of a tab of a tab box, which is also the url fragment that selects the tab
+     * (the css :target rule of style_html.css); public, so that a link from another page can open
+     * a page with one tab selected e.g. the all user overwrites column links to the 'others' tab
+     * of the changed object
+     *
+     * @param string $label the translated tab label as tab_box gets it
+     * @return string the html id of the tab
+     */
+    function tab_id(string $label): string
+    {
+        return str_replace(' ', '_', strtolower($label));
     }
 
 // -----------------------

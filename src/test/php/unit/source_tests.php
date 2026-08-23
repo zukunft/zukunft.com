@@ -79,6 +79,10 @@ class source_tests
         $src = new source($t->usr1);
         $src->id = 4;
         $t->assert_sql_standard($sc, $src);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $src);
+        $t->assert_sql_changing_users_by_ids($sc, $src);
         $src->id = 5;
         $t->assert_sql_not_changed($sc, $src);
         $t->assert_sql_user_changes($sc, $src);

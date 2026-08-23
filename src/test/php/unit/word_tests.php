@@ -129,6 +129,10 @@ class word_tests
         $t->assert_sql_not_changed($sc, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
         $t->assert_sql_changing_users($sc, $wrd);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $wrd);
+        $t->assert_sql_changing_users_by_ids($sc, $wrd);
         $this->assert_sql_view($t, $wrd);
 
         $t->subheader($ts . 'sql write insert');

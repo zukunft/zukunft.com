@@ -2002,6 +2002,35 @@ class test_base
     }
 
     /**
+     * check the SQL statement to load the default objects of many ids with one query
+     * for all allowed SQL database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object is e.g. a word or a value
+     * @param array $ids the database ids of the objects that should be loaded
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_standard_by_ids(
+        sql_creator           $sc,
+        sandbox|sandbox_multi $usr_obj,
+        array                 $ids = array(1, 2)
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->load_sql_standard_by_ids($sc, $ids);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->load_sql_standard_by_ids($sc, $ids);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
      * check the SQL statement to load the default object by the name
      * for all allowed SQL database dialects
      *
@@ -2179,6 +2208,36 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_of_users_that_changed($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+
+        return $result;
+    }
+
+    /**
+     * check the SQL statements to get the users that have ever changed one of many objects
+     * e.g. to show the changes of the other users on the user page
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object e.g. a word or a value
+     * @param array $ids the database ids of the objects that should be checked
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_changing_users_by_ids(
+        sql_creator           $sc,
+        sandbox|sandbox_multi $usr_obj,
+        array                 $ids = array(1, 2)
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->load_sql_of_users_that_changed_by_ids($sc, $ids);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->load_sql_of_users_that_changed_by_ids($sc, $ids);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
 

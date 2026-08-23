@@ -248,6 +248,9 @@ class change_log extends db_object_seq_id_user
     // change log itself but set by change_log_list::load_changed_objects for a change log that spans
     // objects, so that the frontend can name the changed object; null if not (yet) resolved
     public ?string $row_name = null;
+    // the value that each other user has set for the changed field, keyed by the user name, set by
+    // the same function and empty if no other user has an own value for the field
+    public array $other_values = [];
 
     protected DateTime $change_time;       // the date and time of the change
 
@@ -708,6 +711,11 @@ class change_log extends db_object_seq_id_user
         // that a change log of one object does not repeat the object name in every entry
         if ($this->row_name != null) {
             $vars[json_fields::ROW_NAME] = $this->row_name;
+        }
+        // only sent if another user has an own value for the changed field, so that a change log
+        // without any other user does not send an empty entry per change
+        if ($this->other_values != []) {
+            $vars[json_fields::OTHER_VALUES] = $this->other_values;
         }
         $vars[json_fields::CHANGE_TIME] = $this->time()->format("c");
 
