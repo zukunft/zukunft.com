@@ -463,6 +463,12 @@ class formula_map extends sandbox_code_id
             }
         }
 
+        // TODO Prio 2 add the refs of a formula to the phrase that the formula is assigned to:
+        //      a ref links to a phrase (see the phrase id field of ref_db) and a formula is a
+        //      term, but not a phrase, so the wikipedia page of e.g. "bid-ask spread absolut"
+        //      can only be linked via the assigned phrase; until then json_fields::REFS is
+        //      allowed on a formula, but the import drops it
+
         // set the default type if no type is specified
         if ($this->type_id == 0) {
             $this->type_id = $sys->typ_lst->frm_typ->default_id();
