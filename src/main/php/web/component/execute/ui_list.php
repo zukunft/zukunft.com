@@ -914,12 +914,18 @@ class ui_list extends ui_base
      *
      * @param word|triple|db_object|type_object|null $dbo the phrase the values are related to
      * @param data_object|null $dto the data cache used until the backend has returned the values
+     * @param bool $with_header true to head the table with the column phrases and to name the
+     *                          phrase of the page in the first cell, false to show only the rows
+     * @param bool $with_border true for the bordered standard table, false for a table without
+     *                          the lines between the cells e.g. below a title that groups tables
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
         word|triple|db_object|type_object|null $dbo,
         user_message                          $msg,
-        ?data_object                          $dto = null
+        ?data_object                          $dto = null,
+        bool                                  $with_header = true,
+        bool                                  $with_border = true
     ): string
     {
         $result = '';
@@ -942,7 +948,8 @@ class ui_list extends ui_base
                 // the system column tiers decide which phrase heads a column and in which order;
                 // an empty list falls back to the impact ranking of the values themselves
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
-                $result = $val_lst->table_by_related_columns($msg, $phr_lst, '', $col_order);
+                $result = $val_lst->table_by_related_columns(
+                    $msg, $phr_lst, '', $col_order, $with_header, $with_border);
             }
         }
         return $result;
