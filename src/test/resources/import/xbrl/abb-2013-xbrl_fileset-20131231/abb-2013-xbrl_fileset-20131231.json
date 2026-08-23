@@ -19399,9 +19399,8 @@
     "formulas": [
         {
             "name": "ABB total sales 2013",
-            "expression": "ABB sales 2013 = sum of ABB sales 2013 per sector",
-            "result": "41848",
-            "components": [
+            "expression": "\"sales\" = &sum; ( \"sales\" \"of all\" \"sector\" )",
+            "assigned": [
                 "discrete automation and motion",
                 "low voltage products",
                 "process automation",

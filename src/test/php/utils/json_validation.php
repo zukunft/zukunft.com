@@ -231,6 +231,13 @@ class json_validation
         json_fields::FORMULAS => [
             json_fields::REFS
         ],
+        // a view-validation entry is a page url plus the expected markdown (see
+        // docs/llm/json_views.md) and not a view, but the import still maps it with
+        // view::import_obj, so the two documented fields are allowed until the two TODOs
+        // of the view-validation branch of import::put are done
+        json_fields::VIEW_VALIDATION => [
+            json_fields::URL, json_fields::RESULT
+        ],
     ];
 
 

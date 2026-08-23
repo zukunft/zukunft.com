@@ -20,7 +20,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 19,1,unit,,A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.,1,,,,,,,,3
 20,1,system,,A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.,1,,,,,system,,,3
 21,1,international,,Internationalism is a political principle that advocates greater political or economic cooperation among states and nations.,1,,,,,,,,3
-22,1,second,,Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...),1,,,,,,,,
+22,1,second,seconds,Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...),1,,,,,,,,
 23,1,s,,The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).,3,,,,,,,,3
 24,1,millisecond,milliseconds,The 1/1000th part of a second.,3,,,,,millisecond,,,3
 25,1,metre,,The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.,3,,,,,,,,3

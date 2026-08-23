@@ -53,12 +53,7 @@
       "description": "Numeric confidence between zero and one attached to an assumed value."
     },
     {
-      "name": "measured value",
-      "description": "Value taken from a named and verified source."
-    },
-    {
-      "name": "assumed value",
-      "description": "Value estimated rather than taken from a verified primary source; carries a separate confidence value."
+      "name": "assumed"
     },
     {
       "name": "retracted",
@@ -272,9 +267,9 @@
   "formulas": [
     {
       "name": "benefit cost ratio of mitigation",
-      "formula": "benefit cost ratio = avoided damage / mitigation cost",
+      "expression": "\"benefit cost ratio\" = \"avoided damage\" / \"mitigation cost\"",
       "description": "Ratio above one means that avoiding emissions is cheaper than paying for the consequences.",
-      "components": [
+      "assigned": [
         "avoided damage",
         "mitigation cost"
       ]
@@ -338,8 +333,7 @@
         "benefit cost ratio",
         "Paris Agreement",
         "world",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": "1.8",
       "source": "DIW Wochenbericht 38 2025"
@@ -349,8 +343,7 @@
         "benefit cost ratio",
         "Paris Agreement",
         "world",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": "4.8",
       "source": "DIW Wochenbericht 38 2025"
@@ -361,8 +354,7 @@
         "1.5 degree target",
         "2 degree target",
         "avoided damage",
-        "threshold",
-        "measured value"
+        "threshold"
       ],
       "number": "0.75",
       "source": "Burke 2018 Nature"
@@ -374,8 +366,7 @@
         "2 degree target",
         "avoided damage",
         "trillion USD",
-        "threshold",
-        "measured value"
+        "threshold"
       ],
       "number": "0.60",
       "source": "Burke 2018 Nature"
@@ -387,8 +378,7 @@
         "2 degree target",
         "trillion USD",
         "threshold",
-        "2100",
-        "measured value"
+        "2100"
       ],
       "number": "20",
       "source": "Burke 2018 Nature"
@@ -397,8 +387,7 @@
       "words": [
         "discount rate",
         "Burke 2018",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "3",
       "source": "Burke 2018 Nature"
@@ -408,8 +397,7 @@
         "country share",
         "1.5 degree target",
         "avoided damage",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "71",
       "source": "Burke 2018 Nature"
@@ -419,8 +407,7 @@
         "population share",
         "1.5 degree target",
         "avoided damage",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "90",
       "source": "Burke 2018 Nature"
@@ -432,8 +419,7 @@
         "world",
         "percent",
         "2100",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": "15",
       "source": "Burke 2018 Nature"
@@ -445,8 +431,7 @@
         "world",
         "percent",
         "2100",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": "25",
       "source": "Burke 2018 Nature"
@@ -454,11 +439,11 @@
     {
       "words": [
         "climate damage",
+        "avoided damage",
         "world",
         "GDP share",
         "percent",
-        "Stern Review",
-        "measured value"
+        "Stern Review"
       ],
       "number": "5",
       "source": "Ecologic summary of the Stern Review"
@@ -469,8 +454,7 @@
         "world",
         "GDP share",
         "percent",
-        "Stern Review",
-        "measured value"
+        "Stern Review"
       ],
       "number": "1",
       "source": "Ecologic summary of the Stern Review"
@@ -483,8 +467,7 @@
         "2049",
         "Kotz 2024",
         "original",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "19",
       "source": "Kotz 2024 retraction note"
@@ -498,8 +481,7 @@
         "Kotz 2024",
         "revised",
         "minimum",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "6",
       "source": "Kotz 2024 retraction note"
@@ -513,8 +495,7 @@
         "Kotz 2024",
         "revised",
         "maximum",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "31",
       "source": "Kotz 2024 retraction note"
@@ -526,8 +507,7 @@
         "Kotz 2024",
         "2050",
         "original",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "0.99",
       "source": "Kotz 2024 retraction note"
@@ -539,8 +519,7 @@
         "Kotz 2024",
         "2050",
         "revised",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "0.90",
       "source": "Kotz 2024 retraction note"
@@ -554,7 +533,7 @@
         "3.2 degree scenario",
         "2050",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "18"
     },
@@ -564,7 +543,7 @@
         "output reduction",
         "3.2 degree scenario",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     },
@@ -577,7 +556,7 @@
         "2 degree target",
         "2050",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "4"
     },
@@ -587,21 +566,30 @@
         "output reduction",
         "2 degree target",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     }
   ],
   "calc-validation": [
     {
-      "name": "Stern Review implied benefit cost ratio",
-      "formula": "benefit cost ratio = avoided damage / mitigation cost",
-      "input": {
-        "avoided damage": "5",
-        "mitigation cost": "1"
-      },
-      "result": "5",
-      "description": "Damage of 5 percent of GDP against mitigation cost of 1 percent of GDP as reported for the Stern Review."
+      "formula": "benefit cost ratio of mitigation",
+      "context": [
+        "climate damage",
+        "avoided damage",
+        "mitigation cost",
+        "world",
+        "GDP share",
+        "percent",
+        "Stern Review"
+      ],
+      "words": [
+        "benefit cost ratio",
+        "world",
+        "Stern Review"
+      ],
+      "number": "5",
+      "note": "Damage of 5 percent of GDP against mitigation cost of 1 percent of GDP as reported for the Stern Review."
     }
   ]
 }

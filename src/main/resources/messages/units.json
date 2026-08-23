@@ -309,7 +309,8 @@
     },
     {
       "name": "second",
-      "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)"
+      "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
+      "plural": "seconds"
     },
     {
       "name": "s",
@@ -2007,7 +2008,6 @@
       "from": "second",
       "verb": "must be one of",
       "to": "time unit",
-      "plural": "seconds",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [

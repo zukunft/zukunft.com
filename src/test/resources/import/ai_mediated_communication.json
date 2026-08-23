@@ -77,6 +77,10 @@
     {
       "name": "value",
       "description": "a stored number; reference the provenance qualifier triple, not this bare word"
+    },
+    {
+      "name": "acceptability",
+      "description": "how acceptable a behaviour is judged to be by the people who observe it"
     }
   ],
   "triples": [
@@ -193,203 +197,132 @@
   ],
   "values": [
     {
-      "name": "communication speed increases with smart replies",
       "words": [
         "AI-mediated communication",
         "smart replies",
         "communication speed"
       ],
-      "value": true,
+      "number": "1",
       "source": "Hohenstein et al. 2023",
-      "predicate": "is increased by",
-      "triple": [
-        "communication speed",
-        "is increased by",
-        "smart replies"
-      ]
+      "description": "communication speed increases with smart replies; claimed relation: communication speed is increased by smart replies."
     },
     {
-      "name": "positive emotional language increases with smart replies",
       "words": [
         "smart replies",
         "positivity bias"
       ],
-      "value": true,
+      "number": "1",
       "source": "Hohenstein et al. 2023",
-      "predicate": "is increased by",
-      "triple": [
-        "use of positive emotional language",
-        "is increased by",
-        "smart replies"
-      ]
+      "description": "positive emotional language increases with smart replies; claimed relation: use of positive emotional language is increased by smart replies."
     },
     {
-      "name": "partners evaluate each other as closer and more cooperative",
       "words": [
         "smart replies",
         "interpersonal closeness rating"
       ],
-      "value": true,
+      "number": "1",
       "source": "Hohenstein et al. 2023",
-      "predicate": "is increased by",
-      "triple": [
-        "interpersonal closeness rating",
-        "is increased by",
-        "smart replies"
-      ]
+      "description": "partners evaluate each other as closer and more cooperative; claimed relation: interpersonal closeness rating is increased by smart replies."
     },
     {
-      "name": "suspected AI use lowers evaluation of the user",
       "words": [
         "overt AI use",
         "AI-mediated communication"
       ],
-      "value": true,
+      "number": "1",
       "source": "Hohenstein et al. 2023",
-      "predicate": "is decreased by",
-      "triple": [
-        "evaluation of the communicator",
-        "is decreased by",
-        "overt AI use"
-      ],
-      "description": "The boomerang effect: benefits hold only while AI use stays covert; once suspected, evaluation drops. See the triple 'overt AI use'."
+      "description": "suspected AI use lowers evaluation of the user; claimed relation: evaluation of the communicator is decreased by overt AI use. The boomerang effect: benefits hold only while AI use stays covert; once suspected, evaluation drops. See the triple 'overt AI use'."
     },
     {
-      "name": "positivity bias replicated in referential task",
       "words": [
         "positivity bias",
         "AI-mediated communication"
       ],
-      "value": true,
+      "number": "1",
       "source": "Mieczkowski et al. 2021",
-      "predicate": "is confirmed by",
-      "triple": [
-        "positivity bias",
-        "is confirmed by",
-        "Mieczkowski et al. 2021"
-      ]
+      "description": "positivity bias replicated in referential task; claimed relation: positivity bias is confirmed by Mieczkowski et al. 2021."
     },
     {
-      "name": "AI-generated language may undermine social attractiveness",
       "words": [
         "AI-mediated communication",
         "interpersonal closeness rating"
       ],
-      "value": true,
+      "number": "1",
       "source": "Mieczkowski et al. 2021",
-      "predicate": "may decrease",
-      "triple": [
-        "social attractiveness",
-        "may be decreased by",
-        "AI-generated language"
-      ],
-      "description": "Authors describe the evidence as preliminary and mixed; confidence kept low deliberately."
+      "description": "AI-generated language may undermine social attractiveness; claimed relation: social attractiveness may be decreased by AI-generated language. Authors describe the evidence as preliminary and mixed; confidence kept low deliberately."
     },
     {
-      "name": "confidence in AI-generated language undermining social attractiveness",
       "words": [
         "AI-mediated communication",
         "interpersonal closeness rating",
         "confidence value"
       ],
-      "value": 0.5
+      "number": "0.5",
+      "description": "confidence in AI-generated language undermining social attractiveness."
     },
     {
-      "name": "people expect others to use AI-MC more than themselves",
       "words": [
         "self-other discrepancy",
         "AI-mediated communication"
       ],
-      "value": true,
+      "number": "1",
       "source": "Purcell et al. 2024",
-      "predicate": "is demonstrated by",
-      "triple": [
-        "self-other discrepancy in AI-MC use",
-        "is demonstrated by",
-        "Purcell et al. 2024"
-      ]
+      "description": "people expect others to use AI-MC more than themselves; claimed relation: self-other discrepancy in AI-MC use is demonstrated by Purcell et al. 2024."
     },
     {
-      "name": "people judge their own AI use as more acceptable than others'",
       "words": [
         "self-other discrepancy",
         "overt AI use"
       ],
-      "value": true,
+      "number": "1",
       "source": "Purcell et al. 2024",
-      "predicate": "is demonstrated by",
-      "triple": [
-        "self-other discrepancy in acceptability",
-        "is demonstrated by",
-        "Purcell et al. 2024"
-      ]
+      "description": "people judge their own AI use as more acceptable than others'; claimed relation: self-other discrepancy in acceptability is demonstrated by Purcell et al. 2024."
     },
     {
-      "name": "secret AI use judged less acceptable than open use",
       "words": [
         "overt AI use",
-        "AI-mediated communication"
+        "AI-mediated communication",
+        "acceptability"
       ],
-      "value": true,
+      "number": "1",
       "source": "Purcell et al. 2024",
-      "predicate": "is demonstrated by",
-      "triple": [
-        "lower acceptability of secret AI use",
-        "is demonstrated by",
-        "Purcell et al. 2024"
-      ]
+      "description": "secret AI use judged less acceptable than open use; claimed relation: lower acceptability of secret AI use is demonstrated by Purcell et al. 2024."
     },
     {
-      "name": "habitual AI exposure shifts baseline expectation for human conversation",
       "words": [
         "expectation shift hypothesis",
         "AI-mediated communication",
         "assumed"
       ],
-      "value": true,
-      "source": null,
-      "predicate": "is hypothesized to",
-      "triple": [
-        "AI-MC exposure",
-        "is hypothesized to shift",
-        "expectation for human conversation"
-      ],
-      "description": "Core conjecture under examination. The cited experiments measure in-interaction perception, not durable recalibration of conversational expectation. Plausible and consistent with computer-mediated-communication theory, but not directly tested here. Low confidence reflects the gap between measured effect and claimed long-run shift."
+      "number": "1",
+      "description": "habitual AI exposure shifts baseline expectation for human conversation; claimed relation: AI-MC exposure is hypothesized to shift expectation for human conversation. Core conjecture under examination. The cited experiments measure in-interaction perception, not durable recalibration of conversational expectation. Plausible and consistent with computer-mediated-communication theory, but not directly tested here. Low confidence reflects the gap between measured effect and claimed long-run shift."
     },
     {
-      "name": "confidence in the expectation shift hypothesis",
       "words": [
         "expectation shift hypothesis",
         "AI-mediated communication",
         "confidence value"
       ],
-      "value": 0.35
+      "number": "0.35",
+      "description": "confidence in the expectation shift hypothesis."
     },
     {
-      "name": "AI should never be used for interpersonal communication",
       "words": [
         "never-use maxim",
         "AI-mediated communication",
         "assumed"
       ],
-      "value": true,
-      "source": null,
-      "predicate": "is asserted as",
-      "triple": [
-        "never-use maxim",
-        "is asserted as",
-        "normative position"
-      ],
-      "description": "A normative maxim, not an empirical result. The evidence supports a narrower claim: overt or suspected AI use damages trust and perception. That narrower, measured claim does not entail an absolute prohibition. Low confidence flags the gap between the strong maxim and the data."
+      "number": "1",
+      "description": "AI should never be used for interpersonal communication; claimed relation: never-use maxim is asserted as normative position. A normative maxim, not an empirical result. The evidence supports a narrower claim: overt or suspected AI use damages trust and perception. That narrower, measured claim does not entail an absolute prohibition. Low confidence flags the gap between the strong maxim and the data."
     },
     {
-      "name": "confidence in the never-use maxim",
       "words": [
         "never-use maxim",
         "AI-mediated communication",
         "confidence value"
       ],
-      "value": 0.2
+      "number": "0.2",
+      "description": "confidence in the never-use maxim."
     }
   ]
 }
