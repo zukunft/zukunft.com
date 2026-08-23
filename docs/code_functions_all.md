@@ -14493,28 +14493,6 @@
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
             set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err
-\-- user_display_old
-    \-- user - section for function user not yet defined that it should be set and get in /user/user_display_old.php
-    \-- dsp_sandbox_wrd - section for function dsp_sandbox_wrd not yet defined that it should be set and get in /user/us
-            er_display_old.php
-    \-- dsp_sandbox_wrd_link - section for function dsp_sandbox_wrd_link not yet defined that it should be set and get i
-            n /user/user_display_old.php
-    \-- dsp_sandbox_frm - section for function dsp_sandbox_frm not yet defined that it should be set and get in /user/us
-            er_display_old.php
-    \-- dsp_sandbox_frm_link - section for function dsp_sandbox_frm_link not yet defined that it should be set and get i
-            n /user/user_display_old.php
-    \-- dsp_sandbox_val - section for function dsp_sandbox_val not yet defined that it should be set and get in /user/us
-            er_display_old.php
-    \-- dsp_sandbox_view - section for function dsp_sandbox_view not yet defined that it should be set and get in /user/
-            user_display_old.php
-    \-- dsp_sandbox_component - section for function dsp_sandbox_component not yet defined that it should be set and get
-             in /user/user_display_old.php
-    \-- dsp_sandbox_view_link - section for function dsp_sandbox_view_link not yet defined that it should be set and get
-             in /user/user_display_old.php
-    \-- dsp_sandbox_source - section for function dsp_sandbox_source not yet defined that it should be set and get in /u
-            ser/user_display_old.php
-    \-- dsp_sandbox - section for function dsp_sandbox not yet defined that it should be set and get in /user/user_displ
-            ay_old.php
 \-- user_message
     \-- __construct - section for function __construct is expected to be construct and map in /user/user_message.php
     \-- reset - section for function reset is expected to be construct and map in /user/user_message.php
@@ -14758,9 +14736,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
             order of section set and get has difference at get_plural should be before type_id of set_code_id,
             get_code_id,type_id,get_plural,reverse,plural_reverse,formula_name,impact does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,
@@ -14776,9 +14752,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
             order of section set and get has difference at get_plural should be before type_id of set_code_id,
             get_code_id,type_id,get_plural,reverse,plural_reverse,formula_name,impact does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,
@@ -14794,9 +14768,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
             order of section set and get has difference at get_plural should be before type_id of set_code_id,
             get_code_id,type_id,get_plural,reverse,plural_reverse,formula_name,impact does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,
@@ -14812,9 +14784,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
             order of section set and get has difference at get_plural should be before type_id of set_code_id,
             get_code_id,type_id,get_plural,reverse,plural_reverse,formula_name,impact does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,
@@ -14830,9 +14800,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
             order of section set and get has difference at get_plural should be before type_id of set_code_id,
             get_code_id,type_id,get_plural,reverse,plural_reverse,formula_name,impact does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,
@@ -14848,9 +14816,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
             order of section set and get has difference at get_plural should be before type_id of set_code_id,
             get_code_id,type_id,get_plural,reverse,plural_reverse,formula_name,impact does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,
@@ -14866,9 +14832,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
             order of section set and get has difference at get_plural should be before type_id of set_code_id,
             get_code_id,type_id,get_plural,reverse,plural_reverse,formula_name,impact does not match 1,api_mapper,id,
             obj_id,grp,number,add,set_from_json,refresh_words_via_api,word_list,triple_list,phrase_list,set_source_list,
@@ -14884,9 +14848,7 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,dsp_sandbox_wrd,
-            dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err
 \-- verb_list
     \-- list - section for function list not yet defined that it should be display in /verb/verb_list.php
     \-- dsp_list - section for function dsp_list not yet defined that it should be display in /verb/verb_list.php
@@ -15079,9 +15041,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15097,9 +15057,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15115,9 +15073,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15133,9 +15089,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15151,9 +15105,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15169,9 +15121,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15187,9 +15137,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15205,9 +15153,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15223,9 +15169,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15241,9 +15185,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15259,9 +15201,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15277,9 +15217,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15295,9 +15233,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set,
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set,
             order of section set and get has difference at get_plural should be before set of set,set_from,
             set_from_by_id,set_verb,set_verb_by_id,set_to,set_to_by_id,get_from,get_verb,get_to,set_type,type,
             get_plural,impact,has_verb does not match 1,api_mapper,id,obj_id,grp,number,add,set_from_json,
@@ -15313,9 +15249,7 @@
             set_view_link_types,set_view_relation_types,set_component_types,set_component_link_types,set_position_types,
             set_source_types,set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,
             set_verbs,set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,
-            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,user,
-            dsp_sandbox_wrd,dsp_sandbox_wrd_link,dsp_sandbox_frm,dsp_sandbox_frm_link,dsp_sandbox_val,dsp_sandbox_view,
-            dsp_sandbox_component,dsp_sandbox_view_link,dsp_sandbox_source,dsp_sandbox,set
+            set_change_field_list,set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,set
 \-- triple_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /word/triple_list.php
     \-- get_by_verb - section for function get_by_verb is expected to be set and get in /word/triple_list.php
@@ -16097,28 +16031,6 @@
         \-- type_lists - set the vars of this log html object bases on the api json array
     \-- log_err
         \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- user
-        \-- user_display_old - @return user|null the person who wants to see the user
-    \-- dsp_sandbox_wrd
-        \-- user_display_old - display word changes by the user which are not (yet) standard
-    \-- dsp_sandbox_wrd_link
-        \-- user_display_old - display triple changes by the user which are not (yet) standard
-    \-- dsp_sandbox_frm
-        \-- user_display_old - display formula changes by the user which are not (yet) standard
-    \-- dsp_sandbox_frm_link
-        \-- user_display_old - display formula_link changes by the user which are not (yet) standard
-    \-- dsp_sandbox_val
-        \-- user_display_old - display value changes by the user which are not (yet) standard
-    \-- dsp_sandbox_view
-        \-- user_display_old - display view changes by the user which are not (yet) standard
-    \-- dsp_sandbox_component
-        \-- user_display_old - display component changes by the user which are not (yet) standard
-    \-- dsp_sandbox_view_link
-        \-- user_display_old - display component_link changes by the user which are not (yet) standard
-    \-- dsp_sandbox_source
-        \-- user_display_old - display source changes by the user which are not (yet) standard
-    \-- dsp_sandbox
-        \-- user_display_old - display changes by the user which are not (yet) standard
 \-- load
     \-- load_by_view_id
         \-- component_list - the component names with a link to each component as a comma separated list, sorted by

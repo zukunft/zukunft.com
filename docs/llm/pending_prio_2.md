@@ -357,7 +357,7 @@ the steps one at a time, each as its own commit with tests written first:
    the test_paths use from the web files
 
 7. migrate the remaining direct-db web files to api calls or delete the deprecated functions:
-   web/log/user_log_display.php and web/user/user_display_old.php create their own sql_db, and
+   web/log/user_log_display.php creates its own sql_db, and
    web/word/word.php still builds sql; afterwards no web file references sql_db and the
    html_paths::DB copy falls if not already removed in step 5
 
@@ -711,8 +711,6 @@ add the sample word to the view edit view as well ('word' url parameter of the o
 
 remove the now unreachable legacy view designer code: web/view/view.php and web/view/view_exe.php contain a nearly identical private linked_components() (a DRY violation) plus dsp_edit(), which were only called by http_old/view_add.php and http_old/view_edit.php. Their remaining buttons link to api::DSP_COMPONENT_LINK / DSP_COMPONENT_ADD, i.e. to controllers that are also already retired to /http_old, so these links are dead. Remove dsp_edit / linked_components (and the DSP_COMPONENT_* consts in shared/api.php) once the component list is part of the view edit view. The same applies to view::dsp_navbar_html (only used if html_base::UI_USE_BOOTSTRAP is false) and to view::selector_page and view::dsp_navbar_no_view, which have no caller at all since http_old/view_select.php is retired
 
-remove the dead class web/user/user_display_old.php: it is only included by src/test/php/utils/test_base.php, is never instantiated, uses rest_ctrl without importing it (so it would fail if it were called) and links to controllers that are retired (view_edit.php, value_edit.php, user_triple.php, user_value.php, user_formula_link.php)
-
 ### view del view (missing parts of the retired http_old/view_del.php)
 
 the legacy controller http_old/view_del.php has been replaced by the view_del view called via /http/view.php?m=32 (views::VIEW_DEL_ID), which the 'delete the view' button of the view selector already uses. The new view shows the name of the view to delete and writes the delete through the confirm step, so it covers the yes/no dialog of the old controller completely. No feature of the old controller is missing, but the delete itself is not protected.
@@ -755,7 +753,7 @@ save the source of a value as the new default source of the user: the old contro
 
 ### value edit view (missing parts of the retired http_old/value_edit.php)
 
-the legacy controller http_old/value_edit.php has been replaced by the value_edit view called via /http/view.php?m=19 (views::VALUE_EDIT_ID), which the 'change value' button already uses (web/value/value.php::VIEW_EDIT_ID). The new form has the same fields as the value add view (value, description, source, value type, view style, default view, share and protection type) and it saves through the confirm step. The old controller had no caller left in the program code, only in commented out blocks of the value tests (and in the dead class web/user/user_display_old.php, see above). The missing parts are the same as for the value add view plus the check of an empty value.
+the legacy controller http_old/value_edit.php has been replaced by the value_edit view called via /http/view.php?m=19 (views::VALUE_EDIT_ID), which the 'change value' button already uses (web/value/value.php::VIEW_EDIT_ID). The new form has the same fields as the value add view (value, description, source, value type, view style, default view, share and protection type) and it saves through the confirm step. The old controller had no caller left in the program code, only in commented out blocks of the value tests (and in the meanwhile deleted dead class web/user/user_display_old.php). The missing parts are the same as for the value add view plus the check of an empty value.
 
 show and change the phrases of a value in the value edit view (m=19): the old controller loaded the value by id including its phrases and let the user add or remove a phrase ('phrase1', 'phrase2', ... with the matching 'type1', 'type2', ...), showing the form again after each change. The new view has only the free text field url_var::GROUP_NAME ('gn'), which is even empty in the rendered page, so the phrases of a value can neither be seen nor changed. Solve it together with the phrase selector of the value add view (see the section above)
 
@@ -787,11 +785,11 @@ remove or rewrite web/verb/verb_list.php::dsp_list, the renderer of the old page
 
 ### user settings view (missing parts of the retired http_old/user.php)
 
-the legacy controller http_old/user.php (the settings page of the user) has a mask in the new frontend: the user view called via /http/view.php?m=74 (views::USER_ID), which the user reaches with the 'settings' link of the navbar (api::SETTINGS_REL). The new view shows 'Open issues related to you' (the same as the old dsp_errors of the user), but the main component is only the text 'user_setting placeholder' (see the snapshot src/test/resources/web/html/views_by_id/user/74_user.html). The old controller had no caller in the program code any more, only in the dead class web/user/user_display_old.php, and it would fail anyway, because it calls user_ui::dsp_sandbox, which exists only in that dead class. So the following parts of the old page have to be built in the new view.
+the legacy controller http_old/user.php (the settings page of the user) has a mask in the new frontend: the user view called via /http/view.php?m=74 (views::USER_ID), which the user reaches with the 'settings' link of the navbar (api::SETTINGS_REL). The new view shows 'Open issues related to you' (the same as the old dsp_errors of the user), but the main component is only the text 'user_setting placeholder' (see the snapshot src/test/resources/web/html/views_by_id/user/74_user.html). The old controller had no caller in the program code any more, only in the meanwhile deleted dead class web/user/user_display_old.php, and it would fail anyway, because it calls user_ui::dsp_sandbox, which existed only in that dead class. So the following parts of the old page have to be built in the new view.
 
 replace the 'user_setting placeholder' component of the user view (m=74) with the real user settings form: web/user/user.php::form_edit already creates it (name, email, ...). Save the change through the standard confirm flow and add a page test
 
-show the user sandbox in the user view (m=74): the old page listed under 'Your changes, which are not standard' all objects that the user has changed for himself only (words, triples, values, formulas, formula links, views and components) and offered an undo per object that removed the user overwrite (del_usr_cfg, called via the url parameters 'undo_word', 'undo_triple', 'undo_value', 'undo_formula', 'undo_formula_link', 'undo_view', 'undo_component'). Without this the user can no longer see or revert his own overwrites. There is already a views::UNDO_ID (73) mask that can be used for the confirmation of the undo. The renderer of the old page (web/user/user_display_old.php::dsp_sandbox_*) reads the database directly and must not be reused as it is, because web/ may only use the api (see docs/llm/frontend.md)
+show the user sandbox in the user view (m=74): the old page listed under 'Your changes, which are not standard' all objects that the user has changed for himself only (words, triples, values, formulas, formula links, views and components) and offered an undo per object that removed the user overwrite (del_usr_cfg, called via the url parameters 'undo_word', 'undo_triple', 'undo_value', 'undo_formula', 'undo_formula_link', 'undo_view', 'undo_component'). Without this the user can no longer see or revert his own overwrites. There is already a views::UNDO_ID (73) mask that can be used for the confirmation of the undo. The all user overwrites column of the user page (web/component/execute/ui_log.php::all_user_overwrites) lists these overwrites today and offers the undo per row, so what is left of this entry is only the check that every url parameter of the old page has an equivalent
 
 show 'Your latest changes' in the user view (m=74) with web/user/user.php::dsp_changes, the change log of the user
 
@@ -986,9 +984,7 @@ scan of 2026-06-13: the frontend must never open or query the database (see docs
 
 2. (dead) web/value/value.php::dsp_samples() uses `new sql_db()` + raw SQL but sits entirely inside a /* ... */ block comment (from line ~763). Remove it, or rebuild via the group/value API if the sample display is still wanted.
 
-3. (dead) web/user/user_display_old.php contains 9 `new sql_db()` direct-DB display functions and is not referenced anywhere in src/main/php. Delete the file. This also removes the last '&back=' url parameters of the source (see the general cleanup section above).
-
-4. fix web/log/user_log_display.php::dsp_hist(): it builds $result from change_log_list::tbl() and then returns '' (left over from the api migration of dsp_hist / dsp_hist_links), so the change history is loaded and thrown away.
+3. fix web/log/user_log_display.php::dsp_hist(): it builds $result from change_log_list::tbl() and then returns '' (left over from the api migration of dsp_hist / dsp_hist_links), so the change history is loaded and thrown away.
 
 after each step src/main/php/web must stay free of `new sql_db` / `new sql_creator` / `global $db_con`.
 
@@ -1037,8 +1033,8 @@ raw into alt="..."; all current callers pass constant/translated titles so it is
 user data today (the html_fa() add/edit/del path escapes via ref()); escape the alt as defense in
 depth. (2) formula::dsp_text() (web/formula/formula.php:686) emits usr_text raw, reachable only from
 legacy display()/result-explain paths that are effectively dead (the live render uses name_link());
-latent stored xss if revived. (3) legacy web-side raw-sql builders (user_display_old.php,
-view_list::selector_page, value::dsp_samples) are all dead/commented - recommend deleting.
+latent stored xss if revived. (3) the legacy web-side raw-sql builders
+view_list::selector_page and value::dsp_samples are dead/commented - recommend deleting.
 (4) object-level admin/no-change protection is enforced only for changes to the protection field
 itself (check_protection_change), not consulted in the general edit/delete authz - not exploitable
 today (a normal user's edit of an admin-protected system-owned object is routed to their own overlay),

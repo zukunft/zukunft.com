@@ -1,13 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## what the retired user_display_old.php still does better
-
-the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
-
-a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. the count that the retired user_display_old page showed per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows already builds that union per user and would only have to keep the per-table counts instead of summing them
-
-cfg/ref/ref_list extends type_list and not sandbox_list, although a ref is a sandbox_link: that is why it needs its own load_by_ids and its own empty load_names_related to be usable as a name list of the change log (see change_log_list::name_lists), and why the generic type_list load selects a code_id column that the refs table does not have (see the comment of load_by_phr_id); moving it to sandbox_link_list like term_view_list would remove all three exceptions
-
 ## user default view
 
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
@@ -50,6 +42,12 @@ the 'my' tab of the value page has an undo icon for the numeric value, the sourc
 the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
 
 adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
+
+## user page
+
+a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. a count per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows already builds that union per user and would only have to keep the per-table counts instead of summing them
+
+cfg/ref/ref_list extends type_list and not sandbox_list, although a ref is a sandbox_link: that is why it needs its own load_by_ids and its own empty load_names_related to be usable as a name list of the change log (see change_log_list::name_lists), and why the generic type_list load selects a code_id column that the refs table does not have (see the comment of load_by_phr_id); moving it to sandbox_link_list like term_view_list would remove all three exceptions
 
 ## component page tabs
 

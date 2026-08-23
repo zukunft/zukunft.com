@@ -379,8 +379,6 @@ include_once test_paths::UNIT_INT . 'test_export.php';
 // load the test functions still in development
 include_once test_paths::DEV . 'test_legacy.php';
 
-// TODO to be dismissed
-include_once html_paths::USER . 'user_display_old.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 

@@ -366,8 +366,7 @@ the object structure is:
 │       │       ├── resultUi - $res - the display extension of the api result object
 │       │       └── valueUi - $val - create the html code to show a value to the user
 │       ├── jobUi - $job - the extension of the batch task API objects to create job base html code
-│       └── userUi
-│           └── user_display_oldUi - to display the user-specific settings
+│       └── userUi - $usr - functions to create the HTML code to display the user setup and log information
 ├── TranslatorShared - $mtr - translates a message for the user into the user language
 ├── WorkflowShared - $wrk - defines which view to show next
 ├── json_fieldsShared - list of json field names used for the api and im- and export
