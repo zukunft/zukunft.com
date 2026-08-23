@@ -88,6 +88,19 @@ class ref_tests
         $ref_type_list = new ref_type_list();
         $t->assert_sql_all($sc, $ref_type_list);
 
+        // a ref list is a sandbox list like the source list, so it builds its own list queries
+        // instead of loading a single ref per id (see change_log_list::load_changed_objects)
+        $t->subheader($ts . 'list sql read');
+        $ref_lst = new ref_list($t->usr1);
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($ref_lst->load_sql_by_ids($sc, [1, 2]), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($ref_lst->load_sql_by_ids($sc, [1, 2]), sql_db::MYSQL);
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::MYSQL);
+
         $t->subheader($ts . 'sql write insert');
         $ref = $t_ref->reference();
         $t->assert_sql_insert($sc, $ref);

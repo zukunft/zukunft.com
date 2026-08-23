@@ -232,6 +232,7 @@ the object structure is:
 │       │   │   │   ├── element_list - a list of formula elements to place the name function
 │       │   │   │   ├── figure_list - a list of figures, so either a value of a formula result object
 │       │   │   │   ├── group_list - a list of word and triple groups
+│       │   │   │   ├── ref_list - al list of ref objects
 │       │   │   │   ├── sandbox_link_list
 │       │   │   │   │   ├── component_link_list - a list of links between a view and a component
 │       │   │   │   │   ├── formula_link_list - a list of formula word links
@@ -271,7 +272,6 @@ the object structure is:
 │       │           ├── change_field_list - the const for the change log field table
 │       │           ├── change_table_list - to link coded functionality to a log log table
 │       │           ├── phrase_types - to link coded functionality to a word or a triple, which means to every phrase
-│       │           ├── ref_list - al list of ref objects
 │       │           ├── ref_type_list - to link coded functionality to a reference
 │       │           ├── source_type_list - to link coded functionality to a source
 │       │           ├── protection_type_list - $ptc_typ - a database based enum list for the data protection types

@@ -47,8 +47,6 @@ adding the 'value tab box' to base_views.json shifts the database id of every co
 
 a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. a count per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows already builds that union per user and would only have to keep the per-table counts instead of summing them
 
-cfg/ref/ref_list extends type_list and not sandbox_list, although a ref is a sandbox_link: that is why it needs its own load_by_ids and its own empty load_names_related to be usable as a name list of the change log (see change_log_list::name_lists), and why the generic type_list load selects a code_id column that the refs table does not have (see the comment of load_by_phr_id); moving it to sandbox_link_list like term_view_list would remove all three exceptions
-
 ## component page tabs
 
 the component default view now has the 'component tab box' component with the changes and the my tab; it has no views tab, because the views that use the component are listed by the separate 'component views' component of the same page
