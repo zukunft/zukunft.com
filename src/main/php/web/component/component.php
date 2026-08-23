@@ -68,6 +68,9 @@ include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'component_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -84,6 +87,9 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -148,6 +154,30 @@ class component extends sandbox_code_id
     /*
      * construct and map
      */
+
+    /**
+     * @return array all sandbox component db field names mapped to their url var key so that the
+     *              undo link of the 'my' tab can change any overwritten field (see
+     *              ui_preview::overwrite_confirm_link); the keys match component_fields::ALL_NAMES
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            component_fields::FLD_NAME => url_var::NAME,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            component_fields::FLD_TYPE => url_var::COMPONENT_TYPE,
+            fields::FLD_STYLE => url_var::STYLE,
+            component_fields::FLD_ROW_PHRASE => url_var::PHRASE_ROW,
+            component_fields::FLD_LINK_TYPE => url_var::LINK_TYPE,
+            formula_fields::FLD_ID => url_var::FORMULA,
+            component_fields::FLD_COL_PHRASE => url_var::PHRASE_COL,
+            component_fields::FLD_COL2_PHRASE => url_var::PHRASE_COL_SUB,
+            fields::FLD_USAGE => url_var::USAGE,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
+    }
 
     /**
      * set the vars of this component bases on the url array
@@ -319,6 +349,23 @@ class component extends sandbox_code_id
             $vars[json_fields::FORMULA_ID] = $this->formula_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+    /**
+     * load the component by id AND ask the backend to include the owner, the change log and the
+     * user overwrites, which the tabs of the component page show
+     *
+     * the api handler sets api_types::INCL_RELATED and component::api_json_array() emits the
+     * changes and overwrites that the frontend api_mapper picks up into chg_log,
+     * user_overwrites and other_overwrites
+     *
+     * @param int|string $id the component id to load
+     * @param int $usr_id the id of the session user to load the component for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
 

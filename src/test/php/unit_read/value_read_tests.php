@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -231,6 +232,19 @@ class value_read_tests
         $phr_grp = $t_db->add_phrase_group(array(triple_names::PI_NAME), groups::TN_READ, $msg);
         $val = $t_db->load_value_by_phr_grp($phr_grp);
         $t->assert_export_reload($ts . $test_name, $val);
+
+
+        $t->subheader($ts . 'related views');
+
+        // the views tab of the value page offers the views that can show a value
+        $test_name = 'the related views of a value are the views of the value view type';
+        $val = new value($t->usr1);
+        $val->load_by_id(values::PI_MATH_ID, $msg);
+        $val->load_views_related($msg);
+        $t->assert_contains($test_name, $val->views_related->ids(), views::VALUE_DEFAULT_ID);
+
+        $test_name = '... and never a view that cannot show a value';
+        $t->assert_contains_not($test_name, $val->views_related->ids(), views::WORD_ID);
 
     }
 

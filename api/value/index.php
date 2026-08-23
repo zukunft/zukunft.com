@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -62,6 +63,11 @@ if ($db_con->is_open()) {
     // get the parameters
     $val_id = $_GET[url_var::ID] ?? 0;
     $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
+    // e.g. ir=1 to include the views, changes and overwrites shown by the value page tabs
+    $typ_lst = api_type_list::from_url_array($_GET);
+    if ($with_phr == url_var::TRUE) {
+        $typ_lst->add(api_types::INCL_PHRASES);
+    }
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -81,10 +87,8 @@ if ($db_con->is_open()) {
             // neutral message as a missing id, so the response does not confirm the value exists
             if (!$val->is_readable_by($usr)) {
                 $msg->add_message_text('value id is missing');
-            } elseif ($with_phr == url_var::TRUE) {
-                $result = $val->api_json([api_types::INCL_PHRASES], $msg);
             } else {
-                $result = $val->api_json([], $msg);
+                $result = $val->api_json($typ_lst, $msg, $load_usr);
             }
         } else {
             $msg->add_message_text('value id is missing');

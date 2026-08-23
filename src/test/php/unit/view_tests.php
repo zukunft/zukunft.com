@@ -264,6 +264,12 @@ class view_tests
         $t->subheader($ts . 'sql');
         $mrl_lst = new view_relation_list($t->usr1);
         $this->assert_sql_by_view($t, $sc, $mrl_lst, $t_msk->view());
+        $this->assert_sql_by_ids($t, $sc, $mrl_lst);
+
+        // without an id the query has no name, so that the caller does not send it to the database
+        $test_name = 'the view relation list query of an empty id list is not prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert($test_name, $mrl_lst->load_sql_by_ids($sc, [])->name, '');
 
 
         /*
@@ -314,6 +320,35 @@ class view_tests
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             $qp = $mrl->load_sql_by_view($sc, $msk);
+            $result = $t->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to load the view relations by their ids
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param view_relation_list $mrl the view relation list object
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_ids(
+        test_cleanup       $t,
+        sql_creator        $sc,
+        view_relation_list $mrl
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $mrl->load_sql_by_ids($sc, [1, 2]);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $mrl->load_sql_by_ids($sc, [1, 2]);
             $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;

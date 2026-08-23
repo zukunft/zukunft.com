@@ -64,7 +64,12 @@ class component_link_list_tests
 
         // load by component_link ids
         $lst = new component_link_list($t->usr1);
-        //$t->assert_sql_by_ids($sc, $lst, array(3, 2, 4));
+        $this->assert_sql_by_ids($t, $db_con, $lst);
+
+        // without an id the query has no name, so that the caller does not send it to the database
+        $test_name = 'the component link list query of an empty id list is not prepared';
+        $db_con->db_type = sql_db::POSTGRES;
+        $t->assert($test_name, $lst->load_sql_by_ids($db_con->sql_creator(), [])->name, '');
 
         // load by view
         $lst = new component_link_list($t->usr1);
@@ -131,6 +136,32 @@ class component_link_list_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_component($db_con->sql_creator(), $cmp);
+        $t->assert_qp($qp, $db_con->db_type);
+    }
+
+    /**
+     * test the SQL statement creation to load the component links by their ids
+     * in all SQL dialect and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param component_link_list $lst the empty component_link list object
+     * @return void
+     */
+    private function assert_sql_by_ids(
+        test_cleanup        $t,
+        sql_db              $db_con,
+        component_link_list $lst
+    ): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), [1, 2]);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), [1, 2]);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

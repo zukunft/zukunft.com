@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
@@ -46,6 +47,7 @@ include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
@@ -114,6 +116,19 @@ class formula_link_list extends sandbox_link_list
             phrase::FLD_ID,
             true
         );
+        // also load the name of the linked formula, so that the link can name both linked objects
+        $sc->set_join_fields(
+            formula_db::FLD_NAMES,
+            formula::class,
+            formula_fields::FLD_ID,
+            formula_fields::FLD_ID
+        );
+        $sc->set_join_usr_fields(
+            formula_db::FLD_NAMES_USR_NAME,
+            formula::class,
+            formula_fields::FLD_ID,
+            formula_fields::FLD_ID
+        );
         return $qp;
     }
 
@@ -145,6 +160,37 @@ class formula_link_list extends sandbox_link_list
     {
         global $db_con;
         $qp = $this->load_sql_by_frm_id($db_con->sql_creator(), $frm_id);
+        return $this->load($qp, $msg);
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formula links by the formula link ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of formula link ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        if (count($ids) > 0) {
+            $sc->add_where(formula_link::FLD_ID, $ids, sql_par_type::INT_LIST);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * load a list of formula links by the given formula link ids
+     * @param array $ids an array of formula link ids which should be loaded
+     * @return bool true if at least one formula link found
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
         return $this->load($qp, $msg);
     }
 

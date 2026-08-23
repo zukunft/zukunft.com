@@ -69,6 +69,8 @@ class component_fields
     const string FLD_LINK_COMP_TYPE = 'component_link_type_id';
     const string FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
     const string FLD_LINK_TYPE = 'link_type_id';
+    const string FLD_POS_TYPE_COM = 'the position of the component e.g. right or below';
+    const string FLD_POS_TYPE = 'position_type_id';
 
     // all database field names excluding the id
     // used to identify if there are some user-specific changes

@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -64,6 +65,8 @@ if ($db_con->is_open()) {
     $src_id = $_GET[url_var::ID] ?? 0;
     $src_name = $_GET[url_var::NAME] ?? '';
     $src_code_id = $_GET[url_var::CODE_ID] ?? '';
+    // e.g. ir=1 to include the views, changes and overwrites shown by the source page tabs
+    $typ_lst = api_type_list::from_url_array($_GET, [api_types::HEADER]);
 
     $ctrl = new controller();
 
@@ -78,13 +81,13 @@ if ($db_con->is_open()) {
         $src = new source($load_usr);
         if ($src_id > 0) {
             $src->load_by_id($src_id, $msg);
-            $result = $src->api_json([api_types::HEADER], $msg, $load_usr);
+            $result = $src->api_json($typ_lst, $msg, $load_usr);
         } elseif ($src_name != '') {
             $src->load_by_name($src_name, $msg);
-            $result = $src->api_json([api_types::HEADER], $msg, $load_usr);
+            $result = $src->api_json($typ_lst, $msg, $load_usr);
         } elseif ($src_code_id != '') {
             $src->load_by_code_id($src_code_id, $msg);
-            $result = $src->api_json([api_types::HEADER], $msg, $load_usr);
+            $result = $src->api_json($typ_lst, $msg, $load_usr);
         } else {
             $msg->add_message_text('Cannot load source because id, name and code id is missing');
         }

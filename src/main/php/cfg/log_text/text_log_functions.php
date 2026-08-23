@@ -153,6 +153,25 @@ function log_php_exception_timestamped(Throwable $e): void
 }
 
 /**
+ * exception handler installed by the api entry point as the last safety net: a Throwable that
+ * reaches here has travelled instead of being caught at the statement that raised it, which is a
+ * defect of that layer (see docs/llm/structure.md), so it is written to the error log of the admin
+ * like a database error; without it the response of the request just ends and the reason is only
+ * in the web server log, which the admin of the pod cannot read
+ *
+ * @param Throwable $e the uncaught exception or error
+ * @return void
+ */
+function log_php_exception_to_error_log(Throwable $e): void
+{
+    log_fatal(
+        'Uncaught ' . $e::class . ': ' . $e->getMessage(),
+        'php',
+        'in ' . $e->getFile() . ' on line ' . $e->getLine(),
+        $e->getTraceAsString());
+}
+
+/**
  * for internal functions debugging
  * a message is shown once the url &debug=N level reaches the given minimum level; pass one of the
  * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=6) or, for the deeper

@@ -52,10 +52,13 @@ include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -64,10 +67,13 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
 
@@ -99,6 +105,11 @@ class value extends value_base
 
     // database related variables
     private ?float $number = null;
+
+    // the views that can show a value; populated lazily by load_views_related() and only emitted
+    // via api_json_array() under the INCL_RELATED flag, so the views tab of the default value
+    // view can offer the views to switch to
+    public ?view_list $views_related = null;
 
 
     /*
@@ -199,10 +210,43 @@ class value extends value_base
         // add the numeric string itself
         $vars[json_fields::NUMBER] = $this->get_value();
 
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // the views, changes and overwrites tabs of the value default page
+        if ($typ_lst->incl_related()) {
+            if ($this->views_related == null and !$typ_lst->test_mode()) {
+                $this->load_views_related($msg);
+            }
+            $vars = array_merge($vars,
+                new sandbox_related()->views_array($this->views_related, $msg, $usr));
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
+        }
+
         return $vars;
     }
 
     // TODO test set_by_api_json
+
+    /**
+     * load the views that can show this value into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; unlike a word a value has no
+     * view of its own, so the related views are all views of the value view type, which is
+     * what the views tab offers the user to switch to
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_related(user_message $msg): void
+    {
+        global $sys;
+
+        $msk_lst = new view_list($this->get_user());
+        $msk_lst->load_by_type($sys->typ_lst->msk_typ->id(view_types::VALUE), $msg);
+        $this->views_related = $msk_lst;
+    }
 
     /*
      * im- and export

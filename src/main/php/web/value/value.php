@@ -58,6 +58,8 @@ include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
@@ -90,6 +92,8 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 
 class value extends sandbox_value
@@ -143,6 +147,24 @@ class value extends sandbox_value
             }
         }
         return $msg;
+    }
+
+    /**
+     * the url vars that url_mapper reads back for the user-editable fields of a value;
+     * the text, time and geo values have no url var yet, so an overwrite of one of them gets no
+     * undo icon (see docs/llm/pending.md)
+     *
+     * @return array db field name => url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            value_fields::FLD_VALUE => url_var::NUMERIC_VALUE,
+            source_fields::FLD_ID => url_var::SOURCE,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
     /**
@@ -285,6 +307,23 @@ class value extends sandbox_value
     {
         $data[url_var::WITH_PHRASES] = url_var::TRUE;
         return parent::load_by_id($id, $msg, $data, $usr_id);
+    }
+
+    /**
+     * load the value by id AND ask the backend to include the views that can show this value,
+     * the change log and the user overwrites, which the tabs of the value page show
+     *
+     * the api handler sets api_types::INCL_RELATED and value::api_json_array() emits the
+     * views, changes and overwrites that the frontend api_mapper picks up into view_lst,
+     * chg_log, user_overwrites and other_overwrites
+     *
+     * @param int|string $id the value id to load
+     * @param int $usr_id the id of the session user to load the value for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
 

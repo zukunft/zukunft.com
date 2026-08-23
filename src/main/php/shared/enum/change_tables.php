@@ -62,7 +62,7 @@ enum change_tables: string
     const string VIEW = 'views';
     const string VIEW_USR = 'user_views';
     const string VIEW_TERM_LINK = 'term_views';
-    //const string VIEW_TERM_LINK_USR = 'user_term_views';
+    const string VIEW_TERM_LINK_USR = 'user_term_views';
     const string VIEW_COMPONENT = 'components';
     const string VIEW_COMPONENT_USR = 'user_components';
     const string VIEW_LINK = 'component_links';
@@ -82,8 +82,60 @@ enum change_tables: string
     const string VALUE_TIME_SERIES = 'values_time_series';
     const string VALUE_TS_DATA = 'value_ts_data';
 
+    // value sub-tables for the values with a prime (up to four phrases) resp. a big group id
+    const string VALUE_PRIME = 'values_prime';
+    const string VALUE_BIG = 'values_big';
+    const string VALUE_TEXT_PRIME = 'values_text_prime';
+    const string VALUE_TEXT_BIG = 'values_text_big';
+    const string VALUE_TIME_PRIME = 'values_time_prime';
+    const string VALUE_TIME_BIG = 'values_time_big';
+    const string VALUE_GEO_PRIME = 'values_geo_prime';
+    const string VALUE_GEO_BIG = 'values_geo_big';
+    const string VALUE_TIME_SERIES_PRIME = 'values_time_series_prime';
+    const string VALUE_TIME_SERIES_BIG = 'values_time_series_big';
+
+    // the user sandbox (overlay) tables of the values: a value is stored in the table that matches
+    // its type and the size of its group id, so a value change is logged to one of these and not to
+    // user_values, which holds only the numeric values with a standard group id
+    const string VALUE_PRIME_USR = 'user_values_prime';
+    const string VALUE_BIG_USR = 'user_values_big';
+    const string VALUE_TEXT_USR = 'user_values_text';
+    const string VALUE_TEXT_PRIME_USR = 'user_values_text_prime';
+    const string VALUE_TEXT_BIG_USR = 'user_values_text_big';
+    const string VALUE_TIME_USR = 'user_values_time';
+    const string VALUE_TIME_PRIME_USR = 'user_values_time_prime';
+    const string VALUE_TIME_BIG_USR = 'user_values_time_big';
+    const string VALUE_GEO_USR = 'user_values_geo';
+    const string VALUE_GEO_PRIME_USR = 'user_values_geo_prime';
+    const string VALUE_GEO_BIG_USR = 'user_values_geo_big';
+    const string VALUE_TIME_SERIES_USR = 'user_values_time_series';
+    const string VALUE_TIME_SERIES_PRIME_USR = 'user_values_time_series_prime';
+    const string VALUE_TIME_SERIES_BIG_USR = 'user_values_time_series_big';
+
     // the name prefix of the user sandbox (overlay) tables, e.g. 'words' -> 'user_words'
     const string USER_PREFIX = 'user_';
+
+    // the tables that hold a value, without the user sandbox (overlay) prefix; a value is stored in
+    // the table that matches its type and the size of its group id, but a change in any of them is
+    // a change of the same value, so the change log maps them all to the values table to find the
+    // name and the class of the changed object (see change_log_list::std_table)
+    const array VALUE_TABLES = [
+        self::VALUE,
+        self::VALUE_PRIME,
+        self::VALUE_BIG,
+        self::VALUE_TEXT,
+        self::VALUE_TEXT_PRIME,
+        self::VALUE_TEXT_BIG,
+        self::VALUE_TIME,
+        self::VALUE_TIME_PRIME,
+        self::VALUE_TIME_BIG,
+        self::VALUE_GEO,
+        self::VALUE_GEO_PRIME,
+        self::VALUE_GEO_BIG,
+        self::VALUE_TIME_SERIES,
+        self::VALUE_TIME_SERIES_PRIME,
+        self::VALUE_TIME_SERIES_BIG,
+    ];
 
     // the user sandbox (overlay) tables; a change logged to one of these is a user-specific change and
     // is shown with a translatable 'user' prefix in the change log (see web/log/change_log_named)
@@ -91,11 +143,27 @@ enum change_tables: string
     const array USER_TABLES = [
         self::WORD_USR,
         self::TRIPLE_USR,
+        // all value tables, because the table of a value depends on its type and group id
         self::VALUE_USR,
+        self::VALUE_PRIME_USR,
+        self::VALUE_BIG_USR,
+        self::VALUE_TEXT_USR,
+        self::VALUE_TEXT_PRIME_USR,
+        self::VALUE_TEXT_BIG_USR,
+        self::VALUE_TIME_USR,
+        self::VALUE_TIME_PRIME_USR,
+        self::VALUE_TIME_BIG_USR,
+        self::VALUE_GEO_USR,
+        self::VALUE_GEO_PRIME_USR,
+        self::VALUE_GEO_BIG_USR,
+        self::VALUE_TIME_SERIES_USR,
+        self::VALUE_TIME_SERIES_PRIME_USR,
+        self::VALUE_TIME_SERIES_BIG_USR,
         self::VALUE_LINK_USR,
         self::FORMULA_USR,
         self::FORMULA_LINK_USR,
         self::VIEW_USR,
+        self::VIEW_TERM_LINK_USR,
         self::VIEW_COMPONENT_USR,
         self::VIEW_LINK_USR,
         self::REF_USR,

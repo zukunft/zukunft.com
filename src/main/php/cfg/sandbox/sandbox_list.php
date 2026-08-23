@@ -201,6 +201,19 @@ class sandbox_list extends list_db_write
      */
 
     /**
+     * load whatever the name() of the loaded objects needs beyond the object row itself, so that
+     * a caller that only wants the names can load any list the same way (see
+     * change_log_list::load_row_names); a named object carries its name in its own row, so this
+     * is a no-op for every list except the values, which name themselves by their group phrases
+     *
+     * @param user_message $msg to collect any problem while loading
+     * @return void
+     */
+    function load_names_related(user_message $msg): void
+    {
+    }
+
+    /**
      * set the SQL query parameters to load only the id and name to save time and memory
      * without the final building of the sql statement to allow adding a filter
      * e.g. for words to exclude formula words

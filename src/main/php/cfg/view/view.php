@@ -476,13 +476,18 @@ class view extends sandbox_code_id
                 $cmp_typ_lst->remove(api_types::INCL_RELATED);
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($cmp_typ_lst, $msg);
             }
-            // the owner name is only added for a page request (and the load is skipped in the
-            // test mode), so the view default page can show the owner (see base_views.json)
-            if ($typ_lst->incl_related() and !$typ_lst->test_mode()) {
-                $owner_name = $this->owner_api_name($msg);
-                if ($owner_name != null) {
-                    $vars[json_fields::OWNER] = $owner_name;
+            // a page request carries the owner, the changes and the overwrites, so that the
+            // view default page can show them (see base_views.json)
+            if ($typ_lst->incl_related()) {
+                // the owner load is skipped in the test mode
+                if (!$typ_lst->test_mode()) {
+                    $owner_name = $this->owner_api_name($msg);
+                    if ($owner_name != null) {
+                        $vars[json_fields::OWNER] = $owner_name;
+                    }
                 }
+                $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+                $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();

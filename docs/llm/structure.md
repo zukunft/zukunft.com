@@ -240,6 +240,87 @@ without an explanation reads as an oversight, because it usually is one.
 The check for the review: "would this fix have prevented the *next* failure of
 the same kind, or only re-labelled the last one?"
 
+## The smallest diff that fulfils the task — never rename or delete unasked
+
+"Reduce to the max" is about the **resulting code**, so that a human reads it
+easily. This rule is about the **change**, and it exists for a different
+reason: **less work and less risk for the developer**. Every changed line has
+to be read and can break something, so the fewest changed lines is the fewest
+things that can go wrong.
+
+The rule is aimed at a habit of llm models rather than of humans: a model
+changes code readily — renaming, restructuring, tidying on the way past — and
+writes long comments while doing it. A human working on the same task stops at
+the task. So the target is the smallest diff that fulfils it: touch what the
+task needs and nothing else.
+
+So an existing name stays as it is unless the task asks for it. Do not rename
+or delete a function, a const, a variable, a db field, a code_id, a view or a
+file just because a better name became visible while working nearby, and do not
+"clean up" something that the task merely happened to touch. Renaming is the
+most tempting of these and the most expensive: it breaks the developer's search
+for the old name, it turns a two-line change into a file-wide diff, and it
+hides the actual fix among mechanical edits. When a better name is genuinely
+worth having, **say so in the final report or record it in
+`docs/llm/pending_prio_2.md`** and leave the code alone — a proposal costs the
+developer one sentence, an unasked rename costs a review.
+
+The same holds for deleting something that has become unused: "no code
+references it any more" is not proof that it is dead. A url var, a `code_id`, a
+message id or a json field is an external contract that lives in bookmarks,
+saved links, imports and databases, so retiring one is a decision for the
+developer.
+
+Two counter-examples from one change, both while adding the missing fields of
+the formula link default page:
+
+- `view_relation::relation_type()` was renamed to `link_type()` so that one
+  generic `show_link_type()` could serve every link class. The generalisation
+  was reasonable; the rename was not requested, and the new function could have
+  been added without touching the existing name. It put an unrelated class into
+  the diff of a formula-link task.
+- `url_var::FORMULA_LINK_PRIO` lost its last php reference when the form field
+  was pointed at the url var that the mapper actually reads, so it was deleted
+  as dead code. It was not dead — it is a documented url key in the
+  human-readable url map — and the half-finished deletion left `url_var.php`
+  referencing two consts that no longer existed, so the file would not load.
+  The task was to fix the form field, not to retire a url key.
+
+This rule does **not** weaken "fix the pattern, not the instance" above. The
+distinction is defect versus improvement: when a *defect* is understood, the
+corrected rule goes to every place that shares the broken structure, in the
+same change, because those places are broken too. An *improvement* — a nicer
+name, a tidier signature, a const that could be dropped — is not a defect and
+does not travel.
+
+The check for the review: "does every file in this diff have to be here for the
+task to be done?" If a file is there only because something in it could be
+better, take it out and write the suggestion down instead.
+
+### Short comments — one line saying why
+
+A small diff is only less risk if the developer can see at a glance that the
+code is right. Two things make that possible: **one logical statement per
+line** (rule 2), and **short comments**.
+
+The best comment is one short line that says what the code is for. It explains
+the *why* — the intent, the reason this case exists — because the *what* is
+already in the code below it. A comment that restates the code adds a line to
+read without adding anything to know, and a paragraph above a two-line function
+hides the function.
+
+Long comments are the same llm habit as unasked renames: they feel like care
+and they cost the reader. So when a comment grows past a line or two, ask what
+it is doing: if it explains a rule that holds for the whole class, it belongs in
+the class docblock; if it explains a decision, it belongs in `docs/`, with one
+line pointing there; if it re-tells the code, delete it. The exceptions that
+earn more than a line are already named elsewhere in these docs — the comment
+behind a `new user_message(` saying why it exists, and the note at a deliberate
+asymmetry saying why the twin is different.
+
+The check for the review: "does this comment tell me something the next line
+does not?"
+
 ## Never fail silently — record the reason on `$msg`
 
 A function that carries a `user_message $msg` (or `Message`) and can reject, skip
@@ -354,6 +435,48 @@ the layer boundary and convert them to a `log_err`/`log_fatal` plus a `$msg`
 entry, and give every `match()` a default arm that logs the unexpected case.
 Failing loudly is right — but through the logging and `$msg` channels above,
 never by letting the language kill the process.
+
+### A `Throwable` never travels
+
+The target is that **no `Throwable` is part of the program flow**: an exception
+is not a return value, not a control-flow tool and never a way to hand a problem
+to the caller. A function neither throws to signal a result nor declares
+`@throws` so that somebody further out deals with it — it reports through
+`user_message` and returns.
+
+That means an exception is caught **as early as possible**: the `try` wraps the
+single statement that can raise one (the `new DateTime($txt)`, the json decode,
+the third-party call), not a whole block and not a wrapper three layers up. The
+handler then does two things and the exception is gone:
+
+1. turn it into a **translatable message** — a `msg_id` case with en/de
+   translations added to `$msg`, never the raw exception text, which is english,
+   internal and often contains a file path (see `docs/llm/state-and-messages.md`);
+2. if the cause is **unexpected** — something the user cannot have caused and
+   cannot fix — call `log_err_msg($txt, $msg)`, which writes the error to the
+   system log for the admin *and* puts the generic internal notice with the log
+   link on `$msg`, so all three duties above are done in one call.
+
+A cause the user *can* fix (a malformed date they typed, a value out of range)
+needs no `log_err_msg`: it is a normal user message with the specific `msg_id`
+that says what to do, because an entry in the admin log that nobody has to act
+on only hides the real errors.
+
+- **Right** — the `try` around the single `new DateTime($time_str)` in
+  `change_log::set_time_str`: the one statement that can raise is wrapped, so
+  the exception never leaves the setter. What is still missing there is the
+  second half of the rule — the `catch` only calls `log_err(...)`, so the user
+  learns nothing; with a `user_message $msg` parameter it becomes a
+  `log_err_msg()` (or a specific `msg_id` if the string came from user input).
+- **Wrong** — letting the `DateTime` constructor throw out of the mapper so that
+  the api entry point (or nothing at all) catches it: the response ends
+  mid-json, the user gets a white page and the reason is only in the web server
+  log, which the pod admin cannot read.
+
+The exception handlers registered at the entry points (`api/api_const.php`,
+`test/*`) are the **last** safety net for the case this rule was missed, not the
+place where exceptions are meant to be handled. A `Throwable` arriving there is
+a defect in the layer that let it travel.
 
 A function body should fit on **one screen page** (~50 lines) whenever possible —
 short enough that a reader sees the whole control flow without scrolling. When a

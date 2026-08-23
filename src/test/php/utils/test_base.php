@@ -2165,10 +2165,10 @@ class test_base
      * e.g. to clean up changes not needed any more
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object e.g. a word or a value
      * @return bool true if all tests are fine
      */
-    function assert_sql_changing_users(sql_creator $sc, sandbox $usr_obj): bool
+    function assert_sql_changing_users(sql_creator $sc, sandbox|sandbox_multi $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

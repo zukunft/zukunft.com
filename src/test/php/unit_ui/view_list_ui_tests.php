@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -51,6 +52,9 @@ class view_list_ui_tests
         $t_msk = new test_views($t);
         $msg = new user_message();
 
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+
         // start the test section (ts)
         $ts = 'unit ui html view list ';
         $t->header($ts);
@@ -66,7 +70,7 @@ class view_list_ui_tests
         $from_rows .= $lst->selector($form, 0) . '<br>';
         $test_page .= $html->form($form, $from_rows);
 
-        $t->html_page_test($test_page, 'view_list', 'view_list', $msg);
+        $t->html_page_test($test_page, 'view_list', 'view_list', $msg, $base_url, $lan);
     }
 
 }

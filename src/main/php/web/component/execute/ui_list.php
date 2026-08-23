@@ -63,6 +63,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
@@ -97,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -661,15 +663,16 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for the col-4 tab box of the word, triple or formula page: a "Views" tab with the
-     * related views (each a preview placeholder plus the open and switch buttons), a "Changes"
-     * tab with the change log of the object, latest first, a "My" tab with the session user's
-     * own overwrites (the user_ table rows e.g. of user_words), which is only shown if the
-     * user is logged in and has created overwrites of this object, and an "Others" tab with
-     * the shared overwrites that other users have done on this object
+     * HTML for the col-4 tab box of a sandbox object page: a "Views" tab with the related views
+     * (each a preview placeholder plus the open and switch buttons), a "Changes" tab with the
+     * change log of the object, latest first, a "My" tab with the session user's own overwrites
+     * (the user_ table rows e.g. of user_words), which is only shown if the user is logged in
+     * and has created overwrites of this object, and an "Others" tab with the shared overwrites
+     * that other users have done on this object; an empty tab is dropped, so a link page
+     * without related views shows the same box without the "Views" tab
      * TODO Prio 3 replace the view preview placeholder with a real miniature preview
      *
-     * @param db_object $dbo the word, triple or formula that should be shown to the user
+     * @param db_object $dbo the sandbox object that should be shown to the user
      * @param user_message $msg
      * @param bool $test_mode true to create a reproducible result without a backend call
      * @param array $url_array the parsed url of the current page, carried into the my tab undo links
@@ -679,24 +682,11 @@ class ui_list extends ui_base
     {
         global $mtr;
         $result = '';
-        if ($dbo::class == word::class
-            or $dbo::class == triple::class
-            or $dbo::class == formula::class) {
+        // guarded by class so that a mis-assigned seed component cannot fatal
+        if ($dbo instanceof sandbox) {
             $html = new html_base();
             // tab 1: each related view as a preview placeholder with the open and switch buttons
-            $views_html = '';
-            if ($dbo->view_lst != null) {
-                foreach ($dbo->view_lst->lst() as $msk) {
-                    $preview = $html->div('view preview', view_styles::COL_SM_12);
-                    // the switch button opens the edit view of the shown object, which differs
-                    // per class, so the edit view id of the object is passed to the link builder
-                    $buttons = $msk->open_link($dbo->id())
-                        . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID);
-                    // escape the view name (div emits its body raw and the name is user input); the
-                    // preview and buttons around it are already-built html (stored xss via view name)
-                    $views_html .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
-                }
-            }
+            $views_html = $this->view_previews($dbo);
             // tab 2: the change log of the word as the invisible (borderless, standard grey) table
             // with the three columns when, who and what, latest first (see ui_log)
             $log = new ui_log();
@@ -714,6 +704,31 @@ class ui_list extends ui_base
                 $mtr->txt(msg_id::FORM_SUB_TITLE_MY) => $my_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS) => $others_html,
             ]);
+        } else {
+            log_err($dbo::class . ' is not expected to have a change log and user overwrites');
+        }
+        return $result;
+    }
+
+    /**
+     * the "Views" tab of the view tab box; the list stays empty for an object whose api message
+     * carries no related views, which drops the tab
+     * @param sandbox $dbo the sandbox object that should be shown to the user
+     * @return string the html code of the view previews or an empty string if there is none
+     */
+    private function view_previews(sandbox $dbo): string
+    {
+        $result = '';
+        $html = new html_base();
+        foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
+            $preview = $html->div('view preview', view_styles::COL_SM_12);
+            // the switch button opens the edit view of the shown object, which differs
+            // per class, so the edit view id of the object is passed to the link builder
+            $buttons = $msk->open_link($dbo->id())
+                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID);
+            // escape the view name (div emits its body raw and the name is user input); the
+            // preview and buttons around it are already-built html (stored xss via view name)
+            $result .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
         }
         return $result;
     }

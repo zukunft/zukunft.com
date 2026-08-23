@@ -39,6 +39,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
@@ -55,6 +56,7 @@ include_once html_paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -88,6 +90,12 @@ class sandbox extends db_object
     // the shared overwrites of other users, each additionally with the name of the overwriting
     // user; rendered by the 'others' tab of the object page (ui_preview::other_overwrites_table)
     public array $other_overwrites = [];
+
+    // the recent changes from the api message, rendered by the 'changes' tab
+    public ?change_log_list $chg_log = null;
+
+    // the views that can show this object from the api message, rendered by the 'views' tab
+    public ?view_list $view_lst = null;
 
     // the user that has created the standard object
     protected ?user $owner = null;
@@ -147,6 +155,18 @@ class sandbox extends db_object
             $this->other_overwrites = $json_array[json_fields::OTHER_OVERWRITES];
         } else {
             $this->other_overwrites = [];
+        }
+        if (is_array($json_array[json_fields::CHANGES] ?? null)) {
+            $this->chg_log = new change_log_list();
+            $this->chg_log->api_mapper($json_array[json_fields::CHANGES]);
+        } else {
+            $this->chg_log = null;
+        }
+        if (is_array($json_array[json_fields::VIEWS] ?? null)) {
+            $this->view_lst = new view_list();
+            $this->view_lst->api_mapper($json_array[json_fields::VIEWS]);
+        } else {
+            $this->view_lst = null;
         }
         return $msg->is_ok();
     }

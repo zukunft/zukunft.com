@@ -33,30 +33,41 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_groups.php';
 include_once test_paths::CREATE . 'test_log.php';
 include_once test_paths::CREATE . 'test_sys_log.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -64,6 +75,8 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -78,9 +91,15 @@ class user_ui_tests
 
         $t_sys = new test_sys_log($t);
         $t_log = new test_log($t);
+        $t_frm = new test_formulas($t);
+        $t_grp = new test_groups($t);
         $t_usr = new test_users();
         $log = new ui_log();
         $msg = new user_message();
+
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'unit ui html user ';
@@ -121,13 +140,25 @@ class user_ui_tests
         // that a user sees all changes on one page (the same filter by the user sandbox tables,
         // see change_log_list::filter_user_overwrites and change_tables::USER_TABLES)
         $usr_sys_ui->chg_log = $t_log->log_list_user_overwrites_ui();
-        $all_html = $log->all_user_overwrites($usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
+        $all_html = $log->all_user_overwrites(
+            $usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES, $url_arr);
         $test_name = 'the word overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, views::WORD_NAME);
         $test_name = 'the triple overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, triple_names::MATH_CONST_COM);
         $test_name = 'the formula overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, test_log::FORMULA_OVERWRITE_COM);
+        $test_name = 'the formula link overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html,
+            (string)test_log::FORMULA_LINK_OVERWRITE_ORDER_NBR);
+        $test_name = 'the value overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, (string)values::SAMPLE_INT);
+        $test_name = 'the component overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::COMPONENT_OVERWRITE_COM);
+        $test_name = 'the view overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::VIEW_OVERWRITE_COM);
+        $test_name = 'the source overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::SOURCE_OVERWRITE_COM);
         $test_name = 'the standard table change is not listed beside the overwrites';
         $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
 
@@ -143,10 +174,52 @@ class user_ui_tests
         $test_name = 'the what column names the changed formula';
         $t->assert_text_contains($test_name, $all_html,
             formula_names::INCREASE . change_log_named_ui::OBJECT_SEPARATOR);
+        // a link has no name column, so its name is built from both linked objects; the formula
+        // name is asserted separately, because it was dropped by the link name before
+        $test_name = 'the what column names the changed formula link';
+        $t->assert_text_contains($test_name, $all_html,
+            $t_frm->formula_link()->name() . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = '... including the linked formula';
+        $t->assert_text_contains($test_name, $all_html, formula_names::SCALE_TO_SEC);
+        // a value has no name column either, so the what column names it by the group of phrases
+        $test_name = 'the what column names the changed value';
+        $t->assert_text_contains($test_name, $all_html,
+            $t_grp->group()->name() . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed component';
+        $t->assert_text_contains($test_name, $all_html,
+            components::MATRIX_NAME . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed view';
+        $t->assert_text_contains($test_name, $all_html,
+            views::START_NAME . change_log_named_ui::OBJECT_SEPARATOR);
+        $test_name = 'the what column names the changed source';
+        $t->assert_text_contains($test_name, $all_html,
+            sources::SIB . change_log_named_ui::OBJECT_SEPARATOR);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,
             triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR . $mtr->txt(msg_id::LOG_ADD));
+
+        // each row that can be undone gets an undo icon, so that the user can reset an overwrite
+        // from the user page instead of having to open the 'my' tab of each object; the link is
+        // the same view.php confirm url as the undo icon of the 'my' tab (see url_to_action)
+        $test_name = 'the overwrite rows have an undo icon';
+        $t->assert_text_contains($test_name, $all_html, icons::UNDO);
+        $test_name = 'the undo icon of the word overwrite opens the word edit view';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::MASK . '=' . views::WORD_EDIT_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID);
+        $test_name = 'the undo icon sets the overwritten field back to the value before the change';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::VIEW . '=&amp;' . url_var::PRE . url_var::VIEW . '=' . views::WORD_ID);
+        $test_name = 'the undo icon asks the user to confirm the change';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::STEP . '=' . url_var::STEP_CONFIRM);
+        // a value is keyed by the group id, so its undo link uses the group id and not a row id
+        $test_name = 'the undo icon of the value overwrite opens the value edit view';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::MASK . '=' . views::VALUE_EDIT_ID . '&amp;' . url_var::ID . '=' . values::PI_ID);
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::NUMERIC_VALUE . '=&amp;' . url_var::PRE . url_var::NUMERIC_VALUE
+            . '=' . values::SAMPLE_INT);
         $test_page .= $all_html . '<br>';
 
         // a user can have far more overwrites than a page should show (over 15'000 for the system
@@ -244,7 +317,7 @@ class user_ui_tests
         $test_name = 'without an object the popup form class is empty';
         $t->assert($test_name, $preview->popup_class(), '');
 
-        $t->html_page_test($test_page, 'user', 'user', $msg);
+        $t->html_page_test($test_page, 'user', 'user', $msg, $base_url, $lan);
     }
 
 }

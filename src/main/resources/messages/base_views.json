@@ -457,6 +457,54 @@
       "description": "the views that use the shown component with a link to each view",
       "type": "views_of_component",
       "code_id": "component_views"
+    },
+    {
+      "name": "system show field link type",
+      "description": "the name of the link type of a link as read only",
+      "type": "system_show_field_link_type",
+      "code_id": "show_field_link_type"
+    },
+    {
+      "name": "system show field order number",
+      "description": "the order number of a link as read only",
+      "type": "system_show_field_order_nbr",
+      "code_id": "show_field_order_nbr"
+    },
+    {
+      "name": "link tab box",
+      "description": "tab box with the change log and the user overwrites of this link",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_link"
+    },
+    {
+      "name": "value tab box",
+      "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_value"
+    },
+    {
+      "name": "component tab box",
+      "description": "tab box with the change log and the user overwrites of this component",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_component"
+    },
+    {
+      "name": "view page tab box",
+      "description": "tab box with the change log and the user overwrites of this view; named view page tab box, because view tab box is the name of the tab box of the word, triple and formula page",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_view"
+    },
+    {
+      "name": "source tab box",
+      "description": "tab box with the views that can show this source, the change log and the user overwrites of this source",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_source"
+    },
+    {
+      "name": "system show field start position",
+      "description": "the position in the parent view where the child view of a view relation starts as read only",
+      "type": "system_show_view_start_pos",
+      "code_id": "show_field_start_pos"
     }
   ],
   "views": [
@@ -693,6 +741,10 @@
         {
           "position": "6",
           "name": "source values"
+        },
+        {
+          "position": "7",
+          "name": "source tab box"
         }
       ]
     },
@@ -741,6 +793,10 @@
         {
           "position": "2",
           "name": "main value"
+        },
+        {
+          "position": "3",
+          "name": "value tab box"
         }
       ]
     },
@@ -1042,6 +1098,10 @@
         {
           "position": "6",
           "name": "view components"
+        },
+        {
+          "position": "7",
+          "name": "view page tab box"
         }
       ]
     },
@@ -1090,6 +1150,10 @@
         {
           "position": "10",
           "name": "component views"
+        },
+        {
+          "position": "11",
+          "name": "component tab box"
         }
       ]
     },
@@ -1102,6 +1166,22 @@
         {
           "position": "1",
           "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field owner"
+        },
+        {
+          "position": "5",
+          "name": "link tab box"
         }
       ]
     },
@@ -1117,7 +1197,19 @@
         },
         {
           "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
           "name": "system show field description"
+        },
+        {
+          "position": "4",
+          "name": "system show field owner"
+        },
+        {
+          "position": "5",
+          "name": "link tab box"
         }
       ]
     },
@@ -1130,6 +1222,26 @@
         {
           "position": "1",
           "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
         }
       ]
     },
@@ -1145,7 +1257,23 @@
         },
         {
           "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field start position"
+        },
+        {
+          "position": "4",
           "name": "system show field description"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
         }
       ]
     }

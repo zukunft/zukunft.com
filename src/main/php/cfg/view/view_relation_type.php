@@ -35,8 +35,12 @@ namespace Zukunft\ZukunftCom\main\php\cfg\view;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once paths::SHARED_TYPES . 'view_relation_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
 class view_relation_type extends type_object
 {
@@ -45,8 +49,10 @@ class view_relation_type extends type_object
      * code links
      */
 
-    // list of selection types for a view starting from a word, triple or formula
-    const string DEFAULT = "parent_child"; // for the standard parent child relation
+    // the code id of the default relation, taken from the shared const class so that the default
+    // is defined once; "parent_child" before, which is no code id of view_relation_types.csv, so
+    // that the type list never found it and the default was never treated as the default
+    const string DEFAULT = view_relation_types::DEFAULT;
 
 
     /*
@@ -54,7 +60,9 @@ class view_relation_type extends type_object
      */
 
     // comments used for the database creation
-    const string TBL_COMMENT = 'to define the behaviour of the relation between two views';
-    const string FLD_ID = 'view_relation_type_id';
+    const string TBL_COMMENT = view_fields::FLD_RELATION_TYPE_COM;
+    // the db field name from the shared const, so that the frontend can use the same name
+    // e.g. to map the field of an overwrite to the url var of the edit view (see db_fld_to_url)
+    const string FLD_ID = view_fields::FLD_RELATION_TYPE;
 
 }

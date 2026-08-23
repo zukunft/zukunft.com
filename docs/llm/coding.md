@@ -12,11 +12,13 @@ terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar co
 
 ## The three rules above all others
 
-1. **Reduce to the max.** Prefer the smallest change that does the job: fewer
-   lines, functions, assertions, parameters. When in doubt, leave it out — every
-   rule below is subordinate to this one, correctness excepted: shorter is never
-   worth a wrong answer. (Saint-Exupéry: perfection is reached not when there is
-   nothing left to add, but when there is nothing left to remove.)
+1. **Reduce to the max.** This is about the **resulting code**, so that a human
+   reads it easily: fewer lines, functions, assertions, parameters. When in
+   doubt, leave it out — every rule below is subordinate to this one,
+   correctness excepted: shorter is never worth a wrong answer. (Saint-Exupéry:
+   perfection is reached not when there is nothing left to add, but when there
+   is nothing left to remove.) The size of the **change** is a separate rule,
+   see "smallest diff" under "Understanding the request".
 2. **One logical element per line — three at most** (one assignment, one call,
    one condition). When a line packs more, split it into named steps or push a
    chain behind a well-named helper; but don't pad a simple expression across
@@ -63,11 +65,14 @@ detail file. Order is by how often they fire, not importance.
 ### Understanding the request
 - If the request's target is ambiguous ("here", "this", a name that matches several places), name the candidates and ask which is meant before changing anything; a pasted error trace, file path or line number counts as unambiguous. Investigating to narrow the candidates is fine, but the question comes before the fix — stating the chosen reading in the final report is not a substitute.
 - The target is error-free code, not just the reported issue gone: when fixing a defect, apply the corrected rule to every place that shares the same structure — the symmetric branch, the sibling class, the same pattern in the other list — in the same change. A fix that leaves an unexplained asymmetry (the from side checked, the to side not) is a latent copy of the bug; if a counterpart is deliberately left different, the code comment says why. → `docs/llm/structure.md`
+- Deliver the **smallest diff** that fulfils the task: never rename, move or delete an existing function, const, variable, db field, code_id or file that the task did not ask about, and never tidy up code the task merely touched — a better name found while working nearby goes into the final report or `docs/llm/pending_prio_2.md`, not into the diff. "Nothing references it any more" is not proof that a url var, code_id, message id or json field is dead; those are external contracts and retiring one is the developer's decision. This never weakens the rule above: a *defect* travels to every place sharing the broken structure, an *improvement* does not travel at all. → `docs/llm/structure.md`
 
 ### Structure & style
+- Comments are short: the best one is a single line saying **why** the code is there, because the *what* is in the code below it. A comment that restates the next line is deleted; a rule that holds for the whole class goes into the class docblock and a decision goes into `docs/` with one line pointing there. → `docs/llm/structure.md`
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Whatever happens (corrupted db, bad input, missing config), an uncaught PHP fatal is avoided — guard the value before the call that would fatal and catch exceptions at the layer boundary — because a fatal prevents the three duties of error handling: sys_log entry, admin info, user message. → `docs/llm/structure.md`
+- A `Throwable` never travels: it is not a return value and never handed to the caller (no `@throws`), so the `try` wraps the **single statement** that can raise one and the handler turns it into a translatable `msg_id` on `$msg` — and if the cause is unexpected (the user can neither have caused nor fix it) into `log_err_msg($txt, $msg)`, which informs the user, the admin and the system log in one call; the entry point handlers are the last safety net for a missed catch, not the place to handle exceptions. → `docs/llm/structure.md`
 - Never fail silently: a function carrying a `user_message $msg` that rejects or aborts must record the reason on `$msg` (a `msg_id` that renders to real text) and let it propagate to the UI — never return a failure with `$msg` unchanged, empty, or hidden by an `is_ok()` gate. → `docs/llm/structure.md`
 - A helper that can produce a *user-actionable* error takes a `user_message $msg` parameter (thread it from the callers) so it can return the specific problem and its solution; reserve `log_err` (no `$msg`) for internal inconsistencies the user cannot fix. E.g. `triple::verb_from_api_json`. → `docs/llm/structure.md`
 - Long term almost every `log_err` becomes `log_err_msg($txt, $msg)` (admin log **and** a generic internal notice with the log link for the user), so **when you change anything in a function that still has a bare `log_err`, add the `user_message $msg` parameter and switch that call** — an error nobody tells the user about is not acceptable. Keep the bare `log_err` only where no caller can hold a `$msg` (entry point, bootstrap, cron, HTML-only display) or where the message would fire on a normal path. → `docs/llm/structure.md`
@@ -88,6 +93,8 @@ detail file. Order is by how often they fire, not importance.
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
 - Every resource file read or written is a const in the `files.php` of its layer (cfg / shared / test), so the three `files.php` stay the complete overview of all resource files; never inline a file name at the call site. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
+- Never remove an `include_once` that looks unused: without an autoloader it may be what defines a class before another file extends it, and the fatal shows up elsewhere. Leave it until the includes are changed to proper dynamic loading. → `docs/llm/file-layout.md`
+- Include every class a file uses in block 2, never lazily inside a function; if the include order matters, include the file that loads the package first and say why. → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
 - Loading and saving are separated: every function reached from `save()` (e.g. `db_fields_changed`, `add_user`) works only on in-memory objects + the initial `$db_rec`/`get_similar` reload and never calls a `load_*`; fix an incomplete object at its load, not in the save path. → `docs/llm/architecture.md`
 - Within a section, order functions top down: public / often-used entry points first, rarely-used private helpers last (`load_by_phrase` before `load_sql_by_phrase`). → `docs/llm/architecture.md`

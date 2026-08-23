@@ -1,38 +1,30 @@
 # pending - list of planned llm prompts with prio 1
 
+## what the retired user_display_old.php still does better
+
+the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
+
+link the changed object in the 'all_user_overwrites' column to its default page: change_log_named::tr_when_who_what puts the object name into the what cell as plain text (see change_log_named::object_prefix), so the user page names the changed object but the user cannot click through to it; the old page linked the first cell to the object and the user value to the edit view (value_edit.php, view_edit.php, component_edit.php, source_edit.php)
+
+show the standard value beside the user value in the 'all_user_overwrites' column: the old page had the header "Your name vs. | common name" and showed both values side by side, whereas the what column shows only the change text; the your / instead comparison exists today only in the 'my' tab of the object page
+
+add the overwrites of the other users to the user page: the old page had an 'other user' column per row (a link to user_triple.php, user_value.php, user_view.php, ...) that showed what other users have set for the same object; today this is only the 'others' tab of each object page
+
+group the 'all_user_overwrites' rows by object type or add an object type column: the old page had one table per object type with its own header, so the user could see at a glance how many words resp. values were overwritten; today all types are merged into one when / who / what list that does not name the type
+
+add the ref overwrites to the 'all_user_overwrites' component: change_tables::REF_USR is in change_tables::USER_TABLES, so a ref overwrite is listed today, but change_log_list::name_lists has no ref entry, so the what column cannot name the changed ref (the old page had no ref table either, so this is a gap of both)
+
 ## user default view
 
-fill the formula_link_default view with the missing fields including the 'changes' and 'my' tabs for the user_changes
-
-add the formula_link overwrites to the 'all_user_overwrites' component used in the user_default view
-
-write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show 
-
-add a 'views', 'changes' and 'my' tabs to the value_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
-
-add the value overwrites to the 'all_user_overwrites' component used in the user_default view
-
-add a 'changes' and 'my' tabs to the component_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
-
-add the component overwrites to the 'all_user_overwrites' component used in the user_default view
-
-add a 'changes' and 'my' tabs to the view_default view that shows tha user overwrites similar to the 'changes' and 'my' tabs in the word default page
-
-add the view overwrites to the 'all_user_overwrites' component used in the user_default view
-
-fill the component_link_default view with the missing fields including the my tab for the user_changes
-
-add the component_link overwrites to the 'all_user_overwrites' component used in the user_default view
-
-add a 'views', 'changes' and 'my' tabs to the source_default view that shows tha user overwrites similar to the 'views', 'changes' and 'my' tabs in the word default page
-
-add the source overwrites to the 'all_user_overwrites' component used in the user_default view
-
-check if any functionality or information from src/main/php/web/user/user_display_old.php has not yet been part of the default and user views and report missing parts in /docs/llm/pending.md
-
-repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
-
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
+
+
+for the headline of the add component view 'element' is used. A view component should always be named 'component' not element . Note this change in the rules and check that 'element' is nowhere used to decribe a component 
+
+in the view and component default view in the title add the translated word "view" / "component" before the view / component name, so that the title is e.g. view "Word" or component "Word"
+
+
+write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
 
 
 in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the tooltip of the term so that the user can check if she (or he) has selected the correct term
@@ -45,11 +37,39 @@ create a script that checks that all fields of the main classes are shown on the
 create a script loops over the resources that lists all queries '*.sql' that does not have a limit and that does not have a unique db id in the where condition.
 
 
-## temp
+## cleanup
+
+change the script that generates docs/code_functions_all.md and limit the length of each line
+
+add the check of the open_api specification to /test/test.php
+
+if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default page
 
 fix the view selector link in the word_default page
 
-## cleanup
+### value page tabs
+
+the value default view now has the 'value tab box' component, so the value page shows the views that can show a value (all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
+
+the 'my' tab of the value page has an undo icon for the numeric value, the source and the sandbox fields (see value::db_fld_to_url), but not for a text, time or geo value, because url_var has only NUMERIC_VALUE; the same applies to the apply icon of the 'others' tab
+
+the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
+
+adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
+
+## component page tabs
+
+the component default view now has the 'component tab box' component with the changes and the my tab; it has no views tab, because the views that use the component are listed by the separate 'component views' component of the same page
+
+api/component/index.php did not read the url flags at all, so it always sent api_json([]) and the owner of a component was never sent either although component::api_json_array emits it under incl_related; the endpoint now uses api_type_list::from_url_array like the triple and formula endpoint
+
+web/component/component.php has a load_by_id_with_related and a db_fld_to_url, both only on the component: view_base and source extend the same web sandbox_code_id, so adding either to the parent would also change the view and the source page, which are separate pending items
+
+change_log_list::table_field_to_query_name returns '_of_cmp' for a component changes tab (leading underscore) and logs 'field name not expected' although an empty field name is the normal case of load_obj_last; the same wart exists for the formula ('_of_frm'), view, source, verb, group and value branches, whereas the ref and the type branch handle the empty field name properly - fixing all of them renames the prepared statements and churns the committed fixtures, so it needs its own change
+
+adding the 'component tab box' to base_views.json shifts the database id of every component imported after it, like the value tab box did before
+
+### more
 
 find and fix the silent not-ok on the fresh-database reset path: during reset_db_forced the request message reached the config check of db_check with status NOK but without any error text (only the DONE and 'finished successful' infos), so a sub step of the fresh-db startup (user creation, type fill or base import) returns a failed message without recording the reason - a 'never fail silently' violation; the broken-sql side effect is fixed (db_object_seq_id::sql_write now uses a build-scoped message), so the next forced reset should surface which step it is
 
@@ -70,6 +90,8 @@ decprecate http_old
 review $back
 
 review $msg
+
+repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
 
 Worth fixing
 formula button tooltips lost their object name
@@ -109,6 +131,22 @@ The budget can overshoot by design. A group renders whole once started, so the l
 impact_group no longer defaults to the configured limit. Its $budget is now required and it uses max(0, $budget). Every caller passes a real value today, but a future caller that passes 0 gets a section with no rows and a tail counting everything — silently correct-looking, easy to get wrong. A ?int $budget = null defaulting to configured_limit() would be safer.
 The per-group cap re-reads the config per section. time_groups() and relevant_phrase_groups() each call configured_limit() for $per_group, and group_block() calls it again per group. Correct, just repeated work on a hot path; passing it down with the budget would do.
 The word pages moved too — word.html, word_api.html, word_default_word_1/197, word_del, word_edit, value_list.html all changed. Expected (the same renderer), but they are the pages to eyeball for over-truncation, since the fixtures there are small and now render against a limit of 6 in tests.
+The owner is still not rendered — the task is incomplete. No snapshot anywhere contains ow=. url_mapper::url_par() drops null values, so $obj->get_user()->name() is null when the test url is built, and the system show field owner component renders nothing on both 116_formula_link_1.html and 115_component_1.html. The transport chain exists end to end; the test fixture just never supplies the name.
+view_relation start position is now an empty field. Removing the 'position missing missing' placeholder was right, but test_mappers::view_relation_url doesn't carry url_var::POSITION (and view_relation has no to_url_array override), so 43_view_relation_update_1.html renders the field with no value. Component link works (value="1"), formula link is fully wired. That is exactly the "unexplained asymmetry" the fix-the-pattern rule warns about — one of the three is wired, one reads from an existing url var, one can't.
+Empty "Changes" tab on the formula link page. change_log_table_pure returns a table with when / who / what headers even with zero rows, so tab_box doesn't drop it. 116_formula_link_1.html shows a Changes tab containing only headers.
+form_field_formula_link_prio has no German translation. I changed the en text to "Priority"; de.yaml has no entry for it at all (nor for form_field_view_term_link_prio / form_field_component_link). Pre-existing, but the rule is en and de.
+Seed component ids shifted. The three new components in base_views.json pushed Cash Flow Statement 344→347 and company with ratios 345→348. list.csv is regenerated and no *_ID const pins either, so nothing broke — reporting it rather than absorbing it silently, as the json rules require.
+Two include_once lines commented out (yours): sandbox_named.php no longer includes its own parent sandbox.php, and type_list.php drops change_table_field.php. Same shape in web/sandbox/sandbox.php, where change_log_list.php is commented out while api_mapper does new change_log_list(). All load today, but each now depends on some other file loading the class first — the same class of fragility as the sandbox_link fatal.
+Minor: $url_arr is declared but unused in source_ui_tests.php and user_ui_tests.php (used 4× in component_ui_tests.php). And code_object_name_exceptions.md grew for formula_link — my test vars $lnk_fld_url, $lnk_plain, $lnk_tab — against the rule that the list stays short.
+Not a defect: the coverage doc lists show_link_type, show_order_nbr and link_type as "0 unit test calls". They are tested, but in unit_ui/, which that generator doesn't count.     
+api/ui_config/ui_config.json — timestamp-only diff. Only the header timestamp changed. Consider reverting; it's pure churn.
+load_sql_by_user_value() is public but has no external caller. load_by_user() is the only user. Its sibling load_sql_by_user() is public too, and the test calls it directly, so this matches the local convention — just noting it.
+sort_by_time_and_cut() duplicates the web twin. The frontend web/log/change_log_list already has sort_by_time_and_what() + head(). The two apps are deliberately independent (docs/llm/frontend.md), so this is the accepted pattern rather than a DRY violation — but the backend now sorts and the frontend re-sorts the same list.
+The changes table comment is the load contract. load_by_user() reading 13 tables rests entirely on that comment ("all tables except value and link changes"). If a value change ever lands in changes, it would be listed twice. Not currently possible, but nothing asserts it.
+version.txt correctly untouched — no json format or db structure change.
+Generated docs: code_user_message_exceptions.md only shifts a line number, doesn't grow. code_test_coverage.md adds the three new functions.
+The fold is duplicated verbatim in the backend and the frontend std_table* function. That mirrors the existing prefix-strip duplication rather than adding a new pattern, so it is consistent, but both copies now have to move together.
+Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.  
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.
@@ -152,8 +190,6 @@ extend the verb default view, which today only shows the verb name and the relat
 
 ### values
 
-add change log to value default view
-
 show the missing db fields in the value default view: the source of the value, the timestamp of the last update and the share and protection status
 
 ### source
@@ -195,6 +231,10 @@ add the missing db field to the view link add and edit views: the description fi
 ### formula link
 
 the formula link add and edit views show a description field, but the formula_link table has no description column; either add the description column to the formula_link table or remove the description field from both forms
+
+the label of the component link order number and of the view relation start position is the same msg_id FORM_FIELD_COMPONENT_LINK, so both fields are labelled 'Component link' instead of naming the field; give each its own msg_id with en/de translations
+
+the term_view (view link) has no priority or order column, so form_field_view_link_priority submits url_var::VIEW_TERM_LINK_PRIO with the fallback text 'prio missing' and no mapper reads it; this is the open decision of the 'view link' section above (add the column or remove the form field)
 
 ## workflows
 

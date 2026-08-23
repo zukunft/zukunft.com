@@ -77,6 +77,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -112,6 +113,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
@@ -132,8 +134,12 @@ class component_link extends sandbox_link
     const string TBL_COMMENT = 'to link components to views with an n:m relation';
     const string FLD_ID = 'component_link_id';
     const string FLD_LINK_TYPE_COM = 'if null the default type always is used';
-    const string FLD_ORDER_NBR = 'order_nbr';
+    const string FLD_ORDER_NBR = fields::FLD_ORDER_NBR;
     const sql_field_type FLD_ORDER_NBR_SQL_TYP = sql_field_type::INT;
+    // the names of the linked objects as the list query joins them; the suffix is the position
+    // of the join, so both must match the join order of component_link_list::load_sql_by_ids
+    const string FLD_VIEW_NAME_JOINED = view_fields::FLD_NAME . '1';
+    const string FLD_COMPONENT_NAME_JOINED = component_fields::FLD_NAME . '2';
     const string FLD_POS_COM = 'the position of the component e.g. right or below';
     const string FLD_POS_TYPE = 'position_type_id';
     const string FLD_POS_TYPE_NAME = 'position'; // for log only
@@ -300,6 +306,14 @@ class component_link extends sandbox_link
                 $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
                 $this->set_pos_type_by_id($db_row[self::FLD_POS_TYPE]);
                 $this->set_style_by_id($db_row[fields::FLD_STYLE]);
+                // the list query joins the names of both linked objects, so that the link can
+                // name them e.g. in the change log; a load by id has no join and no names
+                if (array_key_exists(self::FLD_VIEW_NAME_JOINED, $db_row)) {
+                    $msg->merge($this->get_view()->set_name($db_row[self::FLD_VIEW_NAME_JOINED]));
+                }
+                if (array_key_exists(self::FLD_COMPONENT_NAME_JOINED, $db_row)) {
+                    $msg->merge($this->get_component()->set_name($db_row[self::FLD_COMPONENT_NAME_JOINED]));
+                }
             } else {
                 log_warning('view id missing for ' . $this->dsp_id());
             }
@@ -580,6 +594,15 @@ class component_link extends sandbox_link
             if ($typ_lst->incl_related()) {
                 $vars = $this->api_json_array_linked(
                     $vars, json_fields::VIEW, json_fields::COMPONENT, $msg, $usr);
+                // the owner, changes and overwrites of the component link default page
+                if (!$typ_lst->test_mode()) {
+                    $owner_name = $this->owner_api_name($msg);
+                    if ($owner_name != null) {
+                        $vars[json_fields::OWNER] = $owner_name;
+                    }
+                }
+                $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+                $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
             }
 
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -1685,6 +1708,29 @@ class component_link extends sandbox_link
     private function log_move($direction)
     {
 
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string|null the name of the two linked objects e.g. for the change log
+     */
+    function name(): string|null
+    {
+        $result = null;
+
+        if ($this->get_view() != null) {
+            $result = $this->get_view()->name();
+        }
+        if ($this->component_id() != 0) {
+            // append, because the name of a link is the name of both linked objects
+            $result .= ' to ' . $this->get_component()->name();
+        }
+
+        return $result;
     }
 
 }

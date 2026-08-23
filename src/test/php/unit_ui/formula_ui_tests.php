@@ -55,10 +55,13 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -279,6 +282,98 @@ class formula_ui_tests
         // ... and an empty name, never a 'objects not set' placeholder as the page title
         $test_name = 'a fresh formula link has an empty name';
         $t->assert($test_name, $lnk_new->name(), '');
+
+        $t->subheader($ts . 'link fields');
+
+        // the fields of the formula link default page (see base_views.json)
+        $test_name = 'the link type of a formula link is shown with its user-readable name';
+        $t->assert($test_name, $sfm->show_link_type($lnk), formula_link_types::TIME_PERIOD_NAME);
+        $test_name = 'a formula link without a type shows an empty text';
+        $t->assert($test_name, $sfm->show_link_type($lnk_new), '');
+
+        $test_name = 'the order number of a formula link is shown';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk), (string)test_const::FORMULA_LINK_ORDER_NBR);
+        $test_name = 'a formula link without an order number shows an empty text';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk_new), '');
+
+        // the same fields for a page requested by url instead of by api
+        $test_name = 'the link type and the order number of a page url are shown';
+        $lnk_fld_url = new formula_link_ui();
+        $lnk_fld_url->url_mapper([
+            url_var::TYPE => (string)formula_link_types::TIME_PERIOD_ID,
+            url_var::FORMULA_LINK_PRIO => (string)test_const::FORMULA_LINK_ORDER_NBR,
+            url_var::OWNER => users::SYSTEM_TEST_NAME
+        ], $msg, $ui_sys);
+        $t->assert($test_name, $sfm->show_link_type($lnk_fld_url), formula_link_types::TIME_PERIOD_NAME);
+        $t->assert($test_name . ' and the order number', $sfm->show_order_nbr($lnk_fld_url),
+            (string)test_const::FORMULA_LINK_ORDER_NBR);
+
+        $test_name = 'the owner of a formula link is shown';
+        $t->assert($test_name, $sfm->show_owner($lnk_fld_url), users::SYSTEM_TEST_NAME);
+        $test_name = 'a formula link without a known owner shows an empty text';
+        $t->assert($test_name, $sfm->show_owner($lnk_new), '');
+
+        // the undo link of the my tab needs the value before the change from the page url
+        $test_name = 'the page url of a formula link carries the order number';
+        $t->assert($test_name, $lnk->to_url_array($msg)[url_var::FORMULA_LINK_PRIO] ?? '',
+            test_const::FORMULA_LINK_ORDER_NBR);
+        $test_name = 'the page url of a formula link without an order number has no order number';
+        $t->assert($test_name, $lnk_new->to_url_array($msg)[url_var::FORMULA_LINK_PRIO] ?? '', '');
+
+        $test_name = 'the order number db field is mapped to its url var';
+        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_ORDER_NBR] ?? '',
+            url_var::FORMULA_LINK_PRIO);
+        $test_name = 'a db field that a formula link does not have has no url var';
+        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_DESCRIPTION] ?? '', '');
+
+        $t->subheader($ts . 'link tabs');
+
+        // the tab box of the link default page; a link has no related views, so no views tab
+        $lnk_related = $t_frm->formula_link_filled_included();
+        $lnk_related->changes_related = $t_log->log_list_formula_link();
+        // test mode so the backend emits the given change list without a database load
+        $lnk_json = json_decode($lnk_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the changes of a formula link are sent to the frontend';
+        $t->assert_true($test_name, ($lnk_json[json_fields::CHANGES] ?? []) != []);
+
+        // the test mode reads no overlay rows, so the 'my' row is added here
+        $lnk_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_ORDER_NBR,
+                json_fields::USR_VALUE => (string)test_const::FORMULA_LINK_ORDER_NBR,
+                json_fields::STD_VALUE => '',
+            ],
+        ];
+        $lnk_tab = new formula_link_ui(json_encode($lnk_json));
+
+        $test_name = 'the changes of a formula link reach the frontend link object';
+        $t->assert_true($test_name, $lnk_tab->chg_log != null and !$lnk_tab->chg_log->is_empty());
+
+        // the my tab is only shown to a user with an id
+        $usr_lnk_keep = $ui_sys->usr ?? null;
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($lnk_tab, $msg, true);
+
+        $test_name = 'the formula link page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = 'the formula link page shows the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = 'a formula link has no related views, so no views tab is shown';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        $test_name = 'a formula link without overwrites shows no my tab';
+        $lnk_plain = new formula_link_ui($t_frm->formula_link_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($lnk_plain, $msg, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_lnk_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_lnk_keep;
+        }
 
         // TODO review
 

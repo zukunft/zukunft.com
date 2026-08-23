@@ -48,6 +48,7 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::TYPES . 'type_object.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -166,7 +168,7 @@ class sandbox_link extends sandbox
      */
     function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id);
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
     /**
@@ -205,6 +207,15 @@ class sandbox_link extends sandbox
             $result = $this->named_from_cache($msk, $dto?->view_list());
         }
         return $result;
+    }
+
+    /**
+     * the children overwrite this with the type list of their own link type
+     * @return type_object|null the link type or null if this link has no or no known type
+     */
+    function link_type(): ?type_object
+    {
+        return null;
     }
 
     /**

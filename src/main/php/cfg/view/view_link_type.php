@@ -35,8 +35,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\view;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class view_link_type extends type_object
 {
@@ -46,7 +48,9 @@ class view_link_type extends type_object
      */
 
     // comments used for the database creation
-    const string TBL_COMMENT = 'to define the behaviour of the link between a term and a view';
-    const string FLD_ID = 'view_link_type_id';
+    const string TBL_COMMENT = view_fields::FLD_LINK_TYPE_COM;
+    // the db field name from the shared const, so that the frontend can use the same name
+    // e.g. to map the field of an overwrite to the url var of the edit view (see db_fld_to_url)
+    const string FLD_ID = view_fields::FLD_LINK_TYPE;
 
 }

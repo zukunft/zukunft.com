@@ -34,23 +34,32 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
+use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -60,6 +69,8 @@ class view_ui_tests
     function run(test_cleanup $t, frontend $ui): void
     {
         global $mtr;
+        global $ui_sys;
+
         $html = new html_base();
         $t_msk = new test_views($t);
         $msg = new user_message();
@@ -153,6 +164,84 @@ class view_ui_tests
         $t->assert($test_name, $list->view_components($msk_empty, $msg),
             $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS));
 
+
+        $t->subheader($ts . 'view tab box');
+
+        // the view default page shows the change log and the user overwrites in the tab box (see
+        // the 'view tab box' of base_views.json); a view has no related views of its own, because
+        // the components of the view are listed by the 'view components' component of the page
+        $t_log = new test_log($t);
+        $t_usr = new test_users();
+        $msk_related = $t_msk->view_filled_included();
+        $msk_related->changes_related = $t_log->log_list_view();
+        // test mode so the backend emits the given list without loading it from the database
+        $msk_json = json_decode($msk_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the changes of a view are sent to the frontend';
+        $t->assert_true($test_name, ($msk_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' rows are added here like on the word and the component page
+        $msk_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_DESCRIPTION,
+                json_fields::USR_VALUE => 'my own text for this view',
+                json_fields::STD_VALUE => views::START_COM,
+            ],
+        ];
+        $msk_tab = new view(json_encode($msk_json));
+
+        $test_name = 'the changes of a view reach the frontend view object';
+        $t->assert_true($test_name, $msk_tab->chg_log != null and !$msk_tab->chg_log->is_empty());
+
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        $log_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"';
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($msk_tab, $msg, true);
+
+        $test_name = 'the view page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the change that added the view';
+        $t->assert_text_contains($test_name, $tab_html, views::START_NAME);
+
+        $test_name = 'the user with view overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = '... with the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, 'my own text for this view');
+        $t->assert_text_contains($test_name, $tab_html, views::START_COM);
+
+        // like on the word page the undo icon links to the confirm page of the view edit view
+        // that sets the field back to the standard value (see view::db_fld_to_url)
+        $test_name = '... and an undo link to the confirm page for the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, icons::UNDO);
+        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VIEW_EDIT_ID);
+        $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
+
+        // the components of the view are shown by their own component, so the tab box of a view
+        // page never has a views tab
+        $test_name = 'the view page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        $test_name = 'a view without overwrites shows no my tab';
+        $msk_no_ovr = new view($t_msk->view_filled_included()->api_json());
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($msk_no_ovr, $msg, true), $my_tab_ref);
+
+        $test_name = 'without a logged in user the view page shows no my tab';
+        unset($ui_sys->usr);
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($msk_tab, $msg, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
+
+
         $t->subheader($ts . 'link title');
 
         // the term view default page shows the generated link name as the page title with the
@@ -186,6 +275,11 @@ class view_ui_tests
         $url_html = $sfm->title_link($trm_msk_url, $msg);
         $t->assert_text_contains($test_name, $url_html, views::START_NAME);
         $t->assert_text_contains($test_name . ' and the term', $url_html, word_names::MATH);
+
+        // the view link edit form shows an order number field, which the term_view has not yet,
+        // so it shows an empty text instead of writing a log error (see the TODO in term_view)
+        $test_name = 'a term view shows an empty order number';
+        $t->assert($test_name, $sfm->show_order_nbr($trm_msk_url), '');
 
         // the view relation default page uses the same link title (see base_views.json
         // view_relation_default)
@@ -224,6 +318,95 @@ class view_ui_tests
         $t->assert($test_name, $mrl_new->name(), '');
         $test_name = 'a fresh term view has an empty name';
         $t->assert($test_name, (new term_view_ui())->name(), '');
+
+
+        $t->subheader($ts . 'link fields');
+
+        // the term view default page shows how the term is linked to the view (see base_views.json
+        // term_view_default); a term view has no order number yet (see system_form::show_order_nbr)
+        // the default type is never sent to the frontend (see sandbox_link::api_json_array), so
+        // like the style of a component the field stays empty as long as the default applies
+        $test_name = 'the term view page shows no link type for the default type';
+        $t->assert($test_name, $sfm->show_link_type($trm_msk), '');
+        $test_name = 'a fresh term view shows no link type';
+        $t->assert($test_name, $sfm->show_link_type(new term_view_ui()), '');
+
+        $test_name = 'the term view page shows a link type that differs from the default';
+        $trm_msk_sel = $t_msk->term_view_filled_included();
+        $trm_msk_sel->set_predicate(view_link_types::SELECTED_WORD);
+        $trm_msk_sel_ui = new term_view_ui($trm_msk_sel->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $t->assert($test_name, $sfm->show_link_type($trm_msk_sel_ui), view_link_types::SELECTED_WORD_NAME);
+
+        // the view relation default page additionally shows where in the parent view the
+        // components of the child view are added (see base_views.json view_relation_default)
+        $test_name = 'the view relation page shows no link type for the default type';
+        $t->assert($test_name, $sfm->show_link_type($mrl), '');
+        $test_name = 'the view relation page shows a relation type that differs from the default';
+        $mrl_del = $t_msk->view_relation_filled_included();
+        $mrl_del->set_relation_type(view_relation_types::REMOVE);
+        $mrl_del_ui = new view_relation_ui($mrl_del->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $t->assert($test_name, $sfm->show_link_type($mrl_del_ui), view_relation_types::REMOVE_NAME);
+
+        $test_name = 'the view relation page shows the start position';
+        $t->assert($test_name, $sfm->show_start_pos($mrl), (string)$t_msk->view_relation()->start_pos);
+        $test_name = 'a fresh view relation shows no start position';
+        $t->assert($test_name, $sfm->show_start_pos($mrl_new), '');
+
+
+        $t->subheader($ts . 'link tab box');
+
+        // both link default pages show the change log and the user overwrites in the tab box;
+        // a link has no related views, so the tab box of a link page has no views tab
+        $t_log = new test_log($t);
+        $t_usr = new test_users();
+        $mrl_related = $t_msk->view_relation_filled_included();
+        $mrl_related->changes_related = $t_log->log_list_view_relation();
+        // test mode so the backend emits the given list without loading it from the database
+        $mrl_json = json_decode($mrl_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the changes of a view relation are sent to the frontend';
+        $t->assert_true($test_name, ($mrl_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' rows are added here like on the word and the formula link page
+        $mrl_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_DESCRIPTION,
+                json_fields::USR_VALUE => 'my own text for this relation',
+                json_fields::STD_VALUE => 'add usage and log of a word',
+            ],
+        ];
+        $mrl_tab = new view_relation_ui(json_encode($mrl_json));
+
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($mrl_tab, $msg, true);
+
+        $test_name = 'the view relation page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the changed start position';
+        $t->assert_text_contains($test_name, $tab_html,
+            (string)test_const::VIEW_RELATION_START_POS);
+
+        $test_name = 'the user with view relation overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = '... with the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, 'my own text for this relation');
+
+        // a link has no views of its own, so the tab box of a link page never has a views tab
+        $test_name = 'the view relation page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
 
         // show a view with a side-or-below group where the columns
         // are shown side by side on wide screens and stacked on small screens

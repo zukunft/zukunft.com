@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
@@ -223,8 +225,13 @@ class system_tests
         $t->assert_dsp_id($t_log->log_list_short(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name is (id ) in row 2 at 2022-12-26T18:23:45+01:00 / log add triples,triple_name mathematical constant (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system test (3) action add (1) table triples (7)');
         $t->assert_dsp_id($t_log->log_value(), 'log add values,numeric_value (5,,,) 3.1415927');
-        $t->assert_dsp_id($t_log->log_value_prime(), 'log add words,word_name  3.1415927');
-        $t->assert_dsp_id($t_log->log_value_big(), 'log add words,word_name  3.1415927');
+        $t->assert_dsp_id($t_log->log_value_prime(), 'log add values,numeric_value (213,197,135,) 3.1415927');
+        // the id of a big group packs the phrase ids into a text, so the group of the log entry
+        // is compared with the same group loaded by id, which is what change_value::name() does
+        $grp_big = new group($t->usr1, $t_grp->group_17_plus()->id());
+        // TODO Prio 3 use the id const instead of the function for the compare
+        $t->assert_dsp_id($t_log->log_value_big(),
+            'log add values,numeric_value ' . $grp_big->dsp_id_medium() . ' 3.1415927');
         $t->assert_dsp_id($t_sys->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
         $t->assert_dsp_id($t_job->job(), 'base_import (1) for user 1 (zukunft.com system)');
 

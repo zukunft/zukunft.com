@@ -1,0 +1,607 @@
+{
+  "version": "0.0.3",
+  "time": "2026-08-21 21:55:13",
+  "user": "timon",
+  "selection": [
+    "benefit cost ratio",
+    "climate change mitigation"
+  ],
+  "description": "Evidence on whether avoiding greenhouse gas emissions is cheaper than paying for the consequences. Measured values carry a verified source, assumed values carry a separate confidence value. Values from the retracted Kotz 2024 analysis are kept and marked retracted so they are not cited by mistake.",
+  "words": [
+    {
+      "name": "climate change mitigation",
+      "description": "Actions to reduce greenhouse gas emissions or enhance sinks, so that the amount of future warming is limited.",
+      "refs": {
+        "wikipedia": "Climate_change_mitigation",
+        "wikidata": "Q1362332"
+      }
+    },
+    {
+      "name": "climate damage",
+      "description": "The economic loss caused by climate change relative to a counterfactual world without further warming."
+    },
+    {
+      "name": "mitigation cost",
+      "description": "The economic cost of reducing greenhouse gas emissions, excluding any avoided climate damage."
+    },
+    {
+      "name": "avoided damage",
+      "description": "Climate damage that does not occur because emissions were reduced; the benefit side of a mitigation cost benefit analysis."
+    },
+    {
+      "name": "benefit cost ratio",
+      "description": "Avoided climate damage divided by mitigation cost. Values above one mean that avoiding emissions is cheaper than paying for the consequences."
+    },
+    {
+      "name": "income reduction",
+      "description": "Reduction of income per capita relative to a baseline without climate impacts."
+    },
+    {
+      "name": "output reduction",
+      "description": "Reduction of economic output per capita relative to a baseline without further warming."
+    },
+    {
+      "name": "probability",
+      "description": "Likelihood of a stated outcome, expressed between zero and one."
+    },
+    {
+      "name": "discount rate",
+      "description": "Rate at which future consumption is valued lower than present consumption in a cost benefit analysis."
+    },
+    {
+      "name": "confidence",
+      "description": "Numeric confidence between zero and one attached to an assumed value."
+    },
+    {
+      "name": "measured value",
+      "description": "Value taken from a named and verified source."
+    },
+    {
+      "name": "assumed value",
+      "description": "Value estimated rather than taken from a verified primary source; carries a separate confidence value."
+    },
+    {
+      "name": "retracted",
+      "description": "Qualifier marking a value from a publication that has been withdrawn by its authors or its journal. Kept for traceability, not for citation."
+    },
+    {
+      "name": "minimum",
+      "description": "Lower end of an estimated range."
+    },
+    {
+      "name": "maximum",
+      "description": "Upper end of an estimated range."
+    },
+    {
+      "name": "threshold",
+      "description": "Value that a quantity is stated to exceed."
+    },
+    {
+      "name": "revised",
+      "description": "Value from a corrected version replacing an earlier published value."
+    },
+    {
+      "name": "original",
+      "description": "Value as first published, before correction or retraction."
+    },
+    {
+      "name": "1.5 degree target",
+      "description": "Limiting global mean warming to 1.5 degrees Celsius above pre-industrial levels."
+    },
+    {
+      "name": "2 degree target",
+      "description": "Limiting global mean warming to 2 degrees Celsius above pre-industrial levels."
+    },
+    {
+      "name": "3.2 degree scenario",
+      "description": "A scenario with about 3.2 degrees Celsius of global warming by mid century."
+    },
+    {
+      "name": "Paris Agreement",
+      "description": "International treaty of 2015 on climate change mitigation, adaptation and finance.",
+      "refs": {
+        "wikipedia": "Paris_Agreement",
+        "wikidata": "Q26265569"
+      }
+    },
+    {
+      "name": "percent",
+      "description": "One part per hundred."
+    },
+    {
+      "name": "trillion USD",
+      "description": "Trillion United States dollars."
+    },
+    {
+      "name": "GDP share",
+      "description": "Share of gross domestic product."
+    },
+    {
+      "name": "country share",
+      "description": "Share of the countries covered by a study."
+    },
+    {
+      "name": "population share",
+      "description": "Share of the global population."
+    },
+    {
+      "name": "world",
+      "description": "The global economy as a whole."
+    },
+    {
+      "name": "2049",
+      "description": "The year 2049."
+    },
+    {
+      "name": "2050",
+      "description": "The year 2050."
+    },
+    {
+      "name": "2100",
+      "description": "The year 2100."
+    },
+    {
+      "name": "Glanemann 2020",
+      "description": "Glanemann, Willner and Levermann, Paris Climate Agreement passes the cost-benefit test, Nature Communications 11:110."
+    },
+    {
+      "name": "Haensel 2020",
+      "description": "Haensel and others, Climate economics support for the UN climate targets, Nature Climate Change 10:781-789."
+    },
+    {
+      "name": "Burke 2018",
+      "description": "Burke, Alampay Davis and Diffenbaugh, Large potential reduction in economic damages under UN mitigation targets, Nature 557:549-553."
+    },
+    {
+      "name": "Kotz 2024",
+      "description": "Kotz, Levermann and Wenz, The economic commitment of climate change, Nature 628:551-557. Retracted on 3 December 2025."
+    },
+    {
+      "name": "Brown 2020",
+      "description": "Brown and Saunders, Approximate calculations of the net economic impact of global warming mitigation targets under heightened damage estimates, PLOS ONE."
+    },
+    {
+      "name": "Morris 2025",
+      "description": "Morris and others, Reconciling widely varying estimates of the global economic impacts from climate change, Nature Climate Change 15."
+    },
+    {
+      "name": "Stern Review",
+      "description": "The Economics of Climate Change, review for the United Kingdom government, 2006.",
+      "refs": {
+        "wikipedia": "Stern_Review",
+        "wikidata": "Q1191367"
+      }
+    },
+    {
+      "name": "Swiss Re 2021",
+      "description": "Swiss Re Institute study on the economic consequences of climate change, reported through secondary Swiss sources only."
+    },
+    {
+      "name": "IPCC AR6",
+      "description": "Sixth Assessment Report of the Intergovernmental Panel on Climate Change.",
+      "refs": {
+        "wikipedia": "IPCC_Sixth_Assessment_Report",
+        "wikidata": "Q105776079"
+      }
+    },
+    {
+      "name": "study",
+      "description": "A published scientific or policy analysis."
+    }
+  ],
+  "triples": [
+    {
+      "from": "Glanemann 2020",
+      "verb": "is a",
+      "to": "study",
+      "description": "Cost benefit analysis with an empirically calibrated damage curve in DICE."
+    },
+    {
+      "from": "Haensel 2020",
+      "verb": "is a",
+      "to": "study",
+      "description": "Updated DICE calibration testing the optimality of the UN temperature targets."
+    },
+    {
+      "from": "Burke 2018",
+      "verb": "is a",
+      "to": "study",
+      "description": "Empirical panel projection of damages under 1.5, 2 and about 3 degrees."
+    },
+    {
+      "from": "Kotz 2024",
+      "verb": "is a",
+      "to": "study",
+      "description": "Subnational panel projection of committed damages, retracted in December 2025."
+    },
+    {
+      "from": "Brown 2020",
+      "verb": "is a",
+      "to": "study",
+      "description": "Dissenting cost benefit analysis on the margin between 1.5 and 2 degrees."
+    },
+    {
+      "from": "Morris 2025",
+      "verb": "is a",
+      "to": "study",
+      "description": "Comparison reconciling the wide spread between published damage estimates."
+    },
+    {
+      "from": "Stern Review",
+      "verb": "is a",
+      "to": "study",
+      "description": "Early government commissioned assessment of climate damages and mitigation cost."
+    },
+    {
+      "from": "Swiss Re 2021",
+      "verb": "is a",
+      "to": "study",
+      "description": "Reinsurance industry assessment of global GDP loss under warming scenarios."
+    },
+    {
+      "from": "avoided damage",
+      "verb": "is part of",
+      "to": "benefit cost ratio",
+      "description": "Avoided damage is the numerator of the benefit cost ratio."
+    },
+    {
+      "from": "mitigation cost",
+      "verb": "is part of",
+      "to": "benefit cost ratio",
+      "description": "Mitigation cost is the denominator of the benefit cost ratio."
+    },
+    {
+      "from": "IPCC AR6",
+      "verb": "is a",
+      "to": "study",
+      "description": "Assessment report finding that the benefit of limiting warming to 2 degrees exceeds the mitigation cost in most of the assessed literature."
+    },
+    {
+      "from": "mitigation cost",
+      "verb": "is part of",
+      "to": "climate change mitigation",
+      "description": "The cost side of mitigation, without the avoided damage."
+    },
+    {
+      "from": "avoided damage",
+      "verb": "is a",
+      "to": "climate damage",
+      "description": "Avoided damage is the part of climate damage that mitigation prevents."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "benefit cost ratio of mitigation",
+      "formula": "benefit cost ratio = avoided damage / mitigation cost",
+      "description": "Ratio above one means that avoiding emissions is cheaper than paying for the consequences.",
+      "components": [
+        "avoided damage",
+        "mitigation cost"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "Glanemann 2020 Nature Communications",
+      "url": "https://doi.org/10.1038/s41467-019-13961-1",
+      "description": "Paris Climate Agreement passes the cost-benefit test, 27 January 2020."
+    },
+    {
+      "name": "Haensel 2020 Nature Climate Change",
+      "url": "https://doi.org/10.1038/s41558-020-0833-x",
+      "description": "Climate economics support for the UN climate targets, 2020."
+    },
+    {
+      "name": "Burke 2018 Nature",
+      "url": "https://doi.org/10.1038/s41586-018-0071-9",
+      "description": "Large potential reduction in economic damages under UN mitigation targets."
+    },
+    {
+      "name": "Kotz 2024 retraction note",
+      "url": "https://doi.org/10.1038/s41586-025-09726-0",
+      "description": "Retraction note of 3 December 2025 stating the revised uncertainty ranges."
+    },
+    {
+      "name": "Kotz 2025 revised preprint",
+      "url": "https://doi.org/10.5281/zenodo.15984134",
+      "description": "Revised, not yet peer reviewed version of the retracted analysis."
+    },
+    {
+      "name": "Brown 2020 PLOS ONE",
+      "url": "https://doi.org/10.1371/journal.pone.0239520",
+      "description": "Net economic impact of mitigation targets under heightened damage estimates."
+    },
+    {
+      "name": "Morris 2025 Nature Climate Change",
+      "url": "https://doi.org/10.1038/s41558-024-02232-7",
+      "description": "Reconciling widely varying estimates of global economic climate impacts."
+    },
+    {
+      "name": "DIW Wochenbericht 38 2025",
+      "url": "https://www.diw.de/de/diw_01.c.974540.de/publikationen/wochenberichte/2025_38_3/zwei_jahrzehnte_klimakostenforschung__praeventiver_klimaschutz_als_volkswirtschaftlicher_vorteil.html",
+      "description": "Two decades of climate cost research, review of the benefit cost evidence."
+    },
+    {
+      "name": "Ecologic summary of the Stern Review",
+      "url": "https://www.ecologic.eu/de/1927",
+      "description": "Secondary summary reporting the Stern Review damage and mitigation shares."
+    },
+    {
+      "name": "Umwelt Zentralschweiz climate cost page",
+      "url": "https://www.umwelt-zentralschweiz.ch/was-wir-machen/themen/klima/was-kostet-uns-der-klimawandel/",
+      "description": "Secondary Swiss source reporting the Swiss Re GDP loss figures."
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "benefit cost ratio",
+        "Paris Agreement",
+        "world",
+        "minimum",
+        "measured value"
+      ],
+      "number": "1.8",
+      "source": "DIW Wochenbericht 38 2025"
+    },
+    {
+      "words": [
+        "benefit cost ratio",
+        "Paris Agreement",
+        "world",
+        "maximum",
+        "measured value"
+      ],
+      "number": "4.8",
+      "source": "DIW Wochenbericht 38 2025"
+    },
+    {
+      "words": [
+        "probability",
+        "1.5 degree target",
+        "2 degree target",
+        "avoided damage",
+        "threshold",
+        "measured value"
+      ],
+      "number": "0.75",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "probability",
+        "1.5 degree target",
+        "2 degree target",
+        "avoided damage",
+        "trillion USD",
+        "threshold",
+        "measured value"
+      ],
+      "number": "0.60",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "avoided damage",
+        "1.5 degree target",
+        "2 degree target",
+        "trillion USD",
+        "threshold",
+        "2100",
+        "measured value"
+      ],
+      "number": "20",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "discount rate",
+        "Burke 2018",
+        "percent",
+        "measured value"
+      ],
+      "number": "3",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "country share",
+        "1.5 degree target",
+        "avoided damage",
+        "percent",
+        "measured value"
+      ],
+      "number": "71",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "population share",
+        "1.5 degree target",
+        "avoided damage",
+        "percent",
+        "measured value"
+      ],
+      "number": "90",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "output reduction",
+        "2 degree target",
+        "world",
+        "percent",
+        "2100",
+        "minimum",
+        "measured value"
+      ],
+      "number": "15",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "output reduction",
+        "2 degree target",
+        "world",
+        "percent",
+        "2100",
+        "maximum",
+        "measured value"
+      ],
+      "number": "25",
+      "source": "Burke 2018 Nature"
+    },
+    {
+      "words": [
+        "climate damage",
+        "world",
+        "GDP share",
+        "percent",
+        "Stern Review",
+        "measured value"
+      ],
+      "number": "5",
+      "source": "Ecologic summary of the Stern Review"
+    },
+    {
+      "words": [
+        "mitigation cost",
+        "world",
+        "GDP share",
+        "percent",
+        "Stern Review",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "Ecologic summary of the Stern Review"
+    },
+    {
+      "words": [
+        "income reduction",
+        "world",
+        "percent",
+        "2049",
+        "Kotz 2024",
+        "original",
+        "retracted",
+        "measured value"
+      ],
+      "number": "19",
+      "source": "Kotz 2024 retraction note"
+    },
+    {
+      "words": [
+        "income reduction",
+        "world",
+        "percent",
+        "2049",
+        "Kotz 2024",
+        "revised",
+        "minimum",
+        "retracted",
+        "measured value"
+      ],
+      "number": "6",
+      "source": "Kotz 2024 retraction note"
+    },
+    {
+      "words": [
+        "income reduction",
+        "world",
+        "percent",
+        "2049",
+        "Kotz 2024",
+        "revised",
+        "maximum",
+        "retracted",
+        "measured value"
+      ],
+      "number": "31",
+      "source": "Kotz 2024 retraction note"
+    },
+    {
+      "words": [
+        "probability",
+        "climate damage",
+        "Kotz 2024",
+        "2050",
+        "original",
+        "retracted",
+        "measured value"
+      ],
+      "number": "0.99",
+      "source": "Kotz 2024 retraction note"
+    },
+    {
+      "words": [
+        "probability",
+        "climate damage",
+        "Kotz 2024",
+        "2050",
+        "revised",
+        "retracted",
+        "measured value"
+      ],
+      "number": "0.90",
+      "source": "Kotz 2024 retraction note"
+    },
+    {
+      "words": [
+        "output reduction",
+        "world",
+        "GDP share",
+        "percent",
+        "3.2 degree scenario",
+        "2050",
+        "Swiss Re 2021",
+        "assumed value"
+      ],
+      "number": "18"
+    },
+    {
+      "words": [
+        "confidence",
+        "output reduction",
+        "3.2 degree scenario",
+        "Swiss Re 2021",
+        "assumed value"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "output reduction",
+        "world",
+        "GDP share",
+        "percent",
+        "2 degree target",
+        "2050",
+        "Swiss Re 2021",
+        "assumed value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "confidence",
+        "output reduction",
+        "2 degree target",
+        "Swiss Re 2021",
+        "assumed value"
+      ],
+      "number": "0.6"
+    }
+  ],
+  "calc-validation": [
+    {
+      "name": "Stern Review implied benefit cost ratio",
+      "formula": "benefit cost ratio = avoided damage / mitigation cost",
+      "input": {
+        "avoided damage": "5",
+        "mitigation cost": "1"
+      },
+      "result": "5",
+      "description": "Damage of 5 percent of GDP against mitigation cost of 1 percent of GDP as reported for the Stern Review."
+    }
+  ]
+}

@@ -152,6 +152,10 @@ class term extends combine_named
         formula_fields::FLD_FORMULA_USER_TEXT,
         formula_fields::FLD_LATEX
     );
+    // the user-specific name field alone, e.g. to join the term name to a term view
+    const array FLD_NAMES_USR_NAME = array(
+        self::FLD_NAME
+    );
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         fields::FLD_USAGE,

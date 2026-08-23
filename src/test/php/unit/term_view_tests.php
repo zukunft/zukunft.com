@@ -43,8 +43,10 @@ include_once test_paths::CREATE . 'test_links.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\create\test_links;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -79,6 +81,19 @@ class term_view_tests
         // TODO check if all links have the check
         $t->assert_sql_by_link($sc, $lnk);
         $t->assert_sql_user_changes($sc, $lnk);
+
+        $t->subheader($ts . 'term_view list sql read');
+        $lnk_lst = new term_view_list($t->usr1);
+        // the list query joins the names of the linked view and term (see change_log_list)
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($lnk_lst->load_sql_by_ids($sc, [1, 2]), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($lnk_lst->load_sql_by_ids($sc, [1, 2]), sql_db::MYSQL);
+
+        // without an id the query has no name, so that the caller does not send it to the database
+        $test_name = 'the term view list query of an empty id list is not prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert($test_name, $lnk_lst->load_sql_by_ids($sc, [])->name, '');
 
         $t->subheader($ts . 'term_view sql write insert');
         $lnk = $t_lnk->term_view();

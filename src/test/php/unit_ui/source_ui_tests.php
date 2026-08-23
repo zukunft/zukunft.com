@@ -32,22 +32,31 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -56,10 +65,16 @@ class source_ui_tests
     function run(test_cleanup $t): void
     {
         global $mtr;
+        global $ui_sys;
+
         $html = new html_base();
         $t_src = new test_sources($t);
         $t_val = new test_values($t);
         $msg = new user_message();
+
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'unit ui html source ';
@@ -78,7 +93,7 @@ class source_ui_tests
         $base = new ui_base();
         $test_page .= $html->text_h2('source url link');
         $test_page .= $base->source_url_link($src);
-        $t->html_page_test($test_page, 'source', 'source', $msg);
+        $t->html_page_test($test_page, 'source', 'source', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'title');
 
@@ -143,6 +158,93 @@ class source_ui_tests
         $test_name = 'a source without an id does not list the values without a source';
         $t->assert($test_name, $list->values_by_source($src_no_url, $msg, $dto),
             $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES));
+
+
+        $t->subheader($ts . 'view tab box');
+
+        // the source default page shows the views that can show a source, the change log and the
+        // user overwrites in the tab box (see the 'source tab box' of base_views.json)
+        $t_msk = new test_views($t);
+        $t_log = new test_log($t);
+        $t_usr = new test_users();
+        $src_related = $t_src->source_filled_included();
+        $src_related->views_related = $t_msk->view_list_word();
+        $src_related->changes_related = $t_log->log_list_source();
+        // test mode so the backend emits the two given lists without loading them from the database
+        $src_json = json_decode($src_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the views of a source are sent to the frontend';
+        $t->assert_true($test_name, ($src_json[json_fields::VIEWS] ?? []) != []);
+        $test_name = 'the changes of a source are sent to the frontend';
+        $t->assert_true($test_name, ($src_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' rows are added here like on the word and the view page
+        $src_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_DESCRIPTION,
+                json_fields::USR_VALUE => 'my own text for this source',
+                json_fields::STD_VALUE => sources::BFS_COM,
+            ],
+        ];
+        $src_tab = new source(json_encode($src_json));
+
+        $test_name = 'the views of a source reach the frontend source object';
+        $t->assert_true($test_name, $src_tab->view_lst != null and !$src_tab->view_lst->is_empty());
+        $test_name = 'the changes of a source reach the frontend source object';
+        $t->assert_true($test_name, $src_tab->chg_log != null and !$src_tab->chg_log->is_empty());
+
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        $log_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"';
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($src_tab, $msg, true);
+
+        $test_name = 'the source page shows the views tab';
+        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... with the name of a view that can show the source';
+        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the switch button must open the edit view of the shown object, so on a source page the
+        // source edit view and never the word edit view (see view::switch_link)
+        $test_name = '... and a switch button that opens the source edit view';
+        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::SOURCE_EDIT_ID);
+
+        $test_name = 'the source page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the change that added the source';
+        $t->assert_text_contains($test_name, $tab_html, sources::BFS);
+
+        $test_name = 'the user with source overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = '... with the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, 'my own text for this source');
+        $t->assert_text_contains($test_name, $tab_html, sources::BFS_COM);
+
+        // like on the word page the undo icon links to the confirm page of the source edit view
+        // that sets the field back to the standard value (see source::db_fld_to_url)
+        $test_name = '... and an undo link to the confirm page for the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, icons::UNDO);
+        $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
+
+        $test_name = 'a source without the related data shows no views and no my tab';
+        $src_plain = new source($t_src->source_filled_included()->api_json());
+        $plain_html = $list->view_tab_box($src_plain, $msg, true);
+        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
+        $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
+
+        $test_name = 'without a logged in user the source page shows no my tab';
+        unset($ui_sys->usr);
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($src_tab, $msg, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
     }
 
 }

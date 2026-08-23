@@ -139,6 +139,12 @@ class component_db
     const array FLD_NAMES_USR = array(
         fields::FLD_DESCRIPTION
     );
+    // list of the user-specific database field names including the name,
+    // e.g. to join the component name to a component link
+    const array FLD_NAMES_USR_ALL = array(
+        component_fields::FLD_NAME,
+        fields::FLD_DESCRIPTION
+    );
     // list of the user-specific database field names
     const array FLD_NAMES_NUM_USR = array(
         component_fields::FLD_TYPE,

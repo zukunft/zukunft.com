@@ -101,6 +101,7 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -157,6 +158,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -275,12 +277,6 @@ class word extends sandbox_code_id
     // when the api_types::INCL_RELATED flag is set, so the default word view can show the
     // references; refs have no impact, so the frontend keeps the database (id) order
     public ?ref_list $references_related = null;
-
-    // the most recent change log entries of this word;
-    // populated lazily by load_changes_related() and only emitted via api_json_array()
-    // when the api_types::INCL_RELATED flag is set, so the default word view can show the
-    // recent changes; the change log is ordered by time, latest first
-    public ?change_log_list $changes_related = null;
 
     // the views that can show this word: its own default view plus the default views of
     // its parent words; populated lazily by load_views_related() and only emitted via
@@ -594,40 +590,13 @@ class word extends sandbox_code_id
                         $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
                             [], $msg, $usr);
                     }
-                    if ($this->changes_related == null and !$typ_lst->test_mode()) {
-                        $this->load_changes_related($msg);
-                    }
-                    if ($this->changes_related != null and !$this->changes_related->is_empty()) {
-                        $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
-                            [], $msg, $usr);
-                    }
+                    $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
                     if ($this->views_related == null and !$typ_lst->test_mode()) {
                         $this->load_views_related($msg);
                     }
-                    if ($this->views_related != null and !$this->views_related->is_empty()) {
-                        // drop the related views the requester may not read (idor)
-                        $this->views_related->filter_readable_by($usr);
-                        $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
-                            [], $msg, $usr);
-                    }
-                    // the fields the requesting user has overwritten in user_words with the user
-                    // and the standard value, so the 'my' tab can show the user overwrites, and
-                    // the shared overwrites of the other users for the 'others' tab
-                    if (!$typ_lst->test_mode()) {
-                        // a sub message for the user of this api call, which can differ from the
-                        // user of the request message; merged back so a failed overlay read is
-                        // reported instead of silently dropping the tab
-                        $ovr_msg = new user_message($usr);
-                        $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
-                        if ($usr_ovr != []) {
-                            $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
-                        }
-                        $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
-                        if ($oth_ovr != []) {
-                            $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
-                        }
-                        $msg->merge($ovr_msg);
-                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_array($this->views_related, $msg, $usr));
+                    $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -749,19 +718,6 @@ class word extends sandbox_code_id
         $ref_lst = new ref_list($this->get_user());
         $ref_lst->load_by_phr_id($this->phrase()->id(), $msg);
         $this->references_related = $ref_lst;
-    }
-
-    /**
-     * load the most recent change log entries of this word into the in-memory
-     * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
-     * @param user_message $msg to collect any problem while loading the changes
-     * @return void
-     */
-    function load_changes_related(user_message $msg): void
-    {
-        $chg_lst = new change_log_list();
-        $chg_lst->load_obj_last($this, $this->get_user(), $msg);
-        $this->changes_related = $chg_lst;
     }
 
     /**

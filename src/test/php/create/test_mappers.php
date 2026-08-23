@@ -1989,8 +1989,10 @@ class test_mappers
         $url_array[] = [url_var::FORMULA, $frm_lnk->formula_id()];
         $url_array[] = [url_var::PHRASE, $frm_lnk->phrase_id()];
         $url_array[] = [url_var::NAME, $frm_lnk->name()];
-        $url_array[] = [url_var::POSITION, $frm_lnk->order_nbr];
+        $url_array[] = [url_var::FORMULA_LINK_PRIO, $frm_lnk->order_nbr];
         $url_array[] = [url_var::TYPE, $frm_lnk->predicate_id()];
+        // the creating user of a test object is its owner
+        $url_array[] = [url_var::OWNER, $frm_lnk->get_user()->name()];
         $url_array[] = [url_var::SHARE, $frm_lnk->share_id()];
         $url_array[] = [url_var::PROTECTION, $frm_lnk->protection_id()];
         return $url_array;

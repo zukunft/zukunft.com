@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1192 of 5584 public functions have at least 2 unit test calls; the 4392 functions below do not
+1233 of 5631 public functions have at least 2 unit test calls; the 4398 functions below do not
 
 ## main backend
 
@@ -100,6 +100,7 @@ so same-named functions of several classes share their test calls
     \-- load_obj_last - 0 unit test calls
     \-- load_row_names - 0 unit test calls
     \-- load_sql_by_user - 0 unit test calls
+    \-- load_sql_by_user_value - 1 unit test calls
     \-- load_sql_obj_fld - 0 unit test calls
     \-- load_sql_obj_last - 0 unit test calls
 \-- change_table
@@ -180,7 +181,6 @@ so same-named functions of several classes share their test calls
     \-- reload_phrases - 0 unit test calls
     \-- reload_row_phrase - 0 unit test calls
     \-- reload_wrd_col2 - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_col_phrase - 0 unit test calls
     \-- set_col_phrase_by_id - 0 unit test calls
     \-- set_col_sub_phrase - 0 unit test calls
@@ -237,7 +237,6 @@ so same-named functions of several classes share their test calls
     \-- name_field - 0 unit test calls
     \-- predicate_name - 0 unit test calls
     \-- reload_objects - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set - 0 unit test calls
     \-- set_component - 0 unit test calls
     \-- set_link_objects - 0 unit test calls
@@ -255,6 +254,7 @@ so same-named functions of several classes share their test calls
     \-- add_by_key - 1 unit test calls
     \-- cmp_ids - 0 unit test calls
     \-- load_by_component - 0 unit test calls
+    \-- load_by_ids - 0 unit test calls
     \-- load_by_view - 0 unit test calls
     \-- load_by_view_with_components - 0 unit test calls
     \-- load_components - 0 unit test calls
@@ -271,7 +271,6 @@ so same-named functions of several classes share their test calls
     \-- load_by_view_id - 0 unit test calls
     \-- load_names - 0 unit test calls
     \-- load_sql - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_view_id - 0 unit test calls
     \-- load_sql_names - 0 unit test calls
@@ -472,7 +471,6 @@ so same-named functions of several classes share their test calls
     \-- load_obj_by_id - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_by_id - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_object_by_id - 0 unit test calls
     \-- set_type - 1 unit test calls
     \-- sql_delete - 0 unit test calls
@@ -539,7 +537,6 @@ so same-named functions of several classes share their test calls
     \-- load_by_ids - 0 unit test calls
     \-- load_phrases - 0 unit test calls
     \-- load_sql - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
 \-- formula
     \-- add_formula_name_phrase - 0 unit test calls
     \-- apply_result_phrases - 0 unit test calls
@@ -571,7 +568,6 @@ so same-named functions of several classes share their test calls
     \-- get_res_lst - 0 unit test calls
     \-- load_all_terms - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
-    \-- load_changes_related - 0 unit test calls
     \-- load_data_for_calc - 0 unit test calls
     \-- load_latex_terms - 0 unit test calls
     \-- load_phrases_related - 0 unit test calls
@@ -612,7 +608,6 @@ so same-named functions of several classes share their test calls
     \-- pos - 0 unit test calls
     \-- predicate_name - 0 unit test calls
     \-- reload_objects - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set - 0 unit test calls
     \-- set_formula - 0 unit test calls
     \-- set_phrase - 0 unit test calls
@@ -621,6 +616,7 @@ so same-named functions of several classes share their test calls
 \-- formula_link_list
     \-- del_without_log - 0 unit test calls
     \-- load_by_frm_id - 0 unit test calls
+    \-- load_by_ids - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_by_frm_id - 0 unit test calls
     \-- phrase_ids - 0 unit test calls
@@ -649,7 +645,6 @@ so same-named functions of several classes share their test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_all - 0 unit test calls
     \-- load_sql_by_formula_ref - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_phr - 0 unit test calls
     \-- load_sql_by_phr_lst - 1 unit test calls
@@ -705,7 +700,6 @@ so same-named functions of several classes share their test calls
     \-- not_changed_sql - 0 unit test calls
     \-- not_used - 0 unit test calls
     \-- reload_wrd - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- save_fields_func - 0 unit test calls
     \-- save_links - 0 unit test calls
     \-- set_latex - 0 unit test calls
@@ -809,7 +803,6 @@ so same-named functions of several classes share their test calls
     \-- get_by_val_with_one_phr_each - 0 unit test calls
     \-- load_by_phr - 0 unit test calls
     \-- load_names_sql_by_ids - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_phr - 0 unit test calls
     \-- load_sql_by_phr_single - 0 unit test calls
     \-- load_sql_init - 0 unit test calls
@@ -917,7 +910,7 @@ so same-named functions of several classes share their test calls
     \-- load_by_status - 0 unit test calls
     \-- load_by_type - 0 unit test calls
     \-- load_sql_by_status - 0 unit test calls
-    \-- load_sql_by_type - 0 unit test calls
+    \-- load_sql_by_type - 1 unit test calls
 \-- job_runner
     \-- run - 0 unit test calls
     \-- run_job - 0 unit test calls
@@ -1020,7 +1013,6 @@ so same-named functions of several classes share their test calls
     \-- predicate_id - 0 unit test calls
     \-- prior - 0 unit test calls
     \-- related_now - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_id - 0 unit test calls
     \-- set_id_from_obj - 0 unit test calls
     \-- set_impact - 0 unit test calls
@@ -1098,7 +1090,6 @@ so same-named functions of several classes share their test calls
     \-- load_names_by_ids - 0 unit test calls
     \-- load_names_sql_by_ids - 0 unit test calls
     \-- load_sql - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_phr_lst - 1 unit test calls
     \-- load_sql_like - 0 unit test calls
@@ -1175,7 +1166,6 @@ so same-named functions of several classes share their test calls
     \-- phrase_name - 0 unit test calls
     \-- predicate_name - 0 unit test calls
     \-- reload_objects - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set - 0 unit test calls
     \-- set_code_id - 1 unit test calls
     \-- set_description - 1 unit test calls
@@ -1278,7 +1268,6 @@ so same-named functions of several classes share their test calls
     \-- load_sql_by_frm - 0 unit test calls
     \-- load_sql_by_frm_single - 0 unit test calls
     \-- load_sql_by_grp - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_obj_old - 0 unit test calls
     \-- load_sql_by_phr_lst - 1 unit test calls
     \-- load_sql_by_phrase - 0 unit test calls
@@ -1326,6 +1315,7 @@ so same-named functions of several classes share their test calls
     \-- is_same - 1 unit test calls
     \-- is_similar_std - 0 unit test calls
     \-- is_value_obj - 0 unit test calls
+    \-- load_changes_related - 0 unit test calls
     \-- load_owner - 0 unit test calls
     \-- load_sql_changer - 0 unit test calls
     \-- load_sql_fields - 0 unit test calls
@@ -1358,7 +1348,6 @@ so same-named functions of several classes share their test calls
     \-- protection_type_code_id - 0 unit test calls
     \-- protection_type_name - 0 unit test calls
     \-- reload_objects - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- row_mapper_std - 0 unit test calls
     \-- row_mapper_usr - 0 unit test calls
     \-- save_fields_func - 0 unit test calls
@@ -1410,7 +1399,6 @@ so same-named functions of several classes share their test calls
     \-- is_same - 1 unit test calls
     \-- load_by_code_id - 0 unit test calls
     \-- load_sql_by_code_id - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_code_id - 1 unit test calls
 \-- sandbox_link
     \-- can_be_ready - 0 unit test calls
@@ -1490,7 +1478,6 @@ so same-named functions of several classes share their test calls
     \-- name_field - 0 unit test calls
     \-- name_or_null - 0 unit test calls
     \-- no_id_but_name - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_description - 1 unit test calls
     \-- set_type_by_code_id - 0 unit test calls
     \-- set_type_by_name - 0 unit test calls
@@ -1498,6 +1485,7 @@ so same-named functions of several classes share their test calls
     \-- sql_insert_key_field - 0 unit test calls
 \-- sandbox_list
     \-- get_user - 1 unit test calls
+    \-- load_names_related - 0 unit test calls
     \-- load_sbx_names - 0 unit test calls
     \-- load_sql_names - 0 unit test calls
     \-- load_user_changes - 0 unit test calls
@@ -1584,6 +1572,7 @@ so same-named functions of several classes share their test calls
     \-- is_time_value - 0 unit test calls
     \-- is_value_obj - 0 unit test calls
     \-- load - 0 unit test calls
+    \-- load_changes_related - 0 unit test calls
     \-- load_objects - 0 unit test calls
     \-- load_owner - 0 unit test calls
     \-- load_sql_fields - 0 unit test calls
@@ -1611,6 +1600,7 @@ so same-named functions of several classes share their test calls
     \-- no_non_id_diff - 0 unit test calls
     \-- not_changed - 0 unit test calls
     \-- not_used - 0 unit test calls
+    \-- other_overwrites_api_array - 0 unit test calls
     \-- owner - 0 unit test calls
     \-- owner_id - 0 unit test calls
     \-- protection_type_code_id - 0 unit test calls
@@ -1644,6 +1634,7 @@ so same-named functions of several classes share their test calls
     \-- take_ownership - 0 unit test calls
     \-- type_name - 0 unit test calls
     \-- used_by_someone_else - 0 unit test calls
+    \-- user_overwrites_api_array - 0 unit test calls
     \-- usr_cfg_cleanup - 0 unit test calls
     \-- value_type - 0 unit test calls
 \-- sandbox_named
@@ -1678,7 +1669,6 @@ so same-named functions of several classes share their test calls
     \-- msg_id_already_used - 0 unit test calls
     \-- name_or_null - 0 unit test calls
     \-- no_id_but_name - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set - 0 unit test calls
     \-- set_description - 1 unit test calls
     \-- set_usage - 0 unit test calls
@@ -1687,10 +1677,16 @@ so same-named functions of several classes share their test calls
 \-- sandbox_predicated_link
     \-- is_link_type_obj - 0 unit test calls
     \-- predicate_name - 0 unit test calls
+\-- sandbox_related
+    \-- changes_array - 0 unit test calls
+    \-- load_changes - 0 unit test calls
+    \-- other_overwrites - 0 unit test calls
+    \-- overwrites_array - 0 unit test calls
+    \-- user_overwrites - 0 unit test calls
+    \-- views_array - 0 unit test calls
 \-- sandbox_typed
     \-- delta - 0 unit test calls
     \-- fill_api_obj - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_type - 1 unit test calls
     \-- set_type_by_code_id - 0 unit test calls
     \-- set_type_by_name - 0 unit test calls
@@ -1800,18 +1796,17 @@ so same-named functions of several classes share their test calls
     \-- delta - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_user_changes - 0 unit test calls
+    \-- load_views_related - 0 unit test calls
     \-- name_field - 0 unit test calls
     \-- not_changed - 0 unit test calls
     \-- not_changed_sql - 0 unit test calls
     \-- not_used - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_type - 1 unit test calls
     \-- type_code_id - 0 unit test calls
     \-- type_name - 0 unit test calls
 \-- source_list
     \-- load_by_ids - 0 unit test calls
     \-- load_like - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_like - 0 unit test calls
 \-- source_type_list
@@ -2021,7 +2016,6 @@ so same-named functions of several classes share their test calls
     \-- setup_db - 0 unit test calls
     \-- setup_db_zukunft_user_via_db_admin - 0 unit test calls
     \-- sf - 0 unit test calls
-    \-- sql_creator - 1 unit test calls
     \-- sql_escape - 0 unit test calls
     \-- sql_separator_foreign_key - 0 unit test calls
     \-- sql_separator_index - 0 unit test calls
@@ -2286,7 +2280,6 @@ so same-named functions of several classes share their test calls
     \-- load_word_by_name - 0 unit test calls
     \-- name_field - 0 unit test calls
     \-- owner_id - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set_id - 0 unit test calls
     \-- set_id_from_obj - 0 unit test calls
     \-- set_impact - 0 unit test calls
@@ -2307,7 +2300,6 @@ so same-named functions of several classes share their test calls
     \-- load_by_ids - 0 unit test calls
     \-- load_like - 0 unit test calls
     \-- load_names - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_like - 0 unit test calls
     \-- merge_by_name - 0 unit test calls
     \-- name_pos_lst - 1 unit test calls
@@ -2330,7 +2322,6 @@ so same-named functions of several classes share their test calls
     \-- name_field - 0 unit test calls
     \-- predicate_name - 0 unit test calls
     \-- reload_objects - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set - 0 unit test calls
     \-- set_predicate - 0 unit test calls
     \-- set_term - 0 unit test calls
@@ -2338,6 +2329,9 @@ so same-named functions of several classes share their test calls
     \-- to_field - 0 unit test calls
     \-- to_value - 0 unit test calls
     \-- type_field - 0 unit test calls
+\-- term_view_list
+    \-- load_by_ids - 0 unit test calls
+    \-- load_sql - 0 unit test calls
 \-- text_log
     \-- echo_lines - 0 unit test calls
     \-- echo_log - 0 unit test calls
@@ -2359,6 +2353,7 @@ so same-named functions of several classes share their test calls
     \-- log_msg - 0 unit test calls
     \-- log_php_error_timestamped - 0 unit test calls
     \-- log_php_exception_timestamped - 0 unit test calls
+    \-- log_php_exception_to_error_log - 0 unit test calls
     \-- log_warning - 0 unit test calls
     \-- log_warning_msg - 0 unit test calls
     \-- log_warning_msg_ui - 0 unit test calls
@@ -2402,7 +2397,6 @@ so same-named functions of several classes share their test calls
     \-- load_by_link_id - 0 unit test calls
     \-- load_by_name - 0 unit test calls
     \-- load_by_name_generated - 0 unit test calls
-    \-- load_changes_related - 0 unit test calls
     \-- load_formulas_related - 0 unit test calls
     \-- load_references_related - 0 unit test calls
     \-- load_sql - 0 unit test calls
@@ -2430,7 +2424,6 @@ so same-named functions of several classes share their test calls
     \-- predicate_name - 0 unit test calls
     \-- reload_objects - 0 unit test calls
     \-- reload_view - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set - 0 unit test calls
     \-- set_code_id - 1 unit test calls
     \-- set_impact - 0 unit test calls
@@ -2460,7 +2453,6 @@ so same-named functions of several classes share their test calls
     \-- load_by_verb - 0 unit test calls
     \-- load_names - 0 unit test calls
     \-- load_sql - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_phr - 0 unit test calls
     \-- load_sql_by_phr_lst - 1 unit test calls
@@ -2621,7 +2613,6 @@ so same-named functions of several classes share their test calls
     \-- load_dummy - 0 unit test calls
     \-- load_fallback - 0 unit test calls
     \-- load_sql_by_code_id - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_profile_and_higher - 0 unit test calls
     \-- load_sql_count_changes - 0 unit test calls
     \-- load_sql_count_user_rows - 0 unit test calls
@@ -2678,6 +2669,7 @@ so same-named functions of several classes share their test calls
 \-- value
     \-- delta - 0 unit test calls
     \-- get_value - 0 unit test calls
+    \-- load_views_related - 0 unit test calls
     \-- set_value - 0 unit test calls
     \-- sql_field_type - 0 unit test calls
 \-- value_base
@@ -2755,9 +2747,9 @@ so same-named functions of several classes share their test calls
     \-- load_by_ids - 0 unit test calls
     \-- load_by_phr - 0 unit test calls
     \-- load_by_phr_lst - 0 unit test calls
+    \-- load_names_related - 0 unit test calls
     \-- load_phrases - 0 unit test calls
     \-- load_sql_by_grp_lst - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_phr - 0 unit test calls
     \-- load_sql_by_phr_lst - 1 unit test calls
     \-- load_sql_by_phr_single - 0 unit test calls
@@ -2794,7 +2786,6 @@ so same-named functions of several classes share their test calls
     \-- load_sql_by_grp - 0 unit test calls
     \-- load_sql_multi - 0 unit test calls
     \-- load_sql_standard - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
 \-- value_ts_data
     \-- sql_foreign_key - 0 unit test calls
     \-- sql_index - 0 unit test calls
@@ -2865,7 +2856,6 @@ so same-named functions of several classes share their test calls
     \-- load_sql_by_term - 0 unit test calls
     \-- load_sql_user_changes - 0 unit test calls
     \-- name_field - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- save_component_links - 0 unit test calls
     \-- set_join - 0 unit test calls
     \-- set_style - 0 unit test calls
@@ -2880,12 +2870,15 @@ so same-named functions of several classes share their test calls
     \-- get_user - 1 unit test calls
     \-- import_obj - 0 unit test calls
     \-- load_by_component_id - 0 unit test calls
+    \-- load_by_ids - 0 unit test calls
     \-- load_by_pattern - 0 unit test calls
+    \-- load_by_type - 0 unit test calls
     \-- load_names - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_by_component_id - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_pattern - 0 unit test calls
+    \-- load_sql_by_type - 1 unit test calls
     \-- load_sql_names - 0 unit test calls
     \-- set_user - 0 unit test calls
 \-- view_relation
@@ -2902,7 +2895,6 @@ so same-named functions of several classes share their test calls
     \-- relation_type_code_id - 0 unit test calls
     \-- relation_type_id - 0 unit test calls
     \-- reload_objects - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- set - 0 unit test calls
     \-- set_child - 0 unit test calls
     \-- set_child_by_name - 0 unit test calls
@@ -2914,6 +2906,7 @@ so same-named functions of several classes share their test calls
     \-- type_field - 0 unit test calls
 \-- view_relation_list
     \-- add_by_key - 1 unit test calls
+    \-- load_by_ids - 0 unit test calls
     \-- load_by_view - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_by_view - 0 unit test calls
@@ -2965,7 +2958,6 @@ so same-named functions of several classes share their test calls
     \-- link_types - 0 unit test calls
     \-- load_by_formula_name - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
-    \-- load_changes_related - 0 unit test calls
     \-- load_formulas_related - 0 unit test calls
     \-- load_parent_formulas_related - 0 unit test calls
     \-- load_phrases_related - 0 unit test calls
@@ -2992,7 +2984,6 @@ so same-named functions of several classes share their test calls
     \-- reload_value_list - 0 unit test calls
     \-- reload_view - 0 unit test calls
     \-- reserved_names - 0 unit test calls
-    \-- row_mapper_sandbox - 0 unit test calls
     \-- save_view - 0 unit test calls
     \-- set_type - 1 unit test calls
     \-- set_view_id - 0 unit test calls
@@ -3039,9 +3030,8 @@ so same-named functions of several classes share their test calls
     \-- load_linked_words - 0 unit test calls
     \-- load_names - 0 unit test calls
     \-- load_sql - 0 unit test calls
-    \-- load_sql_by_ids - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
-    \-- load_sql_by_type - 0 unit test calls
+    \-- load_sql_by_type - 1 unit test calls
     \-- load_sql_like - 0 unit test calls
     \-- load_sql_linked_words - 0 unit test calls
     \-- load_sql_names - 0 unit test calls
@@ -3363,6 +3353,7 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- btn_unlink - 0 unit test calls
     \-- component_type_selector - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- dsp_add - 0 unit test calls
     \-- dsp_edit - 0 unit test calls
     \-- dsp_hist - 0 unit test calls
@@ -3374,6 +3365,7 @@ so same-named functions of several classes share their test calls
     \-- is_button - 0 unit test calls
     \-- is_hidden - 0 unit test calls
     \-- is_list_group - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- log_debug - 0 unit test calls
     \-- log_err - 0 unit test calls
     \-- name_link - 0 unit test calls
@@ -3393,7 +3385,10 @@ so same-named functions of several classes share their test calls
 \-- component_link
     \-- api_array - 1 unit test calls
     \-- component_style_selector - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- get_component - 1 unit test calls
+    \-- get_style_id - 0 unit test calls
+    \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- set_component - 0 unit test calls
     \-- set_component_id - 0 unit test calls
@@ -3461,6 +3456,7 @@ so same-named functions of several classes share their test calls
     \-- component_type_selector - 0 unit test calls
     \-- db_fld_to_url - 1 unit test calls
     \-- doi - 0 unit test calls
+    \-- field_change_confirm_url - 0 unit test calls
     \-- file_selector - 0 unit test calls
     \-- formula_link_type_selector - 0 unit test calls
     \-- formula_name - 0 unit test calls
@@ -3557,10 +3553,12 @@ so same-named functions of several classes share their test calls
     \-- view_selector - 0 unit test calls
 \-- formula_link
     \-- api_array - 1 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- formula_link_type_selector - 0 unit test calls
     \-- formula_name - 0 unit test calls
     \-- formula_selector - 0 unit test calls
     \-- get_description - 0 unit test calls
+    \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- phrase_name - 0 unit test calls
     \-- set_formula - 0 unit test calls
@@ -3979,6 +3977,7 @@ so same-named functions of several classes share their test calls
     \-- input_valid - 1 unit test calls
 \-- sandbox_link
     \-- api_array - 1 unit test calls
+    \-- link_type - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- url_mapper - 1 unit test calls
@@ -4035,6 +4034,7 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- db_fld_to_url - 1 unit test calls
     \-- doi - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_tip - 1 unit test calls
     \-- sandbox_fld_order - 1 unit test calls
@@ -4168,8 +4168,10 @@ so same-named functions of several classes share their test calls
     \-- show_description - 0 unit test calls
     \-- show_formula - 0 unit test calls
     \-- show_language_symbol - 0 unit test calls
+    \-- show_link_type - 0 unit test calls
     \-- show_name - 0 unit test calls
     \-- show_name_big - 0 unit test calls
+    \-- show_order_nbr - 0 unit test calls
     \-- show_owner - 0 unit test calls
     \-- show_parent_view - 0 unit test calls
     \-- show_phrase_type - 0 unit test calls
@@ -4179,7 +4181,6 @@ so same-named functions of several classes share their test calls
     \-- show_ref_source - 0 unit test calls
     \-- show_ref_type - 0 unit test calls
     \-- show_ref_url - 0 unit test calls
-    \-- show_relation_type - 0 unit test calls
     \-- show_reverse - 0 unit test calls
     \-- show_row_phrase - 0 unit test calls
     \-- show_start_pos - 0 unit test calls
@@ -4259,7 +4260,9 @@ so same-named functions of several classes share their test calls
     \-- word_by_id - 0 unit test calls
 \-- term_view
     \-- api_array - 1 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- get_description - 0 unit test calls
+    \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- set_term - 0 unit test calls
     \-- set_term_id - 0 unit test calls
@@ -4549,6 +4552,7 @@ so same-named functions of several classes share their test calls
     \-- btn_del - 0 unit test calls
     \-- btn_edit - 0 unit test calls
     \-- btn_undo_add_value - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- dsp_add_fast - 0 unit test calls
     \-- dsp_edit - 0 unit test calls
     \-- dsp_hist - 0 unit test calls
@@ -4564,6 +4568,7 @@ so same-named functions of several classes share their test calls
     \-- is_id_set - 0 unit test calls
     \-- links_and_measure - 0 unit test calls
     \-- load_by_id - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- match_all - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_tip - 1 unit test calls
@@ -4613,6 +4618,7 @@ so same-named functions of several classes share their test calls
     \-- default_id - 0 unit test calls
     \-- selector - 0 unit test calls
 \-- view
+    \-- db_fld_to_url - 1 unit test calls
     \-- dsp_edit - 0 unit test calls
     \-- dsp_hist - 0 unit test calls
     \-- dsp_hist_links - 0 unit test calls
@@ -4620,6 +4626,7 @@ so same-named functions of several classes share their test calls
     \-- dsp_navbar_html_no_view - 0 unit test calls
     \-- dsp_navbar_no_view - 0 unit test calls
     \-- dsp_navbar_simple - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- log_err - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- open_link - 0 unit test calls
@@ -4662,10 +4669,11 @@ so same-named functions of several classes share their test calls
 \-- view_relation
     \-- api_array - 1 unit test calls
     \-- child - 1 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- get_description - 0 unit test calls
+    \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- parent - 1 unit test calls
-    \-- relation_type - 0 unit test calls
     \-- set_child_view - 0 unit test calls
     \-- set_child_view_id - 0 unit test calls
     \-- set_parent_view - 0 unit test calls

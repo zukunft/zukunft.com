@@ -79,7 +79,7 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 //include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_LOG . 'change_table.php';
-include_once paths::MODEL_LOG . 'change_table_field.php';
+//include_once paths::MODEL_LOG . 'change_table_field.php';
 //include_once paths::MODEL_LOG . 'change_table_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';

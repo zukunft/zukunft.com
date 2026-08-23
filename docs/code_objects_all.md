@@ -61,6 +61,7 @@ the object structure is:
 ├── ref_link_wikidata - link for the reference type wikidata
 ├── source_db - the database const for source tables
 ├── result_db - the database const for triple tables
+├── sandbox_related - the related data of a sandbox object for its page tabs
 ├── user_service
 │   └── xml - to im- and export xml files
 ├── ip_range_db - the database const for ip_range tables

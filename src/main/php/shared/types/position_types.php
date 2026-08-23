@@ -44,6 +44,7 @@ class position_types
 
     // place the component right or left of the previous component depending on the language write order e.g for arabic it will be left
     const string SIDE = "side";
+    const string SIDE_NAME = "side";
 
     // place the component below the previous component but within an explicitly defined row
     const string COMBINE = "combine";

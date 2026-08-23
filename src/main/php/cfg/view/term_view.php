@@ -114,6 +114,10 @@ class term_view extends sandbox_link
     const string TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const string FLD_ID = 'term_view_id';
     const string FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+    // the names of the linked objects as the list query joins them; the suffix is the position
+    // of the join, so both must match the join order of term_view_list::load_sql_by_ids
+    const string FLD_VIEW_NAME_JOINED = view_fields::FLD_NAME . '1';
+    const string FLD_TERM_NAME_JOINED = term::FLD_NAME . '2';
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
@@ -127,7 +131,8 @@ class term_view extends sandbox_link
     );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
-    // TODO Prio 2 maybe add a priority
+    // TODO Prio 2 add an order number like the formula link and the component link,
+    //      because the view link edit form already shows an order number field
     const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
         fields::FLD_DESCRIPTION,
@@ -213,6 +218,14 @@ class term_view extends sandbox_link
                 $this->set_term($trm);
                 $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
                 $this->description = $db_row[fields::FLD_DESCRIPTION];
+                // the list query joins the names of both linked objects, so that the link can
+                // name them e.g. in the change log; a load by id has no join and no names
+                if (array_key_exists(self::FLD_VIEW_NAME_JOINED, $db_row)) {
+                    $msg->merge($msk->set_name($db_row[self::FLD_VIEW_NAME_JOINED]));
+                }
+                if (array_key_exists(self::FLD_TERM_NAME_JOINED, $db_row)) {
+                    $trm->set_name($db_row[self::FLD_TERM_NAME_JOINED]);
+                }
             } else {
                 log_warning('view id missing for ' . $this->dsp_id());
             }
@@ -399,6 +412,15 @@ class term_view extends sandbox_link
         if ($typ_lst->incl_related()) {
             $vars = $this->api_json_array_linked(
                 $vars, json_fields::VIEW, json_fields::TERM, $msg, $usr);
+            // the owner, changes and overwrites of the term view default page
+            if (!$typ_lst->test_mode()) {
+                $owner_name = $this->owner_api_name($msg);
+                if ($owner_name != null) {
+                    $vars[json_fields::OWNER] = $owner_name;
+                }
+            }
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
         return $vars;
@@ -866,6 +888,29 @@ class term_view extends sandbox_link
             msg_id::VAR_TERM_NAME => $this->term()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string|null the name of the two linked objects e.g. for the change log
+     */
+    function name(): string|null
+    {
+        $result = null;
+
+        if ($this->get_view() != null) {
+            $result = $this->get_view()->name();
+        }
+        if ($this->term() != null) {
+            // append, because the name of a link is the name of both linked objects
+            $result .= ' to ' . $this->term()->name();
+        }
+
+        return $result;
     }
 
 }

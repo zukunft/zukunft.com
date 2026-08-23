@@ -146,6 +146,40 @@ class view_relation_list extends sandbox_link_list
     }
 
     /**
+     * set the SQL query parameters to load a list of view relations by the view relation ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of view relation ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        if (count($ids) > 0) {
+            $sc->add_where(view_relation_db::FLD_ID, $ids, sql_par_type::INT_LIST);
+            // also load the names of both linked views, so that the relation can name them
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_FROM, '', true);
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_TO, '', true);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * load a list of view relations by the given view relation ids
+     * @param array $ids an array of view relation ids which should be loaded
+     * @return bool true if at least one view relation found
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp, $msg);
+    }
+
+    /**
      * set the common part of the SQL query view relations
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique

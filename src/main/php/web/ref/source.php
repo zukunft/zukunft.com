@@ -202,6 +202,23 @@ class source extends sandbox_code_id
      */
 
     /**
+     * load the source by id AND ask the backend to include the views that can show this source,
+     * the change log and the user overwrites, which the tabs of the source page show
+     *
+     * the api handler sets api_types::INCL_RELATED and source::api_json_array() emits the views,
+     * changes and overwrites that the frontend api_mapper picks up into view_lst, chg_log,
+     * user_overwrites and other_overwrites
+     *
+     * @param int|string $id the source id to load
+     * @param int $usr_id the id of the session user to load the source for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
      * set the vars of this source frontend object bases on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match

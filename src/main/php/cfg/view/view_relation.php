@@ -70,6 +70,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -97,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class view_relation extends sandbox_link
 {
@@ -122,6 +124,11 @@ class view_relation extends sandbox_link
     const string FLD_FROM = view_relation_db::FLD_PARENT;
     const string FLD_PREDICATE = view_relation_type::FLD_ID;
     const string FLD_TO = view_relation_db::FLD_CHILD;
+
+    // the names of the linked views as the list query joins them; the suffix is the position
+    // of the join, so both must match the join order of view_relation_list::load_sql_by_ids
+    const string FLD_PARENT_NAME_JOINED = view_fields::FLD_NAME . '1';
+    const string FLD_CHILD_NAME_JOINED = view_fields::FLD_NAME . '2';
 
 
     /*
@@ -182,6 +189,14 @@ class view_relation extends sandbox_link
             $this->set_predicate_id($db_row[view_relation_type::FLD_ID]);
             $this->start_pos = $db_row[view_relation_db::FLD_START_POS];
             $this->description = $db_row[fields::FLD_DESCRIPTION];
+            // the list query joins the names of both linked views, so that the relation can
+            // name them e.g. in the change log; a load by id has no join and no names
+            if (array_key_exists(self::FLD_PARENT_NAME_JOINED, $db_row)) {
+                $msg->merge($prt->set_name($db_row[self::FLD_PARENT_NAME_JOINED]));
+            }
+            if (array_key_exists(self::FLD_CHILD_NAME_JOINED, $db_row)) {
+                $msg->merge($cld->set_name($db_row[self::FLD_CHILD_NAME_JOINED]));
+            }
         }
         return $msg->is_ok();
     }
@@ -319,6 +334,15 @@ class view_relation extends sandbox_link
             if ($typ_lst->incl_related()) {
                 $vars = $this->api_json_array_linked(
                     $vars, json_fields::PARENT, json_fields::CHILD, $msg, $usr);
+                // the owner, changes and overwrites of the view relation default page
+                if (!$typ_lst->test_mode()) {
+                    $owner_name = $this->owner_api_name($msg);
+                    if ($owner_name != null) {
+                        $vars[json_fields::OWNER] = $owner_name;
+                    }
+                }
+                $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+                $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             if ($this->id() != 0) {
@@ -878,7 +902,8 @@ class view_relation extends sandbox_link
             $result = $this->parent()->name();
         }
         if ($this->child() != null) {
-            $result = ' to ' . $this->child()->name();
+            // append, because the name of a link is the name of both linked objects
+            $result .= ' to ' . $this->child()->name();
         }
 
         return $result;
