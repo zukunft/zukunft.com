@@ -48,6 +48,7 @@ include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_log_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -161,6 +163,8 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $all_html, test_log::VIEW_OVERWRITE_COM);
         $test_name = 'the source overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, test_log::SOURCE_OVERWRITE_COM);
+        $test_name = 'the ref overwrite of the shown user is listed';
+        $t->assert_text_contains($test_name, $all_html, test_log::REF_OVERWRITE_KEY);
         $test_name = 'the standard table change is not listed beside the overwrites';
         $t->assert_text_not_contains($test_name, $all_html, word_names::TEST_RENAMED);
 
@@ -200,10 +204,37 @@ class user_ui_tests
         $test_name = 'the what column names the changed source';
         $t->assert_text_contains($test_name, $all_html,
             $name_end . sources::SIB . $link_end);
+        // a ref has no name column either, so it is named by the phrase and the type that it links;
+        // esc() keeps the quotes of the name, because it escapes with ENT_NOQUOTES
+        $test_name = 'the what column names the changed ref';
+        $t->assert_text_contains($test_name, $all_html,
+            $name_end . test_log::REF_OVERWRITE_NAME . $link_end);
 
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,
             $name_end . triple_names::MATH_CONST . $link_end . $mtr->txt(msg_id::LOG_ADD));
+
+        // the column lists the changes of every object type, so it names the type of each changed
+        // object, which the old user page showed as one table per type (see docs/llm/pending.md)
+        $test_name = 'the column has a type header';
+        $t->assert_text_contains($test_name, $all_html, $mtr->txt(msg_id::CHANGE_LOG_TBL_TYPE));
+        $test_name = 'the type of a changed word is named';
+        $t->assert_text_contains($test_name, $all_html, $mtr->text_db_table(change_tables::WORD));
+        $test_name = 'the type of a changed value is named';
+        $t->assert_text_contains($test_name, $all_html, $mtr->text_db_table(change_tables::VALUE));
+        $test_name = 'the type of a changed view is named';
+        $t->assert_text_contains($test_name, $all_html, $mtr->text_db_table(change_tables::VIEW));
+        $test_name = 'the type of a changed ref is named';
+        $t->assert_text_contains($test_name, $all_html, $mtr->text_db_table(change_tables::REF));
+        // the user sandbox change of a word is a change of a word and not of a 'user word'
+        $test_name = 'the type names the object and not the user sandbox table';
+        $t->assert_text_not_contains($test_name, $all_html, $mtr->text_db_table(change_tables::WORD_USR));
+
+        // an object page shows the changes of one object, so there the type is already known
+        $test_name = 'the changes tab of an object page has no type column';
+        $one_obj_html = $log->change_log_table_pure(
+            $usr_sys_ui, $t_log->log_list_word_changes_ui(), $msg, true);
+        $t->assert_text_not_contains($test_name, $one_obj_html, $mtr->txt(msg_id::CHANGE_LOG_TBL_TYPE));
 
         // the name of the changed object links to the default page of the object, so that the user
         // can open it from the user page instead of having to search it by name
@@ -304,6 +335,40 @@ class user_ui_tests
         $test_name = '... and indicates the users above the inline limit';
         $t->assert_text_contains($test_name, $inline_page, change_log_named_ui::MORE_INDICATOR);
         $t->html_page_test($inline_page, 'user', 'user_log_others_inline', $msg, $base_url, $lan);
+
+        // with the grouping the column shows one table per object type with the type as its header,
+        // the type of the newest change first, like the retired user_display_old page did
+        $grouped_page = $log->all_user_overwrites(
+            $usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES,
+            $url_arr, [change_log_actions::GROUP_BY_TYPE, change_log_actions::UNDO]);
+        // the column sorts the changes newest first before it splits them by type, so the expected
+        // groups are taken from the sorted list; without the sort the groups would be in the order
+        // in which the test builder added them, which is the oldest change first
+        $grouped_lst = $t_log->log_list_user_overwrites_ui()->filter_user_overwrites($usr_sys_ui);
+        $grouped_lst->sort_by_time_and_what(true);
+        $groups = $grouped_lst->split_by_object_type();
+        // the heading tag depends on the bootstrap setting, so the expected html is built with the
+        // same function that the renderer uses
+        $head_html = new html_base();
+        $test_name = 'the grouped column has a table header per object type';
+        foreach (array_keys($groups) as $type_name) {
+            $t->assert_text_contains($test_name, $grouped_page, $head_html->text_h4($type_name));
+        }
+        // all test changes have the same change time, so the newest is the one with the highest
+        // change log id, which is the reference overwrite added last by log_list_user_overwrites
+        $test_name = 'the type of the newest change is the first group';
+        $newest_type = $grouped_lst->lst()[0]->object_type();
+        $first_pos = strpos($grouped_page, $head_html->text_h4($newest_type));
+        foreach (array_keys($groups) as $type_name) {
+            $t->assert_true($test_name,
+                $first_pos <= strpos($grouped_page, $head_html->text_h4($type_name)));
+        }
+        // the header of each table names the type, so a type column would only repeat it
+        $test_name = 'the grouped column has no type column';
+        $t->assert_text_not_contains($test_name, $grouped_page, $mtr->txt(msg_id::CHANGE_LOG_TBL_TYPE));
+        $test_name = '... but still the requested undo icon';
+        $t->assert_text_contains($test_name, $grouped_page, icons::UNDO);
+        $t->html_page_test($grouped_page, 'user', 'user_log_grouped', $msg, $base_url, $lan);
 
         // a user can have far more overwrites than a page should show (over 15'000 for the system
         // user), so the list is cut to the configured number of rows before the rows are prepared

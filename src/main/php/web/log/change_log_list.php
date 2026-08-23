@@ -342,6 +342,29 @@ class change_log_list extends ListBase
     }
 
     /**
+     * split this change log into one list per type of the changed object, e.g. all word changes in
+     * one list and all source changes in another
+     *
+     * the types keep the order in which they first appear, so a list that is sorted newest first
+     * gives the type of the newest change first (see ui_log::tables_by_type)
+     *
+     * @return array one change log list per translated object type, by the type name
+     */
+    function split_by_object_type(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $chg) {
+            $type_name = $chg->object_type();
+            if (!array_key_exists($type_name, $result)) {
+                $result[$type_name] = new change_log_list();
+            }
+            // allow duplicates like head(), because the api change entries carry no own id
+            $result[$type_name]->add_obj($chg, true);
+        }
+        return $result;
+    }
+
+    /**
      * the first $limit changes of this list, used to show only the configured number of change rows
      * (like sys_log_list::head limits the user error list)
      *
@@ -409,9 +432,11 @@ class change_log_list extends ListBase
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object e.g. the all
      *                          user overwrites column of the user page
-     * @param array $actions the change_log_actions that the table adds beside when, who and what;
-     *                       an empty list adds nothing, which is what the change log of one object
-     *                       shows, because there the tabs of the same page offer the actions
+     * @param array $types_and_actions the change_log_actions that the table adds beside when, who
+     *                                 and what: the object type and the action icons; an empty list
+     *                                 adds nothing, which is what the change log of one object
+     *                                 shows, because there the tabs of the same page offer the
+     *                                 actions
      * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the borderless when / who / what table
      */
@@ -420,22 +445,28 @@ class change_log_list extends ListBase
         int   $max_rows = 0,
         bool  $test_mode = false,
         bool  $with_object = false,
-        array $actions = [],
+        array $types_and_actions = [],
         array $url_array = []
     ): string
     {
         global $mtr;
         $html = new html_base();
         $head = $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHEN))
-            . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHO))
-            . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHAT));
+            . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHO));
+        // a table that lists the changes of more than one object type names the type of each object
+        if (in_array(change_log_actions::OBJECT_TYPE, $types_and_actions, true)) {
+            $head .= $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_TYPE));
+        }
+        $head .= $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHAT));
         // an icon column shows only the icons, so like the 'my' tab it has no header text, whereas
         // the inline values of the other users are a normal column with the 'user' header
-        foreach ($actions as $action) {
-            if ($action == change_log_actions::OTHERS_INLINE) {
-                $head .= $html->th($mtr->txt(msg_id::OTHERS_TBL_USER));
-            } else {
-                $head .= $html->th('');
+        foreach ($types_and_actions as $action) {
+            if ($action->is_action_column()) {
+                if ($action == change_log_actions::OTHERS_INLINE) {
+                    $head .= $html->th($mtr->txt(msg_id::OTHERS_TBL_USER));
+                } else {
+                    $head .= $html->th('');
+                }
             }
         }
         $rows = $html->tr($head);
@@ -443,7 +474,8 @@ class change_log_list extends ListBase
         // sorted newest first by ui_log::prepared_change_log resp. the test)
         $lst = $max_rows > 0 ? $this->head($max_rows) : $this;
         foreach ($lst->lst() as $chg) {
-            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode, $with_object, $actions, $url_array);
+            $rows .= $chg->tr_when_who_what(
+                $what_max_chars, $test_mode, $with_object, $types_and_actions, $url_array);
         }
         // the forward button appears when more changes exist than the row limit shows; the back
         // button is prepared for the paging implementation (see docs/llm/pending.md) but stays hidden
@@ -451,7 +483,7 @@ class change_log_list extends ListBase
         // change, so the first page is always shown
         $more_rows = ($max_rows > 0 and $this->count() > $max_rows);
         $first_page = true;
-        $rows .= $this->tr_page_nav($more_rows, $first_page, $actions);
+        $rows .= $this->tr_page_nav($more_rows, $first_page, $types_and_actions);
         // borderless table with the standard zukunft.com grey text
         return $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
     }
@@ -463,10 +495,15 @@ class change_log_list extends ListBase
      *
      * @param bool $more_rows true if the list has more changes than the shown row limit
      * @param bool $first_page true if the first (newest) page is shown, so no back button is needed
-     * @param array $actions the change_log_actions of the table, which each add an own column
+     * @param array $types_and_actions the change_log_actions of the table, which each add an own
+     *                                 column except the grouping
      * @return string the html of the footer row, or '' if neither button is needed
      */
-    private function tr_page_nav(bool $more_rows, bool $first_page, array $actions = []): string
+    private function tr_page_nav(
+        bool  $more_rows,
+        bool  $first_page,
+        array $types_and_actions = []
+    ): string
     {
         $html = new html_base();
         $result = '';
@@ -475,8 +512,11 @@ class change_log_list extends ListBase
             $forward = $more_rows ? $html->icon(icons::PAGE_FORWARD) : '';
             // back button on the left, forward button right-aligned at the end of the table
             $cells = $html->td($back) . $html->td('');
-            foreach ($actions as $ignored) {
-                $cells .= $html->td('');
+            foreach ($types_and_actions as $action) {
+                // the grouping is the only entry that adds no column
+                if ($action != change_log_actions::GROUP_BY_TYPE) {
+                    $cells .= $html->td('');
+                }
             }
             $result = $html->tr($cells . $html->td($forward, styles::TEXT_RIGHT));
         }

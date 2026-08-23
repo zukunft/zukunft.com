@@ -199,6 +199,10 @@ class test_log
     // the user value of the source description overwrite of log_source_overwrite, which must not
     // contain the source name for the same reason as the component overwrite above
     const string SOURCE_OVERWRITE_COM = 'my own text for this publication';
+    // the user value and the object name of the ref external key overwrite of log_ref_overwrite;
+    // a ref has no name of its own, so it is named by the phrase and the type that it links
+    const string REF_OVERWRITE_KEY = 'Q167-my-own';
+    const string REF_OVERWRITE_NAME = 'ref of "Pi" to "wikidata"';
     // the value that each other user has set for a changed field, used to show the inline column of
     // change_log_actions::OTHERS_INLINE; one user more than change_log_named::OTHERS_MAX_INLINE, so
     // that a test can also check how the column indicates the users that it does not name
@@ -544,6 +548,25 @@ class test_log
         $chg->new_value = self::SOURCE_OVERWRITE_COM;
         // the name of the changed object as change_log_list::load_changed_objects sets it from the db
         $chg->row_name = sources::SIB;
+        return $chg;
+    }
+
+    /**
+     * @return change the log entry created by overwriting the external key of the pi reference
+     *         in the user sandbox (user_refs)
+     */
+    function log_ref_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::REF_USR, $msg);
+        $chg->set_field(change_fields::FLD_REF_KEY, $msg);
+        $chg->new_value = self::REF_OVERWRITE_KEY;
+        $chg->row_id = refs::PI_ID;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the
+        // db, where a ref is named by the phrase and the type it links (see cfg/ref/ref::name)
+        $chg->row_name = self::REF_OVERWRITE_NAME;
         return $chg;
     }
 
@@ -1264,6 +1287,7 @@ class test_log
         $log_lst->add($cmp_chg);
         $log_lst->add($this->log_view_overwrite());
         $log_lst->add($this->log_source_overwrite());
+        $log_lst->add($this->log_ref_overwrite());
         // a change of the shared standard word, which the column must never list as an overwrite;
         // the renamed-from value is unique to this change, so a test can detect it
         $log_lst->add($this->log_word_update());

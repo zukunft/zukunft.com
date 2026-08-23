@@ -4,9 +4,9 @@
 
 the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
 
-group the 'all_user_overwrites' rows by object type or add an object type column: the old page had one table per object type with its own header, so the user could see at a glance how many words resp. values were overwritten; today all types are merged into one when / who / what list that does not name the type
+a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. the count that the retired user_display_old page showed per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows already builds that union per user and would only have to keep the per-table counts instead of summing them
 
-add the ref overwrites to the 'all_user_overwrites' component: change_tables::REF_USR is in change_tables::USER_TABLES, so a ref overwrite is listed today, but change_log_list::name_lists has no ref entry, so the what column cannot name the changed ref (the old page had no ref table either, so this is a gap of both)
+cfg/ref/ref_list extends type_list and not sandbox_list, although a ref is a sandbox_link: that is why it needs its own load_by_ids and its own empty load_names_related to be usable as a name list of the change log (see change_log_list::name_lists), and why the generic type_list load selects a code_id column that the refs table does not have (see the comment of load_by_phr_id); moving it to sandbox_link_list like term_view_list would remove all three exceptions
 
 ## user default view
 

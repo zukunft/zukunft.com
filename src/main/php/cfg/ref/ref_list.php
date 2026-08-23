@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par_type.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
 //include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
@@ -52,6 +53,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -201,6 +203,50 @@ class ref_list extends type_list
         global $db_con;
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $keys);
         return $this->load($qp, $msg);
+    }
+
+    /**
+     * load a list of references by their database ids, e.g. to name the changed refs of a change
+     * log that lists the changes of more than one object (see change_log_list::name_lists)
+     *
+     * uses the ref query like load_by_phr_id, because the generic type_list load selects a
+     * code_id column that the refs table does not have
+     *
+     * @param array $ids the database ids of the references that should be loaded
+     * @param user_message $msg to collect the load warnings for the user
+     * @return bool true if at least one reference has been loaded
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+
+        $this->reset();
+        if ($ids != []) {
+            $ref = new ref($this->get_user());
+            $sc = $db_con->sql_creator();
+            $qp = $ref->load_sql($sc, 'ids');
+            $sc->add_where(ref::FLD_ID, $ids, sql_par_type::INT_LIST);
+            $qp->sql = $sc->sql();
+            $qp->par = $sc->get_par();
+            $db_lst = $db_con->get($qp, $msg, 'ref list');
+            foreach ($db_lst ?? [] as $db_row) {
+                $ref_obj = new ref($this->get_user());
+                $ref_obj->row_mapper_sandbox($db_row, $msg);
+                $this->add($ref_obj);
+            }
+        }
+        return !$this->is_empty();
+    }
+
+    /**
+     * a ref is named by the phrase it references, which the ref query already reads, so unlike the
+     * value list this list has nothing to load in addition (see change_log_list::load_changed_objects)
+     *
+     * @param user_message $msg to collect the load warnings for the user
+     * @return void
+     */
+    function load_names_related(user_message $msg): void
+    {
     }
 
     /**

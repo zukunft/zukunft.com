@@ -80,6 +80,7 @@ include_once paths::MODEL_LOG . 'change_values_text_big.php';
 include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
 include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
 include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
@@ -118,6 +119,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -412,6 +414,7 @@ class change_log_list extends list_db_read
             change_tables::VALUE => new value_list($usr),
             change_tables::FORMULA => new formula_list($usr),
             change_tables::FORMULA_LINK => new formula_link_list($usr),
+            change_tables::REF => new ref_list($usr),
             change_tables::SOURCE => new source_list($usr),
             change_tables::VIEW => new view_list($usr),
             change_tables::VIEW_COMPONENT => new component_list($usr),

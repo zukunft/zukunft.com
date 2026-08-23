@@ -1667,6 +1667,8 @@ enum messages: string
     case CHANGE_LOG_TBL_WHEN = 'change_log_tbl_when';
     case CHANGE_LOG_TBL_WHO = 'change_log_tbl_who';
     case CHANGE_LOG_TBL_WHAT = 'change_log_tbl_what';
+    // the header of the type column, which only a change log that lists more than one object has
+    case CHANGE_LOG_TBL_TYPE = 'change_log_tbl_type';
 
     // import
     case IMPORT_JSON = 'import';

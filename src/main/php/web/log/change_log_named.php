@@ -52,6 +52,7 @@ include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
+include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::VALUE . 'value.php';
@@ -76,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -122,6 +124,7 @@ class change_log_named extends change_log
         change_tables::VALUE => value::class,
         change_tables::FORMULA => formula::class,
         change_tables::FORMULA_LINK => formula_link::class,
+        change_tables::REF => ref::class,
         change_tables::SOURCE => source::class,
         change_tables::VIEW => view::class,
         change_tables::VIEW_COMPONENT => component::class,
@@ -741,6 +744,21 @@ class change_log_named extends change_log
     }
 
     /**
+     * the type of the changed object in the language of the user, e.g. 'Words' for a change of a
+     * word, so that a change log that lists the changes of more than one object can name the type
+     *
+     * the user sandbox change of an object is a change of the same object type, so the standard
+     * table name is translated and never the 'user_words' of the change itself
+     *
+     * @return string the translated type of the changed object
+     */
+    function object_type(): string
+    {
+        global $mtr;
+        return $mtr->text_db_table($this->std_table_name());
+    }
+
+    /**
      * an empty frontend object of the changed class with only the id set, which is all that the
      * undo link needs: the edit view id of the class, its db field to url var map and the id
      *
@@ -915,7 +933,8 @@ class change_log_named extends change_log
      * @param bool $test_mode true to use a fixed change time so the change log snapshots stay deterministic
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object
-     * @param array $actions the change_log_actions that the row adds beside when, who and what
+     * @param array $types_and_actions the change_log_actions that the row adds beside when, who
+     *                                 and what: the object type and the action icons
      * @param array $url_array the parsed url of the current page, carried into the undo link
      * @return string the html code of the borderless table row
      */
@@ -923,7 +942,7 @@ class change_log_named extends change_log
         int   $what_max_chars,
         bool  $test_mode = false,
         bool  $with_object = false,
-        array $actions = [],
+        array $types_and_actions = [],
         array $url_array = []
     ): string
     {
@@ -942,14 +961,23 @@ class change_log_named extends change_log
         $full_what = $this->what_text($with_object);
         $popup = ($what_max_chars > 0 and mb_strlen($full_what) > $what_max_chars) ? $full_what : '';
         $what_cell = $html->td($this->what($what_max_chars, $with_object), '', 0, $popup);
+        // a table that lists the changes of more than one object type names the type of the changed
+        // object, so that the user sees at a glance which of the changes are e.g. word overwrites
+        $type_cell = '';
+        if (in_array(change_log_actions::OBJECT_TYPE, $types_and_actions, true)) {
+            $type_cell = $html->td($html->esc($this->object_type()));
+        }
         // an action cell stays empty for a change that cannot be undone resp. whose object is not
         // known e.g. a change of a shared standard object or of a table without an edit view, so
         // that the columns stay aligned
         $action_cells = '';
-        foreach ($actions as $action) {
-            $action_cells .= $html->td($this->action_cell($action, $url_array));
+        foreach ($types_and_actions as $action) {
+            if ($action->is_action_column()) {
+                $action_cells .= $html->td($this->action_cell($action, $url_array));
+            }
         }
-        return $html->tr($html->td($when) . $html->td($who) . $what_cell . $action_cells);
+        return $html->tr(
+            $html->td($when) . $html->td($who) . $type_cell . $what_cell . $action_cells);
     }
 
     /**
@@ -965,7 +993,19 @@ class change_log_named extends change_log
             change_log_actions::UNDO => $this->undo_link($url_array),
             change_log_actions::OTHERS_LINK => $this->others_link(),
             change_log_actions::OTHERS_INLINE => $this->others_values(),
+            // the caller filters by is_action_column, so any other entry is a programming error
+            default => $this->action_cell_missing($action),
         };
+    }
+
+    /**
+     * @param change_log_actions $action the entry that is not an action column
+     * @return string an empty cell, because an entry without a cell must not break the table
+     */
+    private function action_cell_missing(change_log_actions $action): string
+    {
+        log_err('change log action ' . $action->value . ' is not expected to fill a table cell');
+        return '';
     }
 
 }

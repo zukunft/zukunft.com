@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1233 of 5642 public functions have at least 2 unit test calls; the 4409 functions below do not
+1233 of 5648 public functions have at least 2 unit test calls; the 4415 functions below do not
 
 ## main backend
 
@@ -1195,9 +1195,11 @@ so same-named functions of several classes share their test calls
     \-- get_user - 1 unit test calls
     \-- key_list - 0 unit test calls
     \-- load - 0 unit test calls
+    \-- load_by_ids - 0 unit test calls
     \-- load_by_keys - 0 unit test calls
     \-- load_by_phr_id - 0 unit test calls
     \-- load_dummy - 0 unit test calls
+    \-- load_names_related - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_source - 0 unit test calls
     \-- set_user - 0 unit test calls
@@ -3129,6 +3131,8 @@ so same-named functions of several classes share their test calls
     \-- test_mode - 0 unit test calls
     \-- with_excluded - 0 unit test calls
     \-- with_excluded_id - 0 unit test calls
+\-- change_log_actions
+    \-- is_action_column - 0 unit test calls
 \-- expression
     \-- r_part - 1 unit test calls
     \-- r_part_usr - 0 unit test calls
@@ -3333,6 +3337,7 @@ so same-named functions of several classes share their test calls
     \-- load_by_user - 0 unit test calls
     \-- load_fallback - 0 unit test calls
     \-- sort_by_time_and_what - 0 unit test calls
+    \-- split_by_object_type - 0 unit test calls
     \-- tbl - 0 unit test calls
     \-- tbl_when_who_what - 0 unit test calls
 \-- change_log_named
@@ -3341,6 +3346,7 @@ so same-named functions of several classes share their test calls
     \-- field - 0 unit test calls
     \-- field_name - 0 unit test calls
     \-- is_user_sandbox_change - 0 unit test calls
+    \-- object_type - 0 unit test calls
     \-- tr - 0 unit test calls
     \-- tr_when_who_what - 0 unit test calls
     \-- what - 0 unit test calls
@@ -3907,6 +3913,7 @@ so same-named functions of several classes share their test calls
     \-- selector - 0 unit test calls
 \-- ref
     \-- api_array - 1 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- external_key - 0 unit test calls
     \-- get_description - 0 unit test calls
     \-- has_phrase - 0 unit test calls

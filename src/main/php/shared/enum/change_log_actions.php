@@ -32,14 +32,22 @@
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
 /**
- * the columns that a change log table can add beside when, who and what
+ * what a change log table shows beside the when, who and what of each change: the type of the
+ * changed object, the grouping by that type and the action icons
  * (see web/log/change_log_list::tbl_when_who_what)
  *
  * an empty list adds nothing, which is what the change log of one object shows, because there the
- * 'my' and 'others' tabs of the same page already offer the actions
+ * object type is the same for every row and the 'my' and 'others' tabs of the same page already
+ * offer the actions
  */
 enum change_log_actions: string
 {
+    // the type of the changed object e.g. 'Words' in an own column left of the what column, which
+    // a change log needs as soon as it lists the changes of more than one object type
+    case OBJECT_TYPE = 'object_type';
+    // one table per object type instead of one table for all changes, each with the type as its
+    // header; the type column is dropped then, because the header already names the type
+    case GROUP_BY_TYPE = 'group_by_type';
     // the icon that opens the confirm page which sets the changed field back to the value before
     // the change, so that the user can reset one overwrite without opening the object page
     case UNDO = 'undo';
@@ -49,4 +57,12 @@ enum change_log_actions: string
     // the values of the other users in the table itself; this needs the values on the change entry
     // (see cfg/log/change_log_list::load_changed_objects), which costs a query per changed object
     case OTHERS_INLINE = 'others_inline';
+
+    /**
+     * @return bool true if this entry adds a column right of the what column
+     */
+    function is_action_column(): bool
+    {
+        return in_array($this, [self::UNDO, self::OTHERS_LINK, self::OTHERS_INLINE], true);
+    }
 }
