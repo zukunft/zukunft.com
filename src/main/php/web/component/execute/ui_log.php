@@ -152,6 +152,7 @@ class ui_log
      * @param user_message $msg to collect the mapping errors
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @param msg_id|null $ui_msg_code_id the message id of the headline shown in the user language
+     * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code with the overwrite table or the no-changes message
      */
     function all_user_overwrites(
@@ -159,7 +160,8 @@ class ui_log
         change_log_list $log_lst,
         user_message    $msg,
         bool            $test_mode = false,
-        ?msg_id         $ui_msg_code_id = null
+        ?msg_id         $ui_msg_code_id = null,
+        array           $url_array = []
     ): string
     {
         global $mtr;
@@ -201,7 +203,9 @@ class ui_log
             // this column lists the changes of all objects of the user, so unlike the 'my' tab of
             // an object page the what column must name the changed object, because 'added user
             // description' alone does not tell the user which word or triple has been changed
-            $result .= $this->table_pure($my_lst, $msg, $test_mode, true);
+            // and each row gets an undo icon, so that the user can reset one overwrite from the
+            // user page instead of having to open the 'my' tab of each object
+            $result .= $this->table_pure($my_lst, $msg, $test_mode, true, true, $url_array);
         }
         return $result;
     }
@@ -215,13 +219,18 @@ class ui_log
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object
+     * @param bool $with_undo true to add the undo icon column, which needs the listed changes to be
+     *                        the user overwrites of the session user
+     * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the borderless when / who / what change log table
      */
     private function table_pure(
         change_log_list $log_lst,
         user_message    $msg,
         bool            $test_mode,
-        bool            $with_object = false
+        bool            $with_object = false,
+        bool            $with_undo = false,
+        array           $url_array = []
     ): string
     {
         global $ui_sys;
@@ -232,7 +241,8 @@ class ui_log
                 $msg, 0);
         }
         $max_rows = $this->configured_row_limit($msg);
-        return $log_lst->tbl_when_who_what($what_max_chars, $max_rows, $test_mode, $with_object);
+        return $log_lst->tbl_when_who_what(
+            $what_max_chars, $max_rows, $test_mode, $with_object, $with_undo, $url_array);
     }
 
     /**

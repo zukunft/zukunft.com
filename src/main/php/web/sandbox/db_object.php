@@ -251,6 +251,50 @@ class db_object extends TextIdObject
         return [];
     }
 
+    /**
+     * the url of the confirm page of the edit view of this object that changes one field: the field
+     * is set to the given new value and the given old value is the '8'-prefixed opening value, so
+     * that the confirm page shows exactly this one pending change; the other entries of the given
+     * url are kept, so the confirm submit never resets another field
+     *
+     * shared by the undo and apply icons of the 'my' and 'others' tabs (ui_preview) and the undo
+     * icon of the all user overwrites column of the user page (change_log_named)
+     *
+     * @param string $fld the db field name of the field to change
+     * @param string $new_val the value that confirming the change saves for the session user
+     * @param string $old_val the '8'-prefixed opening value shown as the current value
+     * @param array $url_array the parsed url of the current page that is carried into the link
+     * @return string the url of the confirm page or an empty string if this object has no edit view
+     *                or no url var for the given field
+     */
+    function field_change_confirm_url(
+        string $fld,
+        string $new_val,
+        string $old_val,
+        array  $url_array = []
+    ): string
+    {
+        $result = '';
+        $fld_var = $this->db_fld_to_url()[$fld] ?? '';
+        // not every class has an edit view, so guard the const to avoid a fatal
+        if ($fld_var != '' and $this->id() > 0 and defined($this::class . '::VIEW_EDIT_ID')) {
+            // keep all entries of the current url except the entry (and the '8'-prefixed opening
+            // value) of the field to change, which is replaced by the given values below
+            $url_pars = $url_array;
+            unset($url_pars[$fld_var]);
+            unset($url_pars[url_var::PRE . $fld_var]);
+            $url_pars = array_merge($url_pars, [
+                url_var::MASK => $this::VIEW_EDIT_ID,
+                url_var::ID => $this->id(),
+                $fld_var => $new_val,
+                url_var::PRE . $fld_var => $old_val,
+                url_var::STEP => url_var::STEP_CONFIRM,
+            ]);
+            $result = api::MAIN_SCRIPT . '?' . http_build_query($url_pars);
+        }
+        return $result;
+    }
+
 
     /*
      * set and get

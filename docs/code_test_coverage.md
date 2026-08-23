@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1233 of 5626 public functions have at least 2 unit test calls; the 4393 functions below do not
+1233 of 5631 public functions have at least 2 unit test calls; the 4398 functions below do not
 
 ## main backend
 
@@ -3385,6 +3385,7 @@ so same-named functions of several classes share their test calls
 \-- component_link
     \-- api_array - 1 unit test calls
     \-- component_style_selector - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- get_component - 1 unit test calls
     \-- get_style_id - 0 unit test calls
     \-- link_type - 0 unit test calls
@@ -3455,6 +3456,7 @@ so same-named functions of several classes share their test calls
     \-- component_type_selector - 0 unit test calls
     \-- db_fld_to_url - 1 unit test calls
     \-- doi - 0 unit test calls
+    \-- field_change_confirm_url - 0 unit test calls
     \-- file_selector - 0 unit test calls
     \-- formula_link_type_selector - 0 unit test calls
     \-- formula_name - 0 unit test calls
@@ -4258,6 +4260,7 @@ so same-named functions of several classes share their test calls
     \-- word_by_id - 0 unit test calls
 \-- term_view
     \-- api_array - 1 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- get_description - 0 unit test calls
     \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls
@@ -4549,6 +4552,7 @@ so same-named functions of several classes share their test calls
     \-- btn_del - 0 unit test calls
     \-- btn_edit - 0 unit test calls
     \-- btn_undo_add_value - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- dsp_add_fast - 0 unit test calls
     \-- dsp_edit - 0 unit test calls
     \-- dsp_hist - 0 unit test calls
@@ -4665,6 +4669,7 @@ so same-named functions of several classes share their test calls
 \-- view_relation
     \-- api_array - 1 unit test calls
     \-- child - 1 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- get_description - 0 unit test calls
     \-- link_type - 0 unit test calls
     \-- name_linked - 0 unit test calls

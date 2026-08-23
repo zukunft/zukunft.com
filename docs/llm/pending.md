@@ -1,8 +1,26 @@
 # pending - list of planned llm prompts with prio 1
 
-## user default view
+## what the retired user_display_old.php still does better
 
-check if any functionality or information from src/main/php/web/user/user_display_old.php has not yet been part of the default and user views and report missing parts on top of /docs/llm/pending.md
+the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
+
+the undo icon of the 'all_user_overwrites' component is missing for a text, time or geo value: the column has an undo icon per row (change_log_named::undo_link) and every object type of change_log_named::CLASS_BY_TABLE has a db_fld_to_url(), but only the numeric value has a url var, so an overwrite of value_fields::FLD_VALUE_TEXT, _TIME or _GEO gets no icon; the ref overwrites have no icon either, because 'refs' is not in CLASS_BY_TABLE (see the missing ref entry of change_log_list::name_lists below)
+
+the undo icon of the 'all_user_overwrites' component resets the change and not the overwrite: the change log records the old and the new value of a change but not the value of the shared standard object, so the icon sets the field back to the value before this change (which for the first overwrite of a field is the standard value), whereas the undo icon of the 'my' tab of an object page knows the standard value and therefore always removes the overwrite
+
+link the changed object in the 'all_user_overwrites' column to its default page: change_log_named::tr_when_who_what puts the object name into the what cell as plain text (see change_log_named::object_prefix), so the user page names the changed object but the user cannot click through to it; the old page linked the first cell to the object and the user value to the edit view (value_edit.php, view_edit.php, component_edit.php, source_edit.php)
+
+show the standard value beside the user value in the 'all_user_overwrites' column: the old page had the header "Your name vs. | common name" and showed both values side by side, whereas the what column shows only the change text; the your / instead comparison exists today only in the 'my' tab of the object page
+
+add the overwrites of the other users to the user page: the old page had an 'other user' column per row (a link to user_triple.php, user_value.php, user_view.php, ...) that showed what other users have set for the same object; today this is only the 'others' tab of each object page
+
+group the 'all_user_overwrites' rows by object type or add an object type column: the old page had one table per object type with its own header, so the user could see at a glance how many words resp. values were overwritten; today all types are merged into one when / who / what list that does not name the type
+
+add the ref overwrites to the 'all_user_overwrites' component: change_tables::REF_USR is in change_tables::USER_TABLES, so a ref overwrite is listed today, but change_log_list::name_lists has no ref entry, so the what column cannot name the changed ref (the old page had no ref table either, so this is a gap of both)
+
+three things of the old page are deliberately not restored: the display functions wrote to the database while rendering (del_usr_cfg resp. del of a source when the user record equals the standard record), the tables had no row limit and no message when nothing was found, and the sql was built as a raw string with the user id inlined; the current column has the configured row limit, the ALL_USER_OVERWRITES_NONE message and the prepared statements of change_log_list
+
+## user default view
 
 add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
 
@@ -39,7 +57,7 @@ fix the view selector link in the word_default page
 
 the value default view now has the 'value tab box' component, so the value page shows the views that can show a value (all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
 
-the 'my' tab of the value page lists the overwritten fields but has no undo icon: ui_preview::overwrite_confirm_link needs a db field to url var mapping and web/value/value.php has no db_fld_to_url() override yet, so $fld_var stays empty and the link is skipped; the same applies to the apply icon of the 'others' tab
+the 'my' tab of the value page has an undo icon for the numeric value, the source and the sandbox fields (see value::db_fld_to_url), but not for a text, time or geo value, because url_var has only NUMERIC_VALUE; the same applies to the apply icon of the 'others' tab
 
 the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
 

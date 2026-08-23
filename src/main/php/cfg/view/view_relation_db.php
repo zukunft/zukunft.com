@@ -70,8 +70,10 @@ class view_relation_db
     const string FLD_PARENT_COM = 'the parent view that should be modified by the child view for the used view';
     const string FLD_CHILD = 'child_view_id';
     const string FLD_CHILD_COM = 'the child view that should modify the parent view for the used view';
-    const string FLD_START_POS = 'start_pos';
-    const string FLD_START_POS_COM = 'the staring position in the component chain where the changes should apply';
+    // the db field name from the shared const, so that the frontend can use the same name
+    // e.g. to map the field of an overwrite to the url var of the edit view (see db_fld_to_url)
+    const string FLD_START_POS = view_fields::FLD_START_POS;
+    const string FLD_START_POS_COM = view_fields::FLD_START_POS_COM;
 
     // database fields that cannot be user-specific excluding the id
     const array FLD_NAMES = array(

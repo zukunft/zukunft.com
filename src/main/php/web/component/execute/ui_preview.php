@@ -590,22 +590,9 @@ class ui_preview extends ui_base
         global $mtr;
         $html = new html_base();
         $result = '';
-        $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
-        // only word and triple pages show the tab, but guard the edit view const to avoid a fatal
-        if ($fld_var != '' and $dbo->id() > 0 and defined($dbo::class . '::VIEW_EDIT_ID')) {
-            // keep all entries of the current url except the entry (and the '8'-prefixed opening
-            // value) of the field to change, which is replaced by the given values below
-            $url_pars = $url_array;
-            unset($url_pars[$fld_var]);
-            unset($url_pars[url_var::PRE . $fld_var]);
-            $url_pars = array_merge($url_pars, [
-                url_var::MASK => $dbo::VIEW_EDIT_ID,
-                url_var::ID => $dbo->id(),
-                $fld_var => $new_val,
-                url_var::PRE . $fld_var => $old_val,
-                url_var::STEP => url_var::STEP_CONFIRM,
-            ]);
-            $url = api::MAIN_SCRIPT . '?' . http_build_query($url_pars);
+        // the url building is shared with the undo icon of the all user overwrites column
+        $url = $dbo->field_change_confirm_url($fld, $new_val, $old_val, $url_array);
+        if ($url != '') {
             $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . $icon_class . '"></' . html_base::I . '>';
             $result = $html->ref($url, $icon, $mtr->txt($tooltip), '', true);
         }

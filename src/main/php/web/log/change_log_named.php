@@ -40,6 +40,26 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::CONST . 'icons.php';
+// the classes of the objects that a change can change, used by the undo icon of the all user
+// overwrites column to build the confirm url of the edit view (see CLASS_BY_TABLE)
+// component_exe.php is included before component.php, because component.php must never be the
+// first file of the component package that is loaded: its own includes lead via view_list back
+// to component_exe.php, which loads system_form, and system_form extends component, which is
+// not defined yet at that moment; component_exe.php loads the two in the working order
+include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::COMPONENT . 'component_link.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_link.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VIEW . 'term_view.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::VIEW . 'view_relation.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'change_actions.php';
@@ -48,10 +68,23 @@ include_once html_paths::SHARED_ENUM . 'change_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\component_link;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\view\term_view;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\view\view_relation;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -75,6 +108,25 @@ class change_log_named extends change_log
     // appended to the what column of the change log table pure when the text is longer than the
     // configured char limit, to indicate that the full text is shown in the mouseover popup
     const string MORE_INDICATOR = '...';
+
+    //TODO Prio 2 check if this is not defined several times and move it to a mapper class
+    // the frontend class of the changed object per standard table name, so that the undo icon of
+    // the all user overwrites column can use the edit view and the url vars of the changed object;
+    // a table that is missing here simply gets no undo icon, because without the class the link
+    // would not know which edit view to open (see undo_link)
+    const array CLASS_BY_TABLE = [
+        change_tables::WORD => word::class,
+        change_tables::TRIPLE => triple::class,
+        change_tables::VALUE => value::class,
+        change_tables::FORMULA => formula::class,
+        change_tables::FORMULA_LINK => formula_link::class,
+        change_tables::SOURCE => source::class,
+        change_tables::VIEW => view::class,
+        change_tables::VIEW_COMPONENT => component::class,
+        change_tables::VIEW_LINK => component_link::class,
+        change_tables::VIEW_TERM_LINK => term_view::class,
+        change_tables::VIEW_RELATION => view_relation::class,
+    ];
 
     // between the name of the changed object and the change itself in a change log that lists the
     // changes of more than one object e.g. 'Pi: added user description "..."'
@@ -581,6 +633,79 @@ class change_log_named extends change_log
     }
 
     /**
+     * TODO Prio 2 check if this is not defined several times and move it to a mapper class
+     * the name of the table with the standard objects e.g. 'words' for a change of 'user_words',
+     * because the user sandbox change of an object is a change of the same object
+     *
+     * @return string the standard table name of this change
+     */
+    private function std_table_name(): string
+    {
+        $result = $this->table_name();
+        if (str_starts_with($result, change_tables::USER_PREFIX)) {
+            $result = substr($result, strlen(change_tables::USER_PREFIX));
+        }
+        return $result;
+    }
+
+    /**
+     * an empty frontend object of the changed class with only the id set, which is all that the
+     * undo link needs: the edit view id of the class, its db field to url var map and the id
+     *
+     * @return db_object|null the changed object or null if the class of the table is not known
+     */
+    private function changed_object(): ?db_object
+    {
+        $result = null;
+        $class = self::CLASS_BY_TABLE[$this->std_table_name()] ?? null;
+        if ($class != null and $this->row_id != null) {
+            $result = new $class();
+            $result->set_id($this->row_id);
+        }
+        return $result;
+    }
+
+    /**
+     * the undo icon of a row of the all user overwrites column: it opens the confirm page of the
+     * edit view of the changed object with the field set back to the value it had before this
+     * change, so that confirming undoes exactly this one logged change
+     *
+     * unlike the undo of the 'my' tab, which knows the standard value of the field, this link can
+     * only use the old value of the change, because a change log entry records the change and not
+     * the value of the shared standard object (see docs/llm/pending.md)
+     *
+     * @param array $url_array the parsed url of the current page, carried into the undo link
+     * @return string the html code of the undo icon link or an empty string if no link can be built
+     */
+    private function undo_link(array $url_array): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        // only a change that the user has written to the user sandbox can be undone; a change of
+        // the shared standard object is not an overwrite of this user
+        if ($this->is_user_sandbox_change()) {
+            $dbo = $this->changed_object();
+            if ($dbo != null) {
+                // a field that links to another object (e.g. the view of a word) is logged with
+                // the name of the linked object, whereas the url carries its id, so the id is
+                // used whenever the change has one (like value_to_show does for the change text)
+                $url = $dbo->field_change_confirm_url(
+                    $this->field(),
+                    (string)($this->old_id ?? $this->old_value ?? ''),
+                    (string)($this->new_id ?? $this->new_value ?? ''),
+                    $url_array);
+                if ($url != '') {
+                    $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML
+                        . '="' . icons::UNDO . '"></' . html_base::I . '>';
+                    $result = $html->ref($url, $icon, $mtr->txt(msg_id::MY_TBL_UNDO), '', true);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the translated change action, prefixed with a translatable 'user' for a change in the user
      * sandbox (a *_usr overlay table) e.g. 'added user' instead of 'added'; shared by the change log
      * table (what_text) and the changes tab / system change-log text (entry)
@@ -640,9 +765,17 @@ class change_log_named extends change_log
      * @param bool $test_mode true to use a fixed change time so the change log snapshots stay deterministic
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object
+     * @param bool $with_undo true to add the undo icon column
+     * @param array $url_array the parsed url of the current page, carried into the undo link
      * @return string the html code of the borderless table row
      */
-    function tr_when_who_what(int $what_max_chars, bool $test_mode = false, bool $with_object = false): string
+    function tr_when_who_what(
+        int   $what_max_chars,
+        bool  $test_mode = false,
+        bool  $with_object = false,
+        bool  $with_undo = false,
+        array $url_array = []
+    ): string
     {
         global $ui_sys;
         $html = new html_base();
@@ -659,7 +792,10 @@ class change_log_named extends change_log
         $full_what = $this->what_text($with_object);
         $popup = ($what_max_chars > 0 and mb_strlen($full_what) > $what_max_chars) ? $full_what : '';
         $what_cell = $html->td($this->what($what_max_chars, $with_object), '', 0, $popup);
-        return $html->tr($html->td($when) . $html->td($who) . $what_cell);
+        // the undo cell stays empty for a change that cannot be undone e.g. a change of a shared
+        // standard object or of a table without an edit view, so that the columns stay aligned
+        $undo_cell = $with_undo ? $html->td($this->undo_link($url_array)) : '';
+        return $html->tr($html->td($when) . $html->td($who) . $what_cell . $undo_cell);
     }
 
 }

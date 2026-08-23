@@ -48,6 +48,12 @@ class view_fields
     const string FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
     const string FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
     const string FLD_TYPE = 'view_type_id';
+    const string FLD_LINK_TYPE_COM = 'to define the behaviour of the link between a term and a view';
+    const string FLD_LINK_TYPE = 'view_link_type_id';
+    const string FLD_RELATION_TYPE_COM = 'to define the behaviour of the relation between two views';
+    const string FLD_RELATION_TYPE = 'view_relation_type_id';
+    const string FLD_START_POS_COM = 'the staring position in the component chain where the changes should apply';
+    const string FLD_START_POS = 'start_pos';
 
     // all database field names excluding the id
     // used to identify if there are some user-specific changes

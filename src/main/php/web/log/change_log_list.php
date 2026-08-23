@@ -407,13 +407,18 @@ class change_log_list extends ListBase
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object e.g. the all
      *                          user overwrites column of the user page
+     * @param bool $with_undo true to add the undo icon column, which needs the changes to be the
+     *                        user overwrites of the session user e.g. the all user overwrites column
+     * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the borderless when / who / what table
      */
     function tbl_when_who_what(
-        int  $what_max_chars,
-        int  $max_rows = 0,
-        bool $test_mode = false,
-        bool $with_object = false
+        int   $what_max_chars,
+        int   $max_rows = 0,
+        bool  $test_mode = false,
+        bool  $with_object = false,
+        bool  $with_undo = false,
+        array $url_array = []
     ): string
     {
         global $mtr;
@@ -421,12 +426,16 @@ class change_log_list extends ListBase
         $head = $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHEN))
             . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHO))
             . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHAT));
+        // the undo column shows only the icons, so like the 'my' tab it has no header text
+        if ($with_undo) {
+            $head .= $html->th('');
+        }
         $rows = $html->tr($head);
         // show only the most recent changes up to the configured row limit (the list is already
         // sorted newest first by ui_log::prepared_change_log resp. the test)
         $lst = $max_rows > 0 ? $this->head($max_rows) : $this;
         foreach ($lst->lst() as $chg) {
-            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode, $with_object);
+            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode, $with_object, $with_undo, $url_array);
         }
         // the forward button appears when more changes exist than the row limit shows; the back
         // button is prepared for the paging implementation (see docs/llm/pending.md) but stays hidden
@@ -434,7 +443,7 @@ class change_log_list extends ListBase
         // change, so the first page is always shown
         $more_rows = ($max_rows > 0 and $this->count() > $max_rows);
         $first_page = true;
-        $rows .= $this->tr_page_nav($more_rows, $first_page);
+        $rows .= $this->tr_page_nav($more_rows, $first_page, $with_undo);
         // borderless table with the standard zukunft.com grey text
         return $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
     }
@@ -446,9 +455,10 @@ class change_log_list extends ListBase
      *
      * @param bool $more_rows true if the list has more changes than the shown row limit
      * @param bool $first_page true if the first (newest) page is shown, so no back button is needed
+     * @param bool $with_undo true if the table has the additional undo icon column
      * @return string the html of the footer row, or '' if neither button is needed
      */
-    private function tr_page_nav(bool $more_rows, bool $first_page): string
+    private function tr_page_nav(bool $more_rows, bool $first_page, bool $with_undo = false): string
     {
         $html = new html_base();
         $result = '';
@@ -456,10 +466,11 @@ class change_log_list extends ListBase
             $back = !$first_page ? $html->icon(icons::PAGE_BACK) : '';
             $forward = $more_rows ? $html->icon(icons::PAGE_FORWARD) : '';
             // back button on the left, forward button right-aligned at the end of the table
-            $result = $html->tr(
-                $html->td($back)
-                . $html->td('')
-                . $html->td($forward, styles::TEXT_RIGHT));
+            $cells = $html->td($back) . $html->td('');
+            if ($with_undo) {
+                $cells .= $html->td('');
+            }
+            $result = $html->tr($cells . $html->td($forward, styles::TEXT_RIGHT));
         }
         return $result;
     }

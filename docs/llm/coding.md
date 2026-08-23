@@ -93,6 +93,8 @@ detail file. Order is by how often they fire, not importance.
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
 - Every resource file read or written is a const in the `files.php` of its layer (cfg / shared / test), so the three `files.php` stay the complete overview of all resource files; never inline a file name at the call site. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
+- Never remove an `include_once` that looks unused: without an autoloader it may be what defines a class before another file extends it, and the fatal shows up elsewhere. Leave it until the includes are changed to proper dynamic loading. → `docs/llm/file-layout.md`
+- Include every class a file uses in block 2, never lazily inside a function; if the include order matters, include the file that loads the package first and say why. → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
 - Loading and saving are separated: every function reached from `save()` (e.g. `db_fields_changed`, `add_user`) works only on in-memory objects + the initial `$db_rec`/`get_similar` reload and never calls a `load_*`; fix an incomplete object at its load, not in the save path. → `docs/llm/architecture.md`
 - Within a section, order functions top down: public / often-used entry points first, rarely-used private helpers last (`load_by_phrase` before `load_sql_by_phrase`). → `docs/llm/architecture.md`

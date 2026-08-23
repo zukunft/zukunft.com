@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::LOG . 'change_log_list.php';
@@ -57,6 +58,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
@@ -138,7 +140,8 @@ class user_ui_tests
         // that a user sees all changes on one page (the same filter by the user sandbox tables,
         // see change_log_list::filter_user_overwrites and change_tables::USER_TABLES)
         $usr_sys_ui->chg_log = $t_log->log_list_user_overwrites_ui();
-        $all_html = $log->all_user_overwrites($usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES);
+        $all_html = $log->all_user_overwrites(
+            $usr_sys_ui, new change_log_list_ui(), $msg, true, msg_id::ALL_USER_OVERWRITES, $url_arr);
         $test_name = 'the word overwrite of the shown user is listed';
         $t->assert_text_contains($test_name, $all_html, views::WORD_NAME);
         $test_name = 'the triple overwrite of the shown user is listed';
@@ -195,6 +198,28 @@ class user_ui_tests
         $test_name = 'the object name is not cut off by the what column limit';
         $t->assert_text_contains($test_name, $all_html,
             triple_names::MATH_CONST . change_log_named_ui::OBJECT_SEPARATOR . $mtr->txt(msg_id::LOG_ADD));
+
+        // each row that can be undone gets an undo icon, so that the user can reset an overwrite
+        // from the user page instead of having to open the 'my' tab of each object; the link is
+        // the same view.php confirm url as the undo icon of the 'my' tab (see url_to_action)
+        $test_name = 'the overwrite rows have an undo icon';
+        $t->assert_text_contains($test_name, $all_html, icons::UNDO);
+        $test_name = 'the undo icon of the word overwrite opens the word edit view';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::MASK . '=' . views::WORD_EDIT_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID);
+        $test_name = 'the undo icon sets the overwritten field back to the value before the change';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::VIEW . '=&amp;' . url_var::PRE . url_var::VIEW . '=' . views::WORD_ID);
+        $test_name = 'the undo icon asks the user to confirm the change';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::STEP . '=' . url_var::STEP_CONFIRM);
+        // a value is keyed by the group id, so its undo link uses the group id and not a row id
+        $test_name = 'the undo icon of the value overwrite opens the value edit view';
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::MASK . '=' . views::VALUE_EDIT_ID . '&amp;' . url_var::ID . '=' . values::PI_ID);
+        $t->assert_text_contains($test_name, $all_html,
+            url_var::NUMERIC_VALUE . '=&amp;' . url_var::PRE . url_var::NUMERIC_VALUE
+            . '=' . values::SAMPLE_INT);
         $test_page .= $all_html . '<br>';
 
         // a user can have far more overwrites than a page should show (over 15'000 for the system

@@ -449,7 +449,7 @@ class component_exe extends component
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $msg, $test_mode),
             component_types::CHANGE_LOG_TABLE_PURE => $log->change_log_table_pure($dbo, $log_lst, $msg, $test_mode),
             component_types::USER_SYSTEM_ERRORS => $log->user_system_errors($err_lst, $msg, $this->ui_msg_code_id),
-            component_types::ALL_USER_OVERWRITES => $log->all_user_overwrites($dbo, $log_lst, $msg, $test_mode, $this->ui_msg_code_id),
+            component_types::ALL_USER_OVERWRITES => $log->all_user_overwrites($dbo, $log_lst, $msg, $test_mode, $this->ui_msg_code_id, $url_array),
 
             // view relation only -
             component_types::SYSTEM_FIELD_PARENT_VIEW => $form->show_parent_view($dbo),

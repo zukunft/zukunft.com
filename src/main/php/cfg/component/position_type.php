@@ -34,8 +34,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
 
 class position_type extends type_object
 {
@@ -46,6 +48,8 @@ class position_type extends type_object
 
     // comments used for the database creation
     const string TBL_COMMENT = 'to define the position of components';
-    const string FLD_ID = 'position_type_id'; // to use in const until final is allowed
+    // the db field name from the shared const, so that the frontend can use the same name
+    // e.g. to map the field of an overwrite to the url var of the edit view (see db_fld_to_url)
+    const string FLD_ID = component_fields::FLD_POS_TYPE;
 
 }

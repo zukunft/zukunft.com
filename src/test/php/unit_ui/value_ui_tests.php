@@ -41,6 +41,7 @@ include_once test_paths::CREATE . 'test_phrases.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -239,6 +240,16 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $tab_html, $mtr->txt(msg_id::MY_TBL_INSTEAD));
         $test_name = '... and the translated name of the overwritten field';
         $t->assert_text_contains($test_name, $tab_html, $mtr->text_db_field(value_fields::FLD_VALUE));
+
+        // like on the word page the undo icon links to the confirm page of the value edit view
+        // that sets the field back to the standard value (see value::db_fld_to_url)
+        $test_name = '... and an undo link to the confirm page for the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, icons::UNDO);
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::NUMERIC_VALUE . '=' . values::PI_SHORT);
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::PRE . url_var::NUMERIC_VALUE . '=' . values::SAMPLE_INT);
+        $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
 
         // a value loaded without the related data has neither a views nor a my tab
         $val_plain = new value($t_val->value($msg)->api_json());
