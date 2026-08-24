@@ -2,7 +2,7 @@
 
 /*
 
-    model/component/component_link.php - link a single display component/element to a view
+    model/component/component_link.php - link a single display component to a view
     ----------------------------------
 
     The main sections of this object are

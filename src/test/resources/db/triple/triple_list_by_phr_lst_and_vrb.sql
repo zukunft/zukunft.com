@@ -43,4 +43,4 @@ PREPARE triple_list_by_phr_lst_and_vrb_up (bigint, bigint[], bigint[], bigint) A
  LEFT JOIN user_phrases ul2 ON l2.phrase_id      = ul2.phrase_id AND ul2.user_id = $1
      WHERE (s.from_phrase_id = ANY ($2) or s.to_phrase_id = ANY ($3))
        AND s.verb_id = $4
-  ORDER BY s.verb_id, name_given, s.triple_id;
+  ORDER BY s.verb_id, triple_name, s.triple_id;

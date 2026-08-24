@@ -243,7 +243,7 @@ TODO add $style and $pos_type to the frontend object
 
 ## database change setup
 
-User Sandbox: values, formulas, formula_links, views and view elements are included in the user sandbox, which means, each user can exclude or adjust single entries
+User Sandbox: values, formulas, formula_links, views and view components are included in the user sandbox, which means, each user can exclude or adjust single entries
 
 to avoid confusion words, formula names, triples and verbs may have a limited user sandbox, but a normal user can change the name, which will hopefully not happen often.
 

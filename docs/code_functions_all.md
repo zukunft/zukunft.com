@@ -16620,9 +16620,9 @@
     \-- form_end
         \-- system_form - @return string that simply closes the form
     \-- row_start
-        \-- system_form - @return string combine the next elements to one row
+        \-- system_form - @return string combine the next components to one row
     \-- row_right
-        \-- system_form - @return string combine the next elements to one row and align to the right
+        \-- system_form - @return string combine the next components to one row and align to the right
     \-- row_center
         \-- system_form - @return string to start a new row and center the following components (e.g. the confirm button
                 s)

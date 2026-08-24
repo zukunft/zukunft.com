@@ -45,6 +45,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -121,19 +123,26 @@ class triple_list extends ListBase
      */
     function display(user_message $msg, string $back = '', ?int $limit = null): string
     {
-        return implode(' ', $this->names_linked($msg, $back, $limit));
+        $names = $this->names_linked($msg, $back);
+        $result = implode(' ', array_slice($names, 0, $limit ?? count($names)));
+        // never cut silently: tell the user that the list continues, but without a number, because
+        // the list itself is already cut by the read limit (see cfg/verb/verb::triples_read_limit)
+        // and so the true number of the remaining triples is not known here
+        if ($limit != null and count($names) > $limit) {
+            $result .= ' ' . msg_id::THREE_POINTS->text();
+        }
+        return $result;
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @param int|null $limit the max number of triples to return, null for all of them
      * @return array with a list of the triple names with html links
      */
-    function names_linked(user_message $msg, string $back = '', ?int $limit = null): array
+    function names_linked(user_message $msg, string $back = ''): array
     {
         $result = array();
         foreach ($this->lst() as $trp) {
-            if (!$trp->is_hidden($msg) and ($limit == null or count($result) < $limit)) {
+            if (!$trp->is_hidden($msg)) {
                 $result[] = $trp->name_link($back);
             }
         }

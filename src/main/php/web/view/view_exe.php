@@ -184,7 +184,7 @@ class view_exe extends view_base
             // if the position type is side the component in the same row as the previous component
             // if the position type is combine the component below the previous component but within an explicitly defined row
 
-            // if a row contains only standard for elements
+            // if a row contains only standard form components
             // the row start and end can be set automatically
             // if a row contains buttons, hidden components, subheader or related tables
             // the row start and end should be defined by explicit components
@@ -480,7 +480,7 @@ class view_exe extends view_base
             $result .= $html->dsp_tbl_start_hist();
         }
 
-        // show the view elements and allow the user to change them
+        // show the view components and allow the user to change them
         $this->log_debug('load');
         if (!$this->load_components()) {
             $this->log_err('Loading of view components for ' . $this->dsp_id() . ' failed');
@@ -506,7 +506,7 @@ class view_exe extends view_base
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
-                $result .= 'Name of the new display element: ';
+                $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());

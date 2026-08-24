@@ -1926,6 +1926,9 @@ enum messages: string
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
+    // the class word in front of the object name of a page title e.g. view "Word"
+    case SYSTEM_TITLE_VIEW = 'system_title_view';
+    case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';

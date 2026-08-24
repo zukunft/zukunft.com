@@ -387,15 +387,17 @@
     },
     {
       "name": "View title",
-      "description": "show the view name as the page title and the type, the share and the protection in the subtitle",
+      "description": "show the translated word view and the view name as the page title and the type, the share and the protection in the subtitle",
       "type": "title_of_named_with_edit_link",
-      "code_id": "title_of_named_with_edit_link_view"
+      "code_id": "title_of_named_with_edit_link_view",
+      "ui_msg_code_id": "system_title_view"
     },
     {
       "name": "Component title",
-      "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
+      "description": "show the translated word component and the component name as the page title and the type, the share and the protection in the subtitle",
       "type": "title_of_named_with_edit_link",
-      "code_id": "title_of_named_with_edit_link_component"
+      "code_id": "title_of_named_with_edit_link_component",
+      "ui_msg_code_id": "system_title_component"
     },
     {
       "name": "Link title",

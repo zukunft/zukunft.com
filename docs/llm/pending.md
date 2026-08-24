@@ -1,26 +1,13 @@
 # pending - list of planned llm prompts with prio 1
 
-## verb default view
-
-the values of a source are neither limited when they are loaded nor when they are shown, the gap that the triples of a verb had before (see triple_list::load_by_verb and ui_list::configured_link_limit); the source page needs the same two config.yaml limits, e.g. 'lists > limit > value list' for the shown values and a 'lists > limit > sources > read' beside the new 'triples > read'
-
-neither the verb page nor the source page tells the user that the shown list is cut: config.yaml promises "if more phrases are assigned the list ends with '... and n more'" for the phrase and formula list, but no list renders that indicator, and with a read limit the true total is not known either, so the count needs its own query (the same open point as the per type count of the user page)
-
-the triples of a verb are shown in database id order, because triple_list::load_sql sorts by the given name, which is null for every triple that uses the generated name, and the id is only the tie break that makes the order deterministic; for a comma separated list of names the user expects the shown name order, which needs the generated name resp. the user-specific name in the order by
-
-## user default view
-
-for the headline of the add component view 'element' is used. A view component should always be named 'component' not element . Note this change in the rules and check that 'element' is nowhere used to decribe a component 
-
-in the view and component default view in the title add the translated word "view" / "component" before the view / component name, so that the title is e.g. view "Word" or component "Word"
-
-
-write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
-
+## general
 
 in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the tooltip of the term so that the user can check if she (or he) has selected the correct term
 
 in the formula edit (and add) view add an icon near the formula expression and latex formula input field that the user can use to update the latex based on the expression or the other way round
+
+
+write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
 
 
 create a script that checks that all fields of the main classes are shown on the related default view, add and edit view except the fields that are explicitly excluded
@@ -37,6 +24,12 @@ add the check of the open_api specification to /test/test.php
 if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default page
 
 fix the view selector link in the word_default page
+
+### verb default view
+
+a cut list shows that it continues, but not by how much: the verb page ends the triples with '...' without a number, because the loaded list is itself cut by the read limit, so the number of the remaining triples is not known (unlike value_list::more_tail, which knows the count within the loaded list). the exact number needs its own count query, the same open point as the per type count of the user page
+
+triple_fields::FLD_NAME_GIVEN and FLD_NAME_AUTO are null for all 971 triples of the test database, although the import sets a name for each of them: the generated name lands in triple_name only, so a query that needs to know whether the user has given an own name cannot tell. check if the import should fill name_generated and if the two fields are needed at all beside triple_name
 
 ### value page tabs
 

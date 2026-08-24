@@ -94,4 +94,4 @@ PREPARE value_list_t_by_source FROM
      LEFT JOIN user_values_text_big u ON s.group_id = u.group_id
                                      AND u.user_id = ?
          WHERE (u.source_id = ? OR (s.source_id = ?
-           AND u.source_id IS NULL))';
+           AND u.source_id IS NULL)) LIMIT ? OFFSET ?';

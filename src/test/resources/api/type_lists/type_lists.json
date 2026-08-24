@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-08-24T18:47:58+00:00",
+    "timestamp": "2026-08-24T20:26:42+00:00",
     "body": {
         "user_profiles": [
             {
@@ -21995,9 +21995,10 @@
                         "link_id": 1071,
                         "id": 332,
                         "name": "View title",
-                        "description": "show the view name as the page title and the type, the share and the protection in the subtitle",
+                        "description": "show the translated word view and the view name as the page title and the type, the share and the protection in the subtitle",
                         "type_id": 192,
                         "code_id": "title_of_named_with_edit_link_view",
+                        "ui_msg_code_id": "system_title_view",
                         "position": 1,
                         "position_type": 1
                     },
@@ -22075,9 +22076,10 @@
                         "link_id": 1078,
                         "id": 333,
                         "name": "Component title",
-                        "description": "show the component name as the page title and the type, the share and the protection in the subtitle",
+                        "description": "show the translated word component and the component name as the page title and the type, the share and the protection in the subtitle",
                         "type_id": 192,
                         "code_id": "title_of_named_with_edit_link_component",
+                        "ui_msg_code_id": "system_title_component",
                         "position": 1,
                         "position_type": 1
                     },
