@@ -68,7 +68,7 @@ class components
     const string FORM_NAME = 'form_field_name';
     const string FORM_NAME_NAME = 'system form field name';
     const string FORM_NAME_COM = 'the name field in a form';
-    const int FORM_NAME_ID = 4;
+    const int FORM_NAME_ID = 130;
     const string FORM_DESCRIPTION = 'form_field_description';
     const string FORM_DESCRIPTION_NAME = 'system form field description';
     const string FORM_DESCRIPTION_COM = 'the description field in a form';
@@ -84,7 +84,7 @@ class components
     const string FORM_PLURAL = 'form_field_plural';
     const string FORM_PLURAL_NAME = 'system form field plural';
     const string FORM_PLURAL_COM = 'the plural language form field in a form (to be move to languages forms)';
-    const int FORM_PLURAL_ID = 92;
+    const int FORM_PLURAL_ID = 267;
 
     // triple only fields
     const string FORM_WEIGHT = 'form_field_weight';

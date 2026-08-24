@@ -128,6 +128,34 @@ class test_formulas extends test_objects
     }
 
     /**
+     * the formulas of solution_prio.json: the three formulas that scale a number of the start
+     * page table to one and the sum that turns a percent loss into global happy time points
+     *
+     * @return formula_list the formulas that solution_prio.json defines
+     */
+    function list_solution_prio(): formula_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
+        $t_trm = new test_terms($this->env);
+        $trm_lst = $t_trm->term_list_solution_prio();
+        $lst = new formula_list($this->env->usr1);
+        $prio_lst = [
+            [formula_names::SCALE_MIO_TO_ONE_ID, formula_names::SCALE_MIO_TO_ONE, formula_names::SCALE_MIO_TO_ONE_EXP],
+            [formula_names::SCALE_BIL_TO_ONE_ID, formula_names::SCALE_BIL_TO_ONE, formula_names::SCALE_BIL_TO_ONE_EXP],
+            [formula_names::SCALE_TRILLION_TO_ONE_ID, formula_names::SCALE_TRILLION_TO_ONE, formula_names::SCALE_TRILLION_TO_ONE_EXP],
+            [formula_names::GLOBAL_HTP_ID, formula_names::GLOBAL_HTP, formula_names::GLOBAL_HTP_EXP],
+        ];
+        foreach ($prio_lst as [$id, $name, $exp]) {
+            $frm = new formula($this->env->usr1);
+            $frm->set($id, $name);
+            $frm->set_user_text($exp, $msg, $trm_lst);
+            $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
+            $lst->add($frm);
+        }
+        return $lst;
+    }
+
+    /**
      * @return formula for db write testingthat does not have a reserved name
      */
     function formula_rename(): formula

@@ -617,6 +617,11 @@ class test_values extends test_objects
     }
 
     /**
+     * the potential loss and the potential gain of every global problem of solution_prio.json,
+     * so that the start page table of the global issues can be tested with the data that the
+     * import creates: per problem the loss in trillion EUR and the gain of its solution in
+     * billion htp, the eight problems whose numbers are an estimate marked with "assumed"
+     *
      * @return value_list the cost and gain values of the global problems as defined in
      *         solution_prio.json, e.g. to test the start page table of the global issues
      */
@@ -624,8 +629,6 @@ class test_values extends test_objects
     {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
-        $gw = $t_trp->global_warming()->phrase();
-        $pop = $t_wrd->word_populism()->phrase();
         $potential = $t_wrd->word_potential()->phrase();
         $loss = $t_wrd->word_loss()->phrase();
         $gain = $t_wrd->word_gain()->phrase();
@@ -633,13 +636,35 @@ class test_values extends test_objects
         $billion = $t_wrd->word_billion()->phrase();
         $eur = $t_wrd->word_eur()->phrase();
         $htp = $t_wrd->word_htp()->phrase();
+        $assumed = $t_wrd->word_assumed()->phrase();
+        // per problem the phrase, the loss, the solution phrase, the gain and whether the two
+        // numbers are estimated, in the order of the start page ranking
+        $prio_lst = [
+            [$t_trp->global_warming()->phrase(), 31.5, $t_trp->reduce_emissions()->phrase(), 35.2, false],
+            [$t_wrd->word_populism()->phrase(), 23.8, $t_trp->avoid_wrong_decisions()->phrase(), 34.1, false],
+            [$t_wrd->word_poverty()->phrase(), 20.4, $t_wrd->word_research()->phrase(), 34.1, false],
+            [$t_wrd->word_health()->phrase(), 13.6, $t_wrd->word_taxes()->phrase(), 8.8, false],
+            [$t_wrd->word_education()->phrase(), 9.4, $t_wrd->word_spending()->phrase(), 14.3, false],
+            [$t_trp->wealth_concentration()->phrase(), 11.2, $t_trp->basic_income()->phrase(), 16, true],
+            [$t_wrd->word_disinformation()->phrase(), 8, $t_trp->platform_regulation()->phrase(), 12, true],
+            [$t_trp->market_power()->phrase(), 7.3, $t_trp->market_share_tax()->phrase(), 6, true],
+            [$t_trp->biased_information()->phrase(), 6.5, $t_trp->delphi_method()->phrase(), 9, true],
+            [$t_trp->black_box_ai()->phrase(), 4.5, $t_trp->public_ai()->phrase(), 7, true],
+            [$t_trp->citizen_participation()->phrase(), 3.2, $t_trp->fluid_democracy()->phrase(), 5.5, true],
+            [$t_trp->gdp_mismeasurement()->phrase(), 2.5, $t_trp->gross_domestic_usage()->phrase(), 4, true],
+            [$t_trp->proprietary_software()->phrase(), 1.8, $t_trp->free_software()->phrase(), 3, true],
+        ];
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value_for_phrases([$gw, $potential, $loss, $trillion, $eur], 31.5));
-        $lst->add($this->value_for_phrases([$pop, $potential, $loss, $trillion, $eur], 23.8));
-        $lst->add($this->value_for_phrases(
-            [$gw, $t_trp->reduce_emissions()->phrase(), $potential, $gain, $billion, $htp], 35.2));
-        $lst->add($this->value_for_phrases(
-            [$pop, $t_trp->avoid_wrong_decisions()->phrase(), $potential, $gain, $billion, $htp], 34.1));
+        foreach ($prio_lst as [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed]) {
+            $loss_phr = [$problem, $potential, $loss, $trillion, $eur];
+            $gain_phr = [$problem, $solution, $potential, $gain, $billion, $htp];
+            if ($is_assumed) {
+                $loss_phr[] = $assumed;
+                $gain_phr[] = $assumed;
+            }
+            $lst->add($this->value_for_phrases($loss_phr, $loss_nbr));
+            $lst->add($this->value_for_phrases($gain_phr, $gain_nbr));
+        }
         return $lst;
     }
 

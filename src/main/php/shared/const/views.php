@@ -389,14 +389,15 @@ class views
     const string TEST_COMPLETE_NAME = 'System Test View Complete';
     const string TEST_EXCLUDED_NAME = 'System Test View Excluded';
     const string TEST_TABLE_NAME = 'System Test View Table';
-    const string TEST_ALL_NAME = 'complete';
+    // the name of the view with the code id self::COMPLETE, which is capitalised unlike the code id
+    const string TEST_ALL_NAME = 'Complete';
 
     // to test a system view (add word) as unit test without database
     const string TEST_FORM_NAME = 'Add word';
     const string TEST_FORM_NEW_NAME = 'Add new word';
     const string TEST_FORM_COM = 'system form to add a word';
     const string TEST_FORM = 'word_add';
-    const int TEST_FORM_ID = 3;
+    const int TEST_FORM_ID = 2;
 
     // code if of views that should be checked before deployment if they are still fine with the base setup
     const string CURRENCY = 'currency'; // the default view for all currencies

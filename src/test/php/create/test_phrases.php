@@ -1122,10 +1122,27 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_trp->global_problem()->phrase());
+        // the problems of solution_prio.json in the order of the start page ranking
         $lst->add($t_trp->global_warming()->phrase());
         $lst->add($t_wrd->word_populism()->phrase());
+        $lst->add($t_wrd->word_poverty()->phrase());
+        $lst->add($t_wrd->word_health()->phrase());
+        $lst->add($t_wrd->word_education()->phrase());
+        $lst->add($t_trp->wealth_concentration()->phrase());
+        $lst->add($t_wrd->word_disinformation()->phrase());
+        $lst->add($t_trp->market_power()->phrase());
+        $lst->add($t_trp->biased_information()->phrase());
+        $lst->add($t_trp->black_box_ai()->phrase());
+        $lst->add($t_trp->citizen_participation()->phrase());
+        $lst->add($t_trp->gdp_mismeasurement()->phrase());
+        $lst->add($t_trp->proprietary_software()->phrase());
+        // the triples that link a problem to "global problem", so that the table finds the
+        // values of a problem although "global problem" is in no value group
         $lst->add($t_trp->global_warming_problem()->phrase());
         $lst->add($t_trp->populism_problem()->phrase());
+        $lst->add($t_trp->poverty_problem()->phrase());
+        $lst->add($t_trp->potential_health_problem()->phrase());
+        $lst->add($t_trp->potential_education_problem()->phrase());
         $lst->add($t_trp->column_cost()->phrase());
         $lst->add($t_trp->column_gain()->phrase());
         return $lst;

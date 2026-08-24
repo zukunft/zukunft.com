@@ -12805,6 +12805,8 @@
     \-- similar - section for function similar not yet defined that it should be related in /phrase/phrase.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /phrase/phrase.php
     \-- name_link - section for function name_link not yet defined that it should be base in /phrase/phrase.php
+    \-- name_link_plural - section for function name_link_plural not yet defined that it should be base in /phrase/phras
+            e.php
     \-- name_link_with_tip - section for function name_link_with_tip not yet defined that it should be base in /phrase/p
             hrase.php
     \-- dsp_tbl_cell - section for function dsp_tbl_cell not yet defined that it should be base in /phrase/phrase.php
@@ -12910,6 +12912,7 @@
             play in /phrase/phrase_list.php
     \-- name_link_list - section for function name_link_list not yet defined that it should be display in /phrase/phrase
             _list.php
+    \-- plural - section for function plural not yet defined that it should be display in /phrase/phrase_list.php
     \-- headline - section for function headline not yet defined that it should be display in /phrase/phrase_list.php
     \-- id_url_long - section for function id_url_long not yet defined that it should be display in /phrase/phrase_list.
             php
@@ -12997,55 +13000,55 @@
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,
             order of section display has difference at name_tip should be before dsp_id,
              name_link should be before dsp_id, display should be before dsp_id of dsp_id,name_tip,get_impact,name_link,
             edit_link,dsp_tbl_cell,dsp_unlink,dsp_selector,display does not match dsp_entries,name_link,
             system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,
             name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long
 \-- term_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/term_list.php
     \-- word_by_id - section for function word_by_id not yet defined that it should be set and get in /phrase/term_list.
@@ -13136,23 +13139,23 @@
     \-- order error - order of section display has difference at name should be before display of display,name,
             get_description,display_linked does not match dsp_entries,name_link,system_change_log,change_log_table_pure,
             user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,figures,display,
-            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,
-            id_url_long,links_with_context,list,sort_by_impact_and_type,
+            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,plural,
+            headline,id_url_long,links_with_context,list,sort_by_impact_and_type,
             order of section display has difference at name should be before display of display,name,get_description,
             display_linked does not match dsp_entries,name_link,system_change_log,change_log_table_pure,
             user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,figures,display,
-            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,
-            id_url_long,links_with_context,list,sort_by_impact_and_type,
+            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,plural,
+            headline,id_url_long,links_with_context,list,sort_by_impact_and_type,
             order of section display has difference at name should be before display of display,name,get_description,
             display_linked does not match dsp_entries,name_link,system_change_log,change_log_table_pure,
             user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,figures,display,
-            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,
-            id_url_long,links_with_context,list,sort_by_impact_and_type,
+            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,plural,
+            headline,id_url_long,links_with_context,list,sort_by_impact_and_type,
             order of section display has difference at name should be before display of display,name,get_description,
             display_linked does not match dsp_entries,name_link,system_change_log,change_log_table_pure,
             user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,figures,display,
-            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,headline,
-            id_url_long,links_with_context,list,sort_by_impact_and_type
+            name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,name_link_list,plural,
+            headline,id_url_long,links_with_context,list,sort_by_impact_and_type
 \-- result_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /result/result_list.php
     \-- add_result - section for function add_result not yet defined that it should be modify in /result/result_list.php
@@ -13255,6 +13258,8 @@
     \-- name - section for function name is expected to be debug in /sandbox/db_object.php
     \-- get_description - section for function get_description is expected to be set and get in /sandbox/db_object.php
     \-- get_plural - section for function get_plural is expected to be set and get in /sandbox/db_object.php
+    \-- plural_name - section for function plural_name not yet defined that it should be dummy functions to prevent poly
+            morph warning in /sandbox/db_object.php
     \-- reverse - section for function reverse not yet defined that it should be dummy functions to prevent polymorph wa
             rning in /sandbox/db_object.php
     \-- plural_reverse - section for function plural_reverse not yet defined that it should be dummy functions to preven
@@ -13433,13 +13438,18 @@
     \-- display - section for function display not yet defined that it should be display in /sandbox/sandbox_named.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /sandbox/sandbox_named.php
     \-- name_link - section for function name_link not yet defined that it should be base in /sandbox/sandbox_named.php
+    \-- name_link_plural - section for function name_link_plural not yet defined that it should be base in /sandbox/sand
+            box_named.php
     \-- calc_view_id - section for function calc_view_id is expected to be ui support in /sandbox/sandbox_named.php
-    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,
-            name_link does not match name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,
-            term_by_obj_id,name_tip,names,
-            order of section base has difference at name_link should be before name_tip of name_tip,
-            name_link does not match name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,
-            term_by_obj_id,name_tip,names
+    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link,
+            name_link_plural does not match name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,
+            br,term_by_obj_id,name_tip,names,
+            order of section base has difference at name_link should be before name_tip of name_tip,name_link,
+            name_link_plural does not match name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,
+            br,term_by_obj_id,name_tip,names,
+            order of section base has difference at name_link should be before name_tip of name_tip,name_link,
+            name_link_plural does not match name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,
+            br,term_by_obj_id,name_tip,names
 \-- sandbox_typed
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_typed.php
@@ -13794,49 +13804,49 @@
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view,order of section display has difference at header should be before page_view of display,page_view,
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view,order of section display has difference at header should be before page_view of display,page_view,
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view,order of section display has difference at header should be before page_view of display,page_view,
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view,order of section display has difference at header should be before page_view of display,page_view,
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view,order of section display has difference at header should be before page_view of display,page_view,
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view,order of section display has difference at header should be before page_view of display,page_view,
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view,order of section display has difference at header should be before page_view of display,page_view,
             display_admin,header,header_admin,get_html,user,owner,owner_name,status_name does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             page_view
 \-- sys_log_list
@@ -14120,32 +14130,32 @@
             sort_by_name,sort_by_impact,type_selector does not match dsp_entries,name_link,system_change_log,
             change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,
             figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,
-            name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,
-            display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
+            name_link_list,plural,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,
+            table,display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
             order of section display has difference at name_link should be before name_tip of name_tip,name_link,
             sort_by_name,sort_by_impact,type_selector does not match dsp_entries,name_link,system_change_log,
             change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,
             figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,
-            name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,
-            display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
+            name_link_list,plural,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,
+            table,display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
             order of section display has difference at name_link should be before name_tip of name_tip,name_link,
             sort_by_name,sort_by_impact,type_selector does not match dsp_entries,name_link,system_change_log,
             change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,
             figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,
-            name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,
-            display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
+            name_link_list,plural,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,
+            table,display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
             order of section display has difference at name_link should be before name_tip of name_tip,name_link,
             sort_by_name,sort_by_impact,type_selector does not match dsp_entries,name_link,system_change_log,
             change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,
             figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,
-            name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,
-            display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
+            name_link_list,plural,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,
+            table,display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page,
             order of section display has difference at name_link should be before name_tip of name_tip,name_link,
             sort_by_name,sort_by_impact,type_selector does not match dsp_entries,name_link,system_change_log,
             change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,user_system_errors,name,id,dsp_names,
             figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,name_link_grouped_by_verb,
-            name_link_list,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,table,
-            display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page
+            name_link_list,plural,headline,id_url_long,links_with_context,list,sort_by_impact_and_type,display_linked,
+            table,display_old,load_by_id_with_related,link_type,name_linked,display_admin,get_html,get_html_page
 \-- type_lists
     \-- class_to_type_list - section for function class_to_type_list not yet defined that it should be type list by clas
             s in /types/type_lists.php
@@ -14682,28 +14692,28 @@
             list_most_relevant,columns_by_phrase,table_by_related_columns,list_unit,table does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             display_admin,get_html,get_html_page,list_most_relevant,
             order of section display has difference at table should be before list_most_relevant of list,
             list_most_relevant,columns_by_phrase,table_by_related_columns,list_unit,table does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             display_admin,get_html,get_html_page,list_most_relevant,
             order of section display has difference at table should be before list_most_relevant of list,
             list_most_relevant,columns_by_phrase,table_by_related_columns,list_unit,table does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             display_admin,get_html,get_html_page,list_most_relevant,
             order of section display has difference at table should be before list_most_relevant of list,
             list_most_relevant,columns_by_phrase,table_by_related_columns,list_unit,table does not match dsp_entries,
             name_link,system_change_log,change_log_table_pure,user_overwrites_table_pure,all_user_overwrites,
             user_system_errors,name,id,dsp_names,figures,display,name_tip,dsp_id,header,subheader,name_link_by_impact,
-            name_link_grouped_by_verb,name_link_list,headline,id_url_long,links_with_context,list,
+            name_link_grouped_by_verb,name_link_list,plural,headline,id_url_long,links_with_context,list,
             sort_by_impact_and_type,display_linked,table,display_old,load_by_id_with_related,link_type,name_linked,
             display_admin,get_html,get_html_page,list_most_relevant
 \-- verb
@@ -14995,6 +15005,8 @@
     \-- children - section for function children is expected to be foaf in /word/triple.php
     \-- similar - section for function similar not yet defined that it should be related in /word/triple.php
     \-- name_link - section for function name_link not yet defined that it should be base in /word/triple.php
+    \-- name_link_plural - section for function name_link_plural not yet defined that it should be base in /word/triple.
+            php
     \-- phrase_selector - section for function phrase_selector not yet defined that it should be select in /word/triple.
             php
     \-- is_type - section for function is_type is expected to be info in /word/triple.php
@@ -15338,6 +15350,8 @@
     \-- children - section for function children is expected to be foaf in /word/word.php
     \-- similar - section for function similar not yet defined that it should be related in /word/word.php
     \-- name_link - section for function name_link not yet defined that it should be base in /word/word.php
+    \-- name_link_plural - section for function name_link_plural not yet defined that it should be base in /word/word.ph
+            p
     \-- btn_unlink - section for function btn_unlink not yet defined that it should be buttons in /word/word.php
     \-- dsp_type_selector - section for function dsp_type_selector not yet defined that it should be select in /word/wor
             d.php
@@ -15795,6 +15809,8 @@
         \-- phrase_list - html for the parent triples pointing to $phr (excluding the given verbs) grouped by verb:
     \-- name_link_list
         \-- phrase_list - html for the parent triples pointing to $phr (excluding the given verbs) grouped by verb:
+    \-- plural
+        \-- phrase_list - the plural of each phrase is its own user data, so the list asks every phrase instead of
     \-- headline
         \-- phrase_list - @returns string the html code to display the phrases as a headline
     \-- id_url_long

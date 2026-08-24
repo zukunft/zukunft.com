@@ -225,9 +225,8 @@ class word_ui_tests
         $tbl_html = $list->table_with_related_columns($wrd_zh, $msg, $dto);
         $test_name = 'the values are shown as a table';
         $t->assert_text_contains($test_name, $tbl_html, '<table');
-        // the row phrases differ per row, so the top left cell names the phrase of the page
-        $test_name = 'the phrase of the page names the table in the first header cell';
-        $t->assert_text_contains($test_name, $tbl_html, '>' . word_names::ZH . '</a>');
+        $test_name = 'the top left header cell is empty, because the row phrases differ per row';
+        $t->assert_text_contains($test_name, $tbl_html, '<th></th>');
         // both values of the page word are related to a different triple, so no triple is used by
         // enough values to head a column and both values are shown in the "Values" column
         $test_name = 'the high impact triple of a value is shown as a row name';

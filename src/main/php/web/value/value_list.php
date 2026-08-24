@@ -520,8 +520,11 @@ class value_list extends ListBase
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
      * @param string $back the last view to suggest the best follow-up view
      * @param array $col_order the defined column phrase names, the most important column first
-     * @param bool $with_header true to head the table with the column phrases and to name the
-     *                          selected phrase in the first cell, false to show only the rows
+     * @param bool $with_header true to name the selected phrase centred above the table, false
+     *                          where the page already says which phrase the table is about; a
+     *                          table of several rows shows more than one item of the phrase, so
+     *                          its header is the plural in a headline, while a table of one row
+     *                          keeps the singular in the smaller label size
      * @param bool $with_border true for the bordered standard table, false for a table without
      *                          the lines between the cells e.g. within a page that groups tables
      * @return string the html code of the value table or '' if this list is empty
@@ -531,7 +534,7 @@ class value_list extends ListBase
         phrase_list  $context_phr_lst = new phrase_list(),
         string       $back = '',
         array        $col_order = [],
-        bool         $with_header = true,
+        bool         $with_header = false,
         bool         $with_border = true
     ): string
     {
@@ -593,19 +596,15 @@ class value_list extends ListBase
                 $cells[$row_key][$col_id][] = $val->value_edit($msg, $back);
             }
 
-            // the first cell of the header names the phrase that the reader has selected, so
-            // that a table taken out of its page still says what it is about
-            $rows = '';
-            if ($with_header) {
-                $header = $html->th($context_phr_lst->name_link_list());
-                foreach ($col_phr as $phr) {
-                    $header .= $html->th($phr->name_link());
-                }
-                if ($rest_col) {
-                    $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
-                }
-                $rows = $html->tr($header);
+            // the column row keeps the top left cell empty, because the row phrases differ per row
+            $header = $html->th('');
+            foreach ($col_phr as $phr) {
+                $header .= $html->th($phr->name_link());
             }
+            if ($rest_col) {
+                $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
+            }
+            $rows = $html->tr($header);
             foreach ($row_label as $row_key => $label) {
                 $row = $html->td($label);
                 foreach (array_keys($col_phr) as $col_id) {
@@ -617,6 +616,19 @@ class value_list extends ListBase
                 $rows .= $html->tr($row);
             }
             $result = $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
+            // the header names the phrase that the reader has selected centred above the table,
+            // so that a table taken out of its page still says what it is about; more than one
+            // row means more than one item of the phrase, so the header names it in the plural
+            if ($with_header) {
+                if (count($row_label) > 1) {
+                    // a table of several items is a list of its own, so its header is a headline
+                    $header_html = $html->text_h2($context_phr_lst->plural());
+                } else {
+                    // a table of one item only labels that item, so the header stays small
+                    $header_html = $html->text_h3($context_phr_lst->name_link_list());
+                }
+                $result = $html->div_center($header_html) . $result;
+            }
         }
         return $result;
     }

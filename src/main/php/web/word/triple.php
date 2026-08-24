@@ -67,6 +67,7 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
@@ -103,6 +104,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -801,6 +803,22 @@ class triple extends sandbox_code_id
     ): string
     {
         return parent::name_link($back, $style, $msk_id, $base_url);
+    }
+
+    /**
+     * display a triple in the plural with a link to the main page for the triple
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @returns string the html code
+     */
+    function name_link_plural(
+        string  $lan = languages::DEFAULT,
+        ?string $back = '',
+        string  $style = '',
+        int     $msk_id = views::TRIPLE_ID,
+        string  $base_url = ''
+    ): string
+    {
+        return parent::name_link_plural($lan, $back, $style, $msk_id, $base_url);
     }
 
 

@@ -1116,6 +1116,68 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "human" of the "global happy time points" formula of solution_prio.json
+     */
+    function word_human(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::HUMAN_ID, word_names::HUMAN);
+        return $wrd;
+    }
+
+    /**
+     * @return word "population" of the "global happy time points" formula of solution_prio.json
+     */
+    function word_population(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::POPULATION_ID, word_names::POPULATION);
+        return $wrd;
+    }
+
+    /**
+     * @return word the qualifier of a value that is estimated instead of taken from a source
+     */
+    function word_assumed(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::ASSUMED_ID, word_names::ASSUMED);
+        return $wrd;
+    }
+
+    /*
+     * the problems and solutions of solution_prio.json that are a word, not a triple
+     */
+
+    function word_disinformation(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::DISINFORMATION_ID, word_names::DISINFORMATION);
+        return $wrd;
+    }
+
+    function word_research(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::RESEARCH_ID, word_names::RESEARCH);
+        return $wrd;
+    }
+
+    function word_taxes(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::TAXES_ID, word_names::TAXES);
+        return $wrd;
+    }
+
+    function word_spending(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SPENDING_ID, word_names::SPENDING);
+        return $wrd;
+    }
+
     function word_happy(): word
     {
         $wrd = new word($this->env->usr1);

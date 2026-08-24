@@ -392,14 +392,17 @@ class library
     }
 
     /**
+     * whitespace between two tags is never significant here, because format_html writes every tag
+     * on its own line, so a space before a tag cannot be told apart from the indentation that
+     * format_html has added; content whose exact spacing matters is kept on a single line by a
+     * text-nowrap span, which format_html copies verbatim (see format_html)
+     *
      * @param string $html_string
      * @return string text with just single spaces and all spaces removed not needed for HTML
      */
     function trim_html(string $html_string): string
     {
         $result = $this->trim_lines($html_string);
-        // to keep spaces before links
-        $result = preg_replace('/ <a /', '<as ', $result);
 
         // special case: replace system test winter time with daylight saving time
         $result = str_replace('2023-01-03T20:59:59+00:00', '2023-01-03T20:59:59+01:00', $result);
@@ -424,10 +427,7 @@ class library
         $result = preg_replace('/> /', '>', $result);
 
         // remove spaces not needed
-        $result = preg_replace('/> </', '><', $result);
-
-        // restore the spaces that are needed
-        return preg_replace('/<as /', ' <a ', $result);
+        return preg_replace('/> </', '><', $result);
     }
 
     /**

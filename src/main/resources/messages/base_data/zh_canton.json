@@ -363,8 +363,7 @@
       "description": "attributable proportion of a whole, 0..1"
     },
     {
-      "name": "ratio",
-      "description": "a quotient of two quantities"
+      "name": "ratio"
     },
     {
       "name": "gap",

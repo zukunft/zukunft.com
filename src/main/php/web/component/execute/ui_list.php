@@ -914,8 +914,8 @@ class ui_list extends ui_base
      *
      * @param word|triple|db_object|type_object|null $dbo the phrase the values are related to
      * @param data_object|null $dto the data cache used until the backend has returned the values
-     * @param bool $with_header true to head the table with the column phrases and to name the
-     *                          phrase of the page in the first cell, false to show only the rows
+     * @param bool $with_header true to name the phrase of the page centred above the table, false
+     *                          where the page already says which phrase the table is about
      * @param bool $with_border true for the bordered standard table, false for a table without
      *                          the lines between the cells e.g. below a title that groups tables
      * @return string the html code of the value table or '' if the phrase has no values
@@ -924,7 +924,7 @@ class ui_list extends ui_base
         word|triple|db_object|type_object|null $dbo,
         user_message                          $msg,
         ?data_object                          $dto = null,
-        bool                                  $with_header = true,
+        bool                                  $with_header = false,
         bool                                  $with_border = true
     ): string
     {

@@ -283,12 +283,10 @@
       "name": "assumed"
     },
     {
-      "name": "low",
-      "description": "lower bound of an assumed band"
+      "name": "low"
     },
     {
-      "name": "high",
-      "description": "upper bound of an assumed band"
+      "name": "high"
     },
     {
       "name": "centre"

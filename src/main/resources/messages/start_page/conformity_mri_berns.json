@@ -319,8 +319,7 @@
       "description": "participant discarded for imaging artifact"
     },
     {
-      "name": "initial",
-      "description": "value before exclusions"
+      "name": "initial"
     },
     {
       "name": "interaction",

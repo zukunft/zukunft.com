@@ -52,6 +52,7 @@ include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -505,6 +507,15 @@ class phrase extends combine_named
     function name_link(): string
     {
         return $this->obj()->name_link();
+    }
+
+    /**
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @returns string the html code to display the plural of the phrase with reference links
+     */
+    function name_link_plural(string $lan = languages::DEFAULT): string
+    {
+        return $this->obj()->name_link_plural($lan);
     }
 
     /**

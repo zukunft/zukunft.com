@@ -1238,29 +1238,6 @@
       ]
     },
     {
-      "name": "complete",
-      "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
-      "type": "word_default",
-      "components": [
-        {
-          "position": "1",
-          "name": "Word"
-        },
-        {
-          "position": "2",
-          "name": "formula list"
-        },
-        {
-          "position": "3",
-          "name": "Export JSON"
-        },
-        {
-          "position": "4",
-          "name": "Export XML"
-        }
-      ]
-    },
-    {
       "name": "company list with main ratios",
       "type": "detail_view",
       "components": [

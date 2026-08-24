@@ -56,6 +56,8 @@ class styles
     const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
+    // bootstrap css class to center a line e.g. the phrase above a value table
+    const string TEXT_CENTER = 'text-center';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken
     const string TEXT_NOWRAP = 'text-nowrap';
 

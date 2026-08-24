@@ -221,7 +221,7 @@ class value_list_ui_tests
         $tbl_html = $t_val->value_list_most_relevant_ui()->table_by_related_columns($msg_ui);
         $test_name = 'the values are shown as a table';
         $t->assert_text_contains($test_name, $tbl_html, '<table');
-        $test_name = 'the top left header cell is empty if no phrase is selected';
+        $test_name = 'the top left header cell is empty, because the row phrases differ per row';
         $t->assert_text_contains($test_name, $tbl_html, '<th></th>');
         $test_name = 'the phrase used by most values heads a column';
         $t->assert_text_contains($test_name, $tbl_html, word_names::INHABITANTS);
@@ -238,16 +238,19 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $tbl_html, '<th', '<td');
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');
-        // with the page phrase as context the phrase of the page names the table in the first
-        // header cell, but is not repeated as a column or a row of the table
+        // with the page phrase as context the phrase of the page is not repeated in the table
         $tbl_ctx = $t_val->value_list_most_relevant_ui()
             ->table_by_related_columns($msg_ui, $phr_lst_context_ui);
-        $test_name = 'the context phrase names the table in the first header cell';
-        $t->assert_text_contains($test_name, $tbl_ctx, '>' . word_names::INHABITANTS . '</a>');
         $test_name = 'the context phrase is not used as a column headline';
+        $t->assert_text_not_contains($test_name, $tbl_ctx, word_names::INHABITANTS);
+        // the header names the context phrase centred above the table, so that a table taken
+        // out of its page still says what it is about
+        $test_name = 'with the header the context phrase is linked above the table';
         $lib = new library();
-        $t->assert_text_not_contains($test_name,
-            $lib->str_right_of($tbl_ctx, '</th>'), word_names::INHABITANTS);
+        $tbl_header = $t_val->value_list_most_relevant_ui()
+            ->table_by_related_columns($msg_ui, $phr_lst_context_ui, '', [], true);
+        $t->assert_text_contains($test_name,
+            $lib->str_left_of($tbl_header, '<table'), '>' . word_names::INHABITANTS . '</a>');
 
         $t->subheader($ts . 'more tail');
         $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, '', '', 1);

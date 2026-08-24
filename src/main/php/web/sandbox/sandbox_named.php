@@ -50,6 +50,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -331,6 +333,30 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
         // escape the user settable name (link body); ref() escapes the
         // description that becomes the title attribute
         return $html->ref($url, $this->name(), $this->get_description(), $style);
+    }
+
+    /**
+     * like name_link, but with the plural of the name as the link body, e.g. for a headline
+     * above a table that shows more than one row
+     *
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @param int $msk_id database id of the view that should be shown
+     * @return string the html code of the link with the plural name
+     */
+    function name_link_plural(
+        string  $lan = languages::DEFAULT,
+        ?string $back = '',
+        string  $style = '',
+        int     $msk_id = views::GROUP_EDIT_ID,
+        string  $base_url = ''
+    ): string
+    {
+        $html = new html_base();
+        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
+        // escape the user settable plural (link body) like name_link escapes the name
+        return $html->ref($url, $this->plural_name($lan), $this->get_description(), $style);
     }
 
 

@@ -27,4 +27,4 @@ SELECT component_delete_log
         3,
         51,
         'system form field name',
-        4);
+        130);

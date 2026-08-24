@@ -1306,6 +1306,117 @@ class test_triples extends test_objects
         return $trp;
     }
 
+    /*
+     * the problems of solution_prio.json that are a triple and the solution of each; the phrases
+     * are named by id and name only, because the start page table uses them as the phrase of a
+     * value and never follows the from/verb/to link (see docs/llm/testing.md)
+     */
+
+    function wealth_concentration(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::WEALTH_CONCENTRATION_ID, triple_names::WEALTH_CONCENTRATION);
+        return $trp;
+    }
+
+    function basic_income(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::BASIC_INCOME_ID, triple_names::BASIC_INCOME);
+        return $trp;
+    }
+
+    function platform_regulation(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PLATFORM_REGULATION_ID, triple_names::PLATFORM_REGULATION);
+        return $trp;
+    }
+
+    function market_power(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::MARKET_POWER_ID, triple_names::MARKET_POWER);
+        return $trp;
+    }
+
+    function market_share_tax(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::MARKET_SHARE_TAX_ID, triple_names::MARKET_SHARE_TAX);
+        return $trp;
+    }
+
+    function biased_information(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::BIASED_INFORMATION_ID, triple_names::BIASED_INFORMATION);
+        return $trp;
+    }
+
+    function delphi_method(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::DELPHI_METHOD_ID, triple_names::DELPHI_METHOD);
+        return $trp;
+    }
+
+    function black_box_ai(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::BLACK_BOX_AI_ID, triple_names::BLACK_BOX_AI);
+        return $trp;
+    }
+
+    function public_ai(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PUBLIC_AI_ID, triple_names::PUBLIC_AI);
+        return $trp;
+    }
+
+    function citizen_participation(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CITIZEN_PARTICIPATION_ID, triple_names::CITIZEN_PARTICIPATION);
+        return $trp;
+    }
+
+    function fluid_democracy(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FLUID_DEMOCRACY_ID, triple_names::FLUID_DEMOCRACY);
+        return $trp;
+    }
+
+    function gdp_mismeasurement(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GDP_MISMEASUREMENT_ID, triple_names::GDP_MISMEASUREMENT);
+        return $trp;
+    }
+
+    function gross_domestic_usage(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GROSS_DOMESTIC_USAGE_ID, triple_names::GROSS_DOMESTIC_USAGE);
+        return $trp;
+    }
+
+    function proprietary_software(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PROPRIETARY_SOFTWARE_ID, triple_names::PROPRIETARY_SOFTWARE);
+        return $trp;
+    }
+
+    function free_software(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FREE_SOFTWARE_ID, triple_names::FREE_SOFTWARE);
+        return $trp;
+    }
+
     /**
      * @return triple that defines that "health" "can be a" "global problem" used for start view unit testing
      */

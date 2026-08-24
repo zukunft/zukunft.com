@@ -69,6 +69,8 @@ messages:
   all_user_overwrites_none: "Dieser Benutzer hat nichts geändert."
   change_blocked_for_ip_user: "Dieser Pod erlaubt keine Änderungen ohne Anmeldung. Bitte melden Sie sich an, um Daten zu erfassen oder zu ändern."
   change_blocked_cross_origin: "Diese Änderungsanfrage wurde blockiert, weil sie nicht von dieser Website stammt. Bitte versuchen Sie es erneut aus der zukunft.com-Anwendung."
+  solution_prio_title: "Welches Problem lohnt sich zuerst zu lösen?"
+  solution_prio_ranking_table: "Globale Probleme nach dem Verlust, den eine Lösung vermeiden kann"
   phrase_has: "hat"
   phrase_alias: "Alias"
   phrase_aliases: "Aliasse"

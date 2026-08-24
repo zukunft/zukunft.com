@@ -42,6 +42,8 @@ enum languages: string
     const string DEFAULT_COM = "the system language, so each word must be unique for all users in this language";
     const string TN_READ = "English";
     const string DEFAULT_LOCAL_NAME = "English";
+    // the plural of most English names, used only if the user has set no plural for a name
+    const string DEFAULT_PLURAL_SUFFIX = "s";
 
     const string TRANSLATE = "de";
     const string TRANSLATE_WIKI = "de";

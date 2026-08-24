@@ -60,6 +60,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -844,12 +846,23 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the plural of each phrase is its own user data, so the list asks every phrase instead of
+     * adding an "s" to the list text, which would pluralise only the last phrase of the list
+     *
+     * @param string $lan the code of the user interface language e.g. "en"
      * @returns string the html code to display the plural of the phrases with the most useful link
-     * TODO replace adding the s with a language specific functions that can include exceptions
      */
-    private function plural(): string
+    function plural(string $lan = languages::DEFAULT): string
     {
-        return $this->name_link() . 's';
+        $result = '';
+        $this->sort_by_impact();
+        foreach ($this->lst() as $phr) {
+            if ($result <> '') {
+                $result .= ', ';
+            }
+            $result .= $phr->name_link_plural($lan);
+        }
+        return $result;
     }
 
     /**
