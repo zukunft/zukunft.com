@@ -1203,6 +1203,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::TRILLION_ID, word_names::TRILLION);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1210,6 +1211,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::BILLION_ID, word_names::BILLION);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1231,6 +1233,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::EUR_ID, word_names::EUR);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1314,6 +1317,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::HTP_ID, word_names::HTP);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 

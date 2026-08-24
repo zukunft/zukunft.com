@@ -527,6 +527,8 @@ class value_list extends ListBase
      *                          keeps the singular in the smaller label size
      * @param bool $with_border true for the bordered standard table, false for a table without
      *                          the lines between the cells e.g. within a page that groups tables
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase, which define the
+     *                                  columns and say which phrase belongs into a phrase column
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
@@ -535,7 +537,8 @@ class value_list extends ListBase
         string       $back = '',
         array        $col_order = [],
         bool         $with_header = false,
-        bool         $with_border = true
+        bool         $with_border = true,
+        ?phrase_list $rel_lst = null
     ): string
     {
         $result = '';
@@ -543,14 +546,16 @@ class value_list extends ListBase
             $html = new html_base();
             // the row order follows the impact, so it never depends on the api/db row order
             $this->sort_by_impact();
+            // the unit says nothing about the row, so it is assumed like the phrase of the page
+            $grp_ctx = $this->context_with_units($context_phr_lst, $msg);
             // a column phrase needs to be used by at least two values, else the column has one entry
             [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
-                $this->lst(), $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
+                $this->lst(), $msg, $grp_ctx, config::MIN_PHRASE_GROUP - 1);
             // a phrase that the system column tiers define as a column wins over the impact
             // ranking and is used even if only one value carries it
             if ($col_order != []) {
                 [$all_by_id, $val_phr_ids] = $this->phrase_ranking(
-                    $this->lst(), $msg, $context_phr_lst, 0);
+                    $this->lst(), $msg, $grp_ctx, 0);
                 $phr_by_id = $this->columns_by_definition($all_by_id, $phr_by_id, $col_order);
             }
 
@@ -575,14 +580,34 @@ class value_list extends ListBase
             // no value of the list is silently dropped from the table
             $rest_col = $remaining != [];
 
+            // a defined column that no value carries names a phrase of the row instead of a
+            // number, e.g. the "solution" column shows the solution of the problem row
+            $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst);
+            // the names that belong into each phrase column, read once for the whole table
+            $phr_col_names = [];
+            foreach ($phr_col as $phr_col_id => $phr) {
+                $phr_col_names[$phr_col_id] = $rel_lst->child_names($phr);
+            }
+
             // per row the label and per row and column the value html
             $row_label = [];
             $cells = [];
+            $phr_cells = [];
             foreach ($this->lst() as $val) {
                 $col_id = $val_col[$val->id()] ?? '';
-                $ctx = clone $context_phr_lst;
+                $ctx = clone $grp_ctx;
                 if ($col_id !== '') {
                     $ctx->add_phrase($col_phr[$col_id]);
+                }
+                // a phrase shown in a column of its own does not name the row any more, so it is
+                // added to the context before the row key is built
+                $phr_cell = [];
+                foreach (array_keys($phr_col) as $phr_col_id) {
+                    $child = $this->phrase_of_column($val, $phr_col_names[$phr_col_id]);
+                    if ($child != null) {
+                        $ctx->add_phrase($child);
+                        $phr_cell[$phr_col_id] = $child->name_link();
+                    }
                 }
                 // the row is named by the phrases that are left after the context and the column
                 // phrase, e.g. the year if the columns are inhabitants and area
@@ -590,6 +615,12 @@ class value_list extends ListBase
                 if (!key_exists($row_key, $row_label)) {
                     $row_label[$row_key] = $val->grp->name_link_list($ctx);
                     $cells[$row_key] = [];
+                }
+                // the phrase of a row is the same for every value of that row, so it is set
+                // instead of added, e.g. the solution is named once although the row has the
+                // potential loss and the potential gain of the problem
+                foreach ($phr_cell as $phr_col_id => $link) {
+                    $phr_cells[$row_key][$phr_col_id] = $link;
                 }
                 // two values with the same row and column are shown in the same cell instead of
                 // the second one replacing the first
@@ -601,6 +632,9 @@ class value_list extends ListBase
             foreach ($col_phr as $phr) {
                 $header .= $html->th($phr->name_link());
             }
+            foreach ($phr_col as $phr) {
+                $header .= $html->th($phr->name_link());
+            }
             if ($rest_col) {
                 $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
             }
@@ -609,6 +643,9 @@ class value_list extends ListBase
                 $row = $html->td($label);
                 foreach (array_keys($col_phr) as $col_id) {
                     $row .= $html->td(implode(', ', $cells[$row_key][$col_id] ?? []));
+                }
+                foreach (array_keys($phr_col) as $phr_col_id) {
+                    $row .= $html->td($phr_cells[$row_key][$phr_col_id] ?? '');
                 }
                 if ($rest_col) {
                     $row .= $html->td(implode(', ', $cells[$row_key][''] ?? []));
@@ -628,6 +665,76 @@ class value_list extends ListBase
                     $header_html = $html->text_h3($context_phr_lst->name_link_list());
                 }
                 $result = $html->div_center($header_html) . $result;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that a table neither names a row nor a column by
+     *
+     * a scaling or a measure phrase describes the number and is shown with it (e.g. "35.2 billion
+     * htp"), so like the phrase of the page it says nothing about the row; the target layout in
+     * the view-validation of solution_prio.json names the unit in the column header instead
+     *
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
+     * @return phrase_list the assumed phrases plus every scaling and measure phrase of these values
+     */
+    private function context_with_units(phrase_list $context_phr_lst, user_message $msg): phrase_list
+    {
+        $result = clone $context_phr_lst;
+        foreach ($this->lst() as $val) {
+            foreach ($val->grp->phr_lst()->lst() as $phr) {
+                // the same unit is used by many values, so a repeat is expected and no double
+                if (!$result->has_id($phr->id())) {
+                    if ($phr->is_scaling($msg) or $phr->is_measure($msg)) {
+                        $result->add_phrase($phr);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the defined columns that name a phrase of the row instead of a value
+     *
+     * e.g. the "solution" column of solution_prio.json: no value carries the phrase "solution",
+     * but the solutions are linked to it, so the column can show the solution of the problem row
+     *
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param array $col_phr the columns that hold a value, keyed by phrase id
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase
+     * @return array the phrase columns keyed by phrase id in the order of the definition
+     */
+    private function phrase_columns(array $col_order, array $col_phr, ?phrase_list $rel_lst): array
+    {
+        $result = [];
+        foreach ($col_order as $name) {
+            $phr = $rel_lst?->column_phrase($name);
+            // a column that already holds the values of this phrase cannot name a phrase too
+            if ($phr != null and !array_key_exists($phr->id(), $col_phr)) {
+                if ($rel_lst->child_names($phr) != []) {
+                    $result[$phr->id()] = $phr;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrase of the given value that belongs into a phrase column
+     *
+     * @param value $val the value whose phrases are searched
+     * @param array $child_names the names of the phrases linked to the column phrase
+     * @return phrase|null the first phrase of the value that the column covers or null if none
+     */
+    private function phrase_of_column(value $val, array $child_names): ?phrase
+    {
+        $result = null;
+        foreach ($val->grp->phr_lst()->lst() as $phr) {
+            if ($result == null and in_array($phr->name(), $child_names)) {
+                $result = $phr;
             }
         }
         return $result;

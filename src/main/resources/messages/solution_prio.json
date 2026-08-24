@@ -466,6 +466,7 @@
     },
     {
       "name": "htp",
+      "type": "measure",
       "description": "the symbol used in formulas for happy time points"
     },
     {
@@ -479,6 +480,7 @@
     },
     {
       "name": "trillion",
+      "type": "scaling",
       "description": "the scaling factor of 10^12"
     },
     {
@@ -1051,6 +1053,13 @@
       "to": "mayor column (system)"
     },
     {
+      "name": "column loss",
+      "description": "the table column 'loss' that should be shown also on small screens; the values name the measure with the words 'potential' and 'loss', so the column of the potential loss is headed by 'loss'",
+      "from": "loss",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
       "name": "column priority",
       "description": "the table column 'priority' that should not be shown on small screens",
       "from": "priority",
@@ -1286,6 +1295,31 @@
       "from": "avoidance",
       "verb": "of",
       "to": "wrong decisions"
+    },
+    {
+      "from": "reduce climate gas emissions",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "avoid wrong decisions",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "research",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "taxes",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "spending",
+      "verb": "is a",
+      "to": "solution"
     },
     {
       "name": "platform regulation",

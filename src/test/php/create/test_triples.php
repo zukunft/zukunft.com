@@ -1257,6 +1257,21 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "column solution (high prio)" that defines "solution" as a mayor table column
+     */
+    function column_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_SOLUTION_ID, triple_names::COLUMN_SOLUTION);
+        $trp->set_from($t_wrd->solution()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "column cost" that defines "cost" as a mayor table column
      */
     function column_cost(): triple
@@ -1287,6 +1302,21 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "column loss" that defines "loss" as a mayor table column
+     */
+    function column_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_LOSS_ID, triple_names::COLUMN_LOSS);
+        $trp->set_from($t_wrd->word_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "reduce climate gas emissions" - the solution of the global warming problem
      */
     function reduce_emissions(): triple
@@ -1303,6 +1333,86 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::AVOID_WRONG_DECISIONS_ID, triple_names::AVOID_WRONG_DECISIONS);
+        return $trp;
+    }
+
+    /*
+     * the triples that link a solution to "solution": the table asks which phrase of a row is a
+     * solution, so unlike the solutions themselves these triples need their from/verb/to link
+     */
+
+    /**
+     * @return triple that "reduce climate gas emissions" "is a" "solution"
+     */
+    function reduce_emissions_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REDUCE_EMISSIONS_SOLUTION_ID);
+        $trp->set_from($this->reduce_emissions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "avoid wrong decisions" "is a" "solution"
+     */
+    function avoid_wrong_decisions_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::AVOID_WRONG_DECISIONS_SOLUTION_ID);
+        $trp->set_from($this->avoid_wrong_decisions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "research" "is a" "solution"
+     */
+    function research_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::RESEARCH_SOLUTION_ID);
+        $trp->set_from($t_wrd->word_research()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "taxes" "is a" "solution"
+     */
+    function taxes_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::TAXES_SOLUTION_ID);
+        $trp->set_from($t_wrd->word_taxes()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "spending" "is a" "solution"
+     */
+    function spending_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SPENDING_SOLUTION_ID);
+        $trp->set_from($t_wrd->word_spending()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
         return $trp;
     }
 

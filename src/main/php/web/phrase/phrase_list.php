@@ -308,6 +308,32 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the phrase that this list defines as the table column of the given name
+     *
+     * the caller has the column name from column_names() and needs the phrase itself to head the
+     * column with a link and to ask child_names() which phrases belong into that column
+     *
+     * @param string $name the name of a column phrase e.g. "solution"
+     * @return phrase|null the column phrase or null if this list defines no column of that name
+     */
+    function column_phrase(string $name): ?phrase
+    {
+        $result = null;
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $result == null) {
+                $trp = $phr->obj();
+                // the tier is the "to" side, so the column phrase is the "from" side
+                if (in_array($trp->get_to()?->name(), triples::SYSTEM_COLUMN_TIERS)) {
+                    if ($trp->get_from()?->name() == $name) {
+                        $result = $trp->get_from();
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * build the category subtitle html for the page-title
      * based on the verbs::CATEGORY_VERBS priority list
      *

@@ -979,7 +979,7 @@ class ui_list extends ui_base
                 // an empty list falls back to the impact ranking of the values themselves
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
                 $result = $val_lst->table_by_related_columns(
-                    $msg, $phr_lst, '', $col_order, $with_header, $with_border);
+                    $msg, $phr_lst, '', $col_order, $with_header, $with_border, $dto?->phr_lst);
             }
         }
         return $result;

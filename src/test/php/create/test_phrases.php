@@ -1145,6 +1145,15 @@ class test_phrases
         $lst->add($t_trp->potential_education_problem()->phrase());
         $lst->add($t_trp->column_cost()->phrase());
         $lst->add($t_trp->column_gain()->phrase());
+        $lst->add($t_trp->column_loss()->phrase());
+        // the solution column names the solution of the problem row instead of a value, so it
+        // needs the column definition and the triples that link a solution to "solution"
+        $lst->add($t_trp->column_solution()->phrase());
+        $lst->add($t_trp->reduce_emissions_solution()->phrase());
+        $lst->add($t_trp->avoid_wrong_decisions_solution()->phrase());
+        $lst->add($t_trp->research_solution()->phrase());
+        $lst->add($t_trp->taxes_solution()->phrase());
+        $lst->add($t_trp->spending_solution()->phrase());
         return $lst;
     }
 

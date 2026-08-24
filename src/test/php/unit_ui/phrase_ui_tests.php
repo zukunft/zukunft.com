@@ -174,6 +174,33 @@ class phrase_ui_tests
             $lib->str_left_of($tbl_plural, '<table'), '<' . html_base::H4 . '>');
         $test_name = '... and the gain of the populism solution';
         $t->assert_text_contains($test_name, $tbl_html, '34.1');
+        // a scaling or measure phrase describes the number, so the row is the problem and not
+        // the problem per unit; the unit belongs to the value like in the target layout of the
+        // view-validation of solution_prio.json
+        $test_name = 'the scaling of a value does not name a row';
+        $t->assert_text_not_contains($test_name, $tbl_html, '>' . word_names::BILLION . '</a>');
+        $test_name = 'the measure of a value does not name a row';
+        $t->assert_text_not_contains($test_name, $tbl_html, '>' . word_names::EUR . '</a>');
+        // the values name the measure with the words "potential" and "loss", so "column loss"
+        // of solution_prio.json is the definition that heads the potential loss column
+        $test_name = 'the defined loss column heads the potential loss';
+        $tbl_header_row = $lib->str_left_of($tbl_html, '</tr>');
+        $t->assert_text_contains($test_name, $tbl_header_row, '>' . word_names::LOSS . '</a>');
+        // without the definition the impact ranking would head that column by "potential", which
+        // every value of the table carries and which therefore tells the reader nothing
+        $test_name = '... instead of a phrase that every value carries';
+        $t->assert_text_not_contains($test_name, $tbl_header_row, '>' . word_names::POTENTIAL . '</a>');
+        // no value carries the phrase "solution", but the solutions are linked to it, so that
+        // column names the solution of the problem row instead of a number
+        $test_name = 'the solution column is headed by the solution phrase';
+        $t->assert_text_contains($test_name, $tbl_header_row, '>' . word_names::SOLUTION . '</a>');
+        $test_name = '... and shows the solution of the problem';
+        $t->assert_text_contains($test_name, $tbl_html, '>' . triple_names::REDUCE_EMISSIONS . '</a>');
+        // the solution is shown in its column, so it does not name the row any more; the text up
+        // to the first closing cell is the header row plus the label of the first row
+        $test_name = '... which is therefore no longer part of the row name';
+        $t->assert_text_not_contains($test_name,
+            $lib->str_left_of($tbl_html, '</' . html_base::TD . '>'), triple_names::REDUCE_EMISSIONS);
         $test_name = 'without the problem links no value matches the page phrase';
         $dto_no_links = new data_object();
         $dto_no_links->val_lst = $t_val->value_list_solution_prio_ui();
