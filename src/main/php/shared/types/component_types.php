@@ -560,6 +560,10 @@ class component_types
     const int VIEW_COMPONENTS_ID = 225;
     const string SHOW_FORMULA = "system_show_field_formula";
     const int SHOW_FORMULA_ID = 226;
+    // the read only twin of FORM_FIELD_NAME_IN_FORMULAS: the short name of a verb used in a
+    // formula, where both sides of the triple are combined
+    const string SHOW_NAME_IN_FORMULAS = "system_show_field_name_in_formulas";
+    const int SHOW_NAME_IN_FORMULAS_ID = 233;
     const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
     const int SHOW_PHRASE_ROW_ID = 227;
     const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
@@ -1013,6 +1017,7 @@ class component_types
         [self::SHOW_OWNER, self::SHOW_OWNER_ID],
         [self::VIEW_COMPONENTS, self::VIEW_COMPONENTS_ID],
         [self::SHOW_FORMULA, self::SHOW_FORMULA_ID],
+        [self::SHOW_NAME_IN_FORMULAS, self::SHOW_NAME_IN_FORMULAS_ID],
         [self::SHOW_PHRASE_ROW, self::SHOW_PHRASE_ROW_ID],
         [self::SHOW_PHRASE_COL, self::SHOW_PHRASE_COL_ID],
         [self::SHOW_PHRASE_COL_SUB, self::SHOW_PHRASE_COL_SUB_ID],

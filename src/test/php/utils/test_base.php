@@ -1225,8 +1225,11 @@ class test_base
             // add the related database objects
             $dbo->load_by_id_with_related($id, $msg);
         }
-        // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above
-        $dbo_api_msg = $dbo->api_json([api_types::INCL_RELATED, api_types::INCL_PHRASES]);
+        // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above;
+        // the user is given like the api endpoints do (see api/verb/index.php), because a related
+        // list is loaded and filtered for a user and a verb carries none of its own
+        $dbo_api_msg = $dbo->api_json(
+            [api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg, $usr);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {

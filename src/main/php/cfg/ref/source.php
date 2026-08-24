@@ -85,12 +85,14 @@ include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -117,12 +119,14 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -163,6 +167,10 @@ class source extends sandbox_code_id
     // emitted via api_json_array() under the INCL_RELATED flag, so the views tab of the default
     // source view can offer the views to switch to
     public ?view_list $views_related = null;
+
+    // the values that name this source; filled and emitted like views_related above, so that the
+    // 'source values' component of the source page lists them
+    public ?value_list $values_related = null;
 
 
     /*
@@ -301,6 +309,21 @@ class source extends sandbox_code_id
                 }
                 $vars = array_merge($vars,
                     new sandbox_related()->views_array($this->views_related, $msg, $usr));
+                // a value names the source by its id, so a fresh source (id 0, e.g. the add
+                // form) has none, whereas the views above are the same for every source
+                if ($this->values_related == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                    $this->load_values_related($msg);
+                }
+                if ($this->values_related != null and !$this->values_related->is_empty()) {
+                    // drop the values the requester may not read, so the list cannot disclose
+                    // another user's private value of this source (idor), the same gate that
+                    // word::api_json_array uses for the values of a word
+                    $this->values_related->filter_readable_by($usr);
+                    // INCL_PHRASES so each value carries its group phrases, which the frontend
+                    // needs for the value name
+                    $vars[json_fields::VALUES] = $this->values_related->api_json_array(
+                        new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+                }
                 $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
                 $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
             }
@@ -327,6 +350,22 @@ class source extends sandbox_code_id
         $msk_lst = new view_list($this->get_user());
         $msk_lst->load_by_type($sys->typ_lst->msk_typ->id(view_types::SOURCE), $msg);
         $this->views_related = $msk_lst;
+    }
+
+    /**
+     * load the values that name this source into the in-memory values_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'source values'
+     * component of the source default page shows (see web/component/execute/ui_list::values_by_source)
+     *
+     * @param user_message $msg to collect any problem while loading the values
+     * @return void
+     */
+    function load_values_related(user_message $msg): void
+    {
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_source($this, $msg);
+        $val_lst->load_names_related($msg);
+        $this->values_related = $val_lst;
     }
 
 

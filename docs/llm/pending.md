@@ -1,9 +1,12 @@
 # pending - list of planned llm prompts with prio 1
 
+## verb default view
+
+the triples of a verb are neither limited when they are loaded (value_list has a limit and a page parameter, triple_list::load_by_verb has none) nor when they are shown (web/word/triple_list::display renders every name), so the page of a much used verb lists them all: "is a" has 186 triples and even the placeholder verb "not set" has 66; the change log table solves the same problem with the configured row limit and a forward button (see ui_log::configured_row_limit), and the same applies to the values of a source
+
+the triples of a verb are shown in database id order, because triple_list::load_sql sorts by the given name, which is null for every triple that uses the generated name, and the id is only the tie break that makes the order deterministic; for a comma separated list of names the user expects the shown name order, which needs the generated name resp. the user-specific name in the order by
+
 ## user default view
-
-add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
-
 
 for the headline of the add component view 'element' is used. A view component should always be named 'component' not element . Note this change in the rules and check that 'element' is nowhere used to decribe a component 
 
@@ -136,7 +139,12 @@ The changes table comment is the load contract. load_by_user() reading 13 tables
 version.txt correctly untouched — no json format or db structure change.
 Generated docs: code_user_message_exceptions.md only shifts a line number, doesn't grow. code_test_coverage.md adds the three new functions.
 The fold is duplicated verbatim in the backend and the frontend std_table* function. That mirrors the existing prefix-strip duplication rather than adding a new pattern, so it is consistent, but both copies now have to move together.
-Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.  
+Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.
+A caller I missed, already fixed by you: test_words::zh_full_ui() calls the web word's set_type, so it needed user_message_ui not user_message. My caller scan mis-classified it because zh_ui() returns a word_ui. I re-checked — that was the only one; every other set_type call is on a backend word, a component, element or sql_db.
+The fixtures are now coherent: component 352 = the new field, link 1013 = verb view position 7, sub-title 8, triples 9 — exactly as computed; the api type-list fixtures carry only the new system_show_field_name_in_formulas, none of the old colliding name. The verb snapshot's triples are in ascending id order, confirming the tie-break landed.
+change_log_list_word_1.json shifted by +3 (ids 6885→6888 …) — the re-import wrote three more change rows. That fixture pins absolute change-log ids, so it will drift on every re-import; not caused by this change, but worth knowing.
+docs/code_user_message_exceptions.md now reports db_object_seq_id.php:350 - user_message $msg = new user_message(), instead of the full signature — the generator matches a single line and your reformat of api_json split the signature across lines. Cosmetic, but the entry is now less readable than its siblings.
+Checked and clean: no &&/|| in added code, no secrets, includes and use blocks alphabetically placed, log_err only on genuine programming-error paths.
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.

@@ -66,6 +66,9 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_WORD . 'word.php';
+// cannot be included here, because type_list.php includes this file before it defines type_list,
+// and triple_list.php pulls in change_table_list.php, which extends type_list (see load_triples_related)
+//include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
@@ -98,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -173,6 +177,9 @@ class verb extends type_object
             $this->usage = $usage;
         }
     }
+    // the triples that use this verb, filled only for the verb page (see load_triples_related)
+    // and sent to the frontend under the incl_related api flag
+    public ?triple_list $triples_related = null;
     // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
     public ?float $impact = null {
         get {
@@ -595,6 +602,9 @@ class verb extends type_object
     function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::CODE_ID] = $this->get_code_id();
@@ -607,7 +617,42 @@ class verb extends type_object
         $vars[json_fields::IMPACT] = $this->impact;
         $vars[json_fields::ID] = $this->id();
 
+        // the triples of the verb page, which a verb selector or a phrase does not need;
+        // a triple names the verb by its id, so a fresh verb (id 0, e.g. the add form) has none
+        if ($typ_lst->incl_related() and $this->id() != 0) {
+            $trp_usr = $usr ?? $this->get_user();
+            if ($this->triples_related == null and !$typ_lst->test_mode()) {
+                $this->load_triples_related($trp_usr, $msg);
+            }
+            if ($this->triples_related != null) {
+                $vars[json_fields::TRIPLES] = $this->triples_related->api_json_array(
+                    [], $msg, $usr);
+            }
+        }
+
         return $vars;
+    }
+
+    /**
+     * load the triples that use this verb into the in-memory list so that api_json_array() can
+     * emit them under the INCL_RELATED flag, which the 'verb triples' component of the verb
+     * default page shows (see web/component/execute/ui_list::triple_list)
+     *
+     * @param user|null $usr the user who wants to see the triples of this verb
+     * @param user_message $msg to collect any problem while loading the triples
+     * @return void
+     */
+    function load_triples_related(?user $usr, user_message $msg): void
+    {
+        // a triple list is always user specific, so without the user the list cannot be loaded
+        // and an empty list would tell the user that the verb is unused, which is not known here
+        if ($usr == null) {
+            log_err_msg('the user is missing to load the triples of the verb ' . $this->dsp_id(), $msg);
+        } else {
+            $trp_lst = new triple_list($usr);
+            $trp_lst->load_by_verb($this, $msg);
+            $this->triples_related = $trp_lst;
+        }
     }
     // TODO test set_by_api_json
 

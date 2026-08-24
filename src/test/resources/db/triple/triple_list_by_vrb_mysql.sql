@@ -42,4 +42,4 @@ PREPARE triple_list_by_vrb FROM
   LEFT JOIN phrases l2       ON  s.to_phrase_id   =  l2.phrase_id
   LEFT JOIN user_phrases ul2 ON l2.phrase_id      = ul2.phrase_id AND ul2.user_id = ?
       WHERE s.verb_id = ?
-   ORDER BY s.verb_id, name_given';
+   ORDER BY s.verb_id, name_given, s.triple_id';

@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1234 of 5634 public functions have at least 2 unit test calls; the 4400 functions below do not
+1236 of 5641 public functions have at least 2 unit test calls; the 4405 functions below do not
 
 ## main backend
 
@@ -1198,7 +1198,6 @@ so same-named functions of several classes share their test calls
     \-- load_dummy - 0 unit test calls
     \-- load_sql_by_names - 0 unit test calls
     \-- load_sql_by_phr_id - 0 unit test calls
-    \-- load_sql_by_source - 0 unit test calls
 \-- ref_type
     \-- db_fields_all - 0 unit test calls
 \-- ref_type_list
@@ -1802,6 +1801,7 @@ so same-named functions of several classes share their test calls
     \-- delta - 0 unit test calls
     \-- load_sql - 0 unit test calls
     \-- load_sql_user_changes - 0 unit test calls
+    \-- load_values_related - 0 unit test calls
     \-- load_views_related - 0 unit test calls
     \-- name_field - 0 unit test calls
     \-- not_changed - 0 unit test calls
@@ -2754,6 +2754,7 @@ so same-named functions of several classes share their test calls
     \-- load_by_ids - 0 unit test calls
     \-- load_by_phr - 0 unit test calls
     \-- load_by_phr_lst - 0 unit test calls
+    \-- load_by_source - 0 unit test calls
     \-- load_names_related - 0 unit test calls
     \-- load_phrases - 0 unit test calls
     \-- load_sql_by_grp_lst - 0 unit test calls
@@ -2818,6 +2819,7 @@ so same-named functions of several classes share their test calls
     \-- load_sql_by_code_id - 0 unit test calls
     \-- load_sql_by_id - 0 unit test calls
     \-- load_sql_by_name - 0 unit test calls
+    \-- load_triples_related - 0 unit test calls
     \-- name_field - 0 unit test calls
     \-- not_used_sql - 0 unit test calls
     \-- row_mapper_verb - 0 unit test calls
@@ -3920,7 +3922,7 @@ so same-named functions of several classes share their test calls
     \-- ref_type_selector - 0 unit test calls
     \-- set_phrase - 0 unit test calls
     \-- set_predicate_id - 0 unit test calls
-    \-- source - 0 unit test calls
+    \-- source - 1 unit test calls
     \-- source_name - 0 unit test calls
     \-- source_selector - 0 unit test calls
     \-- type_name - 0 unit test calls
@@ -4185,6 +4187,7 @@ so same-named functions of several classes share their test calls
     \-- show_link_type - 0 unit test calls
     \-- show_name - 0 unit test calls
     \-- show_name_big - 0 unit test calls
+    \-- show_name_in_formulas - 0 unit test calls
     \-- show_order_nbr - 0 unit test calls
     \-- show_owner - 0 unit test calls
     \-- show_parent_view - 0 unit test calls
@@ -4364,6 +4367,7 @@ so same-named functions of several classes share their test calls
     \-- get_html_by_id - 0 unit test calls
     \-- get_view_by_id - 0 unit test calls
     \-- log_err - 0 unit test calls
+    \-- phrase_types - 0 unit test calls
     \-- set_change_action_list - 0 unit test calls
     \-- set_change_field_list - 0 unit test calls
     \-- set_change_table_list - 0 unit test calls
@@ -4605,6 +4609,7 @@ so same-named functions of several classes share their test calls
     \-- formula_name - 0 unit test calls
     \-- get_plural - 0 unit test calls
     \-- impact - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- plural_reverse - 0 unit test calls
     \-- reverse - 0 unit test calls

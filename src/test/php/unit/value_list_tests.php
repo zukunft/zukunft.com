@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -76,6 +77,7 @@ class value_list_tests
         $t_val = new test_values($t);
         $t_phr = new test_phrases($t);
         $t_wrd = new test_words($t);
+        $t_src = new test_sources($t);
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 
@@ -167,6 +169,19 @@ class value_list_tests
         $test_name = $test_names . 'a related to a phrase whose id matches the user id '
             . 'still binds all three query parameters';
         $this->assert_sql_by_phr_same_id($test_name, $t, $db_con);
+        // the source of a value is user-specific, so the union has one source parameter for the
+        // user tables and one for the standard tables (see value_list::load_sql_by_source)
+        $test_name = $test_names . 'the source that they name e.g. all values of the SI brochure';
+        $src = $t_src->source();
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src), sql_db::MYSQL);
+        $test_name = $test_names . 'the source that they name, but only the text values';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src, 0, 0, value_types::TEXT), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src, 0, 0, value_types::TEXT), sql_db::MYSQL);
         $test_name = $test_names . 'a list of ids';
         $val_ids = $t_val->value_list($msg)->id_lst();
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids);

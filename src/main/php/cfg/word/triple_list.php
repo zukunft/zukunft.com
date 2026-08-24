@@ -516,7 +516,13 @@ class triple_list extends sandbox_list_named
             phrase::FLD_ID,
             true
         );
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb_db::FLD_ID) . ', ' . triple_fields::FLD_NAME_GIVEN);
+        // the triple id is the last sort key, because most triples use the generated name and so
+        // have no given name, which would leave every row of one verb tied and the order of the
+        // result up to the database e.g. for the triples of a verb shown by the verb page
+        $order = sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb_db::FLD_ID)
+            . ', ' . triple_fields::FLD_NAME_GIVEN
+            . ', ' . sql_db::STD_TBL . '.' . $sc->name_sql_esc(triple_fields::FLD_ID);
+        $sc->set_order_text($order);
         return $qp;
     }
 

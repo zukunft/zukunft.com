@@ -424,6 +424,7 @@
             user_exp_is_valid,expression_may_match,no_ref_needed
 \-- source
     \-- load_views_related - section for function load_views_related is expected to be load in /ref/source.php
+    \-- load_values_related - section for function load_values_related is expected to be load in /ref/source.php
     \-- delta - section for function delta is expected to be del in /ref/source.php
     \-- order error - order of section info has difference at delta should be before needs_db_update of diff_msg,
             needs_db_update,delta does not match 2,delta,diff_msg,needs_db_update,next_nbr,is_key_updated,
@@ -583,6 +584,7 @@
             verb.php
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /verb/verb.php
+    \-- load_triples_related - section for function load_triples_related is expected to be load in /verb/verb.php
     \-- delta - section for function delta is expected to be del in /verb/verb.php
     \-- is_valid - section for function is_valid is expected to be check in /verb/verb.php
     \-- get_similar - section for function get_similar is expected to be save in /verb/verb.php
@@ -865,19 +867,19 @@
             le.php
     \-- order error - order of section api has difference at api_json_array should be before load_views_related of load_
             values_related,load_formulas_related,load_references_related,load_views_related,
-            api_json_array does not match api_json_array,load_views_related,
+            api_json_array does not match api_json_array,load_views_related,load_triples_related,
             order of section api has difference at api_json_array should be before load_views_related of load_values_rel
             ated,load_formulas_related,load_references_related,load_views_related,
-            api_json_array does not match api_json_array,load_views_related,
+            api_json_array does not match api_json_array,load_views_related,load_triples_related,
             order of section api has difference at api_json_array should be before load_views_related of load_values_rel
             ated,load_formulas_related,load_references_related,load_views_related,
-            api_json_array does not match api_json_array,load_views_related,
+            api_json_array does not match api_json_array,load_views_related,load_triples_related,
             order of section api has difference at api_json_array should be before load_views_related of load_values_rel
             ated,load_formulas_related,load_references_related,load_views_related,
-            api_json_array does not match api_json_array,load_views_related,
+            api_json_array does not match api_json_array,load_views_related,load_triples_related,
             order of section api has difference at api_json_array should be before load_views_related of load_values_rel
             ated,load_formulas_related,load_references_related,load_views_related,
-            api_json_array does not match api_json_array,load_views_related,
+            api_json_array does not match api_json_array,load_views_related,load_triples_related,
             order of section set and get has difference at get_predicate_code_id should be before set,
              set_type should be before set, get_code_id should be before get_description,
              set_view_id should be before get_description, get_view should be before get_description,
@@ -1592,6 +1594,8 @@
         \-- view - create an array for the api json creation
     \-- load_views_related
         \-- value - load the views that can show this value into the in-memory views_related list so that
+    \-- load_triples_related
+        \-- verb - load the triples that use this verb into the in-memory list so that api_json_array() can
 \-- im- and export
     \-- 1
         \-- formula_map - import a formula from a JSON object
@@ -8961,6 +8965,7 @@
     \-- load_sql_by_phr_lst - section for function load_sql_by_phr_lst is expected to be load sql in /value/value_list.p
             hp
     \-- load_sql_by_phr - section for function load_sql_by_phr is expected to be load sql in /value/value_list.php
+    \-- load_sql_by_source - section for function load_sql_by_source is expected to be load sql in /value/value_list.php
     \-- load_sql_multi - section for function load_sql_multi is expected to be load sql in /value/value_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /value/value_list.php
     \-- load_sql_by_grp_lst - section for function load_sql_by_grp_lst is expected to be load sql in /value/value_list.p
@@ -9010,133 +9015,165 @@
             ons in /value/value_list.php
     \-- del - section for function del is expected to be del in /value/value_list.php
     \-- order error - order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr
-            _lst,load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses,
+            _lst,load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,
+            load_sql_by_source,load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,
+            load_by_component,load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,
+            load_by_frm_and_type_id,load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,
+            load_by_frm_id,5,load_sql_by_ids,load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,
+            fill_from_cache_json,load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,
+            load_type_lists,load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,
+            from_cache,reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
             order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
-            load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
             order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
-            load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
             order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
-            load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
             order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
-            load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
             order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
-            load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
             order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
-            load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
             order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
-            load_by_phr,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_multi,
-            load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,load_components,
-            3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,load_sql_by_frm_id,
-            load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,load_by_ids,
-            phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,load_frontend_cfg,
-            load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,load_type_lists_cached,
-            load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,reload_if_cache_denied,
-            fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,load_backend_only,load_sql_by_user,
-            load_by_user_sql,load_sql_old,load_by_name_and_table_id,load_sql_by_name_and_table_id,load_by_field_row,
-            load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,load_by_user,load_obj_last,load_obj_field_last,
-            load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,load_by_fld_of_trp,load_by_fld_of_val,
-            load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,load_by_fld_of_cmp,load_names,load_like,
-            load_additional_by_id,load_by_phr_id,load_names_related,load_sql_names,load_sbx_names,load_user_changes,
-            load_by_phr_lst_multi,load_sql_by_phr_lst_multi,load_sql_by_phr_lst_single,load_sql_init,load_by_id,
-            load_by_ip_addresses
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
+            order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses,
+            order of section load has difference at load_sql_by_ids should be before load_by_id of load_by_phr_lst,
+            load_by_phr,load_by_source,load_by_ids,load_by_id,load_sql_by_phr_lst,load_sql_by_phr,load_sql_by_source,
+            load_sql_multi,load_sql_by_ids does not match load_by_view,load_by_view_with_components,load_by_component,
+            load_components,3,4,1,load_sql,load_obj_by_id,load_sql_by_id,load_by_frm,load_by_frm_and_type_id,
+            load_sql_by_frm_id,load_sql_by_frm_and_type_id,get_by_link_id,load_phrases,load_by_frm_id,5,load_sql_by_ids,
+            load_by_ids,phrase_ids,del_without_log,load_by_group_id_sql,del,load_cfg,fill_from_cache_json,
+            load_frontend_cfg,load_usr_cfg,load_by_url,html_by_url,load_by_key,load_sql_by_id_str,load_type_lists,
+            load_type_lists_cached,load_cache_type,load_system_users,load_from_csv_resource,load_cached,from_cache,
+            reload_if_cache_denied,fill_from_api_json,load,load_cache,load_log_if_empty,load_log,load_core,
+            load_backend_only,load_sql_by_user,load_by_user_sql,load_sql_old,load_by_name_and_table_id,
+            load_sql_by_name_and_table_id,load_by_field_row,load_sql_by_field_row,load_by_obj,load_sql_by_obj,add,
+            load_by_user,load_obj_last,load_obj_field_last,load_by_obj_fld,load_by_fld_of_wrd,load_by_fld_of_vrb,
+            load_by_fld_of_trp,load_by_fld_of_val,load_by_fld_of_frm,load_by_fld_of_src,load_by_fld_of_ui,
+            load_by_fld_of_cmp,load_names,load_like,load_additional_by_id,load_by_phr_id,load_names_related,
+            load_sql_names,load_sbx_names,load_user_changes,load_by_phr_lst_multi,load_sql_by_phr_lst_multi,
+            load_sql_by_phr_lst_single,load_sql_init,load_by_id,load_by_ip_addresses
 \-- value_text
     \-- delta - section for function delta is expected to be del in /value/value_text.php
 \-- value_time
@@ -11797,6 +11834,8 @@
             ut without auto fill in /component/execute/system_form.php
     \-- show_plural_reverse - section for function show_plural_reverse not yet defined that it should be optional with s
             how password but without auto fill in /component/execute/system_form.php
+    \-- show_name_in_formulas - section for function show_name_in_formulas not yet defined that it should be optional wi
+            th show password but without auto fill in /component/execute/system_form.php
     \-- show_style - section for function show_style not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- show_formula - section for function show_formula not yet defined that it should be optional with show password b
@@ -14668,6 +14707,7 @@
     \-- formula_name - section for function formula_name not yet defined that it should be set and get in /verb/verb.php
     \-- impact - section for function impact not yet defined that it should be set and get in /verb/verb.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /verb/verb.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /verb/verb.php
     \-- api_array - section for function api_array not yet defined that it should be api in /verb/verb.php
     \-- name_link - section for function name_link not yet defined that it should be base in /verb/verb.php
     \-- dsp_edit - section for function dsp_edit not yet defined that it should be deprecate in /verb/verb.php
@@ -14798,7 +14838,13 @@
             set_view_relation_types,set_component_types,set_component_link_types,set_position_types,set_source_types,
             set_ref_types,set_share_types,set_protection_types,set_languages,set_language_forms,set_verbs,
             set_sys_log_statuum,set_job_types,set_change_action_list,set_change_table_list,set_change_field_list,
-            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err
+            set_system_views,get_html_by_id,get_view_by_id,get_view,get_html,log_err,
+            order of section api has difference at api_array should be before load_by_id_with_related of api_mapper,
+            load_by_id_with_related,api_array does not match api_mapper,1,api_array,load_by_id_with_related,api_get,
+            order of section api has difference at api_array should be before load_by_id_with_related of api_mapper,
+            load_by_id_with_related,api_array does not match api_mapper,1,api_array,load_by_id_with_related,api_get,
+            order of section api has difference at api_array should be before load_by_id_with_related of api_mapper,
+            load_by_id_with_related,api_array does not match api_mapper,1,api_array,load_by_id_with_related,api_get
 \-- verb_list
     \-- list - section for function list not yet defined that it should be display in /verb/verb_list.php
     \-- dsp_list - section for function dsp_list not yet defined that it should be display in /verb/verb_list.php
@@ -16368,6 +16414,8 @@
     \-- show_reverse
         \-- system_form - @param verb|db_object $dbo the verb
     \-- show_plural_reverse
+        \-- system_form - @param verb|db_object $dbo the verb
+    \-- show_name_in_formulas
         \-- system_form - @param verb|db_object $dbo the verb
     \-- show_style
         \-- system_form - @param view|component|component_link|db_object $dbo the object whose display style is shown

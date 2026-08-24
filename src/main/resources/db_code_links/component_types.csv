@@ -231,3 +231,4 @@ component_type_id, type_name, description, code_id
 230, 'component views', 'the views that use the shown component with a link to each view', 'views_of_component'
 231, 'show link type', 'show the name of the link type of a link without link or form field', 'system_show_field_link_type'
 232, 'show order number', 'show the order number of a link without link or form field', 'system_show_field_order_nbr'
+233, 'show name in formulas', 'show the verb name used in formulas without link or form field', 'system_show_field_name_in_formulas'

@@ -215,6 +215,27 @@ class type_lists
         return null;
     }
 
+    /**
+     * the preloaded phrase types of the request cache
+     *
+     * guarded and static, because a render before the type cache has been loaded would otherwise
+     * end in an uncaught fatal on $ui_sys->typ_lst_cache->phr_typ, and a fatal prevents the three
+     * duties of error handling: the sys_log entry, the admin info and the user message
+     *
+     * @param user_message $msg to report the missing cache
+     * @return phrase_type_list|null the cached phrase types or null if the cache is not loaded
+     */
+    static function phrase_types(user_message $msg): ?phrase_type_list
+    {
+        global $ui_sys;
+
+        $result = $ui_sys?->typ_lst_cache?->phr_typ;
+        if ($result == null) {
+            log_err_msg_ui('the type cache is missing to read a phrase type', $msg);
+        }
+        return $result;
+    }
+
 
     /*
      * set and get

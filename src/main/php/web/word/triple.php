@@ -630,15 +630,19 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * @param string|null $code_id the code id of the phrase type
+     * @param string|null $code_id the code id of the phrase type, null to reset the type
+     * @param user_message $msg to report a missing type cache, without which the code id
+     *                          cannot be resolved to the type id
      */
-    function set_type(?string $code_id): void
+    function set_type(?string $code_id, user_message $msg): void
     {
-        global $ui_sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($ui_sys->typ_lst_cache->phr_typ->id($code_id));
+            $phr_typ = type_lists::phrase_types($msg);
+            if ($phr_typ != null) {
+                $this->set_type_id($phr_typ->id($code_id));
+            }
         }
     }
 
@@ -648,12 +652,15 @@ class triple extends sandbox_code_id
      */
     function type(user_message $msg): ?object
     {
-        global $ui_sys;
         if ($this->type_id($msg) == null) {
             return null;
-        } else {
-            return $ui_sys->typ_lst_cache->phr_typ->get($this->type_id($msg));
         }
+        $result = null;
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($phr_typ != null) {
+            $result = $phr_typ->get($this->type_id($msg));
+        }
+        return $result;
     }
 
     function get_plural(): ?string

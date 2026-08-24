@@ -702,6 +702,16 @@ class system_form extends component
     }
 
     /**
+     * @param verb|db_object $dbo the verb
+     * @return string the short name that the verb has in a formula as read-only text, where both
+     *                sides of the triple are combined (empty if no formula name is set)
+     */
+    function show_name_in_formulas(verb|db_object $dbo): string
+    {
+        return $this->esc($dbo->frm_name ?? '');
+    }
+
+    /**
      * @param view|component|component_link|db_object $dbo the object whose display style is shown
      * @return string the user-readable name of the display style (empty if no style is set)
      */
@@ -836,12 +846,11 @@ class system_form extends component
      */
     function show_phrase_type(word|db_object $dbo, user_message $msg): string
     {
-        global $ui_sys;
-
         $result = '';
         $type_id = $dbo->type_id($msg);
-        if ($type_id !== null) {
-            $result = $this->esc($ui_sys->typ_lst_cache->phr_typ->name($type_id));
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($type_id !== null and $phr_typ != null) {
+            $result = $this->esc($phr_typ->name($type_id));
         }
         return $result;
     }

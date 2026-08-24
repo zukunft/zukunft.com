@@ -47,6 +47,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'def.php';
@@ -66,6 +67,7 @@ include_once html_paths::MODEL_REF . 'source_db.php';
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -108,6 +110,9 @@ class source extends sandbox_code_id
 
     private ?string $url = null;
     private ?string $doi = null;
+    // the values that name this source, filled only if the source has been loaded for its page
+    // (see load_by_id_with_related), otherwise null
+    public ?value_list $val_lst = null;
 
 
     /*
@@ -236,6 +241,14 @@ class source extends sandbox_code_id
             $this->doi = $json_array[json_fields::DOI];
         } else {
             $this->doi = null;
+        }
+        // only the source page asks for the values, so a missing list is not an empty list
+        if (is_array($json_array[json_fields::VALUES] ?? null)) {
+            $val_lst = new value_list();
+            $val_lst->api_mapper($json_array[json_fields::VALUES]);
+            $this->val_lst = $val_lst;
+        } else {
+            $this->val_lst = null;
         }
         return $msg->is_ok();
     }
