@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-24T12:55:36+00:00",
+    "timestamp": "2026-08-24T14:46:00+00:00",
     "body": {
         "user_profiles": [
             {
@@ -22532,6 +22532,37 @@
                         "type_id": 199,
                         "code_id": "view_tab_box_link",
                         "position": 6,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 120,
+                "name": "solution priority validation",
+                "description": "the ranking of the global problems by potential loss with the solution, its loss reduction, the initial effort and the reward ratio",
+                "type_id": 11,
+                "code_id": "solution_prio_validation",
+                "components": [
+                    {
+                        "link_id": 1111,
+                        "id": 353,
+                        "name": "Title solution priority",
+                        "description": "page title: the global problems ranked by their potential loss",
+                        "type_id": 63,
+                        "code_id": "solution_prio_title",
+                        "ui_msg_code_id": "solution_prio_title",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1112,
+                        "id": 354,
+                        "name": "table problem ranking by potential loss",
+                        "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",
+                        "type_id": 214,
+                        "code_id": "solution_prio_ranking_table",
+                        "ui_msg_code_id": "solution_prio_ranking_table",
+                        "position": 2,
                         "position_type": 1
                     }
                 ]
