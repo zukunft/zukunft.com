@@ -3179,7 +3179,7 @@ so same-named functions of several classes share their test calls
     \-- escape - 0 unit test calls
     \-- explain_missing - 0 unit test calls
     \-- fix_volatile_in_html - 0 unit test calls
-    \-- format_html - 0 unit test calls
+    \-- format_html - 1 unit test calls
     \-- get_bool - 0 unit test calls
     \-- get_datetime - 0 unit test calls
     \-- ids_not_empty - 0 unit test calls
@@ -3242,7 +3242,6 @@ so same-named functions of several classes share their test calls
     \-- term_id - 0 unit test calls
     \-- time_to_url - 0 unit test calls
     \-- trim_all_spaces - 0 unit test calls
-    \-- trim_html - 0 unit test calls
     \-- trim_json - 0 unit test calls
     \-- trim_lines - 0 unit test calls
     \-- ui_class_to_table_id_list - 0 unit test calls
@@ -3488,6 +3487,7 @@ so same-named functions of several classes share their test calls
     \-- phrase_selector - 0 unit test calls
     \-- phrase_selector_old - 0 unit test calls
     \-- phrase_type_selector - 0 unit test calls
+    \-- plural_name - 0 unit test calls
     \-- plural_reverse - 0 unit test calls
     \-- pre_value - 0 unit test calls
     \-- protection_type_selector - 0 unit test calls
@@ -3849,6 +3849,7 @@ so same-named functions of several classes share their test calls
     \-- is_word - 0 unit test calls
     \-- main_word - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_link_plural - 0 unit test calls
     \-- name_link_with_tip - 0 unit test calls
     \-- name_linked - 0 unit test calls
     \-- name_tip - 1 unit test calls
@@ -3892,6 +3893,7 @@ so same-named functions of several classes share their test calls
     \-- parent_triples_ex_verbs - 0 unit test calls
     \-- parents - 0 unit test calls
     \-- phrase_selector - 0 unit test calls
+    \-- plural - 0 unit test calls
     \-- remove - 0 unit test calls
     \-- result_phrases_most_relevant - 0 unit test calls
     \-- scaling_list - 0 unit test calls
@@ -4018,6 +4020,7 @@ so same-named functions of several classes share their test calls
     \-- input_valid - 1 unit test calls
     \-- load_by_name - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_link_plural - 0 unit test calls
     \-- name_tip - 1 unit test calls
     \-- save_view - 0 unit test calls
     \-- set_description - 1 unit test calls
@@ -4316,6 +4319,7 @@ so same-named functions of several classes share their test calls
     \-- is_type - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_link_plural - 0 unit test calls
     \-- parents - 0 unit test calls
     \-- phrase_selector - 0 unit test calls
     \-- phrase_type_selector - 0 unit test calls
@@ -4720,6 +4724,7 @@ so same-named functions of several classes share their test calls
     \-- log_view - 0 unit test calls
     \-- math - 0 unit test calls
     \-- name_link - 0 unit test calls
+    \-- name_link_plural - 0 unit test calls
     \-- parents - 0 unit test calls
     \-- phrase_selector - 0 unit test calls
     \-- phrase_type_selector - 0 unit test calls

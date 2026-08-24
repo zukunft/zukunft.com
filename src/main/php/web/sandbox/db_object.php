@@ -58,6 +58,7 @@ include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_HELPER . 'MapObject.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -671,6 +673,31 @@ class db_object extends TextIdObject
         $msg = 'ERROR: plural not overwritten by ' . $this::class;
         log_err($msg);
         return $msg;
+    }
+
+    /**
+     * the name in the plural form
+     *
+     * the plural of a name is user data, so it is used whenever the user has set one; only if
+     * the user has set none the plural is guessed, and only for a language that builds the
+     * plural by adding an "s", because in any other language the guess would be wrong more
+     * often than right
+     * TODO use a language specific function that can include the exceptions of the language
+     *
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @return string the plural given by the user, the guessed plural or the name
+     */
+    function plural_name(string $lan = languages::DEFAULT): string
+    {
+        $result = $this->get_plural();
+        if ($result == null or $result == '') {
+            if ($lan == languages::DEFAULT) {
+                $result = $this->name() . languages::DEFAULT_PLURAL_SUFFIX;
+            } else {
+                $result = $this->name();
+            }
+        }
+        return $result;
     }
 
     function reverse(): ?string

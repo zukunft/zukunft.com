@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = true;
+    CONST bool AUTO_UPDATE_TEST_FILES = false;
 
     /*
      * types and extensions
@@ -203,6 +203,7 @@ class files
     CONST string IMPORT_CBAM_COSTS = test_paths::IMPORT . 'CBAM_costs' . self::JSON;
     CONST string IMPORT_CBAM_PREREQUISITE = test_paths::IMPORT . 'CBAM_ prerequisite' . self::JSON;
     CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
+    CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
     CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
     CONST string IMPORT_EU_BANKING = test_paths::IMPORT . 'eu_banking' . self::JSON;
     CONST string IMPORT_EU_SOFTWARE_SOVEREIGNTY = test_paths::IMPORT . 'eu_software_sovereignty' . self::JSON;
@@ -303,7 +304,7 @@ class files
         self::IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON,
         self::IMPORT_PRO_CONTRA_NPP_CH,
         self::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
-        // THOMY_test.json is not loaded here, because it sets a code id, which needs a system user
+        self::IMPORT_THOMY_TEST,
         self::IMPORT_BASE_TEST_DATA,
         self::IMPORT_BUS_LINE_MEILEN_USTER,
         self::IMPORT_CAR_COSTS,
@@ -319,7 +320,7 @@ class files
         self::IMPORT_ALMENDE,
         self::IMPORT_ANSER_TRUST_VS_FEAR,
         self::IMPORT_CARBON_LEAKAGE_EFFECT,
-        // CBAM_setup.json is not loaded here, because it sets a code id, which needs a system user
+        self::IMPORT_CBAM_SETUP,
         self::IMPORT_CBAM_PREREQUISITE,
         self::IMPORT_CBAM_ALU,
         self::IMPORT_CBAM_COSTS,
@@ -343,6 +344,8 @@ class files
         self::IMPORT_WTW_SAMPLE,
         self::IMPORT_CURRENCY_WIKIPEDIA,
         self::IMPORT_WIKIDATA_TO_IMPORT_Q4917,
+        self::IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS,
+        self::IMPORT_XBRL_SAMPLE_JSON,
     ];
 
 

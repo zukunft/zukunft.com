@@ -197,6 +197,26 @@ class test_terms
     }
 
     /**
+     * @return term_list the terms used by the formulas of solution_prio.json: the scaling words
+     *         and the phrases of the "global happy time points" sum
+     */
+    function term_list_solution_prio(): term_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new term_list($this->env->usr1);
+        $lst->add($t_wrd->word_one()->term());
+        $lst->add($t_wrd->word_mio()->term());
+        $lst->add($t_wrd->word_billion()->term());
+        $lst->add($t_wrd->word_trillion()->term());
+        $lst->add($t_wrd->word_htp()->term());
+        $lst->add($t_wrd->word_percent()->term());
+        $lst->add($t_wrd->word_global()->term());
+        $lst->add($t_wrd->word_human()->term());
+        $lst->add($t_wrd->word_population()->term());
+        return $lst;
+    }
+
+    /**
      * @return term_list the terms used in the "definition of joule" formula: joule, kg, metre and second
      */
     function term_list_joule(): term_list

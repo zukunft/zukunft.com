@@ -213,7 +213,7 @@ class system_tests
         $t->assert_dsp_id($t_fig->figure_value($msg), 'value figure π (unit symbol): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,,) for user 3 (zukunft.com system test) 2022-12-26 18:23:45');
         $t->assert_dsp_id($t_fig->figure_list($msg), ' 3.1415926535898 π (unit symbol)  123456 "mathematics"  (5,-1)');
         $t->assert_dsp_id($t_msk->view(), '"Start view" (view_id 1) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_msk->view_list(), '"Start view","Add word" (view_id 1,3) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_msk->view_list(), '"Start view","Add word" (view_id 1,2) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component(), '"Word" (component_id 1) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component_list(), '"Word","form field share type" (component_id 1,7) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');

@@ -363,8 +363,7 @@
       "description": "attributable proportion of a whole, 0..1"
     },
     {
-      "name": "ratio",
-      "description": "a quotient of two quantities"
+      "name": "ratio"
     },
     {
       "name": "gap",
@@ -1301,16 +1300,18 @@
     },
     {
       "words": [
-        "number of districts",
-        "Zurich (canton)"
+        "district",
+        "Zurich",
+        "canton"
       ],
       "number": "12",
       "source": "Statistik Kanton Zürich 2025"
     },
     {
       "words": [
-        "number of municipalities",
-        "Zurich (canton)",
+        "municipality",
+        "Zurich",
+        "canton",
         "2025"
       ],
       "number": "160",
@@ -1353,7 +1354,8 @@
     {
       "words": [
         "population growth per year",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2025",
         "percent"
       ],
@@ -1363,7 +1365,8 @@
     {
       "words": [
         "population growth per year",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2024",
         "percent"
       ],
@@ -1372,8 +1375,10 @@
     },
     {
       "words": [
-        "foreign population share",
-        "Zurich (canton)",
+        "population",
+        "foreign",
+        "Zurich",
+        "canton",
         "2025",
         "percent"
       ],
@@ -1382,8 +1387,10 @@
     },
     {
       "words": [
-        "foreign population share",
-        "Zurich (canton)",
+        "population",
+        "foreign",
+        "Zurich",
+        "canton",
         "2024",
         "percent"
       ],
@@ -1392,15 +1399,18 @@
     },
     {
       "words": [
-        "number of nationalities present in Zurich (canton)",
-        "Zurich (canton)"
+        "nationality",
+        "Zurich",
+        "canton"
       ],
       "number": "180",
       "source": "Statistik Kanton Zürich 2025"
     },
     {
       "words": [
-        "median age of Zurich (canton)",
+        "median age",
+        "Zurich",
+        "canton",
         "year",
         "2024"
       ],
@@ -1409,8 +1419,10 @@
     },
     {
       "words": [
-        "male population share",
-        "Zurich (canton)",
+        "male",
+        "population",
+        "Zurich",
+        "canton",
         "2024",
         "percent"
       ],
@@ -1419,8 +1431,10 @@
     },
     {
       "words": [
-        "female population share",
-        "Zurich (canton)",
+        "female",
+        "population",
+        "Zurich",
+        "canton",
         "2024",
         "percent"
       ],
@@ -1449,8 +1463,10 @@
     },
     {
       "words": [
-        "share of population 0–19",
-        "Zurich (canton)",
+        "population",
+        "age 0 to 19",
+        "Zurich",
+        "canton",
         "2025",
         "percent"
       ],
@@ -1459,8 +1475,10 @@
     },
     {
       "words": [
-        "share of population 20–64",
-        "Zurich (canton)",
+        "population",
+        "age 20 to 64",
+        "Zurich",
+        "canton",
         "2025",
         "percent"
       ],
@@ -1469,8 +1487,10 @@
     },
     {
       "words": [
-        "share of population 65+",
-        "Zurich (canton)",
+        "population",
+        "age 65 plus",
+        "Zurich",
+        "canton",
         "2025",
         "percent"
       ],
@@ -1479,7 +1499,9 @@
     },
     {
       "words": [
-        "annual births of Zurich (canton)",
+        "annual births",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "15420",
@@ -1487,7 +1509,9 @@
     },
     {
       "words": [
-        "number of households in Zurich (canton)",
+        "household",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "742000",
@@ -1496,7 +1520,8 @@
     {
       "words": [
         "average household size",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "inhabitant",
         "2024"
       ],
@@ -1505,8 +1530,10 @@
     },
     {
       "words": [
-        "German language share",
-        "Zurich (canton)",
+        "German",
+        "language",
+        "Zurich",
+        "canton",
         "percent"
       ],
       "number": "0.815",
@@ -1514,7 +1541,9 @@
     },
     {
       "words": [
-        "GDP of Zurich (canton)",
+        "gross domestic product",
+        "Zurich",
+        "canton",
         "billion",
         "Swiss franc",
         "2022"
@@ -1524,7 +1553,10 @@
     },
     {
       "words": [
-        "GDP rank of Zurich (canton)",
+        "rank",
+        "gross domestic product",
+        "Zurich",
+        "canton",
         "Switzerland",
         "2022"
       ],
@@ -1533,7 +1565,9 @@
     },
     {
       "words": [
-        "GDP of Zurich (canton)",
+        "gross domestic product",
+        "Zurich",
+        "canton",
         "percent",
         "Switzerland",
         "2022"
@@ -1543,7 +1577,9 @@
     },
     {
       "words": [
-        "GDP per capita of Zurich (canton)",
+        "GDP per capita",
+        "Zurich",
+        "canton",
         "Swiss franc",
         "2022"
       ],
@@ -1552,7 +1588,10 @@
     },
     {
       "words": [
-        "GDP per capita rank",
+        "rank",
+        "GDP per capita",
+        "Zurich",
+        "canton",
         "Switzerland",
         "2022"
       ],
@@ -1562,7 +1601,8 @@
     {
       "words": [
         "real GDP growth",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2024",
         "percent"
       ],
@@ -1571,7 +1611,9 @@
     },
     {
       "words": [
-        "unemployment rate of Zurich (canton)",
+        "unemployment",
+        "Zurich",
+        "canton",
         "2026‑01",
         "percent"
       ],
@@ -1580,7 +1622,9 @@
     },
     {
       "words": [
-        "unemployment rate of Zurich (canton)",
+        "unemployment",
+        "Zurich",
+        "canton",
         "2025",
         "percent"
       ],
@@ -1589,7 +1633,9 @@
     },
     {
       "words": [
-        "number of employees in Zurich (canton)",
+        "employee",
+        "Zurich",
+        "canton",
         "2023"
       ],
       "number": "928400",
@@ -1597,8 +1643,9 @@
     },
     {
       "words": [
-        "full‑time equivalent jobs in Zurich (canton)",
-        "Zurich (canton)",
+        "full‑time equivalent",
+        "Zurich",
+        "canton",
         "2023"
       ],
       "number": "786200",
@@ -1607,7 +1654,8 @@
     {
       "words": [
         "services share of employment",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023",
         "percent"
       ],
@@ -1617,7 +1665,8 @@
     {
       "words": [
         "industry share of employment",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023",
         "percent"
       ],
@@ -1627,7 +1676,8 @@
     {
       "words": [
         "agriculture share of employment",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023",
         "percent"
       ],
@@ -1637,7 +1687,8 @@
     {
       "words": [
         "median monthly salary",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "Swiss franc",
         "2024"
       ],
@@ -1647,7 +1698,8 @@
     {
       "words": [
         "gender pay gap",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2024"
       ],
@@ -1656,7 +1708,9 @@
     },
     {
       "words": [
-        "number of companies in Zurich (canton)",
+        "company",
+        "Zurich",
+        "canton",
         "2025"
       ],
       "number": "98600",
@@ -1664,7 +1718,9 @@
     },
     {
       "words": [
-        "number of startups in Zurich (canton)",
+        "startup",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "2150",
@@ -1673,7 +1729,8 @@
     {
       "words": [
         "patent applications per 10 000",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023"
       ],
       "number": "18.4",
@@ -1681,8 +1738,9 @@
     },
     {
       "words": [
-        "total canton budget",
-        "Zurich (canton)",
+        "budget",
+        "Zurich",
+        "canton",
         "billion",
         "Swiss franc",
         "2026"
@@ -1693,7 +1751,8 @@
     {
       "words": [
         "gross canton debt",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "billion",
         "Swiss franc",
         "2024"
@@ -1704,7 +1763,8 @@
     {
       "words": [
         "debt to revenue ratio",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2024"
       ],
@@ -1714,7 +1774,8 @@
     {
       "words": [
         "cantonal profit tax rate",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2025"
       ],
@@ -1724,7 +1785,8 @@
     {
       "words": [
         "cantonal profit tax rate",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2026"
       ],
@@ -1734,7 +1796,8 @@
     {
       "words": [
         "cantonal tax multiplier",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2025"
       ],
@@ -1764,7 +1827,8 @@
     {
       "words": [
         "AAA credit rating",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "S&P",
         "Fitch",
         "2025"
@@ -1774,7 +1838,9 @@
     },
     {
       "words": [
-        "number of dwellings in Zurich (canton)",
+        "dwelling",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "768300",
@@ -1783,7 +1849,8 @@
     {
       "words": [
         "rented dwellings share",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2024"
       ],
@@ -1793,7 +1860,8 @@
     {
       "words": [
         "owner‑occupied dwellings share",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2024"
       ],
@@ -1803,7 +1871,8 @@
     {
       "words": [
         "average monthly rent",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "Swiss franc",
         "2024"
       ],
@@ -1813,7 +1882,8 @@
     {
       "words": [
         "apartment price per m²",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "Swiss franc",
         "2025"
       ],
@@ -1823,7 +1893,8 @@
     {
       "words": [
         "housing vacancy rate",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2025‑06",
         "percent"
       ],
@@ -1833,7 +1904,8 @@
     {
       "words": [
         "public road network length",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "kilometre"
       ],
       "number": "4180",
@@ -1842,7 +1914,8 @@
     {
       "words": [
         "railway network length",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "kilometre"
       ],
       "number": "520",
@@ -1851,7 +1924,8 @@
     {
       "words": [
         "public transport modal share",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2023"
       ],
@@ -1861,7 +1935,8 @@
     {
       "words": [
         "motorised individual transport share",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2023"
       ],
@@ -1871,7 +1946,8 @@
     {
       "words": [
         "bicycle modal share",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2023"
       ],
@@ -1881,7 +1957,8 @@
     {
       "words": [
         "walking modal share",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2023"
       ],
@@ -1891,7 +1968,8 @@
     {
       "words": [
         "number of primary schools in Zurich (canton)",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "252",
@@ -1900,7 +1978,8 @@
     {
       "words": [
         "number of secondary schools",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "87",
@@ -1908,15 +1987,18 @@
     },
     {
       "words": [
-        "number of universities in Zurich (canton)",
-        "Zurich (canton)"
+        "university",
+        "Zurich",
+        "canton"
       ],
       "number": "4",
       "source": "Statistik Kanton Zürich 2025"
     },
     {
       "words": [
-        "number of students in Zurich (canton)",
+        "student",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "88500",
@@ -1925,7 +2007,8 @@
     {
       "words": [
         "tertiary education attainment 25–64",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent"
       ],
       "number": "0.423",
@@ -1934,7 +2017,8 @@
     {
       "words": [
         "research expenditure share",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent",
         "2022"
       ],
@@ -1943,7 +2027,9 @@
     },
     {
       "words": [
-        "number of hospitals in Zurich (canton)",
+        "hospital",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "28",
@@ -1952,7 +2038,8 @@
     {
       "words": [
         "number of acute care beds",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2024"
       ],
       "number": "6420",
@@ -1961,7 +2048,8 @@
     {
       "words": [
         "doctors per 1000 inhabitants",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023"
       ],
       "number": "5.2",
@@ -1970,7 +2058,8 @@
     {
       "words": [
         "life expectancy at birth",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "year",
         "male",
         "2023"
@@ -1981,7 +2070,8 @@
     {
       "words": [
         "life expectancy at birth",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "year",
         "female",
         "2023"
@@ -1992,7 +2082,8 @@
     {
       "words": [
         "infant mortality per 1000 live births",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023"
       ],
       "number": "2.0",
@@ -2000,8 +2091,10 @@
     },
     {
       "words": [
-        "forest share of area",
-        "Zurich (canton)",
+        "forest",
+        "area",
+        "Zurich",
+        "canton",
         "percent"
       ],
       "number": "0.305",
@@ -2009,8 +2102,10 @@
     },
     {
       "words": [
-        "agricultural share of area",
-        "Zurich (canton)",
+        "agricultural",
+        "area",
+        "Zurich",
+        "canton",
         "percent"
       ],
       "number": "0.428",
@@ -2019,7 +2114,8 @@
     {
       "words": [
         "settlement share of area",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent"
       ],
       "number": "0.237",
@@ -2028,7 +2124,8 @@
     {
       "words": [
         "water share of area",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "percent"
       ],
       "number": "0.03",
@@ -2045,7 +2142,8 @@
     {
       "words": [
         "CO₂ emissions per capita",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "tonne",
         "2022"
       ],
@@ -2054,8 +2152,10 @@
     },
     {
       "words": [
-        "renewable electricity share",
-        "Zurich (canton)",
+        "renewable",
+        "electricity",
+        "Zurich",
+        "canton",
         "percent",
         "2024"
       ],
@@ -2065,7 +2165,8 @@
     {
       "words": [
         "total electricity consumption",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "GWh",
         "2024"
       ],
@@ -2074,8 +2175,10 @@
     },
     {
       "words": [
-        "waste recycling rate",
-        "Zurich (canton)",
+        "recycling",
+        "waste",
+        "Zurich",
+        "canton",
         "percent",
         "2024"
       ],
@@ -2085,7 +2188,8 @@
     {
       "words": [
         "annual tourist overnight stays",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "million",
         "2024"
       ],
@@ -2095,7 +2199,8 @@
     {
       "words": [
         "homicide rate per 100 000",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023"
       ],
       "number": "0.4",
@@ -2104,7 +2209,8 @@
     {
       "words": [
         "Mercer quality of life rank",
-        "Zurich region",
+        "Zurich",
+        "region",
         "2025"
       ],
       "number": "2",
@@ -2113,7 +2219,8 @@
     {
       "words": [
         "Human Development Index value",
-        "Zurich region",
+        "Zurich",
+        "region",
         "2023"
       ],
       "number": "0.993",
@@ -2121,7 +2228,9 @@
     },
     {
       "words": [
-        "Gini coefficient of Zurich (canton)",
+        "Gini coefficient",
+        "Zurich",
+        "canton",
         "2022"
       ],
       "number": "32.4",
@@ -2146,7 +2255,8 @@
     {
       "words": [
         "year of accession to Confederation",
-        "Zurich (canton)"
+        "Zurich",
+        "canton"
       ],
       "number": "1351",
       "source": "Wikipedia Canton of Zurich"

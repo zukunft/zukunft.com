@@ -2571,6 +2571,25 @@
       "verb": "is alias of",
       "to": "Japanese yen",
       "description": "'Yen' (used in the original dataset) and 'Japanese yen' (used in the new file) refer to the same currency (JPY)."
+    },
+    {
+      "name": "in EUR",
+      "from": "EUR",
+      "verb": "in",
+      "to": "Euro",
+      "description": "Indicates that a monetary value is expressed in euros, the reporting unit of the euro area."
+    },
+    {
+      "from": "€",
+      "verb": "is alias of",
+      "to": "Euro",
+      "description": "The euro sign is used in place of the currency name, so it names the same currency and not only a symbol pointing to it."
+    },
+    {
+      "from": "$",
+      "verb": "is alias of",
+      "to": "US dollar",
+      "description": "The dollar sign is used in place of the currency name, so it names the same currency and not only a symbol pointing to it."
     }
   ],
   "sources": [

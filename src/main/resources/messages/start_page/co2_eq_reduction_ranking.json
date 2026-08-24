@@ -336,8 +336,7 @@
       "name": "initial effort",
       "from": "effort",
       "verb": "kind of",
-      "to": "initial",
-      "description": "Criterion: one-time global investment needed to set the solution up at the scale behind its reduction potential. Unit: billion US dollar. Range spans about one standard deviation."
+      "to": "initial"
     },
     {
       "name": "fulfillment probability",

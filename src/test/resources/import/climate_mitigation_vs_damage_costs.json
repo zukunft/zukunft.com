@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-08-21 21:55:13",
   "user": "timon",
   "selection": [
@@ -9,56 +10,15 @@
   "description": "Evidence on whether avoiding greenhouse gas emissions is cheaper than paying for the consequences. Measured values carry a verified source, assumed values carry a separate confidence value. Values from the retracted Kotz 2024 analysis are kept and marked retracted so they are not cited by mistake.",
   "words": [
     {
-      "name": "climate change mitigation",
-      "description": "Actions to reduce greenhouse gas emissions or enhance sinks, so that the amount of future warming is limited.",
-      "refs": {
-        "wikipedia": "Climate_change_mitigation",
-        "wikidata": "Q1362332"
-      }
-    },
-    {
-      "name": "climate damage",
-      "description": "The economic loss caused by climate change relative to a counterfactual world without further warming."
-    },
-    {
-      "name": "mitigation cost",
-      "description": "The economic cost of reducing greenhouse gas emissions, excluding any avoided climate damage."
-    },
-    {
-      "name": "avoided damage",
-      "description": "Climate damage that does not occur because emissions were reduced; the benefit side of a mitigation cost benefit analysis."
-    },
-    {
-      "name": "benefit cost ratio",
-      "description": "Avoided climate damage divided by mitigation cost. Values above one mean that avoiding emissions is cheaper than paying for the consequences."
-    },
-    {
-      "name": "income reduction",
-      "description": "Reduction of income per capita relative to a baseline without climate impacts."
-    },
-    {
-      "name": "output reduction",
-      "description": "Reduction of economic output per capita relative to a baseline without further warming."
-    },
-    {
       "name": "probability",
       "description": "Likelihood of a stated outcome, expressed between zero and one."
-    },
-    {
-      "name": "discount rate",
-      "description": "Rate at which future consumption is valued lower than present consumption in a cost benefit analysis."
     },
     {
       "name": "confidence",
       "description": "Numeric confidence between zero and one attached to an assumed value."
     },
     {
-      "name": "measured value",
-      "description": "Value taken from a named and verified source."
-    },
-    {
-      "name": "assumed value",
-      "description": "Value estimated rather than taken from a verified primary source; carries a separate confidence value."
+      "name": "assumed"
     },
     {
       "name": "retracted",
@@ -85,18 +45,6 @@
       "description": "Value as first published, before correction or retraction."
     },
     {
-      "name": "1.5 degree target",
-      "description": "Limiting global mean warming to 1.5 degrees Celsius above pre-industrial levels."
-    },
-    {
-      "name": "2 degree target",
-      "description": "Limiting global mean warming to 2 degrees Celsius above pre-industrial levels."
-    },
-    {
-      "name": "3.2 degree scenario",
-      "description": "A scenario with about 3.2 degrees Celsius of global warming by mid century."
-    },
-    {
       "name": "Paris Agreement",
       "description": "International treaty of 2015 on climate change mitigation, adaptation and finance.",
       "refs": {
@@ -107,22 +55,6 @@
     {
       "name": "percent",
       "description": "One part per hundred."
-    },
-    {
-      "name": "trillion USD",
-      "description": "Trillion United States dollars."
-    },
-    {
-      "name": "GDP share",
-      "description": "Share of gross domestic product."
-    },
-    {
-      "name": "country share",
-      "description": "Share of the countries covered by a study."
-    },
-    {
-      "name": "population share",
-      "description": "Share of the global population."
     },
     {
       "name": "world",
@@ -187,9 +119,219 @@
     {
       "name": "study",
       "description": "A published scientific or policy analysis."
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "climate"
+    },
+    {
+      "name": "mitigation"
+    },
+    {
+      "name": "damage"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "avoided"
+    },
+    {
+      "name": "benefit"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "output"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "discount"
+    },
+    {
+      "name": "1.5"
+    },
+    {
+      "name": "degree"
+    },
+    {
+      "name": "target"
+    },
+    {
+      "name": "2"
+    },
+    {
+      "name": "3.2"
+    },
+    {
+      "name": "scenario"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "country"
+    },
+    {
+      "name": "population"
     }
   ],
   "triples": [
+    {
+      "name": "climate change",
+      "from": "change",
+      "verb": "of",
+      "to": "climate"
+    },
+    {
+      "name": "climate change mitigation",
+      "from": "mitigation",
+      "verb": "of",
+      "to": "climate change",
+      "description": "Actions to reduce greenhouse gas emissions or enhance sinks, so that the amount of future warming is limited."
+    },
+    {
+      "name": "climate damage",
+      "from": "damage",
+      "verb": "of",
+      "to": "climate",
+      "description": "The economic loss caused by climate change relative to a counterfactual world without further warming."
+    },
+    {
+      "name": "mitigation cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "mitigation",
+      "description": "The economic cost of reducing greenhouse gas emissions, excluding any avoided climate damage."
+    },
+    {
+      "name": "avoided damage",
+      "from": "damage",
+      "verb": "kind of",
+      "to": "avoided",
+      "description": "Climate damage that does not occur because emissions were reduced; the benefit side of a mitigation cost benefit analysis."
+    },
+    {
+      "name": "benefit cost",
+      "from": "benefit",
+      "verb": "and",
+      "to": "cost"
+    },
+    {
+      "name": "benefit cost ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "benefit cost",
+      "description": "Avoided climate damage divided by mitigation cost. Values above one mean that avoiding emissions is cheaper than paying for the consequences."
+    },
+    {
+      "name": "income reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "income",
+      "description": "Reduction of income per capita relative to a baseline without climate impacts."
+    },
+    {
+      "name": "output reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "output",
+      "description": "Reduction of economic output per capita relative to a baseline without further warming."
+    },
+    {
+      "name": "discount rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "discount",
+      "description": "Rate at which future consumption is valued lower than present consumption in a cost benefit analysis."
+    },
+    {
+      "name": "1.5 degree",
+      "from": "1.5",
+      "verb": "times",
+      "to": "degree"
+    },
+    {
+      "name": "1.5 degree target",
+      "from": "target",
+      "verb": "of",
+      "to": "1.5 degree",
+      "description": "Limiting global mean warming to 1.5 degrees Celsius above pre-industrial levels."
+    },
+    {
+      "name": "2 degree",
+      "from": "2",
+      "verb": "times",
+      "to": "degree"
+    },
+    {
+      "name": "2 degree target",
+      "from": "target",
+      "verb": "of",
+      "to": "2 degree",
+      "description": "Limiting global mean warming to 2 degrees Celsius above pre-industrial levels."
+    },
+    {
+      "name": "3.2 degree",
+      "from": "3.2",
+      "verb": "times",
+      "to": "degree"
+    },
+    {
+      "name": "3.2 degree scenario",
+      "from": "scenario",
+      "verb": "of",
+      "to": "3.2 degree",
+      "description": "A scenario with about 3.2 degrees Celsius of global warming by mid century."
+    },
+    {
+      "name": "trillion USD",
+      "from": "USD",
+      "verb": "scaled by",
+      "to": "trillion",
+      "description": "Trillion United States dollars."
+    },
+    {
+      "name": "GDP share",
+      "from": "share",
+      "verb": "of",
+      "to": "GDP",
+      "description": "Share of gross domestic product."
+    },
+    {
+      "name": "country share",
+      "from": "share",
+      "verb": "of",
+      "to": "country",
+      "description": "Share of the countries covered by a study."
+    },
+    {
+      "name": "population share",
+      "from": "share",
+      "verb": "of",
+      "to": "population",
+      "description": "Share of the global population."
+    },
     {
       "from": "Glanemann 2020",
       "verb": "is a",
@@ -272,9 +414,9 @@
   "formulas": [
     {
       "name": "benefit cost ratio of mitigation",
-      "formula": "benefit cost ratio = avoided damage / mitigation cost",
+      "expression": "\"benefit cost ratio\" = \"avoided damage\" / \"mitigation cost\"",
       "description": "Ratio above one means that avoiding emissions is cheaper than paying for the consequences.",
-      "components": [
+      "assigned": [
         "avoided damage",
         "mitigation cost"
       ]
@@ -338,8 +480,7 @@
         "benefit cost ratio",
         "Paris Agreement",
         "world",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": "1.8",
       "source": "DIW Wochenbericht 38 2025"
@@ -349,8 +490,7 @@
         "benefit cost ratio",
         "Paris Agreement",
         "world",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": "4.8",
       "source": "DIW Wochenbericht 38 2025"
@@ -361,8 +501,7 @@
         "1.5 degree target",
         "2 degree target",
         "avoided damage",
-        "threshold",
-        "measured value"
+        "threshold"
       ],
       "number": "0.75",
       "source": "Burke 2018 Nature"
@@ -374,8 +513,7 @@
         "2 degree target",
         "avoided damage",
         "trillion USD",
-        "threshold",
-        "measured value"
+        "threshold"
       ],
       "number": "0.60",
       "source": "Burke 2018 Nature"
@@ -387,8 +525,7 @@
         "2 degree target",
         "trillion USD",
         "threshold",
-        "2100",
-        "measured value"
+        "2100"
       ],
       "number": "20",
       "source": "Burke 2018 Nature"
@@ -397,8 +534,7 @@
       "words": [
         "discount rate",
         "Burke 2018",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "3",
       "source": "Burke 2018 Nature"
@@ -408,8 +544,7 @@
         "country share",
         "1.5 degree target",
         "avoided damage",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "71",
       "source": "Burke 2018 Nature"
@@ -419,8 +554,7 @@
         "population share",
         "1.5 degree target",
         "avoided damage",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "90",
       "source": "Burke 2018 Nature"
@@ -432,8 +566,7 @@
         "world",
         "percent",
         "2100",
-        "minimum",
-        "measured value"
+        "minimum"
       ],
       "number": "15",
       "source": "Burke 2018 Nature"
@@ -445,8 +578,7 @@
         "world",
         "percent",
         "2100",
-        "maximum",
-        "measured value"
+        "maximum"
       ],
       "number": "25",
       "source": "Burke 2018 Nature"
@@ -454,11 +586,11 @@
     {
       "words": [
         "climate damage",
+        "avoided damage",
         "world",
         "GDP share",
         "percent",
-        "Stern Review",
-        "measured value"
+        "Stern Review"
       ],
       "number": "5",
       "source": "Ecologic summary of the Stern Review"
@@ -469,8 +601,7 @@
         "world",
         "GDP share",
         "percent",
-        "Stern Review",
-        "measured value"
+        "Stern Review"
       ],
       "number": "1",
       "source": "Ecologic summary of the Stern Review"
@@ -483,8 +614,7 @@
         "2049",
         "Kotz 2024",
         "original",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "19",
       "source": "Kotz 2024 retraction note"
@@ -498,8 +628,7 @@
         "Kotz 2024",
         "revised",
         "minimum",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "6",
       "source": "Kotz 2024 retraction note"
@@ -513,8 +642,7 @@
         "Kotz 2024",
         "revised",
         "maximum",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "31",
       "source": "Kotz 2024 retraction note"
@@ -526,8 +654,7 @@
         "Kotz 2024",
         "2050",
         "original",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "0.99",
       "source": "Kotz 2024 retraction note"
@@ -539,8 +666,7 @@
         "Kotz 2024",
         "2050",
         "revised",
-        "retracted",
-        "measured value"
+        "retracted"
       ],
       "number": "0.90",
       "source": "Kotz 2024 retraction note"
@@ -554,7 +680,7 @@
         "3.2 degree scenario",
         "2050",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "18"
     },
@@ -564,7 +690,7 @@
         "output reduction",
         "3.2 degree scenario",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     },
@@ -577,7 +703,7 @@
         "2 degree target",
         "2050",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "4"
     },
@@ -587,21 +713,30 @@
         "output reduction",
         "2 degree target",
         "Swiss Re 2021",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.6"
     }
   ],
   "calc-validation": [
     {
-      "name": "Stern Review implied benefit cost ratio",
-      "formula": "benefit cost ratio = avoided damage / mitigation cost",
-      "input": {
-        "avoided damage": "5",
-        "mitigation cost": "1"
-      },
-      "result": "5",
-      "description": "Damage of 5 percent of GDP against mitigation cost of 1 percent of GDP as reported for the Stern Review."
+      "formula": "benefit cost ratio of mitigation",
+      "context": [
+        "climate damage",
+        "avoided damage",
+        "mitigation cost",
+        "world",
+        "GDP share",
+        "percent",
+        "Stern Review"
+      ],
+      "words": [
+        "benefit cost ratio",
+        "world",
+        "Stern Review"
+      ],
+      "number": "5",
+      "note": "Damage of 5 percent of GDP against mitigation cost of 1 percent of GDP as reported for the Stern Review."
     }
   ]
 }

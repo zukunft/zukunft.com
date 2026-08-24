@@ -201,6 +201,32 @@ class import_tests
         $imp->get_data_object($val_lst_bad, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'unexpected json value name');
 
+        // the description of a value is kept in its phrase group (see
+        // sandbox_value::set_description), so the import must map it like any other field
+        $test_name = 'JSON import value description';
+        $test_desc = 'the number of the unit test value';
+        $msg = new user_message($t->usr_dev);
+        $val_with_desc = [json_fields::VALUES => [[
+            json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+            json_fields::NUMBER => 8.88,
+            json_fields::DESCRIPTION => $test_desc
+        ]]];
+        $dto = $imp->get_data_object($val_with_desc, $msg);
+        $val = $dto->value_list()->lst()[0] ?? null;
+        $t->assert($test_name, $val?->get_description(), $test_desc);
+
+        // negative: a value without a description must not get one, because a partial object
+        // must never overwrite a field that it does not carry
+        $test_name = '... and a value without a description has none';
+        $msg = new user_message($t->usr_dev);
+        $val_no_desc = [json_fields::VALUES => [[
+            json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+            json_fields::NUMBER => 8.88
+        ]]];
+        $dto = $imp->get_data_object($val_no_desc, $msg);
+        $val = $dto->value_list()->lst()[0] ?? null;
+        $t->assert_null($test_name, $val?->get_description());
+
         // the compact "phrase-values" map assigns a number directly to a single phrase
         // (here three "<city> inhabitants" triples), expanded to one value per entry
         $test_name = 'JSON import phrase-values count';

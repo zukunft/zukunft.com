@@ -349,37 +349,31 @@
       "to": "fuel"
     },
     {
-      "name": "per 100 km",
       "from": "cost",
       "verb": "per",
       "to": "100 km"
     },
     {
-      "name": "per day",
       "from": "cost",
       "verb": "per",
       "to": "day"
     },
     {
-      "name": "per km",
       "from": "cost",
       "verb": "per",
       "to": "km"
     },
     {
-      "name": "per l",
       "from": "cost",
       "verb": "per",
       "to": "l"
     },
     {
-      "name": "per t",
       "from": "cost",
       "verb": "per",
       "to": "t"
     },
     {
-      "name": "per year",
       "from": "cost",
       "verb": "per",
       "to": "year"

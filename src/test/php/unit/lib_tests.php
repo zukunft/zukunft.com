@@ -182,6 +182,20 @@ class lib_tests
         $result = $lib->trim_html($text);
         $t->assert("trim_html space after tag", $result, $target);
 
+        // the html snapshots are stored formatted, so a formatted html must trim to the same text
+        // as the compact html it has been created from, links included
+        $test_name = 'trim_html of a formatted html';
+        $text = '<li><a href="/http/view.php">word</a></li>';
+        $target = $lib->trim_html($text);
+        $result = $lib->trim_html($lib->format_html($text));
+        $t->assert($test_name, $result, $target);
+
+        // only the spaces between the tags are removed, a space within a text is part of the text
+        $test_name = 'trim_html keeps a space within a text';
+        $target = $lib->trim_html('<td>two words</td>');
+        $result = $lib->trim_html('<td>twowords</td>');
+        $t->assert_not($test_name, $result, $target);
+
         // convert an HTML page title to the text the user would see, keeping the
         // font awesome edit icon as a readable '<fas fa-edit>' placeholder
         $test_name = 'html_to_text';

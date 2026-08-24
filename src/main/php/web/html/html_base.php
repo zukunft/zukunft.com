@@ -1957,7 +1957,7 @@ class html_base
     function div_center(string $txt): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="container text-center">' . $txt . '</' . self::DIV . '>';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . ' ' . styles::TEXT_CENTER . '">' . $txt . '</' . self::DIV . '>';
         } else {
             return '<' . self::DIV . ' ' . self::CLASS_HTML . '="center_form">' . $txt . '</' . self::DIV . '>';
         }
@@ -1966,7 +1966,7 @@ class html_base
     function dsp_form_center(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="container text-center">';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . ' ' . styles::TEXT_CENTER . '">';
         } else {
             return '<' . self::DIV . ' ' . self::CLASS_HTML . '="center_form">';
         }

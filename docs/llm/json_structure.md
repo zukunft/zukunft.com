@@ -949,22 +949,25 @@ source name.
 }
 ```
 
-### Qualify a value as specifically as the data allows — prefer triples from single words
+### Qualify a value as specifically as the data allows — build from single words
 
 A value's `words` array is the phrase group the number belongs to. **Always
 describe a value as specifically as the data allows**: add as many qualifying
 phrases as possible. A bare `{"words": ["price"], "number": "20"}` claims *the*
 price is 20 — meaningless. Add the context (dataset, entity, period, source).
 
-Express each qualifier as a **phrase built from single words**, and **prefer a
-triple over a flat extra word**:
+Express every qualifier through **single words**, and combine them into a triple
+only where the combination itself carries meaning — the entity, the order or the
+verb (see *Word vs triple in a value* below):
 
 - Define the individual words (`economics`, `textbook`, `example`).
 - Combine them with **existing verbs** into triples, building up. Because each
   triple's `to`/`from` is itself a named triple, give it an explicit `name`:
   - `{"from": "textbook", "verb": "of", "to": "economics", "name": "economics textbook"}`
   - `{"from": "example", "verb": "of", "to": "economics textbook", "name": "economics textbook example"}`
-- Reference the resulting triple by name in the value's `words` array.
+- Reference the resulting triple by name in the value's `words` array — here the
+  `of` chain is what says the example is *from* the textbook and the textbook is
+  *about* economics, which the three loose words would not.
 
 - **Vague**: `{"words": ["price"], "number": "20", "share": "public", "source": "economics textbook example"}`
 - **Specific**: `{"words": ["price", "economics textbook example"], "number": "20", "source": "economics textbook example"}`
@@ -979,7 +982,7 @@ quantity in the whole graph. The qualifier that usually decides this is the
 - **Wrong** — generic entity word, group is not globally unique:
 
 ```json
-{ "words": ["canton", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+{ "words": ["canton", "GDP", "2022", "CHF"], "number": "159800000000" }
 ```
 
 There are 26 cantons, so this never says *which* canton's GDP it is — another
@@ -994,48 +997,85 @@ no unique fact.
 ```
 
 ```json
-{ "words": ["Zurich (canton)", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+{ "words": ["Zurich (canton)", "GDP", "2022", "CHF"], "number": "159800000000" }
 ```
 
 Now the group identifies one number globally. The shared atoms (`canton`, `GDP`,
-`2022`, `CHF`, `measured value`) stay reusable across every entity; only the
-entity phrase carries the global identity. Apply it to every value —
+`2022`, `CHF`) stay reusable across every entity; only the entity phrase carries
+the global identity. Apply it to every value —
 `Zurich (city)` not bare `city`, `Vestas` not bare `company`. The entity triple
 doubles as the disambiguation of the ambiguous name (`Zurich` the canton vs the
 city — see *Disambiguate an ambiguous word with qualifier triples*).
 
-### Word vs triple in a value — does the order carry meaning?
+### Word vs triple in a value — single words unless the order or the verb carries meaning
 
-A value's `words` array is an **unordered set**: the import cannot tell `["A", "B"]`
-from `["B", "A"]`. So when two phrases qualify a value, ask whether their order
-could change the meaning:
+**Default to single words in a value's `words` array; reach for a triple only
+when the combination itself carries information that the flat words would lose.**
+That is the case for exactly two things: the **order** of the combined phrases
+and the **verb** that combines them.
 
-- **If the order could be relevant, use a triple** instead of two flat words.
-  The triple fixes the direction in its `from`/`verb`/`to`, and the value
-  references the single triple name — so the meaning survives.
-- **If the order is never relevant, use two (or more) flat words** and do *not*
-  invent a triple. A triple costs a name and a database row; spend it only where
-  direction earns it. Over-triplifying buries the reusable single-word atoms, so
-  when in doubt that the order matters, leave it as separate words.
+The reason is what the user can do with the result. Every phrase of the group is
+its own link, so
 
-**Order could matter → triple:**
+```json
+{ "words": ["primary", "school", "Zurich", "canton", "2024"], "number": "252" }
+```
 
-- A ratio — `revenue / cost` ≠ `cost / revenue`: tag the value with
-  `{"from": "revenue", "verb": "per", "to": "cost", "name": "revenue per cost"}`,
-  not the two bare words.
-- A directed flow — exports *from* Switzerland *to* Germany differ from the
-  reverse: `{"from": "Switzerland", "verb": "to", "to": "Germany", "name": "Switzerland to Germany"}`.
-- A signed change over a period — a value measured *from* 2023 *to* 2024 flips
-  sign if the years swap: `{"from": "2023", "verb": "to", "to": "2024", "name": "2023 to 2024"}`.
+gives the reader of "number of primary schools in Zurich (canton)" five entry
+points instead of one: from `school` they reach every other school figure, from
+`Zurich` the city and the canton alike, from `primary` every other primary
+measure. And nothing is lost, because the triples built from those words
+(`primary school`, `Zurich (canton)`) hang on the words themselves — so the
+single word is the *shorter* path to the triple, while a triple in the value is a
+dead end that leads back to its two parts and no further.
 
-**Order is irrelevant → flat words:**
+A triple also costs a name and a database row. Spend it only where the order or
+the verb earns it; when in doubt, leave the phrases separate.
+
+**The order carries meaning → triple.** A value's `words` array is an **unordered
+set**: the import cannot tell `["A", "B"]` from `["B", "A"]`. So whenever
+swapping two phrases would name a different quantity, the direction has to live
+in a triple's `from`/`to`. `forum_outreach_estimate.json` holds both directions
+of the same pair, and they are reciprocals:
+
+```json
+{ "name": "qualified collaborator per hour", "from": "qualified collaborator", "verb": "per", "to": "hour" },
+{ "name": "hour per qualified collaborator", "from": "hour", "verb": "per", "to": "qualified collaborator" }
+```
+
+As flat words both would be `["qualified collaborator", "hour"]` — one group for
+two different numbers. The same holds for any ratio (`revenue per cost`), any
+directed flow (exports *from* Switzerland *to* Germany) and any signed change
+over a period (*from* 2023 *to* 2024 flips sign if the years swap).
+
+**The verb carries meaning → triple.** Two phrases can be linked by more than one
+relation, and then the verb alone decides which number is meant. `zh_city.json`
+uses the same `from` and the same `to` twice and only changes the verb:
+
+```json
+{ "name": "inbound commuters to Zurich (city)",     "from": "commuter", "verb": "in", "to": "Zurich (city)" },
+{ "name": "outbound commuters from Zurich (city)",  "from": "commuter", "verb": "of", "to": "Zurich (city)" }
+```
+
+The 2023 values are 235'000 and 58'000. Flattened to
+`["commuter", "Zurich (city)", "2023"]` both would land in one group, and the
+question the number answers — who commutes *into* the city versus *out of* it —
+would be gone.
+
+**Neither → flat words:**
 
 - `{"words": ["Vestas", "revenue", "2024"], "number": "..."}` — "Vestas's revenue
-  in 2024" reads the same whatever the qualifier order; no triple needed.
-- `{"words": ["city of Zurich", "inhabitant", "2025"], "number": "443037"}` — the
+  in 2024" reads the same whatever the qualifier order, and no verb links the
+  three; no triple needed.
+- `{"words": ["Zurich", "city", "inhabitant", "2025"], "number": "443037"}` — the
   entity, measure and period have no direction among themselves.
 - `{"words": ["Switzerland", "population", "2023"], "number": "..."}` — a plain
   fact tagged by entity, measure and period.
+
+The one qualifier that stays a triple either way is the **entity**, because it
+must be globally unique (see *Name the entity globally, not just locally*):
+`Zurich (canton)` is a phrase in its own right, not the accident of two words
+meeting in a group.
 
 ### Naming a formula operand: triple vs flat atoms
 
@@ -1123,7 +1163,7 @@ as a failed validation, never saved as a value.
   **literal, with no parent/child inheritance**: the validator takes each value
   whose phrase group is *wholly contained* in `context`, so `context` must be a
   **superset of every input value's full group** — include every qualifier the
-  values carry (measure, period, `measured value`, …), not just the phrase the
+  values carry (measure, period, currency, …), not just the phrase the
   expression names. A value tagged `city population` is therefore *not* found by a
   bare `population` unless the value also carries the word `population`; and to
   tell two same-measure inputs apart, put the distinguishing word (`city` /

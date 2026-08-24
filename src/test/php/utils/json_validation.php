@@ -75,6 +75,9 @@ class json_validation
     // the fields that the mapper of a section reads by the section name, filled by section_fields
     private array $sec_fld = [];
 
+    // the name of every const that the php code uses, filled by code_const_list on the first request
+    private array $code_const = [];
+
     // the folders with the import json files: the data of the pod and the data used for testing
     const array SCAN_PATHS = [
         'main data' => files::MESSAGE_PATH,
@@ -142,7 +145,7 @@ class json_validation
     const string CHK_CROSS_KEY = 'triple key with different names across the main data';
     const string CHK_CROSS_DESC = 'description differs across the main data';
     const string CHK_CMP_PHRASE = 'component uses a phrase that no main data file defines';
-    const string CHK_NOT_LOADED = 'file not named by an import const array';
+    const string CHK_NOT_LOADED = 'json file that neither an import nor a test reads';
     const string CHK_SECTION = 'import section not covered by this check';
     const string CHK_VERSION = 'format version';
 
@@ -220,6 +223,12 @@ class json_validation
     // the folders with the php classes that the mappers use, scanned to read their source
     const array CLASS_PATHS = [paths::MODEL, paths::SHARED];
 
+    // the folders with the php code that may name a json file, scanned for the const usages
+    const array CODE_PATHS = [paths::PHP_LIB, TEST_PHP_PATH];
+
+    // the file that only lists the file consts, so a const named there is not yet a usage
+    const string FILE_CONST_FILE = 'const' . DIRECTORY_SEPARATOR . 'files.php';
+
     // the fields that a section may use although no mapper stores them yet, so that the todo is
     // in the code of the field and not a finding repeated for every file
     const array SECTION_FIELDS_EXTRA = [
@@ -230,6 +239,13 @@ class json_validation
         // see the TODO Prio 2 at the end of formula_map::import_mapper
         json_fields::FORMULAS => [
             json_fields::REFS
+        ],
+        // a view-validation entry is a page url plus the expected markdown (see
+        // docs/llm/json_views.md) and not a view, but the import still maps it with
+        // view::import_obj, so the two documented fields are allowed until the two TODOs
+        // of the view-validation branch of import::put are done
+        json_fields::VIEW_VALIDATION => [
+            json_fields::URL, json_fields::RESULT
         ],
     ];
 
@@ -327,11 +343,11 @@ class json_validation
             . ' the phrase in the file of the component (see docs/llm/json_structure.md) or use'
             . ' the name of the phrase that is meant');
         $md_txt .= $this->section_md(self::CHK_NOT_LOADED, $find_lst,
-            'the import loads a json file only if a const of cfg/const/files.php or'
-            . ' test/php/const/files.php names it and that const is part of one of the arrays'
-            . ' used by test/test.php and test/test_full_load.php (' . $this->load_list_names()
-            . '), so a file that is in none of them is never imported and never tested:'
-            . ' add it to the matching list or delete the file');
+            'a json file is read either by the import, which loads the files of the const arrays'
+            . ' of test/test.php and test/test_full_load.php (' . $this->load_list_names()
+            . '), or by a single test that names its const itself (e.g. import_write_tests uses'
+            . ' test_files::IMPORT_WORDS); a file that neither names is dead weight, because'
+            . ' nothing ever reads it: add it to the matching list, use it in a test or delete it');
         $md_txt .= $this->section_md(self::CHK_SECTION, $find_lst,
             'the field check reads the allowed fields out of the mapper of the section, so it'
             . ' needs to know the mapper class of every top level key that the import reads:'
@@ -563,9 +579,9 @@ class json_validation
             $const_name = $this->file_const_name($file_path);
             if ($const_name == '') {
                 $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - named by no const';
-            } else {
+            } elseif (!$this->const_used_in_code($const_name)) {
                 $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - ' . $const_name
-                    . ' is in no import list';
+                    . ' is in no import list and used by no test';
             }
         }
         $json_array = json_decode(file_get_contents($file_path), true);
@@ -1498,6 +1514,52 @@ class json_validation
             }
         }
         return $result;
+    }
+
+    /**
+     * true if any php file besides the const class itself names the given const
+     *
+     * a json file that no import list names can still be loaded by a single test through its
+     * own const (e.g. import_write_tests uses test_files::IMPORT_WORDS), so only a const that
+     * nothing references at all marks a file that nothing reads
+     *
+     * @param string $const_name the class and the name of the const e.g. 'test_files::IMPORT_WORDS'
+     * @return bool false if no php file uses the const
+     */
+    private function const_used_in_code(string $const_name): bool
+    {
+        if ($this->code_const == []) {
+            $this->code_const = $this->code_const_list();
+        }
+        $parts = explode('::', $const_name);
+        return in_array(end($parts), $this->code_const);
+    }
+
+    /**
+     * the name of every const that the php code uses with a class prefix
+     *
+     * the two files.php are skipped, because a const that only its own class lists is not yet
+     * used by anything; a usage always names the const with a class or self prefix
+     *
+     * @return array the name of every const that the php code uses
+     */
+    private function code_const_list(): array
+    {
+        $result = [];
+        foreach (self::CODE_PATHS as $path) {
+            $dir_iterator = new RecursiveDirectoryIterator($path);
+            foreach (new RecursiveIteratorIterator($dir_iterator) as $file) {
+                $file_path = $file->getPathname();
+                if (str_ends_with($file->getFilename(), shared_def::FILE_PHP)
+                    and !str_ends_with($file_path, self::FILE_CONST_FILE)) {
+                    $matches = [];
+                    preg_match_all('/::([A-Z][A-Z_0-9]+)\b/',
+                        file_get_contents($file_path), $matches);
+                    $result = array_merge($result, $matches[1]);
+                }
+            }
+        }
+        return array_unique($result);
     }
 
     /**

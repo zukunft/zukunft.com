@@ -1,5 +1,5 @@
 {
-  "description": "Fermi estimate of a public CBAM calculation tool: Expected-value estimate for building a public, source-bound CBAM (Carbon Border Adjustment Mechanism) calculation tool, conditional on the stated premise that a usable tool causes an additional 10% reduction in global GHG emissions within one year.",
+  "description": "Fermi estimate of a public CBAM calculation tool: Expected-value estimate for building a public, source-bound CBAM (Carbon Border Adjustment Mechanism) calculation tool, conditional on the stated premise that a usable tool causes an additional 10% reduction in global GHG emissions within one year. The calculation is the \"expected value of a tool build\" formula, whose inputs are the values of this file. Reported outcome: P(usable) 0.028, value of the 10 percent reduction 1'096'300'000'000 USD per year (range 692'400'000'000 to 1'961'800'000'000), expected value 29'200'000'000 USD. One-year, non-compounding effect only, per the stated premise. If the effect is assumed durable/annual, NPV over 10y at 5% discount scales roughly x7.7. Sensitivity: the cost-effectiveness case (build_cost vs. EV) is positive even at P(usable) as low as 0.0001 (EV ~110M USD, still >>build_cost). The result is therefore almost entirely determined by the 10 percent causal premise, not by cost or adoption probability.",
   "version": "0.0.3",
   "data_version": "0.0.1",
   "words": [
@@ -110,6 +110,9 @@
     },
     {
       "name": "year"
+    },
+    {
+      "name": "expected"
     }
   ],
   "triples": [
@@ -228,6 +231,42 @@
       "verb": "kind of",
       "to": "confidence",
       "description": "The p-value of an assumed value: the subjective probability between 0 and 1 that the tagged estimate is right."
+    },
+    {
+      "name": "usable probability",
+      "from": "probability",
+      "verb": "kind of",
+      "to": "usable",
+      "description": "The probability that the tool ends up usable, which is the product of the technical completion and the effect-relevant adoption probability."
+    },
+    {
+      "name": "expected value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "expected"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "usable probability of a tool",
+      "expression": "\"usable probability\" = \"technical completion\" * \"effect-relevant adoption\"",
+      "description": "A tool is usable only if it is both technically finished and adopted widely enough to matter, so the two probabilities multiply.",
+      "assigned": [
+        "technical completion",
+        "effect-relevant adoption"
+      ]
+    },
+    {
+      "name": "expected value of a tool build",
+      "expression": "\"expected value\" = \"usable probability\" * \"greenhouse gas emission reduction\" * \"global greenhouse gas emissions\" * \"social cost of carbon\" - \"build cost\"",
+      "description": "The avoided damage that the tool is expected to cause, valued with the social cost of carbon, minus what building it costs.",
+      "assigned": [
+        "usable probability",
+        "greenhouse gas emission reduction",
+        "global greenhouse gas emissions",
+        "social cost of carbon",
+        "build cost"
+      ]
     }
   ],
   "sources": [
@@ -353,17 +392,5 @@
       ],
       "number": 0.3
     }
-  ],
-  "formula": "EV = P(usable) * (0.10 * global_emissions_2024 * SCC) - build_cost, where P(usable) = P(technical completion) * P(adoption)",
-  "result": {
-    "P_usable": 0.028,
-    "value_of_10pct_reduction_usd_per_year": 1096300000000,
-    "value_of_10pct_reduction_range_usd": [
-      692400000000,
-      1961800000000
-    ],
-    "expected_value_usd": 29200000000,
-    "expected_value_note": "One-year, non-compounding effect only, per the stated premise. If the effect is assumed durable/annual, NPV over 10y at 5% discount scales roughly x7.7.",
-    "sensitivity": "Cost-effectiveness case (build_cost vs. EV) is positive even at P(usable) as low as 0.0001 (EV ~110M USD, still >>build_cost). The result is therefore almost entirely determined by the 10 percent causal premise, not by cost or adoption probability."
-  }
+  ]
 }

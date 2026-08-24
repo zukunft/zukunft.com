@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -242,6 +243,14 @@ class value_list_ui_tests
             ->table_by_related_columns($msg_ui, $phr_lst_context_ui);
         $test_name = 'the context phrase is not used as a column headline';
         $t->assert_text_not_contains($test_name, $tbl_ctx, word_names::INHABITANTS);
+        // the header names the context phrase centred above the table, so that a table taken
+        // out of its page still says what it is about
+        $test_name = 'with the header the context phrase is linked above the table';
+        $lib = new library();
+        $tbl_header = $t_val->value_list_most_relevant_ui()
+            ->table_by_related_columns($msg_ui, $phr_lst_context_ui, '', [], true);
+        $t->assert_text_contains($test_name,
+            $lib->str_left_of($tbl_header, '<table'), '>' . word_names::INHABITANTS . '</a>');
 
         $t->subheader($ts . 'more tail');
         $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, '', '', 1);

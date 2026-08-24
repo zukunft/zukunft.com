@@ -515,6 +515,12 @@ class value_base extends sandbox_value
             }
         }
 
+        // the description of a value is the description of its phrase group (see
+        // sandbox_value::set_description), so it is mapped after the words, which create the group
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->set_description($in_ex_json[json_fields::DESCRIPTION]);
+        }
+
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
             // a null source simply names no source; guard any other non-string type before the

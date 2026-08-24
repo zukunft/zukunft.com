@@ -220,16 +220,13 @@
   "components": [
     {
       "name": "CBAM calculation result",
-      "type": "system_sub_title",
-      "code_id": "cbam_result_display",
-      "ui_msg_code_id": "cbam_result_display"
+      "type": "system_sub_title"
     }
   ],
   "views": [
     {
       "name": "CBAM Product View",
       "description": "Standard view to display embedded emissions and CBAM duty",
-      "code_id": "cbam_product_view",
       "type": "product",
       "components": [
         {"position": "1", "name": "Word title"},

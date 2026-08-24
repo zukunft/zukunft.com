@@ -38,7 +38,10 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -80,7 +83,10 @@ class phrase_ui_tests
         $dto->val_lst = $t_val->value_list_zh_impact_ui();
         $trp_zh_city = new triple_ui($t_trp->zh_city()->api_json());
         $test_page .= $html->text_h2('values of ' . $trp_zh_city->name() . ' as a table');
-        $test_page .= 'as table: ' . $list->table_with_related_columns($trp_zh_city, $msg, $dto) . '<br>';
+        // the page shows the table with the header that names the selected phrase, but without
+        // the border, because the page already groups the tables by a title
+        $test_page .= 'as table: ' . $list->table_with_related_columns(
+                $trp_zh_city, $msg, $dto, true, false) . '<br>';
 
         // the table of the global issues as shown on the start page: the start phrase is the
         // "global problem" triple, and the data object carries the solution_prio.json data via
@@ -90,8 +96,9 @@ class phrase_ui_tests
         $dto_prio->val_lst = $t_val->value_list_solution_prio_ui();
         $dto_prio->phr_lst = $t_phr->list_global_problems_ui();
         $trp_problem = new triple_ui($t_trp->global_problem()->api_json());
-        $test_page .= $html->text_h2('the global issues of ' . $trp_problem->name() . ' as a table');
-        $test_page .= 'as table: ' . $list->table_with_related_columns($trp_problem, $msg, $dto_prio) . '<br>';
+        $test_page .= $html->text_h2($trp_problem->name() . ' as a table');
+        $test_page .= 'as table: ' . $list->table_with_related_columns(
+                $trp_problem, $msg, $dto_prio, true, false) . '<br>';
         $t->html_page_test($test_page, 'phrase', 'phrase', $msg);
 
         $t->subheader($ts . 'table with related columns');
@@ -102,8 +109,43 @@ class phrase_ui_tests
         // phrase of the value, e.g. "Zurich" for the value of "Zurich" and "Zurich (city)"
         $test_name = 'the other phrase of the value is shown as the row name';
         $t->assert_text_contains($test_name, $tbl_html, '>' . word_names::ZH . '</a>');
+        // the page phrase names the table in the header, so it must not be repeated in a row;
+        // the rows are the part behind the header row and the row shows the name of a phrase,
+        // not its key, so the check uses the phrase name
         $test_name = 'the phrase of the page is not repeated as a row name';
-        $t->assert_text_not_contains($test_name, $tbl_html, triple_names::CITY_ZH);
+        $lib = new library();
+        $t->assert_text_not_contains($test_name,
+            $lib->str_right_of($tbl_html, '</tr>'), triple_names::CITY_ZH_NAME);
+
+        // the header names the selected phrase centred above the table, so that a table taken
+        // out of its page still says what it is about
+        $test_name = 'with the header the selected phrase is linked above the table';
+        $tbl_header = $list->table_with_related_columns($trp_zh_city, $msg, $dto, true, true);
+        $t->assert_text_contains($test_name,
+            $lib->str_left_of($tbl_header, '<table'), '>' . triple_names::CITY_ZH_NAME . '</a>');
+        $test_name = '... and the header is centred';
+        $t->assert_text_contains($test_name, $tbl_header, styles::TEXT_CENTER);
+        $test_name = 'without the header the table starts with the column row';
+        $tbl_no_header = $list->table_with_related_columns($trp_zh_city, $msg, $dto, false, true);
+        $t->assert_text_not_contains($test_name,
+            $lib->str_left_of($tbl_no_header, '<table'), triple_names::CITY_ZH_NAME);
+        $test_name = '... but the rows are still shown';
+        $t->assert_text_contains($test_name, $tbl_no_header, '<table');
+
+        // the border is switched off where the page already groups the tables by a title
+        $test_name = 'with the border the table has the lines between the cells';
+        $t->assert_text_contains($test_name, $tbl_header, 'table-bordered');
+        $test_name = 'without the border the table has no lines between the cells';
+        $tbl_no_border = $list->table_with_related_columns($trp_zh_city, $msg, $dto, true, false);
+        $t->assert_text_not_contains($test_name, $tbl_no_border, 'table-bordered');
+
+        // one row shows one item of the phrase, so the header stays in the singular and small
+        $test_name = 'a table with one row names the phrase in the singular';
+        $t->assert_text_contains($test_name,
+            $lib->str_left_of($tbl_header, '<table'), '>' . triple_names::CITY_ZH_NAME . '</a>');
+        $test_name = '... in the smaller label size';
+        $t->assert_text_contains($test_name,
+            $lib->str_left_of($tbl_header, '<table'), '<' . html_base::H5 . '>');
 
         $t->subheader($ts . 'global issues table');
         // the "global problem" phrase is in no value group: the values of "global warming" and
@@ -117,6 +159,19 @@ class phrase_ui_tests
         $t->assert_text_contains($test_name, $tbl_html, word_names::POPULISM);
         $test_name = '... with the cost of the global warming problem';
         $t->assert_text_contains($test_name, $tbl_html, '31.5');
+        // more than one row shows more than one item of the phrase, so the header uses the
+        // plural; the "global problem" triple has none, so the English plural is guessed
+        $test_name = 'a table with several rows names the phrase in the plural';
+        $tbl_plural = $list->table_with_related_columns($trp_problem, $msg, $dto_prio, true, false);
+        $t->assert_text_contains($test_name, $lib->str_left_of($tbl_plural, '<table'),
+            '>' . triple_names::GLOBAL_PROBLEM . languages::DEFAULT_PLURAL_SUFFIX . '</a>');
+        $test_name = '... centred above the table';
+        $t->assert_text_contains($test_name,
+            $lib->str_left_of($tbl_plural, '<table'), styles::TEXT_CENTER);
+        // a table of several items is a list of its own, so its header is a bigger headline
+        $test_name = '... in the bigger headline size';
+        $t->assert_text_contains($test_name,
+            $lib->str_left_of($tbl_plural, '<table'), '<' . html_base::H4 . '>');
         $test_name = '... and the gain of the populism solution';
         $t->assert_text_contains($test_name, $tbl_html, '34.1');
         $test_name = 'without the problem links no value matches the page phrase';

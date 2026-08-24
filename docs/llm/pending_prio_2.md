@@ -37,6 +37,24 @@ tonne per year, tonne of CO2, tonne of CO2 per year, kilogram per person, kilogr
 value_base.php:521 guards the object-valued source and reports a new msg_id; no fixture exercises it. src/test/resources/import/inconsistency_tests/ is the established home for exactly this (a value_source_not_a_name.json next to triple_has_a_word_name.json).
 
 
+he two assigned lists in CBAM_costs.json name children, not the parent phrase
+
+coding.md:169 says to assign a formula "to the most parent phrase it applies to (bid-ask spread absolut → currency, not each single currency)". I assigned expected value of a tool build to its five operand phrases and ABB total sales 2013 to the six sector triples. For ABB
+in particular, sector is the parent of all six via the file's own is a sector triples, and country.json's equivalent sum assigns to the single parent (assigned_word: "country"). Both are arguably one level too specific.
+
+2. Two format version findings appeared that were not there before
+
+republik_test_init_de.json and republik_test_init_en.json now report no "version" field. This is not from my edits — neither file was touched — but the check only runs on a file with no other finding, so fixing other things in the same run surfaced them. They need a       
+"version": "0.0.3" line.
+
+3. src/test/resources/api/ui_config/ui_config.json differs only in its timestamp (10:37 → 13:15) — a run artifact, worth dropping from the commit.
+
+4. Two things I flagged earlier as id shifts are actually harmless — correcting my own warning: word/list.csv contains no word from any TEST_DATA_FILES_NOT_REVIEWED file (no AI-mediated, SCC, GtCO2eq, …). So the new word acceptability in ai_mediated_communication.json and
+   the expected / usable probability / expected value additions in CBAM_costs.json do not require re-baselining that file. The only baseline touch needed was the second plural, and you have already regenerated it.
+
+5. Still open, deliberately (reported before, unchanged): CBAM_costs.json has no calc-validation, because the Gt→tonne scale is unmodelled and the file's reported EV (29.2 × 10⁹) does not reproduce from its own inputs (30.69 × 10⁹). The two intermediates do match exactly.
+
+
 ## data validation
 
 `test/json_validation.php` checks every json of `src/main/resources/messages` and

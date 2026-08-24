@@ -142,7 +142,6 @@
       "name": "ingredient list",
       "description": "list of ingredients with their food ingredient units for the current product",
       "type": "values_related",
-      "code_id": "ingredient_list",
       "row": "ingredients",
       "column": "food ingredient units"
     },
@@ -154,8 +153,7 @@
     {
       "name": "Export JSON",
       "description": "export this word and the related value in the JSON format",
-      "type": "export_json",
-      "code_id": "export_json"
+      "type": "export_json"
     }
   ],
   "views": [

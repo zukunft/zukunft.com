@@ -501,8 +501,7 @@
       "name": "gross"
     },
     {
-      "name": "centre",
-      "description": "a place where an activity is concentrated"
+      "name": "centre"
     },
     {
       "name": "financial",
@@ -1444,7 +1443,9 @@
   "values": [
     {
       "words": [
-        "area of Zurich (city)",
+        "area",
+        "Zurich",
+        "city",
         "square kilometre",
         "2024"
       ],
@@ -1453,7 +1454,9 @@
     },
     {
       "words": [
-        "elevation of Zurich (city)",
+        "elevation",
+        "Zurich",
+        "city",
         "metre"
       ],
       "number": "408",
@@ -1461,8 +1464,9 @@
     },
     {
       "words": [
-        "Zurich (city)",
-        "population of Zurich (city)",
+        "Zurich",
+        "city",
+        "population",
         "2024-12-31"
       ],
       "number": "436551",
@@ -1470,8 +1474,9 @@
     },
     {
       "words": [
-        "Zurich (city)",
-        "population of Zurich (city)",
+        "Zurich",
+        "city",
+        "population",
         "2025-12-31"
       ],
       "number": "452421",
@@ -1479,7 +1484,8 @@
     },
     {
       "words": [
-        "Zurich agglomeration",
+        "Zurich",
+        "agglomeration",
         "population of Zurich agglomeration",
         "2022"
       ],
@@ -1488,7 +1494,8 @@
     },
     {
       "words": [
-        "population density",
+        "density",
+        "population",
         "inhabitant",
         "square kilometre",
         "2024"
@@ -1499,7 +1506,8 @@
     {
       "words": [
         "population growth per year",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2020-2024",
         "percent"
       ],
@@ -1508,8 +1516,10 @@
     },
     {
       "words": [
-        "foreign population share",
-        "Zurich (city)",
+        "population",
+        "foreign",
+        "Zurich",
+        "city",
         "2024",
         "percent"
       ],
@@ -1518,16 +1528,19 @@
     },
     {
       "words": [
-        "number of nationalities present in Zurich (city)",
-        "Zurich (city)"
+        "nationality",
+        "Zurich",
+        "city"
       ],
       "number": "170",
       "source": "Statistik Stadt Zürich 2025"
     },
     {
       "words": [
-        "male population share",
-        "Zurich (city)",
+        "male",
+        "population",
+        "Zurich",
+        "city",
         "2024",
         "percent"
       ],
@@ -1536,8 +1549,10 @@
     },
     {
       "words": [
-        "female population share",
-        "Zurich (city)",
+        "female",
+        "population",
+        "Zurich",
+        "city",
         "2024",
         "percent"
       ],
@@ -1546,7 +1561,9 @@
     },
     {
       "words": [
-        "median age of Zurich (city)",
+        "median age",
+        "Zurich",
+        "city",
         "year",
         "2024"
       ],
@@ -1555,7 +1572,9 @@
     },
     {
       "words": [
-        "annual births of Zurich (city)",
+        "annual births",
+        "Zurich",
+        "city",
         "2025"
       ],
       "number": "4535",
@@ -1563,7 +1582,9 @@
     },
     {
       "words": [
-        "number of households in Zurich (city)",
+        "household",
+        "Zurich",
+        "city",
         "2024"
       ],
       "number": "228000",
@@ -1572,7 +1593,8 @@
     {
       "words": [
         "average household size",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "inhabitant"
       ],
       "number": "1.9",
@@ -1580,16 +1602,19 @@
     },
     {
       "words": [
-        "number of city districts",
-        "Zurich (city)"
+        "district",
+        "Zurich",
+        "city"
       ],
       "number": "12",
       "source": "Wikipedia Zurich"
     },
     {
       "words": [
-        "German language share",
-        "Zurich (city)",
+        "German",
+        "language",
+        "Zurich",
+        "city",
         "percent"
       ],
       "number": "0.71",
@@ -1597,7 +1622,9 @@
     },
     {
       "words": [
-        "GDP of Zurich (city)",
+        "gross domestic product",
+        "Zurich",
+        "city",
         "billion",
         "Swiss franc",
         "2022"
@@ -1607,7 +1634,9 @@
     },
     {
       "words": [
-        "GDP per capita of Zurich (city)",
+        "GDP per capita",
+        "Zurich",
+        "city",
         "Swiss franc",
         "2024"
       ],
@@ -1616,7 +1645,8 @@
     },
     {
       "words": [
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "gross domestic product",
         "growth",
         "2025",
@@ -1627,7 +1657,9 @@
     },
     {
       "words": [
-        "unemployment rate of Zurich (city)",
+        "unemployment",
+        "Zurich",
+        "city",
         "2026-03",
         "percent"
       ],
@@ -1636,7 +1668,9 @@
     },
     {
       "words": [
-        "number of employees in Zurich (city)",
+        "employee",
+        "Zurich",
+        "city",
         "2023"
       ],
       "number": "545938",
@@ -1644,8 +1678,10 @@
     },
     {
       "words": [
-        "full‑time equivalent jobs in Zurich (city)",
-        "Zurich (city)",
+        "equivalent",
+        "full‑time",
+        "Zurich",
+        "city",
         "2023"
       ],
       "number": "442000",
@@ -1654,7 +1690,8 @@
     {
       "words": [
         "services share of employment",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "percent"
       ],
       "number": "0.88",
@@ -1663,7 +1700,8 @@
     {
       "words": [
         "industry share of employment",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "percent"
       ],
       "number": "0.115",
@@ -1672,7 +1710,8 @@
     {
       "words": [
         "agriculture share of employment",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "percent"
       ],
       "number": "0.005",
@@ -1681,7 +1720,8 @@
     {
       "words": [
         "median monthly salary",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "Swiss franc",
         "2024"
       ],
@@ -1691,7 +1731,8 @@
     {
       "words": [
         "median monthly salary",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "Swiss franc",
         "male",
         "2024"
@@ -1702,7 +1743,8 @@
     {
       "words": [
         "median monthly salary",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "Swiss franc",
         "female",
         "2024"
@@ -1728,7 +1770,9 @@
     },
     {
       "words": [
-        "number of companies in Zurich (city)",
+        "company",
+        "Zurich",
+        "city",
         "2025"
       ],
       "number": "38000",
@@ -1736,7 +1780,9 @@
     },
     {
       "words": [
-        "number of startups in Zurich (city)",
+        "startup",
+        "Zurich",
+        "city",
         "2025"
       ],
       "number": "1400",
@@ -1753,7 +1799,9 @@
     },
     {
       "words": [
-        "number of dwellings in Zurich (city)",
+        "dwelling",
+        "Zurich",
+        "city",
         "2024"
       ],
       "number": "235000",
@@ -1761,7 +1809,9 @@
     },
     {
       "words": [
-        "number of apartments in Zurich (city)",
+        "apartment",
+        "Zurich",
+        "city",
         "2024"
       ],
       "number": "218000",
@@ -1770,7 +1820,8 @@
     {
       "words": [
         "housing vacancy rate",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2025",
         "percent"
       ],
@@ -1779,8 +1830,9 @@
     },
     {
       "words": [
-        "number of second homes",
-        "Zurich (city)",
+        "second home",
+        "Zurich",
+        "city",
         "2025-09"
       ],
       "number": "7620",
@@ -1789,7 +1841,8 @@
     {
       "words": [
         "median rent per m²",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "Swiss franc",
         "2025"
       ],
@@ -1799,7 +1852,8 @@
     {
       "words": [
         "apartment price per m²",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "Swiss franc",
         "2025"
       ],
@@ -1809,7 +1863,8 @@
     {
       "words": [
         "number of tram lines",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "VBZ"
       ],
       "number": "15",
@@ -1818,7 +1873,8 @@
     {
       "words": [
         "number of bus lines",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "VBZ"
       ],
       "number": "62",
@@ -1826,7 +1882,8 @@
     },
     {
       "words": [
-        "public transport punctuality",
+        "punctuality",
+        "public transport",
         "ZVV",
         "percent"
       ],
@@ -1836,7 +1893,8 @@
     {
       "words": [
         "bicycle network length",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "kilometre",
         "2025"
       ],
@@ -1846,8 +1904,10 @@
     {
       "words": [
         "number of public fountains",
-        "Zurich (city)",
-        "drinking water"
+        "Zurich",
+        "city",
+        "water",
+        "drinking"
       ],
       "number": "1200",
       "source": "Statistik Stadt Zürich 2025"
@@ -1855,7 +1915,8 @@
     {
       "words": [
         "number of primary schools in Zurich (city)",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2024"
       ],
       "number": "92",
@@ -1863,15 +1924,18 @@
     },
     {
       "words": [
-        "number of universities in Zurich (city)",
-        "Zurich (city)"
+        "university",
+        "Zurich",
+        "city"
       ],
       "number": "6",
       "source": "Statistik Stadt Zürich 2025"
     },
     {
       "words": [
-        "number of students in Zurich (city)",
+        "student",
+        "Zurich",
+        "city",
         "2024"
       ],
       "number": "72000",
@@ -1879,8 +1943,10 @@
     },
     {
       "words": [
-        "PISA score average",
-        "Zurich region",
+        "PISA",
+        "index",
+        "Zurich",
+        "region",
         "2022"
       ],
       "number": "498",
@@ -1888,7 +1954,8 @@
     },
     {
       "words": [
-        "PISA score average",
+        "PISA",
+        "index",
         "mathematics",
         "2022"
       ],
@@ -1897,7 +1964,8 @@
     },
     {
       "words": [
-        "PISA score average",
+        "PISA",
+        "index",
         "reading",
         "2022"
       ],
@@ -1906,7 +1974,8 @@
     },
     {
       "words": [
-        "PISA score average",
+        "PISA",
+        "index",
         "science",
         "2022"
       ],
@@ -1915,7 +1984,9 @@
     },
     {
       "words": [
-        "number of hospitals in Zurich (city)",
+        "hospital",
+        "Zurich",
+        "city",
         "2024"
       ],
       "number": "14",
@@ -1924,7 +1995,8 @@
     {
       "words": [
         "doctors per 1000 inhabitants",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2023"
       ],
       "number": "5.8",
@@ -1932,18 +2004,21 @@
     },
     {
       "words": [
-        "green space share",
-        "Zurich (city)",
-        "percent",
-        "area"
+        "green space",
+        "area",
+        "Zurich",
+        "city",
+        "percent"
       ],
       "number": "0.43",
       "source": "Statistik Stadt Zürich 2025"
     },
     {
       "words": [
-        "forest share of area",
-        "Zurich (city)",
+        "forest",
+        "area",
+        "Zurich",
+        "city",
         "percent"
       ],
       "number": "0.265",
@@ -1960,7 +2035,8 @@
     {
       "words": [
         "CO₂ emissions per capita",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "tonne",
         "2022"
       ],
@@ -1970,7 +2046,8 @@
     {
       "words": [
         "annual sunshine duration",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "hour",
         "year"
       ],
@@ -1980,7 +2057,8 @@
     {
       "words": [
         "annual precipitation total",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "millimetre",
         "year"
       ],
@@ -1989,8 +2067,9 @@
     },
     {
       "words": [
-        "city budget total",
-        "Zurich (city)",
+        "budget",
+        "Zurich",
+        "city",
         "billion",
         "Swiss franc",
         "2026"
@@ -2001,7 +2080,8 @@
     {
       "words": [
         "municipal tax multiplier",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "percent",
         "2026"
       ],
@@ -2011,7 +2091,8 @@
     {
       "words": [
         "AAA credit rating",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "S&P",
         "Fitch",
         "2025"
@@ -2022,7 +2103,8 @@
     {
       "words": [
         "annual tourist overnight stays",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2024",
         "million"
       ],
@@ -2032,7 +2114,8 @@
     {
       "words": [
         "homicide rate per 100 000",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2023"
       ],
       "number": "0.5",
@@ -2041,7 +2124,8 @@
     {
       "words": [
         "Mercer quality of life rank",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2025"
       ],
       "number": "2",
@@ -2049,7 +2133,8 @@
     },
     {
       "words": [
-        "Democracy Index score",
+        "democracy",
+        "index",
         "Switzerland",
         "2024"
       ],
@@ -2058,8 +2143,10 @@
     },
     {
       "words": [
-        "Human Development Index value",
-        "Zurich region",
+        "human development index",
+        "index",
+        "Zurich",
+        "region",
         "2023"
       ],
       "number": "0.970",
@@ -2067,7 +2154,9 @@
     },
     {
       "words": [
-        "Gini coefficient of Zurich",
+        "Gini coefficient",
+        "Zurich",
+        "city",
         "2022"
       ],
       "number": "33.8",
@@ -2076,7 +2165,8 @@
     {
       "words": [
         "average download speed",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "megabit per second",
         "2025"
       ],
@@ -2085,8 +2175,10 @@
     },
     {
       "words": [
-        "safety index",
-        "Zurich (city)",
+        "safety",
+        "index",
+        "Zurich",
+        "city",
         "2025",
         "100 point scale"
       ],
@@ -2105,24 +2197,27 @@
     },
     {
       "words": [
-        "number of museums",
-        "Zurich (city)"
+        "museum",
+        "Zurich",
+        "city"
       ],
       "number": "65",
       "source": "Statistik Stadt Zürich 2025"
     },
     {
       "words": [
-        "number of theatres",
-        "Zurich (city)"
+        "theatre",
+        "Zurich",
+        "city"
       ],
       "number": "28",
       "source": "Statistik Stadt Zürich 2025"
     },
     {
       "words": [
-        "number of restaurants",
-        "Zurich (city)",
+        "restaurant",
+        "Zurich",
+        "city",
         "2025"
       ],
       "number": "1900",
@@ -2131,7 +2226,8 @@
     {
       "words": [
         "number of hotel beds",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2024"
       ],
       "number": "14200",
@@ -2139,8 +2235,10 @@
     },
     {
       "words": [
-        "share of renewable electricity",
-        "Zurich (city)",
+        "electricity",
+        "renewable",
+        "Zurich",
+        "city",
         "percent",
         "2024"
       ],
@@ -2149,8 +2247,10 @@
     },
     {
       "words": [
-        "waste recycling rate",
-        "Zurich (city)",
+        "recycling",
+        "waste",
+        "Zurich",
+        "city",
         "percent",
         "2024"
       ],
@@ -2159,9 +2259,11 @@
     },
     {
       "words": [
-        "number of parking spaces",
+        "space",
+        "parking",
         "public",
-        "Zurich (city)"
+        "Zurich",
+        "city"
       ],
       "number": "18500",
       "source": "Statistik Stadt Zürich 2025"
@@ -2169,7 +2271,8 @@
     {
       "words": [
         "length of road network",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "kilometre"
       ],
       "number": "610",
@@ -2178,7 +2281,8 @@
     {
       "words": [
         "length of tram network",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "kilometre"
       ],
       "number": "125",
@@ -2194,7 +2298,8 @@
     {
       "words": [
         "annual public transport trips per inhabitant",
-        "Zurich (city)"
+        "Zurich",
+        "city"
       ],
       "number": "680",
       "source": "ZVV"
@@ -2210,7 +2315,8 @@
     {
       "words": [
         "number of patent applications per 10 000",
-        "Zurich region",
+        "Zurich",
+        "region",
         "2023"
       ],
       "number": "18.4",
@@ -2219,7 +2325,8 @@
     {
       "words": [
         "life expectancy at birth",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "year",
         "female",
         "2023"
@@ -2230,7 +2337,8 @@
     {
       "words": [
         "life expectancy at birth",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "year",
         "male",
         "2023"
@@ -2241,7 +2349,8 @@
     {
       "words": [
         "infant mortality per 1000 live births",
-        "Zurich (canton)",
+        "Zurich",
+        "canton",
         "2023"
       ],
       "number": "2.1",
@@ -2250,9 +2359,11 @@
     {
       "words": [
         "city employees total",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "2025",
-        "full‑time equivalent"
+        "equivalent",
+        "full‑time"
       ],
       "number": "34736",
       "source": "Statistik Stadt Zürich 2025"
@@ -2260,7 +2371,8 @@
     {
       "words": [
         "share of women among city employees",
-        "Zurich (city)",
+        "Zurich",
+        "city",
         "percent",
         "2025"
       ],

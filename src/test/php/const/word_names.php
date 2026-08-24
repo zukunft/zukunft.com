@@ -117,6 +117,11 @@ class word_names
     const int PROBLEM_ID = 205;
     const string GLOBAL = 'global';
     const int GLOBAL_ID = 194;
+    // the phrases of the "global happy time points" formula of solution_prio.json
+    const string HUMAN = 'human';
+    const int HUMAN_ID = 14;
+    const string POPULATION = 'population';
+    const int POPULATION_ID = 268;
     const string POTENTIAL = 'potential';
     const int POTENTIAL_ID = 222;
     const string SOLUTION = 'solution';
@@ -141,22 +146,34 @@ class word_names
     const string EDUCATION = 'education';
     const int EDUCATION_ID = 253;
     const string EDUCATION_COM = 'process of teaching and learning';
+    // the qualifier of a value that is estimated instead of taken from a source
+    const string ASSUMED = 'assumed';
+    const int ASSUMED_ID = 308;
+    // the problems and solutions of solution_prio.json that are a word, not a triple
+    const string DISINFORMATION = 'disinformation';
+    const int DISINFORMATION_ID = 277;
+    const string RESEARCH = 'research';
+    const int RESEARCH_ID = 250;
+    const string TAXES = 'taxes';
+    const int TAXES_ID = 252;
+    const string SPENDING = 'spending';
+    const int SPENDING_ID = 254;
     const string HTP = 'htp';
     const int HTP_ID = 269;
     const string TRILLION = 'trillion';
     const int TRILLION_ID = 270;
     const string USD = 'USD';
-    const int USD_ID = 383;
+    const int USD_ID = 393;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 540;
+    const int SALES_ID = 550;
     const string CASH = 'cash';
-    const int CASH_ID = 541;
+    const int CASH_ID = 551;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 542;
+    const int STATEMENT_ID = 552;
     const string PARTS = 'parts';
-    const int PARTS_ID = 544;
+    const int PARTS_ID = 554;
     const string INCOME = 'income';
     const int INCOME_ID = 298;
     const string TAX = 'tax';
@@ -178,26 +195,26 @@ class word_names
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 316;
+    const int YEAR_2013_ID = 326;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 317;
+    const int YEAR_2014_ID = 327;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 318;
+    const int YEAR_2015_ID = 328;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 319;
+    const int YEAR_2016_ID = 329;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 320;
+    const int YEAR_2017_ID = 330;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 321;
+    const int YEAR_2018_ID = 331;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
     const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
     const int COMPANY_ID = 189;
     const string ABB = 'ABB';
-    const int ABB_ID = 538;
+    const int ABB_ID = 548;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 539;
+    const int VESTAS_ID = 549;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -231,25 +248,25 @@ class word_names
     const int HOUR_ID = 101;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 606;
+    const int YEAR_2021_ID = 616;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 381;
+    const int YEAR_2022_ID = 391;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 605;
+    const int YEAR_2023_ID = 615;
     const string YEAR_2024 = '2024';
     const int YEAR_2024_ID = 276;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 604;
+    const int YEAR_2025_ID = 614;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 603;
+    const int YEAR_2026_ID = 613;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 602;
+    const int YEAR_2027_ID = 612;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 601;
+    const int YEAR_2028_ID = 611;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 600;
+    const int YEAR_2029_ID = 610;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 599;
+    const int YEAR_2030_ID = 609;
     const string LIGHT = 'light';
     const int LIGHT_ID = 84;
     const string SPEED = 'speed';
@@ -282,12 +299,12 @@ class word_names
     const string EUR = 'EUR';
     const int EUR_ID = 272;
     const string EURO = 'Euro';
-    const int EURO_ID = 371;
+    const int EURO_ID = 381;
     const string DOLLAR = '$';
-    const int DOLLAR_ID = 385;
+    const int DOLLAR_ID = 395;
     const string EURO_SIGN = '€';
-    const int EURO_SIGN_ID = 387;
-    const int CURRENCY_ID = 334;
+    const int EURO_SIGN_ID = 397;
+    const int CURRENCY_ID = 344;
     const string US = 'US';
 
 
@@ -514,8 +531,13 @@ class word_names
         shared_words::POD_ID => shared_words::POD,
         shared_words::POINT_ID => shared_words::POINT,
         shared_words::POINTS_ID => shared_words::POINTS,
+        self::ASSUMED_ID => self::ASSUMED,
+        self::DISINFORMATION_ID => self::DISINFORMATION,
         self::POPULISM_ID => self::POPULISM,
         self::POVERTY_ID => self::POVERTY,
+        self::RESEARCH_ID => self::RESEARCH,
+        self::SPENDING_ID => self::SPENDING,
+        self::TAXES_ID => self::TAXES,
         self::PRIOR_ID => self::PRIOR_NAME,
         self::POTENTIAL_ID => self::POTENTIAL,
         self::PROBLEM_ID => self::PROBLEM,

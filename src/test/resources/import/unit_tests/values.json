@@ -24,6 +24,10 @@
         {
           "name": "Globalization",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q7181",
+          "type": "wikidata"
         }
       ]
     },
@@ -129,19 +133,6 @@
         },
         {
           "name": "Q11432",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "global",
-      "refs": [
-        {
-          "name": "Globalization",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7181",
           "type": "wikidata"
         }
       ]

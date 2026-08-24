@@ -1940,6 +1940,10 @@ enum messages: string
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
 
+    // the start page, which ranks the global problems by the potential loss they can avoid
+    case SOLUTION_PRIO_TITLE = 'solution_prio_title';
+    case SOLUTION_PRIO_RANKING_TABLE = 'solution_prio_ranking_table';
+
     // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
     case PHRASE_HAS = 'phrase_has';
     case PHRASE_ALIAS = 'phrase_alias';
