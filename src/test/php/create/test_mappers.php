@@ -1098,7 +1098,9 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class:
-                $obj = $t_vrb->verb_is();
+                // the filled verb, because the show url is what the verb page test renders from
+                // and only a verb with all fields set shows every field of the verb default view
+                $obj = $t_vrb->verb_is_filled();
                 $obj_array = $this->verb_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;

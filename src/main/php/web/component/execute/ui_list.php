@@ -378,7 +378,7 @@ class ui_list extends ui_base
     }
 
     /**
-     * the triples that use the given verb as a comma separated list of the triple names with a
+     * the triples that use the given verb as a blank separated list of the triple names with a
      * link to each triple, used by the verb default page and the verb edit and delete pages
      *
      * TODO move to a component exe part class
@@ -409,13 +409,33 @@ class ui_list extends ui_base
             if ($trp_lst == null) {
                 log_err_msg_ui('the triple cache is missing to select the triples of a verb', $msg);
             } else {
-                $result = $trp_lst->display($msg);
+                $result = $trp_lst->display($msg, '', $this->configured_link_limit($msg));
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
                 }
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for triples', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the number of links shown at once, e.g. the triples that use a verb on the verb page
+     * (config.yaml "user > frontend > lists > limit > link list")
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximum number of links to show
+     */
+    private function configured_link_limit(user_message $msg): int
+    {
+        global $ui_sys;
+
+        $result = config::LIMIT_LINK_LIST;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                $msg, config::LIMIT_LINK_LIST);
         }
         return $result;
     }

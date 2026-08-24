@@ -618,34 +618,30 @@
         },
         {
           "position": "2",
-          "name": "Verb"
-        },
-        {
-          "position": "3",
           "name": "system show field description"
         },
         {
-          "position": "4",
+          "position": "3",
           "name": "system show field reverse"
         },
         {
-          "position": "5",
+          "position": "4",
           "name": "system show field plural"
         },
         {
-          "position": "6",
+          "position": "5",
           "name": "system show field plural reverse"
         },
         {
-          "position": "7",
+          "position": "6",
           "name": "system show field name in formulas"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system sub title triples"
         },
         {
-          "position": "9",
+          "position": "8",
           "name": "verb triples"
         }
       ]

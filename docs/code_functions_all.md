@@ -15733,7 +15733,7 @@
         \-- sandbox_link - @return string that best describes this object
         \-- job_list - @return string with a table of the batch job entries for users
         \-- sys_log_list - @return string with a table of the system log entries for users
-        \-- triple_list - @param string $back the back trace url for the undo functionality
+        \-- triple_list - the names are separated by a blank and not by a comma, because each name is already a link
     \-- name_tip
         \-- formula_link_list - @return string with a list of the formula names with html links
     \-- dsp_id
@@ -16221,7 +16221,7 @@
     \-- phrases_of_formula
         \-- ui_list - HTML for the list of words and triples assigned to the given formula in order of impact
     \-- triple_list
-        \-- ui_list - the triples that use the given verb as a comma separated list of the triple names with a
+        \-- ui_list - the triples that use the given verb as a blank separated list of the triple names with a
     \-- view_components
         \-- ui_list - the components of the given view as a comma separated list of the component names with a
     \-- component_views

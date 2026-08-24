@@ -2,7 +2,9 @@
 
 ## verb default view
 
-the triples of a verb are neither limited when they are loaded (value_list has a limit and a page parameter, triple_list::load_by_verb has none) nor when they are shown (web/word/triple_list::display renders every name), so the page of a much used verb lists them all: "is a" has 186 triples and even the placeholder verb "not set" has 66; the change log table solves the same problem with the configured row limit and a forward button (see ui_log::configured_row_limit), and the same applies to the values of a source
+the values of a source are neither limited when they are loaded nor when they are shown, the gap that the triples of a verb had before (see triple_list::load_by_verb and ui_list::configured_link_limit); the source page needs the same two config.yaml limits, e.g. 'lists > limit > value list' for the shown values and a 'lists > limit > sources > read' beside the new 'triples > read'
+
+neither the verb page nor the source page tells the user that the shown list is cut: config.yaml promises "if more phrases are assigned the list ends with '... and n more'" for the phrase and formula list, but no list renders that indicator, and with a read limit the true total is not known either, so the count needs its own query (the same open point as the per type count of the user page)
 
 the triples of a verb are shown in database id order, because triple_list::load_sql sorts by the given name, which is null for every triple that uses the generated name, and the id is only the tie break that makes the order deterministic; for a comma separated list of names the user expects the shown name order, which needs the generated name resp. the user-specific name in the order by
 

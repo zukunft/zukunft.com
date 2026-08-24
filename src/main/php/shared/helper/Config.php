@@ -48,6 +48,9 @@ class Config
     // number of entries initial to show in a value list
     const int LIMIT_VALUE_LIST = 6;
 
+    // number of entries initial to show in a list of links e.g. the triples that use a verb
+    const int LIMIT_LINK_LIST = 30;
+
     // a phrase linked to more values than this to form its own group
     const int MIN_PHRASE_GROUP = 2;
 

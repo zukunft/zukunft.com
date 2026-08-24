@@ -67,6 +67,8 @@ class def
     // fallback separator between the object, view and pod name in the html (browser tab) page title;
     // overridden by config.yaml entry frontend.lists.separator.title
     const string FALLBACK_TITLE_SEPARATOR = ' - ';
+    // between the label and the value of a read only field e.g. 'Plural: are' on the verb page
+    const string FALLBACK_LABEL_SEPARATOR = ': ';
     // fallback for the minimal screen width in pixel to show 'side or below' components side by side;
     // overridden by config.yaml entry frontend.layout.side width.min
     const int FALLBACK_MIN_SIDE_WIDTH = 1000;
@@ -78,6 +80,9 @@ class def
     // phrase values view to pick the column phrases;
     // overridden by config.yaml entry frontend.lists.limit.values.read
     const int FALLBACK_PHRASE_VALUES_READ = 1000;
+    // fallback for the number of triples read for one verb and sent to the verb page;
+    // overridden by config.yaml entry frontend.lists.limit.triples.read
+    const int FALLBACK_VERB_TRIPLES_READ = 100;
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
     const string PROJECT_PATH = '/zukunft.com/'; // the default project path used to filter the exception trace

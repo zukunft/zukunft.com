@@ -111,24 +111,29 @@ class triple_list extends ListBase
      */
 
     /**
+     * the names are separated by a blank and not by a comma, because each name is already a link
+     * and so stands out on its own, whereas a comma between two links adds a line to the page
+     *
      * @param string $back the back trace url for the undo functionality
+     * @param int|null $limit the max number of triples to show, null for all of them
      * @return string with a list of the triple names with html links
      * ex. names_linked
      */
-    function display(user_message $msg, string $back = ''): string
+    function display(user_message $msg, string $back = '', ?int $limit = null): string
     {
-        return implode(', ', $this->names_linked($msg, $back));
+        return implode(' ', $this->names_linked($msg, $back, $limit));
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
+     * @param int|null $limit the max number of triples to return, null for all of them
      * @return array with a list of the triple names with html links
      */
-    function names_linked(user_message $msg, string $back = ''): array
+    function names_linked(user_message $msg, string $back = '', ?int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $trp) {
-            if (!$trp->is_hidden($msg)) {
+            if (!$trp->is_hidden($msg) and ($limit == null or count($result) < $limit)) {
                 $result[] = $trp->name_link($back);
             }
         }

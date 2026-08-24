@@ -77,6 +77,8 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'def.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -112,7 +114,9 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class verb extends type_object
 {
@@ -650,9 +654,25 @@ class verb extends type_object
             log_err_msg('the user is missing to load the triples of the verb ' . $this->dsp_id(), $msg);
         } else {
             $trp_lst = new triple_list($usr);
-            $trp_lst->load_by_verb($this, $msg);
+            $trp_lst->load_by_verb($this, $msg, false, $this->triples_read_limit());
             $this->triples_related = $trp_lst;
         }
+    }
+
+    /**
+     * the number of triples read for one verb and sent to the verb page
+     * (config.yaml "user > frontend > lists > limit > triples > read")
+     *
+     * @return int the maximal number of triples to read for this verb
+     */
+    private function triples_read_limit(): int
+    {
+        global $cfg;
+
+        $limit = $cfg?->get_by(
+            [words::READ, words::TRIPLES, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+            def_shared::FALLBACK_VERB_TRIPLES_READ);
+        return (int)($limit ?? def_shared::FALLBACK_VERB_TRIPLES_READ);
     }
     // TODO test set_by_api_json
 

@@ -204,15 +204,16 @@ class triple_list extends sandbox_list_named
     }
 
     /**
-     * load all triples that use the given verb
+     * load the triples that use the given verb
      * @param verb $vrb if set to filter the selection
      * @param bool $load_all force to include also the excluded triples e.g. for admins
+     * @param int $limit the max number of triples to read, zero for the database default
      * @return bool true if at least one triple found
      */
-    function load_by_verb(verb $vrb, user_message $msg, bool $load_all = false): bool
+    function load_by_verb(verb $vrb, user_message $msg, bool $load_all = false, int $limit = 0): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_verb($db_con->sql_creator(), $vrb);
+        $qp = $this->load_sql_by_verb($db_con->sql_creator(), $vrb, $limit);
         return $this->load($qp, $msg, $load_all);
     }
 
@@ -392,14 +393,16 @@ class triple_list extends sandbox_list_named
     }
 
     /**
-     * set the SQL query parameters to load all triples that use the given verb
+     * set the SQL query parameters to load the triples that use the given verb
      * @param sql_creator $sc with the target db_type set
      * @param verb $vrb if set to filter the selection
+     * @param int $limit the max number of triples to read, zero for the database default
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_verb(
         sql_creator $sc,
-        verb        $vrb
+        verb        $vrb,
+        int         $limit = 0
     ): sql_par
     {
         $qp = $this->load_sql($sc);
@@ -407,6 +410,9 @@ class triple_list extends sandbox_list_named
             $qp->name .= 'vrb';
             $sc->add_where(verb_db::FLD_ID, $vrb->id());
             $sc->set_name($qp->name);
+            // a much used verb has thousands of triples, so the read is limited to the number
+            // that the verb page can show (see cfg/verb/verb::load_triples_related)
+            $sc->set_page($limit);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
