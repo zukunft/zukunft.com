@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-24T12:07:59+00:00",
+    "timestamp": "2026-08-23T09:14:32+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9661,12 +9661,6 @@
                 "code_id": "system_show_field_order_nbr",
                 "description": "show the order number of a link without link or form field",
                 "id": 232
-            },
-            {
-                "name": "show name in formulas",
-                "code_id": "system_show_field_name_in_formulas",
-                "description": "show the verb name used in formulas without link or form field",
-                "id": 233
             }
         ],
         "component_link_types": [
@@ -21275,51 +21269,50 @@
                     },
                     {
                         "link_id": 1008,
-                        "id": 197,
-                        "name": "system show field description",
-                        "description": "the object description as read only",
-                        "type_id": 147,
-                        "code_id": "show_field_description",
+                        "id": 285,
+                        "name": "Verb",
+                        "description": "simply show the verb name",
+                        "type_id": 37,
                         "position": 2,
                         "position_type": 1
                     },
                     {
                         "link_id": 1009,
-                        "id": 325,
-                        "name": "system show field reverse",
-                        "description": "the reverse name of a verb as read only",
-                        "type_id": 219,
-                        "code_id": "show_field_reverse",
+                        "id": 197,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
                         "position": 3,
                         "position_type": 1
                     },
                     {
                         "link_id": 1010,
-                        "id": 307,
-                        "name": "system show field plural",
-                        "description": "show the plural form of a word as read only text",
-                        "type_id": 190,
-                        "code_id": "show_field_plural",
+                        "id": 325,
+                        "name": "system show field reverse",
+                        "description": "the reverse name of a verb as read only",
+                        "type_id": 219,
+                        "code_id": "show_field_reverse",
                         "position": 4,
                         "position_type": 1
                     },
                     {
                         "link_id": 1011,
-                        "id": 326,
-                        "name": "system show field plural reverse",
-                        "description": "the plural of the reverse name of a verb as read only",
-                        "type_id": 220,
-                        "code_id": "show_field_plural_reverse",
+                        "id": 307,
+                        "name": "system show field plural",
+                        "description": "show the plural form of a word as read only text",
+                        "type_id": 190,
+                        "code_id": "show_field_plural",
                         "position": 5,
                         "position_type": 1
                     },
                     {
                         "link_id": 1012,
-                        "id": 352,
-                        "name": "system show field name in formulas",
-                        "description": "the verb name used in formulas as read only",
-                        "type_id": 233,
-                        "code_id": "show_field_name_in_formulas",
+                        "id": 326,
+                        "name": "system show field plural reverse",
+                        "description": "the plural of the reverse name of a verb as read only",
+                        "type_id": 220,
+                        "code_id": "show_field_plural_reverse",
                         "position": 6,
                         "position_type": 1
                     },

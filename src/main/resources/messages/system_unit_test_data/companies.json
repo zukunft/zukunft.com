@@ -379,6 +379,9 @@
     {
       "name": "2013",
       "type": "time"
+    },
+    {
+      "name": "main"
     }
   ],
   "triples": [
@@ -1049,6 +1052,19 @@
       "from": "Operating profit",
       "verb": "kind of",
       "to": "reported"
+    },
+    {
+      "name": "main ratio",
+      "from": "Ratio",
+      "verb": "kind of",
+      "to": "main"
+    },
+    {
+      "name": "company main ratio",
+      "from": "main ratio",
+      "verb": "of",
+      "to": "company",
+      "description": "the ratios that are shown for every company e.g. in the column of the company list"
     }
   ],
   "formulas": [

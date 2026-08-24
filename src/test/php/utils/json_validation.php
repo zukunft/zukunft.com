@@ -227,6 +227,10 @@ class json_validation
         json_fields::SOURCES => [
             json_fields::AUTHOR, json_fields::PUBLISHER, json_fields::PUBLISH_DATE
         ],
+        // see the TODO Prio 2 at the end of formula_map::import_mapper
+        json_fields::FORMULAS => [
+            json_fields::REFS
+        ],
     ];
 
 
