@@ -199,6 +199,19 @@ class test_log
     // the user value of the source description overwrite of log_source_overwrite, which must not
     // contain the source name for the same reason as the component overwrite above
     const string SOURCE_OVERWRITE_COM = 'my own text for this publication';
+    // the user value and the object name of the ref external key overwrite of log_ref_overwrite;
+    // a ref has no name of its own, so it is named by the phrase and the type that it links
+    const string REF_OVERWRITE_KEY = 'Q167-my-own';
+    const string REF_OVERWRITE_NAME = 'ref of "Pi" to "wikidata"';
+    // the value that each other user has set for a changed field, used to show the inline column of
+    // change_log_actions::OTHERS_INLINE; one user more than change_log_named::OTHERS_MAX_INLINE, so
+    // that a test can also check how the column indicates the users that it does not name
+    const array OTHER_VALUES = [
+        'linus' => 'the text of linus',
+        'lea' => 'the text of lea',
+        'julian' => 'the text of julian',
+        'mia' => 'the text of mia',
+    ];
 
 
     /*
@@ -502,7 +515,7 @@ class test_log
         $chg->set_table(change_tables::TRIPLE_USR, $msg);
         $chg->set_field(fields::FLD_DESCRIPTION, $msg);
         $chg->new_value = triple_names::MATH_CONST_COM;
-       // the name of the changed object as change_log_list::load_row_names sets it from the db
+       // the name of the changed object as change_log_list::load_changed_objects sets it from the db
         $chg->row_name = triple_names::MATH_CONST;
         return $chg;
     }
@@ -533,8 +546,27 @@ class test_log
         $chg->set_table(change_tables::SOURCE_USR, $msg);
         $chg->set_field(fields::FLD_DESCRIPTION, $msg);
         $chg->new_value = self::SOURCE_OVERWRITE_COM;
-        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
         $chg->row_name = sources::SIB;
+        return $chg;
+    }
+
+    /**
+     * @return change the log entry created by overwriting the external key of the pi reference
+     *         in the user sandbox (user_refs)
+     */
+    function log_ref_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::REF_USR, $msg);
+        $chg->set_field(change_fields::FLD_REF_KEY, $msg);
+        $chg->new_value = self::REF_OVERWRITE_KEY;
+        $chg->row_id = refs::PI_ID;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the
+        // db, where a ref is named by the phrase and the type it links (see cfg/ref/ref::name)
+        $chg->row_name = self::REF_OVERWRITE_NAME;
         return $chg;
     }
 
@@ -670,7 +702,7 @@ class test_log
         $chg->set_table(change_tables::FORMULA_USR, $msg);
         $chg->set_field(fields::FLD_DESCRIPTION, $msg);
         $chg->new_value = self::FORMULA_OVERWRITE_COM;
-        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
         $chg->row_name = formula_names::INCREASE;
         return $chg;
     }
@@ -678,7 +710,7 @@ class test_log
     /**
      * @return change the log entry created by overwriting the pi value in the user sandbox
      *         (user_values); a value has no name of its own, so the row name is the group name
-     *         that change_log_list::load_row_names reads from the phrases of the group
+     *         that change_log_list::load_changed_objects reads from the phrases of the group
      */
     function log_value_overwrite(): change
     {
@@ -799,7 +831,7 @@ class test_log
         // set the field after the table, because the field id is unique per table
         $chg->set_field(formula_link::FLD_ORDER, $msg);
         $chg->new_value = self::FORMULA_LINK_OVERWRITE_ORDER_NBR;
-        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
         $chg->row_name = $t_frm->formula_link()->name();
         return $chg;
     }
@@ -840,7 +872,7 @@ class test_log
         $chg->set_table(change_tables::VIEW_USR, $msg);
         $chg->set_field(fields::FLD_DESCRIPTION, $msg);
         $chg->new_value = self::VIEW_OVERWRITE_COM;
-        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
         $chg->row_name = views::START_NAME;
         return $chg;
     }
@@ -893,7 +925,7 @@ class test_log
         $chg->set_table(change_tables::VIEW_COMPONENT_USR, $msg);
         $chg->set_field(fields::FLD_DESCRIPTION, $msg);
         $chg->new_value = self::COMPONENT_OVERWRITE_COM;
-        // the name of the changed object as change_log_list::load_row_names sets it from the db
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
         $chg->row_name = components::MATRIX_NAME;
         return $chg;
     }
@@ -1232,19 +1264,30 @@ class test_log
      */
     function log_list_user_overwrites(): change_log_list
     {
-        // the word overwrite carries the name of the changed word like the triple overwrite, so
-        // that the column can name the object of every change (see change_log_list::load_row_names)
+        // the word overwrite carries the name of the changed word like the triple overwrite, so that
+        // the column can name the object of every change (see change_log_list::load_changed_objects)
         $wrd_chg = $this->log_word_add_view();
         $wrd_chg->row_name = word_names::MATH;
+        // only the word overwrite carries the values of the other users, which the same function
+        // adds from the changed object, so that a test can check that the icon to the values of the
+        // other users is shown for this change and not for a change that no other user has touched
+        $wrd_chg->other_values = self::OTHER_VALUES;
         $log_lst = new change_log_list();
         $log_lst->add($wrd_chg);
         $log_lst->add($this->log_triple_add_description());
         $log_lst->add($this->log_formula_increase_description());
         $log_lst->add($this->log_formula_link_order_overwrite());
         $log_lst->add($this->log_value_overwrite());
-        $log_lst->add($this->log_component_overwrite());
+        // the component overwrite carries the value of the shared standard object, which the same
+        // function adds from the changed object, so that the column can show the user value beside
+        // the common value; only this one change has it, so that a test can check that a change
+        // without a standard value simply shows no comparison
+        $cmp_chg = $this->log_component_overwrite();
+        $cmp_chg->std_value = components::WORD_COM;
+        $log_lst->add($cmp_chg);
         $log_lst->add($this->log_view_overwrite());
         $log_lst->add($this->log_source_overwrite());
+        $log_lst->add($this->log_ref_overwrite());
         // a change of the shared standard word, which the column must never list as an overwrite;
         // the renamed-from value is unique to this change, so a test can detect it
         $log_lst->add($this->log_word_update());

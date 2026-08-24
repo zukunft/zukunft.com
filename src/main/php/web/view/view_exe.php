@@ -247,7 +247,14 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache, $msg)) {
                     $auto_row = false;
                 }
-                $row .= $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode, $url_array);
+                $cmp_html = $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode, $url_array);
+                // a combined component shares the row with the previous one, but it is still an own
+                // component, so it starts on an own line, e.g. the plural of a word below its
+                // description instead of behind it; a component that creates no html adds no line
+                if ($pos_type == position_types::COMBINE and $cmp_html != '') {
+                    $cmp_html = $html->div($cmp_html);
+                }
+                $row .= $cmp_html;
 
                 // remember the style to apply it to the complete row or column
                 // TODO Prio 1 use a row / col explicit style parameter instead

@@ -52,6 +52,7 @@ include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -108,6 +110,9 @@ class verb extends sandbox_named
     // because there both sides are combined
     public ?string $frm_name = null;
     public float $impact = 0.0;
+    // the triples that use this verb, filled only if the verb has been loaded for its page
+    // (see load_by_id_with_related), otherwise null
+    public ?triple_list $trp_lst = null;
 
 
     /*
@@ -254,7 +259,31 @@ class verb extends sandbox_named
         } else {
             $this->frm_name = '';
         }
+        // only the verb page asks for the triples, so a missing list is not an empty list
+        if (is_array($json_array[json_fields::TRIPLES] ?? null)) {
+            $trp_lst = new triple_list();
+            $trp_lst->api_mapper($json_array[json_fields::TRIPLES]);
+            $this->trp_lst = $trp_lst;
+        } else {
+            $this->trp_lst = null;
+        }
         return $msg->is_ok();
+    }
+
+    /**
+     * load the verb by id AND ask the backend to include the triples that use this verb, which
+     * the 'verb triples' component of the verb default page shows
+     *
+     * the api handler sets api_types::INCL_RELATED and verb::api_json_array() emits the triples
+     * that the api_mapper above picks up into trp_lst
+     *
+     * @param int|string $id the verb id to load
+     * @param int $usr_id the id of the session user to load the verb for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
     /**

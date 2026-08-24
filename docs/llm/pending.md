@@ -1,23 +1,14 @@
 # pending - list of planned llm prompts with prio 1
 
-## what the retired user_display_old.php still does better
+## verb default view
 
-the check of src/main/php/web/user/user_display_old.php against the current user page and the object default pages; the object types are covered (the old page had nine sandbox tables: values, formulas, formula links, words, triples, views, components, component links and sources; the all user overwrites column names eleven types today), so what is missing is not the data but the actions and the comparison
+the values of a source are neither limited when they are loaded nor when they are shown, the gap that the triples of a verb had before (see triple_list::load_by_verb and ui_list::configured_link_limit); the source page needs the same two config.yaml limits, e.g. 'lists > limit > value list' for the shown values and a 'lists > limit > sources > read' beside the new 'triples > read'
 
-link the changed object in the 'all_user_overwrites' column to its default page: change_log_named::tr_when_who_what puts the object name into the what cell as plain text (see change_log_named::object_prefix), so the user page names the changed object but the user cannot click through to it; the old page linked the first cell to the object and the user value to the edit view (value_edit.php, view_edit.php, component_edit.php, source_edit.php)
+neither the verb page nor the source page tells the user that the shown list is cut: config.yaml promises "if more phrases are assigned the list ends with '... and n more'" for the phrase and formula list, but no list renders that indicator, and with a read limit the true total is not known either, so the count needs its own query (the same open point as the per type count of the user page)
 
-show the standard value beside the user value in the 'all_user_overwrites' column: the old page had the header "Your name vs. | common name" and showed both values side by side, whereas the what column shows only the change text; the your / instead comparison exists today only in the 'my' tab of the object page
-
-add the overwrites of the other users to the user page: the old page had an 'other user' column per row (a link to user_triple.php, user_value.php, user_view.php, ...) that showed what other users have set for the same object; today this is only the 'others' tab of each object page
-
-group the 'all_user_overwrites' rows by object type or add an object type column: the old page had one table per object type with its own header, so the user could see at a glance how many words resp. values were overwritten; today all types are merged into one when / who / what list that does not name the type
-
-add the ref overwrites to the 'all_user_overwrites' component: change_tables::REF_USR is in change_tables::USER_TABLES, so a ref overwrite is listed today, but change_log_list::name_lists has no ref entry, so the what column cannot name the changed ref (the old page had no ref table either, so this is a gap of both)
+the triples of a verb are shown in database id order, because triple_list::load_sql sorts by the given name, which is null for every triple that uses the generated name, and the id is only the tie break that makes the order deterministic; for a comma separated list of names the user expects the shown name order, which needs the generated name resp. the user-specific name in the order by
 
 ## user default view
-
-add to the verb_default page to missing database fields and add a component that shows all triples where the verb has been used
-
 
 for the headline of the add component view 'element' is used. A view component should always be named 'component' not element . Note this change in the rules and check that 'element' is nowhere used to decribe a component 
 
@@ -56,6 +47,10 @@ the 'my' tab of the value page has an undo icon for the numeric value, the sourc
 the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
 
 adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
+
+## user page
+
+a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. a count per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows already builds that union per user and would only have to keep the per-table counts instead of summing them
 
 ## component page tabs
 
@@ -146,7 +141,12 @@ The changes table comment is the load contract. load_by_user() reading 13 tables
 version.txt correctly untouched — no json format or db structure change.
 Generated docs: code_user_message_exceptions.md only shifts a line number, doesn't grow. code_test_coverage.md adds the three new functions.
 The fold is duplicated verbatim in the backend and the frontend std_table* function. That mirrors the existing prefix-strip duplication rather than adding a new pattern, so it is consistent, but both copies now have to move together.
-Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.  
+Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.
+A caller I missed, already fixed by you: test_words::zh_full_ui() calls the web word's set_type, so it needed user_message_ui not user_message. My caller scan mis-classified it because zh_ui() returns a word_ui. I re-checked — that was the only one; every other set_type call is on a backend word, a component, element or sql_db.
+The fixtures are now coherent: component 352 = the new field, link 1013 = verb view position 7, sub-title 8, triples 9 — exactly as computed; the api type-list fixtures carry only the new system_show_field_name_in_formulas, none of the old colliding name. The verb snapshot's triples are in ascending id order, confirming the tie-break landed.
+change_log_list_word_1.json shifted by +3 (ids 6885→6888 …) — the re-import wrote three more change rows. That fixture pins absolute change-log ids, so it will drift on every re-import; not caused by this change, but worth knowing.
+docs/code_user_message_exceptions.md now reports db_object_seq_id.php:350 - user_message $msg = new user_message(), instead of the full signature — the generator matches a single line and your reformat of api_json split the signature across lines. Cosmetic, but the entry is now less readable than its siblings.
+Checked and clean: no &&/|| in added code, no secrets, includes and use blocks alphabetically placed, log_err only on genuine programming-error paths.
 
 Worth deciding
 Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.

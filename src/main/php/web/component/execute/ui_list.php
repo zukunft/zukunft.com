@@ -378,7 +378,7 @@ class ui_list extends ui_base
     }
 
     /**
-     * the triples that use the given verb as a comma separated list of the triple names with a
+     * the triples that use the given verb as a blank separated list of the triple names with a
      * link to each triple, used by the verb default page and the verb edit and delete pages
      *
      * TODO move to a component exe part class
@@ -393,19 +393,49 @@ class ui_list extends ui_base
         global $mtr;
 
         $result = '';
-        // without the verb or the preloaded triples the list cannot be created, and showing the
-        // not-used message would tell the user that the verb has no triples, which is not known here
-        if ($dbo == null or $cfg?->trp_lst == null) {
-            log_err_msg_ui('the verb or the triple cache is missing to select the triples of a verb', $msg);
+        if ($dbo == null) {
+            log_err_msg_ui('the verb is missing to select the triples of a verb', $msg);
         } elseif ($dbo::class == verb::class) {
-            $trp_lst = clone $cfg->trp_lst;
-            $trp_lst = $trp_lst->get_by_verb($dbo, $msg);
-            $result = $trp_lst->display($msg);
-            if ($result == '') {
-                $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
+            // a verb loaded for its page carries all its triples (see verb::load_by_id_with_related),
+            // whereas the page cache holds only the triples of the shown phrases, so it would list
+            // the triples of the verb that happen to be on the page and not all of them
+            $trp_lst = $dbo->trp_lst;
+            if ($trp_lst == null and $cfg?->trp_lst != null) {
+                $trp_lst = clone $cfg->trp_lst;
+                $trp_lst = $trp_lst->get_by_verb($dbo, $msg);
+            }
+            // without the preloaded triples the list cannot be created, and showing the not-used
+            // message would tell the user that the verb has no triples, which is not known here
+            if ($trp_lst == null) {
+                log_err_msg_ui('the triple cache is missing to select the triples of a verb', $msg);
+            } else {
+                $result = $trp_lst->display($msg, '', $this->configured_link_limit($msg));
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
+                }
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for triples', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the number of links shown at once, e.g. the triples that use a verb on the verb page
+     * (config.yaml "user > frontend > lists > limit > link list")
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximum number of links to show
+     */
+    private function configured_link_limit(user_message $msg): int
+    {
+        global $ui_sys;
+
+        $result = config::LIMIT_LINK_LIST;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                $msg, config::LIMIT_LINK_LIST);
         }
         return $result;
     }
@@ -1016,15 +1046,25 @@ class ui_list extends ui_base
         global $mtr;
 
         $result = '';
-        // without the source or the preloaded values the list cannot be created, and showing the
-        // not-used message would tell the user that the source has no values, which is not known here
-        if ($dbo == null or $dto?->val_lst == null) {
-            log_err_msg_ui('the source or the value cache is missing to select the values of a source', $msg);
+        if ($dbo == null) {
+            log_err_msg_ui('the source is missing to select the values of a source', $msg);
         } elseif ($dbo::class == source::class) {
-            $val_lst = $dto->val_lst->filter($msg, $dbo);
-            $result = $this->value_list_unit($val_lst, $msg, $style_id);
-            if ($result == '') {
-                $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES);
+            // a source loaded for its page carries all its values (see source::load_by_id_with_related),
+            // whereas the page cache holds only the values of the shown phrases, so it would list the
+            // values of the source that happen to be on the page and not all of them
+            $val_lst = $dbo->val_lst;
+            if ($val_lst == null and $dto?->val_lst != null) {
+                $val_lst = $dto->val_lst->filter($msg, $dbo);
+            }
+            // without the preloaded values the list cannot be created, and showing the not-used
+            // message would tell the user that the source has no values, which is not known here
+            if ($val_lst == null) {
+                log_err_msg_ui('the value cache is missing to select the values of a source', $msg);
+            } else {
+                $result = $this->value_list_unit($val_lst, $msg, $style_id);
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES);
+                }
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for values', $msg);

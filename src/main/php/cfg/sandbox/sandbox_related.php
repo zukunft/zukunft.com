@@ -47,6 +47,7 @@ include_once paths::MODEL_LOG . 'change_log_list.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -56,6 +57,7 @@ include_once paths::SHARED_TYPES . 'share_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -193,14 +195,25 @@ class sandbox_related
      *
      * @param sandbox|sandbox_multi $sbx the object whose overwrites should be shown
      * @param user_message $msg to collect the error messages for the calling user
+     * @param sandbox|sandbox_multi|null $std the standard object if the caller has already loaded
+     *                                        it, so that it is not read a second time e.g. by the
+     *                                        user page, which needs it for the standard value too
+     * @param user_list|null $changers the users that have changed the object if the caller has
+     *                                 already read them for many objects at once, so that they are
+     *                                 not read again per object (see sandbox::changed_by_ids)
      * @return array one entry per overwritten field and user, sorted by user name and field
      */
-    function other_overwrites(sandbox|sandbox_multi $sbx, user_message $msg): array
+    function other_overwrites(
+        sandbox|sandbox_multi      $sbx,
+        user_message               $msg,
+        sandbox|sandbox_multi|null $std = null,
+        ?user_list                 $changers = null
+    ): array
     {
         $result = [];
-        $std = null;
+        $changers = $changers ?? $sbx->changed_by($msg);
         // the user list of changed_by() stays null if no other user has changed the object
-        foreach ($sbx->changed_by($msg)->lst() ?? [] as $other) {
+        foreach ($changers->lst() ?? [] as $other) {
             if ($other->id() != $sbx->get_user()->id()) {
                 $other_obj = clone $sbx;
                 $other_obj->set_user($other);

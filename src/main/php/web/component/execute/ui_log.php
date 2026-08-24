@@ -48,6 +48,7 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'change_log_actions.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -65,11 +66,24 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 
 class ui_log
 {
+
+    // what the all user overwrites column of the user page adds beside when, who and what: the type
+    // of the changed object, the undo icon and the icon to the values of the other users; the values
+    // of the other users are not shown inline, because reading them costs a query per changed object
+    // and the rows are not grouped by type, because the grouping hides how recent a change is
+    // (see change_log_actions and docs/llm/pending.md)
+    const array USER_PAGE_TYPES_AND_ACTIONS = [
+        change_log_actions::OBJECT_TYPE,
+        change_log_actions::UNDO,
+        change_log_actions::OTHERS_LINK,
+    ];
+
 
     /*
      * display
@@ -153,6 +167,10 @@ class ui_log
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @param msg_id|null $ui_msg_code_id the message id of the headline shown in the user language
      * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @param array|null $types_and_actions the change_log_actions that each row adds beside when,
+     *                                      who and what; null for the default columns of the user
+     *                                      page and an empty list for a plain when / who / what
+     *                                      table
      * @return string the html code with the overwrite table or the no-changes message
      */
     function all_user_overwrites(
@@ -161,7 +179,8 @@ class ui_log
         user_message    $msg,
         bool            $test_mode = false,
         ?msg_id         $ui_msg_code_id = null,
-        array           $url_array = []
+        array           $url_array = [],
+        ?array          $types_and_actions = null
     ): string
     {
         global $mtr;
@@ -203,9 +222,54 @@ class ui_log
             // this column lists the changes of all objects of the user, so unlike the 'my' tab of
             // an object page the what column must name the changed object, because 'added user
             // description' alone does not tell the user which word or triple has been changed
-            // and each row gets an undo icon, so that the user can reset one overwrite from the
-            // user page instead of having to open the 'my' tab of each object
-            $result .= $this->table_pure($my_lst, $msg, $test_mode, true, true, $url_array);
+            // and each row gets the two action icons, so that the user can reset one overwrite and
+            // can see what the other users have set without opening the tabs of each object page
+            $lst_types_and_actions = $types_and_actions ?? self::USER_PAGE_TYPES_AND_ACTIONS;
+            if (in_array(change_log_actions::GROUP_BY_TYPE, $lst_types_and_actions, true)) {
+                $result .= $this->tables_by_type($my_lst, $msg, $test_mode, $lst_types_and_actions, $url_array);
+            } else {
+                $result .= $this->table_pure(
+                    $my_lst, $msg, $test_mode, true, $lst_types_and_actions, $url_array);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * one table per object type instead of one table for all changes, each table with the type as
+     * its header, like the retired user_display_old page showed the overwrites
+     *
+     * the type whose change is the newest comes first, so if the last thing the user did was a
+     * source update the sources are on top; the list is already sorted newest first, so the order
+     * in which the types first appear is the order of the tables
+     *
+     * @param change_log_list $log_lst the filtered, sorted and row-limited change log to render
+     * @param user_message $msg to collect the mapping errors
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param array $types_and_actions the change_log_actions of the tables
+     * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @return string the html code of one table per object type
+     */
+    private function tables_by_type(
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode,
+        array           $types_and_actions,
+        array           $url_array
+    ): string
+    {
+        $html = new html_base();
+        $result = '';
+        // the header of each table names the type, so a type column would only repeat it
+        $tbl_entries = array_filter(
+            $types_and_actions,
+            fn($entry) => $entry->is_action_column());
+        foreach ($log_lst->split_by_object_type() as $type_name => $type_lst) {
+            $result .= $html->text_h4($html->esc($type_name));
+            // the row limit is applied to the complete list before the split, so a group is never
+            // cut again and the paging footer of a group would repeat the one of the whole list
+            $result .= $this->table_pure(
+                $type_lst, $msg, $test_mode, true, $tbl_entries, $url_array, 0);
         }
         return $result;
     }
@@ -219,9 +283,12 @@ class ui_log
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object
-     * @param bool $with_undo true to add the undo icon column, which needs the listed changes to be
-     *                        the user overwrites of the session user
+     * @param array $types_and_actions the change_log_actions that the table adds beside when, who
+     *                                 and what, which need the listed changes to be the user
+     *                                 overwrites of the session user
      * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @param int|null $max_rows the row limit of this table, null for the configured limit and
+     *                           zero for a table whose list is already limited by the caller
      * @return string the html code of the borderless when / who / what change log table
      */
     private function table_pure(
@@ -229,8 +296,9 @@ class ui_log
         user_message    $msg,
         bool            $test_mode,
         bool            $with_object = false,
-        bool            $with_undo = false,
-        array           $url_array = []
+        array           $types_and_actions = [],
+        array           $url_array = [],
+        ?int            $max_rows = null
     ): string
     {
         global $ui_sys;
@@ -240,9 +308,9 @@ class ui_log
                 [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
                 $msg, 0);
         }
-        $max_rows = $this->configured_row_limit($msg);
+        $rows = $max_rows ?? $this->configured_row_limit($msg);
         return $log_lst->tbl_when_who_what(
-            $what_max_chars, $max_rows, $test_mode, $with_object, $with_undo, $url_array);
+            $what_max_chars, $rows, $test_mode, $with_object, $types_and_actions, $url_array);
     }
 
     /**

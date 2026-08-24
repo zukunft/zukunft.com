@@ -759,8 +759,10 @@ class triple extends sandbox_link_named
                 }
                 if ($this->get_verb() != null) {
                     if ($with_names) {
-                        // include the verb name so the frontend can link the verb
-                        $vars[json_fields::VERB] = $this->get_verb()->api_json_array($typ_lst, $msg);
+                        // TODO Prio 3 review
+                        // include the verb name so the frontend can link the verb, but never the
+                        // related objects of the verb, which are all triples that use it
+                        $vars[json_fields::VERB] = $this->get_verb()->api_json_array([], $msg);
                     } else {
                         $vars[json_fields::VERB] = $this->get_verb()->id();
                     }

@@ -1269,6 +1269,60 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * create the SQL to load the default values of many rows at once; the same query as
+     * load_sql_standard but with an id list, so that a page that shows the changes of many objects
+     * needs one query per object type instead of one per object
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids the database row ids to select the standard rows
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_standard_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
+        $qp->name .= 'ids';
+
+        $sc->set_class($this::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields($this->all_fields());
+        $sc->add_where($this->id_field(), $ids);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * the database rows with the standard values of the given ids, by object id
+     *
+     * the rows and not the objects are returned, because the caller has the objects as the user
+     * sees them and must map the standard row into a clone of them: a link object needs the linked
+     * objects of the loaded object to map its row (like load_standard, which maps into $this)
+     *
+     * @param array $ids the database row ids of the objects of this class
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return array the database row with the standard values by the object id
+     */
+    function load_standard_rows_by_ids(array $ids, user_message $msg): array
+    {
+        global $db_con;
+
+        $result = [];
+        if ($ids == []) {
+            return $result;
+        }
+        $qp = $this->load_sql_standard_by_ids($db_con->sql_creator(), $ids);
+        $db_rows = $db_con->get($qp, $msg, 'standard by ids');
+        foreach ($db_rows as $db_row) {
+            $id = $db_row[$this->id_field()] ?? 0;
+            if ($id != 0) {
+                $result[$id] = $db_row;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * create an SQL statement to retrieve the user changes of the current object
      *
      * @param sql_creator $sc with the target db_type set
@@ -1717,13 +1771,13 @@ class sandbox extends db_object_seq_id_user
      */
     function load_sql_of_users_that_changed(sql_creator $sc): sql_par
     {
-        $lib = new library();
-
         $qp = new sql_par($this::class);
         $qp->name .= 'user_list';
 
-        $class = $lib->class_to_name($this::class);
-        $sc->set_class($class, new sql_type_list([sql_type::USER]));
+        // the class name and not the short table name, so that sql_creator::DB_TYPES_NOT_NAMED
+        // matches: a link table like user_component_links has no name field, and with the short
+        // name the query selected s.component_link_name and the database rejected it
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
         $sc->set_join_fields(
@@ -1738,6 +1792,88 @@ class sandbox extends db_object_seq_id_user
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * create an SQL statement to get the users that have ever changed one of the given objects;
+     * the same query as load_sql_of_users_that_changed but for many objects at once, so that a page
+     * that shows the changes of many objects needs one query per object type instead of one per
+     * object (see change_log_list::load_changed_objects)
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids the database ids of the objects of this class
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_of_users_that_changed_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $qp->name .= 'user_list_by_ids';
+
+        // the class name and not the short table name, so that sql_creator::DB_TYPES_NOT_NAMED
+        // matches and a link table like user_component_links does not get a name field
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->get_user()->id);
+        // only the id and the name of the user are joined and not user_db::FLD_NAMES_LIST like in
+        // load_sql_of_users_that_changed, because the user has a view_id and a source_id of its own
+        // and a joined field of the same name would overwrite the id of the changed object
+        $sc->set_join_fields(
+            array(user_db::FLD_ID, user_db::FLD_NAME),
+            user::class,
+            user_db::FLD_ID,
+            user_db::FLD_ID);
+        $sc->add_where($this->id_field(), $ids);
+        $sc->add_where(fields::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * the users that have changed one of the given objects of this class, by object id
+     *
+     * the users themselves are loaded once for all objects, so that this needs two queries for any
+     * number of objects, whereas changed_by needs two queries per object
+     *
+     * @param array $ids the database ids of the objects of this class
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return array the user_list of the users that have changed the object, by object id
+     */
+    function changed_by_ids(array $ids, user_message $msg): array
+    {
+        global $db_con;
+
+        $result = [];
+        if ($ids == []) {
+            return $result;
+        }
+        $qp = $this->load_sql_of_users_that_changed_by_ids($db_con->sql_creator(), $ids);
+        $db_rows = $db_con->get($qp, $msg, 'sandbox user list by ids');
+        $usr_ids = [];
+        $usr_ids_by_row = [];
+        foreach ($db_rows as $db_row) {
+            $usr_id = $db_row[user_db::FLD_ID] ?? 0;
+            $row_id = $db_row[$this->id_field()] ?? 0;
+            if ($usr_id > 0 and $row_id != 0) {
+                $usr_ids[] = $usr_id;
+                $usr_ids_by_row[$row_id][] = $usr_id;
+            }
+        }
+        // load the users of all objects with one query instead of one query per object
+        $usr_lst = new user_list($this->get_user());
+        $usr_lst->load_by_ids($db_con, array_unique($usr_ids), $msg);
+        foreach ($usr_ids_by_row as $row_id => $row_usr_ids) {
+            $row_lst = new user_list($this->get_user());
+            foreach ($usr_lst->lst() as $usr) {
+                if (in_array($usr->id(), $row_usr_ids)) {
+                    $row_lst->add($usr);
+                }
+            }
+            $result[$row_id] = $row_lst;
+        }
+        return $result;
     }
 
     /**

@@ -505,6 +505,12 @@
       "description": "the position in the parent view where the child view of a view relation starts as read only",
       "type": "system_show_view_start_pos",
       "code_id": "show_field_start_pos"
+    },
+    {
+      "name": "system show field name in formulas",
+      "description": "the verb name used in formulas as read only",
+      "type": "system_show_field_name_in_formulas",
+      "code_id": "show_field_name_in_formulas"
     }
   ],
   "views": [
@@ -612,23 +618,23 @@
         },
         {
           "position": "2",
-          "name": "Verb"
-        },
-        {
-          "position": "3",
           "name": "system show field description"
         },
         {
-          "position": "4",
+          "position": "3",
           "name": "system show field reverse"
         },
         {
-          "position": "5",
+          "position": "4",
           "name": "system show field plural"
         },
         {
-          "position": "6",
+          "position": "5",
           "name": "system show field plural reverse"
+        },
+        {
+          "position": "6",
+          "name": "system show field name in formulas"
         },
         {
           "position": "7",

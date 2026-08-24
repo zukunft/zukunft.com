@@ -679,7 +679,7 @@ class system_form extends component
      */
     function show_plural(word|db_object $dbo): string
     {
-        return $this->esc($dbo->plural ?? '');
+        return $this->show_field_labeled($dbo->plural ?? '', msg_id::FORM_FIELD_PLURAL);
     }
 
     /**
@@ -688,7 +688,7 @@ class system_form extends component
      */
     function show_reverse(verb|db_object $dbo): string
     {
-        return $this->esc($dbo->reverse ?? '');
+        return $this->show_field_labeled($dbo->reverse ?? '', msg_id::FORM_FIELD_REVERSE);
     }
 
     /**
@@ -698,7 +698,41 @@ class system_form extends component
      */
     function show_plural_reverse(verb|db_object $dbo): string
     {
-        return $this->esc($dbo->rev_plural ?? '');
+        return $this->show_field_labeled($dbo->rev_plural ?? '', msg_id::FORM_FIELD_PLURAL_REVERSE);
+    }
+
+    /**
+     * @param verb|db_object $dbo the verb
+     * @return string the short name that the verb has in a formula as read-only text, where both
+     *                sides of the triple are combined (empty if no formula name is set)
+     */
+    function show_name_in_formulas(verb|db_object $dbo): string
+    {
+        return $this->show_field_labeled($dbo->frm_name ?? '', msg_id::FORM_FIELD_NAME_IN_FORMULAS);
+    }
+
+    /**
+     * a read only field value with the translated label of the field in front of it, e.g.
+     * 'Plural: are', because the verb page shows the plural, the reverse and the plural reverse
+     * below each other and without the label the user cannot tell which value is which
+     *
+     * the label of the matching form field is reused, so that the read only page and the edit
+     * form name the same field the same way (see form_field_plural)
+     *
+     * @param string $value the field value of the object
+     * @param msg_id $ui_msg_code_id the message id of the field label
+     * @return string the escaped value behind its label, '' if the object has no value
+     */
+    private function show_field_labeled(string $value, msg_id $ui_msg_code_id): string
+    {
+        global $mtr;
+
+        $result = '';
+        // a field without a value is not shown at all, so its label would stand alone
+        if ($value != '') {
+            $result = $mtr->txt($ui_msg_code_id) . def::FALLBACK_LABEL_SEPARATOR . $this->esc($value);
+        }
+        return $result;
     }
 
     /**
@@ -836,12 +870,11 @@ class system_form extends component
      */
     function show_phrase_type(word|db_object $dbo, user_message $msg): string
     {
-        global $ui_sys;
-
         $result = '';
         $type_id = $dbo->type_id($msg);
-        if ($type_id !== null) {
-            $result = $this->esc($ui_sys->typ_lst_cache->phr_typ->name($type_id));
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($type_id !== null and $phr_typ != null) {
+            $result = $this->esc($phr_typ->name($type_id));
         }
         return $result;
     }

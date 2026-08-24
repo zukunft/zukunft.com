@@ -276,12 +276,8 @@ class db_object extends TextIdObject
     {
         $result = '';
         $fld_var = $this->db_fld_to_url()[$fld] ?? '';
-        // the id of a value is its group id, which is a text for a group of more than four phrases,
-        // so a text id is checked for an empty text and never compared with a number
-        $id = $this->id();
-        $id_set = is_string($id) ? $id != '' : $id > 0;
         // not every class has an edit view, so guard the const to avoid a fatal
-        if ($fld_var != '' and $id_set and defined($this::class . '::VIEW_EDIT_ID')) {
+        if ($fld_var != '' and $this->has_db_id() and defined($this::class . '::VIEW_EDIT_ID')) {
             // keep all entries of the current url except the entry (and the '8'-prefixed opening
             // value) of the field to change, which is replaced by the given values below
             $url_pars = $url_array;
@@ -297,6 +293,52 @@ class db_object extends TextIdObject
             $result = api::MAIN_SCRIPT . '?' . http_build_query($url_pars);
         }
         return $result;
+    }
+
+    /**
+     * the url of the default page of this object e.g. to link the name of the changed object in
+     * the all user overwrites column of the user page to the object itself
+     *
+     * the default view is derived from the edit view, because a frontend class names its crud
+     * views but not its default view (see views::change_to_show_id)
+     *
+     * @return string the url of the default page or an empty string if this object has no own view
+     */
+    function default_page_url(): string
+    {
+        $result = '';
+        // not every class has an edit view, so guard the const to avoid a fatal
+        if ($this->has_db_id() and defined($this::class . '::VIEW_EDIT_ID')) {
+            $msk_id = new views()->change_to_show_id($this::VIEW_EDIT_ID);
+            // a class without an own default view would send the user to the start page
+            if ($msk_id != views::START_ID) {
+                $result = api::MAIN_SCRIPT . '?' . http_build_query([
+                        url_var::MASK => $msk_id,
+                        url_var::ID => $this->id(),
+                    ]);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if this object has a database id; the id of a value is its group id, which is a text for
+     * a group of more than four phrases, so a text id is checked for an empty text and never
+     * compared with a number
+     *
+     * private, because value::is_id_set answers another question (whether the phrase group of the
+     * value has an id) and the two must never be mixed up
+     *
+     * @return bool true if the database id of this object is set
+     */
+    private function has_db_id(): bool
+    {
+        $id = $this->id();
+        if (is_string($id)) {
+            return $id != '';
+        } else {
+            return $id > 0;
+        }
     }
 
 

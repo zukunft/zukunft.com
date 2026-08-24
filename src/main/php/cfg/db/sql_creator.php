@@ -1148,6 +1148,7 @@ class sql_creator
                 or $spt == sql_par_type::INT_OR
                 or $spt == sql_par_type::INT_NOT
                 or $spt == sql_par_type::INT_NOT_OR_NULL
+                or $spt == sql_par_type::INT_USR
                 or $spt == sql_par_type::LIMIT
                 or $spt == sql_par_type::OFFSET) {
                 $this->add_par($spt, $fld_val, $name);
@@ -3774,8 +3775,9 @@ class sql_creator
             }
         }
 
-        // select by the user-specific name
-        if ($typ == sql_par_type::TEXT_USR) {
+        // select by the user-specific name or id, which is the where of the CASE that the field
+        // list uses: the user value if the user has one, else the value of the standard row
+        if ($typ == sql_par_type::TEXT_USR or $typ == sql_par_type::INT_USR) {
             $sql_where .= '(' . sql_db::USR_TBL . '.';
             $sql_where .= $fld . " = " . $par->name;
             $sql_where .= ' ' . sql::OR . ' (' . sql_db::STD_TBL . '.';
@@ -3908,8 +3910,8 @@ class sql_creator
 
                     $par_pos = $i + 1 + $par_offset;
 
-                    // select by the user-specific name
-                    if ($typ == sql_par_type::TEXT_USR) {
+                    // select by the user-specific name or id (see the same where above)
+                    if ($typ == sql_par_type::TEXT_USR or $typ == sql_par_type::INT_USR) {
                         $result .= '(' . sql_db::USR_TBL . '.';
                         $result .= $this->par_lst->name($i) . " = " . $this->par_name($par_pos);
                         $result .= ' ' . sql::OR . ' (' . sql_db::STD_TBL . '.';

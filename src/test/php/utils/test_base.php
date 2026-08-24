@@ -379,8 +379,6 @@ include_once test_paths::UNIT_INT . 'test_export.php';
 // load the test functions still in development
 include_once test_paths::DEV . 'test_legacy.php';
 
-// TODO to be dismissed
-include_once html_paths::USER . 'user_display_old.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 
@@ -1227,8 +1225,11 @@ class test_base
             // add the related database objects
             $dbo->load_by_id_with_related($id, $msg);
         }
-        // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above
-        $dbo_api_msg = $dbo->api_json([api_types::INCL_RELATED, api_types::INCL_PHRASES]);
+        // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above;
+        // the user is given like the api endpoints do (see api/verb/index.php), because a related
+        // list is loaded and filtered for a user and a verb carries none of its own
+        $dbo_api_msg = $dbo->api_json(
+            [api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg, $usr);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
@@ -2002,6 +2003,35 @@ class test_base
     }
 
     /**
+     * check the SQL statement to load the default objects of many ids with one query
+     * for all allowed SQL database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object is e.g. a word or a value
+     * @param array $ids the database ids of the objects that should be loaded
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_standard_by_ids(
+        sql_creator           $sc,
+        sandbox|sandbox_multi $usr_obj,
+        array                 $ids = array(1, 2)
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->load_sql_standard_by_ids($sc, $ids);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->load_sql_standard_by_ids($sc, $ids);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
      * check the SQL statement to load the default object by the name
      * for all allowed SQL database dialects
      *
@@ -2179,6 +2209,36 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_of_users_that_changed($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+
+        return $result;
+    }
+
+    /**
+     * check the SQL statements to get the users that have ever changed one of many objects
+     * e.g. to show the changes of the other users on the user page
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object e.g. a word or a value
+     * @param array $ids the database ids of the objects that should be checked
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_changing_users_by_ids(
+        sql_creator           $sc,
+        sandbox|sandbox_multi $usr_obj,
+        array                 $ids = array(1, 2)
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->load_sql_of_users_that_changed_by_ids($sc, $ids);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->load_sql_of_users_that_changed_by_ids($sc, $ids);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
 

@@ -489,15 +489,19 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param string|null $code_id the code id of the phrase type
+     * @param string|null $code_id the code id of the phrase type, null to reset the type
+     * @param user_message $msg to report a missing type cache, without which the code id
+     *                          cannot be resolved to the type id
      */
-    function set_type(?string $code_id): void
+    function set_type(?string $code_id, user_message $msg): void
     {
-        global $ui_sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($ui_sys->typ_lst_cache->phr_typ->id($code_id));
+            $phr_typ = type_lists::phrase_types($msg);
+            if ($phr_typ != null) {
+                $this->set_type_id($phr_typ->id($code_id));
+            }
         }
     }
 
@@ -641,10 +645,10 @@ class word extends sandbox_code_id
      */
     function dsp_type_selector(string $form, user_message $msg, string $style = '', ?type_lists $typ_lst = null): string
     {
-        global $ui_sys;
         $result = '';
-        if ($ui_sys->typ_lst_cache->phr_typ->get_code_id($this->type_id($msg)) == phrase_types::FORMULA_LINK) {
-            $result .= ' type: ' . $ui_sys->typ_lst_cache->phr_typ->name($this->type_id($msg));
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($phr_typ?->get_code_id($this->type_id($msg)) == phrase_types::FORMULA_LINK) {
+            $result .= ' type: ' . $phr_typ->name($this->type_id($msg));
         } else {
             $result .= $this->phrase_type_selector($form, $msg, $typ_lst);
         }
@@ -773,10 +777,10 @@ class word extends sandbox_code_id
      */
     function is_type(string $type, user_message $msg): bool
     {
-        global $ui_sys;
         $result = false;
-        if ($this->type_id($msg) != Null) {
-            if ($this->type_id($msg) == $ui_sys->typ_lst_cache->phr_typ->id($type)) {
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($this->type_id($msg) != Null and $phr_typ != null) {
+            if ($this->type_id($msg) == $phr_typ->id($type)) {
                 $result = true;
             }
         }

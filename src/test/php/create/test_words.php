@@ -473,7 +473,7 @@ class test_words extends test_objects
         $t_phr = new test_phrases($this->env);
         $wrd = $this->zh_ui();
         $wrd->phr_lst = $t_phr->list_zh_ui();
-        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        $wrd->set_type(phrase_types::MEASURE, new user_message_ui());
         $wrd->share_id = $ui_sys?->typ_lst_cache?->shr_typ?->id(share_types::PERSONAL);
         $wrd->protection_id = $ui_sys?->typ_lst_cache?->ptc_typ?->id(protection_types::ADMIN);
         return $wrd;

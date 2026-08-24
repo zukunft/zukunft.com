@@ -226,9 +226,9 @@ class test_refs extends test_objects
 
     function ref_list_math(): ref_list
     {
-        $lst = new ref_list();
-        $lst->add($this->reference());
-        $lst->add($this->reference_math());
+        $lst = new ref_list($this->env->usr1);
+        $lst->add_obj($this->reference());
+        $lst->add_obj($this->reference_math());
         return $lst;
     }
 

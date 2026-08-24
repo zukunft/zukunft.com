@@ -203,7 +203,7 @@ class sandbox_list extends list_db_write
     /**
      * load whatever the name() of the loaded objects needs beyond the object row itself, so that
      * a caller that only wants the names can load any list the same way (see
-     * change_log_list::load_row_names); a named object carries its name in its own row, so this
+     * change_log_list::load_changed_objects); a named object carries its name in its own row, so this
      * is a no-op for every list except the values, which name themselves by their group phrases
      *
      * @param user_message $msg to collect any problem while loading

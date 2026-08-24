@@ -54,6 +54,8 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -74,6 +76,8 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -190,6 +194,26 @@ class ref extends sandbox
             }
         }
         return $msg;
+    }
+
+    /**
+     * the url vars that url_mapper reads back for the user-editable fields of a reference;
+     * the reference type is the predicate, which the parent reads from url_var::TYPE
+     *
+     * @return array db field name => url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            ref_fields::FLD_EX_KEY => url_var::EXTERNAL_KEY,
+            ref_fields::FLD_TYPE => url_var::TYPE,
+            ref_fields::FLD_SOURCE => url_var::SOURCE,
+            fields::FLD_URL => url_var::URL,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
 

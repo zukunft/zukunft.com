@@ -83,6 +83,7 @@ include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
@@ -120,6 +121,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 
 class value_list extends sandbox_value_list
 {
@@ -324,6 +326,31 @@ class value_list extends sandbox_value_list
     }
 
     /**
+     * load a list of values that name the given source, e.g. for the source page all values that
+     * the user has taken from this publication
+     *
+     * @param source $src the source that the loaded values should name
+     * @param user_message $msg to collect any problem while loading the values
+     * @param int $limit the number of rows to return
+     * @param int $page jump over these number of pages
+     * @return bool true if at least one value has been loaded
+     */
+    function load_by_source(source $src, user_message $msg, int $limit = sql_db::ROW_LIMIT, int $page = 0): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_source($sc, $src, $limit, $page);
+        $this->load($qp, $msg);
+        // a source can name a text value without naming a number value, so unlike load_by_phr the
+        // text values are loaded independent of the result of the number query
+        $sc->reset();
+        $qp = $this->load_sql_by_source($sc, $src, $limit, $page, value_types::TEXT);
+        $this->load($qp, $msg);
+        return !$this->is_empty();
+    }
+
+    /**
      * load a list of values by the given value ids
      *
      * @param array $val_ids an array of value ids which should be loaded
@@ -522,6 +549,147 @@ class value_list extends sandbox_value_list
             }
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values that name the given source
+     *
+     * a value is stored in the table that matches its value type and the size of its group id, so
+     * like load_sql_by_phr the statement is a union over all these tables
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param source $src the source that the loaded values should name
+     * @param int $limit the number of rows to return
+     * @param int $page jump over these number of pages
+     * @param value_types|null $val_typ if not null load only the values of this type
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_source(
+        sql_creator      $sc,
+        source           $src,
+        int              $limit = 0,
+        int              $page = 0,
+        value_types|null $val_typ = null
+    ): sql_par
+    {
+        $lib = new library();
+
+        // set the default value type
+        if ($val_typ === null) {
+            $val_typ = value_types::NUMBER;
+        }
+        $sc_par_lst = new sql_type_list();
+        $sc_par_lst->add($val_typ->sql_type());
+        $val = $sc_par_lst->value_object($this->get_user());
+        $val_typ_lst = new value_type_list([$val_typ]);
+        $val_ext = $val_typ_lst->query_extension();
+
+        $qp = new sql_par($val::class);
+        $qp->name = $lib->class_to_name(value_list::class) . $val_ext . '_by_source';
+        $par_types = array();
+
+        // prepare adding the parameters in order of expected usage
+        $par_pos = $sc->par_count();
+
+        // the parameter type decides how the where is created, so the source needs two parameters
+        // with the same id: the user tables resolve the source with a CASE and match it with the
+        // INT_USR where, whereas the standard tables have no user row and match the plain id
+        // (the same reason why load_sql_by_phr has a phrase and a group parameter)
+        $pos_src_usr = $par_pos;
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos);
+        $sc->add_where_par(source_fields::FLD_ID, $src->id(), sql_par_type::INT_USR, '', $par_name);
+
+        $pos_src_std = $par_pos;
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos);
+        $sc->add_where_par(source_fields::FLD_ID, $src->id(), sql_par_type::INT, '', $par_name);
+
+        // add the user parameter
+        $pos_usr = $par_pos;
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos);
+        $sc->add_where_par(user_db::FLD_ID, $this->get_user()->id, sql_par_type::INT, '', $par_name);
+
+        // remember the parameters
+        $par_lst = clone $sc->par_list();
+
+        // loop over the possible tables where the value might be stored in this pod
+        foreach (value_db::TBL_LIST as $tbl_typ) {
+            // reset but keep the parameter list
+            $sc->reset();
+            $qp_tbl = $this->load_sql_by_source_single(
+                $sc, $pos_src_usr, $pos_src_std, $pos_usr, $tbl_typ, $par_lst, $sc_par_lst);
+            if ($sc->db_type() != sql_db::MYSQL) {
+                $qp->merge($qp_tbl, true);
+            } else {
+                $qp->merge($qp_tbl);
+            }
+        }
+        // for the union take the parameters from the creator, which keeps one entry per
+        // placeholder ($1 source, $2 user) reused across the branches (see load_sql_by_phr)
+        if ($sc->db_type() != sql_db::MYSQL) {
+            $qp->par = $lib->key_num_sort($sc->get_par());
+        }
+
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load the values of one source from one value table
+     *
+     * the source of a value is user-specific (see value_db::FLD_NAMES_NUM_USR), so the where uses
+     * INT_USR, which matches the user row if the user has one and the standard row otherwise
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $src_usr_pos the position of the source parameter of the user tables
+     * @param int $src_std_pos the position of the source parameter of the standard tables
+     * @param int $usr_pos the position of the user parameter
+     * @param array $sc_par_lst the table types of the value table to select from
+     * @param sql_field_list $par_lst the parameters of the complete union query
+     * @param sql_type_list $sc_typ_lst the parameters for the sql statement creation
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    private function load_sql_by_source_single(
+        sql_creator    $sc,
+        int            $src_usr_pos,
+        int            $src_std_pos,
+        int            $usr_pos,
+        array          $sc_par_lst,
+        sql_field_list $par_lst,
+        sql_type_list  $sc_typ_lst
+    ): sql_par
+    {
+        $val = $sc_typ_lst->value_object($this->get_user());
+
+        $qp = $this->load_sql_init(
+            $sc,
+            $val::class,
+            'source',
+            $sc_par_lst,
+            $par_lst,
+            $sc_typ_lst,
+            $usr_pos);
+        // a standard table has no user row that could overwrite the source, so there the plain
+        // id matches, whereas the user tables need the CASE where of INT_USR
+        if ($this->is_std($sc_par_lst)) {
+            $sc->add_where_no_par('', source_fields::FLD_ID, sql_par_type::INT, $src_std_pos);
+        } else {
+            $sc->add_where_no_par('', source_fields::FLD_ID, sql_par_type::INT_USR, $src_usr_pos);
+        }
+        $qp->sql = $sc->sql(0, true, false);
+        $qp->par = $sc->get_par();
 
         return $qp;
     }

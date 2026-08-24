@@ -345,7 +345,11 @@ class db_object_seq_id extends db_object
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
-    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
+    function api_json(
+        api_type_list|array $typ_lst = [],
+        user_message $msg = new user_message(),
+        user|null $usr = null
+    ): string
     {
         global $db_con;
         $api_msg = new api_message();

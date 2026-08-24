@@ -248,6 +248,13 @@ class value_tests
         $t->assert_sql_standard($sc, $val_16);
         $t->assert_sql_standard($sc, $val_17);
         $t->assert_sql_standard($sc, $val_txt);
+        // the same two queries for many values of one table at once, which the user page uses; a
+        // prime value is selected by its phrase ids, so each id adds an own union sub-query
+        $t->assert_sql_standard_by_ids($sc, $val);
+        $t->assert_sql_standard_by_ids($sc, $val_17);
+        $t->assert_sql_standard_by_ids($sc, $val_txt);
+        $t->assert_sql_changing_users_by_ids($sc, $val_3);
+        $t->assert_sql_changing_users_by_ids($sc, $val_17);
 
         // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql write insert');

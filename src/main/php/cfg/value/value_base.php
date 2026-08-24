@@ -865,6 +865,35 @@ class value_base extends sandbox_value
         array       $fld_lst = []
     ): sql_par
     {
+        return parent::load_sql_standard($id, $sc, $this->standard_field_list());
+    }
+
+    /**
+     * the same as load_sql_standard but for many values of one table at once
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids the group ids of the values to select, all of the table of this value
+     * @param array $fld_lst overwritten by the fields of the value type of this value
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_standard_by_ids(
+        sql_creator $sc,
+        array       $ids,
+        array       $fld_lst = []
+    ): sql_par
+    {
+        return parent::load_sql_standard_by_ids($sc, $ids, $this->standard_field_list());
+    }
+
+    /**
+     * the fields of the standard row of this value, which depend on the value type, because a text
+     * value is stored in another table than a numeric value; shared by the single and the by ids
+     * standard query
+     *
+     * @return array the db field names of the standard row of this value
+     */
+    private function standard_field_list(): array
+    {
         if ($this->is_numeric()) {
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
@@ -899,7 +928,7 @@ class value_base extends sandbox_value
                 array(user_db::FLD_ID)
             );
         }
-        return parent::load_sql_standard($id, $sc, $fld_lst);
+        return $fld_lst;
     }
 
 

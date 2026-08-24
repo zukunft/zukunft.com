@@ -349,8 +349,8 @@ zukunft.com:
                 sys-conf-value: 10
                 tooltip-comment: "number of initial entries to show in a list names"
               link list:
-                sys-conf-value: 8
-                tooltip-comment: "number of initial entries to show in a list of links"
+                sys-conf-value: 30
+                tooltip-comment: "number of initial entries to show in a list of links e.g. the triples that use a verb shown on the verb page"
               phrase list:
                 sys-conf-value: 8
                 tooltip-comment: "number of phrases to show at once e.g. the phrases assigned to a formula; if more phrases are assigned the list ends with '... and n more'"
@@ -371,6 +371,10 @@ zukunft.com:
                 read:
                   sys-conf-value: 1000
                   tooltip-comment: "maximal number of the most relevant values read for one phrase; these values are the base of the phrase values view, which picks the phrases used most often within them as the column headlines (e.g. inhabitants for city)"
+              triples:
+                read:
+                  sys-conf-value: 100
+                  tooltip-comment: "maximal number of triples read for one verb, which bounds the api message of the verb page; it is above the 'link list' limit that decides how many of them are shown, so that the read is not repeated if the shown number is increased"
             separator:
               tooltip-comment: "the default separator for horizontal lists e.g. entry one, entry two / next topic"
               entry: ", "

@@ -52,6 +52,9 @@ class icons
     const string UNDO = 'fas fa-rotate-left';
     // shown in the 'others' tab to apply the overwrite of another user to the own user values
     const string APPLY = 'fas fa-rotate-right';
+    // shown in the all user overwrites column of the user page to open the 'others' tab of the
+    // changed object, which lists what the other users have set for the same object
+    const string OTHERS = 'fas fa-users';
     // the show / hide password toggle icons (see form_input_password and style_html.css)
     const string PASSWORD_SHOW = 'fas fa-eye';       // shown while the password is masked, click to reveal it
     const string PASSWORD_HIDE = 'fas fa-eye-slash'; // shown while the password is revealed, click to mask it

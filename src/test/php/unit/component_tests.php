@@ -90,6 +90,10 @@ class component_tests
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
         $t->assert_sql_user_changes($sc, $cmp);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $cmp);
+        $t->assert_sql_changing_users_by_ids($sc, $cmp);
 
         $t->subheader($ts . 'component sql read standard by name');
         $cmp = new component($t->usr1);

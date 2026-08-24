@@ -1634,6 +1634,9 @@ enum messages: string
     // shown when a user sandbox change adds an empty field, i.e. removes the user overwrite for a
     // field, so 'added user view id ""' becomes 'remove user overwrite for view'
     case LOG_REMOVE_USER_OVERWRITE = 'remove user overwrite for';
+    // shown after the user value of an overwrite to name the value of the shared standard object,
+    // e.g. 'added user description "my text" instead of "the common text"'
+    case LOG_INSTEAD_OF = 'instead of';
     // the change preview table column headers and the impact label
     case CHANGE_TBL_FIELD = 'change_tbl_field';
     case CHANGE_TBL_FROM = 'change_tbl_from';
@@ -1650,6 +1653,9 @@ enum messages: string
     case OTHERS_TBL_VALUE = 'others_tbl_value';
     // the tooltip of the apply icon link that takes over the overwrite of another user
     case OTHERS_TBL_APPLY = 'others_tbl_apply';
+    // the tooltip of the icon link of the all user overwrites column that opens the 'others' tab
+    // of the changed object
+    case OTHERS_TBL_SHOW = 'others_tbl_show';
     case POPUP_IMPACT = 'popup_impact';
     // the fallback unit for the impact of a change if no other impact unit is set
     case POPUP_IMPACT_UNIT_FALLBACK = 'happy_time_points';
@@ -1661,6 +1667,8 @@ enum messages: string
     case CHANGE_LOG_TBL_WHEN = 'change_log_tbl_when';
     case CHANGE_LOG_TBL_WHO = 'change_log_tbl_who';
     case CHANGE_LOG_TBL_WHAT = 'change_log_tbl_what';
+    // the header of the type column, which only a change log that lists more than one object has
+    case CHANGE_LOG_TBL_TYPE = 'change_log_tbl_type';
 
     // import
     case IMPORT_JSON = 'import';

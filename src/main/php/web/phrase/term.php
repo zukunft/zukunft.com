@@ -43,6 +43,7 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -239,12 +241,11 @@ class term extends combine_named
     private
     function load_word_by_id(int $id, user_message $msg): bool
     {
-        global $ui_sys;
-
         $result = false;
         $wrd = new word();
         if ($wrd->load_by_id($id, $msg)) {
-            if ($wrd->type_id($msg) == $ui_sys->typ_lst_cache->phr_typ->id(phrase_types::FORMULA_LINK)) {
+            $phr_typ = type_lists::phrase_types($msg);
+            if ($wrd->type_id($msg) == $phr_typ?->id(phrase_types::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id, $msg);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);

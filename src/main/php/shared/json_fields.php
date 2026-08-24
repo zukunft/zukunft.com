@@ -317,6 +317,9 @@ class json_fields
     const string NEW_ID = 'new_id';
     const string STD_VALUE = 'std_value';
     const string STD_ID = 'std_id';
+    // the value that each other user has set for the changed field, keyed by the user name, so that
+    // a change log that lists the changes of one user can show them beside the change
+    const string OTHER_VALUES = 'other_values';
 
     // the fields that the requesting user has overwritten in the user sandbox (overlay) table
     // e.g. user_words, each with the db field name, the user value and the standard value,

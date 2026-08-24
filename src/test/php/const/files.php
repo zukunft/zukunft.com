@@ -259,6 +259,10 @@ class files
     CONST string SQL_FORMAT_TEST_UPDATE_MYSQL = 'word_update_0022004000002_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_MYSQL = 'word_by_id_mysql' . self::SQL;
+    // a select that is a union of selects, because a prime value is selected by its phrase ids
+    // and therefore one sub select per value is needed (see sandbox_multi::load_sql_by_ids_union)
+    CONST string SQL_FORMAT_TEST_UNION = 'value_prime_p3_by_user_list_by_ids_2' . self::SQL;
+    CONST string SQL_FORMAT_TEST_UNION_MYSQL = 'value_prime_p3_by_user_list_by_ids_2_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT = 'user_list_by_count_changes' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;

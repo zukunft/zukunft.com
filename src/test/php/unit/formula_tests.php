@@ -96,6 +96,10 @@ class formula_tests
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
         $t->assert_sql_user_changes($sc, $frm);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $frm);
+        $t->assert_sql_changing_users_by_ids($sc, $frm);
         $this->assert_sql_user_changes_frm($t, $frm);
 
         $t->subheader($ts . 'sql read default by name');

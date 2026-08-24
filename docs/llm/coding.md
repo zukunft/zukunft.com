@@ -69,6 +69,7 @@ detail file. Order is by how often they fire, not importance.
 
 ### Structure & style
 - Comments are short: the best one is a single line saying **why** the code is there, because the *what* is in the code below it. A comment that restates the next line is deleted; a rule that holds for the whole class goes into the class docblock and a decision goes into `docs/` with one line pointing there. → `docs/llm/structure.md`
+- A condition uses `and` / `or` and never `&&` / `||`; wherever precedence decides the result, brackets say what binds to what — `$prime = ($this->is_prime() or $this->is_main());`, because `and` / `or` bind looser than `=` and without the brackets the assignment silently keeps only the first operand. A plain `if ($a and $b)` needs none, an assignment and a mix of both operators always do. → `docs/llm/structure.md`
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Whatever happens (corrupted db, bad input, missing config), an uncaught PHP fatal is avoided — guard the value before the call that would fatal and catch exceptions at the layer boundary — because a fatal prevents the three duties of error handling: sys_log entry, admin info, user message. → `docs/llm/structure.md`

@@ -52,6 +52,7 @@ include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
+include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::VALUE . 'value.php';
@@ -63,6 +64,7 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'change_actions.php';
+include_once html_paths::SHARED_ENUM . 'change_log_actions.php';
 include_once html_paths::SHARED_ENUM . 'change_tables.php';
 include_once html_paths::SHARED_ENUM . 'change_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -75,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -88,6 +91,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -120,6 +124,7 @@ class change_log_named extends change_log
         change_tables::VALUE => value::class,
         change_tables::FORMULA => formula::class,
         change_tables::FORMULA_LINK => formula_link::class,
+        change_tables::REF => ref::class,
         change_tables::SOURCE => source::class,
         change_tables::VIEW => view::class,
         change_tables::VIEW_COMPONENT => component::class,
@@ -131,6 +136,12 @@ class change_log_named extends change_log
     // between the name of the changed object and the change itself in a change log that lists the
     // changes of more than one object e.g. 'Pi: added user description "..."'
     const string OBJECT_SEPARATOR = ': ';
+
+    // the max number of other users named in the inline column of the other users' values and the
+    // separator between them e.g. 'anna: "her text", bob: "his text"'
+    // TODO Prio 1 move this value to config.yaml
+    const int OTHERS_MAX_INLINE = 3;
+    const string OTHERS_SEPARATOR = ', ';
 
     // the translated suffix of a reference (id) field name that is dropped when only the field itself
     // is named (not its value), e.g. 'view id' -> 'view' in 'remove user overwrite for view'
@@ -146,13 +157,21 @@ class change_log_named extends change_log
     public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
     public ?string $new_value = null;      // the field value after the user change
     public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
-    public ?string $std_value = null;  // the standard field value for all users that does not have changed it
-    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+    // the value resp. the reference id of the shared standard object, which the change log itself
+    // does not contain and which the backend adds only for a change log that spans the objects of
+    // one user (see cfg/log/change_log_list::load_changed_objects), so that the all user overwrites
+    // column can show the user value beside the common value
+    public ?string $std_value = null;
+    public ?int $std_id = null;
     // the name of the changed object e.g. the word name of a word change, set by the backend from
-    // the row id (see cfg/log/change_log_list::load_row_names) and null if the backend has not
+    // the row id (see cfg/log/change_log_list::load_changed_objects) and null if the backend has not
     // resolved a name for this change; used to name the object in a change log that lists the
     // changes of more than one object e.g. the all user overwrites column of the user page
     public ?string $row_name = null;
+    // the value that each other user has set for the changed field, keyed by the user name, for the
+    // inline column of change_log_actions::OTHERS_INLINE; empty unless the backend has been asked
+    // for it, because reading it costs a query per changed object (see docs/llm/pending.md)
+    public array $other_values = [];
 
 
     /*
@@ -188,10 +207,25 @@ class change_log_named extends change_log
         } else {
             $this->new_id = null;
         }
+        if (array_key_exists(json_fields::STD_VALUE, $json_array)) {
+            $this->std_value = $json_array[json_fields::STD_VALUE];
+        } else {
+            $this->std_value = null;
+        }
+        if (array_key_exists(json_fields::STD_ID, $json_array)) {
+            $this->std_id = $json_array[json_fields::STD_ID];
+        } else {
+            $this->std_id = null;
+        }
         if (array_key_exists(json_fields::ROW_NAME, $json_array)) {
             $this->row_name = $json_array[json_fields::ROW_NAME];
         } else {
             $this->row_name = null;
+        }
+        if (array_key_exists(json_fields::OTHER_VALUES, $json_array)) {
+            $this->other_values = $json_array[json_fields::OTHER_VALUES];
+        } else {
+            $this->other_values = [];
         }
         return $msg->is_ok();
     }
@@ -556,7 +590,13 @@ class change_log_named extends change_log
         if ($max_chars > 0 and mb_strlen($what) > $max_chars) {
             $what = mb_substr($what, 0, $max_chars) . self::MORE_INDICATOR;
         }
-        return $html->esc($what);
+        $result = $html->esc($what);
+        // the link is added after the shortening, so that the char limit counts the visible chars
+        // and never the html of the link
+        if ($with_object) {
+            $result = $this->object_link($result);
+        }
+        return $result;
     }
 
     /**
@@ -593,7 +633,8 @@ class change_log_named extends change_log
                     // show the new value first because it is the more relevant one:
                     // 'changed description to "new" from "old"'
                     $result = $this->action_txt(msg_id::LOG_UPDATE) . ' ' . $fld . $mtr->txt(msg_id::LOG_TO)
-                        . ' "' . $new . '" ' . $mtr->txt(msg_id::SIDE_FROM) . ' "' . $old . '"';
+                        . ' "' . $new . '" ' . $mtr->txt(msg_id::SIDE_FROM) . ' "' . $old . '"'
+                        . $this->std_value_txt($new);
                 } else {
                     $result = $this->action_txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
                 }
@@ -602,7 +643,8 @@ class change_log_named extends change_log
                 // field, so instead of 'added user view id ""' show 'remove user overwrite for view'
                 $result = $this->user_overwrite_removal_txt();
             } else {
-                $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
+                $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"'
+                    . $this->std_value_txt($new);
             }
         }
         if ($with_object) {
@@ -633,6 +675,54 @@ class change_log_named extends change_log
     }
 
     /**
+     * the value of the shared standard object shown after the user value of an overwrite, e.g.
+     * ' instead of "the common description"', so that the user page shows the user value beside
+     * the common value like the 'my' tab of an object page does in its two columns
+     *
+     * the standard value is empty for a change log of one object, because the backend adds it only
+     * for the change log that spans the objects of one user (see change_log_list::load_changed_objects)
+     *
+     * @param string $new the shown user value, to skip a standard value that says the same
+     * @return string the leading space and the standard value, or '' if there is nothing to compare
+     */
+    private function std_value_txt(string $new): string
+    {
+        global $mtr;
+        $result = '';
+        $std = $this->value_to_show($this->std_id, $this->std_value);
+        if ($std != '' and $std != $new) {
+            $result = ' ' . $mtr->txt(msg_id::LOG_INSTEAD_OF) . ' "' . $std . '"';
+        }
+        return $result;
+    }
+
+    /**
+     * replace the name of the changed object at the start of the what text with a link to the
+     * default page of the object, so that the user can open the object that has been changed
+     * from the all user overwrites column instead of having to search it by name
+     *
+     * @param string $esc_what the escaped and shortened what text starting with the object name
+     * @return string the what text with the object name as a link, or unchanged if no link can
+     *                be built for this change
+     */
+    private function object_link(string $esc_what): string
+    {
+        $html = new html_base();
+        $result = $esc_what;
+        $prefix = $html->esc($this->object_prefix());
+        // link only if the whole name has survived the shortening of the what column, because a
+        // link on a cut name would look like the complete name of the object
+        if ($prefix != '' and str_starts_with($esc_what, $prefix)) {
+            $url = $this->changed_object()?->default_page_url() ?? '';
+            if ($url != '') {
+                $result = $html->ref($url, $this->row_name)
+                    . self::OBJECT_SEPARATOR . substr($esc_what, strlen($prefix));
+            }
+        }
+        return $result;
+    }
+
+    /**
      * TODO Prio 2 check if this is not defined several times and move it to a mapper class
      * the name of the table with the standard objects e.g. 'words' for a change of 'user_words',
      * because the user sandbox change of an object is a change of the same object
@@ -654,6 +744,21 @@ class change_log_named extends change_log
     }
 
     /**
+     * the type of the changed object in the language of the user, e.g. 'Words' for a change of a
+     * word, so that a change log that lists the changes of more than one object can name the type
+     *
+     * the user sandbox change of an object is a change of the same object type, so the standard
+     * table name is translated and never the 'user_words' of the change itself
+     *
+     * @return string the translated type of the changed object
+     */
+    function object_type(): string
+    {
+        global $mtr;
+        return $mtr->text_db_table($this->std_table_name());
+    }
+
+    /**
      * an empty frontend object of the changed class with only the id set, which is all that the
      * undo link needs: the edit view id of the class, its db field to url var map and the id
      *
@@ -666,6 +771,64 @@ class change_log_named extends change_log
         if ($class != null and $this->row_id != null) {
             $result = new $class();
             $result->set_id($this->row_id);
+        }
+        return $result;
+    }
+
+    /**
+     * the values that the other users have set for the changed field, e.g. 'anna: "her text"',
+     * as the inline alternative to the icon link of others_link
+     *
+     * only the first OTHERS_MAX_INLINE users are named and the rest is indicated, because the
+     * column is one cell of a row-limited table and a much used object can have many overwrites
+     *
+     * @return string the html code of the cell content or '' if no other user has an own value
+     */
+    private function others_values(): string
+    {
+        $html = new html_base();
+        $result = '';
+        $shown = 0;
+        foreach ($this->other_values as $user_name => $value) {
+            if ($shown >= self::OTHERS_MAX_INLINE) {
+                $result .= self::MORE_INDICATOR;
+                break;
+            }
+            if ($result != '') {
+                $result .= self::OTHERS_SEPARATOR;
+            }
+            // both the user name and the value are user input, so both are escaped
+            $result .= $html->esc($user_name) . self::OBJECT_SEPARATOR . '"' . $html->esc($value) . '"';
+            $shown++;
+        }
+        return $result;
+    }
+
+    /**
+     * the icon of a row of the all user overwrites column that opens the 'others' tab of the
+     * changed object, which lists what the other users have set for the same object
+     *
+     * shown only if another user really has an own value for the changed field, so that the icon
+     * never opens a page whose 'others' tab is empty; the backend reads these values with the
+     * standard value of the field (see cfg/log/change_log_list::load_changed_objects)
+     *
+     * @return string the html code of the icon link or an empty string if no link can be built
+     */
+    private function others_link(): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        $url = '';
+        if ($this->other_values != []) {
+            $url = $this->changed_object()?->default_page_url() ?? '';
+        }
+        if ($url != '') {
+            $tab = $html->tab_id($mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS));
+            $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML
+                . '="' . icons::OTHERS . '"></' . html_base::I . '>';
+            $result = $html->ref($url . '#' . $tab, $icon,
+                $mtr->txt(msg_id::OTHERS_TBL_SHOW), '', true);
         }
         return $result;
     }
@@ -770,7 +933,8 @@ class change_log_named extends change_log
      * @param bool $test_mode true to use a fixed change time so the change log snapshots stay deterministic
      * @param bool $with_object true to name the changed object in the what column, which is needed
      *                          if the table lists the changes of more than one object
-     * @param bool $with_undo true to add the undo icon column
+     * @param array $types_and_actions the change_log_actions that the row adds beside when, who
+     *                                 and what: the object type and the action icons
      * @param array $url_array the parsed url of the current page, carried into the undo link
      * @return string the html code of the borderless table row
      */
@@ -778,7 +942,7 @@ class change_log_named extends change_log
         int   $what_max_chars,
         bool  $test_mode = false,
         bool  $with_object = false,
-        bool  $with_undo = false,
+        array $types_and_actions = [],
         array $url_array = []
     ): string
     {
@@ -797,10 +961,51 @@ class change_log_named extends change_log
         $full_what = $this->what_text($with_object);
         $popup = ($what_max_chars > 0 and mb_strlen($full_what) > $what_max_chars) ? $full_what : '';
         $what_cell = $html->td($this->what($what_max_chars, $with_object), '', 0, $popup);
-        // the undo cell stays empty for a change that cannot be undone e.g. a change of a shared
-        // standard object or of a table without an edit view, so that the columns stay aligned
-        $undo_cell = $with_undo ? $html->td($this->undo_link($url_array)) : '';
-        return $html->tr($html->td($when) . $html->td($who) . $what_cell . $undo_cell);
+        // a table that lists the changes of more than one object type names the type of the changed
+        // object, so that the user sees at a glance which of the changes are e.g. word overwrites
+        $type_cell = '';
+        if (in_array(change_log_actions::OBJECT_TYPE, $types_and_actions, true)) {
+            $type_cell = $html->td($html->esc($this->object_type()));
+        }
+        // an action cell stays empty for a change that cannot be undone resp. whose object is not
+        // known e.g. a change of a shared standard object or of a table without an edit view, so
+        // that the columns stay aligned
+        $action_cells = '';
+        foreach ($types_and_actions as $action) {
+            if ($action->is_action_column()) {
+                $action_cells .= $html->td($this->action_cell($action, $url_array));
+            }
+        }
+        return $html->tr(
+            $html->td($when) . $html->td($who) . $type_cell . $what_cell . $action_cells);
+    }
+
+    /**
+     * the content of one action cell of a change log row
+     *
+     * @param change_log_actions $action the action column that should be filled
+     * @param array $url_array the parsed url of the current page, carried into the undo link
+     * @return string the html code of the cell content or '' if the row has nothing for this action
+     */
+    private function action_cell(change_log_actions $action, array $url_array): string
+    {
+        return match ($action) {
+            change_log_actions::UNDO => $this->undo_link($url_array),
+            change_log_actions::OTHERS_LINK => $this->others_link(),
+            change_log_actions::OTHERS_INLINE => $this->others_values(),
+            // the caller filters by is_action_column, so any other entry is a programming error
+            default => $this->action_cell_missing($action),
+        };
+    }
+
+    /**
+     * @param change_log_actions $action the entry that is not an action column
+     * @return string an empty cell, because an entry without a cell must not break the table
+     */
+    private function action_cell_missing(change_log_actions $action): string
+    {
+        log_err('change log action ' . $action->value . ' is not expected to fill a table cell');
+        return '';
     }
 
 }
