@@ -1268,6 +1268,7 @@ class ui_list extends ui_base
 
     /**
      * @return string the html code of a sortable list
+     * @deprecated the fixed start page rows are replaced by start_list, see web/html/list_sort.php
      */
     function list_sort(
         phrase       $phr,
@@ -1280,16 +1281,38 @@ class ui_list extends ui_base
     }
 
     /**
-     * @return string the html code for the start view as a sortable list
+     * the table of the start view: the values of the "global problem" phrase with one column per
+     * phrase that the column tiers define, e.g. the problem, its loss, the solution and its gain
+     *
+     * the request cache is asked first, because it carries the phrase with its from, verb and to
+     * phrases, which the table needs to head the row column by the phrase the page phrase is
+     * built from ("problem" for "global problem")
+     *
+     * @param data_object $dto the data cache used to reduce the backend traffic
+     * @param user_message $msg to collect the load warnings for the user
+     * @return string the html code for the start view as a table
      */
     function start_list(
         data_object  $dto,
         user_message $msg
     ): string
     {
-        $phr = new phrase();
-        $phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
-        return $this->list_sort($phr, $msg, $dto);
+        $phr = $dto->phr_lst?->get_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        if ($phr == null) {
+            $phr = new phrase();
+            $phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        }
+        // without the column definitions the table falls back to the impact ranking, so they are
+        // added to the request cache once; a cache that already knows a column is left untouched,
+        // so an offline unit test needs no api call
+        if ($dto->phr_lst->column_names() == []) {
+            $col_lst = new phrase_list();
+            if ($col_lst->load_column_definitions($msg)) {
+                $dto->add_phrases($col_lst, $msg);
+            }
+        }
+        // the page already says what the table is about, so it is shown without the border
+        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false);
     }
 
     /**

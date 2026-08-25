@@ -184,7 +184,8 @@ class component_exe extends component
 
             // start page - components used for the start page
             component_types::PHRASE_NAME => $base->phrase_name($dbo),
-            // TODO Prio 2 use the spreadsheet for the start view
+            // TODO Prio 2 use a changeable spreadsheet for the start view; until it exists this
+            // component shows the values of the global problems as a table built from the data
             //component_type::CALC_SHEET => $this->calc_sheet(),
             component_types::CALC_SHEET => $list->start_list($cfg, $msg),
 

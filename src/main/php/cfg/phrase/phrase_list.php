@@ -140,6 +140,10 @@ class phrase_list extends sandbox_list_named
     // so a normal 0 to n order could have more advantages)
     // $usr of sandbox list is the user object of the person for whom the phrase list is loaded, so to say the viewer
 
+    // the maximum number of link levels that load_by_phr_levels follows, because the level is
+    // requested by the url and each level multiplies the number of database reads
+    const int MAX_LINK_LEVELS = 3;
+
 
     /*
      * construct and map
@@ -2518,6 +2522,58 @@ class phrase_list extends sandbox_list_named
         } else {
             return false;
         }
+    }
+
+    /**
+     * load a list of phrases by a given phrase and direction following more than one link level
+     *
+     * a second level also loads the phrases related to the phrases that the first level has
+     * found, e.g. for "column (system)" and "down" the first level gives the column tiers and
+     * the second level the column definitions that point to a tier, so that the frontend can
+     * fill its cache with one api call instead of one call per tier
+     *
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param user_message $msg to report a load problem to the caller
+     * @param foaf_direction $direction to select either the parents, children or all related phrases
+     * @param int $levels the number of link levels to follow, one for the direct links only
+     * @return bool true if at least one phrase has been found
+     */
+    function load_by_phr_levels(
+        phrase         $phr,
+        user_message   $msg,
+        foaf_direction $direction = foaf_direction::BOTH,
+        int            $levels = 1
+    ): bool
+    {
+        // the level is user input from the url, so it is bounded here to protect the backend
+        if ($levels > self::MAX_LINK_LEVELS) {
+            $levels = self::MAX_LINK_LEVELS;
+        }
+        $result = $this->load_by_phr($phr, $msg, null, $direction);
+        // the start phrase is already expanded, so the walk never follows it again
+        $done = [$phr->id()];
+        for ($i = 1; $i < $levels; $i++) {
+            // the phrases of the level before are taken before the load, because the load adds
+            // to this list and a phrase already expanded must not be followed a second time,
+            // which also ends a circular link chain
+            $next = [];
+            foreach ($this->lst() as $lst_phr) {
+                if (!in_array($lst_phr->id(), $done)) {
+                    $done[] = $lst_phr->id();
+                    $next[] = $lst_phr;
+                }
+            }
+            foreach ($next as $lst_phr) {
+                // only the triples, because a phrase is linked to another phrase by a triple and
+                // the word part of load_by_phr would only add a warning for the still empty list
+                $trp_lst = new triple_list($this->get_user());
+                $trp_lst->load_by_phr($lst_phr, $msg, null, $direction);
+                if ($this->add_trp_lst($trp_lst)) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
     }
 
     /**

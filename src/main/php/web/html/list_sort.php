@@ -2,7 +2,7 @@
 
 /*
 
-    web/html/list_sort.php - create the html code to display a sortable list
+    web/html/list_sort.php - deprecated placeholder of the fixed start page spreadsheet
     ----------------------
 
 
@@ -34,42 +34,32 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HELPER . 'data_object.php';
-include_once html_paths::HTML . 'table.php';
-include_once html_paths::HTML . 'scopes.php';
 include_once html_paths::PHRASE . 'phrase.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::WORD . 'triple.php';
-include_once html_paths::WORD . 'word.php';
-include_once html_paths::SHARED_CONST . 'views.php';
-include_once html_paths::SHARED . 'url_var.php';
-include_once html_paths::SHARED_CONST . 'words.php';
-//include_once test_paths::CONST . 'triple_names.php';
-//include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\test\php\const\triple_names;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 
+/**
+ * the empty placeholder of the spreadsheet that the start page has shown before
+ *
+ * the start page now shows the values of the "global problem" phrase as a table built from the
+ * data (ui_list::start_list), so this class no longer hard codes the column headers, the five
+ * problem rows and their numbers; the class is kept because the spreadsheet component of the
+ * start view is meant to become a changeable sheet with words, numbers and formulas
+ */
 class list_sort
 {
 
-
     /**
-     * TODO review
      * @param phrase $phr the start phrase to select the rows
      * @param user_message $msg to collect the load warnings for the user
      * @param data_object|null $cac the data cache use to reduce the backend traffic
-     * @return string html code to display a spreadsheet
+     * @return string always empty, because a spreadsheet is not implemented yet
+     * @deprecated the fixed rows are replaced by ui_list::start_list, which shows the values of
+     *             the given phrase as a table with the columns defined by the column tiers
      */
     function list_sort(
         phrase       $phr,
@@ -77,155 +67,7 @@ class list_sort
         ?data_object $cac = null
     ): string
     {
-        // create the table
-        $tbl = new table();
-
-        // add the main column
-        $tbl->add_column($phr, $msg);
-
-        // get the phrases for the rows
-        // from "global problem" to e.g. "climate change"
-        $phr_lst = $phr->is_or_can_be($msg, $cac?->phr_lst, $cac->typ_lst_cache);
-
-        // TODO remove temp hardcoded solution
-        if ($phr_lst->is_empty()) {
-            $phr_lst = new phrase_list();
-            $trp = new triple();
-            $trp->load_by_name('global warming', $msg);
-            $phr_lst->add($trp->phrase(), $msg);
-            $wrd = new word();
-            $wrd->load_by_name('populism', $msg);
-            $phr_lst->add($wrd->phrase(), $msg);
-            $wrd = new word();
-            $wrd->load_by_name('health', $msg);
-            $phr_lst->add($wrd->phrase(), $msg);
-            $wrd = new word();
-            $wrd->load_by_name('poverty', $msg);
-            $phr_lst->add($wrd->phrase(), $msg);
-            $wrd = new word();
-            $wrd->load_by_name('education', $msg);
-            $phr_lst->add($wrd->phrase(), $msg);
-            $trillion = new word();
-
-            $trillion->load_by_name('trillion', $msg);
-            $billion = new word();
-            $billion->load_by_name('billion', $msg);
-            $usd = new word();
-            $usd->load_by_name('USD', $msg);
-            $htp = new word();
-            $htp->load_by_name('htp', $msg);
-        } else {
-            $trillion = $cac?->phr_lst->get_by_name(word_names::TRILLION, $msg);
-            $billion = $cac?->phr_lst->get_by_name(word_names::BILLION, $msg);
-            $usd = $cac?->phr_lst->get_by_name(word_names::USD, $msg);
-            $htp = $cac?->phr_lst->get_by_name(word_names::HTP, $msg);
-        }
-
-        // check if the phrase list has at least the most necessary entries
-        if ($trillion == null) {
-            log_err('trillion is null');
-        }
-        if ($billion == null) {
-            log_err('billion is null');
-        }
-        if ($usd == null) {
-            log_err('usd is null');
-        }
-        if ($htp == null) {
-            log_err('htp is null');
-        }
-
-        // get the most relevant result
-        //$tbl->add_column($phr_lst->result_phrases_most_relevant());
-
-        /*
-         * outline of the remaining target solution
-
-        // fill the space with the most relevant related phrases and numbers
-        // if a solution exists and the table has enough space add the solution
-        $col_nbr = $tbl->target_columns(); // 1 expected
-        $col_phr_lst = $phr_lst->phrases_most_relevant($col_nbr);
-
-        foreach ($col_phr_lst as $col_phr)
-        {
-            $tbl->add_column($col_phr, $msg);
-
-            // get the most relevant result
-            $tbl->add_column($col_phr->result_most_relevant(), $msg);
-        }
-
-        // if the list is sorted start it with a ranking column
-        $rank_phr = new phrase(phrases::RANKING);
-        $tbl->add_first_column($rank_phr);
-
-        // show the table
-
-        */
-
-        $html = new html_base();
-        $col_lst = new phrase_list();
-        // add phrase_views class: a phrase_list with a selected component and component parameters
-
-
-        $th = $html->th('Priority', scopes::COL);
-        $th .= $html->th('Problem', scopes::COL);
-        $th .= $html->th('Costs in ' . $trillion->name_link() . ' ' . $usd->name_link(),
-            scopes::COL, styles::TEXT_RIGHT);
-        $th .= $html->th('Solution', scopes::COL);
-        if ($billion != null and $htp != null) {
-            $th .= $html->th('Gain in ' . $billion->name_link() . ' ' . $htp->name_link(),
-                scopes::COL, styles::TEXT_RIGHT);
-        }
-        $tr = $html->tr($th);
-        $thead = $html->thead($tr);
-        $result = $thead;
-        $tr = '';
-        $row = 1;
-        foreach ($phr_lst->lst() as $row_phr) {
-            $td = $html->th($row, scopes::ROW);
-            $td .= $html->td($row_phr->name_link());
-            // TODO remove temp hardcoded solution
-            if ($row == 1) {
-                $td .= $html->td("31.5", styles::TEXT_RIGHT);
-                $td .= $html->td("reduce climate gas emissions");
-                $td .= $html->td("35.2", styles::TEXT_RIGHT);
-            }
-            if ($row == 2) {
-                $td .= $html->td("23.8", styles::TEXT_RIGHT);
-                $td .= $html->td("avoid wrong decisions");
-                $td .= $html->td("34.1", styles::TEXT_RIGHT);
-            }
-            if ($row == 3) {
-                $td .= $html->td("20.4", styles::TEXT_RIGHT);
-                $td .= $html->td("research");
-                $td .= $html->td("34.1", styles::TEXT_RIGHT);
-            }
-            if ($row == 4) {
-                $td .= $html->td("13.6", styles::TEXT_RIGHT);
-                $td .= $html->td("taxes");
-                $td .= $html->td("8.8", styles::TEXT_RIGHT);
-            }
-            if ($row == 5) {
-                $td .= $html->td("9.4", styles::TEXT_RIGHT);
-                $td .= $html->td("spending");
-                $td .= $html->td("14.3", styles::TEXT_RIGHT);
-            }
-            $tr .= $html->tr($td);
-            $row++;
-        }
-
-        // footer row to extend the table
-        $url_arr_problem = [url_var::MASK => views::WORD_ID, url_var::ID => triple_names::GLOBAL_PROBLEM_ID];
-        $url_arr_solution = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::SOLUTION_ID];
-        $td = $html->th('', scopes::ROW);
-        $td .= $html->td($phr->button_add_triple($url_arr_problem));
-        $td .= $html->td("", styles::TEXT_RIGHT);
-        $td .= $html->td($phr->button_add_triple($url_arr_solution));
-        $td .= $html->td("", styles::TEXT_RIGHT);
-        $tr .= $html->tr($td);
-        $tbody = $html->tbody($tr);
-
-        return $html->tbl($thead . $tbody, styles::TABLE_PUR);
+        return '';
     }
 
 }

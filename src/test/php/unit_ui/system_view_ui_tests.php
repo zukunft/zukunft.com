@@ -98,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -114,7 +115,9 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -584,6 +587,17 @@ class system_view_ui_tests
     ): void
     {
         $updated_files = [];
+        // the start view shows the global problems as a table, which the frontend fills from the
+        // api; a unit test has no api, so the cache of that view is filled from the factories,
+        // and only of that view, so the snapshots of the other views stay unchanged
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $dto_start = new data_object();
+        $dto_start->online = false;
+        $dto_start->typ_lst_cache = $ui->dto->typ_lst_cache;
+        $dto_start->msk_lst = $ui->dto->msk_lst;
+        $dto_start->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
         // TODO Prio 3 review and use random?
         for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
             for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
@@ -607,7 +621,11 @@ class system_view_ui_tests
                 } else {
                     $msg->usr = null;
                 }
-                $html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
+                $dto = $ui->dto;
+                if ($id == views::START_ID) {
+                    $dto = $dto_start;
+                }
+                $html = $ui->url_to_html($url_array, $msg, $dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
                 $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;

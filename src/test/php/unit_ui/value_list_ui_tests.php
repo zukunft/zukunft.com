@@ -218,7 +218,10 @@ class value_list_ui_tests
         $t->assert($test_name, new value_list_ui()->columns_by_phrase($msg_ui), '');
 
         $t->subheader($ts . 'table with related columns');
-        $tbl_html = $t_val->value_list_most_relevant_ui()->table_by_related_columns($msg_ui);
+        // the row limit is checked below, so the column checks ask for every row; else the value
+        // that shares no column phrase would be behind the limit and only reachable via the link
+        $tbl_html = $t_val->value_list_most_relevant_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', [], false, true, null, value_list_ui::LIMIT_ALL);
         $test_name = 'the values are shown as a table';
         $t->assert_text_contains($test_name, $tbl_html, '<table');
         $test_name = 'the top left header cell is empty, because the row phrases differ per row';
@@ -236,6 +239,20 @@ class value_list_ui_tests
             substr_count($tbl_html, '<th') <= position_types::MAX_SIDE_COLUMNS + 2);
         $test_name = 'the header is shown before the first row';
         $t->assert_text_order($test_name, $tbl_html, '<th', '<td');
+
+        // a page must not fill the screen, so with the configured limit the rows that do not fit
+        // are reachable via the "... and n more" row instead of being shown
+        $tbl_cut = $t_val->value_list_most_relevant_ui()->table_by_related_columns($msg_ui);
+        $test_name = 'a table with more rows than the limit ends with a more row';
+        $t->assert_text_contains($test_name, $tbl_cut, msg_id::MORE->text());
+        $test_name = '... so the row behind the limit is not shown';
+        $t->assert_text_not_contains($test_name, $tbl_cut, '>' . word_names::PI . '</a>');
+        // the rest column exists because of the data and not because the reader asked for it, so
+        // it is left out if its only value is in a row that the table does not show
+        $test_name = '... and the column of the values without a column phrase stays away';
+        $t->assert_text_not_contains($test_name, $tbl_cut,
+            '<th>' . msg_id::FORM_SUB_TITLE_VALUES->text() . '</th>');
+
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');
         // with the page phrase as context the phrase of the page is not repeated in the table

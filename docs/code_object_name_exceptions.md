@@ -32,7 +32,7 @@ formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, 
 group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_used, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_newer, $job_older, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
-phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $rank_phr, $result, $switzerland, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
+phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $result, $switzerland, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_filled, $ref_new, $ref_obj, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_ui, $res_upd, $result, $rst
@@ -52,7 +52,7 @@ view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_empty, $msk_filled, $msk_new
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $mrl_del_ui, $mrl_new, $mrl_tab, $mrl_url, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $from, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_auto, $wrd_back, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del_ui, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_auto, $wrd_back, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del_ui, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 
@@ -110,7 +110,7 @@ component_type: $cmp_typ
 component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
-data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_empty, $dto_no_links, $dto_prio, $dto_ui, $res_cfg
+data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_empty, $dto_no_links, $dto_prio, $dto_start, $dto_ui, $res_cfg
 db_cache: $cac, $db_cache
 db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta
@@ -150,11 +150,11 @@ json_io: $json_export
 json_validation: $chk
 language_form: $lan_for, $lan_typ
 language_list: $lst, $ui_lst
-list_sort: $lst, $msk
+list_sort: $lst
 message: $ui_msg
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $col_lst, $common_phr_lst, $context_phr_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $found_lst, $full_lst, $kept, $load_lst, $lst, $lst_imp, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $self, $src_phr_lst, $target, $time_lst, $zh_lst
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $col_lst, $common_phr_lst, $context_phr_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $found_lst, $full_lst, $kept, $load_lst, $lst, $lst_imp, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $self, $src_phr_lst, $target, $time_lst, $unit_lst, $zh_lst
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ

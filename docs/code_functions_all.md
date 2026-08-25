@@ -5365,6 +5365,7 @@
             t.php
     \-- get_by_ids - section for function get_by_ids is expected to be set and get in /phrase/phrase_list.php
     \-- load_by_phr - section for function load_by_phr is expected to be load in /phrase/phrase_list.php
+    \-- load_by_phr_levels - section for function load_by_phr_levels is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_vrb_and_type - section for function load_by_phr_vrb_and_type is expected to be load in /phrase/phras
             e_list.php
     \-- load_sql_linked_phrases - section for function load_sql_linked_phrases is expected to be load sql in /phrase/phr
@@ -12721,8 +12722,6 @@
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
-\-- list_sort
-    \-- list_sort - section for function list_sort missing in /html/list_sort.php
 \-- rest_call
     \-- class_to_api_name - section for function class_to_api_name missing in /html/rest_call.php
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
@@ -16065,7 +16064,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 2
+    \-- 4
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -16286,9 +16285,9 @@
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort
         \-- ui_list - @return string the html code of a sortable list
-        \-- list_sort - TODO review
+        \-- list_sort - @param phrase $phr the start phrase to select the rows
     \-- start_list
-        \-- ui_list - @return string the html code for the start view as a sortable list
+        \-- ui_list - the table of the start view: the values of the "global problem" phrase with one column per
     \-- result_changes
         \-- ui_list - @return string the html code of the results that changes if the pending user change is confirmed
     \-- view_after

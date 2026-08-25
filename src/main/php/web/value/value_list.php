@@ -106,6 +106,9 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class value_list extends ListBase
 {
 
+    // show every row of a table instead of the configured number (like type_list::LIMIT_ALL)
+    const int LIMIT_ALL = 0;
+
     /*
      * set and get
      */
@@ -529,6 +532,8 @@ class value_list extends ListBase
      *                          the lines between the cells e.g. within a page that groups tables
      * @param phrase_list|null $rel_lst the phrases related to the page phrase, which define the
      *                                  columns and say which phrase belongs into a phrase column
+     * @param int|null $limit the max number of rows to show, null for the configured limit and
+     *                        self::LIMIT_ALL for every row
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
@@ -538,7 +543,8 @@ class value_list extends ListBase
         array        $col_order = [],
         bool         $with_header = false,
         bool         $with_border = true,
-        ?phrase_list $rel_lst = null
+        ?phrase_list $rel_lst = null,
+        ?int         $limit = null
     ): string
     {
         $result = '';
@@ -580,9 +586,9 @@ class value_list extends ListBase
                     }
                 }
             }
-            // the values that share no column phrase get a last column of their own, so that
-            // no value of the list is silently dropped from the table
-            $rest_col = $remaining != [];
+            // the values that share no column phrase get a last column of their own, so that no
+            // value of a shown row is silently dropped; whether that column is needed is decided
+            // once the rows are cut, because a value behind the limit is not shown either
 
             // a defined column that no value carries names a phrase of the row instead of a
             // number, e.g. the "solution" column shows the solution of the problem row
@@ -631,6 +637,24 @@ class value_list extends ListBase
                 $cells[$row_key][$col_id][] = $val->value_edit($msg, $back);
             }
 
+            // a page must not fill the screen, because the user messages are shown below the
+            // view and would else be hidden below the fold, so the rows are cut to the
+            // configured number before the header is built
+            $row_limit = $limit ?? $this->configured_row_limit($msg);
+            $shown_keys = array_keys($row_label);
+            if ($row_limit != self::LIMIT_ALL) {
+                $shown_keys = array_slice($shown_keys, 0, $row_limit);
+            }
+            // a defined column is shown even if it is empty, because the reader has asked for
+            // it, but the rest column only exists because of the data, so it is shown only if a
+            // row that the table shows really has a value without a column
+            $rest_col = false;
+            foreach ($shown_keys as $row_key) {
+                if (($cells[$row_key][''] ?? []) != []) {
+                    $rest_col = true;
+                }
+            }
+
             // a phrase column is defined like a value column, so both kinds are shown in one
             // order, e.g. the "solution" column between the "loss" and the "gain" column
             $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
@@ -640,18 +664,22 @@ class value_list extends ListBase
             // no defined column, because the row phrases differ per row
             $row_col = $this->row_column($context_phr_lst, $col_order);
             $header = $html->th($row_col?->name_link() ?? '');
+            // the unit describes the number of a whole column, so its own header names it
+            $col_unit = $this->column_units($col_phr, $val_col, $msg);
             foreach ($col_ids as $col_id) {
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
-                $header .= $html->th($phr->name_link());
+                // a phrase column names a phrase of the row, so it has no unit
+                $unit_lst = $col_unit[$col_id] ?? new phrase_list();
+                $header .= $html->th($this->column_header($phr, $unit_lst));
             }
             if ($rest_col) {
                 $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
             }
             $rows = $html->tr($header);
-            foreach ($row_label as $row_key => $label) {
-                $row = $html->td($label);
+            foreach ($shown_keys as $row_key) {
+                $row = $html->td($row_label[$row_key]);
                 foreach ($col_ids as $col_id) {
-                    // a phrase column names a phrase of the row, a value column shows the values
+                    // a phrase column names a phrase of the row, a value column its values
                     if (array_key_exists($col_id, $col_phr)) {
                         $row .= $html->td(implode(', ', $cells[$row_key][$col_id] ?? []));
                     } else {
@@ -662,6 +690,14 @@ class value_list extends ListBase
                     $row .= $html->td(implode(', ', $cells[$row_key][''] ?? []));
                 }
                 $rows .= $html->tr($row);
+            }
+            $diff = count($row_label) - count($shown_keys);
+            if ($diff > 0) {
+                $col_count = count($col_ids);
+                if ($rest_col) {
+                    $col_count++;
+                }
+                $rows .= $this->tr_more($diff, $context_phr_lst, $col_count);
             }
             $result = $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
             // the header names the phrase that the reader has selected centred above the table,
@@ -740,22 +776,105 @@ class value_list extends ListBase
     private function phrases_of_every_value(array $col_order): phrase_list
     {
         $result = new phrase_list();
-        $lst = $this->lst();
-        $first = array_shift($lst);
-        if ($first != null and $lst != []) {
+        if (count($this->lst()) > 1) {
+            foreach ($this->phrases_of_all($this->lst())->lst() as $phr) {
+                // a defined column shows its phrase in the column header already, so the reader
+                // sees it there instead of in the table header
+                if (!in_array($phr->name(), $col_order)) {
+                    $result->add_phrase($phr);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that every one of the given values carries
+     *
+     * @param array $val_lst the values to compare e.g. the values of one column
+     * @return phrase_list the phrases of the first value that every other value carries too
+     */
+    private function phrases_of_all(array $val_lst): phrase_list
+    {
+        $result = new phrase_list();
+        $first = array_shift($val_lst);
+        if ($first != null) {
             foreach ($first->grp->phr_lst()->lst() as $phr) {
                 $shared = true;
-                foreach ($this->lst() as $val) {
+                foreach ($val_lst as $val) {
                     if (!$val->grp->phr_lst()->has_id($phr->id())) {
                         $shared = false;
                     }
                 }
-                // a defined column shows its phrase in the column header already, so the reader
-                // sees it there instead of in the table header
-                if ($shared and !in_array($phr->name(), $col_order)) {
+                if ($shared) {
                     $result->add_phrase($phr);
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * per value column the scaling and measure phrases that every value of that column carries
+     *
+     * the unit describes the number and is the same for the whole column, so the column header
+     * names it once instead of every row repeating it, e.g. "loss (trillion EUR)"
+     *
+     * @param array $col_phr the columns that hold a value, keyed by phrase id
+     * @param array $val_col per value id the id of the column the value belongs to
+     * @return array per column id the unit phrases of that column, the scaling first
+     */
+    private function column_units(array $col_phr, array $val_col, user_message $msg): array
+    {
+        $result = [];
+        foreach (array_keys($col_phr) as $col_id) {
+            $col_val_lst = [];
+            foreach ($this->lst() as $val) {
+                if (($val_col[$val->id()] ?? '') == $col_id) {
+                    $col_val_lst[] = $val;
+                }
+            }
+            $shared = $this->phrases_of_all($col_val_lst);
+            $unit_lst = new phrase_list();
+            // the scaling comes first, so the header reads like the number e.g. "trillion EUR"
+            foreach ($shared->lst() as $phr) {
+                if ($phr->is_scaling($msg)) {
+                    $unit_lst->add_phrase($phr);
+                }
+            }
+            foreach ($shared->lst() as $phr) {
+                if ($phr->is_measure($msg)) {
+                    $unit_lst->add_phrase($phr);
+                }
+            }
+            $result[$col_id] = $unit_lst;
+        }
+        return $result;
+    }
+
+    /**
+     * the content of one column header cell
+     *
+     * the unit is separated from the phrases that name the column by a translatable word, so
+     * that the header reads like a sentence e.g. "cost in trillion EUR"
+     *
+     * @param phrase $phr the phrase that heads the column
+     * @param phrase_list $unit_lst the unit phrases of that column, empty if it has no common unit
+     * @return string the html of the header cell e.g. 'cost in trillion EUR'
+     */
+    private function column_header(phrase $phr, phrase_list $unit_lst): string
+    {
+        $result = $phr->name_link();
+        $unit_html = '';
+        foreach ($unit_lst->lst() as $unit_phr) {
+            // the parts of a unit are read as one term, so a space and not a comma joins them
+            if ($unit_html != '') {
+                $unit_html .= ' ';
+            }
+            $unit_html .= $unit_phr->name_link();
+        }
+        if ($unit_html != '') {
+            $result .= ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ' . $unit_html;
         }
         return $result;
     }
@@ -1069,6 +1188,48 @@ class value_list extends ListBase
         $name = $html->span($val->grp->name_link_list($context_phr_lst), styles::VALUE_NAME);
         $num = $html->span($val->value_edit($msg, $back), styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
+        return $result;
+    }
+
+    /**
+     * the "... and n more" row of a table that shows only the configured number of rows
+     *
+     * the tail is in the row name column, because that is the column the reader follows down;
+     * the value columns of that row stay empty like in change_log_list::tr_page_nav
+     *
+     * @param int $diff the number of rows that this table does not show
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader; the first is the page phrase
+     * @param int $col_count the number of columns behind the row name column
+     * @return string the html code of the "... and n more" table row
+     */
+    private function tr_more(int $diff, phrase_list $context_phr_lst, int $col_count): string
+    {
+        $html = new html_base();
+        $cells = $html->td($this->more_tail($diff, $context_phr_lst));
+        for ($i = 0; $i < $col_count; $i++) {
+            $cells .= $html->td('');
+        }
+        $result = $html->tr($cells);
+        return $result;
+    }
+
+    /**
+     * the configured number of rows shown in a value table
+     * (config.yaml "select > initial > entries", falling back to config::LIMIT_SHORT_LIST if the
+     * config is not loaded), which is the short version of a list; the more and the all version
+     * are not wired yet (see docs/llm/frontend.md "Short, more and all")
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximum number of table rows to show
+     */
+    private function configured_row_limit(user_message $msg): int
+    {
+        global $ui_sys;
+        $result = config::LIMIT_SHORT_LIST;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [words::ENTRIES, words::INITIAL, words::SELECT], $msg, config::LIMIT_SHORT_LIST);
+        }
         return $result;
     }
 

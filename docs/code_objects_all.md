@@ -416,7 +416,7 @@ the object structure is:
 │   └── display_listUi - to display a list that can be sorted
 ├── html_namesUi - HTML language const used for the html zukunft.com frontend
 ├── html_selectorUi - $sel - to select a word (or formula or verb)
-├── list_sortUi - create the html code to display a sortable list
+├── list_sortUi - deprecated placeholder of the fixed start page spreadsheet
 ├── rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 ├── scopesUi - scope constants used for html frontend
 ├── sheetUi - create the html code to display a spreadsheet

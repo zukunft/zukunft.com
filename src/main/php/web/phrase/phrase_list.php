@@ -98,6 +98,9 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class phrase_list extends sandbox_list_named
 {
 
+    // the link levels below "column (system)": the column tiers and their column definitions
+    const int COLUMN_LEVELS = 2;
+
     /*
      * set and get
      */
@@ -171,6 +174,56 @@ class phrase_list extends sandbox_list_named
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * add the phrases related to the phrase with the given name to the list
+     *
+     * by name and not by id, because the frontend knows a system phrase from a shared const with
+     * its name, but never its database id (see docs/llm/constants.md)
+     *
+     * @param string $name the name of the phrase whose related phrases should be added
+     * @param foaf_direction $direction up for the parents, down for the children
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param int $levels the number of link levels to follow, one for the direct links only
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_related_by_name(
+        string         $name,
+        foaf_direction $direction,
+        user_message   $msg,
+        int            $levels = 1
+    ): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
+        $data = array();
+        $data[url_var::NAME] = $name;
+        $data[url_var::DIRECTION] = $direction->value;
+        $data[url_var::LEVELS] = $levels;
+        $json_body = $api->api_get(self::class, $data);
+        $msg->merge($this->api_mapper($json_body));
+        return $this->count() > $count;
+    }
+
+    /**
+     * add the triples that define the table columns to this list
+     *
+     * a column is defined by a triple that links a phrase to a system column tier, e.g. the
+     * triple "column loss" links "loss" to "mayor column (system)", so the definitions of one
+     * tier are the triples that point to the tier phrase; without them a value table falls back
+     * to the impact ranking instead of the column order the tiers and the order triples give
+     *
+     * the tiers themselves point to "column (system)", so two levels below that phrase are the
+     * tiers and their definitions, which is why one api call fills the cache
+     *
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one column definition has been added to this list
+     */
+    function load_column_definitions(user_message $msg): bool
+    {
+        return $this->load_related_by_name(
+            triples::SYSTEM_COLUMN, foaf_direction::DOWN, $msg, self::COLUMN_LEVELS);
     }
 
     /**
