@@ -16724,7 +16724,7 @@
     \-- child_names
         \-- phrase_list - get the names of the phrases that this list links to the given phrase by a triple
     \-- column_names
-        \-- phrase_list - the names of the phrases that this list defines as table columns, ordered by the column
+        \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_phrase
         \-- phrase_list - the phrase that this list defines as the table column of the given name
     \-- category_subtitle

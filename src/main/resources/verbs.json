@@ -83,7 +83,7 @@
     {
       "name": "is follower of",
       "code_id": "follow",
-      "description": "the time order of two phrases e.g. 2025 is follower of 2024; for a position order use 'is before' or 'is after'",
+      "description": "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'",
       "formula_name": "follower",
       "name_plural_reverse": "is followed by",
       "name_plural": "is follower of",
@@ -346,20 +346,20 @@
       "name_reverse": "uses"
     },
     {
-      "name": "is before",
+      "name": "is next main column after",
       "code_id": "before",
-      "description": "to order two phrases by position e.g. to define that one column is shown before another column; for a time order use 'is follower of'",
-      "name_plural_reverse": "are after",
-      "name_plural": "are before",
-      "name_reverse": "is after"
+      "description": "to chain the main table columns e.g. the solution column is the next main column after the problem column and all columns explaining the problem; for a time order use 'is follower of'",
+      "name_plural_reverse": "are main columns before",
+      "name_plural": "are next main columns after",
+      "name_reverse": "is main column before"
     },
     {
-      "name": "is after",
+      "name": "is explaining column for",
       "code_id": "after",
-      "description": "to order two phrases by position e.g. to define that one column is shown after another column; for a time order use 'is follower of'",
-      "name_plural_reverse": "are before",
-      "name_plural": "are after",
-      "name_reverse": "is before"
+      "description": "to attach a column that explains a main table column e.g. the loss column gives the size of the problem column; an explaining column is shown between its main column and the next main column",
+      "name_plural_reverse": "are explained by columns",
+      "name_plural": "are explaining columns for",
+      "name_reverse": "is explained by column"
     },
     {
       "name": "supports",

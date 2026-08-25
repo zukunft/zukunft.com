@@ -215,6 +215,47 @@ class phrase_list_tests
         }
 
 
+        $t->subheader($ts . 'column order');
+
+        // positive: the "is next main column after" chain orders the main columns and the
+        // "is explaining column for" triples put each explaining column behind its main column
+        $test_name = 'the explaining columns follow their main column';
+        $phr_lst_ui = $t_phr->list_columns_ordered_ui();
+        $target = implode(', ', [word_names::PROBLEM, word_names::LOSS, word_names::COST,
+            word_names::SOLUTION, word_names::GAIN]);
+        $t->assert($test_name, implode(', ', $phr_lst_ui->column_names()), $target);
+
+        // negative: without the main column chain nothing tells which main column is the left
+        // one, so the main columns keep the order of their explaining triples
+        $test_name = 'without the main column chain the explaining triples decide';
+        $phr_lst_ui = $t_phr->list_columns_unchained_ui();
+        $target = implode(', ', [word_names::SOLUTION, word_names::GAIN,
+            word_names::PROBLEM, word_names::LOSS, word_names::COST]);
+        $t->assert($test_name, implode(', ', $phr_lst_ui->column_names()), $target);
+
+        // negative: a circular main column chain has no first main column, so it is not walked,
+        // but the columns still fall back to the explaining triples instead of being dropped
+        $test_name = 'a circular main column chain drops no column';
+        $phr_lst_ui = $t_phr->list_columns_circular_ui();
+        $target = implode(', ', [word_names::SOLUTION, word_names::GAIN,
+            word_names::PROBLEM, word_names::LOSS, word_names::COST]);
+        $t->assert($test_name, implode(', ', $phr_lst_ui->column_names()), $target);
+
+        // negative: a defined column that no explaining triple links to a main column is added
+        // behind the ordered columns, so that no defined column is missing from the table
+        $test_name = 'a column with no explaining triple is appended';
+        $phr_lst_ui = $t_phr->list_columns_partly_explained_ui();
+        $target = implode(', ', [word_names::PROBLEM, word_names::LOSS,
+            word_names::SOLUTION, word_names::GAIN, word_names::COST]);
+        $t->assert($test_name, implode(', ', $phr_lst_ui->column_names()), $target);
+
+        // negative: the order triples alone define no column, so a list whose triples name no
+        // column tier names no column and the caller falls back to its own ranking
+        $test_name = 'a list without a column definition names no column';
+        $phr_lst_ui = $t_phr->phrase_list_ui();
+        $t->assert($test_name, $phr_lst_ui->column_names(), []);
+
+
 
         $t->subheader($ts . 'import names');
 

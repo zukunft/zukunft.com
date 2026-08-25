@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-24T21:01:34+00:00",
+    "timestamp": "2026-08-25T07:01:56+00:00",
     "body": {
         "user_profiles": [
             {
@@ -7146,7 +7146,7 @@
             {
                 "name": "is follower of",
                 "code_id": "follow",
-                "description": "the time order of two phrases e.g. 2025 is follower of 2024; for a position order use 'is before' or 'is after'",
+                "description": "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'",
                 "plural": "is follower of",
                 "reverse": "is followed by",
                 "rev_plural": "is followed by",
@@ -7540,24 +7540,24 @@
                 "id": 43
             },
             {
-                "name": "is before",
+                "name": "is next main column after",
                 "code_id": "before",
-                "description": "to order two phrases by position e.g. to define that one column is shown before another column; for a time order use 'is follower of'",
-                "plural": "are before",
-                "reverse": "is after",
-                "rev_plural": "are after",
+                "description": "to chain the main table columns e.g. the solution column is the next main column after the problem column and all columns explaining the problem; for a time order use 'is follower of'",
+                "plural": "are next main columns after",
+                "reverse": "is main column before",
+                "rev_plural": "are main columns before",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
                 "id": 44
             },
             {
-                "name": "is after",
+                "name": "is explaining column for",
                 "code_id": "after",
-                "description": "to order two phrases by position e.g. to define that one column is shown after another column; for a time order use 'is follower of'",
-                "plural": "are after",
-                "reverse": "is before",
-                "rev_plural": "are before",
+                "description": "to attach a column that explains a main table column e.g. the loss column gives the size of the problem column; an explaining column is shown between its main column and the next main column",
+                "plural": "are explaining columns for",
+                "reverse": "is explained by column",
+                "rev_plural": "are explained by columns",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,

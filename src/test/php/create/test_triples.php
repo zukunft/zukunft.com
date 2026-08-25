@@ -901,6 +901,37 @@ class test_triples extends test_objects
     }
 
     /**
+     * the frontend triple of a page request, which unlike a list entry carries the from, verb
+     * and to phrases with their names, because the page links each part; a bare api_json sends
+     * the from side as an id only, which arrives nameless at the frontend
+     * (see web/word/triple::load_by_id_with_related)
+     *
+     * @param triple $trp the backend triple that the page is about
+     * @return triple_ui the page object as the frontend receives it
+     */
+    private function page_ui(triple $trp): triple_ui
+    {
+        return new triple_ui($trp->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
+     * @return triple_ui the "global problem" page phrase of the global issues table, whose
+     *         from side "problem" heads the row column of that table
+     */
+    function global_problem_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_problem());
+    }
+
+    /**
+     * @return triple_ui the "city of Zurich" page phrase of the related values table
+     */
+    function zh_city_ui(): triple_ui
+    {
+        return $this->page_ui($this->zh_city());
+    }
+
+    /**
      * @return triple_ui the "US dollar" triple for frontend unit testing
      */
     function us_dollar_ui(): triple_ui
@@ -1257,6 +1288,103 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "main column (system)" - the tier of the columns hidden on a small screen
+     */
+    function column_main(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_MAIN_ID, triple_names::SYSTEM_COLUMN_MAIN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "column problem (high prio)" that defines "problem" as a mayor table column
+     */
+    function column_problem(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_PROBLEM_ID, triple_names::COLUMN_PROBLEM);
+        $trp->set_from($t_wrd->word_problem()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column solution (high prio) is next main column after column problem (high prio)"
+     */
+    function column_solution_after_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_SOLUTION_AFTER_PROBLEM_ID);
+        $trp->set_from($this->column_solution()->phrase());
+        $trp->set_verb($t_vrb->verb_before());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * the reverse of column_solution_after_problem, which no import file contains
+     *
+     * @return triple "column problem (high prio) is next main column after column solution (high prio)"
+     */
+    function column_problem_after_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_PROBLEM_AFTER_SOLUTION_ID);
+        $trp->set_from($this->column_problem()->phrase());
+        $trp->set_verb($t_vrb->verb_before());
+        $trp->set_to($this->column_solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column loss is explaining column for column problem (high prio)"
+     */
+    function column_loss_explains_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_LOSS_EXPLAINS_PROBLEM_ID);
+        $trp->set_from($this->column_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column cost is explaining column for column problem (high prio)"
+     */
+    function column_cost_explains_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_COST_EXPLAINS_PROBLEM_ID);
+        $trp->set_from($this->column_cost()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column gain is explaining column for column solution (high prio)"
+     */
+    function column_gain_explains_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_GAIN_EXPLAINS_SOLUTION_ID);
+        $trp->set_from($this->column_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_solution()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "column solution (high prio)" that defines "solution" as a mayor table column
      */
     function column_solution(): triple
@@ -1272,7 +1400,9 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "column cost" that defines "cost" as a mayor table column
+     * the cost column explains the loss column, so it is one tier below the columns it explains
+     *
+     * @return triple "column cost" that defines "cost" as a main table column
      */
     function column_cost(): triple
     {
@@ -1282,7 +1412,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::COLUMN_COST_ID, triple_names::COLUMN_COST);
         $trp->set_from($t_wrd->word_cost()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
-        $trp->set_to($this->column_mayor()->phrase());
+        $trp->set_to($this->column_main()->phrase());
         return $trp;
     }
 

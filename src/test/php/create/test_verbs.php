@@ -272,6 +272,22 @@ class test_verbs extends test_objects
         return new verb(verbs::HAS_ID, verbs::HAS_NAME, verbs::HAS);
     }
 
+    /**
+     * @return verb "is next main column after" that chains the main columns of a table
+     */
+    function verb_before(): verb
+    {
+        return new verb(verbs::BEFORE_ID, verbs::BEFORE_NAME, verbs::BEFORE);
+    }
+
+    /**
+     * @return verb "is explaining column for" that places a column behind the column it explains
+     */
+    function verb_after(): verb
+    {
+        return new verb(verbs::AFTER_ID, verbs::AFTER_NAME, verbs::AFTER);
+    }
+
 
     /*
      * list

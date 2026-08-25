@@ -1143,9 +1143,17 @@ class test_phrases
         $lst->add($t_trp->poverty_problem()->phrase());
         $lst->add($t_trp->potential_health_problem()->phrase());
         $lst->add($t_trp->potential_education_problem()->phrase());
+        $lst->add($t_trp->column_problem()->phrase());
         $lst->add($t_trp->column_cost()->phrase());
         $lst->add($t_trp->column_gain()->phrase());
         $lst->add($t_trp->column_loss()->phrase());
+        // the main column chain and the explaining columns that put the columns in the order
+        // problem, loss, cost, solution, gain; the cost column is ordered although no value of
+        // this table carries the phrase "cost"
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        $lst->add($t_trp->column_loss_explains_problem()->phrase());
+        $lst->add($t_trp->column_cost_explains_problem()->phrase());
+        $lst->add($t_trp->column_gain_explains_solution()->phrase());
         // the solution column names the solution of the problem row instead of a value, so it
         // needs the column definition and the triples that link a solution to "solution"
         $lst->add($t_trp->column_solution()->phrase());
@@ -1163,6 +1171,102 @@ class test_phrases
     function list_global_problems_ui(): phrase_list_ui
     {
         return $this->ui_list($this->list_global_problems());
+    }
+
+    /**
+     * @return phrase_list_ui the page phrase of the global issues table, which is the context
+     *         that every row of that table is assumed to be about
+     */
+    function list_global_problem_context_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->global_problem()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the table column definitions of solution_prio.json without any order triple, so that a
+     * test can add exactly the main column and explaining column triples it wants to check
+     *
+     * @return phrase_list with the "problem", "solution", "cost", "gain" and "loss" columns
+     */
+    private function list_column_definitions(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_problem()->phrase());
+        $lst->add($t_trp->column_solution()->phrase());
+        $lst->add($t_trp->column_cost()->phrase());
+        $lst->add($t_trp->column_gain()->phrase());
+        $lst->add($t_trp->column_loss()->phrase());
+        return $lst;
+    }
+
+    /**
+     * the explaining column triples of list_column_definitions, added solution first so that
+     * only the main column chain can decide which main column is shown left
+     *
+     * @param phrase_list $lst the column definitions to add the explaining triples to
+     * @return phrase_list the given list with "gain", "loss" and "cost" linked to their column
+     */
+    private function add_explaining_columns(phrase_list $lst): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst->add($t_trp->column_gain_explains_solution()->phrase());
+        $lst->add($t_trp->column_loss_explains_problem()->phrase());
+        $lst->add($t_trp->column_cost_explains_problem()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the column definitions with the complete order: the "solution"
+     *         column is the next main column after the "problem" column and every column
+     *         explains one of the two, so the order is problem, loss, cost, solution, gain
+     */
+    function list_columns_ordered_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_column_definitions();
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        return $this->ui_list($this->add_explaining_columns($lst));
+    }
+
+    /**
+     * @return phrase_list_ui the column definitions with the explaining columns but without the
+     *         main column chain, so that the main columns keep the order of their triples
+     */
+    function list_columns_unchained_ui(): phrase_list_ui
+    {
+        $lst = $this->list_column_definitions();
+        return $this->ui_list($this->add_explaining_columns($lst));
+    }
+
+    /**
+     * @return phrase_list_ui the ordered column definitions plus the reverse main column link,
+     *         so that the main column chain is circular and cannot be walked
+     */
+    function list_columns_circular_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_column_definitions();
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        $lst->add($t_trp->column_problem_after_solution()->phrase());
+        return $this->ui_list($this->add_explaining_columns($lst));
+    }
+
+    /**
+     * @return phrase_list_ui the column definitions with the main column chain, but with no
+     *         triple that tells which main column the "cost" column explains
+     */
+    function list_columns_partly_explained_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_column_definitions();
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        $lst->add($t_trp->column_gain_explains_solution()->phrase());
+        $lst->add($t_trp->column_loss_explains_problem()->phrase());
+        return $this->ui_list($lst);
     }
 
     /**

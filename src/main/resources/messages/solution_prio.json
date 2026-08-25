@@ -1040,10 +1040,10 @@
     },
     {
       "name": "column cost",
-      "description": "the table column 'cost' that should be shown also on small screens",
+      "description": "the table column 'cost' with the cost of the problem in a currency, which explains the loss column and is therefore shown only if the screen is not small",
       "from": "cost",
       "verb": "can be",
-      "to": "mayor column (system)"
+      "to": "main column (system)"
     },
     {
       "name": "column gain",
@@ -1420,69 +1420,74 @@
       "to": "gross"
     },
     {
-      "from": "column priority",
-      "verb": "is before",
-      "to": "column problem (high prio)"
-    },
-    {
       "from": "column problem (high prio)",
-      "verb": "is before",
-      "to": "column cost"
-    },
-    {
-      "from": "column cost",
-      "verb": "is before",
-      "to": "column solution (high prio)"
+      "verb": "is next main column after",
+      "to": "column priority"
     },
     {
       "from": "column solution (high prio)",
-      "verb": "is before",
-      "to": "column gain"
-    },
-    {
-      "from": "column gain",
-      "verb": "is before",
-      "to": "column effort"
-    },
-    {
-      "from": "column effort",
-      "verb": "is before",
-      "to": "column percent"
-    },
-    {
-      "from": "column percent",
-      "verb": "is before",
-      "to": "column potential loss"
-    },
-    {
-      "from": "column potential loss",
-      "verb": "is before",
-      "to": "column potential gain"
-    },
-    {
-      "from": "column potential gain",
-      "verb": "is before",
-      "to": "column expected return"
-    },
-    {
-      "from": "column expected return",
-      "verb": "is before",
-      "to": "column probability"
+      "verb": "is next main column after",
+      "to": "column problem (high prio)"
     },
     {
       "from": "column probability",
-      "verb": "is before",
-      "to": "column standard deviation"
+      "verb": "is explaining column for",
+      "to": "column priority"
     },
     {
       "from": "column standard deviation",
-      "verb": "is before",
-      "to": "column ranking"
+      "verb": "is explaining column for",
+      "to": "column priority"
     },
     {
       "from": "column ranking",
-      "verb": "is before",
-      "to": "column source"
+      "verb": "is explaining column for",
+      "to": "column priority"
+    },
+    {
+      "from": "column source",
+      "verb": "is explaining column for",
+      "to": "column priority"
+    },
+    {
+      "from": "column loss",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column cost",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column potential loss",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column percent",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column gain",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
+    },
+    {
+      "from": "column effort",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
+    },
+    {
+      "from": "column potential gain",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
+    },
+    {
+      "from": "column expected return",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
     },
     {
       "name": "loss reduction",
