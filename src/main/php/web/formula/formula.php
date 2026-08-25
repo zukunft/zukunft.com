@@ -182,12 +182,17 @@ class formula extends sandbox_code_id
     {
         parent::url_mapper($url_array, $msg, $dto);
         if ($msg->is_ok()) {
-            if (array_key_exists(url_var::USER_EXPRESSION, $url_array)) {
+            // the field that the user has asked to refresh has just been recalculated by the
+            // backend (see api_par_from_url), so the url value of that field is outdated
+            $refresh = $url_array[url_var::REFRESH] ?? '';
+            if (array_key_exists(url_var::USER_EXPRESSION, $url_array)
+                and $refresh != url_var::REFRESH_EXPRESSION) {
                 if ($url_array[url_var::USER_EXPRESSION] != null) {
                     $this->set_usr_text($url_array[url_var::USER_EXPRESSION]);
                 }
             }
-            if (array_key_exists(url_var::LATEX, $url_array)) {
+            if (array_key_exists(url_var::LATEX, $url_array)
+                and $refresh != url_var::REFRESH_LATEX) {
                 if ($url_array[url_var::LATEX] != null) {
                     $this->set_latex($url_array[url_var::LATEX]);
                 }
@@ -534,6 +539,31 @@ class formula extends sandbox_code_id
     function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
         return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
+     * ask the backend to recalculate a part of the formula form based on the values that the user
+     * has entered but not yet saved, e.g. the latex based on the changed expression
+     *
+     * the terms are always included, because the validated expression and the validated latex
+     * beside the fields link the terms that the entered text selects
+     *
+     * @param array $url_array the url parameters of the page request
+     * @return array the api parameters of the refresh, empty if the user has not asked for one
+     */
+    function api_par_from_url(array $url_array): array
+    {
+        $result = [];
+        if (array_key_exists(url_var::REFRESH, $url_array)) {
+            $result = [
+                url_var::INCL_RELATED => url_var::TRUE,
+                url_var::REFRESH => $url_array[url_var::REFRESH],
+                url_var::USER_EXPRESSION => $url_array[url_var::USER_EXPRESSION] ?? '',
+                url_var::LATEX => $url_array[url_var::LATEX] ?? '',
+                url_var::PRE . url_var::LATEX => $url_array[url_var::PRE . url_var::LATEX] ?? '',
+            ];
+        }
+        return $result;
     }
 
     /**

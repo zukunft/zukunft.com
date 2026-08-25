@@ -219,6 +219,9 @@ class url_mapper
                     if ($base_key == url_var::STEP) {
                         $value = $this->map_std_step_to($value, $msg);
                     }
+                    if ($base_key == url_var::REFRESH) {
+                        $value = $this->map_std_refresh_to($value, $msg);
+                    }
                     if ($base_key == url_var::MASK) {
                         $value = $this->map_std_mask_to($value);
                     }
@@ -335,6 +338,19 @@ class url_mapper
         );
     }
 
+    private function map_human_refresh_to_std(
+        string       $std_value,
+        user_message $msg
+    ): string
+    {
+        return $this->map_value_to_std(
+            $std_value,
+            $msg,
+            url_var::HUMAN_TO_STD_REFRESH_VAL,
+            'url_var::HUMAN_TO_STD_REFRESH_VAL'
+        );
+    }
+
     private function map_std_action_to(
         string       $std_value,
         user_message $msg
@@ -358,6 +374,19 @@ class url_mapper
             $msg,
             url_var::HUMAN_TO_STD_STEP_VAL,
             'url_var::HUMAN_TO_STD_STEP_VAL'
+        );
+    }
+
+    private function map_std_refresh_to(
+        string       $std_value,
+        user_message $msg
+    ): string
+    {
+        return $this->map_std_value_to(
+            $std_value,
+            $msg,
+            url_var::HUMAN_TO_STD_REFRESH_VAL,
+            'url_var::HUMAN_TO_STD_REFRESH_VAL'
         );
     }
 
@@ -442,6 +471,10 @@ class url_mapper
         $key = url_var::STEP;
         if (array_key_exists($key, $std_array)) {
             $std_array[$key] = $this->map_human_step_to_std($std_array[$key], $msg);
+        }
+        $key = url_var::REFRESH;
+        if (array_key_exists($key, $std_array)) {
+            $std_array[$key] = $this->map_human_refresh_to_std($std_array[$key], $msg);
         }
         return $std_array;
     }

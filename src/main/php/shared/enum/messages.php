@@ -746,6 +746,10 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case FORMULA_LATEX_CHANGE_NOT_MAPPED = 'the latex change adds or removes a term or a number, '
+        . 'which cannot be assigned to a part of the expression, so please change the expression itself';
+    case FORMULA_LATEX_DIFFERS_FROM_EXPRESSION = 'the latex does not name the same terms and numbers '
+        . 'as the expression, so the latex change cannot be applied to the expression';
     case FORMULA_NAME_EQUALS_TERM = 'the formula name "'
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" is also used as a '
@@ -2135,6 +2139,8 @@ enum messages: string
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_CONFIRM = 'form_button_confirm';
     case FORM_BUTTON_DEL = 'form_button_del';
+    // the tooltip of the refresh icon beside a form field label
+    case FORM_BUTTON_REFRESH = 'form_button_refresh';
     case BUTTON_VIEW_OPEN = 'button_view_open';
     case BUTTON_VIEW_SWITCH = 'button_view_switch';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';

@@ -206,6 +206,66 @@ class formula_tests
         $test_name = 'a changed formula expression is written';
         $t->assert_true($test_name, $chg_lst->has_name(formula_fields::FLD_FORMULA_TEXT));
 
+        $t->subheader($ts . 'expression update based on the latex changes');
+        // the refresh icon beside the expression field of the formula form takes the change that
+        // the user has done in the latex field over into the expression; the latex shows a term by
+        // its symbol, so only the changed tokens are applied by their position (see update_usr_text)
+        $exp = '"second (time)" = "minute" * 60';
+        $latex = '\text{s} = 60 \cdot \text{min}';
+
+        $test_name = 'a changed number of the latex is taken over into the expression';
+        $t->assert($test_name,
+            $this->usr_text_updated($t, $exp, $latex, '\text{s} = 3600 \cdot \text{min}'),
+            '"second (time)" = "minute" * 3600');
+
+        $test_name = 'a changed term of the latex is taken over into the expression';
+        $t->assert($test_name,
+            $this->usr_text_updated($t, $exp, $latex, '\text{s} = 60 \cdot \text{h}'),
+            '"second (time)" = "h" * 60');
+
+        $test_name = 'a changed term and number of the latex are both taken over';
+        $t->assert($test_name,
+            $this->usr_text_updated($t, $exp, $latex, '\text{ms} = 3600 \cdot \text{h}'),
+            '"ms" = "h" * 3600');
+
+        $test_name = 'an unchanged latex keeps the expression';
+        $t->assert($test_name, $this->usr_text_updated($t, $exp, $latex, $latex), $exp);
+
+        $test_name = 'a term of a fraction is taken over into the expression';
+        $t->assert($test_name,
+            $this->usr_text_updated($t,
+                '"percent" = "this" / "prior"',
+                '\text{percent} = \frac{\text{this}}{\text{prior}}',
+                '\text{percent} = \frac{\text{this}}{\text{next}}'),
+            '"percent" = "this" / "next"');
+
+        $test_name = 'a number within a term name is not changed by a latex number';
+        $t->assert($test_name,
+            $this->usr_text_updated($t, '"CO2" = "kg" * 44', '\text{CO2} = 44 \cdot \text{kg}',
+                '\text{CO2} = 12 \cdot \text{kg}'),
+            '"CO2" = "kg" * 12');
+
+        // a latex change that cannot be assigned to an expression token must never guess, so the
+        // expression stays unchanged and the user is told to change the expression itself
+        $frm_ltx = new formula($t->usr1);
+        $frm_ltx->usr_text = $exp;
+        $msg = new user_message();
+        $test_name = 'an added latex term keeps the expression';
+        $t->assert($test_name,
+            $frm_ltx->update_usr_text($latex, $latex . ' \cdot \text{h}', $msg), $exp);
+        $test_name = 'an added latex term is reported to the user';
+        $t->assert_true($test_name, $msg->all_message_text() != '');
+
+        $frm_ltx = new formula($t->usr1);
+        $frm_ltx->usr_text = '"a" = "b" * "c" * 2';
+        $msg = new user_message();
+        $test_name = 'a latex that does not match the expression keeps the expression';
+        $t->assert($test_name,
+            $frm_ltx->update_usr_text($latex, '\text{s} = 61 \cdot \text{min}', $msg),
+            '"a" = "b" * "c" * 2');
+        $test_name = 'a latex that does not match the expression is reported to the user';
+        $t->assert_true($test_name, $msg->all_message_text() != '');
+
         $t->subheader($ts . 'user overlay log for a boolean change');
         // when a user turns on all_values_needed for a base formula that has it set to false, the
         // change log function must declare the _all_values_needed_old parameter it references; a
@@ -256,6 +316,22 @@ class formula_tests
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($t->usr1), $json_file);
 
+    }
+
+    /**
+     * apply a latex change to an expression like the refresh icon of the formula form does
+     *
+     * @param test_cleanup $t the test environment
+     * @param string $usr_text the formula expression before the latex change
+     * @param string $latex_pre the latex before the change of the user
+     * @param string $latex the latex as changed by the user
+     * @return string the updated expression
+     */
+    private function usr_text_updated(test_cleanup $t, string $usr_text, string $latex_pre, string $latex): string
+    {
+        $frm = new formula($t->usr1);
+        $frm->usr_text = $usr_text;
+        return $frm->update_usr_text($latex_pre, $latex, new user_message());
     }
 
     /**

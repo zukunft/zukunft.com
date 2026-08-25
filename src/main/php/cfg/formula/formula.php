@@ -91,6 +91,7 @@ include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
@@ -119,11 +120,24 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as views_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
 class formula extends formula_map
 {
+
+    /*
+     * const for the latex
+     */
+
+    // the parts of an expression or of a latex that the user can change one by one: a term (a
+    // quoted name in the expression or a "\text{}" token in the latex) or a number; the term is
+    // matched first and the number is the only capture group, so a number within a term name
+    // e.g. "CO2" is part of the term and never a number of its own
+    const string EXP_TOKEN = '\\\\text\{[^{}]*}|' . chars::TERM_DELIMITER . '[^'
+    . chars::TERM_DELIMITER . ']*' . chars::TERM_DELIMITER . '|([\d.]+)';
+
 
     /*
      * object vars
@@ -185,6 +199,42 @@ class formula extends formula_map
      */
 
     /**
+     * take over the expression and the latex that the user has entered in the formula form and
+     * recalculate the part that the user has asked to refresh, so that the form can show the
+     * effect of the change before it is saved
+     *
+     * the terms are always resolved again, because the validated expression and the validated
+     * latex beside the fields must show the terms that the entered text selects now
+     *
+     * @param array $url_array the api request parameters with the form values, the '8'-prefixed
+     *                         value before the change and the requested refresh (url_var::REFRESH)
+     * @param user_message $msg to tell the user why a change could not be applied
+     * @return void
+     */
+    function refresh_from_url(array $url_array, user_message $msg): void
+    {
+        $refresh = $url_array[url_var::REFRESH] ?? '';
+        if ($refresh != '') {
+            if (array_key_exists(url_var::USER_EXPRESSION, $url_array)) {
+                $this->usr_text = $url_array[url_var::USER_EXPRESSION];
+            }
+            if (array_key_exists(url_var::LATEX, $url_array)) {
+                $this->set_latex($url_array[url_var::LATEX]);
+            }
+            if ($refresh == url_var::REFRESH_EXPRESSION) {
+                $latex_pre = $url_array[url_var::PRE . url_var::LATEX] ?? '';
+                $this->update_usr_text($latex_pre, $this->get_latex(), $msg);
+            } elseif ($refresh == url_var::REFRESH_LATEX) {
+                $this->update_latex();
+            } elseif ($refresh != url_var::REFRESH_TERMS) {
+                // the refresh is set by the formula form, so any other value is an internal error
+                log_err_msg('unknown formula refresh request "' . $refresh . '"', $msg);
+            }
+            $this->load_latex_terms($msg);
+        }
+    }
+
+    /**
      * create the latex format of this formula from the resolved text (usr_text): each phrase is
      * shown as its symbol (the phrase linked via the "is symbol for" verb) or, if no symbol is
      * linked, as its name; a product becomes "\cdot", a repeated factor a superscript and a
@@ -200,6 +250,121 @@ class formula extends formula_map
             $this->set_latex($result);
         }
         return $result;
+    }
+
+    /**
+     * update the user expression (usr_text) based on the change that the user has done in the
+     * latex field of the formula form
+     *
+     * the latex shows a term by its symbol (e.g. "min" for "minute") and drops the expression
+     * structure (e.g. a division becomes a "\frac"), so the latex cannot be parsed back to an
+     * expression; instead only the changed latex tokens are applied: the n-th "\text{}" token of
+     * the latex names the n-th quoted name of the expression and the n-th number of the latex the
+     * n-th number of the expression, which is the order that update_latex creates
+     *
+     * a latex change that adds or removes a term or a number cannot be assigned to an expression
+     * token, so nothing is changed and the user is asked to change the expression itself; the same
+     * applies if the latex does not name the same terms and numbers as the expression, e.g.
+     * because it has been written by hand
+     *
+     * a changed term is taken over as it is written in the latex, because the name behind a new
+     * symbol is unknown here; the validated expression beside the field shows the user at once
+     * whether the new text selects a term
+     *
+     * @param string $latex_pre the latex as it has been when the form has been opened
+     * @param string $latex the latex as changed by the user
+     * @param user_message $msg to tell the user why a latex change has not been applied
+     * @return string the updated user expression that is also stored in the usr_text object field
+     */
+    function update_usr_text(string $latex_pre, string $latex, user_message $msg): string
+    {
+        $result = $this->usr_text ?? '';
+        $trm_pre = $this->latex_names($latex_pre);
+        $trm_new = $this->latex_names($latex);
+        $nbr_pre = $this->numbers($latex_pre);
+        $nbr_new = $this->numbers($latex);
+        if (count($trm_pre) != count($trm_new) or count($nbr_pre) != count($nbr_new)) {
+            $msg->add_warning_with_vars(msg_id::FORMULA_LATEX_CHANGE_NOT_MAPPED, []);
+        } elseif (count($trm_pre) != count($this->expression_names($result))
+            or count($nbr_pre) != count($this->numbers($result))) {
+            $msg->add_warning_with_vars(msg_id::FORMULA_LATEX_DIFFERS_FROM_EXPRESSION, []);
+        } else {
+            $result = $this->apply_latex_diff($result, $trm_pre, $trm_new, $nbr_pre, $nbr_new);
+            $this->usr_text = $result;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $latex the formula in the latex format
+     * @return array the text of each "\text{}" token in the order of the latex
+     */
+    private function latex_names(string $latex): array
+    {
+        preg_match_all('/\\\\text\{([^{}]*)}/', $latex, $matches);
+        return $matches[1];
+    }
+
+    /**
+     * @param string $text a formula in the latex or in the expression format
+     * @return array the numbers in the order of the text, ignoring the numbers within a term name
+     */
+    private function numbers(string $text): array
+    {
+        preg_match_all('/' . self::EXP_TOKEN . '/', $text, $matches);
+        return array_values(array_filter($matches[1], fn(string $number) => $number != ''));
+    }
+
+    /**
+     * @param string $usr_text the formula expression e.g. '"second (time)" = "minute" * 60'
+     * @return array the quoted term names in the order of the expression, without the quotes
+     */
+    private function expression_names(string $usr_text): array
+    {
+        $delimiter = preg_quote(chars::TERM_DELIMITER, '/');
+        preg_match_all('/' . $delimiter . '([^' . $delimiter . ']*)' . $delimiter . '/', $usr_text, $matches);
+        return $matches[1];
+    }
+
+    /**
+     * replace the changed terms and numbers of the latex in the expression by their position
+     * @param string $usr_text the formula expression that should be updated
+     * @param array $trm_pre the latex term names before the change
+     * @param array $trm_new the latex term names after the change
+     * @param array $nbr_pre the latex numbers before the change
+     * @param array $nbr_new the latex numbers after the change
+     * @return string the expression with the changed terms and numbers
+     */
+    private function apply_latex_diff(
+        string $usr_text,
+        array  $trm_pre,
+        array  $trm_new,
+        array  $nbr_pre,
+        array  $nbr_new
+    ): string
+    {
+        $trm_pos = 0;
+        $nbr_pos = 0;
+        return preg_replace_callback(
+            '/' . self::EXP_TOKEN . '/',
+            function (array $match) use (&$trm_pos, &$nbr_pos, $trm_pre, $trm_new, $nbr_pre, $nbr_new) {
+                $token = $match[0];
+                // only a number token fills the capture group of EXP_TOKEN
+                if (($match[1] ?? '') == '') {
+                    if ($trm_new[$trm_pos] != $trm_pre[$trm_pos]) {
+                        $token = chars::TERM_DELIMITER . $trm_new[$trm_pos] . chars::TERM_DELIMITER;
+                    }
+                    $trm_pos++;
+                } else {
+                    if ($nbr_new[$nbr_pos] != $nbr_pre[$nbr_pos]) {
+                        $token = $nbr_new[$nbr_pos];
+                    }
+                    $nbr_pos++;
+                }
+                return $token;
+            },
+            $usr_text
+        );
     }
 
     /**

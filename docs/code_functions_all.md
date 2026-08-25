@@ -14,7 +14,11 @@
             ponent_link.php
     \-- delta - section for function delta is expected to be del in /component/component_link.php
 \-- formula
+    \-- refresh_from_url - section for function refresh_from_url not yet defined that it should be latex in /formula/for
+            mula.php
     \-- update_latex - section for function update_latex not yet defined that it should be latex in /formula/formula.php
+    \-- update_usr_text - section for function update_usr_text not yet defined that it should be latex in /formula/formu
+            la.php
     \-- ref_exp_is_valid - section for function ref_exp_is_valid not yet defined that it should be info in /formula/form
             ula.php
     \-- user_exp_is_valid - section for function user_exp_is_valid not yet defined that it should be info in /formula/fo
@@ -937,8 +941,12 @@
     \-- message_to_invalid
         \-- component_link - get a list of database field names, values and types that have been updated
 \-- latex
+    \-- refresh_from_url
+        \-- formula - take over the expression and the latex that the user has entered in the formula form and
     \-- update_latex
         \-- formula - create the latex format of this formula from the resolved text (usr_text): each phrase is
+    \-- update_usr_text
+        \-- formula - update the user expression (usr_text) based on the change that the user has done in the
 \-- predefined
     \-- calc_predefined
         \-- formula - return the result of a special formula
@@ -6528,6 +6536,8 @@
             formula.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formul
             a.php
+    \-- api_par_from_url - section for function api_par_from_url not yet defined that it should be overwrites in /formul
+            a/formula.php
     \-- expression_latex - section for function expression_latex not yet defined that it should be overwrites in /formul
             a/formula.php
     \-- expression_latex_link - section for function expression_latex_link not yet defined that it should be overwrites 
@@ -6912,6 +6922,8 @@
             replace in /html/html_base.php
     \-- label - section for function label not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
+    \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
+             for all html elements used in zukunft.com in /html/html_base.php
     \-- label_lan - section for function label_lan not yet defined that it should be base elements - functions for all h
             tml elements used in zukunft.com in /html/html_base.php
     \-- form_field_id - section for function form_field_id not yet defined that it should be base elements - functions f
@@ -7312,6 +7324,8 @@
             /sandbox/db_object.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/db_object.php
     \-- id - section for function id not yet defined that it should be set and get in /sandbox/db_object.php
+    \-- api_par_from_url - section for function api_par_from_url not yet defined that it should be load in /sandbox/db_o
+            bject.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /sandbox/db_object.php
     \-- api_json - section for function api_json not yet defined that it should be interface in /sandbox/db_object.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /sandbox/db_object.php
@@ -9444,6 +9458,8 @@
 \-- base elements - functions for all html elements used in zukunft.com
     \-- label
         \-- html_base - create the html code for a label
+    \-- button_refresh
+        \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
     \-- label_lan
         \-- html_base - translate and create the html code for a label
     \-- form_field_id

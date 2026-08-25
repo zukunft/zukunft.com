@@ -134,6 +134,12 @@ class url_var
     const string USER_EXPRESSION = 'fe';
     const string FORMULA_LINK = 'fl'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO = 'fp';
+    // which part of the formula form the user has asked to recalculate, one of the REFRESH_* values
+    // the values repeat the key, because a url var is unique within the complete url_var class
+    const string REFRESH = 'fr';
+    const string REFRESH_EXPRESSION = 'fre'; // recalculate the expression based on the latex changes
+    const string REFRESH_LATEX = 'frx'; // recalculate the latex based on the expression
+    const string REFRESH_TERMS = 'frt'; // only resolve the terms of the expression and the latex again
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -451,6 +457,12 @@ class url_var
     const string NEED_ALL_HUMAN = 'need_all_val';
     const string USER_EXPRESSION_HUMAN = 'formula_text';
     const string LATEX_HUMAN = 'latex'; // the formula in latex format
+    // which part of the formula form the user has asked to recalculate, one of the REFRESH_*_HUMAN
+    // values; each value names what it creates from what, so that it stays unique and self-explaining
+    const string REFRESH_HUMAN = 'refresh';
+    const string REFRESH_EXPRESSION_HUMAN = 'expression_from_latex';
+    const string REFRESH_LATEX_HUMAN = 'latex_from_expression';
+    const string REFRESH_TERMS_HUMAN = 'terms_only';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -668,6 +680,7 @@ class url_var
         [self::FORMULA_TYPE_HUMAN, self::FORMULA_TYPE],
         [self::USER_EXPRESSION_HUMAN, self::USER_EXPRESSION],
         [self::LATEX_HUMAN, self::LATEX],
+        [self::REFRESH_HUMAN, self::REFRESH],
         [self::NEED_ALL_HUMAN, self::NEED_ALL],
         [self::FORMULA_LINK_HUMAN, self::FORMULA_LINK],
         [self::FORMULA_LINK_PRIO_HUMAN, self::FORMULA_LINK_PRIO],
@@ -760,6 +773,13 @@ class url_var
         self::SHOW_FULL => self::CRUD_FULL_HUMAN,
         self::SHOW_POPUP => self::CRUD_POPUP_HUMAN,
         self::SHOW_CREATE => self::CRUD_CELL_HUMAN,
+    ];
+
+    // map human-readable url values to standard url values
+    const array HUMAN_TO_STD_REFRESH_VAL = [
+        self::REFRESH_EXPRESSION => self::REFRESH_EXPRESSION_HUMAN,
+        self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
+        self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
     ];
 
     // map human-readable url values to standard url values

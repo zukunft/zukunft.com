@@ -194,6 +194,10 @@
                         <label for="expression">
                             Expression
                         </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="fre">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
                         <input class="form-control" type="text" name="fe" id="expression" value="&quot;second (time)&quot; = &quot;minute&quot; * 60">
                     </div>
                     <input type="hidden" name="8fe" value="&quot;second (time)&quot; = &quot;minute&quot; * 60">
@@ -201,6 +205,10 @@
                         <label for="expression">
                             Validated expression
                         </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frt">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
                         <span class="text-nowrap">"<a href="/http/view.php?m=92&amp;id=64" title="The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.">second (time)</a>" = "<a href="/http/view.php?m=90&amp;id=100" title="A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.">minute</a>" * 60</span>
                     </div>
                 </div>
@@ -209,6 +217,10 @@
                         <label for="latex">
                             LaTeX
                         </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frx">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
                         <input class="form-control" type="text" name="fx" id="latex" value="\text{s} = 60 \cdot \text{min}">
                     </div>
                     <input type="hidden" name="8fx" value="\text{s} = 60 \cdot \text{min}">
@@ -216,6 +228,10 @@
                         <label for="latex">
                             Validated LaTeX
                         </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frt">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
                         <span class="text-nowrap"><a href="/http/view.php?m=90&amp;id=23" title="The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).">s</a> = 60 &middot; <a href="/http/view.php?m=90&amp;id=657" title="The minimal numeric value.">min</a></span>
                     </div>
                 </div>
@@ -327,14 +343,142 @@
                         Formulas
                     </h5>
                 </div>
-            </div>
-            <div class="row col-md-12">
-                <div class="col-md-12">
-                    <h5>
-                        Changes
-                    </h5>
-                    <div>
-                        26-12-2022 18:23 zukunft.com system added "\text{s} = 60 \cdot \text{min}"26-12-2022 18:23 zukunft.com system added ""second (time)" = "minute" * 60"26-12-2022 18:23 zukunft.com system added "{t64}={w100}*60"26-12-2022 18:23 zukunft.com system added "1"26-12-2022 18:23 zukunft.com system added "to convert times in minutes to seconds and the other way round"26-12-2022 18:23 zukunft.com system added "1"26-12-2022 18:23 zukunft.com system added "scale minute to sec"
+                <div class="col-md-4">
+                    <div class="css-tabs">
+                        <div class="css-tab" id="views">
+                            <a href="#views" class="css-tab-label">
+                                Views
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <div>
+                                        <div class="col-md-12">
+                                            view preview
+                                        </div>
+                                        Formula (default)
+                                        <a href="/http/view.php?m=97&amp;id=1">
+                                            view
+                                        </a>
+                                        <a href="/http/view.php?m=25&amp;id=1">
+                                            switch
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="css-tab" id="changes">
+                            <a href="#changes" class="css-tab-label">
+                                Changes
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                when
+                                            </th>
+                                            <th>
+                                                who
+                                            </th>
+                                            <th>
+                                                what
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                26-12-2022 18:23
+                                            </td>
+                                            <td>
+                                                <a href="/http/view.php?m=74&amp;id=1">
+                                                    zukunft.com system
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added latex "\text{s} = 60 \cdot \text{min}"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                26-12-2022 18:23
+                                            </td>
+                                            <td>
+                                                <a href="/http/view.php?m=74&amp;id=1">
+                                                    zukunft.com system
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added resolved text ""second (time)" = "minute" * 60"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                26-12-2022 18:23
+                                            </td>
+                                            <td>
+                                                <a href="/http/view.php?m=74&amp;id=1">
+                                                    zukunft.com system
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added formula text "{t64}={w100}*60"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                26-12-2022 18:23
+                                            </td>
+                                            <td>
+                                                <a href="/http/view.php?m=74&amp;id=1">
+                                                    zukunft.com system
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added formula type "calc"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                26-12-2022 18:23
+                                            </td>
+                                            <td>
+                                                <a href="/http/view.php?m=74&amp;id=1">
+                                                    zukunft.com system
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added description "to convert times in minutes to seconds and the other way round"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                26-12-2022 18:23
+                                            </td>
+                                            <td>
+                                                <a href="/http/view.php?m=74&amp;id=1">
+                                                    zukunft.com system
+                                                </a>
+                                            </td>
+                                            <td>
+                                                set owner to zukunft.com system
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                26-12-2022 18:23
+                                            </td>
+                                            <td>
+                                                <a href="/http/view.php?m=74&amp;id=1">
+                                                    zukunft.com system
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added "scale minute to sec"
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1062,6 +1062,8 @@ class system_form extends component
      * @param string $style_text the column style of the field
      * @param db_object|type_object|null $dbo the object, used to keep the original db snapshot as the
      *                       '8' pre value on a re-render (e.g. after a save error) instead of the change
+     * @param string $refresh which part of the form a refresh icon beside the label should recalculate
+     *                        e.g. url_var::REFRESH_LATEX, '' for a field without a refresh icon
      * @return string the html code of the editable field plus the hidden pre value
      */
     private function form_field_tracked(
@@ -1069,14 +1071,15 @@ class system_form extends component
         msg_id                     $label,
         ?string                    $value,
         string                     $style_text,
-        db_object|type_object|null $dbo = null
+        db_object|type_object|null $dbo = null,
+        string                     $refresh = ''
     ): string
     {
         $html = new html_base();
         $value = $value ?? '';
         // on a re-render keep the original db snapshot from the url, else the unchanged value is the snap
         $pre = ($dbo instanceof db_object) ? ($dbo->pre_value($url_id) ?? $value) : $value;
-        return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text)
+        return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text, $refresh)
             . $html->form_hidden(url_var::PRE . $url_id, $pre);
     }
 
@@ -2178,12 +2181,14 @@ class system_form extends component
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show the
         // formula text before the change (see url_var::PRE)
         // 2/3 of the width, because the expression with the term links is shown in the last third
+        // the refresh icon takes the changes of the latex field over into the expression
         return $this->form_field_tracked(
             url_var::USER_EXPRESSION,
             msg_id::FORM_FIELD_FORMULA_EXPRESSION,
             $dbo->get_usr_text(),
             view_styles::COL_SM_8,
-            $dbo);
+            $dbo,
+            url_var::REFRESH_EXPRESSION);
     }
 
     /**
@@ -2197,12 +2202,14 @@ class system_form extends component
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show
         // the latex text before the change (see url_var::PRE)
         // 2/3 of the width, because the formatted latex with the term links is shown in the last third
+        // the refresh icon creates the latex again based on the expression
         return $this->form_field_tracked(
             url_var::LATEX,
             msg_id::FORM_FIELD_FORMULA_LATEX,
             $dbo->get_latex(),
             view_styles::COL_SM_8,
-            $dbo);
+            $dbo,
+            url_var::REFRESH_LATEX);
     }
 
     /**

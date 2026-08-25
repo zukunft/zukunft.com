@@ -549,6 +549,73 @@ above); the helper only resolves the `code_id` to that message id. A json field
 without its own message id falls back to its db field translation (identity map),
 so most json fields need no extra entry.
 
+## Url field names and field values, and why both are unique
+
+`url_var.php` holds two kinds of const, and telling them apart is the first step
+to reading it:
+
+- a **url field name** (the key left of the `=`), e.g. `MASK = 'm'`,
+  `ACTION = 'a'`, `REFRESH = 'fr'`; `PRE = '8'` and `BACK = '9'` are the two
+  field name *prefixes*
+- a **value that one named field can carry** (right of the `=`), e.g.
+  `CRUD_CREATE` is a value of the `ACTION` field and `REFRESH_LATEX` a value of
+  the `REFRESH` field
+
+So `ACTION = 'a'` and `CRUD_CREATE = 'a'` are not the same thing used twice: the
+first names the field, the second is one of the values that field accepts, and
+the url that creates an object reads `?a=a`. The class is one namespace only in
+the sense that both kinds live in it — the url itself keeps them apart by
+position.
+
+A value const still gets its **own unique string, built by repeating its field
+name**, so that reading a url and searching the code both stay unambiguous:
+
+- **Right**: `REFRESH = 'fr'` with `REFRESH_EXPRESSION = 'fre'`,
+  `REFRESH_LATEX = 'frx'`, `REFRESH_TERMS = 'frt'` — `?fr=frx` says at a glance
+  which field carries which value, and a search for `frx` finds one place
+- **Wrong**: `REFRESH_EXPRESSION = 'e'` — a bare letter reads like a field name
+  of its own, and the next single-letter field then shares its string
+
+Check a new const against the whole file before adding it, e.g. with
+`grep "^\s*const string" src/main/php/shared/url_var.php | grep -o "= '[^']*'" | sort | uniq -d`
+(the leading `const` filter skips the commented-out placeholder lines).
+
+### Every url var also needs its human name and the mapping
+
+The same url exists in a short standard format (`?m=25&id=1&fr=frx`) and in a
+human-readable format (`?mask_id=formula_edit&id=1&refresh=latex_from_expression`),
+so a new const is only half done without its `*_HUMAN` twin and the map entry
+that `web/helper/url_mapper.php` converts with. Without the map entry every
+`standard_url_to_human()` call reports the key as `URL_MAP_MISSING`.
+
+A new **field name** needs two things:
+
+1. `<NAME>_HUMAN` beside the short const in `url_var.php`
+2. a `[self::<NAME>_HUMAN, self::<NAME>]` row in `url_var::HUMAN_TO_STD`
+
+A new **field value** needs three more, because a value is converted by its own
+map (see `ACTION` / `STEP` as the existing examples):
+
+3. `<NAME>_HUMAN` for each value; a human value names what it does rather than
+   repeating the field, e.g. `REFRESH_LATEX_HUMAN = 'latex_from_expression'`,
+   which keeps it readable and unique at the same time
+4. a `HUMAN_TO_STD_<FIELD>_VAL` const mapping standard value → human value
+5. one branch per direction in `url_mapper.php`: in `map_standard_to()` (short →
+   human) and in `map_url_to_standard()` (human → short), each calling a
+   `map_std_<field>_to()` / `map_human_<field>_to_std()` wrapper
+
+`POD_TO_STD` only carries the mask and the step, because the pod-independent url
+is the minimal interchange format — a transient form parameter is not added there.
+
+Some older consts still share a string, nearly all of them a field name and a
+value of another field: `ACTION = 'a'` / `CRUD_CREATE = 'a'`, `VIEW = 'd'` /
+`CRUD_DELETE = 'd'`, `RESULT = 'r'` / `CRUD_READ = 'r'`, `USER = 'u'` /
+`CRUD_UPDATE = 'u'`. Those urls are unambiguous, but the code is harder to read
+and to search, so they are debt and not a pattern to copy. The one real field
+name clash is `STEP_HUMAN = 'step'` / `STEP_POD = 'step'`, which is the same
+field in the long and in the pod url format. Renaming any of them changes the
+url contract and needs its own change (see `docs/llm/pending_prio_2.md`).
+
 ## Back-navigation parameter convention
 
 Back navigation (where to redirect after an action) is encoded as

@@ -79,6 +79,9 @@ if ($db_con->is_open()) {
         $frm = new formula($load_usr);
         if ($frm_id > 0) {
             $frm->load_by_id($frm_id, $msg);
+            // a formula form can ask to recalculate the expression, the latex or only the terms
+            // based on the values that the user has entered but not yet saved
+            $frm->refresh_from_url($_GET, $msg);
             $result = $frm->api_json($typ_lst, $msg, $load_usr);
         } elseif ($frm_name != '') {
             $frm->load_by_name($frm_name, $msg);

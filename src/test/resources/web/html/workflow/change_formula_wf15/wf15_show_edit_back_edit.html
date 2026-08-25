@@ -194,6 +194,10 @@
                         <label for="expression">
                             Expression
                         </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="fre">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
                         <input class="form-control" type="text" name="fe" id="expression" value="&quot;percent&quot; = ( &quot;this&quot; - &quot;prior&quot; ) / &quot;prior&quot;">
                     </div>
                     <input type="hidden" name="8fe" value="&quot;percent&quot; = ( &quot;this&quot; - &quot;prior&quot; ) / &quot;prior&quot;">
@@ -201,6 +205,10 @@
                         <label for="expression">
                             Validated expression
                         </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frt">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
                         <span class="text-nowrap">"percent" = ( "this" - "prior" ) / "prior"</span>
                     </div>
                 </div>
@@ -209,6 +217,10 @@
                         <label for="latex">
                             LaTeX
                         </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frx">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
                         <input class="form-control" type="text" name="fx" id="latex">
                     </div>
                     <input type="hidden" name="8fx" value="">
@@ -321,12 +333,31 @@
                         Formulas
                     </h5>
                 </div>
-            </div>
-            <div class="row col-md-12">
-                <div class="col-md-12">
-                    <h5>
-                        Changes
-                    </h5>
+                <div class="col-md-4">
+                    <div class="css-tabs">
+                        <div class="css-tab" id="changes">
+                            <a href="#changes" class="css-tab-label">
+                                Changes
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                when
+                                            </th>
+                                            <th>
+                                                who
+                                            </th>
+                                            <th>
+                                                what
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

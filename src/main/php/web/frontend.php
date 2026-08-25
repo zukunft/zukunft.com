@@ -1012,7 +1012,9 @@ class frontend
                 // mandatory-field-missing message to the rendered test page
                 if (!$test_mode and $dbo instanceof db_object_ui) {
                     $usr_id = $usr?->id() ?? 0;
-                    $dbo->load_by_id($id, $msg_ui, [], $usr_id);
+                    // the url may ask the backend for more than the stored object, e.g. the formula
+                    // form asks to recalculate the latex based on the entered expression
+                    $dbo->load_by_id($id, $msg_ui, $dbo->api_par_from_url($url_array), $usr_id);
                 }
                 $dbo->url_mapper($url_array, $msg_ui, $dto);
             }
