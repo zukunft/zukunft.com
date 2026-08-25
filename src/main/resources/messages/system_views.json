@@ -1330,6 +1330,18 @@
       "ui_msg_code_id": "form_field_formula_latex"
     },
     {
+      "name": "system expression with links",
+      "description": "show the formula expression beside the expression field with a tooltip and a link for each term, so that the user can check which term a name selects",
+      "type": "expression_link",
+      "code_id": "expression_link"
+    },
+    {
+      "name": "system expression latex with links",
+      "description": "show the formula latex beside the latex field with a tooltip and a link for each term, so that the user can check which term a name selects",
+      "type": "expression_latex_link_form",
+      "code_id": "expression_latex_link_form"
+    },
+    {
       "name": "system form field flag need all vars",
       "description": "the formula needs all variables to be set for a valid result",
       "type": "system_form_field_formula_all_vars",
@@ -3921,44 +3933,54 @@
         },
         {
           "position": "8",
-          "name": "system form field latex"
+          "name": "system expression with links",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form field flag need all vars"
+          "name": "system form field latex"
         },
         {
           "position": "10",
-          "name": "system form select view"
+          "name": "system expression latex with links",
+          "position_type": "side"
         },
         {
           "position": "11",
+          "name": "system form field flag need all vars"
+        },
+        {
+          "position": "12",
+          "name": "system form select view"
+        },
+        {
+          "position": "13",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "12",
+          "position": "14",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "13",
+          "position": "15",
           "name": "system formatter row right"
         },
         {
-          "position": "14",
+          "position": "16",
           "name": "system form button cancel"
         },
         {
-          "position": "15",
+          "position": "17",
           "name": "system form button save"
         },
         {
-          "position": "16",
+          "position": "18",
           "name": "system formatter row end"
         },
         {
-          "position": "17",
+          "position": "19",
           "name": "system form end"
         }
       ]
@@ -4002,109 +4024,119 @@
         },
         {
           "position": "8",
-          "name": "system form field latex"
+          "name": "system expression with links",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form field flag need all vars"
+          "name": "system form field latex"
         },
         {
           "position": "10",
-          "name": "system form select view"
+          "name": "system expression latex with links",
+          "position_type": "side"
         },
         {
           "position": "11",
+          "name": "system form field flag need all vars"
+        },
+        {
+          "position": "12",
+          "name": "system form select view"
+        },
+        {
+          "position": "13",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "12",
+          "position": "14",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "13",
+          "position": "15",
           "name": "system formatter row right"
         },
         {
-          "position": "14",
+          "position": "16",
           "name": "assigned phrases of this formula"
         },
         {
-          "position": "15",
+          "position": "17",
           "name": "system form button cancel"
         },
         {
-          "position": "16",
+          "position": "18",
           "name": "system form button save"
         },
         {
-          "position": "17",
+          "position": "19",
           "name": "system formatter row end"
         },
         {
-          "position": "18",
+          "position": "20",
           "name": "system form end"
         },
         {
-          "position": "19",
+          "position": "21",
           "name": "system formatter row start"
         },
         {
-          "position": "20",
+          "position": "22",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "21",
+          "position": "23",
           "name": "system formatter row end"
         },
         {
-          "position": "22",
+          "position": "24",
           "name": "system formatter row start"
         },
         {
-          "position": "23",
+          "position": "25",
           "name": "system sub title results",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "24",
+          "position": "26",
           "name": "result list of formula",
           "position_type": "combine"
         },
         {
-          "position": "25",
+          "position": "27",
           "name": "system sub title formulas",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "26",
+          "position": "28",
           "name": "formula list of formula",
           "position_type": "combine"
         },
         {
-          "position": "27",
+          "position": "29",
           "name": "system formatter row end"
         },
         {
-          "position": "28",
+          "position": "30",
           "name": "system formatter row start"
         },
         {
-          "position": "29",
+          "position": "31",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "30",
+          "position": "32",
           "name": "change log formula",
           "position_type": "combine"
         },
         {
-          "position": "31",
+          "position": "33",
           "name": "system formatter row end"
         }
       ]

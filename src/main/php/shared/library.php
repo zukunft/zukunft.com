@@ -1893,7 +1893,6 @@ class library
      */
     function arrayOrderDiff(array $order, array $compare): string
     {
-        $result = true;
         $txt = '';
         // reset the keys for both arrays to have increasing numbers as keys
         $order = array_values($order);
@@ -1905,10 +1904,11 @@ class library
             $pos = array_search($value, $compare);
             if ($pos !== false) {
                 if ($pos < $pre) {
-                    if ($txt != '') {
-                        $txt .= ', ';
+                    // only the first difference is named, because moving that function
+                    // is expected to fix the following differences as well
+                    if ($txt == '') {
+                        $txt = $value . ' should be before ' . $compare[$pre];
                     }
-                    $txt .= $value . ' should be before ' . $compare[$pre];
                 } else {
                     $pre = $pos;
                 }

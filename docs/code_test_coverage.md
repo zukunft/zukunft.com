@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1237 of 5647 public functions have at least 2 unit test calls; the 4410 functions below do not
+1237 of 5652 public functions have at least 2 unit test calls; the 4415 functions below do not
 
 ## main backend
 
@@ -2766,6 +2766,7 @@ so same-named functions of several classes share their test calls
     \-- phr_lst - 0 unit test calls
     \-- phr_lst_all - 0 unit test calls
     \-- phrase_groups - 0 unit test calls
+    \-- read_limit - 0 unit test calls
     \-- remove - 0 unit test calls
     \-- remove_list - 0 unit test calls
     \-- set_grp_ids - 0 unit test calls
@@ -3549,6 +3550,7 @@ so same-named functions of several classes share their test calls
     \-- edit_link - 0 unit test calls
     \-- expression_latex - 0 unit test calls
     \-- expression_latex_link - 0 unit test calls
+    \-- expression_link - 0 unit test calls
     \-- formula_type_selector - 0 unit test calls
     \-- get_latex - 0 unit test calls
     \-- get_usr_text - 0 unit test calls
@@ -3694,6 +3696,7 @@ so same-named functions of several classes share their test calls
     \-- form_end - 0 unit test calls
     \-- form_end_with_submit - 0 unit test calls
     \-- form_field - 0 unit test calls
+    \-- form_field_id - 0 unit test calls
     \-- form_hidden - 0 unit test calls
     \-- form_input - 0 unit test calls
     \-- form_input_password - 0 unit test calls
@@ -4414,6 +4417,8 @@ so same-named functions of several classes share their test calls
 \-- ui_base
     \-- all - 0 unit test calls
     \-- expression_latex_link - 0 unit test calls
+    \-- expression_latex_link_form - 0 unit test calls
+    \-- expression_link - 0 unit test calls
     \-- group_name - 0 unit test calls
     \-- language_name - 0 unit test calls
     \-- main_value - 0 unit test calls

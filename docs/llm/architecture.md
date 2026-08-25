@@ -78,7 +78,14 @@ These nouns have precise, non-interchangeable meanings — use them exactly:
 - **formula** — an expression for calculation
 - **result** — the numeric result of a formula
 - **view** — a named display mask
-- **component** — parts of a display mask
+- **component** — a part of a display mask
+- **element** — a part of a formula (`cfg/element/element.php`), never a part of a view
+
+A part of a view is a **component** — in the code, in a comment and in every text
+shown to the user. Never call it an *element*: `element` is the cached part of a
+formula expression, so "view element" reads as if a formula were meant. The html
+`<div>`, `<input>` and `<select>` tags stay *elements*, because that is what the
+html standard calls them, and a *list element* is fine where a list is meant.
 
 Two collective nouns build on the above and must not be confused:
 

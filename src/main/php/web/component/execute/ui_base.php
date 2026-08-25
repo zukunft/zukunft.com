@@ -39,6 +39,9 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 
@@ -46,6 +49,9 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -241,11 +247,72 @@ class ui_base
         return $result;
     }
 
+    /**
+     * @param db_object|null $dbo the formula whose latex should be displayed
+     * @return string the latex of the given formula with a link per term, or an empty string if it has no latex
+     */
     function expression_latex_link(?db_object $dbo = null): string
     {
         $result = '';
         if ($dbo != null and method_exists($dbo, 'expression_latex_link')) {
             $result = $dbo->expression_latex_link();
+        }
+        return $result;
+    }
+
+    /**
+     * @param db_object|null $dbo the formula whose latex should be displayed
+     * @return string the html code of the column beside the latex field of the formula form
+     */
+    function expression_latex_link_form(?db_object $dbo = null): string
+    {
+        return $this->form_side_column(
+            $this->expression_latex_link($dbo),
+            msg_id::FORM_FIELD_FORMULA_LATEX_VALIDATED,
+            url_var::LATEX,
+            msg_id::FORM_FIELD_FORMULA_LATEX);
+    }
+
+    /**
+     * @param db_object|null $dbo the formula whose expression should be displayed
+     * @return string the html code of the column beside the expression field of the formula form
+     */
+    function expression_link(?db_object $dbo = null): string
+    {
+        $result = '';
+        if ($dbo != null and method_exists($dbo, 'expression_link')) {
+            $result = $dbo->expression_link();
+        }
+        return $this->form_side_column(
+            $result,
+            msg_id::FORM_FIELD_FORMULA_EXPRESSION_VALIDATED,
+            url_var::USER_EXPRESSION,
+            msg_id::FORM_FIELD_FORMULA_EXPRESSION);
+    }
+
+    /**
+     * the label points to the field that it validates, so that a click on it opens the field
+     * and the user sees which entry the shown terms are selected by
+     *
+     * @param string $html_code the html code that should be shown beside a form field
+     * @param msg_id $ui_msg_code_id the message id of the label of the column
+     * @param string $fld_url_id the url id of the field that the column belongs to e.g. url_var::LATEX
+     * @param msg_id $fld_msg_code_id the message id of the label of the field that the column belongs to
+     * @return string the html code in the column that fills the third which the 2/3 wide field leaves free
+     */
+    private function form_side_column(
+        string $html_code,
+        msg_id $ui_msg_code_id,
+        string $fld_url_id,
+        msg_id $fld_msg_code_id
+    ): string
+    {
+        $result = '';
+        // a field without a value shows no column at all, so its label would stand alone
+        if ($html_code != '') {
+            $html = new html_base();
+            $label = $html->label_lan($ui_msg_code_id, $html->form_field_id($fld_url_id, $fld_msg_code_id));
+            $result = $html->div($label . $html_code, view_styles::COL_SM_4);
         }
         return $result;
     }

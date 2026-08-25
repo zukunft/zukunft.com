@@ -577,6 +577,44 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * the user expression with each term shown as a link to the term that displays the term
+     * description as a tooltip, e.g. '"second (time)" = "minute" * 60' with both names linked;
+     * shown beside the expression field of the formula edit form, so that the user can check
+     * which term the name in the expression actually selects
+     *
+     * a term name is wrapped in double quotes in the expression, so only a quoted name is
+     * replaced and a name that also appears as plain text stays untouched; the terms are taken
+     * from the preloaded term list because the frontend has no direct database access
+     *
+     * @return string the expression with the term names replaced by the term links
+     */
+    function expression_link(): string
+    {
+        // escape the user expression first, so that only the trusted term-link html inserted
+        // below stays unescaped; the term name in the search is escaped to match the now
+        // escaped expression, name_link() returns the safe anchor html (stored xss via the text).
+        // ENT_NOQUOTES, because the expression is element text and its double quotes are the term
+        // delimiter that the replace below looks for, so they must stay literal
+        $exp = htmlspecialchars($this->usr_text ?? '', ENT_NOQUOTES);
+        if ($this->trm_lst != null) {
+            foreach ($this->trm_lst->lst() as $trm) {
+                $name = htmlspecialchars($trm->name(), ENT_NOQUOTES);
+                $exp = str_replace(
+                    chars::TERM_DELIMITER . $name . chars::TERM_DELIMITER,
+                    chars::TERM_DELIMITER . $trm->name_link() . chars::TERM_DELIMITER,
+                    $exp
+                );
+            }
+        }
+        $result = '';
+        if ($exp != '') {
+            $html = new html_base();
+            $result = $html->span($exp, styles::TEXT_NOWRAP);
+        }
+        return $result;
+    }
+
+    /**
      * render the given latex math markup as html and keep the whole expression on one line with
      * the "text-nowrap" wrapper; shared by expression_latex and expression_latex_link
      * @param string $latex the latex expression, the term names already replaced by links if wanted

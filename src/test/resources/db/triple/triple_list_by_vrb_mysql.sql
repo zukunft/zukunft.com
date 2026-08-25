@@ -40,4 +40,4 @@ PREPARE triple_list_by_vrb FROM
                              AND u.user_id = ? LEFT JOIN phrases l ON s.from_phrase_id = l.phrase_id LEFT JOIN user_phrases ul ON l.phrase_id = ul.phrase_id
                              AND ul.user_id = ? LEFT JOIN phrases l2 ON s.to_phrase_id = l2.phrase_id LEFT JOIN user_phrases ul2 ON l2.phrase_id = ul2.phrase_id
                              AND ul2.user_id = ?
-         WHERE s.verb_id = ? ORDER BY s.verb_id, name_given, s.triple_id LIMIT ? OFFSET ?';
+         WHERE s.verb_id = ? ORDER BY s.verb_id, triple_name, s.triple_id LIMIT ? OFFSET ?';

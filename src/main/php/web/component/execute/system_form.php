@@ -163,19 +163,32 @@ class system_form extends component
      * - related limit=high:  "Zurich" /n "is a city, canton, Company <edit-icon>"
      * - related symbol:      "CHF" /n "is symbol for <Swiss Franc> <edit-icon>"
      *
+     * - with a class word: 'view "Word" <edit-icon>'
+     *
      * @param db_object $dbo the object whose name is shown as the page title
      * @param int $max to limit the number of related phrases shown before a "..." link
+     * @param msg_id|null $ui_msg_code_id the translated class word shown in front of the name,
+     *                                    null for a page where the class is obvious from the name
      * @return string the html code for the page title with the related-phrases and edit links
      */
     function title_named(
         db_object    $dbo,
         user_message $msg,
         int          $max = def::LIMIT_RELATED_PER_VERB,
-        array        $url_array = []
+        array        $url_array = [],
+        ?msg_id      $ui_msg_code_id = null
     ): string
     {
-        // for a named object the page title is simply its name shown big
-        return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, '', $url_array);
+        global $mtr;
+
+        // for a named object the page title is simply its name shown big; a page whose name alone
+        // does not say what is shown (a view and a component can have the name of a word) puts the
+        // translated class word in front of it and quotes the name, like the verb page title
+        $title = $this->esc($dbo->name());
+        if ($ui_msg_code_id != null) {
+            $title = $mtr->txt($ui_msg_code_id) . ' "' . $title . '"';
+        }
+        return $this->subtitle($dbo, $title, $msg, $max, '', $url_array);
     }
 
     /**
@@ -2164,11 +2177,12 @@ class system_form extends component
         // the quotes exactly once - passing a pre-escaped value would double-encode the quotes.
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show the
         // formula text before the change (see url_var::PRE)
+        // 2/3 of the width, because the expression with the term links is shown in the last third
         return $this->form_field_tracked(
             url_var::USER_EXPRESSION,
             msg_id::FORM_FIELD_FORMULA_EXPRESSION,
             $dbo->get_usr_text(),
-            view_styles::COL_SM_12,
+            view_styles::COL_SM_8,
             $dbo);
     }
 
@@ -2182,11 +2196,12 @@ class system_form extends component
     {
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show
         // the latex text before the change (see url_var::PRE)
+        // 2/3 of the width, because the formatted latex with the term links is shown in the last third
         return $this->form_field_tracked(
             url_var::LATEX,
             msg_id::FORM_FIELD_FORMULA_LATEX,
             $dbo->get_latex(),
-            view_styles::COL_SM_12,
+            view_styles::COL_SM_8,
             $dbo);
     }
 
@@ -2313,7 +2328,7 @@ class system_form extends component
     }
 
     /**
-     * @return string combine the next elements to one row
+     * @return string combine the next components to one row
      */
     function row_start(): string
     {
@@ -2322,7 +2337,7 @@ class system_form extends component
     }
 
     /**
-     * @return string combine the next elements to one row and align to the right
+     * @return string combine the next components to one row and align to the right
      */
     function row_right(): string
     {

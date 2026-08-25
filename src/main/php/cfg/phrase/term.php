@@ -293,6 +293,11 @@ class term extends combine_named
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
                 $this->set_name($db_row[self::FLD_NAME]);
+                // the description is part of the term view fields and needed
+                // e.g. for the tooltip of a term link
+                if (key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                    $this->set_description($db_row[fields::FLD_DESCRIPTION]);
+                }
                 if (key_exists(fields::FLD_USAGE, $db_row)) {
                     $this->set_usage($db_row[fields::FLD_USAGE]);
                 }

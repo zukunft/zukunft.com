@@ -1926,6 +1926,9 @@ enum messages: string
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
+    // the class word in front of the object name of a page title e.g. view "Word"
+    case SYSTEM_TITLE_VIEW = 'system_title_view';
+    case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
@@ -2004,6 +2007,9 @@ enum messages: string
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
     case FORM_FIELD_FORMULA_LATEX = 'form_field_formula_latex';
+    // the label of the column that shows what the entered expression or latex selects
+    case FORM_FIELD_FORMULA_EXPRESSION_VALIDATED = 'form_field_formula_expression_validated';
+    case FORM_FIELD_FORMULA_LATEX_VALIDATED = 'form_field_formula_latex_validated';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
 
     // view fields

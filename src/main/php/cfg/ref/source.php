@@ -363,7 +363,7 @@ class source extends sandbox_code_id
     function load_values_related(user_message $msg): void
     {
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_source($this, $msg);
+        $val_lst->load_by_source($this, $msg, value_list::read_limit());
         $val_lst->load_names_related($msg);
         $this->values_related = $val_lst;
     }

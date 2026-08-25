@@ -43,4 +43,4 @@ PREPARE triple_list_by_phr_lst_up_and_vrb FROM
   LEFT JOIN user_phrases ul2 ON l2.phrase_id      = ul2.phrase_id AND ul2.user_id = ?
       WHERE s.from_phrase_id IN (?)
         AND s.verb_id = ?
-   ORDER BY s.verb_id, name_given, s.triple_id';
+   ORDER BY s.verb_id, triple_name, s.triple_id';

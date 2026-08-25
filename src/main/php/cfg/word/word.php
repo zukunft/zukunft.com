@@ -658,23 +658,7 @@ class word extends sandbox_code_id
      */
     function load_values_related(user_message $msg): void
     {
-        $this->values_related = $this->reload_value_list($msg, 1, $this->values_read_limit());
-    }
-
-    /**
-     * the configured number of the most relevant values read for one phrase
-     * which is the base of the phrase values view that picks the column phrases from them
-     *
-     * @return int the maximal number of values to read for this word
-     */
-    private function values_read_limit(): int
-    {
-        global $cfg;
-
-        $limit = $cfg?->get_by(
-            [words::READ, words::VALUES, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-            def_shared::FALLBACK_PHRASE_VALUES_READ);
-        return (int)($limit ?? def_shared::FALLBACK_PHRASE_VALUES_READ);
+        $this->values_related = $this->reload_value_list($msg, 1, value_list::read_limit());
     }
 
     /**

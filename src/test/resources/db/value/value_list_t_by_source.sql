@@ -1,4 +1,4 @@
-PREPARE value_list_t_by_source (bigint, bigint, bigint) AS
+PREPARE value_list_t_by_source (bigint, bigint, bigint, bigint, bigint) AS
     SELECT     '' AS group_id,
                '' AS user_group_id,
                phrase_id_1,
@@ -94,4 +94,4 @@ PREPARE value_list_t_by_source (bigint, bigint, bigint) AS
      LEFT JOIN user_values_text_big u ON s.group_id = u.group_id
                                      AND u.user_id = $3
          WHERE (u.source_id = $1 OR (s.source_id = $1
-           AND u.source_id IS NULL));
+           AND u.source_id IS NULL)) LIMIT $4 OFFSET $5;

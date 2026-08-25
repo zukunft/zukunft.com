@@ -191,7 +191,7 @@ class component_exe extends component
             // system form - components that can only be used for internal system forms
             // general form fields
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
-            component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
+            component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array, $this->ui_msg_code_id),
             component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::TITLE_LINK_EDIT => $form->title_link($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::PHRASE_TITLE => $form->title_phrase($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
@@ -316,6 +316,8 @@ class component_exe extends component
             component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->lan, $form_name),
             component_types::EXPRESSION => $base->expression($dbo),
             component_types::EXPRESSION_LATEX_LINK => $base->expression_latex_link($dbo),
+            component_types::EXPRESSION_LATEX_LINK_FORM => $base->expression_latex_link_form($dbo),
+            component_types::EXPRESSION_LINK => $base->expression_link($dbo),
 
             // buttons
             component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo, $url_array),

@@ -787,7 +787,7 @@ Technical
 - capsule all function so that all parameters are checked before the start
 
 usability
-- add a view element that show the value differences related to a word; e.g. where other user use other values and formula results for ABB
+- add a view component that show the value differences related to a word; e.g. where other user use other values and formula results for ABB
 
 UI
 - review UI concept: click only for view, double click for change and right click for more related change functions (or three line menu)
@@ -822,7 +822,7 @@ log
 - allow also to see the log of deleted words, values and formulas
 - in the log view show in a mondial view the details of the change
 - move the undo button in the formula log view to the row
-- display the changes on display elements
+- display the changes on components
 
 export
 - export yaml

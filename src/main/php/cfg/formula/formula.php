@@ -139,9 +139,11 @@ class formula extends formula_map
     // default formula view can show the assigned phrases in the "Formula title" subtitle
     public ?phrase_list $phrases_related = null;
 
-    // the terms shown in the latex format (one per "\text{...}" token); populated lazily by
-    // load_latex_terms() and emitted via api_json_array() under the INCL_RELATED flag so the
-    // "expression_latex_link" component can turn each latex token into a link to the term
+    // the terms named by this formula: one per "\text{...}" token of the latex and one per
+    // quoted name of the expression, because the latex may use the symbol of a term (e.g. "min"
+    // for "minute"); populated lazily by load_latex_terms() and emitted via api_json_array()
+    // under the INCL_RELATED flag so the "expression_latex_link" and the "expression_link"
+    // component can turn each token into a link to the term
     public ?term_list $latex_terms = null;
 
     // the views that can show this formula: its own default view or, if none is set, the system
@@ -568,15 +570,37 @@ class formula extends formula_map
         $latex = $this->get_latex();
         if ($latex != null and $latex != '') {
             if (preg_match_all('/\\\\text\{([^{}]*)}/', $latex, $matches)) {
-                foreach ($matches[1] as $name) {
-                    $trm = new term($this->get_user());
-                    if ($trm->load_by_name($name, $msg) != 0) {
-                        $trm_lst->add($trm);
-                    }
-                }
+                $this->add_terms_by_name($trm_lst, $matches[1], $msg);
+            }
+        }
+        // the expression names a term in full, whereas the latex may use its symbol (e.g. "min"
+        // for "minute"), so the names of both are needed to link every term of the formula form
+        $exp = $this->usr_text;
+        if ($exp != null and $exp != '') {
+            $delimiter = preg_quote(chars::TERM_DELIMITER, '/');
+            if (preg_match_all('/' . $delimiter . '([^' . $delimiter . ']*)' . $delimiter . '/', $exp, $matches)) {
+                $this->add_terms_by_name($trm_lst, $matches[1], $msg);
             }
         }
         $this->latex_terms = $trm_lst;
+    }
+
+    /**
+     * add the terms with the given names to the list, skipping a name that is no term
+     *
+     * @param term_list $trm_lst the list to fill
+     * @param array $names the term names found in the latex or in the expression
+     * @param user_message $msg to collect any problem while loading a term
+     * @return void
+     */
+    private function add_terms_by_name(term_list $trm_lst, array $names, user_message $msg): void
+    {
+        foreach ($names as $name) {
+            $trm = new term($this->get_user());
+            if ($trm->load_by_name($name, $msg) != 0) {
+                $trm_lst->add($trm);
+            }
+        }
     }
 
     /**

@@ -79,6 +79,8 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'def.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
@@ -117,6 +119,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_sh
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
@@ -323,6 +327,26 @@ class value_list extends sandbox_value_list
         } else {
             return false;
         }
+    }
+
+    /**
+     * the configured number of the most relevant values read at once for one object
+     * (config.yaml "user > frontend > lists > limit > values > read")
+     *
+     * shared by the phrase and the source page, because both read the values of one object and
+     * one setting decides how many values a page may read (see word::load_values_related and
+     * source::load_values_related)
+     *
+     * @return int the maximal number of values to read
+     */
+    static function read_limit(): int
+    {
+        global $cfg;
+
+        $limit = $cfg?->get_by(
+            [words::READ, words::VALUES, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+            def_shared::FALLBACK_PHRASE_VALUES_READ);
+        return (int)($limit ?? def_shared::FALLBACK_PHRASE_VALUES_READ);
     }
 
     /**
@@ -628,11 +652,16 @@ class value_list extends sandbox_value_list
                 $qp->merge($qp_tbl);
             }
         }
+        // the limit belongs to the union and not to one of its branches, so it is added after the
+        // loop and its two parameters are the last ones, which is what get_page() assumes
+        $sc->set_page($limit, $page);
+
         // for the union take the parameters from the creator, which keeps one entry per
         // placeholder ($1 source, $2 user) reused across the branches (see load_sql_by_phr)
         if ($sc->db_type() != sql_db::MYSQL) {
             $qp->par = $lib->key_num_sort($sc->get_par());
         }
+        $qp->sql .= $sc->get_page();
 
         foreach ($qp->par as $par) {
             if (is_numeric($par)) {

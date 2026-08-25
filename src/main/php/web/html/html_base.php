@@ -2124,6 +2124,17 @@ class html_base
     }
 
     /**
+     * @param string $url_id the url id of the input field e.g. url_var::LATEX
+     * @param msg_id $msg_id the msg_id of the title of the input field e.g. LaTeX
+     * @return string the html id of the input field, e.g. to point the label of a neighbour column to it
+     */
+    function form_field_id(string $url_id, msg_id $msg_id): string
+    {
+        global $mtr;
+        return $this->field_id($url_id, $mtr->txt($msg_id));
+    }
+
+    /**
      * the user-readable html id of a form field, derived from its translated label
      * (e.g. id="mask"); a disambiguating url-var suffix is kept so the id stays unique
      * when one label is reused across several forms on a page (e.g. an add form whose
@@ -2171,12 +2182,11 @@ class html_base
         string      $class_add = '',
         string      $placeholder = ''): string
     {
-        global $mtr;
         $name = '';
         if ($url_id != '') {
             $name = ' name="' . $url_id . '"';
         }
-        $id = $this->field_id($url_id, $mtr->txt($msg_id));
+        $id = $this->form_field_id($url_id, $msg_id);
         if ($value != '') {
             // escape the value so a name/description with " < > & cannot break out of the
             // attribute; the browser decodes it back so the resubmitted value is unchanged

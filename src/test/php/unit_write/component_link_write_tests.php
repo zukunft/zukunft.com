@@ -167,7 +167,7 @@ class component_link_write_tests
         $msk = $t_db->load_view(views::TEST_ADD_NAME);
         $dsp2 = $t_db->load_view(views::TEST_ADD_NAME, $t->usr2);
         $cmp = $t_db->load_component(components::TEST_ADD_NAME, $msg);
-        // create a second view element to be able to test the change of the view order
+        // create a second view component to be able to test the change of the view order
         $cmp2 = new component($t->usr1);
         $cmp2->set_name(components::TEST_ADD_2_NAME);
         $cmp2->description = 'Just added a second view component for testing';

@@ -156,7 +156,7 @@ the object structure is:
 │           │   │       └── change_values_prime - log object for changes of values with a prime group id
 │           │   ├── sandbox
 │           │   │   ├── sandbox_link
-│           │   │   │   ├── component_link - link a single display component/element to a view
+│           │   │   │   ├── component_link - link a single display component to a view
 │           │   │   │   ├── formula_link - link a formula to a word
 │           │   │   │   ├── ref - $ref - a link between a phrase and another system such as wikidata
 │           │   │   │   ├── sandbox_link_named

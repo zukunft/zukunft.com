@@ -84,7 +84,7 @@ class components
     const string FORM_PLURAL = 'form_field_plural';
     const string FORM_PLURAL_NAME = 'system form field plural';
     const string FORM_PLURAL_COM = 'the plural language form field in a form (to be move to languages forms)';
-    const int FORM_PLURAL_ID = 267;
+    const int FORM_PLURAL_ID = 269;
 
     // triple only fields
     const string FORM_WEIGHT = 'form_field_weight';

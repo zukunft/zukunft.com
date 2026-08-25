@@ -690,7 +690,7 @@ class component extends sandbox_code_id
         $hidden_fields = '';
         if ($this->id() <= 0) {
             $script = views::COMPONENT_ADD;
-            $header = $html->text_h2('Create a view element');
+            $header = $html->text_h2('Create a view component');
         } else {
             $script = views::COMPONENT_EDIT;
             $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
@@ -740,11 +740,11 @@ class component extends sandbox_code_id
         // show the view component name
         if ($this->id() <= 0) {
             $form_name = views::COMPONENT_ADD;
-            $result .= $html->dsp_text_h2('Create a view element for '
+            $result .= $html->dsp_text_h2('Create a view component for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()));
         } else {
             $form_name = views::COMPONENT_EDIT;
-            $result .= $html->dsp_text_h2('Edit the view element "' . $html->esc($this->name) . '" (used for '
+            $result .= $html->dsp_text_h2('Edit the view component "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ') ');
         }
         $result .= '<div class="row">';
@@ -769,7 +769,7 @@ class component extends sandbox_code_id
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8);
-        // TODO Prio 0 check if the generated component edit mask has the type and all other elements used here and remove this function
+        // TODO Prio 0 check if the generated component edit mask has the type and all other fields used here and remove this function
         //$result .= $this->dsp_type_selector($form_name); // allow to change the type
         $result .= '</div>';
         $result .= $html->form_field(
@@ -838,7 +838,7 @@ class component extends sandbox_code_id
         if ($this->id() <= 0) {
             $script = views::COMPONENT_ADD;
             $fld_ext = '_add';
-            $header = $html->text_h2('Create a view element');
+            $header = $html->text_h2('Create a view component');
         } else {
             $script = views::COMPONENT_EDIT;
             $fld_ext = '';

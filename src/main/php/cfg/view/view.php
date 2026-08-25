@@ -1124,7 +1124,7 @@ class view extends sandbox_code_id
      */
 
     /**
-     * true if the view is part of the view element list
+     * true if the view is part of the given view list
      */
     function is_in_list($msk_lst): bool
     {
