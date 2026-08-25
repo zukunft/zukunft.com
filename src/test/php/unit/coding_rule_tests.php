@@ -2005,8 +2005,14 @@ class coding_rule_tests
                         $all_fnc_lst[$sec] = $sec_all_fnc_lst;
                     } else {
                         $diff_txt = $lib->arrayOrderDiff($sec_fnc_lst_keys, $sec_all_fnc_lst_keys);
-                        $msg_lst[] = 'order of section ' . $sec . ' has difference at ' . $diff_txt . ' of ' . implode(",", $sec_fnc_lst_keys)
-                            . ' does not match ' . implode(",", $sec_all_fnc_lst_keys);
+                        // the two compared function lists are not named, because the developer
+                        // reads them in the class itself and they would flood the md report
+                        $order_msg = 'order of section ' . $sec . ' has difference at ' . $diff_txt;
+                        // the order of a section is checked once per function of the section,
+                        // so the same message is expected several times but reported only once
+                        if (!in_array($order_msg, $msg_lst)) {
+                            $msg_lst[] = $order_msg;
+                        }
                     }
                 } else {
                     $class_row = [];

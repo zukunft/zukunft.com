@@ -2177,11 +2177,12 @@ class system_form extends component
         // the quotes exactly once - passing a pre-escaped value would double-encode the quotes.
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show the
         // formula text before the change (see url_var::PRE)
+        // 2/3 of the width, because the expression with the term links is shown in the last third
         return $this->form_field_tracked(
             url_var::USER_EXPRESSION,
             msg_id::FORM_FIELD_FORMULA_EXPRESSION,
             $dbo->get_usr_text(),
-            view_styles::COL_SM_12,
+            view_styles::COL_SM_8,
             $dbo);
     }
 
@@ -2195,11 +2196,12 @@ class system_form extends component
     {
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show
         // the latex text before the change (see url_var::PRE)
+        // 2/3 of the width, because the formatted latex with the term links is shown in the last third
         return $this->form_field_tracked(
             url_var::LATEX,
             msg_id::FORM_FIELD_FORMULA_LATEX,
             $dbo->get_latex(),
-            view_styles::COL_SM_12,
+            view_styles::COL_SM_8,
             $dbo);
     }
 

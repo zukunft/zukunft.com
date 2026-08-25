@@ -2,10 +2,83 @@
 
 ## general
 
-in the formula edit (and add) view reduce the field size for the expression and the latex expression to 2/3 (8 of 12 in bootstrap) and show right of the fields to formatted latex with link and the expression with links to the terms and the tooltip of the term so that the user can check if she (or he) has selected the correct term
 
-in the formula edit (and add) view add an icon near the formula expression and latex formula input field that the user can use to update the latex based on the expression or the other way round
+in the formula edit (and add) view add an icon to the formula labels 'expression', 'latex' formula input field that the user can use to update the latex based on the expression or the other way round
 
+in the formula edit view replace the 'Changes' part on the bottom of the page with the 'view' and 'changes' tabs on the right side similar to the 'view' and 'changes' tabs in the word_default view 
+
+
+## main pages
+
+in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
+
+### triple
+
+show the missing db fields in the triple default view: the weight, the condition formula
+
+### verb
+
+extend the verb default view, which today only shows the verb name and the related triples, with the missing db fields: the description, the plural (name_plural), the reverse (name_reverse), the plural reverse (name_plural_reverse), the name used in formulas (formula_name) and the usage
+
+### values
+
+show the missing db fields in the value default view: the source of the value, the timestamp of the last update and the share and protection status
+
+### source
+
+add the missing db field to the source add and edit views: the code_id field, shown only for users whose profile passes can_set_code_id (for sources the code_id is a user changeable field)
+
+extend the source default view, which today only shows the source name and the related values, with the missing db fields: the source type, the url as a link, the description and the usage
+
+### ref
+
+show the non-changeable ref db fields last_update (the timestamp of the last successful update of the reference) and impact as display-only info in the ref edit view
+
+extend the ref default view, which today only shows the reference name and the related values, with the missing db fields: the linked phrase, the reference type, the external key, the url as a link to the external page, the source, the description and the last_update timestamp
+
+### formula
+
+show the missing db fields in the formula default view: the latex format (rendered, next to the existing expression components), the formula type, the 'all values needed' flag and the timestamp of the last update
+
+### result
+
+extend the result default view, which today only shows the related results, with the missing db fields of the requested result itself: the result value with its phrase group, a link to the formula that calculated it and the timestamp of the last calculation (last_update)
+
+### view
+
+add the missing db fields to the view add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the usage as display-only info in the edit view, because unlike the other edit views the view edit view has no usage section yet
+
+extend the view default view (view_default, which shows the name with the type, share and protection in the title subtitle plus the description) with the style, the list of linked components and the usage e.g. the terms that use it as their default view; the style needs the style_id api mapping in web/view/view.php first, which the frontend view does not carry yet
+
+### component
+
+add the missing db fields to the component add and edit views: a formula selection (formula_id, used for the calculated component types), a linked component selection (linked_component_id) together with its link types (component_link_type_id and link_type_id), and, for users whose profile passes can_set_code_id, the code_id and ui_msg_code_id fields (with ui_msg_code_id_vars, ui_msg_code_id_exception and ui_msg_value_exception); show the usage as display-only info in the edit view
+
+extend the component default view (component_default, which shows the name with the type in the title subtitle plus the description) with the style, the row and column phrases and the views that use it
+
+### view link
+
+add the missing db field to the view link add and edit views: the description field (a user changeable term_view db field); additionally the forms show fields without a term_view db column: a view style select in both forms and a priority field in the add form resp. the component link order number field in the edit form, so either add the style and priority columns to the term_view table (see the priority TODO in term_view.php and form_field_view_link_priority) or remove these form fields, and use the same priority component in the add and the edit form
+
+### formula link
+
+the formula link add and edit views show a description field, but the formula_link table has no description column; either add the description column to the formula_link table or remove the description field from both forms
+
+the label of the component link order number and of the view relation start position is the same msg_id FORM_FIELD_COMPONENT_LINK, so both fields are labelled 'Component link' instead of naming the field; give each its own msg_id with en/de translations
+
+the term_view (view link) has no priority or order column, so form_field_view_link_priority submits url_var::VIEW_TERM_LINK_PRIO with the fallback text 'prio missing' and no mapper reads it; this is the open decision of the 'view link' section above (add the column or remove the form field)
+
+## workflows
+
+add the missing workflows for the main objects e.g. source, ref, view, component. Compared to the word workflows the workflows only need one back test.
+
+## admin
+
+add to the admin menu a page that shows the system errors
+
+## cleanup
+
+change the script that generates docs/code_functions_all.md and limit the length of each line
 
 write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
 
@@ -14,10 +87,6 @@ create a script that checks that all fields of the main classes are shown on the
 
 create a script loops over the resources that lists all queries '*.sql' that does not have a limit and that does not have a unique db id in the where condition.
 
-
-## cleanup
-
-change the script that generates docs/code_functions_all.md and limit the length of each line
 
 add the check of the open_api specification to /test/test.php
 
@@ -168,74 +237,6 @@ the basic steps to show the start page are
 - the order of the column may differ and is relative e.g. 'per cent is after number'
 - the number of rows to show is taken from the config but can be overwritten
 
-
-## main pages
-
-in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
-
-### triple
-
-show the missing db fields in the triple default view: the weight, the condition formula
-
-### verb
-
-extend the verb default view, which today only shows the verb name and the related triples, with the missing db fields: the description, the plural (name_plural), the reverse (name_reverse), the plural reverse (name_plural_reverse), the name used in formulas (formula_name) and the usage
-
-### values
-
-show the missing db fields in the value default view: the source of the value, the timestamp of the last update and the share and protection status
-
-### source
-
-add the missing db field to the source add and edit views: the code_id field, shown only for users whose profile passes can_set_code_id (for sources the code_id is a user changeable field)
-
-extend the source default view, which today only shows the source name and the related values, with the missing db fields: the source type, the url as a link, the description and the usage
-
-### ref
-
-show the non-changeable ref db fields last_update (the timestamp of the last successful update of the reference) and impact as display-only info in the ref edit view
-
-extend the ref default view, which today only shows the reference name and the related values, with the missing db fields: the linked phrase, the reference type, the external key, the url as a link to the external page, the source, the description and the last_update timestamp
-
-### formula
-
-show the missing db fields in the formula default view: the latex format (rendered, next to the existing expression components), the formula type, the 'all values needed' flag and the timestamp of the last update
-
-### result
-
-extend the result default view, which today only shows the related results, with the missing db fields of the requested result itself: the result value with its phrase group, a link to the formula that calculated it and the timestamp of the last calculation (last_update)
-
-### view
-
-add the missing db fields to the view add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the usage as display-only info in the edit view, because unlike the other edit views the view edit view has no usage section yet
-
-extend the view default view (view_default, which shows the name with the type, share and protection in the title subtitle plus the description) with the style, the list of linked components and the usage e.g. the terms that use it as their default view; the style needs the style_id api mapping in web/view/view.php first, which the frontend view does not carry yet
-
-### component
-
-add the missing db fields to the component add and edit views: a formula selection (formula_id, used for the calculated component types), a linked component selection (linked_component_id) together with its link types (component_link_type_id and link_type_id), and, for users whose profile passes can_set_code_id, the code_id and ui_msg_code_id fields (with ui_msg_code_id_vars, ui_msg_code_id_exception and ui_msg_value_exception); show the usage as display-only info in the edit view
-
-extend the component default view (component_default, which shows the name with the type in the title subtitle plus the description) with the style, the row and column phrases and the views that use it
-
-### view link
-
-add the missing db field to the view link add and edit views: the description field (a user changeable term_view db field); additionally the forms show fields without a term_view db column: a view style select in both forms and a priority field in the add form resp. the component link order number field in the edit form, so either add the style and priority columns to the term_view table (see the priority TODO in term_view.php and form_field_view_link_priority) or remove these form fields, and use the same priority component in the add and the edit form
-
-### formula link
-
-the formula link add and edit views show a description field, but the formula_link table has no description column; either add the description column to the formula_link table or remove the description field from both forms
-
-the label of the component link order number and of the view relation start position is the same msg_id FORM_FIELD_COMPONENT_LINK, so both fields are labelled 'Component link' instead of naming the field; give each its own msg_id with en/de translations
-
-the term_view (view link) has no priority or order column, so form_field_view_link_priority submits url_var::VIEW_TERM_LINK_PRIO with the fallback text 'prio missing' and no mapper reads it; this is the open decision of the 'view link' section above (add the column or remove the form field)
-
-## workflows
-
-add the missing workflows for the main objects e.g. source, ref, view, component. Compared to the word workflows the workflows only need one back test.
-
-## admin
-
-add to the admin menu a page that shows the system errors
 
 # move to Prio 2
 

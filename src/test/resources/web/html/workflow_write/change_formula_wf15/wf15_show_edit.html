@@ -190,22 +190,34 @@
                     <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-8">
                         <label for="expression">
                             Expression
                         </label>
                         <input class="form-control" type="text" name="fe" id="expression" value="&quot;percent&quot; = ( &quot;this&quot; - &quot;prior&quot; ) / &quot;prior&quot;">
                     </div>
                     <input type="hidden" name="8fe" value="&quot;percent&quot; = ( &quot;this&quot; - &quot;prior&quot; ) / &quot;prior&quot;">
+                    <div class="col-md-4">
+                        <label for="expression">
+                            Validated expression
+                        </label>
+                        <span class="text-nowrap">"percent" = ( "this" - "prior" ) / "prior"</span>
+                    </div>
                 </div>
                 <div class="row col-md-12">
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-8">
                         <label for="latex">
                             LaTeX
                         </label>
                         <input class="form-control" type="text" name="fx" id="latex" value="\text{percent} = \frac{\text{this} - \text{prior}}{\text{prior}}">
                     </div>
                     <input type="hidden" name="8fx" value="\text{percent} = \frac{\text{this} - \text{prior}}{\text{prior}}">
+                    <div class="col-md-4">
+                        <label for="latex">
+                            Validated LaTeX
+                        </label>
+                        <span class="text-nowrap">percent = <span class="frac"><span class="num">this - prior</span><span class="den">prior</span></span></span>
+                    </div>
                 </div>
                 <div class="row col-md-12">
                     <div class="form-check-inline">

@@ -251,6 +251,12 @@ class component_types
     const string EXPRESSION_LATEX_LINK = "expression_latex_link";
     const int EXPRESSION_LATEX_LINK_ID = 202;
     const string EXPRESSION_LATEX_LINK_COM = "display the formula expression in the latex format with a tooltip and a link for each term";
+    // the same latex, but in the column beside the latex field of the formula form
+    const string EXPRESSION_LATEX_LINK_FORM = "expression_latex_link_form";
+    const int EXPRESSION_LATEX_LINK_FORM_ID = 235;
+    // the user expression, not the latex, with the same tooltip and link for each term
+    const string EXPRESSION_LINK = "expression_link";
+    const int EXPRESSION_LINK_ID = 234;
     const string FORM_FIELD_FORMULA_ALL_VAR_NEEDED = "system_form_field_formula_all_vars";
     const int FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID = 54;
     const string FORM_LIST_FORMULAS = "formula_list_changeable";
@@ -666,6 +672,8 @@ class component_types
         self::FORM_FIELD_FORMULA_LATEX,
         self::EXPRESSION,
         self::EXPRESSION_LATEX_LINK,
+        self::EXPRESSION_LATEX_LINK_FORM,
+        self::EXPRESSION_LINK,
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
         self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_GROUP,
@@ -857,6 +865,8 @@ class component_types
         [self::FORM_FIELD_FORMULA_LATEX, self::FORM_FIELD_FORMULA_LATEX_ID],
         [self::EXPRESSION, self::EXPRESSION_ID],
         [self::EXPRESSION_LATEX_LINK, self::EXPRESSION_LATEX_LINK_ID],
+        [self::EXPRESSION_LATEX_LINK_FORM, self::EXPRESSION_LATEX_LINK_FORM_ID],
+        [self::EXPRESSION_LINK, self::EXPRESSION_LINK_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],
         [self::FORM_FIELD_GROUP, self::FORM_FIELD_GROUP_ID],

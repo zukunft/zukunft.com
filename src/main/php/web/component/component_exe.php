@@ -316,6 +316,8 @@ class component_exe extends component
             component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->lan, $form_name),
             component_types::EXPRESSION => $base->expression($dbo),
             component_types::EXPRESSION_LATEX_LINK => $base->expression_latex_link($dbo),
+            component_types::EXPRESSION_LATEX_LINK_FORM => $base->expression_latex_link_form($dbo),
+            component_types::EXPRESSION_LINK => $base->expression_link($dbo),
 
             // buttons
             component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo, $url_array),

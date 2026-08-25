@@ -254,6 +254,8 @@ messages:
   form_field_weight: "Weight"
   form_field_formula_expression: "Expression"
   form_field_formula_latex: "LaTeX"
+  form_field_formula_expression_validated: "Validated expression"
+  form_field_formula_latex_validated: "Validated LaTeX"
   form_field_formula_all_vars: "All values needed"
   form_button_cancel: "cancel"
   form_button_save: "save"

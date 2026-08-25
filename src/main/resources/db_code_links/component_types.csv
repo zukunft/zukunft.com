@@ -232,3 +232,5 @@ component_type_id, type_name, description, code_id
 231, 'show link type', 'show the name of the link type of a link without link or form field', 'system_show_field_link_type'
 232, 'show order number', 'show the order number of a link without link or form field', 'system_show_field_order_nbr'
 233, 'show name in formulas', 'show the verb name used in formulas without link or form field', 'system_show_field_name_in_formulas'
+234, 'expression with links', 'show the formula expression with a tooltip and a link for each term', 'expression_link'
+235, 'latex with links in a form', 'show the formula latex beside the latex field with a tooltip and a link for each term', 'expression_latex_link_form'
