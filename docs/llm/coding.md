@@ -130,6 +130,8 @@ detail file. Order is by how often they fire, not importance.
 - A json field name shown to the user is translated via `$mtr->text_json_field` (which maps the json field to its db field translation), called as late as possible (at display, not when storing/passing the raw field name). → `docs/llm/state-and-messages.md`
 - Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/state-and-messages.md`
 - Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
+- `url_var.php` names two things: a **url field** (`ACTION = 'a'`, `REFRESH = 'fr'`) and a **value one field can carry** (`CRUD_CREATE` is a value of `ACTION`, so a create reads `?a=a`); a new value const still gets a unique string built by repeating its field name (`REFRESH_EXPRESSION = 'fre'`, never a bare `'e'`), so that a url stays readable and a code search finds one place. → `docs/llm/state-and-messages.md`
+- A new url var is only half done without its human format: add the `*_HUMAN` twin and the `HUMAN_TO_STD` row for a field, plus a `HUMAN_TO_STD_<FIELD>_VAL` map and the two `url_mapper.php` branches for a value — else `standard_url_to_human()` reports the key as `URL_MAP_MISSING`. → `docs/llm/state-and-messages.md`
 - A user's permissions derive from the `profile_id` only (`is_admin`, `is_system`, `can_set_*`, …); the user `code_id` merely *selects* a specific user (e.g. system test user 1 vs 2) and never grants or removes a right. → `docs/llm/state-and-messages.md`
 
 ### Frontend (`web/`)

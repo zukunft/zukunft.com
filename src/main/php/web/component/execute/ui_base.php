@@ -292,7 +292,8 @@ class ui_base
 
     /**
      * the label points to the field that it validates, so that a click on it opens the field
-     * and the user sees which entry the shown terms are selected by
+     * and the user sees which entry the shown terms are selected by; the refresh icon beside the
+     * label asks the backend to resolve the terms of the entered text again
      *
      * @param string $html_code the html code that should be shown beside a form field
      * @param msg_id $ui_msg_code_id the message id of the label of the column
@@ -312,6 +313,9 @@ class ui_base
         if ($html_code != '') {
             $html = new html_base();
             $label = $html->label_lan($ui_msg_code_id, $html->form_field_id($fld_url_id, $fld_msg_code_id));
+            // the refresh icon resolves the terms of the entered text again, so that the user sees
+            // which term a name selects without saving the formula first
+            $label .= $html->button_refresh(url_var::REFRESH_TERMS);
             $result = $html->div($label . $html_code, view_styles::COL_SM_4);
         }
         return $result;

@@ -1171,6 +1171,25 @@ all_values_needed change with the changed db field; add formula_fields::FLD_LATE
 formula_fields::FLD_TYPE and formula_fields::FLD_ALL_NEEDED with their url vars and add the
 matching positive and negative unit tests (docs/llm/testing.md)
 
+make every string in url_var.php unique (see "Url field names and field values, and why both are
+unique" in docs/llm/state-and-messages.md): about 20 of the 315 consts still share a string,
+nearly all of them a url field name and a value of another field, e.g. ACTION 'a' with
+CRUD_CREATE 'a', VIEW 'd' with CRUD_DELETE 'd', RESULT 'r' with CRUD_READ 'r' and USER 'u' with
+CRUD_UPDATE 'u'; those urls are unambiguous (a create reads '?a=a') but hard to read and to
+search, so give each value its field name as a prefix (CRUD_CREATE 'aa', ...); the only real
+field name clash is STEP_HUMAN 'step' with STEP_POD 'step', which is the same field in the long
+and in the pod url format and may stay as it is; renaming changes the url contract, so it needs
+its own change with the url mapper, the workflow url fixtures and the snapshots of every add,
+edit and delete view regenerated
+
+let an add view keep the values that the user has entered: frontend::url_to_html only calls
+url_mapper when the url carries an object id, so an add form re-renders with empty fields even
+though the url has the entered values (see the wf14 add formula workflow snapshots, which show
+'name="fe" id="expression"' without a value); because of this the refresh icons of the formula
+form (url_var::REFRESH, see cfg/formula/formula.php refresh_from_url) recalculate nothing in the
+formula_add view while they work in formula_edit; the fix affects every add view, so it needs its
+own change with the add snapshots of all objects regenerated
+
 note for the review: the other formula db fields are absent from the edit view by design -
 formula_text (internal {f1} expression) is derived from the posted user expression on save,
 last_update is set by the calculation, usage is shown read-only as the usage number sub title,

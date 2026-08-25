@@ -1864,6 +1864,12 @@
       "type": "system_form_field_doi",
       "code_id": "form_field_doi",
       "ui_msg_code_id": "form_field_doi"
+    },
+    {
+      "name": "system form tab box",
+      "description": "tab box with the views that can show the changed object, its change log and the user overwrites, shown beside the lists of a system edit form; an own component, because a system view can only use a component of system_views.json and view tab box is defined in base_views.json",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_form"
     }
   ],
   "views": [
@@ -4119,24 +4125,12 @@
         },
         {
           "position": "29",
-          "name": "system formatter row end"
+          "name": "system form tab box",
+          "position_type": "column",
+          "style": "col-md-4"
         },
         {
           "position": "30",
-          "name": "system formatter row start"
-        },
-        {
-          "position": "31",
-          "name": "system sub title log",
-          "style": "col-md-12"
-        },
-        {
-          "position": "32",
-          "name": "change log formula",
-          "position_type": "combine"
-        },
-        {
-          "position": "33",
           "name": "system formatter row end"
         }
       ]

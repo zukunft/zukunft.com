@@ -107,6 +107,8 @@ class html_base
     // bootstrap const string used in zukunft.com
     const string BS_FORM = 'form-control';
     const string BS_BTN = 'btn btn-space col-1';
+    // a borderless button that shows only an icon, e.g. the refresh icon beside a form field label
+    const string BS_BTN_ICON = 'btn btn-link p-0 ms-1 align-baseline';
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
     const string BS_BTN_DEL = 'btn-outline-secondary';
@@ -2111,6 +2113,30 @@ class html_base
     }
 
     /**
+     * a small submit button beside a form field label that asks the backend to recalculate one
+     * part of the form; it is a submit button and not a link, because only a submit sends the
+     * values that the user has entered but not yet saved
+     *
+     * @param string $refresh which part should be recalculated e.g. url_var::REFRESH_LATEX
+     * @return string the html code of the refresh button, '' if the field offers no refresh
+     */
+    function button_refresh(string $refresh): string
+    {
+        global $mtr;
+        $result = '';
+        if ($refresh != '') {
+            $result = '<' . self::BUTTON
+                . ' ' . self::CLASS_HTML . '="' . self::BS_BTN_ICON . '"'
+                . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '"'
+                . ' ' . self::NAME . '="' . url_var::REFRESH . '"'
+                . ' ' . self::VALUE . '="' . $refresh . '">'
+                . $this->icon_with_title(icons::REFRESH, '', $mtr->txt(msg_id::FORM_BUTTON_REFRESH))
+                . '</' . self::BUTTON . '>';
+        }
+        return $result;
+    }
+
+    /**
      * translate and create the html code for a label
      * TODO use if if possible
      * @param msg_id $msg_id message id that should be translated to the text to be shown as a label
@@ -2331,6 +2357,8 @@ class html_base
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
+     * @param string $refresh which part of the form a refresh icon beside the label should recalculate
+     *                        e.g. url_var::REFRESH_LATEX, '' for a field without a refresh icon
      * @return string the HTML code for the field with the label
      */
     function form_field(
@@ -2339,7 +2367,8 @@ class html_base
         string|int|null $value = '',
         string          $type = html_base::INPUT_TEXT,
         string          $input_class = '',
-        string          $style = view_styles::COL_SM_12
+        string          $style = view_styles::COL_SM_12,
+        string          $refresh = ''
     ): string
     {
         // TODO Prio 2 move mtr to label
@@ -2348,6 +2377,7 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             // the label for must equal the input id (field_id) so the pair stays linked
             $text = $this->label($name, $this->field_id($url_id, $name));
+            $text .= $this->button_refresh($refresh);
             $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
             return $this->div_form($text, $style);
         } else {

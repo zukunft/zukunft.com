@@ -466,6 +466,21 @@ class db_object extends TextIdObject
         return $this->load_by_id($id, $msg, [], $usr_id);
     }
 
+    /**
+     * the additional api parameters that the backend needs to answer this page request, e.g. the
+     * not yet saved form values that the formula form asks the backend to recalculate
+     *
+     * the base object needs none, so a page request is answered by the plain load by id and every
+     * frontend dbo type can be used polymorphically by frontend::url_to_html
+     *
+     * @param array $url_array the url parameters of the page request
+     * @return array the api parameters to add to the load call
+     */
+    function api_par_from_url(array $url_array): array
+    {
+        return [];
+    }
+
 
     /*
      * interface

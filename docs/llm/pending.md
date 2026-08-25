@@ -1,16 +1,5 @@
+
 # pending - list of planned llm prompts with prio 1
-
-## general
-
-
-in the formula edit (and add) view add an icon to the formula labels 'expression', 'latex' formula input field that the user can use to update the latex based on the expression or the other way round
-
-in the formula edit view replace the 'Changes' part on the bottom of the page with the 'view' and 'changes' tabs on the right side similar to the 'view' and 'changes' tabs in the word_default view 
-
-
-## main pages
-
-in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
 
 ### triple
 
@@ -75,6 +64,10 @@ add the missing workflows for the main objects e.g. source, ref, view, component
 ## admin
 
 add to the admin menu a page that shows the system errors
+
+## main pages
+
+in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
 
 ## cleanup
 

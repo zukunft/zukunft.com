@@ -261,6 +261,7 @@ messages:
   form_button_save: "save"
   form_button_confirm: "confirm"
   form_button_del: "delete"
+  form_button_refresh: "recalculate this field based on the other fields"
   button_view_open: "view"
   button_view_switch: "switch"
   system_button_import: "import"
