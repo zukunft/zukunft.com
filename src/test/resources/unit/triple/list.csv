@@ -146,7 +146,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 145,291,5,225,1,loss reduction,,,the share of the potential loss of a problem that a solution can avoid,,,,,,,,,,,
 146,224,36,312,1,initial effort,,,the work needed to implement a solution the first time, without the recurring operation,,,,,,,,,,,
 147,314,5,313,1,reward ratio,,,the avoided potential loss per unit of initial effort, used to sort the solutions by efficiency instead of by problem size,,,,,,,,,,,
-148,201,27,105,1,person year,,,the work of one person during one year, the unit of the initial effort,,,,,,,,,,,
+148,201,27,105,1,person year,,,the work of one person during one year, the unit of the initial effort,,,3,,,,,,,,
 149,319,5,216,1,probability range,,,the interval that contains the true value with a probability of 80 percent; the width is derived from the confidence of the value, so it is itself an assumption and not a measured dispersion,,,,,,,,,,,
 150,264,30,-114,1,happy time points,,,To measure the "happy points" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the "happy time points". ,,,,,,,,,,,
 151,-110,2,-102,1,global warming (global problem),,,,,,,,,,,,,,
