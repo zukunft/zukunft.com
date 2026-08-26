@@ -1513,6 +1513,7 @@
     {
       "name": "person year",
       "description": "the work of one person during one year, the unit of the initial effort",
+      "type": "measure",
       "from": "person",
       "verb": "times",
       "to": "year"

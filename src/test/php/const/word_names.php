@@ -149,6 +149,14 @@ class word_names
     // the qualifier of a value that is estimated instead of taken from a source
     const string ASSUMED = 'assumed';
     const int ASSUMED_ID = 308;
+    // the bounds of the probability range of a value
+    const string LOW = 'low';
+    const int LOW_ID = 316;
+    const string HIGH = 'high';
+    const int HIGH_ID = 317;
+    // the confidence that the range of a value contains the true value
+    const string CONFIDENCE = 'confidence';
+    const int CONFIDENCE_ID = 311;
     // the problems and solutions of solution_prio.json that are a word, not a triple
     const string DISINFORMATION = 'disinformation';
     const int DISINFORMATION_ID = 277;

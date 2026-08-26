@@ -223,6 +223,11 @@ class triple_names
     const int COLUMN_GAIN_ID = 173;
     const string COLUMN_LOSS = 'column loss';
     const int COLUMN_LOSS_ID = 174;
+    // the measure that the values name with the words "potential" and "loss", and its column
+    const string POTENTIAL_LOSS = 'potential loss';
+    const int POTENTIAL_LOSS_ID = 123;
+    const string COLUMN_POTENTIAL_LOSS = 'column potential loss';
+    const int COLUMN_POTENTIAL_LOSS_ID = 183;
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 534;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

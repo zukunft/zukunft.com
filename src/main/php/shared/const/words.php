@@ -203,6 +203,18 @@ class words
     const string PAGE = 'page';
     const string PCT = 'percent';
     const int PCT_ID = 160;
+    // the words that tag a value as a bound of the probability range of the value with the same
+    // phrases (see the view-validation of solution_prio.json), and the qualifier of an estimate
+    const string LOW = 'low';
+    const string HIGH = 'high';
+    const string ASSUMED = 'assumed';
+    // the word that tags the confidence that the range of a value contains the true value
+    const string CONFIDENCE = 'confidence';
+    const array RANGE_WORDS = [self::LOW, self::HIGH];
+    // the qualifiers of a value that a table shows as the tooltip of the cell
+    const array QUALIFIERS = [self::ASSUMED];
+    // the words that describe how a number is stated instead of what it is about
+    const array VALUE_MARKERS = [self::LOW, self::HIGH, self::ASSUMED, self::CONFIDENCE];
     const string PEERS = 'peers';
     const string PERCENT = 'percent';
     const string PERIOD = 'period';

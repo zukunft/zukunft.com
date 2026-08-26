@@ -288,6 +288,14 @@ class test_verbs extends test_objects
         return new verb(verbs::AFTER_ID, verbs::AFTER_NAME, verbs::AFTER);
     }
 
+    /**
+     * @return verb "kind of" that assigns a sub kind to a category e.g. "potential loss"
+     */
+    function verb_kind_of(): verb
+    {
+        return new verb(verbs::KIND_OF_ID, verbs::KIND_OF_NAME, verbs::KIND_OF);
+    }
+
 
     /*
      * list

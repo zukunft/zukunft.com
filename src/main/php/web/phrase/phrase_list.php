@@ -98,8 +98,9 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class phrase_list extends sandbox_list_named
 {
 
-    // the link levels below "column (system)": the column tiers and their column definitions
-    const int COLUMN_LEVELS = 2;
+    // the link levels from "column (system)": the column tiers, their column definitions and
+    // the order triples that chain the definitions
+    const int COLUMN_LEVELS = 3;
 
     /*
      * set and get
@@ -241,8 +242,11 @@ class phrase_list extends sandbox_list_named
      * tier are the triples that point to the tier phrase; without them a value table falls back
      * to the impact ranking instead of the column order the tiers and the order triples give
      *
-     * the tiers themselves point to "column (system)", so two levels below that phrase are the
-     * tiers and their definitions, which is why one api call fills the cache
+     * a tier is what "column (system)" can be, so "column (system)" is the from side of the tier
+     * triple, while a definition points to its tier with the to side and the order triples that
+     * chain the definitions link a definition to a definition; the walk therefore follows both
+     * directions, and three levels from "column (system)" are the tiers, their definitions and
+     * the order triples, which is why one api call fills the cache
      *
      * @param user_message $msg to report a problem of the api message to the user
      * @return bool true if at least one column definition has been added to this list
@@ -250,7 +254,7 @@ class phrase_list extends sandbox_list_named
     function load_column_definitions(user_message $msg): bool
     {
         return $this->load_related_by_name(
-            triples::SYSTEM_COLUMN, foaf_direction::DOWN, $msg, self::COLUMN_LEVELS);
+            triples::SYSTEM_COLUMN, foaf_direction::BOTH, $msg, self::COLUMN_LEVELS);
     }
 
     /**
@@ -405,6 +409,30 @@ class phrase_list extends sandbox_list_named
             // a phrase defined as a column twice keeps its first position
             if (!in_array($col_by_def[$def_name], $result)) {
                 $result[] = $col_by_def[$def_name];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the tier of the table column of the given phrase name
+     *
+     * the tier says on which screens the column is shown: a mayor column on every screen, a main
+     * column not on a small one and a minor column on a wide one only
+     *
+     * @param string $name the name of the column phrase e.g. "loss"
+     * @return string the tier name e.g. "mayor column (system)" or '' if the column is not defined
+     */
+    function column_tier(string $name): string
+    {
+        $result = '';
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $result == '') {
+                $trp = $phr->obj();
+                $to_name = $trp->get_to()?->name() ?? '';
+                if (in_array($to_name, triples::SYSTEM_COLUMN_TIERS) and $trp->get_from()?->name() == $name) {
+                    $result = $to_name;
+                }
             }
         }
         return $result;

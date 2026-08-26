@@ -154,7 +154,7 @@ list_sort: $lst
 message: $ui_msg
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $found_lst, $full_lst, $kept, $lnk_lst, $load_lst, $lst, $lst_imp, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $self, $src_phr_lst, $target, $time_lst, $unit_lst, $zh_lst
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $found_lst, $full_lst, $kept, $lnk_lst, $load_lst, $lst, $lst_imp, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $self, $src_phr_lst, $target, $time_lst, $unit_lst, $zh_lst
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ

@@ -52,8 +52,7 @@
       "description": "rate of increase over a period"
     },
     {
-      "name": "percent",
-      "type": "measure"
+      "name": "percent"
     },
     {
       "name": "foreign"

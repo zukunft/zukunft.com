@@ -136,7 +136,6 @@
     },
     {
       "name": "percent",
-      "type": "measure",
       "refs": [
         {
           "name": "Percentage",

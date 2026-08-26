@@ -1146,6 +1146,36 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word the tag of the lower bound of the probability range of a value
+     */
+    function word_low(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LOW_ID, word_names::LOW);
+        return $wrd;
+    }
+
+    /**
+     * @return word the tag of the upper bound of the probability range of a value
+     */
+    function word_high(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::HIGH_ID, word_names::HIGH);
+        return $wrd;
+    }
+
+    /**
+     * @return word the tag of the confidence that the range of a value contains the true value
+     */
+    function word_confidence(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::CONFIDENCE_ID, word_names::CONFIDENCE);
+        return $wrd;
+    }
+
     /*
      * the problems and solutions of solution_prio.json that are a word, not a triple
      */

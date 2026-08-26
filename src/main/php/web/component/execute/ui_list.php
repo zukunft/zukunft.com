@@ -1297,14 +1297,55 @@ class ui_list extends ui_base
         user_message $msg
     ): string
     {
-        $phr = $dto->phr_lst?->get_by_name(triple_names::GLOBAL_PROBLEM, $msg);
-        if ($phr == null) {
-            $phr = new phrase();
-            $phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
-        }
+        $phr = $this->start_page_phrase($dto, $msg);
         $this->add_start_page_cache($dto, $phr, $msg);
         // the page already says what the table is about, so it is shown without the border
         return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false);
+    }
+
+    /**
+     * the page phrase of the start view, which is "global problem", with the phrases it is
+     * built from
+     *
+     * the row column is headed by the phrase that the page phrase is built from ("problem"), and
+     * a load by name does not carry that phrase; the triples that link a problem to the page
+     * phrase do, so on a cold cache the page phrase is taken from them, and it is kept in the
+     * cache, so that every later component of the page finds it by name
+     *
+     * @param data_object $dto the request cache, which gets the page phrase and its links
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return phrase the page phrase of the start view
+     */
+    private function start_page_phrase(data_object $dto, user_message $msg): phrase
+    {
+        $result = $dto->phr_lst->get_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        if ($result == null) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name(
+                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+                // every child is a triple that links to the page phrase, so the first one
+                // carries it; the sort makes the pick deterministic
+                $child_lst->sort_by_impact();
+                $first = $child_lst->lst()[0];
+                if ($first->is_triple()) {
+                    $result = $first->obj()->get_to();
+                }
+            }
+            if ($result != null) {
+                // the page phrase is no link, so it is added to the cache on its own
+                $page_lst = new phrase_list();
+                $page_lst->add_phrase($result);
+                $dto->add_phrases($page_lst, $msg);
+            }
+        }
+        if ($result == null) {
+            // no problem is linked to the page phrase, so the table has no row, but the page
+            // phrase itself is still needed to head the empty table
+            $result = new phrase();
+            $result->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        }
+        return $result;
     }
 
     /**

@@ -5366,6 +5366,7 @@
     \-- get_by_ids - section for function get_by_ids is expected to be set and get in /phrase/phrase_list.php
     \-- load_by_phr - section for function load_by_phr is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_levels - section for function load_by_phr_levels is expected to be load in /phrase/phrase_list.php
+    \-- load_linked_sides - section for function load_linked_sides is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_vrb_and_type - section for function load_by_phr_vrb_and_type is expected to be load in /phrase/phras
             e_list.php
     \-- load_sql_linked_phrases - section for function load_sql_linked_phrases is expected to be load sql in /phrase/phr
@@ -12884,6 +12885,8 @@
             ist.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
             t.php
+    \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
+            php
     \-- column_phrase - section for function column_phrase not yet defined that it should be related in /phrase/phrase_l
             ist.php
     \-- category_subtitle - section for function category_subtitle not yet defined that it should be related in /phrase/
@@ -16729,6 +16732,8 @@
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
     \-- column_names
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
+    \-- column_tier
+        \-- phrase_list - the tier of the table column of the given phrase name
     \-- column_phrase
         \-- phrase_list - the phrase that this list defines as the table column of the given name
     \-- category_subtitle

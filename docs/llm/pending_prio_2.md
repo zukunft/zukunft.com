@@ -55,6 +55,29 @@ republik_test_init_de.json and republik_test_init_en.json now report no "version
 5. Still open, deliberately (reported before, unchanged): CBAM_costs.json has no calc-validation, because the Gt→tonne scale is unmodelled and the file's reported EV (29.2 × 10⁹) does not reproduce from its own inputs (30.69 × 10⁹). The two intermediates do match exactly.
 
 
+2. My $dto_start guard misses a render path — 6 snapshots are non-deterministic
+
+I previously reported these as possibly stale leftovers. They are not: the three workflow/ files are modified, i.e. the last run wrote live database data into them, while their siblings are untouched and hold the fixture.
+
+workflow/add_word_wf1/wf1_edit_back_edit_save_cancel.html   [M] LIVE ("… and 4 more")                                                                                                                                                                                            
+workflow/add_formula_wf14/wf14_edit_back.html               [M] LIVE                                                                                                                                                                                                             
+workflow/add_triple_wf4/wf4_edit_back.html                  [M] LIVE
++ the three workflow_write counterparts
+
+Cause: url_test_base.php:239 decides from the url, ($next_url[url_var::MASK] ?? 0) == views::START_ID. But url_to_html() also falls back to the start view internally when the mask cannot be resolved — and a back step whose back-mask is 0 (visible as 9m=0 in your paste)    
+takes that path. The guard sees 0 != 1, hands over $this->req->dto, and add_start_page_cache() then fills that shared cache from the live API — which is why later steps stay live too.
+
+This is what produced the -0.32 failure you asked about: those files depend on deployment data. The fix is to treat an unresolvable mask as the start view, the same way url_to_html() does. I have not changed it, as you asked for review only.
+
+3. Four new public functions with no test coverage — load_linked_sides, column_tier, child_phrases, load_related_by_ids. All sit on API/db paths that the offline fixtures short-circuit; load_linked_sides is a unit_read loader.
+
+4. code_object_name_exceptions.md grew by one — phrase_list: $page_lst, the allowed several-lists-in-one-scope case, but that file is meant to stay short.
+
+To confirm
+
+The 17 changed views_by_id snapshots only gained phrase-selector options for the column-definition triples (column confidence, column cost, …) — nothing in this diff touches selectors, so it reads as the db re-import again. And the percent fix itself needs a re-import plus
+regeneration before it can be verified; unit/word/list.csv still records type 3 and will change with it.
+
 ## data validation
 
 `test/json_validation.php` checks every json of `src/main/resources/messages` and

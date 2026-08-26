@@ -1270,6 +1270,31 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the "loss" column definition alone, so that a value with "potential"
+     *         and "loss" lands in the "loss" column
+     */
+    function list_columns_loss_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the "loss" and the "potential loss" column definitions, so that the
+     *         more specific "potential loss" column takes the values with "potential" and "loss"
+     */
+    function list_columns_potential_loss_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_loss()->phrase());
+        $lst->add($t_trp->column_potential_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * a list of currencies and their common parent "currency" linked via the "is a" verb
      * e.g. to test word::similar where the similar words of "Swiss franc" are "Euro" and "US Dollar"
      *

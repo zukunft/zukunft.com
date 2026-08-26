@@ -121,6 +121,11 @@ if ($db_con->is_open()) {
         } else {
             $lst->load_like($pattern, $msg);
         }
+        // a related list is used structurally, so a triple nested in a link needs its own from
+        // and to, which a list load does not fill (see phrase_list::load_linked_sides)
+        if ($api_types != []) {
+            $lst->load_linked_sides($msg);
+        }
         // drop the phrases the requester may not read (idor); see phrase::is_readable_by
         $lst->filter_readable_by($usr);
         $result = $lst->api_json($api_types, $msg);

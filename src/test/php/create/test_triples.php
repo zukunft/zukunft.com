@@ -1447,6 +1447,36 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "potential loss" - the loss that a problem can cause, which the values name
+     *         with the two words "potential" and "loss"
+     */
+    function potential_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POTENTIAL_LOSS_ID, triple_names::POTENTIAL_LOSS);
+        $trp->set_from($t_wrd->word_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_kind_of());
+        $trp->set_to($t_wrd->word_potential()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential loss" that defines "potential loss" as a main table column
+     */
+    function column_potential_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_LOSS_ID, triple_names::COLUMN_POTENTIAL_LOSS);
+        $trp->set_from($this->potential_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_main()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "reduce climate gas emissions" - the solution of the global warming problem
      */
     function reduce_emissions(): triple
