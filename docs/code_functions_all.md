@@ -12880,6 +12880,8 @@
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
             php
+    \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
+            ist.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
             t.php
     \-- column_phrase - section for function column_phrase not yet defined that it should be related in /phrase/phrase_l
@@ -14660,6 +14662,7 @@
             names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- value_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /value/value_list.php
+    \-- phrase_list - section for function phrase_list is expected to be cast in /value/value_list.php
     \-- get_by_names - section for function get_by_names is expected to be set and get in /value/value_list.php
     \-- add - section for function add not yet defined that it should be modify in /value/value_list.php
     \-- filter - section for function filter not yet defined that it should be modify in /value/value_list.php
@@ -16064,7 +16067,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 4
+    \-- 5
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -16722,6 +16725,8 @@
         \-- phrase_list - get the phrase of the most relevant result
     \-- child_names
         \-- phrase_list - get the names of the phrases that this list links to the given phrase by a triple
+    \-- child_phrases
+        \-- phrase_list - the phrases that this list links to the given phrase by a triple
     \-- column_names
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_phrase

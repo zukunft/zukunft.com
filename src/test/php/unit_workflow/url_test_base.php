@@ -43,9 +43,11 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
@@ -54,6 +56,8 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\workflows;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
@@ -86,6 +90,7 @@ class url_test_base
     protected string $step_path;       // the snapshot file path grown by the cumulative spine steps
     protected string $http_method;     // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
     protected string $url;             // the last call url of the workflow
+    protected data_object $dto_start;  // the cache of the start view, which every back step reaches
 
 
     /**
@@ -116,8 +121,33 @@ class url_test_base
         // to record all workflow changes for usr1; the test profile of usr1 is system privileged
         // (user::is_system), so adding the reserved test names is still allowed (check_preserved)
         $this->msg->usr = $this->usr;
+        $this->dto_start = $this->start_page_cache($t);
         $t->name = $name;
         $t->header($ts);
+    }
+
+    /**
+     * the frontend cache of the start view, which every workflow reaches with a back step
+     *
+     * the start view shows the global problems as a table that the frontend fills from the api;
+     * a workflow test has no api, so the phrases and the values of the global problems come from
+     * the create factories, while the type and view caches are shared with the workflow cache
+     *
+     * @param test_cleanup $t the test environment holding the create factories
+     * @return data_object the cache used to render the start view
+     */
+    private function start_page_cache(test_cleanup $t): data_object
+    {
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $result = new data_object();
+        $result->online = false;
+        $result->typ_lst_cache = $this->ui->dto->typ_lst_cache;
+        $result->msk_lst = $this->ui->dto->msk_lst;
+        $result->cfg = $this->ui->dto->cfg;
+        $result->add_phrases($t_phr->list_global_problems_ui(), $this->msg);
+        $result->val_lst = $t_val->value_list_solution_prio_ui();
+        return $result;
     }
 
     /**
@@ -203,9 +233,15 @@ class url_test_base
             $this->req->usr_backend, $this->req->msg,
             $this->req->dto, $this->req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
+        // the start view is the target of every back step and needs its own cache (see init),
+        // so that the back page shows the table of the global problems instead of nothing
+        $dto = $this->req->dto;
+        if (($next_url[url_var::MASK] ?? 0) == views::START_ID) {
+            $dto = $this->dto_start;
+        }
         // render in test mode so that the snapshot is reproducible without backend calls
         $result = $this->ui->url_to_html($next_url, $this->req->msg,
-            $this->req->dto, $this->req->test_mode);
+            $dto, $this->req->test_mode);
         // return to the default section for the following assertions
         $sys->times->switch(system_time_type::DEFAULT);
         $this->assert_html($this->step_path, $result, $next_url);

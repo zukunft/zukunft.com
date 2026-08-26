@@ -1302,17 +1302,81 @@ class ui_list extends ui_base
             $phr = new phrase();
             $phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
         }
-        // without the column definitions the table falls back to the impact ranking, so they are
-        // added to the request cache once; a cache that already knows a column is left untouched,
-        // so an offline unit test needs no api call
+        $this->add_start_page_cache($dto, $phr, $msg);
+        // the page already says what the table is about, so it is shown without the border
+        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false);
+    }
+
+    /**
+     * TODO Prio 1 avoid this exception
+     * add the phrases and the values that the table of the start view needs to the request cache
+     *
+     * each step is skipped if the cache already has that data, so a unit test that fills the
+     * cache upfront needs no api call at all
+     *
+     * @param data_object $dto the request cache to fill
+     * @param phrase $phr the page phrase of the start view, which is "global problem"
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return void
+     */
+    private function add_start_page_cache(data_object $dto, phrase $phr, user_message $msg): void
+    {
+        // "global problem" itself is in no value group, so the rows are the phrases that a
+        // triple links to it; without those triples the table finds no value at all
+        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name(
+                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+            }
+        }
+        // without the column definitions the table falls back to the impact ranking
         if ($dto->phr_lst->column_names() == []) {
             $col_lst = new phrase_list();
             if ($col_lst->load_column_definitions($msg)) {
                 $dto->add_phrases($col_lst, $msg);
             }
         }
-        // the page already says what the table is about, so it is shown without the border
-        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false);
+        // the values belong to the problems and not to "global problem", so they are loaded for
+        // the children
+        if ($dto->val_lst->is_empty()) {
+            $val_lst = new value_list();
+            if ($val_lst->load_by_phr_lst($dto->phr_lst->child_phrases($phr), $msg)) {
+                $dto->val_lst = $val_lst;
+            }
+        }
+        // a defined column that no value carries names a phrase of the row instead of a number,
+        // e.g. the solution column shows the solution of the problem row; the table recognises
+        // that phrase by the triple that links it to the column, e.g. "reduce climate gas
+        // emissions is a solution", so the links of every phrase of the values are loaded once
+        $val_phr_lst = $dto->val_lst->phrase_list();
+        if (!$val_phr_lst->is_empty() and !$this->column_links_loaded($dto)) {
+            $lnk_lst = new phrase_list();
+            if ($lnk_lst->load_related_by_ids($val_phr_lst, foaf_direction::UP, $msg)) {
+                $dto->add_phrases($lnk_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * true if the request cache already links a phrase to a defined table column
+     *
+     * e.g. the triple "reduce climate gas emissions is a solution" links a solution to the
+     * solution column; one such link is enough, because they are loaded for all columns at once
+     *
+     * @param data_object $dto the request cache to check
+     * @return bool true if the links of the column phrases are already cached
+     */
+    private function column_links_loaded(data_object $dto): bool
+    {
+        $result = false;
+        foreach ($dto->phr_lst->column_names() as $name) {
+            $col_phr = $dto->phr_lst->column_phrase($name);
+            if ($col_phr != null and !$dto->phr_lst->child_phrases($col_phr)->is_empty()) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

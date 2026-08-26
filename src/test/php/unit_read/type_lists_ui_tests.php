@@ -52,7 +52,9 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -80,7 +82,14 @@ class type_lists_ui_tests
         $wrd = $t_wrd->word_dsp();
         $wrd->set_name('All type selectors');
         $cfg = new data_object();
+        $cfg->online = false;
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
+        // the start view shows the global problems as a table, which the frontend fills from the
+        // api; this test has no api, so the phrases and values come from the create factories
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $cfg->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        $cfg->val_lst = $t_val->value_list_solution_prio_ui();
         $test_page = $msk->show($wrd, $msg, $cfg, '') . '<br><br>';
 
         // test the type list selectors; each selector renders its own <label for> tied to

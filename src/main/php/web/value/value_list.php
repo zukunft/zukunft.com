@@ -128,17 +128,44 @@ class value_list extends ListBase
      * load
      */
 
+    /**
+     * add the values of any of the given phrases to this list
+     *
+     * @param phrase_list $phr_lst the phrases whose values should be loaded
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one value has been loaded
+     */
     function load_by_phr_lst(phrase_list $phr_lst, user_message $msg): bool
     {
         $result = false;
         $rest = new rest_call();
 
         $data = array();
-        $data[api::JSON_LIST_PHRASE_IDS] = $phr_lst->ids();
+        // comma separated like every other id list of the api e.g. url_var::ID_LST
+        $data[api::JSON_LIST_PHRASE_IDS] = implode(',', $phr_lst->ids());
         $json_body = $rest->api_get(self::class, $data);
-        $this->api_mapper($json_body);
+        $msg->merge($this->api_mapper($json_body));
         if (!$this->is_empty()) {
             $result = true;
+        }
+        return $result;
+    }
+
+
+    /**
+     * the phrases that the values of this list carry
+     *
+     * @return phrase_list every phrase of every value group, each phrase only once
+     */
+    function phrase_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $val) {
+            foreach ($val->grp->phr_lst()->lst() as $phr) {
+                if (!$result->has_id($phr->id())) {
+                    $result->add_phrase($phr);
+                }
+            }
         }
         return $result;
     }
@@ -592,7 +619,7 @@ class value_list extends ListBase
 
             // a defined column that no value carries names a phrase of the row instead of a
             // number, e.g. the "solution" column shows the solution of the problem row
-            $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst);
+            $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg);
             // the names that belong into each phrase column, read once for the whole table
             $phr_col_names = [];
             foreach ($phr_col as $phr_col_id => $phr) {
@@ -724,11 +751,26 @@ class value_list extends ListBase
     }
 
     /**
+     * true if the phrase describes the number instead of the row or the column
+     *
+     * the scaling, the measure and the percent format all belong to the value, e.g. "35.2 billion
+     * htp" or "10 percent", so such a phrase is shown once in the column header behind the phrase
+     * that names the column and never heads a column of its own
+     *
+     * @param phrase $phr the phrase to check
+     * @return bool true if the phrase is a unit of the number
+     */
+    private function is_unit(phrase $phr, user_message $msg): bool
+    {
+        return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg));
+    }
+
+    /**
      * the phrases that a table neither names a row nor a column by
      *
-     * a scaling or a measure phrase describes the number and is shown with it (e.g. "35.2 billion
-     * htp"), so like the phrase of the page it says nothing about the row; the target layout in
-     * the view-validation of solution_prio.json names the unit in the column header instead
+     * a unit describes the number and is shown with it (e.g. "35.2 billion htp"), so like the
+     * phrase of the page it says nothing about the row; the target layout in the view-validation
+     * of solution_prio.json names the unit in the column header instead
      *
      * a phrase that every value carries describes the whole table, so the header names it once
      * and it says as little about a single row as the phrase of the page
@@ -748,7 +790,7 @@ class value_list extends ListBase
             foreach ($val->grp->phr_lst()->lst() as $phr) {
                 // the same unit is used by many values, so a repeat is expected and no double
                 if (!$result->has_id($phr->id())) {
-                    if ($phr->is_scaling($msg) or $phr->is_measure($msg)) {
+                    if ($this->is_unit($phr, $msg)) {
                         $result->add_phrase($phr);
                     }
                 }
@@ -842,8 +884,9 @@ class value_list extends ListBase
                     $unit_lst->add_phrase($phr);
                 }
             }
+            // every other unit follows the scaling, e.g. the measure "EUR" of "trillion EUR"
             foreach ($shared->lst() as $phr) {
-                if ($phr->is_measure($msg)) {
+                if ($this->is_unit($phr, $msg) and !$phr->is_scaling($msg)) {
                     $unit_lst->add_phrase($phr);
                 }
             }
@@ -913,15 +956,23 @@ class value_list extends ListBase
      * @param array $col_order the defined column phrase names, the most important column first
      * @param array $col_phr the columns that hold a value, keyed by phrase id
      * @param phrase_list|null $rel_lst the phrases related to the page phrase
+     * @param user_message $msg to report a problem of reading the phrase type
      * @return array the phrase columns keyed by phrase id in the order of the definition
      */
-    private function phrase_columns(array $col_order, array $col_phr, ?phrase_list $rel_lst): array
+    private function phrase_columns(
+        array        $col_order,
+        array        $col_phr,
+        ?phrase_list $rel_lst,
+        user_message $msg
+    ): array
     {
         $result = [];
         foreach ($col_order as $name) {
             $phr = $rel_lst?->column_phrase($name);
-            // a column that already holds the values of this phrase cannot name a phrase too
-            if ($phr != null and !array_key_exists($phr->id(), $col_phr)) {
+            // a column that already holds the values of this phrase cannot name a phrase too,
+            // and a unit describes the number, so it heads no column of its own either
+            if ($phr != null and !array_key_exists($phr->id(), $col_phr)
+                and !$this->is_unit($phr, $msg)) {
                 if ($rel_lst->child_names($phr) != []) {
                     $result[$phr->id()] = $phr;
                 }

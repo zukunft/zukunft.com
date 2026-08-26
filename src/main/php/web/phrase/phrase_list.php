@@ -207,6 +207,33 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * add the phrases linked to any of the given phrases to this list
+     *
+     * one call for the whole list, because a page normally needs the links of many phrases at
+     * once, e.g. of every phrase that the values of a table carry
+     *
+     * @param phrase_list $phr_lst the phrases whose linked phrases should be added
+     * @param foaf_direction $direction up for the parents, down for the children
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_related_by_ids(
+        phrase_list    $phr_lst,
+        foaf_direction $direction,
+        user_message   $msg
+    ): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
+        $data = array();
+        $data[url_var::ID_LST] = implode(',', $phr_lst->ids());
+        $data[url_var::DIRECTION] = $direction->value;
+        $json_body = $api->api_get(self::class, $data);
+        $msg->merge($this->api_mapper($json_body));
+        return $this->count() > $count;
+    }
+
+    /**
      * add the triples that define the table columns to this list
      *
      * a column is defined by a triple that links a phrase to a system column tier, e.g. the
@@ -321,6 +348,33 @@ class phrase_list extends sandbox_list_named
                     $name = $trp->get_from()?->name();
                     if ($name != null and !in_array($name, $result)) {
                         $result[] = $name;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that this list links to the given phrase by a triple
+     *
+     * the phrase counterpart of child_names, used where the id is needed and not only the name,
+     * e.g. to load the values of the global problems from the api; unlike children() this
+     * matches the "to" side and returns the linked phrases instead of the linking triples
+     *
+     * @param phrase $phr the phrase whose children should be returned
+     * @return phrase_list the phrases that link to the given phrase
+     */
+    function child_phrases(phrase $phr): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple()) {
+                $trp = $lst_phr->obj();
+                if ($trp->get_to()?->name() == $phr->name()) {
+                    $from = $trp->get_from();
+                    if ($from != null and !$result->has_id($from->id())) {
+                        $result->add_phrase($from);
                     }
                 }
             }

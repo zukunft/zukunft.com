@@ -38,6 +38,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\cfg\application;
@@ -46,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -82,7 +84,26 @@ if ($db_con->is_open()) {
         // of each linking triple (e.g. to find the table column definitions), so it needs the
         // phrase names; a list selected by id or by pattern only names its own entries
         $api_types = [];
-        if ($phr_ids != '') {
+        // a missing or unknown direction must not leave $dir unset, because the loads below
+        // would then fail with a php error instead of returning the related phrases
+        $dir = foaf_direction::BOTH;
+        if ($direction_text != '') {
+            try {
+                $dir = foaf_direction::from($direction_text);
+            } catch (ValueError $error) {
+                $msg->add_message_text($error->getMessage());
+            }
+        }
+        if ($phr_ids != '' and $direction_text != '') {
+            // an id list with a direction asks for the phrases linked to any of the given
+            // phrases, so that the frontend needs one call and not one call per phrase
+            $phr_lst = new phrase_list($usr);
+            $phr_lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)), $msg);
+            $trp_lst = new triple_list($usr);
+            $trp_lst->load_by_phr_lst($phr_lst, $msg, null, $dir);
+            $lst->add_trp_lst($trp_lst);
+            $api_types = [api_types::INCL_PHRASES];
+        } elseif ($phr_ids != '') {
             $lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)), $msg);
         } elseif ($phr_id != '' or $phr_name != '') {
             $phr = new phrase($usr);
@@ -92,14 +113,6 @@ if ($db_con->is_open()) {
                 // a system phrase is requested by its name, because the frontend knows the name
                 // from a shared const but not the database id e.g. "mayor column (system)"
                 $phr->load_by_name($phr_name, $msg);
-            }
-            // a missing or unknown direction must not leave $dir unset, because the load below
-            // would then fail with a php error instead of returning the related phrases
-            $dir = foaf_direction::BOTH;
-            try {
-                $dir = foaf_direction::from($direction_text);
-            } catch (ValueError $error) {
-                $msg->add_message_text($error->getMessage());
             }
             if ($phr->id() != 0) {
                 $lst->load_by_phr_levels($phr, $msg, $dir, $levels);
