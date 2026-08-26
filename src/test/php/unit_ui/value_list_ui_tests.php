@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -69,6 +70,8 @@ class value_list_ui_tests
         $tl = new test_lib();
         $t_wrd = new test_words($t);
         $t_val = new test_values($t);
+        $t_phr = new test_phrases($t);
+        $lib = new library();
         $msg = new user_message();
         $msg_ui = new user_message_ui();
         $ui = new frontend('unit ui html reference list');
@@ -218,7 +221,10 @@ class value_list_ui_tests
         $t->assert($test_name, new value_list_ui()->columns_by_phrase($msg_ui), '');
 
         $t->subheader($ts . 'table with related columns');
-        $tbl_html = $t_val->value_list_most_relevant_ui()->table_by_related_columns($msg_ui);
+        // the row limit is checked below, so the column checks ask for every row; else the value
+        // that shares no column phrase would be behind the limit and only reachable via the link
+        $tbl_html = $t_val->value_list_most_relevant_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', [], false, true, null, value_list_ui::LIMIT_ALL);
         $test_name = 'the values are shown as a table';
         $t->assert_text_contains($test_name, $tbl_html, '<table');
         $test_name = 'the top left header cell is empty, because the row phrases differ per row';
@@ -236,6 +242,106 @@ class value_list_ui_tests
             substr_count($tbl_html, '<th') <= position_types::MAX_SIDE_COLUMNS + 2);
         $test_name = 'the header is shown before the first row';
         $t->assert_text_order($test_name, $tbl_html, '<th', '<td');
+
+        // a page must not fill the screen, so with the configured limit the rows that do not fit
+        // are reachable via the "... and n more" row instead of being shown
+        $tbl_cut = $t_val->value_list_most_relevant_ui()->table_by_related_columns($msg_ui);
+        $test_name = 'a table with more rows than the limit ends with a more row';
+        $t->assert_text_contains($test_name, $tbl_cut, msg_id::MORE->text());
+        $test_name = '... so the row behind the limit is not shown';
+        $t->assert_text_not_contains($test_name, $tbl_cut, '>' . word_names::PI . '</a>');
+        // the rest column exists because of the data and not because the reader asked for it, so
+        // it is left out if its only value is in a row that the table does not show
+        $test_name = '... and the column of the values without a column phrase stays away';
+        $t->assert_text_not_contains($test_name, $tbl_cut,
+            '<th>' . msg_id::FORM_SUB_TITLE_VALUES->text() . '</th>');
+
+        // a value tagged "low" or "high" is a bound of the probability range of the value with
+        // the same phrases, so it is shown behind that centre value instead of in a row of its
+        // own, and the qualifier "assumed" names no row either, so the problem keeps one row
+        // (see the view-validation of solution_prio.json)
+        $tbl_range = $t_val->value_list_range_ui()->table_by_related_columns($msg_ui);
+        $test_name = 'the range bounds are shown behind their centre value';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '2.2 (0.88 – 5.5)');
+        // the four loss values (centre, both bounds and the confidence) share one row; the gain
+        // is carried by one value only, so it heads no column and names a row of its own, which
+        // is the header row plus two rows
+        $test_name = '... so the bounds and the qualifier name no row of their own';
+        $t->assert($test_name, substr_count($tbl_range, '<' . html_base::TR . '>'), 3);
+        $test_name = '... and a value without bounds is shown without brackets';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range), '35.2 (');
+        $test_name = 'the estimate qualifier of a value is the tooltip of its cell';
+        $t->assert_text_contains($test_name, $tbl_range, 'title="' . word_names::ASSUMED . ', ');
+        // a value tagged "confidence" says how sure the value with the same subject is, so it is
+        // the tooltip of that value and no value or row of its own
+        $test_name = 'the confidence of a value is the tooltip of its cell';
+        $t->assert_text_contains($test_name, $tbl_range, word_names::CONFIDENCE . ' ');
+        $test_name = '... and not a value of the cell';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range), '5.5), ');
+        // the confidence is a share, so its unit differs from the unit of the loss, but it still
+        // follows the loss instead of opening a column of its own unit
+        $unit_sep = ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ';
+        $test_name = '... nor a column of its own unit';
+        $t->assert($test_name, substr_count(
+            $lib->html_to_text($lib->str_left_of($tbl_range, '</tr>')), word_names::LOSS . $unit_sep), 1);
+
+        // a column shows one measure, so a phrase with values in two units gets one column per
+        // unit, the unit of the most relevant value first, and no value is lost; the "loss"
+        // column is defined here, because the two values differ in their unit only, so without
+        // the definition "loss" is a phrase that every value carries and heads no column
+        $loss_lst = $t_phr->list_columns_loss_ui();
+        $tbl_units = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $loss_lst->column_names(), false, true, $loss_lst);
+        $hdr_units = $lib->html_to_text($lib->str_left_of($tbl_units, '</tr>'));
+        $test_name = 'a phrase with values in two units gets one column per unit';
+        $t->assert($test_name, substr_count($hdr_units, word_names::LOSS . $unit_sep), 2);
+        $test_name = '... the unit of the most relevant value first';
+        $t->assert_text_order($test_name, $hdr_units, word_names::EUR, word_names::HTP);
+        $test_name = '... and a cell holds the values of its unit only';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_units), '2.2, ');
+
+        // a defined column can be a triple that no value carries but whose two parts the values
+        // carry, e.g. "potential loss" for the values with "potential" and "loss"; it takes those
+        // values before the column of one of its parts, because it names more of their phrases
+        $rel_lst = $t_phr->list_columns_potential_loss_ui();
+        $tbl_parts = $t_val->value_list_range_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $rel_lst->column_names(), false, true, $rel_lst);
+        $hdr_parts = $lib->html_to_text($lib->str_left_of($tbl_parts, '</tr>'));
+        $test_name = 'a column of two phrases takes the values that carry both';
+        $t->assert_text_contains($test_name, $hdr_parts,
+            word_names::POTENTIAL . ' ' . word_names::LOSS . $unit_sep);
+        $test_name = '... and the column of one of the two phrases stays away';
+        $t->assert($test_name, substr_count($hdr_parts, word_names::LOSS . $unit_sep), 1);
+        // negative: without the column of the two phrases the values stay in the column of the
+        // one phrase they carry
+        $rel_lst = $t_phr->list_columns_loss_ui();
+        $tbl_one = $t_val->value_list_range_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $rel_lst->column_names(), false, true, $rel_lst);
+        $hdr_one = $lib->html_to_text($lib->str_left_of($tbl_one, '</tr>'));
+        $test_name = 'without the column of two phrases the column of the one phrase is used';
+        $t->assert_text_contains($test_name, $hdr_one, word_names::LOSS . $unit_sep);
+        $t->assert_text_not_contains($test_name, $hdr_one, word_names::POTENTIAL . ' ' . word_names::LOSS);
+
+        // the tier of a defined column says on which screens it is shown: a main column carries
+        // the class that hides it on a small screen, a mayor column has no class and is shown on
+        // every screen; "potential loss" is a main and "loss" a mayor column
+        $test_name = 'a main column is hidden on a small screen';
+        $t->assert_text_contains($test_name, $tbl_parts, '<th class="' . styles::COL_MAIN . '">');
+        $test_name = 'a mayor column is shown on every screen';
+        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MAIN);
+        // negative: a column that the data suggests has no tier and therefore no class
+        $test_name = 'a column without a definition is shown on every screen';
+        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MAIN);
+
+        // every defined column is shown, because the tiers hide the columns per screen size, so
+        // the number of columns that fit on the widest screen limits only the columns that the
+        // data suggests; five defined columns give five column headers plus the row name header
+        $rel_lst = $t_phr->list_columns_ordered_ui();
+        $tbl_def = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $rel_lst->column_names(), false, true, $rel_lst);
+        $test_name = 'every defined column is shown even above the number that fit on the widest screen';
+        $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 1);
+
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');
         // with the page phrase as context the phrase of the page is not repeated in the table
@@ -246,7 +352,6 @@ class value_list_ui_tests
         // the header names the context phrase centred above the table, so that a table taken
         // out of its page still says what it is about
         $test_name = 'with the header the context phrase is linked above the table';
-        $lib = new library();
         $tbl_header = $t_val->value_list_most_relevant_ui()
             ->table_by_related_columns($msg_ui, $phr_lst_context_ui, '', [], true);
         $t->assert_text_contains($test_name,

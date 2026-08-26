@@ -1146,6 +1146,36 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word the tag of the lower bound of the probability range of a value
+     */
+    function word_low(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LOW_ID, word_names::LOW);
+        return $wrd;
+    }
+
+    /**
+     * @return word the tag of the upper bound of the probability range of a value
+     */
+    function word_high(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::HIGH_ID, word_names::HIGH);
+        return $wrd;
+    }
+
+    /**
+     * @return word the tag of the confidence that the range of a value contains the true value
+     */
+    function word_confidence(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::CONFIDENCE_ID, word_names::CONFIDENCE);
+        return $wrd;
+    }
+
     /*
      * the problems and solutions of solution_prio.json that are a word, not a triple
      */
@@ -1203,6 +1233,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::TRILLION_ID, word_names::TRILLION);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1210,6 +1241,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::BILLION_ID, word_names::BILLION);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1231,6 +1263,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::EUR_ID, word_names::EUR);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1314,6 +1347,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::HTP_ID, word_names::HTP);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 

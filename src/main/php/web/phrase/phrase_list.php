@@ -98,6 +98,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class phrase_list extends sandbox_list_named
 {
 
+    // the link levels from "column (system)": the column tiers, their column definitions and
+    // the order triples that chain the definitions
+    const int COLUMN_LEVELS = 3;
+
     /*
      * set and get
      */
@@ -171,6 +175,86 @@ class phrase_list extends sandbox_list_named
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * add the phrases related to the phrase with the given name to the list
+     *
+     * by name and not by id, because the frontend knows a system phrase from a shared const with
+     * its name, but never its database id (see docs/llm/constants.md)
+     *
+     * @param string $name the name of the phrase whose related phrases should be added
+     * @param foaf_direction $direction up for the parents, down for the children
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param int $levels the number of link levels to follow, one for the direct links only
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_related_by_name(
+        string         $name,
+        foaf_direction $direction,
+        user_message   $msg,
+        int            $levels = 1
+    ): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
+        $data = array();
+        $data[url_var::NAME] = $name;
+        $data[url_var::DIRECTION] = $direction->value;
+        $data[url_var::LEVELS] = $levels;
+        $json_body = $api->api_get(self::class, $data);
+        $msg->merge($this->api_mapper($json_body));
+        return $this->count() > $count;
+    }
+
+    /**
+     * add the phrases linked to any of the given phrases to this list
+     *
+     * one call for the whole list, because a page normally needs the links of many phrases at
+     * once, e.g. of every phrase that the values of a table carry
+     *
+     * @param phrase_list $phr_lst the phrases whose linked phrases should be added
+     * @param foaf_direction $direction up for the parents, down for the children
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_related_by_ids(
+        phrase_list    $phr_lst,
+        foaf_direction $direction,
+        user_message   $msg
+    ): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
+        $data = array();
+        $data[url_var::ID_LST] = implode(',', $phr_lst->ids());
+        $data[url_var::DIRECTION] = $direction->value;
+        $json_body = $api->api_get(self::class, $data);
+        $msg->merge($this->api_mapper($json_body));
+        return $this->count() > $count;
+    }
+
+    /**
+     * add the triples that define the table columns to this list
+     *
+     * a column is defined by a triple that links a phrase to a system column tier, e.g. the
+     * triple "column loss" links "loss" to "mayor column (system)", so the definitions of one
+     * tier are the triples that point to the tier phrase; without them a value table falls back
+     * to the impact ranking instead of the column order the tiers and the order triples give
+     *
+     * a tier is what "column (system)" can be, so "column (system)" is the from side of the tier
+     * triple, while a definition points to its tier with the to side and the order triples that
+     * chain the definitions link a definition to a definition; the walk therefore follows both
+     * directions, and three levels from "column (system)" are the tiers, their definitions and
+     * the order triples, which is why one api call fills the cache
+     *
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one column definition has been added to this list
+     */
+    function load_column_definitions(user_message $msg): bool
+    {
+        return $this->load_related_by_name(
+            triples::SYSTEM_COLUMN, foaf_direction::BOTH, $msg, self::COLUMN_LEVELS);
     }
 
     /**
@@ -276,17 +360,91 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * the names of the phrases that this list defines as table columns, ordered by the column
-     * tier of solution_prio.json: a prime column first (shown on every screen), then a second
-     * column (hidden on a small screen), then a third column (only on a wide screen)
+     * the phrases that this list links to the given phrase by a triple
+     *
+     * the phrase counterpart of child_names, used where the id is needed and not only the name,
+     * e.g. to load the values of the global problems from the api; unlike children() this
+     * matches the "to" side and returns the linked phrases instead of the linking triples
+     *
+     * @param phrase $phr the phrase whose children should be returned
+     * @return phrase_list the phrases that link to the given phrase
+     */
+    function child_phrases(phrase $phr): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple()) {
+                $trp = $lst_phr->obj();
+                if ($trp->get_to()?->name() == $phr->name()) {
+                    $from = $trp->get_from();
+                    if ($from != null and !$result->has_id($from->id())) {
+                        $result->add_phrase($from);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the names of the phrases that this list defines as table columns, in the order that the
+     * column order triples of solution_prio.json give: the "is next main column after" triples
+     * chain the main columns and the "is explaining column for" triples place a column behind
+     * the main column it explains, e.g. "column loss" explains "column problem (high prio)",
+     * so the loss column is right of the problem column and left of the next main column
      *
      * a column is defined by a triple "<phrase> can be <tier>", so this list must carry those
      * triples; a phrase without such a triple is not returned and the caller falls back to its
-     * own ranking (see value_list::table_by_related_columns)
+     * own ranking (see value_list::table_by_related_columns); a definition that the chain does
+     * not place is appended, ordered by its tier: a prime column first (shown on every screen),
+     * then a second column (hidden on a small screen), then a third column (only on a wide one)
      *
-     * @return array the column phrase names, the most important column first
+     * @return array the column phrase names, the leftmost column first
      */
     function column_names(): array
+    {
+        $col_by_def = $this->column_definitions();
+        $result = [];
+        foreach ($this->definition_order(array_keys($col_by_def)) as $def_name) {
+            // a phrase defined as a column twice keeps its first position
+            if (!in_array($col_by_def[$def_name], $result)) {
+                $result[] = $col_by_def[$def_name];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the tier of the table column of the given phrase name
+     *
+     * the tier says on which screens the column is shown: a mayor column on every screen, a main
+     * column not on a small one and a minor column on a wide one only
+     *
+     * @param string $name the name of the column phrase e.g. "loss"
+     * @return string the tier name e.g. "mayor column (system)" or '' if the column is not defined
+     */
+    function column_tier(string $name): string
+    {
+        $result = '';
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $result == '') {
+                $trp = $phr->obj();
+                $to_name = $trp->get_to()?->name() ?? '';
+                if (in_array($to_name, triples::SYSTEM_COLUMN_TIERS) and $trp->get_from()?->name() == $name) {
+                    $result = $to_name;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the column definitions of this list, keyed by the name of the defining triple
+     *
+     * @return array per definition triple name e.g. "column loss" the column phrase name "loss",
+     *               ordered by the tier, which orders the definitions the chain does not place
+     */
+    private function column_definitions(): array
     {
         $result = [];
         foreach (triples::SYSTEM_COLUMN_TIERS as $tier) {
@@ -298,8 +456,134 @@ class phrase_list extends sandbox_list_named
                         $name = $trp->get_from()?->name();
                         // a phrase assigned to two tiers keeps the more important one
                         if ($name != null and !in_array($name, $result)) {
-                            $result[] = $name;
+                            $result[$phr->name()] = $name;
                         }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * order the given column definitions by the main column chain of this list
+     *
+     * each main column is directly followed by the columns that explain it, so the next main
+     * column starts only once the explaining columns of the previous one are placed
+     *
+     * @param array $def_names the names of the column definition triples e.g. "column loss"
+     * @return array the definition names, the leftmost column first
+     */
+    private function definition_order(array $def_names): array
+    {
+        $explains = $this->explaining_map();
+        $mains = $this->main_column_chain();
+        foreach (array_keys($explains) as $main) {
+            // a main column that no chain places still keeps its explaining columns
+            if (!in_array($main, $mains)) {
+                $mains[] = $main;
+            }
+        }
+        $result = [];
+        foreach ($mains as $main) {
+            $group = array_merge([$main], $explains[$main] ?? []);
+            foreach ($group as $name) {
+                // only a definition of this list can be a column, and only one column
+                if (in_array($name, $def_names) and !in_array($name, $result)) {
+                    $result[] = $name;
+                }
+            }
+        }
+        // a definition that the chain does not place keeps the order of the definitions
+        foreach ($def_names as $name) {
+            if (!in_array($name, $result)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * walk the "is next main column after" triples of this list from the leftmost main column
+     *
+     * @return array the names of the main column definitions, the leftmost main column first
+     */
+    private function main_column_chain(): array
+    {
+        $next = $this->main_column_map();
+        $result = [];
+        // a main column that follows no other main column starts a chain, so the walk begins there
+        foreach (array_keys($next) as $head) {
+            if (!in_array($head, $next)) {
+                $name = $head;
+                $steps = 0;
+                // the step limit stops a circular chain, which the data should not contain
+                while ($name != '' and !in_array($name, $result) and $steps <= count($next)) {
+                    $result[] = $name;
+                    $name = $next[$name] ?? '';
+                    $steps++;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array per main column definition name the main column that this list places behind it
+     */
+    private function main_column_map(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                $trp = $phr->obj();
+                // the "to" side is the main column before, so the "from" side follows it
+                if ($trp->get_verb()?->name() == verbs::BEFORE_NAME) {
+                    $result[$trp->get_to()?->name()] = $trp->get_from()?->name();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array per main column definition name the names of the columns that explain it,
+     *               in the order of the "is explaining column for" triples of this list
+     */
+    private function explaining_map(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                $trp = $phr->obj();
+                // the "to" side is the explained main column, so the "from" side explains it
+                if ($trp->get_verb()?->name() == verbs::AFTER_NAME) {
+                    $result[$trp->get_to()?->name()][] = $trp->get_from()?->name();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrase that this list defines as the table column of the given name
+     *
+     * the caller has the column name from column_names() and needs the phrase itself to head the
+     * column with a link and to ask child_names() which phrases belong into that column
+     *
+     * @param string $name the name of a column phrase e.g. "solution"
+     * @return phrase|null the column phrase or null if this list defines no column of that name
+     */
+    function column_phrase(string $name): ?phrase
+    {
+        $result = null;
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $result == null) {
+                $trp = $phr->obj();
+                // the tier is the "to" side, so the column phrase is the "from" side
+                if (in_array($trp->get_to()?->name(), triples::SYSTEM_COLUMN_TIERS)) {
+                    if ($trp->get_from()?->name() == $name) {
+                        $result = $trp->get_from();
                     }
                 }
             }

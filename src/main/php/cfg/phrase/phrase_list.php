@@ -140,6 +140,10 @@ class phrase_list extends sandbox_list_named
     // so a normal 0 to n order could have more advantages)
     // $usr of sandbox list is the user object of the person for whom the phrase list is loaded, so to say the viewer
 
+    // the maximum number of link levels that load_by_phr_levels follows, because the level is
+    // requested by the url and each level multiplies the number of database reads
+    const int MAX_LINK_LEVELS = 3;
+
 
     /*
      * construct and map
@@ -2518,6 +2522,109 @@ class phrase_list extends sandbox_list_named
         } else {
             return false;
         }
+    }
+
+    /**
+     * load a list of phrases by a given phrase and direction following more than one link level
+     *
+     * a second level also loads the phrases related to the phrases that the first level has
+     * found, e.g. for "column (system)" and "both" the first level gives the column tiers, which
+     * "column (system)" can be, and the second level the column definitions, which point to a
+     * tier, so that the frontend can fill its cache with one api call instead of one per tier
+     *
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param user_message $msg to report a load problem to the caller
+     * @param foaf_direction $direction to select either the parents, children or all related phrases
+     * @param int $levels the number of link levels to follow, one for the direct links only
+     * @return bool true if at least one phrase has been found
+     */
+    function load_by_phr_levels(
+        phrase         $phr,
+        user_message   $msg,
+        foaf_direction $direction = foaf_direction::BOTH,
+        int            $levels = 1
+    ): bool
+    {
+        // the level is user input from the url, so it is bounded here to protect the backend
+        if ($levels > self::MAX_LINK_LEVELS) {
+            $levels = self::MAX_LINK_LEVELS;
+        }
+        $result = $this->load_by_phr($phr, $msg, null, $direction);
+        // the start phrase is already expanded, so the walk never follows it again
+        $done = [$phr->id()];
+        for ($i = 1; $i < $levels; $i++) {
+            // the phrases of the level before are taken before the load, because the load adds
+            // to this list and a phrase already expanded must not be followed a second time,
+            // which also ends a circular link chain
+            $next = [];
+            foreach ($this->lst() as $lst_phr) {
+                if (!in_array($lst_phr->id(), $done)) {
+                    $done[] = $lst_phr->id();
+                    $next[] = $lst_phr;
+                }
+            }
+            foreach ($next as $lst_phr) {
+                // only the triples, because a phrase is linked to another phrase by a triple and
+                // the word part of load_by_phr would only add a warning for the still empty list
+                $trp_lst = new triple_list($this->get_user());
+                $trp_lst->load_by_phr($lst_phr, $msg, null, $direction);
+                if ($this->add_trp_lst($trp_lst)) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * load the from and to of the triples that the links of this list point to
+     *
+     * a list load fills the from and to of each link with the id and the name only, so a triple
+     * nested in a link carries no from and to of its own; the frontend needs them e.g. to head a
+     * table by the phrase that the page phrase is built from ("problem" of "global problem") or
+     * to match the parts of a column phrase ("potential" and "loss" of "potential loss"), so the
+     * nested triples are loaded with one read and put back into their links
+     *
+     * @param user_message $msg to report a load problem to the caller
+     * @return void
+     */
+    function load_linked_sides(user_message $msg): void
+    {
+        $sides = $this->linked_triple_sides();
+        $ids = [];
+        foreach ($sides as $side) {
+            if (!in_array($side->obj()->id(), $ids)) {
+                $ids[] = $side->obj()->id();
+            }
+        }
+        if ($ids != []) {
+            $trp_lst = new triple_list($this->get_user());
+            $trp_lst->load_by_ids($ids, $msg);
+            foreach ($sides as $side) {
+                $trp = $trp_lst->get($side->obj()->id());
+                if ($trp != null) {
+                    $side->set_obj($trp);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array the from and to phrases of the links of this list that are a triple
+     */
+    private function linked_triple_sides(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $side) {
+                    if ($side != null and $side->is_triple()) {
+                        $result[] = $side;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**

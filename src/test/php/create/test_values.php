@@ -678,6 +678,121 @@ class test_values extends test_objects
     }
 
     /**
+     * the potential loss of global warming with the bounds of its probability range and its
+     * confidence and the potential gain of its solution without bounds, with the numbers of
+     * solution_prio.json, so that the range display of a value table can be tested: the bounds
+     * are tagged "low" and "high", the confidence "confidence" and the loss is an estimate, so
+     * it carries "assumed"
+     *
+     * @return value_list the centre, low and high potential loss, its confidence and the gain
+     */
+    function value_list_range(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase(),
+            $t_wrd->word_assumed()->phrase()];
+        $low_phr = array_merge($loss_phr, [$t_wrd->word_low()->phrase()]);
+        $high_phr = array_merge($loss_phr, [$t_wrd->word_high()->phrase()]);
+        // the confidence is a share, so it names no unit of the loss but the percent format
+        $conf_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
+            $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase(),
+            $t_wrd->word_assumed()->phrase()];
+        $gain_phr = [$problem, $potential, $t_wrd->word_gain()->phrase(),
+            $t_wrd->word_billion()->phrase(), $t_wrd->word_htp()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($loss_phr, 2.2));
+        $lst->add($this->value_for_phrases($low_phr, 0.88));
+        $lst->add($this->value_for_phrases($high_phr, 5.5));
+        $lst->add($this->value_for_phrases($conf_phr, 0.2));
+        $lst->add($this->value_for_phrases($gain_phr, 35.2));
+        return $lst;
+    }
+
+    /**
+     * one value per defined column of a table, so that a table with more defined columns than
+     * fit on the widest screen can be tested: every defined column is shown and the tiers hide
+     * them per screen size instead of a fixed number of columns
+     *
+     * @return value_list one value for each of the "problem", "solution", "cost", "gain" and
+     *         "loss" columns, all about global warming
+     */
+    function value_list_defined_columns(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $col_phr_lst = [
+            $t_wrd->word_problem()->phrase(),
+            $t_wrd->solution()->phrase(),
+            $t_wrd->word_cost()->phrase(),
+            $t_wrd->word_gain()->phrase(),
+            $t_wrd->word_loss()->phrase(),
+        ];
+        $lst = new value_list($this->env->usr1);
+        $number = 1;
+        foreach ($col_phr_lst as $col_phr) {
+            $lst->add($this->value_for_phrases([$problem, $col_phr], $number));
+            $number++;
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui one value per defined column for frontend unit testing
+     */
+    function value_list_defined_columns_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_defined_columns(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui the potential loss with its range for frontend unit testing
+     */
+    function value_list_range_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_range(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of global warming in two units, with the numbers of solution_prio.json:
+     * the absolute loss in trillion EUR and the loss as a share of the global happy time points,
+     * so that a table with one column per unit can be tested
+     *
+     * @return value_list the potential loss in trillion EUR and in percent htp
+     */
+    function value_list_two_units(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $eur_phr = [$problem, $potential, $loss, $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase(), $t_wrd->word_assumed()->phrase()];
+        $htp_phr = [$problem, $potential, $loss, $t_wrd->word_percent()->phrase(),
+            $t_wrd->word_htp()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($eur_phr, 2.2));
+        $lst->add($this->value_for_phrases($htp_phr, -0.37));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the potential loss in two units for frontend unit testing
+     */
+    function value_list_two_units_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_two_units(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * two values related to the word Zurich but assigned to phrases of a different impact
      * so that the sort by impact and the display on the default word page can be tested
      * @return value_list with values related to Zurich of a low and a high impact

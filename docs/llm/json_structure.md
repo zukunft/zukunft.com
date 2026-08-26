@@ -517,8 +517,8 @@ at the moment:
 | `is term jump for` | `term_jump` | the default term jump |
 | `is measure type for` | `measure_type` | the default measure type |
 | `is follower of` | `follow` | **time** ordering: sequence / successor (2025 is follower of 2024) |
-| `is before` | `before` | **position** ordering: this phrase is placed before the other (a column shown before another column); reverse of `is after` |
-| `is after` | `after` | **position** ordering: this phrase is placed after the other (a column shown after another column); reverse of `is before` |
+| `is next main column after` | `before` | **table column** ordering: this main column follows the other main column and all columns explaining it |
+| `is explaining column for` | `after` | **table column** ordering: this column explains the other one, so it is shown between its main column and the next main column |
 | `term type needed` | `term_needed` | the formula needs the linked term type |
 | `supports` | `supports` | argumentation: a finding backs a claim |
 | `explains` | `explains` | argumentation: gives the reason for another phrase |

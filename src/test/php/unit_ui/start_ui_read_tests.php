@@ -38,14 +38,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::MODEL_CONST . 'files.php';
 include_once html_paths::TYPES . 'type_lists.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\list_sort;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
-use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class start_ui_read_tests
@@ -54,8 +53,8 @@ class start_ui_read_tests
     {
         $html = new html_base();
         $msg = new user_message();
-        $t_trp = new test_triples($t);
         $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
         $msg = new user_message();
 
         // start the test section (ts)
@@ -71,17 +70,17 @@ class start_ui_read_tests
         $imp = new import();
         $dto = $imp->get_data_object($json_array, $t->usr1);
         */
+        // the start page shows the values of "global problem" as a table, so its cache needs the
+        // problem links, the column definitions and the values of the global issues
         $dto_ui = new data_object();
         $dto_ui->online = false;
-        $dto_ui->add_phrases($t_phr->phrase_list_start_view_ui(), $msg);
+        $dto_ui->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_ui();
         $dto_ui->typ_lst_cache = $ui->dto->typ_lst_cache;
 
-
-        $msk = new list_sort();
-        $phr = $t_trp->global_problem()->phrase();
-        $phr_ui = new phrase($phr->api_json());
+        $list = new ui_list();
         $test_page = $html->text_h2('start page display test');
-        $test_page .= $msk->list_sort($phr_ui, $msg, $dto_ui);
+        $test_page .= $list->start_list($dto_ui, $msg);
         $t->html_page_test($test_page, 'start page', 'start_page', $msg);
     }
 

@@ -979,7 +979,7 @@ class ui_list extends ui_base
                 // an empty list falls back to the impact ranking of the values themselves
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
                 $result = $val_lst->table_by_related_columns(
-                    $msg, $phr_lst, '', $col_order, $with_header, $with_border);
+                    $msg, $phr_lst, '', $col_order, $with_header, $with_border, $dto?->phr_lst);
             }
         }
         return $result;
@@ -1268,6 +1268,7 @@ class ui_list extends ui_base
 
     /**
      * @return string the html code of a sortable list
+     * @deprecated the fixed start page rows are replaced by start_list, see web/html/list_sort.php
      */
     function list_sort(
         phrase       $phr,
@@ -1280,16 +1281,143 @@ class ui_list extends ui_base
     }
 
     /**
-     * @return string the html code for the start view as a sortable list
+     * the table of the start view: the values of the "global problem" phrase with one column per
+     * phrase that the column tiers define, e.g. the problem, its loss, the solution and its gain
+     *
+     * the request cache is asked first, because it carries the phrase with its from, verb and to
+     * phrases, which the table needs to head the row column by the phrase the page phrase is
+     * built from ("problem" for "global problem")
+     *
+     * @param data_object $dto the data cache used to reduce the backend traffic
+     * @param user_message $msg to collect the load warnings for the user
+     * @return string the html code for the start view as a table
      */
     function start_list(
         data_object  $dto,
         user_message $msg
     ): string
     {
-        $phr = new phrase();
-        $phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
-        return $this->list_sort($phr, $msg, $dto);
+        $phr = $this->start_page_phrase($dto, $msg);
+        $this->add_start_page_cache($dto, $phr, $msg);
+        // the page already says what the table is about, so it is shown without the border
+        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false);
+    }
+
+    /**
+     * the page phrase of the start view, which is "global problem", with the phrases it is
+     * built from
+     *
+     * the row column is headed by the phrase that the page phrase is built from ("problem"), and
+     * a load by name does not carry that phrase; the triples that link a problem to the page
+     * phrase do, so on a cold cache the page phrase is taken from them, and it is kept in the
+     * cache, so that every later component of the page finds it by name
+     *
+     * @param data_object $dto the request cache, which gets the page phrase and its links
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return phrase the page phrase of the start view
+     */
+    private function start_page_phrase(data_object $dto, user_message $msg): phrase
+    {
+        $result = $dto->phr_lst->get_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        if ($result == null) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name(
+                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+                // every child is a triple that links to the page phrase, so the first one
+                // carries it; the sort makes the pick deterministic
+                $child_lst->sort_by_impact();
+                $first = $child_lst->lst()[0];
+                if ($first->is_triple()) {
+                    $result = $first->obj()->get_to();
+                }
+            }
+            if ($result != null) {
+                // the page phrase is no link, so it is added to the cache on its own
+                $page_lst = new phrase_list();
+                $page_lst->add_phrase($result);
+                $dto->add_phrases($page_lst, $msg);
+            }
+        }
+        if ($result == null) {
+            // no problem is linked to the page phrase, so the table has no row, but the page
+            // phrase itself is still needed to head the empty table
+            $result = new phrase();
+            $result->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * TODO Prio 1 avoid this exception
+     * add the phrases and the values that the table of the start view needs to the request cache
+     *
+     * each step is skipped if the cache already has that data, so a unit test that fills the
+     * cache upfront needs no api call at all
+     *
+     * @param data_object $dto the request cache to fill
+     * @param phrase $phr the page phrase of the start view, which is "global problem"
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return void
+     */
+    private function add_start_page_cache(data_object $dto, phrase $phr, user_message $msg): void
+    {
+        // "global problem" itself is in no value group, so the rows are the phrases that a
+        // triple links to it; without those triples the table finds no value at all
+        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name(
+                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+            }
+        }
+        // without the column definitions the table falls back to the impact ranking
+        if ($dto->phr_lst->column_names() == []) {
+            $col_lst = new phrase_list();
+            if ($col_lst->load_column_definitions($msg)) {
+                $dto->add_phrases($col_lst, $msg);
+            }
+        }
+        // the values belong to the problems and not to "global problem", so they are loaded for
+        // the children
+        if ($dto->val_lst->is_empty()) {
+            $val_lst = new value_list();
+            if ($val_lst->load_by_phr_lst($dto->phr_lst->child_phrases($phr), $msg)) {
+                $dto->val_lst = $val_lst;
+            }
+        }
+        // a defined column that no value carries names a phrase of the row instead of a number,
+        // e.g. the solution column shows the solution of the problem row; the table recognises
+        // that phrase by the triple that links it to the column, e.g. "reduce climate gas
+        // emissions is a solution", so the links of every phrase of the values are loaded once
+        $val_phr_lst = $dto->val_lst->phrase_list();
+        if (!$val_phr_lst->is_empty() and !$this->column_links_loaded($dto)) {
+            $lnk_lst = new phrase_list();
+            if ($lnk_lst->load_related_by_ids($val_phr_lst, foaf_direction::UP, $msg)) {
+                $dto->add_phrases($lnk_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * true if the request cache already links a phrase to a defined table column
+     *
+     * e.g. the triple "reduce climate gas emissions is a solution" links a solution to the
+     * solution column; one such link is enough, because they are loaded for all columns at once
+     *
+     * @param data_object $dto the request cache to check
+     * @return bool true if the links of the column phrases are already cached
+     */
+    private function column_links_loaded(data_object $dto): bool
+    {
+        $result = false;
+        foreach ($dto->phr_lst->column_names() as $name) {
+            $col_phr = $dto->phr_lst->column_phrase($name);
+            if ($col_phr != null and !$dto->phr_lst->child_phrases($col_phr)->is_empty()) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

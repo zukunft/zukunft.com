@@ -34,9 +34,11 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\cfg\application;
@@ -45,7 +47,9 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -65,31 +69,66 @@ if ($db_con->is_open()) {
     // get the parameters
     $phr_ids = $_GET[url_var::ID_LST] ?? '';
     $phr_id = $_GET[url_var::PHRASE] ?? '';
+    $phr_name = $_GET[url_var::NAME] ?? '';
     $direction_text = $_GET[url_var::DIRECTION] ?? '';
-    $levels = $_GET[url_var::LEVELS] ?? '';
+    // one level loads the direct links only, more levels also follow the links of the phrases
+    // just found; load_by_phr_levels bounds the requested number
+    $levels = (int)($_GET[url_var::LEVELS] ?? 1);
     $pattern = $_GET[url_var::PATTERN] ?? '';
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         $lst = new phrase_list($usr);
-        if ($phr_ids != '') {
-            $lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)), $msg);
-        } elseif ($phr_id != '') {
-            $phr = new phrase($usr);
-            $phr->set_id($phr_id);
+        // a related list is used structurally by the frontend, which reads the from, verb and to
+        // of each linking triple (e.g. to find the table column definitions), so it needs the
+        // phrase names; a list selected by id or by pattern only names its own entries
+        $api_types = [];
+        // a missing or unknown direction must not leave $dir unset, because the loads below
+        // would then fail with a php error instead of returning the related phrases
+        $dir = foaf_direction::BOTH;
+        if ($direction_text != '') {
             try {
                 $dir = foaf_direction::from($direction_text);
             } catch (ValueError $error) {
                 $msg->add_message_text($error->getMessage());
             }
-            $lst->load_by_phr($phr, $msg, null, $dir);
+        }
+        if ($phr_ids != '' and $direction_text != '') {
+            // an id list with a direction asks for the phrases linked to any of the given
+            // phrases, so that the frontend needs one call and not one call per phrase
+            $phr_lst = new phrase_list($usr);
+            $phr_lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)), $msg);
+            $trp_lst = new triple_list($usr);
+            $trp_lst->load_by_phr_lst($phr_lst, $msg, null, $dir);
+            $lst->add_trp_lst($trp_lst);
+            $api_types = [api_types::INCL_PHRASES];
+        } elseif ($phr_ids != '') {
+            $lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)), $msg);
+        } elseif ($phr_id != '' or $phr_name != '') {
+            $phr = new phrase($usr);
+            if ($phr_id != '') {
+                $phr->set_id($phr_id);
+            } else {
+                // a system phrase is requested by its name, because the frontend knows the name
+                // from a shared const but not the database id e.g. "mayor column (system)"
+                $phr->load_by_name($phr_name, $msg);
+            }
+            if ($phr->id() != 0) {
+                $lst->load_by_phr_levels($phr, $msg, $dir, $levels);
+                $api_types = [api_types::INCL_PHRASES];
+            }
         } else {
             $lst->load_like($pattern, $msg);
         }
+        // a related list is used structurally, so a triple nested in a link needs its own from
+        // and to, which a list load does not fill (see phrase_list::load_linked_sides)
+        if ($api_types != []) {
+            $lst->load_linked_sides($msg);
+        }
         // drop the phrases the requester may not read (idor); see phrase::is_readable_by
         $lst->filter_readable_by($usr);
-        $result = $lst->api_json([], $msg);
+        $result = $lst->api_json($api_types, $msg);
     }
 
     $ctrl = new controller();

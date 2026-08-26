@@ -2756,6 +2756,8 @@
             t.php
     \-- get_by_ids - section for function get_by_ids is expected to be set and get in /phrase/phrase_list.php
     \-- load_by_phr - section for function load_by_phr is expected to be load in /phrase/phrase_list.php
+    \-- load_by_phr_levels - section for function load_by_phr_levels is expected to be load in /phrase/phrase_list.php
+    \-- load_linked_sides - section for function load_linked_sides is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_vrb_and_type - section for function load_by_phr_vrb_and_type is expected to be load in /phrase/phras
             e_list.php
     \-- load_sql_linked_phrases - section for function load_sql_linked_phrases is expected to be load sql in /phrase/phr
@@ -6982,8 +6984,6 @@
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
-\-- list_sort
-    \-- list_sort - section for function list_sort missing in /html/list_sort.php
 \-- rest_call
     \-- class_to_api_name - section for function class_to_api_name missing in /html/rest_call.php
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
@@ -7094,8 +7094,14 @@
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
             php
+    \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
+            ist.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
             t.php
+    \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
+            php
+    \-- column_phrase - section for function column_phrase not yet defined that it should be related in /phrase/phrase_l
+            ist.php
     \-- category_subtitle - section for function category_subtitle not yet defined that it should be related in /phrase/
             phrase_list.php
     \-- assigned_subtitle - section for function assigned_subtitle not yet defined that it should be related in /phrase/
@@ -7687,6 +7693,7 @@
             order of section base has difference at name_link should be before name_tip
 \-- value_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /value/value_list.php
+    \-- phrase_list - section for function phrase_list is expected to be cast in /value/value_list.php
     \-- get_by_names - section for function get_by_names is expected to be set and get in /value/value_list.php
     \-- add - section for function add not yet defined that it should be modify in /value/value_list.php
     \-- filter - section for function filter not yet defined that it should be modify in /value/value_list.php
@@ -8492,7 +8499,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 2
+    \-- 5
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -8717,9 +8724,9 @@
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort
         \-- ui_list - @return string the html code of a sortable list
-        \-- list_sort - TODO review
+        \-- list_sort - @param phrase $phr the start phrase to select the rows
     \-- start_list
-        \-- ui_list - @return string the html code for the start view as a sortable list
+        \-- ui_list - the table of the start view: the values of the "global problem" phrase with one column per
     \-- result_changes
         \-- ui_list - @return string the html code of the results that changes if the pending user change is confirmed
     \-- view_after
@@ -9154,8 +9161,14 @@
         \-- phrase_list - get the phrase of the most relevant result
     \-- child_names
         \-- phrase_list - get the names of the phrases that this list links to the given phrase by a triple
+    \-- child_phrases
+        \-- phrase_list - the phrases that this list links to the given phrase by a triple
     \-- column_names
-        \-- phrase_list - the names of the phrases that this list defines as table columns, ordered by the column
+        \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
+    \-- column_tier
+        \-- phrase_list - the tier of the table column of the given phrase name
+    \-- column_phrase
+        \-- phrase_list - the phrase that this list defines as the table column of the given name
     \-- category_subtitle
         \-- phrase_list - build the category subtitle html for the page-title
     \-- assigned_subtitle

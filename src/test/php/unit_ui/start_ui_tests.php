@@ -38,13 +38,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::MODEL_CONST . 'files.php';
 include_once html_paths::TYPES . 'type_lists.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\list_sort;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
-use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class start_ui_tests
@@ -53,8 +54,8 @@ class start_ui_tests
     {
         $html = new html_base();
         $msg = new user_message();
-        $t_trp = new test_triples($t);
         $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
         $msg = new user_message();
 
         // start the test section (ts)
@@ -70,16 +71,36 @@ class start_ui_tests
         $imp = new import();
         $dto = $imp->get_data_object($json_array, $t->usr1);
         */
+        // the start page shows the values of "global problem" as a table, so its cache needs the
+        // problem links, the column definitions and the values of the global issues
         $dto_ui = new data_object();
-        $dto_ui->set_offline();
-        $dto_ui->add_phrases($t_phr->phrase_list_start_view_ui(), $msg);
+        $dto_ui->online = false;
+        $dto_ui->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_ui();
 
-        $msk = new list_sort();
-        $phr = $t_trp->global_problem()->phrase();
-        $phr_ui = new phrase($phr->api_json());
+        $list = new ui_list();
         $test_page = $html->text_h2('start page display test');
-        $test_page .= $msk->list_sort($phr_ui, $msg, $dto_ui);
+        $start_html = $list->start_list($dto_ui, $msg);
+        $test_page .= $start_html;
         $t->html_page_test($test_page, 'start page', 'start_page', $msg);
+
+        // the start page shows the values of the global problems as a table built from the data,
+        // instead of the spreadsheet with the hard coded column headers and rows
+        $test_name = 'the start page shows the global problems as a table';
+        $t->assert_text_contains($test_name, $start_html, '<' . html_base::TABLE);
+        $test_name = '... headed by the problem the row names';
+        $t->assert_text_contains($test_name, $start_html, '>' . word_names::PROBLEM . '</a>');
+        $test_name = '... and the solution of each problem';
+        $t->assert_text_contains($test_name, $start_html,
+            '>' . triple_names::REDUCE_EMISSIONS . '</a>');
+
+        // negative: without the values of the global issues the start page shows no table at all
+        // instead of an empty header row
+        $test_name = 'without values the start page shows no table';
+        $dto_empty = new data_object();
+        $dto_empty->online = false;
+        $dto_empty->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        $t->assert($test_name, $list->start_list($dto_empty, $msg), '');
     }
 
 }

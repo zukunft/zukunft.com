@@ -37,10 +37,13 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -81,7 +84,7 @@ class phrase_ui_tests
         // is used by one view for both phrase classes
         $dto = new data_object();
         $dto->val_lst = $t_val->value_list_zh_impact_ui();
-        $trp_zh_city = new triple_ui($t_trp->zh_city()->api_json());
+        $trp_zh_city = $t_trp->zh_city_ui();
         $test_page .= $html->text_h2('values of ' . $trp_zh_city->name() . ' as a table');
         // the page shows the table with the header that names the selected phrase, but without
         // the border, because the page already groups the tables by a title
@@ -95,7 +98,7 @@ class phrase_ui_tests
         $dto_prio = new data_object();
         $dto_prio->val_lst = $t_val->value_list_solution_prio_ui();
         $dto_prio->phr_lst = $t_phr->list_global_problems_ui();
-        $trp_problem = new triple_ui($t_trp->global_problem()->api_json());
+        $trp_problem = $t_trp->global_problem_ui();
         $test_page .= $html->text_h2($trp_problem->name() . ' as a table');
         $test_page .= 'as table: ' . $list->table_with_related_columns(
                 $trp_problem, $msg, $dto_prio, true, false) . '<br>';
@@ -105,6 +108,10 @@ class phrase_ui_tests
         $tbl_html = $list->table_with_related_columns($trp_zh_city, $msg, $dto);
         $test_name = 'the values of a triple are shown as a table';
         $t->assert_text_contains($test_name, $tbl_html, '<table');
+        // negative: this table has fewer rows than the configured limit, so nothing is cut off
+        // and a "... and n more" row would tell the user about rows that do not exist
+        $test_name = 'a table below the row limit has no more row';
+        $t->assert_text_not_contains($test_name, $tbl_html, msg_id::MORE->text());
         // the page phrase is the context of every row, so the row is named by the remaining
         // phrase of the value, e.g. "Zurich" for the value of "Zurich" and "Zurich (city)"
         $test_name = 'the other phrase of the value is shown as the row name';
@@ -159,6 +166,38 @@ class phrase_ui_tests
         $t->assert_text_contains($test_name, $tbl_html, word_names::POPULISM);
         $test_name = '... with the cost of the global warming problem';
         $t->assert_text_contains($test_name, $tbl_html, '31.5');
+        // a page must not fill the screen, because the user messages are shown below the view,
+        // so the table shows at most the configured number of rows; the same config key and the
+        // same fallback as value_list::configured_row_limit, because the unit tests use an
+        // empty frontend config, so that here the fallback is the effective limit
+        global $ui_sys;
+        $row_limit = Config::LIMIT_SHORT_LIST;
+        if ($ui_sys?->cfg !== null) {
+            $row_limit = (int)$ui_sys->cfg->get_by(
+                [words::ENTRIES, words::INITIAL, words::SELECT], $msg, Config::LIMIT_SHORT_LIST);
+        }
+        // one row per problem plus the header row; only the problems linked to "global problem"
+        // are rows of this table, so it stays within the limit and is not cut
+        $test_name = 'the table shows at most the configured number of rows';
+        $t->assert_true($test_name,
+            substr_count($tbl_html, '<' . html_base::TR . '>') <= $row_limit + 1);
+
+        // with more rows than the limit the table ends with a "... and n more" row, so that the
+        // rows which do not fit are not lost but reachable
+        $cut_limit = 2;
+        $rel_lst = $t_phr->list_global_problems_ui();
+        $tbl_cut = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            false, true, $rel_lst, $cut_limit);
+        // the shown rows plus the header row and the "... and n more" row
+        $test_name = 'a table with more rows than the limit is cut to the limit';
+        $t->assert($test_name,
+            substr_count($tbl_cut, '<' . html_base::TR . '>'), $cut_limit + 2);
+        $test_name = '... and the last row tells that more rows exist';
+        $t->assert_text_contains($test_name, $tbl_cut, msg_id::MORE->text());
+        $test_name = '... as a link to the view with all values of the page phrase';
+        $t->assert_text_contains($test_name, $tbl_cut,
+            url_var::MASK . '=' . views::PHRASE_VALUES_ID);
         // more than one row shows more than one item of the phrase, so the header uses the
         // plural; the "global problem" triple has none, so the English plural is guessed
         $test_name = 'a table with several rows names the phrase in the plural';
@@ -174,6 +213,82 @@ class phrase_ui_tests
             $lib->str_left_of($tbl_plural, '<table'), '<' . html_base::H4 . '>');
         $test_name = '... and the gain of the populism solution';
         $t->assert_text_contains($test_name, $tbl_html, '34.1');
+        // a scaling or measure phrase describes the number, so the row is the problem and not
+        // the problem per unit; the unit belongs to the column like in the target layout of the
+        // view-validation of solution_prio.json, which heads a column "potential loss
+        // (trillion EUR / year)"
+        $test_name = 'the scaling of a value does not name a row';
+        $t->assert_text_not_contains($test_name,
+            $lib->str_right_of($tbl_html, '</tr>'), '>' . word_names::BILLION . '</a>');
+        $test_name = 'the measure of a value does not name a row';
+        $t->assert_text_not_contains($test_name,
+            $lib->str_right_of($tbl_html, '</tr>'), '>' . word_names::EUR . '</a>');
+        // every value of this table is a potential loss or a potential gain, so "potential"
+        // describes the whole table and cannot tell one row from another; it is named once in
+        // the header and the row is left with the problem alone, like the solution column shows
+        // only the solution; a list of one value keeps its phrases (see the zh row name above)
+        $test_name = 'the header names a phrase of every value behind the phrase of the page';
+        $t->assert($test_name, $lib->html_to_text($lib->str_left_of($tbl_plural, '<table')),
+            triple_names::GLOBAL_PROBLEM . languages::DEFAULT_PLURAL_SUFFIX
+            . ', ' . word_names::POTENTIAL);
+        $test_name = '... and no row of the table repeats it';
+        $t->assert_text_not_contains($test_name, $lib->str_right_of($tbl_plural, '<table'),
+            '>' . word_names::POTENTIAL . '</a>');
+        // without the header there is no place to name it, so it is left out instead of being
+        // repeated in every row
+        $test_name = 'without a header a phrase of every value is not shown';
+        $t->assert_text_not_contains($test_name, $tbl_html, '>' . word_names::POTENTIAL . '</a>');
+        // the values name the measure with the words "potential" and "loss", so "column loss"
+        // of solution_prio.json is the definition that heads the potential loss column
+        $test_name = 'the defined loss column heads the potential loss';
+        $tbl_header_row = $lib->str_left_of($tbl_html, '</tr>');
+        $t->assert_text_contains($test_name, $tbl_header_row, '>' . word_names::LOSS . '</a>');
+        // without the definition the impact ranking would head that column by "potential", which
+        // every value of the table carries and which therefore tells the reader nothing
+        $test_name = '... instead of a phrase that every value carries';
+        $t->assert_text_not_contains($test_name, $tbl_header_row, '>' . word_names::POTENTIAL . '</a>');
+        // no value carries the phrase "solution", but the solutions are linked to it, so that
+        // column names the solution of the problem row instead of a number
+        $test_name = 'the solution column is headed by the solution phrase';
+        $t->assert_text_contains($test_name, $tbl_header_row, '>' . word_names::SOLUTION . '</a>');
+        $test_name = '... and shows the solution of the problem';
+        $t->assert_text_contains($test_name, $tbl_html, '>' . triple_names::REDUCE_EMISSIONS . '</a>');
+        // the solution is shown in its column, so it does not name the row any more; the text up
+        // to the first closing cell is the header row plus the label of the first row
+        $test_name = '... which is therefore no longer part of the row name';
+        $t->assert_text_not_contains($test_name,
+            $lib->str_left_of($tbl_html, '</' . html_base::TD . '>'), triple_names::REDUCE_EMISSIONS);
+        // a phrase column is defined by the same column tiers as a value column, so it stands
+        // where the definition puts it: the solution column between the loss and the gain column
+        // instead of behind every column that holds a value; the cost column is defined too, but
+        // no value carries it and no phrase is linked to it, so the table shows four columns
+        // each headed by its own unit behind a translatable "in", except the solution column,
+        // which holds no number and therefore no unit
+        $test_name = 'the header shows the columns in the defined order with their unit';
+        $unit_sep = ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ';
+        $t->assert($test_name, $lib->html_to_text($tbl_header_row),
+            word_names::PROBLEM
+            . ' ' . word_names::LOSS . $unit_sep . word_names::TRILLION . ' ' . word_names::EUR
+            . ' ' . word_names::SOLUTION
+            . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP);
+
+        // negative: a phrase column exists only where a definition names it, so without the
+        // definitions the same values show no solution column and the impact ranking alone
+        // decides which phrase heads which column
+        $test_name = 'without a column definition no column names a phrase of the row';
+        $tbl_ranked = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg, $t_phr->list_global_problem_context_ui(), '', [], false, true,
+            $t_phr->list_global_problems_ui());
+        $ranked_header = $lib->str_left_of($tbl_ranked, '</tr>');
+        $t->assert_text_not_contains($test_name, $ranked_header, '>' . word_names::SOLUTION . '</a>');
+        // the page phrase heads the row column only if its own phrase is a defined column, so
+        // without the definitions that header stays empty although the page phrase is unchanged
+        $test_name = '... and the row column has no header';
+        $t->assert_text_contains($test_name, $ranked_header,
+            '<' . html_base::TH . '></' . html_base::TH . '>');
+        $test_name = '... but no value is dropped from the table';
+        $t->assert_text_contains($test_name, $tbl_ranked, '31.5');
+
         $test_name = 'without the problem links no value matches the page phrase';
         $dto_no_links = new data_object();
         $dto_no_links->val_lst = $t_val->value_list_solution_prio_ui();

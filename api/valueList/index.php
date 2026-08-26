@@ -36,14 +36,21 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED . 'api.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -62,22 +69,35 @@ if ($db_con->is_open()) {
 
     // get the parameters
     // TODO use a json with the ids
-    // TODO add load by phrase list, formula and source
-    $ids = $_GET[url_var::ID_LST] ?? '';
-    $ids = explode(",", $ids);
+    // TODO add load by formula and source
+    $id_lst = $_GET[url_var::ID_LST] ?? '';
+    $phr_ids = $_GET[api::JSON_LIST_PHRASE_IDS] ?? '';
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        if ($ids != '') {
+        if ($phr_ids != '') {
+            $phr_lst = new phrase_list($usr);
+            $phr_lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)), $msg);
             $lst = new value_list($usr);
-            $lst->load_by_ids($ids, $msg);
+            // any value of any of the given phrases, e.g. the values of all global problems,
+            // because a value normally names only one of the requested phrases
+            $lst->load_by_phr_lst($phr_lst, $msg, true);
+            // drop the values the requesting user may not read (idor); see value::is_readable_by
+            $lst->filter_readable_by($usr);
+            // the frontend names the rows and the columns of a value table by the phrases of each
+            // value, so the group phrases are loaded and emitted with the values
+            $lst->load_phrases($msg);
+            $result = $lst->api_json([api_types::INCL_PHRASES], $msg);
+        } elseif ($id_lst != '') {
+            $lst = new value_list($usr);
+            $lst->load_by_ids(explode(",", $id_lst), $msg);
             // drop the values the requesting user may not read, so listing ids cannot disclose
             // another user's private/personal value (idor); see value::is_readable_by
             $lst->filter_readable_by($usr);
             $result = $lst->api_json([], $msg);
         } else {
-            $msg->add_message_text('formula id is missing');
+            $msg->add_message_text('value or phrase id list is missing');
         }
     }
 

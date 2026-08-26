@@ -67,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
@@ -77,7 +78,10 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -214,6 +218,18 @@ class horizontal_ui_tests
         // this catalog page stacks one form part per component type; count the parts up so
         // each part's field names/ids stay unique (production passes no counter -> name="k")
         $test_form_unique_id = 1;
+        // the spreadsheet component shows the global problems as a table, which the frontend
+        // fills from the api; the catalog has no api, so that one type gets its cache from the
+        // factories, and only that type, so the parts of the other types stay unchanged
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $dto_start = new data_object();
+        $dto_start->online = false;
+        $dto_start->typ_lst_cache = $ui->dto->typ_lst_cache;
+        $dto_start->msk_lst = $ui->dto->msk_lst;
+        $dto_start->cfg = $ui->dto->cfg;
+        $dto_start->add_phrases($t_phr->list_global_problems_ui(), $msg_ui);
+        $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
         foreach ($ui->dto->typ_lst_cache->cmp_typ->lst() as $typ) {
             $test_page .= '<br><br>' . $html->dsp_text_h2($typ->name . ' (' . $typ->code_id . ')') . '<br><br><br>';
             $obj = $t_map->component_type_to_object($typ);
@@ -228,7 +244,11 @@ class horizontal_ui_tests
                 $form_name = 'component_type_test_' . $test_form_unique_id;
                 // render in test mode so that no component triggers a backend call
                 // TODO Prio 2 review and move the calls to the backend 'outside'
-                $part = $cmp->dsp_entries($ui_obj, $msg_ui, $form_name, views::WORD_EDIT_ID, $ui->dto,
+                $cmp_dto = $ui->dto;
+                if ($typ->code_id == component_types::CALC_SHEET) {
+                    $cmp_dto = $dto_start;
+                }
+                $part = $cmp->dsp_entries($ui_obj, $msg_ui, $form_name, views::WORD_EDIT_ID, $cmp_dto,
                     null, '', '', true, [], $test_form_unique_id);
                 // wrap a field part that references its form by id so the reference resolves
                 if (str_contains($part, ' form="') and !str_contains($part, '<form')) {

@@ -1673,6 +1673,9 @@ enum messages: string
     case CHANGE_LOG_TBL_WHAT = 'change_log_tbl_what';
     // the header of the type column, which only a change log that lists more than one object has
     case CHANGE_LOG_TBL_TYPE = 'change_log_tbl_type';
+    // separates the unit from the phrase of a value table column header, so that the header
+    // reads like a sentence e.g. "cost in trillion EUR"
+    case VALUE_TBL_UNIT = 'value_tbl_unit';
 
     // import
     case IMPORT_JSON = 'import';
