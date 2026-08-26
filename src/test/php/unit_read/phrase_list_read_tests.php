@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 
@@ -44,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -129,6 +131,32 @@ class phrase_list_read_tests
         // TODO ABB is not expected to be related even if it is related via zurich and company
         //      but Switzerland is expected to be related
         //$t->assert_contains($test_name, $phr_lst->names(), array(words::TN_ZH, words::TN_CH));
+
+
+        $t->subheader($ts . 'linked sides');
+
+        // a list load fills the from and to of each link with the id and the name only, so a
+        // triple nested as the from of a link carries no from and to of its own; the frontend
+        // needs them e.g. to match the parts of the "potential loss" column, so load_linked_sides
+        // adds them with one read; the column definitions of the main tier are such links,
+        // because the "column potential loss" definition is built from the triple "potential loss"
+        $lst = new phrase_list($t->usr1);
+        $tier = new phrase($t->usr1);
+        $tier->set_obj_from_id(triple_names::SYSTEM_COLUMN_MAIN_ID * -1);
+        $lst->load_by_phr($tier, $msg, null, foaf_direction::DOWN);
+        $col_phr = $lst->get_by_name(triple_names::COLUMN_POTENTIAL_LOSS, $msg);
+        $test_name = 'the column definitions of a tier are loaded';
+        $t->assert_text_contains($test_name, $col_phr?->name() ?? '',
+            triple_names::COLUMN_POTENTIAL_LOSS);
+        // a triple always creates its from and to phrase (see triple create_objects), so a nested
+        // triple that has not been loaded names them with an empty string instead of a null
+        $test_name = 'a triple nested in a link has no from before the sides are loaded';
+        $t->assert($test_name, $col_phr?->obj()?->get_from()?->obj()?->get_from()?->name(), '');
+        $test_name = '... and the from of the nested triple after load_linked_sides';
+        $lst->load_linked_sides($msg);
+        $col_phr = $lst->get_by_name(triple_names::COLUMN_POTENTIAL_LOSS, $msg);
+        $t->assert($test_name,
+            $col_phr?->obj()?->get_from()?->obj()?->get_from()?->name(), word_names::LOSS);
 
     }
 

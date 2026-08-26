@@ -441,6 +441,29 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
 
+
+        $t->subheader($ts . 'value source check');
+
+        // the source of a value is the name of a source declared in the "sources" section, so a
+        // source given as a json object is reported instead of ending the import with a fatal
+        // (see value_base::import_mapper)
+        $test_name = 'JSON import reports a value source that is no name';
+        $msg = new user_message($t->usr_dev);
+        $json_str = file_get_contents(test_files::IMPORT_VALUE_SOURCE_NOT_A_NAME . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $target = 'the source of a value must be the name of a source';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
+        $test_name = '... and names the json of the source that is no name';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'The World Factbook');
+
+        // the same value is a valid import once its source is the name of a declared source
+        $test_name = 'JSON import accepts a value that names its source';
+        $msg = new user_message($t->usr_dev);
+        $json_array[json_fields::VALUES][1][json_fields::SOURCE_NAME] = 'The World Factbook';
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
         $t->subheader($ts . 'convert');
 
         $test_name = 'wikipedia table to zukunft.com JSON string';
