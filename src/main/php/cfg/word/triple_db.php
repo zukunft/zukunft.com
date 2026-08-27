@@ -83,6 +83,7 @@ class triple_db
     const sql_field_type FLD_NAME_AUTO_SQL_TYP = sql_field_type::NAME;
     const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const sql_field_type FLD_WEIGHT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
+    const sql_field_type FLD_COND_ID_SQL_TYP = sql_field_type::INT;
     const string FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
     const string FLD_VIEW_COM = 'the default mask for this triple';
     const string FLD_USAGE_COM = 'number of values, formulas and results linked to this triple, which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing';

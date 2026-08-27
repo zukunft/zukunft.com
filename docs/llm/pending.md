@@ -1,21 +1,13 @@
 
 # pending - list of planned llm prompts with prio 1
 
-### triple
-
-show the missing db fields in the triple default view: the weight, the condition formula
-
-### verb
-
-extend the verb default view, which today only shows the verb name and the related triples, with the missing db fields: the description, the plural (name_plural), the reverse (name_reverse), the plural reverse (name_plural_reverse), the name used in formulas (formula_name) and the usage
-
 ### values
 
-show the missing db fields in the value default view: the source of the value, the timestamp of the last update and the share and protection status
+show the missing value db fields in the value default view: the source of the value, the timestamp of the last update and the share and protection status
 
 ### source
 
-add the missing db field to the source add and edit views: the code_id field, shown only for users whose profile passes can_set_code_id (for sources the code_id is a user changeable field)
+add the missing source db field to the source add and edit views: the code_id field, shown only for users whose profile passes can_set_code_id (for sources the code_id is a user changeable field)
 
 extend the source default view, which today only shows the source name and the related values, with the missing db fields: the source type, the url as a link, the description and the usage
 

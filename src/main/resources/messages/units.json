@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "data_version": "0.0.1",
+  "data_version": "0.0.2",
   "time": "2020-07-23 18:07:26",
   "user": "timon",
   "selection": [
@@ -1769,6 +1769,7 @@
           "type": "wikidata"
         }
       ],
+      "weight": 0.5,
       "impact": 9999999999
     },
     {

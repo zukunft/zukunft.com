@@ -252,6 +252,7 @@ messages:
   form_link_table_view: "Table view"
   form_field_name_in_formulas: "Name for formula expressions"
   form_field_weight: "Weight"
+  form_field_condition_formula: "Condition"
   form_field_formula_expression: "Expression"
   form_field_formula_latex: "LaTeX"
   form_field_formula_expression_validated: "Validated expression"

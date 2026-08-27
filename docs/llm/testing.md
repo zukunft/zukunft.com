@@ -763,6 +763,51 @@ without the header the icon glyphs stay invisible while everything else looks fi
 The one-time apache setup (AllowOverride, mod_headers): `docs/deployment.md`,
 section *local web server for the api tests and the html snapshots*.
 
+## A fixture mismatch is fixed at its producers, never at the reported side
+
+One expected-json fixture can be produced by **several tests that must agree**:
+`api/term_list/term_list.json` is written and checked by the unit test on the
+in-memory factory list (`assert_api($trm_lst)`), by the REST GET test that reads
+the imported database row (`assert_api_get_list(term_list::class, …)`), and its
+content must also survive the ui round trip (`assert_api_to_ui`). Fixing only the
+side the current error report shows moves the disagreement to the next consumer —
+and with the auto-update mechanism each failing run rewrites the fixture to its
+own truth, so successive runs flip the same field back and forth forever.
+
+**The signature of such a loop**: the *same* test fails in two runs with the diff
+direction inverted — `weight//+0.5//` in one report, `weight//-0.5//` in the next.
+That is never a half-applied fix; it is two producers of the same fixture that
+disagree. Stop patching and find the other producer.
+
+Before fixing any fixture mismatch, list **all** of its producers and make them
+agree at the source (the fixture then follows from any of them):
+
+1. **The in-memory factory object** (`src/test/php/create/test_*.php`) used by the
+   unit test. Grep for the fixture *filename* misses this consumer, because
+   `assert_api($obj)` derives the filename from the class name — search for
+   `assert_api` calls on the class instead.
+2. **The database row**, filled by the import files
+   (`src/main/resources/messages/*`). Mind *which* file the standard setup
+   actually loads: the same object can be defined in a `SYSTEM_DATA_FILES` file
+   (imported by every db reset) *and* in a `BASE_DATA_FILES` file (imported only
+   by `test_full_load.php`) — a sample value added to the wrong twin never
+   reaches the test database. And the api-get tests run **before**
+   `run_db_recreate()`, so they read the *previous* run's database: a data change
+   shows up one run late, and its first failure can be the lag, not a bug.
+3. **The ui round trip**: a field emitted by the backend must be mapped by the
+   frontend `api_mapper` *and* re-emitted by the frontend `api_array`, or
+   `assert_api_to_ui` drops it. A hand-built emit branch (like the term ui
+   `api_array`) does not inherit a new field from the object it wraps.
+4. **The fixture file** itself — updated last, once the producers agree, or left
+   to the regeneration mechanism.
+
+The general prevention: a new object field is only *done* when it is wired
+through the whole chain — db `row_mapper`, backend api emit and `api_mapper`,
+frontend `api_mapper` and `api_array`, im-/export and the save diff
+(`db_fields_changed`, `needs_db_update`, `fill`) — plus the matching sample in
+the import data the tests load. Every gap in that chain surfaces later as
+exactly this kind of fixture disagreement, one consumer at a time.
+
 ## Never edit an existing test resource — only add
 
 Everything under `src/test/resources/` (HTML/SQL snapshots, dummy-cache JSON,

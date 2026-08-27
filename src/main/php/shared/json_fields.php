@@ -204,6 +204,10 @@ class json_fields
     const string TO_PHRASE = 'to_phrase';
     const string VERB = 'verb_id';
     const string WEIGHT = 'weight';
+    // the id of a formula with a boolean result; the triple is only used if the result is true
+    const string CONDITION_ID = 'condition_id';
+    // the condition formula object, added for a page request so that the frontend can link it
+    const string CONDITION = 'condition';
 
     // the parent object with detail fields used e.g. for the parent view of view relations
     const string PARENT = 'parent';

@@ -6,6 +6,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -22,6 +23,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
@@ -207,6 +209,15 @@ class triple_tests
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();
         $t->assert_api_to_ui($trp, new triple_ui());
+
+        // the weight is a float, so the edit field must keep the fraction; without float in
+        // the form_field value union the coercion tries int before string and truncates
+        // 0.5 to 0 (see html_base::form_field)
+        $form = new system_form();
+        $test_name = 'the edit form shows the fractional weight of a triple unchanged';
+        $t->assert_text_contains($test_name, $form->form_field_weight($t_trp->triple_impact_ui()), 'value="0.5"');
+        $test_name = 'the edit form of a triple without a weight starts with an empty weight field';
+        $t->assert_false($test_name, str_contains($form->form_field_weight($t_trp->swiss_franc_ui()), 'value='));
 
         $t->subheader($ts . 'url mapping of phrases posted by name');
         // the datalist edit fields submit the shown phrase name instead of the id, so the url
