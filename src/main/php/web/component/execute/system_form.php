@@ -59,6 +59,7 @@ include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'language.php';
@@ -102,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\language;
@@ -1193,6 +1195,42 @@ class system_form extends component
     {
         return $this->form_field_tracked(
             url_var::DESCRIPTION, msg_id::FORM_FIELD_DESCRIPTION, $dbo->get_description(), view_styles::COL_SM_12, $dbo);
+    }
+
+    /**
+     * edit field for the code id that links a database row to program code, e.g. of a source;
+     * the code id is only shown to an admin or a developer (see user::can_see_code_id), and
+     * only a user whose profile may also change it gets the input field, an admin sees the
+     * code id as read only text
+     *
+     * @param sandbox_code_id|db_object $dbo the object with the code id used until now
+     * @return string the html code of the code id field, '' if the user may not see it
+     */
+    function form_field_code_id(sandbox_code_id|db_object $dbo): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        // guarded by class, because only a code id object has a code id and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof sandbox_code_id) {
+            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+                if ($ui_sys->usr->can_set_code_id()) {
+                    $result = $this->form_field_tracked(
+                        url_var::CODE_ID,
+                        msg_id::SYSTEM_DB_FIELD_CODE_ID,
+                        $dbo->code_id,
+                        view_styles::COL_SM_4,
+                        $dbo);
+                } else {
+                    // an admin may see but not change the code id
+                    $result = $this->show_field_labeled($dbo->code_id ?? '', msg_id::SYSTEM_DB_FIELD_CODE_ID);
+                }
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a code id');
+        }
+        return $result;
     }
 
     /**

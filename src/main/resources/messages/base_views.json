@@ -778,14 +778,18 @@
         },
         {
           "position": "5",
-          "name": "system sub title values"
+          "name": "system sub title usage number"
         },
         {
           "position": "6",
-          "name": "source values"
+          "name": "system sub title values"
         },
         {
           "position": "7",
+          "name": "source values"
+        },
+        {
+          "position": "8",
           "name": "source tab box"
         }
       ]

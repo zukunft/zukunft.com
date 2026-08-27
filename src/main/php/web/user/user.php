@@ -593,6 +593,35 @@ class user extends db_object
     }
 
     /**
+     * @returns bool true if the user may change the code id of an object e.g. of a source;
+     *               only the system, test and developer users are permitted, because a code id
+     *               links a database row to program code (mirrors backend user::can_set_code_id)
+     */
+    function can_set_code_id(): bool
+    {
+        $result = false;
+        if ($this->is_system() or $this->is_system_test() or $this->is_developer()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @returns bool true if the code id of an object should be shown to the user; a code id
+     *               links a database row to program code, so it is only relevant for an admin
+     *               or a developer and stays hidden for every other profile, even one that
+     *               could technically set it (docs/llm/state-and-messages.md)
+     */
+    function can_see_code_id(): bool
+    {
+        $result = false;
+        if ($this->is_admin() or $this->is_developer()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * @return string|null the human-readable profile name e.g. "admin" or null if profile is not set
      */
     function profile_name(): ?string

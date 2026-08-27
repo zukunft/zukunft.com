@@ -140,6 +140,16 @@ class source extends sandbox_code_id
             } else {
                 $this->doi = null;
             }
+            // only set when posted, because the code id field is only shown to a user whose
+            // profile may change it, so a form without the field must keep the loaded code id;
+            // an empty submitted field clears it (the backend refuses a not permitted change)
+            if (array_key_exists(url_var::CODE_ID, $url_array)) {
+                if ($url_array[url_var::CODE_ID] != '') {
+                    $this->code_id = $url_array[url_var::CODE_ID];
+                } else {
+                    $this->code_id = null;
+                }
+            }
         }
         return $msg;
     }
@@ -198,6 +208,7 @@ class source extends sandbox_code_id
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             fields::FLD_URL => url_var::URL,
             fields::FLD_DOI => url_var::DOI,
+            fields::FLD_CODE_ID => url_var::CODE_ID,
         ];
     }
 

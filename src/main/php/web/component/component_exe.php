@@ -200,6 +200,7 @@ class component_exe extends component
             component_types::TITLE_VALUE_EDIT => $form->title_value($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
+            component_types::FORM_FIELD_CODE_ID => $form->form_field_code_id($dbo),
 
             // select object fields
             component_types::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
