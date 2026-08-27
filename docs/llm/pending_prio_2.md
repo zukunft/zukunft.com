@@ -1,8 +1,27 @@
 # pending prio 2
 
+## use case
+
+Does PV in Switzerland reduce the CO2-eq emission with or without replacement energy? 
+
+the data file `src/main/resources/messages/use_cases/pv_switzerland_co2.json` (the climate benefit of PV in Switzerland with and without the FfE displacement mix concept) is data only; to import and show it these code changes are needed:
+
+1. register the file: `files.php` has no path const for `messages/use_cases` (only `DATA_START_PAGE_PATH` and `BASE_DATA_PATH`) and no import const array names it, so `json_validation.php` reports it as "not named by an import const array" and `all_unit_write_tests::import_base_data()` never loads it; add a `USE_CASE_PATH` const, a `PV_SWITZERLAND_CO2_FILE` const and a `USE_CASE_FILES` array that the import loop reads after `FULL_LOAD_FILES`, because the file references `mayor column (system)` of `solution_prio.json`
+2. the unit triple `gram per kWh` carries `"type": "measure"`; `triple::import_mapper` reads the type (triple.php ~489), but no other import file types a triple yet, so confirm with the import that the type is saved and that `value_list::is_unit()` then puts the triple behind the translatable "in" of the column header (`avoided emission in gram per kWh`); if the type is dropped, the header shows `gram per kWh` before the "in" like a normal phrase
+3. the view `PV in Switzerland emission comparison` is typed `word` like every view of `base_views.json`, because no view is typed `triple` so far; check that `view.php?m=<view>&words=PV in Switzerland` resolves the triple as the page phrase, else add a triple view type or a `phrase` type
+4. the column definitions `column consumption mix` / `column displacement mix` reuse the `can be <tier> column (system)` pattern of `solution_prio.json`, so the columns only order once `phrase_list::load_column_definitions()` (three levels below `column (system)`) has loaded them; the table falls back to the impact ranking of the two `avoided emission` values otherwise, which shows the same two columns in an undefined order
+5. the two `avoided emission` values are derived by subtraction and carry the arithmetic as `note`; once a formula per row is wanted, replace them by a formula `avoided emission = <reference mix> - <PV life cycle emission>` assigned to `avoided emission` and add a `calc-validation` block, so the table shows results instead of assumed values
+6. the reference mix figures (42, 128, 30, 700) are rounded order of magnitude values with the treeze publications page as url; replace them by the exact figures and the direct url of "Umweltbilanz Strommix Schweiz 2018" and of the FfE paper table before the page is public
+
+
+
 ## start page
 
 add up/down sorting on each column by adding the url_var 'dlo' (display_list_order) and the parameter is the id of the column phrase with an additional 'd' (descending) or 'a'
+
+instead of the column 'solution' write 'solutions' and after each solution write '... 12 more'
+
+make the formula colum left aligned
 
 add link to result / value
 
