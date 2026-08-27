@@ -285,6 +285,25 @@ class value_list_ui_tests
         $t->assert($test_name, substr_count(
             $lib->html_to_text($lib->str_left_of($tbl_range, '</tr>')), word_names::LOSS . $unit_sep), 1);
 
+        // a confidence value often names less than the value it qualifies, e.g. the confidence of
+        // the loss of a problem qualifies the loss of the solution of that problem, which names
+        // the solution too; the confidence follows that value as well, because otherwise its
+        // share opens a second column of the same phrase that shows no number
+        // the solution is a column of its own here, so that the value and its confidence share a
+        // row although only the value names the solution (see solution_prio.json)
+        $wider_lst = $t_phr->list_global_problems_ui();
+        $tbl_wider = $t_val->value_list_confidence_wider_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $wider_lst->column_names(), false, true, $wider_lst);
+        $hdr_wider = $lib->html_to_text($lib->str_left_of($tbl_wider, '</tr>'));
+        $test_name = 'a confidence that names less than its value opens no column of its own';
+        $t->assert($test_name, substr_count($hdr_wider, word_names::LOSS . $unit_sep), 1);
+        $test_name = '... and is the tooltip of the value it qualifies';
+        $t->assert_text_contains($test_name, $tbl_wider, word_names::CONFIDENCE . ' ');
+        // negative: the confidence is no value and no row of its own, so the table has the header
+        // row and the one row of the problem
+        $test_name = '... and no value of the cell';
+        $t->assert($test_name, substr_count($tbl_wider, '<' . html_base::TR . '>'), 2);
+
         // a column shows one measure, so a phrase with values in two units gets one column per
         // unit, the unit of the most relevant value first, and no value is lost; the "loss"
         // column is defined here, because the two values differ in their unit only, so without

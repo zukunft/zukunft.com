@@ -2,31 +2,22 @@
 
 ## start page
 
-add link to ... more that shows more rows
+add to url_var parameters for the list size an page and add link to ... more that shows more rows by calling the page again with the url_var for size increased. use 'dls' (display_list_size) and 'dlp' display list page for the short url and also create the _HUMAN const and wire them
 
-add up/down sorting on each column
+add up/down sorting on each column by adding the url_var 'dlo' (display_list_order) and the parameter is the id of the column phrase with an additional 'd' (descending) or 'a'
 
 add link to result / value
 
-1. The last column is empty in every row and lost its unit. Column 8 is headed initial effort, not initial effort in percent as your target order specified, and all five rows render an empty cell there:
-
-7 'initial effort in person year'   row cells: '3 ( 1.2 – 7.5 )'                                                                                                                                                                                                                 
-8 'initial effort'                  row cells: ''
-
-solution_prio.json has 13 values carrying initial effort + percent, but every one of them also carries confidence (all 0.2). So they open a column, then the confidence handling folds them into the neighbouring range instead of rendering a cell, and column_units() — which  
-skips confidence values — leaves the header without its percent. A column whose values are all confidence values should not open at all. This was already in the live output you pasted as the target order, so it may be pre-existing rather than new, but it is a visible empty
-column either way.
-
-2. Three orphaned wf5 snapshots, one still showing the deprecated spreadsheet. The current change_triple spine is show → edit → back → edit → save → cancel → …, and assert_step appends every step to the path, so wf5_show_edit_save.html, wf5_show_edit_save_cancel.html and  
+1. Three orphaned wf5 snapshots, one still showing the deprecated spreadsheet. The current change_triple spine is show → edit → back → edit → save → cancel → …, and assert_step appends every step to the path, so wf5_show_edit_save.html, wf5_show_edit_save_cancel.html and  
    wf5_show_edit_save_confirmed.html cannot be produced any more — the back excursion now sits between edit and save. They were last written in 765d1647d, and the workflow folders have no unused-file cleanup (that only covers views_by_object/ and views_by_id/).
 
 wf5_show_edit_save_confirmed.html is the awkward one: it is titled Start view and renders the old fixed spreadsheet (Priority | Problem | Costs in trillion USD | Solution | Gain in billion htp, 31.5 / 23.8). That comes from web/html/sheet.php, which is 157 lines of        
 hardcoded rows whose only dispatch is commented out at component_exe.php:189 — dead code the spreadsheet deprecation was meant to reduce to a placeholder. Of the 17 start-view snapshots, 16 now show the new table and this stale one shows the deprecated sheet.
 
-3. docs/llm/pending_prio_2.md — an orphaned paragraph. The trim removed the heading line of the CBAM_costs item but left its body, so lines 17–18 (coding.md:169 says to assign a formula …) now sit under ## source between the two source items and ## data validation, reading
+2. docs/llm/pending_prio_2.md — an orphaned paragraph. The trim removed the heading line of the CBAM_costs item but left its body, so lines 17–18 (coding.md:169 says to assign a formula …) now sit under ## source between the two source items and ## data validation, reading
    as if they belong to sources. It also dropped the moved to pending_next_launch.md pointer.
 
-4. load_related_by_ids still has no coverage — the one function of the four that stayed untested, since it is a plain REST call with no seam.
+3. load_related_by_ids still has no coverage — the one function of the four that stayed untested, since it is a plain REST call with no seam.
 
 ## source
 
