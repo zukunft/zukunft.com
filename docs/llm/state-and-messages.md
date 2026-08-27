@@ -482,6 +482,26 @@ privileges. If a check needs "the test users", express it as the TEST *profile*;
 the code_id stays what it is everywhere else in the system: the stable key to
 *find* a row, not a property of it.
 
+### A code id is only shown to an admin or a developer
+
+The code id of an object (e.g. of a source) links a database row to program
+code, so it is an internal detail that only an admin or a developer needs to
+see. Every page and form hides it for every other profile — including the
+system and test profiles, which could technically *set* it but do not browse
+pages, so the rendered test snapshots stay free of the field.
+
+Seeing and changing are two separate gates on the frontend user:
+
+- `can_see_code_id()` — admin or developer: the code id (value or field) may be
+  rendered at all
+- `can_set_code_id()` — system, test or developer (mirrors the backend):
+  the user gets the *input* field; a user who may only see it (an admin) gets
+  the code id as read-only labeled text
+
+`system_form::form_field_code_id()` is the reference implementation: hidden
+below `can_see_code_id()`, editable only with `can_set_code_id()` on top. A new
+renderer that shows a code id anywhere must use the same two gates.
+
 ### Never overwrite or reset the accumulated messages
 
 A function receiving `$msg` may only **add** to it — never replace, clear, reset,
