@@ -628,6 +628,26 @@ behaviour belongs in the per-assertion `$test_name` strings.
 Don't collapse two sibling sections to the same label; keep just enough of the
 distinguishing word (`'category subtitle'` vs `'category subtitle (multi)'`).
 
+## Generated files are rewritten by the run, never by hand and never by the LLM
+
+Every file that says `do not edit manually` — `docs/code_object_name_exceptions.md`,
+`docs/code_user_message_exceptions.md`, `docs/code_test_coverage.md`,
+`docs/json_findings.md`, `docs/code_functions_all.md` — and every regenerated
+baseline (the `list.csv` of `src/test/resources/unit/<class>/`, the html snapshots,
+the api fixtures) is written by `test/test.php` with `AUTO_UPDATE_TEST_FILES` set to
+`true` and compared with the flag set to `false`. A test that reports such a file as
+outdated says that the code or the data behind it changed; it is never a request to
+edit the file:
+
+- if the change is unwanted (e.g. a `user_message` created under a name other than
+  `$msg` without a strong reason), fix the cause in the code or the data
+- if the change is intended (a new buffer with a documented reason, a new phrase,
+  a new view), leave the file alone: the next run with the flag regenerates it and
+  the diff of that run shows the change for review
+
+An LLM patching the generated line by hand masks the signal, and the next run
+overwrites the edit anyway.
+
 ## Tests that depend on data files must be reproducible from a single point of change
 
 A test relying on a generated artifact — a JSON import file, an SQL snapshot, an

@@ -84,6 +84,8 @@ class phrase_ui_tests
         // word.html shows the word case, so here the triple case, because the component type
         // is used by one view for both phrase classes
         $dto = new data_object();
+        // the cache has no column definitions and a unit test has no api to load them from
+        $dto->online = false;
         $dto->val_lst = $t_val->value_list_zh_impact_ui();
         $trp_zh_city = $t_trp->zh_city_ui();
         $test_page .= $html->text_h2('values of ' . $trp_zh_city->name() . ' as a table');

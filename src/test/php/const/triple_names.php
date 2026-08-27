@@ -232,6 +232,11 @@ class triple_names
     // measure word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
     const int GRAM_PER_KWH_ID = 544;
+    // TODO use the name and not the id for the use cases
+    // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
+    // objects are selected by the name only and never by a database id or a code id
+    // (docs/llm/json_structure.md "Use case files"), which is why no id const exists
+    const string PV_IN_SWITZERLAND = 'PV in Switzerland';
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 534;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

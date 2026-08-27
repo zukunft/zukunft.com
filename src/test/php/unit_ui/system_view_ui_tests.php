@@ -621,8 +621,10 @@ class system_view_ui_tests
                 } else {
                     $msg->usr = null;
                 }
+                // the start page and the calculator show the values of the global problems, so
+                // both render with the start page cache that carries them
                 $dto = $ui->dto;
-                if ($id == views::START_ID) {
+                if ($id == views::START_ID or $id == views::CALCULATOR_ID) {
                     $dto = $dto_start;
                 }
                 $html = $ui->url_to_html($url_array, $msg, $dto, true);

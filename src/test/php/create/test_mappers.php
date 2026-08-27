@@ -1110,7 +1110,14 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case phrase::class:
-                $obj = $t_phr->phrase_filled();
+                // the calculator shows the values of a phrase as a table, so its sample is the
+                // triple "global warming", which has the values of the start page fixture,
+                // instead of the filled test phrase that has none
+                if ($msk_id == views::CALCULATOR_ID) {
+                    $obj = $t_trp->global_warming()->phrase();
+                } else {
+                    $obj = $t_phr->phrase_filled();
+                }
                 $obj_array = $this->phrase_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;

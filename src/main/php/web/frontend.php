@@ -150,6 +150,7 @@ include_once html_paths::MODEL_SYSTEM . 'sys_log.php';
 include_once html_paths::MODEL_USER . 'user.php';
 include_once html_paths::MODEL_USER . 'user_message.php';
 include_once html_paths::SHARED_TYPES . 'job_types.php';
+include_once html_paths::SHARED_TYPES . 'view_types.php';
 
 // cfg group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
@@ -218,6 +219,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // test group (alphabetic by FQN)
@@ -2060,6 +2062,29 @@ class frontend
             and !in_array($view_id, views::ADD_MASKS_IDS)) {
             $dbo->set_id($url_array[url_var::ID]);
         }
+        // a phrase view (e.g. the calculator) shows a word or a triple, and the frontend objects
+        // of a view are typed (see system_form::title_phrase), so the phrase id of the url decides
+        // the object: a negative phrase id is a triple, a positive one a word
+        if ($dbo instanceof phrase_ui and array_key_exists(url_var::ID, $url_array)) {
+            $dbo = $this->phrase_id_to_dbo_ui((int)$url_array[url_var::ID]);
+        }
+        return $dbo;
+    }
+
+    /**
+     * the typed page object of a phrase id: the triple of a negative phrase id or else the word
+     *
+     * @param int $phr_id the phrase id of the url, negative for a triple
+     * @return word_ui|triple_ui the object with the id of the word or triple
+     */
+    private function phrase_id_to_dbo_ui(int $phr_id): word_ui|triple_ui
+    {
+        if ($phr_id < 0) {
+            $dbo = new triple_ui();
+        } else {
+            $dbo = new word_ui();
+        }
+        $dbo->set_id(abs($phr_id));
         return $dbo;
     }
 
@@ -2197,6 +2222,30 @@ class frontend
         } elseif ($view_id === views::SANDBOX_ID
             or $view_id === views::UNDO_ID) {
             $dbo_ui = new db_object_ui();
+        } else {
+            $dbo_ui = $this->dbo_ui_by_view_type($view_id);
+        }
+        return $dbo_ui;
+    }
+
+    /**
+     * the page object of a view that no system view id list names, e.g. a view defined by a
+     * data file such as the use case view of "PV in Switzerland": the type of the view says
+     * which object the page shows, so a view typed "triple" gets a triple and a view typed
+     * "word" a word; any other type falls back to a word and is reported, because the page
+     * would show the wrong object
+     *
+     * @param int $view_id the id of the view to show
+     * @return word_ui|triple_ui the object the view shows
+     */
+    private function dbo_ui_by_view_type(int $view_id): word_ui|triple_ui
+    {
+        $msk = $this->dto?->typ_lst_cache?->get_view_by_id($view_id);
+        $typ_id = $msk?->type_id(new user_message_ui());
+        if ($typ_id == $this->dto?->typ_lst_cache?->msk_typ?->id(view_types::TRIPLE)) {
+            $dbo_ui = new triple_ui();
+        } elseif ($typ_id == $this->dto?->typ_lst_cache?->msk_typ?->id(view_types::WORD)) {
+            $dbo_ui = new word_ui();
         } else {
             log_err('ui object missing for view id ' . $view_id);
             $dbo_ui = new word_ui();

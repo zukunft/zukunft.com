@@ -108,11 +108,41 @@ A formula's `expression` may still reference phrases from earlier base files
 calculation time, not via the per-file import cache.
 
 A borrowed **triple** cannot be re-declared name-only — it needs `from`/`verb`/
-`to` — so repeat the home definition **verbatim**. Triples merge by name on
+`to` — so repeat the home definition **verbatim** (with one exception: a use case
+file drops the `code_id`, see *Use case files* below). Triples merge by name on
 import, so a divergent re-declaration means the last file imported silently wins
 and the relation depends on the import order. `climate gas` is the warning
 example: it is `gas can cause warming` in one file, `climate can cause warming`
 in a second and `gas of climate` in a third.
+
+### Use case files never carry a `code_id` and import for a normal user
+
+A use case file (`files::USE_CASE_FILES`, `src/main/resources/messages/use_cases/`,
+e.g. `pv_switzerland_co2.json`) answers a question with the data — the kind of file
+any user may add. So it is user data, not system data:
+
+- **no `code_id` anywhere** — not on a word, a triple, a formula, a view or a
+  component. A `code_id` marks an object the code addresses by a constant, and only
+  a system or developer user may set one (`user::can_set_code_id`); a normal user's
+  import of such a file is refused for that object and, through the shared message,
+  drops everything after it.
+- **a borrowed system triple is repeated without its `code_id`**: the
+  `from`/`verb`/`to` and the `name` stay verbatim, so the import merges it by name
+  into the existing row, which keeps the code id it already has.
+- **a use case view is a plain view**: it is found by its name or reached through
+  the system `calculator` view, never by a code id of its own.
+- **every row of a use case is selected by its name** — the view, the word or
+  triple of the page, the values — and never by a code id or a database id: the
+  code id does not exist, and the database id follows the import order, so it moves
+  with every file imported before it. In the tests this means
+  `test_base::assert_view_by_name(views::CALCULATOR_NAME, $usr, new triple(),
+  triple_names::PV_IN_SWITZERLAND, $cfg)` instead of `assert_view` with an id, a
+  `triple_names::PV_IN_SWITZERLAND` name const **without** an `_ID` twin, and a
+  snapshot file named by the names (`calculator_triple_pv_in_switzerland.html`),
+  so no re-baseline ever touches a use case test.
+- the unit test that runs the calc-validation of the file imports it as a **normal**
+  user (`import_tests`), so a code id in the file fails the test — that is the
+  coded form of this rule.
 
 ### Split a large domain into a concept file and a list file
 

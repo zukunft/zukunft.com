@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-27T12:26:34+00:00",
+    "timestamp": "2026-08-27T19:57:25+00:00",
     "body": {
         "user_profiles": [
             {
@@ -22544,13 +22544,42 @@
             },
             {
                 "id": 120,
+                "name": "Calculator",
+                "description": "the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",
+                "type_id": 11,
+                "code_id": "calculator",
+                "components": [
+                    {
+                        "link_id": 1111,
+                        "id": 321,
+                        "name": "phrase title",
+                        "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
+                        "type_id": 213,
+                        "code_id": "phrase_title_phrase",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1112,
+                        "id": 322,
+                        "name": "table with related columns",
+                        "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+                        "type_id": 214,
+                        "code_id": "table_with_related_columns_phrase",
+                        "position": 2,
+                        "position_type": 3
+                    }
+                ]
+            },
+            {
+                "id": 121,
                 "name": "solution priority validation",
                 "description": "the ranking of the global problems by potential loss with the solution, its loss reduction, the initial effort and the reward ratio",
                 "type_id": 11,
                 "code_id": "solution_prio_validation",
                 "components": [
                     {
-                        "link_id": 1111,
+                        "link_id": 1113,
                         "id": 353,
                         "name": "Title solution priority",
                         "description": "page title: the global problems ranked by their potential loss",
@@ -22561,42 +22590,13 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1112,
+                        "link_id": 1114,
                         "id": 354,
                         "name": "table problem ranking by potential loss",
                         "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",
                         "type_id": 214,
                         "code_id": "solution_prio_ranking_table",
                         "ui_msg_code_id": "solution_prio_ranking_table",
-                        "position": 2,
-                        "position_type": 1
-                    }
-                ]
-            },
-            {
-                "id": 124,
-                "name": "PV in Switzerland emission comparison",
-                "description": "the climate benefit of photovoltaic electricity in Switzerland with and without the displacement concept",
-                "type_id": 11,
-                "code_id": "pv_switzerland_emission_comparison",
-                "components": [
-                    {
-                        "link_id": 1120,
-                        "id": 357,
-                        "name": "Title PV in Switzerland",
-                        "description": "page title: the phrase PV in Switzerland with its from, verb and to",
-                        "type_id": 213,
-                        "code_id": "pv_switzerland_title",
-                        "position": 1,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1121,
-                        "id": 358,
-                        "name": "table PV in Switzerland emission comparison",
-                        "description": "the values of PV in Switzerland as a table with the column 'consumption mix' for the comparison without and the column 'displacement mix' for the comparison with the FfE displacement concept; one row per remaining phrase combination, e.g. the avoided emission",
-                        "type_id": 214,
-                        "code_id": "pv_switzerland_emission_table",
                         "position": 2,
                         "position_type": 1
                     }

@@ -978,6 +978,9 @@ class ui_list extends ui_base
                 $phr_lst->add_phrase($dbo->phrase());
                 // the system column tiers decide which phrase heads a column and in which order;
                 // an empty list falls back to the impact ranking of the values themselves
+                if ($dto != null) {
+                    $this->add_column_definitions($dto, $msg);
+                }
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
                 // the url of the page is handed over, so that the "... more" tail can call the
                 // same page with the next list size
@@ -1378,13 +1381,7 @@ class ui_list extends ui_base
                 $dto->add_phrases($child_lst, $msg);
             }
         }
-        // without the column definitions the table falls back to the impact ranking
-        if ($dto->phr_lst->column_names() == []) {
-            $col_lst = new phrase_list();
-            if ($col_lst->load_column_definitions($msg)) {
-                $dto->add_phrases($col_lst, $msg);
-            }
-        }
+        $this->add_column_definitions($dto, $msg);
         // the values belong to the problems and not to "global problem", so they are loaded for
         // the children
         if ($dto->val_lst->is_empty()) {
@@ -1402,6 +1399,27 @@ class ui_list extends ui_base
             $lnk_lst = new phrase_list();
             if ($lnk_lst->load_related_by_ids($val_phr_lst, foaf_direction::UP, $msg)) {
                 $dto->add_phrases($lnk_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the column definitions of the system column tiers to the request cache, so that a
+     * value table shows the defined columns in the defined order instead of falling back to
+     * the impact ranking; skipped if the cache already has a definition, so a unit test that
+     * fills the cache upfront needs no api call, and skipped offline, because the request
+     * cache of a unit test has no api to ask
+     *
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return void
+     */
+    private function add_column_definitions(data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and $dto->phr_lst->column_names() == []) {
+            $col_lst = new phrase_list();
+            if ($col_lst->load_column_definitions($msg)) {
+                $dto->add_phrases($col_lst, $msg);
             }
         }
     }

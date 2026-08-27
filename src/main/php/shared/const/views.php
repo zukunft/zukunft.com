@@ -52,7 +52,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 119;
+    const int MAX_TEST_ID = 120;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -371,6 +371,14 @@ class views
     const string TABLE_NAME = 'Table';
     const string TABLE_COM = 'The values related to a word or triple as a table with one column per phrase used most often within the values';
 
+    // the calculator: the values of a word/triple as a table with the columns the system column
+    // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
+    // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
+    const string CALCULATOR = 'calculator';
+    const int CALCULATOR_ID = 120;
+    const string CALCULATOR_NAME = 'Calculator';
+    const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
+
 
     /*
      * const string for system testing
@@ -542,9 +550,10 @@ class views
         self::TRIPLE_ID,
     ];
 
-    // default view for a phrase
+    // default view for a phrase and the views that show a word or a triple the same way
     const array PHRASE_MASKS_IDS = [
         self::PHRASE_ID,
+        self::CALCULATOR_ID,
     ];
 
     // system masks that have a source as the main object
@@ -769,6 +778,7 @@ class views
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
         self::TABLE_ID,
+        self::CALCULATOR_ID,
         self::VIEW_DEFAULT_ID,
         self::COMPONENT_DEFAULT_ID,
         self::FORMULA_LINK_DEFAULT_ID,
@@ -1037,6 +1047,7 @@ class views
         self::PHRASE_ID => self::PHRASE,
         self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
         self::TABLE_ID => self::TABLE,
+        self::CALCULATOR_ID => self::CALCULATOR,
         self::CURRENCY_ID => self::CURRENCY,
         self::VIEW_DEFAULT_ID => self::VIEW,
         self::COMPONENT_DEFAULT_ID => self::COMPONENT,

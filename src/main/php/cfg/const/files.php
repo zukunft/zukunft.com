@@ -313,7 +313,10 @@ class files
 
     // the use case files, imported as the last step of the standard db setup
     // (import_file::import_use_case_data), because a use case builds on the phrases of the
-    // start page e.g. the column tiers of solution_prio.json
+    // start page e.g. the column tiers of solution_prio.json; a use case file never carries a
+    // code_id and must be importable by a normal user, because a use case is user data that
+    // any user may add, so a borrowed system triple is repeated without its code_id
+    // (docs/llm/json_structure.md "use case files")
     const array USE_CASE_FILES = [
         self::PV_SWITZERLAND_CO2_FILE,
     ];

@@ -568,12 +568,16 @@ class phrase extends combine_named
         }
     }
 
+    /**
+     * @return string the name the user has given to the triple of this phrase or an empty
+     *                string for a word and for a triple that only has its generated name
+     */
     function name_given(): string
     {
         if ($this->is_word()) {
             return '';
         } else {
-            return $this->obj()->name_given();
+            return $this->obj()->name_given() ?? '';
         }
     }
 
@@ -591,14 +595,20 @@ class phrase extends combine_named
         return $this->obj()->get_view_id();
     }
 
+    /**
+     * @return int how often the word or triple of this phrase is used, 0 if not yet counted
+     */
     function usage(): int
     {
-        return $this->obj()->usage;
+        return $this->obj()->usage ?? 0;
     }
 
+    /**
+     * @return float the impact of the word or triple of this phrase, 0 if not yet rated
+     */
     function impact(): float
     {
-        return $this->obj()->impact;
+        return $this->obj()->impact ?? 0.0;
     }
 
     function is_similar(phrase|term|type_object|sandbox|null $obj_to_check): bool

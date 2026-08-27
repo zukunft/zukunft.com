@@ -1206,17 +1206,114 @@ class test_base
             }
         }
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
-        // remember the snapshot of this object id, so that delete_unused_files can remove the
-        // snapshot of an id that is no longer tested e.g. after a phrase id re-baseline
-        $this->updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
 
         // load the view from the database (the db layer measures its own read time)
         $msk = new view($usr);
         $msk->load_by_code_id($dsp_code_id, $msg);
+        if ($msk->id() == 0) {
+            log_err('view with code id ' . $dsp_code_id . ' not found');
+        }
+        if ($id != 0) {
+            // add the related database objects
+            $dbo->load_by_id_with_related($id, $msg);
+        }
+        return $this->assert_view_html($msk, $usr, $dbo, $id != 0, $cfg, $file_path, $dsp_code_id);
+    }
+
+    /**
+     * test a view with a sample user object where both are selected by their name, never by the
+     * database id or the code id: a use case (files::USE_CASE_FILES) is user data, which has no
+     * code id and whose ids follow the import, so its view and its objects are named like a user
+     * names them e.g. the "Calculator" view with the triple "PV in Switzerland"
+     * (docs/llm/json_structure.md "Use case files")
+     *
+     * @param string $view_name the name of the view that should be tested e.g. views::CALCULATOR_NAME
+     * @param user $usr to define for which user the view should be created
+     * @param db_object_seq_id $dbo the empty database object of the class that should be shown
+     * @param string $obj_name the name of the database object that should be loaded and shown
+     * @param data_object_ui|null $cfg the context that should be used to create the view
+     *                              which can be fixed test data for stable test results
+     * @return bool true if the generated view matches the expected
+     */
+    function assert_view_by_name(
+        string          $view_name,
+        user            $usr,
+        db_object_seq_id $dbo,
+        string          $obj_name,
+        ?data_object_ui $cfg = null
+    ): bool
+    {
+        $msg = new user_message();
+        $lib = new library();
+
+        // the snapshot is named by the names too, so a re-baseline of the ids never renames it
+        $class = $lib->class_to_name($dbo::class);
+        $file_path = test_paths::HTML . test_paths::VIEWS . $class . DIRECTORY_SEPARATOR
+            . $this->name_to_file($view_name) . '_' . $class . '_' . $this->name_to_file($obj_name);
+
+        // load the view and the object by their names; the related objects are loaded by the id
+        // that the name has resolved, which is the only place the id is used
+        $msk = new view($usr);
+        $msk->load_by_name($view_name, $msg);
+        if ($msk->id() == 0) {
+            log_err('view "' . $view_name . '" not found');
+        }
+        $dbo->load_by_name($obj_name, $msg);
+        if ($dbo->id() == 0) {
+            log_err($class . ' "' . $obj_name . '" not found');
+        } else {
+            $dbo->load_by_id_with_related($dbo->id(), $msg);
+        }
+        return $this->assert_view_html($msk, $usr, $dbo, $dbo->id() != 0, $cfg, $file_path, $view_name);
+    }
+
+    /**
+     * @param string $name a view or object name e.g. "PV in Switzerland"
+     * @return string the name as the part of a snapshot file name e.g. "pv_in_switzerland"
+     */
+    private function name_to_file(string $name): string
+    {
+        $lib = new library();
+        return $lib->str_to_file(strtolower(str_replace(' ', '_', $name)));
+    }
+
+    /**
+     * render a loaded view with a loaded object the way the frontend would and compare the html
+     * with the snapshot; shared by the view asserts that differ only in how the view and the
+     * object have been selected
+     *
+     * @param view $msk the view loaded from the database
+     * @param user $usr to define for which user the view should be created
+     * @param db_object_seq_id|sandbox_multi $dbo the database object that should be shown
+     * @param bool $with_obj true if the object has been loaded, false for an empty add form object
+     * @param data_object_ui|null $cfg the context that should be used to create the view
+     * @param string $file_path the snapshot file without the extension
+     * @param string $view_key the code id or the name of the view for the test name
+     * @return bool true if the generated view matches the expected
+     */
+    private function assert_view_html(
+        view                           $msk,
+        user                           $usr,
+        db_object_seq_id|sandbox_multi $dbo,
+        bool                           $with_obj,
+        ?data_object_ui                $cfg,
+        string                         $file_path,
+        string                         $view_key
+    ): bool
+    {
+        global $sys;
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
+        $lib = new library();
+        $tl = new test_lib();
+
+        // remember the snapshot of this object, so that delete_unused_files can remove the
+        // snapshot of an object that is no longer tested e.g. after a phrase id re-baseline
+        $this->updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+        $class = $lib->class_to_name($dbo::class);
+
         if ($msk->id() > 0) {
             $msk->load_components($msg);
-        } else {
-            log_err('view with code id ' . $dsp_code_id . ' not found');
         }
 
         // build the api message and the ui objects the frontend would receive;
@@ -1226,10 +1323,6 @@ class test_base
         // because a nested db read overwrites the single previous-section slot
         $sys->times->switch(system_time_type::MAP_JSON);
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
-        if ($id != 0) {
-            // add the related database objects
-            $dbo->load_by_id_with_related($id, $msg);
-        }
         // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above;
         // the user is given like the api endpoints do (see api/verb/index.php), because a related
         // list is loaded and filtered for a user and a verb carries none of its own
@@ -1237,7 +1330,7 @@ class test_base
             [api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg, $usr);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
-        if ($id != 0) {
+        if ($with_obj) {
             $dbo_dsp->set_from_json($dbo_api_msg, $msg_ui);
         }
         $dsp_html = new view_ui;
@@ -1263,7 +1356,7 @@ class test_base
 
         // check if the created view matches the expected view
         return $this->assert_html_body(
-            $this->name . ' view ' . $dsp_code_id,
+            $this->name . ' view ' . $view_key,
             $actual, $file_path);
     }
 

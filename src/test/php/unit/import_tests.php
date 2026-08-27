@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_tests
@@ -311,6 +312,32 @@ class import_tests
             . $dto->result_check_list()->lst()[0]->grp()->phrase_list()->dsp_name()
             . ' is missing in the import message';
         $t->assert($test_name, $msg->all_message_text(), $target);
+
+        // the use case file states the avoided emission of PV in Switzerland as values and as
+        // formulas with the same result, so the calc validation of the file must reproduce the
+        // two values from the reference mixes and the PV emission of the same file
+        // the messages are checked first, so that a failure shows what the import reports
+        // a use case is user data, so its file carries no code id and must import for a normal
+        // user (docs/llm/json_structure.md "Use case files"); usr1 is that normal user here
+        $test_name = 'the import of the PV in Switzerland use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PV_SWITZERLAND_CO2_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces both results';
+        $t->assert($test_name, $dto->result_check_list()->count(), 2);
+        // negative: a changed reference mix breaks the pre-calculated result
+        $test_name = '... and a changed reference mix is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array('consumption mix', $val[json_fields::WORDS])
+                and in_array('electricity', $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '130';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
 
         $test_name = 'JSON import warning creation';
         $msg = new user_message($t->usr1);
