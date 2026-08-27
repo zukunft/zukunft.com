@@ -845,6 +845,52 @@ class system_form extends component
     }
 
     /**
+     * @param value|db_object $dbo the value whose source is shown
+     * @return string the linked name of the source behind its label
+     *                (empty if the value has no source or the source is not known)
+     */
+    function show_source(value|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a value links a source and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof value) {
+            // the api sends the source itself for a page request, so the name needs no cache;
+            // name_link() returns safe html, so it is added behind the label unescaped
+            if ($dbo->src?->name() != '') {
+                $result = $this->label_with_html($dbo->src->name_link(), msg_id::FORM_SELECT_SOURCE);
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a source');
+        }
+        return $result;
+    }
+
+    /**
+     * @param value|db_object $dbo the value whose last update time is shown
+     * @return string the time of the last update behind its label in the user's time format
+     *                (empty if the value has never been updated e.g. a not yet saved value)
+     */
+    function show_last_update(value|db_object $dbo): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        // guarded by class, because only a value tracks the time of the last update and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof value) {
+            if ($dbo->last_update != null) {
+                $result = $this->show_field_labeled(
+                    date_format($dbo->last_update, $ui_sys->cfg->date_time_format()),
+                    msg_id::SYSTEM_DB_FIELD_LAST_UPDATE);
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a last update time');
+        }
+        return $result;
+    }
+
+    /**
      * @param component|db_object $dbo the component whose row phrase is shown
      * @param phrase_list $phr_lst the request cache with the preloaded phrases
      * @return string the linked name of the row phrase (empty if not set or not known)

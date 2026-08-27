@@ -589,6 +589,11 @@ class component_types
     const int SHOW_WEIGHT_ID = 236;
     const string SHOW_CONDITION_FORMULA = "system_show_field_condition_formula";
     const int SHOW_CONDITION_FORMULA_ID = 237;
+    // the source and the time of the last update of a value e.g. for the value default page
+    const string SHOW_SOURCE = "system_show_field_source";
+    const int SHOW_SOURCE_ID = 238;
+    const string SHOW_LAST_UPDATE = "system_show_field_last_update";
+    const int SHOW_LAST_UPDATE_ID = 239;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -1041,6 +1046,8 @@ class component_types
         [self::SHOW_ORDER_NBR, self::SHOW_ORDER_NBR_ID],
         [self::SHOW_WEIGHT, self::SHOW_WEIGHT_ID],
         [self::SHOW_CONDITION_FORMULA, self::SHOW_CONDITION_FORMULA_ID],
+        [self::SHOW_SOURCE, self::SHOW_SOURCE_ID],
+        [self::SHOW_LAST_UPDATE, self::SHOW_LAST_UPDATE_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

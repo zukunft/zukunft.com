@@ -120,6 +120,20 @@ class test_values extends test_objects
         return $val;
     }
 
+    /**
+     * @return value_ui the standard test value with the source and the time of the last update
+     *                  as the api sends them for a page request, so that the source link and
+     *                  the last update line of the value default page can be tested
+     */
+    function value_page_ui(user_message $msg): value_ui
+    {
+        $t_src = new test_sources($this->env);
+        $val = $this->value($msg);
+        $val->set_source($t_src->source_reserved());
+        $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
     function value_incomplete(user_message $msg): value
     {
         $t_grp = new test_groups($this->env);

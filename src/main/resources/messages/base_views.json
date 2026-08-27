@@ -525,6 +525,18 @@
       "description": "the formula that decides if a triple is used, with a link to the formula",
       "type": "system_show_field_condition_formula",
       "code_id": "show_field_condition_formula"
+    },
+    {
+      "name": "system show field value source",
+      "description": "the source of a value with a link to the source; named value source, because system show field source is the source name shown on the reference pages",
+      "type": "system_show_field_source",
+      "code_id": "show_field_value_source"
+    },
+    {
+      "name": "system show field last update",
+      "description": "the time when a value has been updated by the user or a calculation job",
+      "type": "system_show_field_last_update",
+      "code_id": "show_field_last_update"
     }
   ],
   "views": [
@@ -826,6 +838,16 @@
         },
         {
           "position": "3",
+          "name": "system show field value source",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
           "name": "value tab box"
         }
       ]
