@@ -1,10 +1,6 @@
 
 # pending - list of planned llm prompts with prio 1
 
-### values
-
-show the missing value db fields in the value default view: the source of the value, the timestamp of the last update and the share and protection status
-
 ### source
 
 add the missing source db field to the source add and edit views: the code_id field, shown only for users whose profile passes can_set_code_id (for sources the code_id is a user changeable field)
@@ -224,6 +220,22 @@ the basic steps to show the start page are
 
 
 # move to Prio 2
+
+## triple add and edit view
+
+reduce the size of the triple description field to 8/12 and add after the description a formula selector for the conditional formula 
+
+## word db table
+
+similar to the triple table field 'triple_condition_id' add a field 'condition_formula_id' to the word table
+
+## word add and edit view
+
+reduce the size of the word description field to 8/12 and add after the description a formula selector for the conditional formula
+
+## triple db table
+
+rename the triples table field 'triple_condition_id' to 'condition_formula_id'
 
 ## log in 
 

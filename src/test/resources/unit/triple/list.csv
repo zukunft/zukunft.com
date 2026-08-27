@@ -1,5 +1,5 @@
 triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,name_generated,description,weight,triple_condition_id,phrase_type_id,view_id,usage,impact,inactive,code_id,excluded,share_type_id,protect_id
-1,2,3,1,1,mathematical constant,,,A mathematical constant that never changes e.g. Pi,,,17,,,9999999999,,,,,3
+1,2,3,1,1,mathematical constant,,,A mathematical constant that never changes e.g. Pi,0.5,,17,,,9999999999,,,,,3
 2,139,37,137,1,Euler's number,,,The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.,,,17,,,,,,,,3
 3,139,37,2,1,Euler's constant,,,Euler's constant (sometimes called the Euler–Mascheroni constant) is a mathematical constant, usually denoted by the lowercase Greek letter gamma (γ), defined as the limiting difference between the harmonic series and the natural logarithm, denoted here by log,,,17,,,,,,,,3
 4,140,4,7,1,jerk (physics),,,Jerk (also known as Jolt) is the rate of change of an object's acceleration over time.,,,3,,,,,,,,3

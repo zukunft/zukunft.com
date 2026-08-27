@@ -95,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use DateTime;
 
 class value extends sandbox_value
 {
@@ -122,6 +123,10 @@ class value extends sandbox_value
      */
 
     public ?source $src = null;
+
+    // the time when this value has been updated by the user or a calculation job,
+    // sent by the api for a page request so that the value default page can show it
+    public ?DateTime $last_update = null;
 
 
     /*
@@ -178,6 +183,18 @@ class value extends sandbox_value
 
         if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
             $this->set_source_id($json_array[json_fields::SOURCE_ID]);
+        }
+        // the nested source with the name is sent for a page request,
+        // so the value default page can link the source
+        if (array_key_exists(json_fields::SOURCE, $json_array)) {
+            $src = new source();
+            $src->api_mapper($json_array[json_fields::SOURCE], $msg);
+            $this->src = $src;
+        }
+        if (array_key_exists(json_fields::LAST_UPDATE, $json_array)) {
+            $lib = new library();
+            $this->last_update = $lib->get_datetime(
+                $json_array[json_fields::LAST_UPDATE], $this->dsp_id(), 'value api mapping');
         }
 
         return $msg->is_ok();

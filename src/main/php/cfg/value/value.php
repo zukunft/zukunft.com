@@ -76,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
+use DateTimeInterface;
 
 class value extends value_base
 {
@@ -216,6 +217,22 @@ class value extends value_base
 
         // the views, changes and overwrites tabs of the value default page
         if ($typ_lst->incl_related()) {
+            // the value default page also shows the source and the time of the last update;
+            // both only for a page request, so that the plain api message stays small and
+            // the volatile timestamp does not make the api test fixtures unstable;
+            // the source is nested with its name, so the frontend can link it without an
+            // extra load (see triple::api_json_array for the same pattern with the condition)
+            if ($this->get_source_id() > 0) {
+                if ($this->get_source()?->name() == '' and !$typ_lst->test_mode()) {
+                    $this->load_source($msg);
+                }
+                if ($this->get_source()?->name() != '') {
+                    $vars[json_fields::SOURCE] = $this->get_source()->api_json_array([], $msg, $usr);
+                }
+            }
+            if ($this->last_update() != null) {
+                $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
+            }
             if ($this->views_related == null and !$typ_lst->test_mode()) {
                 $this->load_views_related($msg);
             }

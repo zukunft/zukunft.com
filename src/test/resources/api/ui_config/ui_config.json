@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-27T08:12:12+00:00",
+    "timestamp": "2026-08-27T14:49:59+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9691,6 +9691,18 @@
                 "code_id": "system_show_field_condition_formula",
                 "description": "show the formula that decides if a triple is used with a link to the formula",
                 "id": 237
+            },
+            {
+                "name": "show source",
+                "code_id": "system_show_field_source",
+                "description": "show the source of a value with a link to the source",
+                "id": 238
+            },
+            {
+                "name": "show last update",
+                "code_id": "system_show_field_last_update",
+                "description": "show the time when a value has been updated by the user or a calculation job",
+                "id": 239
             }
         ],
         "component_link_types": [
@@ -21704,12 +21716,32 @@
                     },
                     {
                         "link_id": 1044,
+                        "id": 358,
+                        "name": "system show field value source",
+                        "description": "the source of a value with a link to the source; named value source, because system show field source is the source name shown on the reference pages",
+                        "type_id": 238,
+                        "code_id": "show_field_value_source",
+                        "position": 3,
+                        "position_type": 3
+                    },
+                    {
+                        "link_id": 1045,
+                        "id": 359,
+                        "name": "system show field last update",
+                        "description": "the time when a value has been updated by the user or a calculation job",
+                        "type_id": 239,
+                        "code_id": "show_field_last_update",
+                        "position": 4,
+                        "position_type": 3
+                    },
+                    {
+                        "link_id": 1046,
                         "id": 350,
                         "name": "value tab box",
                         "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
                         "type_id": 199,
                         "code_id": "view_tab_box_value",
-                        "position": 3,
+                        "position": 5,
                         "position_type": 1
                     }
                 ]
@@ -21722,7 +21754,7 @@
                 "code_id": "formula_default",
                 "components": [
                     {
-                        "link_id": 1045,
+                        "link_id": 1047,
                         "id": 284,
                         "name": "Formula title",
                         "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
@@ -21732,7 +21764,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1046,
+                        "link_id": 1048,
                         "id": 287,
                         "name": "Expression with links",
                         "description": "show the formula expression in the latex format with a tooltip and a link for each term",
@@ -21742,7 +21774,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 1047,
+                        "link_id": 1049,
                         "id": 286,
                         "name": "Expression",
                         "type_id": 62,
@@ -21751,7 +21783,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 1048,
+                        "link_id": 1050,
                         "id": 316,
                         "name": "system sub title description",
                         "description": "show the language specific sub title for the description column",
@@ -21762,7 +21794,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1049,
+                        "link_id": 1051,
                         "id": 199,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -21772,7 +21804,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1050,
+                        "link_id": 1052,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -21783,7 +21815,7 @@
                         "position_type": 5
                     },
                     {
-                        "link_id": 1051,
+                        "link_id": 1053,
                         "id": 298,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21792,7 +21824,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1052,
+                        "link_id": 1054,
                         "id": 301,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -21801,7 +21833,7 @@
                         "position_type": 6
                     },
                     {
-                        "link_id": 1053,
+                        "link_id": 1055,
                         "id": 322,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
@@ -21820,7 +21852,7 @@
                 "code_id": "result_default",
                 "components": [
                     {
-                        "link_id": 1054,
+                        "link_id": 1056,
                         "id": 301,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -21838,7 +21870,7 @@
                 "code_id": "ranking",
                 "components": [
                     {
-                        "link_id": 1055,
+                        "link_id": 1057,
                         "id": 302,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
@@ -21847,7 +21879,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1056,
+                        "link_id": 1058,
                         "id": 303,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
@@ -21856,7 +21888,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1057,
+                        "link_id": 1059,
                         "id": 304,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
@@ -21930,7 +21962,7 @@
                 "code_id": "math_const",
                 "components": [
                     {
-                        "link_id": 1058,
+                        "link_id": 1060,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21939,7 +21971,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1059,
+                        "link_id": 1061,
                         "id": 296,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
@@ -21948,7 +21980,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1060,
+                        "link_id": 1062,
                         "id": 295,
                         "name": "formulas",
                         "description": "simply show all related formulas",
@@ -21966,7 +21998,7 @@
                 "code_id": "global_problem",
                 "components": [
                     {
-                        "link_id": 1061,
+                        "link_id": 1063,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21975,7 +22007,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1062,
+                        "link_id": 1064,
                         "id": 305,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
@@ -21984,7 +22016,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1063,
+                        "link_id": 1065,
                         "id": 306,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
@@ -21993,7 +22025,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1064,
+                        "link_id": 1066,
                         "id": 307,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
@@ -22027,7 +22059,7 @@
                 "code_id": "currency",
                 "components": [
                     {
-                        "link_id": 1065,
+                        "link_id": 1067,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -22036,7 +22068,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1066,
+                        "link_id": 1068,
                         "id": 308,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
@@ -22045,7 +22077,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1067,
+                        "link_id": 1069,
                         "id": 298,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -22054,7 +22086,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1068,
+                        "link_id": 1070,
                         "id": 309,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",
@@ -22072,7 +22104,7 @@
                 "code_id": "phrase_values",
                 "components": [
                     {
-                        "link_id": 1069,
+                        "link_id": 1071,
                         "id": 282,
                         "name": "Word title",
                         "description": "show the word name as a page title",
@@ -22082,7 +22114,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1070,
+                        "link_id": 1072,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -22093,7 +22125,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1071,
+                        "link_id": 1073,
                         "id": 323,
                         "name": "values in columns",
                         "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
@@ -22112,7 +22144,7 @@
                 "code_id": "table",
                 "components": [
                     {
-                        "link_id": 1072,
+                        "link_id": 1074,
                         "id": 324,
                         "name": "phrase title",
                         "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
@@ -22122,7 +22154,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1073,
+                        "link_id": 1075,
                         "id": 325,
                         "name": "table with related columns",
                         "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
@@ -22141,7 +22173,7 @@
                 "code_id": "view_default",
                 "components": [
                     {
-                        "link_id": 1074,
+                        "link_id": 1076,
                         "id": 335,
                         "name": "View title",
                         "description": "show the translated word view and the view name as the page title and the type, the share and the protection in the subtitle",
@@ -22152,7 +22184,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1075,
+                        "link_id": 1077,
                         "id": 199,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22162,7 +22194,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1076,
+                        "link_id": 1078,
                         "id": 339,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -22172,7 +22204,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1077,
+                        "link_id": 1079,
                         "id": 338,
                         "name": "system show field style",
                         "description": "the name of the display style of a view or component as read only",
@@ -22182,7 +22214,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1078,
+                        "link_id": 1080,
                         "id": 340,
                         "name": "system sub title components",
                         "description": "show the language specific sub title for a component list",
@@ -22193,7 +22225,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1079,
+                        "link_id": 1081,
                         "id": 341,
                         "name": "view components",
                         "description": "the components of the shown view sorted by their position with a link to each component",
@@ -22203,7 +22235,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1080,
+                        "link_id": 1082,
                         "id": 352,
                         "name": "view page tab box",
                         "description": "tab box with the change log and the user overwrites of this view; named view page tab box, because view tab box is the name of the tab box of the word, triple and formula page",
@@ -22222,7 +22254,7 @@
                 "code_id": "component_default",
                 "components": [
                     {
-                        "link_id": 1081,
+                        "link_id": 1083,
                         "id": 336,
                         "name": "Component title",
                         "description": "show the translated word component and the component name as the page title and the type, the share and the protection in the subtitle",
@@ -22233,7 +22265,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1082,
+                        "link_id": 1084,
                         "id": 199,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22243,7 +22275,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1083,
+                        "link_id": 1085,
                         "id": 339,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -22253,7 +22285,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1084,
+                        "link_id": 1086,
                         "id": 338,
                         "name": "system show field style",
                         "description": "the name of the display style of a view or component as read only",
@@ -22263,7 +22295,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1085,
+                        "link_id": 1087,
                         "id": 342,
                         "name": "system show field formula",
                         "description": "the name of the calculation formula of a component with a link to the formula",
@@ -22273,7 +22305,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1086,
+                        "link_id": 1088,
                         "id": 343,
                         "name": "system show field row phrase",
                         "description": "the name of the row phrase of a component with a link to the phrase",
@@ -22283,7 +22315,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1087,
+                        "link_id": 1089,
                         "id": 344,
                         "name": "system show field column phrase",
                         "description": "the name of the column phrase of a component with a link to the phrase",
@@ -22293,7 +22325,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1088,
+                        "link_id": 1090,
                         "id": 345,
                         "name": "system show field sub column phrase",
                         "description": "the name of the sub column phrase of a component with a link to the phrase",
@@ -22303,7 +22335,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1089,
+                        "link_id": 1091,
                         "id": 320,
                         "name": "system sub title views",
                         "description": "show the language specific sub title for the related views",
@@ -22314,7 +22346,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1090,
+                        "link_id": 1092,
                         "id": 346,
                         "name": "component views",
                         "description": "the views that use the shown component with a link to each view",
@@ -22324,7 +22356,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1091,
+                        "link_id": 1093,
                         "id": 351,
                         "name": "component tab box",
                         "description": "tab box with the change log and the user overwrites of this component",
@@ -22343,7 +22375,7 @@
                 "code_id": "formula_link_default",
                 "components": [
                     {
-                        "link_id": 1092,
+                        "link_id": 1094,
                         "id": 337,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22353,7 +22385,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1093,
+                        "link_id": 1095,
                         "id": 347,
                         "name": "system show field link type",
                         "description": "the name of the link type of a link as read only",
@@ -22363,7 +22395,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1094,
+                        "link_id": 1096,
                         "id": 348,
                         "name": "system show field order number",
                         "description": "the order number of a link as read only",
@@ -22373,7 +22405,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1095,
+                        "link_id": 1097,
                         "id": 339,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -22383,7 +22415,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1096,
+                        "link_id": 1098,
                         "id": 349,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
@@ -22402,7 +22434,7 @@
                 "code_id": "term_view_default",
                 "components": [
                     {
-                        "link_id": 1097,
+                        "link_id": 1099,
                         "id": 337,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22412,7 +22444,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1098,
+                        "link_id": 1100,
                         "id": 347,
                         "name": "system show field link type",
                         "description": "the name of the link type of a link as read only",
@@ -22422,7 +22454,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1099,
+                        "link_id": 1101,
                         "id": 199,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22432,7 +22464,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1100,
+                        "link_id": 1102,
                         "id": 339,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -22442,7 +22474,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1101,
+                        "link_id": 1103,
                         "id": 349,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
@@ -22461,7 +22493,7 @@
                 "code_id": "component_link_default",
                 "components": [
                     {
-                        "link_id": 1102,
+                        "link_id": 1104,
                         "id": 337,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22471,7 +22503,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1103,
+                        "link_id": 1105,
                         "id": 347,
                         "name": "system show field link type",
                         "description": "the name of the link type of a link as read only",
@@ -22481,7 +22513,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1104,
+                        "link_id": 1106,
                         "id": 348,
                         "name": "system show field order number",
                         "description": "the order number of a link as read only",
@@ -22491,7 +22523,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1105,
+                        "link_id": 1107,
                         "id": 338,
                         "name": "system show field style",
                         "description": "the name of the display style of a view or component as read only",
@@ -22501,7 +22533,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1106,
+                        "link_id": 1108,
                         "id": 339,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -22511,7 +22543,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1107,
+                        "link_id": 1109,
                         "id": 349,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
@@ -22530,7 +22562,7 @@
                 "code_id": "view_relation_default",
                 "components": [
                     {
-                        "link_id": 1108,
+                        "link_id": 1110,
                         "id": 337,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22540,7 +22572,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1109,
+                        "link_id": 1111,
                         "id": 347,
                         "name": "system show field link type",
                         "description": "the name of the link type of a link as read only",
@@ -22550,7 +22582,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1110,
+                        "link_id": 1112,
                         "id": 354,
                         "name": "system show field start position",
                         "description": "the position in the parent view where the child view of a view relation starts as read only",
@@ -22560,7 +22592,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1111,
+                        "link_id": 1113,
                         "id": 199,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22570,7 +22602,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1112,
+                        "link_id": 1114,
                         "id": 339,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -22580,7 +22612,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1113,
+                        "link_id": 1115,
                         "id": 349,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
@@ -22599,8 +22631,8 @@
                 "code_id": "solution_prio_validation",
                 "components": [
                     {
-                        "link_id": 1114,
-                        "id": 358,
+                        "link_id": 1116,
+                        "id": 360,
                         "name": "Title solution priority",
                         "description": "page title: the global problems ranked by their potential loss",
                         "type_id": 63,
@@ -22610,8 +22642,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1115,
-                        "id": 359,
+                        "link_id": 1117,
+                        "id": 361,
                         "name": "table problem ranking by potential loss",
                         "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",
                         "type_id": 214,

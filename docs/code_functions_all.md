@@ -6163,6 +6163,10 @@
              without auto fill in /component/execute/system_form.php
     \-- show_condition_formula - section for function show_condition_formula not yet defined that it should be optional 
             with show password but without auto fill in /component/execute/system_form.php
+    \-- show_source - section for function show_source not yet defined that it should be optional with show password but
+             without auto fill in /component/execute/system_form.php
+    \-- show_last_update - section for function show_last_update not yet defined that it should be optional with show pa
+            ssword but without auto fill in /component/execute/system_form.php
     \-- show_row_phrase - section for function show_row_phrase not yet defined that it should be optional with show pass
             word but without auto fill in /component/execute/system_form.php
     \-- show_col_phrase - section for function show_col_phrase not yet defined that it should be optional with show pass
@@ -8885,6 +8889,10 @@
         \-- system_form - @param triple|db_object $dbo the triple whose weight is shown
     \-- show_condition_formula
         \-- system_form - @param triple|db_object $dbo the triple whose condition formula is shown
+    \-- show_source
+        \-- system_form - @param value|db_object $dbo the value whose source is shown
+    \-- show_last_update
+        \-- system_form - @param value|db_object $dbo the value whose last update time is shown
     \-- show_row_phrase
         \-- system_form - @param component|db_object $dbo the component whose row phrase is shown
     \-- show_col_phrase

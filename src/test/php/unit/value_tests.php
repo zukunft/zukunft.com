@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -58,6 +59,8 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -70,6 +73,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -463,6 +467,23 @@ class value_tests
         $val = $t_val->value($msg);
         // TODO add class field to api message
         $t->assert_api_to_ui($val, new value_ui());
+
+        // the value default page also shows the source with a link to the source page
+        // and the time of the last update in the user's date time format
+        global $ui_sys;
+        $form = new system_form();
+        $val_page = $t_val->value_page_ui($msg);
+        $test_name = 'the value page shows the source with a link to the source';
+        $t->assert_text_contains($test_name, $form->show_source($val_page), sources::SIB);
+        $test_name = 'the value page shows the time of the last update';
+        $t->assert_text_contains($test_name, $form->show_last_update($val_page),
+            date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
+        // a value without a source or an update time shows no lonely labels
+        $val_plain = $t_val->people_zh_canton_mio_symbol_ui();
+        $test_name = 'a value without a source shows no source line';
+        $t->assert($test_name, $form->show_source($val_plain), '');
+        $test_name = 'a value without an update time shows no last update line';
+        $t->assert($test_name, $form->show_last_update($val_plain), '');
 
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
