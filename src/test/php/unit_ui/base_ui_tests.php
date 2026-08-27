@@ -641,6 +641,21 @@ class base_ui_tests
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
         $t->assert($test_name, $view, views::WORD_ADD);
+        // the list size and the list page of a "... more" click are url state like every other
+        // frontend state, so both have a human-readable name that maps to the short name and back
+        $test_name = 'the human-readable list size and page map to the short url vars';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=' . views::START_CODE
+            . '&' . url_var::DISPLAY_LIST_SIZE_HUMAN . '=20&' . url_var::DISPLAY_LIST_PAGE_HUMAN . '=1';
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_SIZE] ?? '', '20');
+        $t->assert($test_name . ' (page)', $url_array[url_var::DISPLAY_LIST_PAGE] ?? '', '1');
+        $test_name = '... and the short url vars map back to the human-readable names';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&'
+            . url_var::DISPLAY_LIST_SIZE . '=20&' . url_var::DISPLAY_LIST_PAGE . '=1';
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
+        $url_array = $lib->url_array($url_human);
+        $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_SIZE_HUMAN] ?? '', '20');
+        $t->assert($test_name . ' (page)', $url_array[url_var::DISPLAY_LIST_PAGE_HUMAN] ?? '', '1');
 
         // TODO Prio 1 review
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is

@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -198,6 +199,46 @@ class phrase_ui_tests
         $test_name = '... as a link to the view with all values of the page phrase';
         $t->assert_text_contains($test_name, $tbl_cut,
             url_var::MASK . '=' . views::PHRASE_VALUES_ID);
+
+        // if the page of the table is known, the url names the list size and the tail calls
+        // the same page with the size of the next list version instead (docs/llm/frontend.md
+        // "Short, more and all"), so the reader stays on the page and sees more rows of it;
+        // the more size is the config.yaml value, which the unit test reads from the cache
+        // (see value_list::configured_more_limit), so it is expected to equal the fallback const
+        $page_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_SIZE => $cut_limit];
+        $tbl_page = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            false, true, $rel_lst, null, $page_url);
+        $test_name = 'the url names the number of rows shown';
+        $t->assert($test_name, substr_count($tbl_page, '<' . html_base::TR . '>'), $cut_limit + 2);
+        $test_name = '... and the more tail calls the same page with the size of the more list';
+        $t->assert_text_contains($test_name, $tbl_page,
+            url_var::DISPLAY_LIST_SIZE . '=' . Config::LIMIT_MORE_LIST);
+        // negative: the tail leads to the same page and not to the view with all values
+        $test_name = '... and not the view with all values of the page phrase';
+        $t->assert_text_not_contains($test_name, $tbl_page,
+            url_var::MASK . '=' . views::PHRASE_VALUES_ID);
+        // the url names the list page as well: the second page starts behind the rows of the
+        // first page and its tail counts only the rows behind itself
+        $test_name = 'the first list page starts with the most relevant problem';
+        $t->assert_text_contains($test_name, $tbl_page, '>' . triple_names::GLOBAL_WARMING . '</a>');
+        $page_url[url_var::DISPLAY_LIST_PAGE] = 1;
+        $tbl_page_two = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            false, true, $rel_lst, null, $page_url);
+        $test_name = 'the second list page does not repeat the first page';
+        $t->assert_text_not_contains($test_name, $tbl_page_two, '>' . triple_names::GLOBAL_WARMING . '</a>');
+        $test_name = '... but starts with the row behind the first page';
+        $t->assert_text_contains($test_name, $tbl_page_two, '>' . word_names::POVERTY . '</a>');
+        // the rows behind the second page are all rows without the two pages, so the count is
+        // taken from the table with every row instead of assuming the size of the fixture
+        $tbl_all = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            false, true, $rel_lst, value_list_ui::LIMIT_ALL);
+        $rest = substr_count($tbl_all, '<' . html_base::TR . '>') - 1 - 2 * $cut_limit;
+        $test_name = '... and its tail counts the rows behind the second page only';
+        $t->assert_text_contains($test_name, $tbl_page_two,
+            msg_id::AND_MORE_BEFORE->text() . ' ' . $rest . ' ' . msg_id::MORE->text());
         // more than one row shows more than one item of the phrase, so the header uses the
         // plural; the "global problem" triple has none, so the English plural is guessed
         $test_name = 'a table with several rows names the phrase in the plural';

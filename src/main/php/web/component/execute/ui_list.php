@@ -955,7 +955,8 @@ class ui_list extends ui_base
         user_message                          $msg,
         ?data_object                          $dto = null,
         bool                                  $with_header = false,
-        bool                                  $with_border = true
+        bool                                  $with_border = true,
+        array                                 $url_array = []
     ): string
     {
         $result = '';
@@ -978,8 +979,11 @@ class ui_list extends ui_base
                 // the system column tiers decide which phrase heads a column and in which order;
                 // an empty list falls back to the impact ranking of the values themselves
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
+                // the url of the page is handed over, so that the "... more" tail can call the
+                // same page with the next list size
                 $result = $val_lst->table_by_related_columns(
-                    $msg, $phr_lst, '', $col_order, $with_header, $with_border, $dto?->phr_lst);
+                    $msg, $phr_lst, '', $col_order, $with_header, $with_border, $dto?->phr_lst,
+                    null, $url_array);
             }
         }
         return $result;
@@ -1290,17 +1294,20 @@ class ui_list extends ui_base
      *
      * @param data_object $dto the data cache used to reduce the backend traffic
      * @param user_message $msg to collect the load warnings for the user
+     * @param array $url_array the url parameters of the start page, which name the list size
+     *                         that a "... more" click has raised
      * @return string the html code for the start view as a table
      */
     function start_list(
         data_object  $dto,
-        user_message $msg
+        user_message $msg,
+        array        $url_array = []
     ): string
     {
         $phr = $this->start_page_phrase($dto, $msg);
         $this->add_start_page_cache($dto, $phr, $msg);
         // the page already says what the table is about, so it is shown without the border
-        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false);
+        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array);
     }
 
     /**

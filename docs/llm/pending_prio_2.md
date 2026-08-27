@@ -2,8 +2,6 @@
 
 ## start page
 
-add to url_var parameters for the list size an page and add link to ... more that shows more rows by calling the page again with the url_var for size increased. use 'dls' (display_list_size) and 'dlp' display list page for the short url and also create the _HUMAN const and wire them
-
 add up/down sorting on each column by adding the url_var 'dlo' (display_list_order) and the parameter is the id of the column phrase with an additional 'd' (descending) or 'a'
 
 add link to result / value
@@ -18,6 +16,16 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
    as if they belong to sources. It also dropped the moved to pending_next_launch.md pointer.
 
 3. load_related_by_ids still has no coverage — the one function of the four that stayed untested, since it is a plain REST call with no seam.
+
+4. The more link carries z=0. The rendered tail is /http/view.php?m=1&z=0&dls=20. z is url_var::STEP, and the 0 is the default that url_mapper::url_to_standard() adds from STD_DEFAULT to every request. more_url() rebuilds the link from the full $url_array, so the default  
+   comes along. Harmless — step 0 is what the page gets anyway — but it makes the url longer than it needs to be and, more importantly, the same mechanism would carry form state (posted field values, 8-prefixed opening values) into the link on an edit page that shows such a  
+   table. html_base::page_url_array() exists for exactly this: it keeps only PAGE_VARS, which now include dls/dlp. Building the link from page_url_array($url_array) instead of $url_array would drop z=0 and the form state in one step. Not fixed, as you asked for review only.
+
+5. The corrected count assertion is unverified. The $rest derivation in phrase_ui_tests.php was written after the run that reported and 1 more vs and 17 more; it lints, but it has not been executed. The rest of that block (row count, dls=20, page 1 starting at poverty) was
+   confirmed by the failing run's actual output.
+
+6. Scope note, not a defect. dlp is wired into the slicing and the url mapping, but no page renders prev/next links yet — the "all" version remains unpaged from the user's side. That is consistent with what was asked (the more link), and the frontend.md update says so.
+
 
 ## source
 

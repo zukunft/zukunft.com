@@ -187,7 +187,7 @@ class component_exe extends component
             // TODO Prio 2 use a changeable spreadsheet for the start view; until it exists this
             // component shows the values of the global problems as a table built from the data
             //component_type::CALC_SHEET => $this->calc_sheet(),
-            component_types::CALC_SHEET => $list->start_list($cfg, $msg),
+            component_types::CALC_SHEET => $list->start_list($cfg, $msg, $url_array),
 
             // system form - components that can only be used for internal system forms
             // general form fields
@@ -468,7 +468,7 @@ class component_exe extends component
             component_types::VALUES_RELATED => $list->values_by_word($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg),
-            component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns($dbo, $msg, $cfg),
+            component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns($dbo, $msg, $cfg, false, true, $url_array),
             component_types::VALUE_CHART => $list->value_chart($dbo, $msg, $cfg),
             component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $msg, $test_mode, $url_array),
             component_types::NUMERIC_VALUE => $list->num_list($dbo, $back),

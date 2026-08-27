@@ -119,6 +119,8 @@ class url_var
     const string VIEW_LINK = 'dc'; // display connector to link a view to another view
     const string VIEW_PARENT = 'df'; // the "from" display view that should be modified
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
+    const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
+    const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
@@ -297,8 +299,9 @@ class url_var
     const int DEBUG_LEVEL_MAIN_STEP = 9; // the ninth debug level is to show the main processing steps such as start and end
     const int DEBUG_LEVEL_MAX_FIXED = 10; // the max number of predefined debug level and the staring of the depth debug levels
 
-    // the url vars that identify the page a request shows: the mask, the object selection
-    // and the search pattern; used to build the '9'-prefixed back part of an edit link
+    // the url vars that identify the page a request shows: the mask, the object selection,
+    // the search pattern and the list size and page, so that a back link returns to the list
+    // as the user has expanded it; used to build the '9'-prefixed back part of an edit link
     // (html_base::page_url_array), so form state and already prefixed params are never
     // repeated in the back part and the url stays short
     const array PAGE_VARS = [
@@ -307,6 +310,8 @@ class url_var
         self::ID_LST,
         self::PATTERN,
         self::PATTERN_HUMAN,
+        self::DISPLAY_LIST_SIZE,
+        self::DISPLAY_LIST_PAGE,
     ];
 
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
@@ -420,6 +425,10 @@ class url_var
     const string PHRASE_POS_HUMAN = 'phrase_id_pos_'; // used for a list of phrases where the list position is added to the name
     const string LINK_PHRASE_HUMAN = 'link_phrase';
     const string UNLINK_PHRASE_HUMAN = 'unlink_phrase';
+
+    // list display
+    const string DISPLAY_LIST_SIZE_HUMAN = 'display_list_size'; // the number of list rows shown on a page
+    const string DISPLAY_LIST_PAGE_HUMAN = 'display_list_page'; // the page of a list longer than the size
 
     // graph
     const string DIRECTION_HUMAN = 'dir'; // 'up' to get the parents and 'down' for the children
@@ -638,6 +647,10 @@ class url_var
         [self::PHRASE_CLASS_HUMAN, self::PHRASE_CLASS],
         [self::PHRASE_LIST_HUMAN, self::PHRASE_LIST],
         [self::PHRASE_POS_HUMAN, self::PHRASE_POS],
+
+        // list display
+        [self::DISPLAY_LIST_SIZE_HUMAN, self::DISPLAY_LIST_SIZE],
+        [self::DISPLAY_LIST_PAGE_HUMAN, self::DISPLAY_LIST_PAGE],
 
         // graph
         [self::DIRECTION_HUMAN, self::DIRECTION],
