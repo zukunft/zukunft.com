@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_tests
@@ -141,6 +142,15 @@ class import_tests
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->triple_list()->count(), 6);
+        // a triple can carry a phrase type like a word, e.g. the unit triple "hertz per second"
+        // is a measure, so that a table header shows it behind the "in" (see value_list::is_unit)
+        $test_name = 'JSON import keeps the measure type of a triple';
+        $trp = $dto->triple_list()->get_by_name('hertz per second', $msg);
+        $t->assert_true($test_name, $trp?->is_measure() ?? false);
+        // negative: a triple without a type in the json stays a normal phrase
+        $test_name = '... and a triple without a type is no measure';
+        $trp = $dto->triple_list()->get_by_name('global warming', $msg);
+        $t->assert_false($test_name, $trp?->is_measure() ?? true);
 
         $test_name = 'JSON import source count';
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);
@@ -303,6 +313,32 @@ class import_tests
             . ' is missing in the import message';
         $t->assert($test_name, $msg->all_message_text(), $target);
 
+        // the use case file states the avoided emission of PV in Switzerland as values and as
+        // formulas with the same result, so the calc validation of the file must reproduce the
+        // two values from the reference mixes and the PV emission of the same file
+        // the messages are checked first, so that a failure shows what the import reports
+        // a use case is user data, so its file carries no code id and must import for a normal
+        // user (docs/llm/json_structure.md "Use case files"); usr1 is that normal user here
+        $test_name = 'the import of the PV in Switzerland use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PV_SWITZERLAND_CO2_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces both results';
+        $t->assert($test_name, $dto->result_check_list()->count(), 2);
+        // negative: a changed reference mix breaks the pre-calculated result
+        $test_name = '... and a changed reference mix is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array('consumption mix', $val[json_fields::WORDS])
+                and in_array('electricity', $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '130';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
         $test_name = 'JSON import warning creation';
         $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_WARNING);
@@ -438,6 +474,29 @@ class import_tests
         $test_name = 'JSON import accepts two triples with different names and different links';
         $msg = new user_message($t->usr_dev);
         $json_array[json_fields::TRIPLES][1][json_fields::EX_VERB] = 'of';
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
+
+        $t->subheader($ts . 'value source check');
+
+        // the source of a value is the name of a source declared in the "sources" section, so a
+        // source given as a json object is reported instead of ending the import with a fatal
+        // (see value_base::import_mapper)
+        $test_name = 'JSON import reports a value source that is no name';
+        $msg = new user_message($t->usr_dev);
+        $json_str = file_get_contents(test_files::IMPORT_VALUE_SOURCE_NOT_A_NAME . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $target = 'the source of a value must be the name of a source';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
+        $test_name = '... and names the json of the source that is no name';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'The World Factbook');
+
+        // the same value is a valid import once its source is the name of a declared source
+        $test_name = 'JSON import accepts a value that names its source';
+        $msg = new user_message($t->usr_dev);
+        $json_array[json_fields::VALUES][1][json_fields::SOURCE_NAME] = 'The World Factbook';
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
 

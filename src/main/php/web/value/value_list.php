@@ -63,6 +63,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
@@ -98,6 +99,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -566,8 +568,12 @@ class value_list extends ListBase
      *                          the lines between the cells e.g. within a page that groups tables
      * @param phrase_list|null $rel_lst the phrases related to the page phrase, which define the
      *                                  columns and say which phrase belongs into a phrase column
-     * @param int|null $limit the max number of rows to show, null for the configured limit and
-     *                        self::LIMIT_ALL for every row
+     * @param int|null $limit the max number of rows to show, null for the size named by the url
+     *                        or else the configured limit, and self::LIMIT_ALL for every row
+     * @param array $url_array the url parameters of the page that shows the table, so that the
+     *                         "... more" tail can call the same page with the next list size and
+     *                         the url can name the list size and the list page; an empty array
+     *                         if the page is not known, e.g. for a table taken out of its page
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
@@ -578,7 +584,8 @@ class value_list extends ListBase
         bool         $with_header = false,
         bool         $with_border = true,
         ?phrase_list $rel_lst = null,
-        ?int         $limit = null
+        ?int         $limit = null,
+        array        $url_array = []
     ): string
     {
         $result = '';
@@ -692,12 +699,15 @@ class value_list extends ListBase
             }
 
             // a page must not fill the screen, because the user messages are shown below the
-            // view and would else be hidden below the fold, so the rows are cut to the
-            // configured number before the header is built
-            $row_limit = $limit ?? $this->configured_row_limit($msg);
+            // view and would else be hidden below the fold, so the rows are cut to the number
+            // named by the url or else the configured number before the header is built; the
+            // url names the list page as well, so the cut starts at the first row of that page
+            $row_limit = $limit ?? $this->row_limit($url_array, $msg);
             $shown_keys = array_keys($row_label);
+            $first_row = 0;
             if ($row_limit != self::LIMIT_ALL) {
-                $shown_keys = array_slice($shown_keys, 0, $row_limit);
+                $first_row = $this->first_row($url_array, $row_limit);
+                $shown_keys = array_slice($shown_keys, $first_row, $row_limit);
             }
             // a defined column is shown even if it is empty, because the reader has asked for
             // it, but the rest column only exists because of the data, so it is shown only if a
@@ -749,14 +759,16 @@ class value_list extends ListBase
                 }
                 $rows .= $html->tr($row);
             }
-            $diff = count($row_label) - count($shown_keys);
+            // the rows behind the shown ones, so a later page counts its own rest only
+            $diff = count($row_label) - $first_row - count($shown_keys);
             if ($diff > 0) {
                 // the empty cells of the more row hide with their column like every other cell
                 $pad_styles = array_values($col_style);
                 if ($rest_col) {
                     $pad_styles[] = '';
                 }
-                $rows .= $this->tr_more($diff, $context_phr_lst, $pad_styles);
+                $more_url = $this->more_url($url_array, $row_limit, $msg);
+                $rows .= $this->tr_more($diff, $context_phr_lst, $pad_styles, $more_url);
             }
             $result = $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
             // the header names the phrase that the reader has selected centred above the table,
@@ -981,8 +993,9 @@ class value_list extends ListBase
      * is the tooltip of the cell, because the table is about the numbers and not about how they
      * have been stated
      *
-     * a value tagged "confidence" says how sure the value with the same subject is, so it is the
-     * tooltip of that value and no value of its own
+     * a value tagged "confidence" says how sure the value it qualifies is, so it is the tooltip
+     * of that value and no value of its own; one that qualifies no value of the cell is shown
+     * like a value, so that nothing is lost
      *
      * @param array $val_lst the values of the cell
      * @param user_message $msg to report a problem of the value display
@@ -993,8 +1006,9 @@ class value_list extends ListBase
     private function cell(array $val_lst, user_message $msg, string $back, string $style): string
     {
         $html = new html_base();
-        [$centre_lst, $bound, $conf, $title_lst] = $this->sort_cell_values($val_lst, $msg);
+        [$centre_lst, $bound, $conf_lst, $title_lst] = $this->sort_cell_values($val_lst, $msg);
         $txt_lst = [];
+        $conf_used = [];
         foreach ($centre_lst as $val) {
             $txt = $val->value_edit($msg, $back);
             $key = $this->range_key($val);
@@ -1007,8 +1021,11 @@ class value_list extends ListBase
                 $txt .= self::RANGE_START . $low_txt . self::RANGE_SEP . $high_txt . self::RANGE_END;
                 unset($bound[$key]);
             }
-            foreach ($conf[$this->subject_key($val, $msg)] ?? [] as $conf_val) {
-                $title_lst[] = words::CONFIDENCE . ' ' . $conf_val->value($msg);
+            foreach ($conf_lst as $conf_key => $conf_val) {
+                if ($this->qualifies($conf_val, $val, $msg)) {
+                    $title_lst[] = words::CONFIDENCE . ' ' . $conf_val->value($msg);
+                    $conf_used[] = $conf_key;
+                }
             }
             $txt_lst[] = $txt;
         }
@@ -1016,6 +1033,12 @@ class value_list extends ListBase
         foreach ($bound as $bound_by_word) {
             foreach ($bound_by_word as $val) {
                 $txt_lst[] = $val->value_edit($msg, $back);
+            }
+        }
+        // the same for a confidence value that qualifies no value of this cell
+        foreach ($conf_lst as $conf_key => $conf_val) {
+            if (!in_array($conf_key, $conf_used)) {
+                $txt_lst[] = $conf_val->value_edit($msg, $back);
             }
         }
         $title = implode(', ', array_unique($title_lst));
@@ -1029,18 +1052,18 @@ class value_list extends ListBase
      * @param array $val_lst the values of the cell
      * @param user_message $msg to report a problem of reading a phrase type
      * @return array [the centre values, the bounds keyed by range key and range word,
-     *                the confidence values keyed by subject, the qualifier names]
+     *                the confidence values, the qualifier names]
      */
     private function sort_cell_values(array $val_lst, user_message $msg): array
     {
         $centre_lst = [];
         $bound = [];
-        $conf = [];
+        $conf_lst = [];
         $qualifier_lst = [];
         foreach ($val_lst as $val) {
             $range_word = $this->range_word($val);
             if ($this->is_confidence($val)) {
-                $conf[$this->subject_key($val, $msg)][] = $val;
+                $conf_lst[] = $val;
             } elseif ($range_word == '') {
                 $centre_lst[] = $val;
             } else {
@@ -1053,7 +1076,7 @@ class value_list extends ListBase
                 }
             }
         }
-        return [$centre_lst, $bound, $conf, $qualifier_lst];
+        return [$centre_lst, $bound, $conf_lst, $qualifier_lst];
     }
 
     /**
@@ -1081,11 +1104,12 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to key
-     * @return string the phrase names of the value without the markers and units, which a value
-     *                shares with its confidence value, encoded like the range key
+     * @param value $val the value to describe
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return array the phrase names of the value without the markers and units, which is what a
+     *               value shares with its confidence value
      */
-    private function subject_key(value $val, user_message $msg): string
+    private function subject_names(value $val, user_message $msg): array
     {
         $names = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1093,8 +1117,27 @@ class value_list extends ListBase
                 $names[] = $phr->name();
             }
         }
-        sort($names);
-        return json_encode($names);
+        return $names;
+    }
+
+    /**
+     * true if the given confidence value says how sure the given value is
+     *
+     * the qualified value names all subject phrases of the confidence value and often more, e.g.
+     * the confidence of the "initial effort" of a problem qualifies the effort of the solution of
+     * that problem, which names the solution too (see solution_prio.json), so a confidence value
+     * that names less than the value it qualifies is still matched
+     *
+     * @param value $conf_val the confidence value
+     * @param value $val the value that the confidence value may qualify
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return bool true if the value carries all subject phrases of the confidence value
+     */
+    private function qualifies(value $conf_val, value $val, user_message $msg): bool
+    {
+        return array_diff(
+                $this->subject_names($conf_val, $msg),
+                $this->subject_names($val, $msg)) == [];
     }
 
     /**
@@ -1138,20 +1181,35 @@ class value_list extends ListBase
             }
         }
         foreach ($conf_lst as $conf_val) {
-            $subject = $this->subject_key($conf_val, $msg);
-            $found = '';
-            // the first unit with the subject wins, so the confidence follows the leading unit
-            foreach ($result as $unit_key => $unit_members) {
-                foreach ($unit_members as $val) {
-                    if ($found == '' and $this->subject_key($val, $msg) == $subject) {
-                        $found = $unit_key;
-                    }
-                }
-            }
+            $found = $this->unit_of_qualified($result, $conf_val, $msg);
+            // a confidence value that qualifies no value of the column keeps its own unit, where
+            // it is shown like a value instead of a tooltip (see cell), so that it is not lost
             if ($found == '') {
                 $found = $this->unit_key($conf_val, $msg);
             }
             $result[$found][] = $conf_val;
+        }
+        return $result;
+    }
+
+    /**
+     * the unit of the values that the given confidence value qualifies
+     *
+     * @param array $unit_lst per unit the values of that unit collected so far
+     * @param value $conf_val the confidence value to place
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return string the unit key of the qualified values or an empty string if none is qualified
+     */
+    private function unit_of_qualified(array $unit_lst, value $conf_val, user_message $msg): string
+    {
+        $result = '';
+        // the first unit with a qualified value wins, so the confidence follows the leading unit
+        foreach ($unit_lst as $unit_key => $unit_members) {
+            foreach ($unit_members as $val) {
+                if ($result == '' and $this->qualifies($conf_val, $val, $msg)) {
+                    $result = $unit_key;
+                }
+            }
         }
         return $result;
     }
@@ -1621,12 +1679,18 @@ class value_list extends ListBase
      * @param int $diff the number of rows that this table does not show
      * @param phrase_list $context_phr_lst the phrases assumed by the reader; the first is the page phrase
      * @param array $col_styles per column behind the row name column its css class
+     * @param string $more_url the url of the same page with the next list size or '' if not known
      * @return string the html code of the "... and n more" table row
      */
-    private function tr_more(int $diff, phrase_list $context_phr_lst, array $col_styles): string
+    private function tr_more(
+        int          $diff,
+        phrase_list  $context_phr_lst,
+        array        $col_styles,
+        string       $more_url = ''
+    ): string
     {
         $html = new html_base();
-        $cells = $html->td($this->more_tail($diff, $context_phr_lst));
+        $cells = $html->td($this->more_tail($diff, $context_phr_lst, $more_url));
         foreach ($col_styles as $style) {
             $cells .= $html->td('', $style);
         }
@@ -1674,25 +1738,114 @@ class value_list extends ListBase
     }
 
     /**
-     * the "... and n more" tail of a truncated value list as a link that shows all values
-     * of the page phrase via the phrase values view (docs/llm/frontend.md: a "more" is
-     * always a link that shows more); only if no phrase is known that could select the
-     * full list the tail stays a plain text
+     * the "... and n more" tail of a truncated value list as a link that shows more (see
+     * docs/llm/frontend.md: a "more" is always a link that shows more): the same page with
+     * the next list size if the page is known, else all values of the page phrase via the
+     * phrase values view; only if neither is known the tail stays a plain text
      *
      * @param int $diff the number of values that are not shown
      * @param phrase_list $context_phr_lst the phrases assumed by the reader; the first is the page phrase
+     * @param string $more_url the url of the same page with the next list size or '' if not known
      * @return string the html code of the more tail
      */
-    private function more_tail(int $diff, phrase_list $context_phr_lst): string
+    private function more_tail(int $diff, phrase_list $context_phr_lst, string $more_url = ''): string
     {
         $html = new html_base();
         $txt = msg_id::THREE_POINTS->text() . ' ' . msg_id::AND_MORE_BEFORE->text() . ' '
             . $diff . ' ' . msg_id::MORE->text();
         $phr = $context_phr_lst->lst()[0] ?? null;
-        if ($phr != null) {
+        if ($more_url != '') {
+            $result = $html->ref($more_url, $txt);
+        } elseif ($phr != null) {
             $result = $html->ref($html->url_back(views::PHRASE_VALUES_ID, $phr->id()), $txt);
         } else {
             $result = $txt;
+        }
+        return $result;
+    }
+
+    /**
+     * the number of table rows to show: the list size named by the url, which a "... more"
+     * click has raised, or else the configured number of the short list
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximum number of table rows to show, self::LIMIT_ALL for every row
+     */
+    private function row_limit(array $url_array, user_message $msg): int
+    {
+        $result = $this->configured_row_limit($msg);
+        if (array_key_exists(url_var::DISPLAY_LIST_SIZE, $url_array)) {
+            $result = (int)$url_array[url_var::DISPLAY_LIST_SIZE];
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param int $row_limit the number of rows of one page
+     * @return int the position of the first row of the list page named by the url, 0 for the first
+     */
+    private function first_row(array $url_array, int $row_limit): int
+    {
+        return (int)($url_array[url_var::DISPLAY_LIST_PAGE] ?? 0) * $row_limit;
+    }
+
+    /**
+     * the url of the same page with the next list size, so that a "... more" click shows the
+     * next version of the list (docs/llm/frontend.md "Short, more and all"); the list page is
+     * dropped, because the larger list starts again with its first row
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param int $row_limit the number of rows shown now
+     * @param user_message $msg to report a problem of reading the config
+     * @return string the url of the same page with the next list size or '' if the page is not known
+     */
+    private function more_url(array $url_array, int $row_limit, user_message $msg): string
+    {
+        $result = '';
+        if ($url_array != []) {
+            $url_pars = $url_array;
+            unset($url_pars[url_var::DISPLAY_LIST_PAGE]);
+            $url_pars[url_var::DISPLAY_LIST_SIZE] = $this->next_row_limit($row_limit, $msg);
+            $result = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+        }
+        return $result;
+    }
+
+    /**
+     * the list size of the next version of a list: the short list grows to the more list and
+     * the more list to all rows (docs/llm/frontend.md "Short, more and all")
+     *
+     * @param int $row_limit the number of rows shown now
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the number of rows of the next version, self::LIMIT_ALL for every row
+     */
+    private function next_row_limit(int $row_limit, user_message $msg): int
+    {
+        $result = self::LIMIT_ALL;
+        $more_limit = $this->configured_more_limit($msg);
+        if ($row_limit < $more_limit) {
+            $result = $more_limit;
+        }
+        return $result;
+    }
+
+    /**
+     * the configured number of rows of the more version of a list
+     * (config.yaml "select > more > entries", falling back to config::LIMIT_MORE_LIST if the
+     * config is not loaded)
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the number of rows of the more list
+     */
+    private function configured_more_limit(user_message $msg): int
+    {
+        global $ui_sys;
+        $result = config::LIMIT_MORE_LIST;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [words::ENTRIES, words::MORE, words::SELECT], $msg, config::LIMIT_MORE_LIST);
         }
         return $result;
     }

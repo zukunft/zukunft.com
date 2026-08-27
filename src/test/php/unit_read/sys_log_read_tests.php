@@ -42,6 +42,13 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class sys_log_read_tests
 {
 
+    // the number of log entries loaded for the api check: the entries of the db setup steps
+    // (import_file) are the oldest rows and the list is loaded newest first, so the page
+    // must hold them together with every error that the api tests before this test may log
+    // (e.g. the end_api errors of the formula list and triple api); a page of 20 fitted
+    // exactly and lost the oldest setup entry when the use case setup step was added
+    const int LOG_PAGE_SIZE = 100;
+
     function run(test_cleanup $t): void
     {
 
@@ -66,7 +73,7 @@ class sys_log_read_tests
         $err_lst->set_user($sys_usr);
         $err_lst->dsp_type = sys_log_list::DSP_ALL;
         $err_lst->page = 0;
-        $err_lst->size = 20;
+        $err_lst->size = self::LOG_PAGE_SIZE;
         $result = $err_lst->load_all($msg);
         $t->assert('system errors', $result, true);
 

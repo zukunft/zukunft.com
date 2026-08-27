@@ -269,6 +269,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.5
 
     TODO save the config for backend, frontend and user as a cache json file and use to trigger for recreation
+    TODO create a 'manipulated' fortune weel where the sice of the sections are base on the aggregated rating of a country from the travel score
     TODO activate the class section test
     TODO include owner and user in im- and export
     TODO add a test case for all verbs

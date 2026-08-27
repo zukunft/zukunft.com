@@ -1257,6 +1257,8 @@ class sql_db
             // load the view unit-test sample data once the system config it references is in place
             $import->import_sample_view_data($usr);
             $import->import_pod_config($usr);
+            // the use cases come last, because they build on the phrases of the start page
+            $import->import_use_case_data($usr);
 
             // add the admin users if defined in the env file
             $this->add_admin_users_from_env($sys_msg, $usr);

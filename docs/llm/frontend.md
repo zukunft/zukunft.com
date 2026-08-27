@@ -376,8 +376,15 @@ When a list is truncated to its configured limit, the "… and n more" tail is a
 A count that cannot be clicked tells the user something exists and gives no way
 to see it.
 
-- The values list tail links to the `phrase_values` view of the page phrase
-  (`value_list::more_tail`): `url_new(views::PHRASE_VALUES_ID, $phr->id())`.
+- The values table tail calls the **same page** with the next list size
+  (`value_list::more_url`): the url var `url_var::DISPLAY_LIST_SIZE` (`dls`,
+  human `display_list_size`) names the rows shown, `url_var::DISPLAY_LIST_PAGE`
+  (`dlp`, `display_list_page`) the page of a list longer than that size, and the
+  tail raises the size to `select: more: entries` and then to all rows
+  (`value_list::next_row_limit`). Both vars are `url_var::PAGE_VARS`, so a back
+  link returns to the list as the user has expanded it. Only a table whose page is
+  not known falls back to the `phrase_values` view of the page phrase
+  (`value_list::more_tail`).
 - The related-phrases "…" in a page title links to the `word_related` view
   (`phrase_list.php`, `views::WORD_RELATED_ID`) — the same pattern.
 - Build the tail text from the message ids (`msg_id::THREE_POINTS`,

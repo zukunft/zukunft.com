@@ -807,6 +807,70 @@ class test_values extends test_objects
     }
 
     /**
+     * the loss of two problems in a unit that is a triple typed "measure" (gram per kWh), so
+     * that the table header is expected to show the triple behind the "in" like a measure word
+     *
+     * @return value_list the loss of global warming and of populism in gram per kWh
+     */
+    function value_list_unit_triple(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $loss = $t_wrd->word_loss()->phrase();
+        $unit = $t_trp->gram_per_kwh()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->global_warming()->phrase(), $loss, $unit], 86));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $loss, $unit], 42));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss in a triple unit for frontend unit testing
+     */
+    function value_list_unit_triple_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_unit_triple(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of the solution of global warming and the confidence of that loss, which
+     * names the problem but not the solution, like the "initial effort" of solution_prio.json
+     *
+     * a confidence value can name less than the value it qualifies, so a match by the equal
+     * subject is not enough: the confidence would keep its own share unit, which opens a second
+     * column of the same phrase that shows no number at all (see split_by_unit)
+     *
+     * @return value_list the potential loss in trillion EUR and its confidence in percent
+     */
+    function value_list_confidence_wider(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $loss_phr = [$problem, $t_trp->reduce_emissions()->phrase(), $potential, $loss,
+            $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase()];
+        // the confidence of the loss is stated for the problem, so it names no solution
+        $conf_phr = [$problem, $potential, $loss,
+            $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($loss_phr, 2.2));
+        $lst->add($this->value_for_phrases($conf_phr, 0.2));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss with a wider confidence for frontend unit testing
+     */
+    function value_list_confidence_wider_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_confidence_wider(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * two values related to the word Zurich but assigned to phrases of a different impact
      * so that the sort by impact and the display on the default word page can be tested
      * @return value_list with values related to Zurich of a low and a high impact

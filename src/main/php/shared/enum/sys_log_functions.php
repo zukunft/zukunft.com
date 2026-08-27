@@ -46,6 +46,8 @@ enum sys_log_functions: string
     const string IMPORT_TEST_CONFIG_NAME = "Import test configuration";
     const string IMPORT_SAMPLE_VIEW_DATA = "import_sample_view_data";
     const string IMPORT_SAMPLE_VIEW_DATA_NAME = "Import sample view data";
+    const string IMPORT_USE_CASE_DATA = "import_use_case_data";
+    const string IMPORT_USE_CASE_DATA_NAME = "Import use case data";
 
     // only to test the write functions
     const string TEST_NAME = "System test function name";

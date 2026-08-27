@@ -81,6 +81,17 @@ class triple_read_tests
         $t->assert($test_name, $trp_by_id->name(), triple_names::MATH_CONST);
         $t->assert($test_name, $trp_by_id->description, triple_names::MATH_CONST_COM);
 
+        // a triple can carry a phrase type like a word: the unit triple "gram per kWh" of the
+        // use case import is typed "measure", so the type must survive the db round trip
+        // (import, save, load), else a table header shows the unit like a normal phrase
+        $test_name = 'the measure type of the unit triple ' . triple_names::GRAM_PER_KWH . ' is saved';
+        $trp_unit = new triple($t->usr1);
+        $trp_unit->load_by_name(triple_names::GRAM_PER_KWH, $msg);
+        $t->assert_true($test_name, $trp_unit->is_measure());
+        // negative: a triple imported without a type is no measure
+        $test_name = '... and a triple without a type is no measure';
+        $t->assert_false($test_name, $trp_by_id->is_measure());
+
         $test_name = 'triple load ' . word_names::CANTON . ' ' . word_names::ZH . ' by link';
         $lnk_canton = new triple($t->usr1);
         $lnk_canton->load_by_link_id( $wrd_zh->id(), $msg, $is_id, $wrd_canton->id() );

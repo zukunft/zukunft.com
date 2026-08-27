@@ -255,6 +255,40 @@ class phrase_list_tests
         $phr_lst_ui = $t_phr->phrase_list_ui();
         $t->assert($test_name, $phr_lst_ui->column_names(), []);
 
+        // the tier of a column says on which screens it is shown, so the table can hide a column
+        // per screen size instead of dropping it; the "loss" column is defined as a mayor column
+        // and the "potential loss" column as a main column
+        $phr_lst_ui = $t_phr->list_columns_potential_loss_ui();
+        $test_name = 'the tier of a mayor column is returned';
+        $t->assert($test_name, $phr_lst_ui->column_tier(word_names::LOSS),
+            triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = 'the tier of a main column is returned';
+        $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_LOSS),
+            triple_names::SYSTEM_COLUMN_MAIN);
+        // negative: a phrase that no triple of the list links to a tier is no column, so it has
+        // no tier and the caller shows it on every screen
+        $test_name = 'a phrase that is no column has no tier';
+        $t->assert($test_name, $phr_lst_ui->column_tier(word_names::GAIN), '');
+
+
+        $t->subheader($ts . 'child phrases');
+
+        // the phrases that a triple of the list links to the given phrase, e.g. the problems
+        // that the triples "<problem> (global problem)" link to "global problem"; the phrase
+        // counterpart of child_names, used where the id is needed and not only the name
+        $test_name = 'the phrases linked to the given phrase are returned';
+        $phr_lst_ui = $t_phr->list_global_problems_ui();
+        $phr = $t_trp->global_problem_ui()->phrase();
+        $t->assert_contains($test_name, $phr_lst_ui->child_phrases($phr)->names(),
+            [triple_names::GLOBAL_WARMING, word_names::POPULISM]);
+        $test_name = '... and the phrase itself is not one of them';
+        $t->assert_text_not_contains($test_name,
+            implode(', ', $phr_lst_ui->child_phrases($phr)->names()), triple_names::GLOBAL_PROBLEM);
+        // negative: a list without a triple that links to the given phrase has no child of it
+        $test_name = 'a list with no link to the given phrase returns no child';
+        $phr_lst_ui = $t_phr->list_columns_loss_ui();
+        $t->assert($test_name, $phr_lst_ui->child_phrases($phr)->names(), []);
+
 
 
         $t->subheader($ts . 'import names');

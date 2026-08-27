@@ -69,6 +69,7 @@ class files
     const string SYSTEM_UNIT_TEST_DATA_FOLDER = 'system_unit_test_data' . DIRECTORY_SEPARATOR;
     const string DATA_START_PAGE_PATH = self::MESSAGE_PATH . 'start_page' . DIRECTORY_SEPARATOR;
     const string BASE_DATA_PATH = self::MESSAGE_PATH . 'base_data' . DIRECTORY_SEPARATOR;
+    const string USE_CASE_PATH = self::MESSAGE_PATH . 'use_cases' . DIRECTORY_SEPARATOR;
     const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
@@ -143,6 +144,11 @@ class files
     const string START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
     const string CONFORMITY_MRI_BERNS_FILE = self::DATA_START_PAGE_PATH . 'conformity_mri_berns' . self::JSON;
     const string CO2_EQ_REDUCTION_RANKING_FILE = self::DATA_START_PAGE_PATH . 'co2_eq_reduction_ranking' . self::JSON;
+
+    // one file per use case that shows how a question is answered with the data, e.g. the
+    // climate benefit of photovoltaic electricity in Switzerland with and without the
+    // displacement mix concept (docs/llm/pending_prio_2.md "use case")
+    const string PV_SWITZERLAND_CO2_FILE = self::USE_CASE_PATH . 'pv_switzerland_co2' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -303,6 +309,16 @@ class files
         self::THESES_COMPLEX_SIMPLE_FILE,
         self::REFS_FILE,
         self::ZURICH_HTP_IMPACT_PATH_FILE,
+    ];
+
+    // the use case files, imported as the last step of the standard db setup
+    // (import_file::import_use_case_data), because a use case builds on the phrases of the
+    // start page e.g. the column tiers of solution_prio.json; a use case file never carries a
+    // code_id and must be importable by a normal user, because a use case is user data that
+    // any user may add, so a borrowed system triple is repeated without its code_id
+    // (docs/llm/json_structure.md "use case files")
+    const array USE_CASE_FILES = [
+        self::PV_SWITZERLAND_CO2_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

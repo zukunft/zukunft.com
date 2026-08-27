@@ -285,6 +285,25 @@ class value_list_ui_tests
         $t->assert($test_name, substr_count(
             $lib->html_to_text($lib->str_left_of($tbl_range, '</tr>')), word_names::LOSS . $unit_sep), 1);
 
+        // a confidence value often names less than the value it qualifies, e.g. the confidence of
+        // the loss of a problem qualifies the loss of the solution of that problem, which names
+        // the solution too; the confidence follows that value as well, because otherwise its
+        // share opens a second column of the same phrase that shows no number
+        // the solution is a column of its own here, so that the value and its confidence share a
+        // row although only the value names the solution (see solution_prio.json)
+        $wider_lst = $t_phr->list_global_problems_ui();
+        $tbl_wider = $t_val->value_list_confidence_wider_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $wider_lst->column_names(), false, true, $wider_lst);
+        $hdr_wider = $lib->html_to_text($lib->str_left_of($tbl_wider, '</tr>'));
+        $test_name = 'a confidence that names less than its value opens no column of its own';
+        $t->assert($test_name, substr_count($hdr_wider, word_names::LOSS . $unit_sep), 1);
+        $test_name = '... and is the tooltip of the value it qualifies';
+        $t->assert_text_contains($test_name, $tbl_wider, word_names::CONFIDENCE . ' ');
+        // negative: the confidence is no value and no row of its own, so the table has the header
+        // row and the one row of the problem
+        $test_name = '... and no value of the cell';
+        $t->assert($test_name, substr_count($tbl_wider, '<' . html_base::TR . '>'), 2);
+
         // a column shows one measure, so a phrase with values in two units gets one column per
         // unit, the unit of the most relevant value first, and no value is lost; the "loss"
         // column is defined here, because the two values differ in their unit only, so without
@@ -299,6 +318,18 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $hdr_units, word_names::EUR, word_names::HTP);
         $test_name = '... and a cell holds the values of its unit only';
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_units), '2.2, ');
+
+        // a unit can be a triple, e.g. "gram per kWh", which the import types "measure" like
+        // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
+        $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $loss_lst->column_names(), false, true, $loss_lst);
+        $hdr_unit_trp = $lib->html_to_text($lib->str_left_of($tbl_unit_trp, '</tr>'));
+        $test_name = 'a unit triple typed measure is shown behind the "in" of the column header';
+        $t->assert_text_contains($test_name, $hdr_unit_trp,
+            word_names::LOSS . $unit_sep . triple_names::GRAM_PER_KWH);
+        // negative: the unit triple heads no column of its own and does not name a row
+        $test_name = '... and heads no column of its own';
+        $t->assert($test_name, substr_count($hdr_unit_trp, triple_names::GRAM_PER_KWH), 1);
 
         // a defined column can be a triple that no value carries but whose two parts the values
         // carry, e.g. "potential loss" for the values with "potential" and "loss"; it takes those

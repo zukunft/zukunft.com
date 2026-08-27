@@ -174,6 +174,14 @@ class system_views_read_tests
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
 
+        // USED CASES
+
+        // the calculator shows the values of a phrase with the defined columns: the use case
+        // "PV in Switzerland" is the sample with the avoided emission per reference mix; a use
+        // case is user data, so the view and the triple are selected by their names and never
+        // by a code id or a database id (docs/llm/json_structure.md "Use case files")
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
 

@@ -1,82 +1,53 @@
 # pending prio 2
 
-## temp
+## use case
+
+PV in Switzerland
+
+add a quick value change modal box to change just the value
+
+if the value if updated use the frontend cache to update the results within the frontend cache and report the result updates to the backend
+
+
+## start page
+
+add up/down sorting on each column by adding the url_var 'dlo' (display_list_order) and the parameter is the id of the column phrase with an additional 'd' (descending) or 'a'
+
+instead of the column 'solution' write 'solutions' and after each solution write '... 12 more'
+
+make the formula column left aligned
+
+add link to result / value
+
+1. Three orphaned wf5 snapshots, one still showing the deprecated spreadsheet. The current change_triple spine is show → edit → back → edit → save → cancel → …, and assert_step appends every step to the path, so wf5_show_edit_save.html, wf5_show_edit_save_cancel.html and  
+   wf5_show_edit_save_confirmed.html cannot be produced any more — the back excursion now sits between edit and save. They were last written in 765d1647d, and the workflow folders have no unused-file cleanup (that only covers views_by_object/ and views_by_id/).
+
+wf5_show_edit_save_confirmed.html is the awkward one: it is titled Start view and renders the old fixed spreadsheet (Priority | Problem | Costs in trillion USD | Solution | Gain in billion htp, 31.5 / 23.8). That comes from web/html/sheet.php, which is 157 lines of        
+hardcoded rows whose only dispatch is commented out at component_exe.php:189 — dead code the spreadsheet deprecation was meant to reduce to a placeholder. Of the 17 start-view snapshots, 16 now show the new table and this stale one shows the deprecated sheet.
+
+2. docs/llm/pending_prio_2.md — an orphaned paragraph. The trim removed the heading line of the CBAM_costs item but left its body, so lines 17–18 (coding.md:169 says to assign a formula …) now sit under ## source between the two source items and ## data validation, reading
+   as if they belong to sources. It also dropped the moved to pending_next_launch.md pointer.
+
+3. load_related_by_ids still has no coverage — the one function of the four that stayed untested, since it is a plain REST call with no seam.
+
+4. The more link carries z=0. The rendered tail is /http/view.php?m=1&z=0&dls=20. z is url_var::STEP, and the 0 is the default that url_mapper::url_to_standard() adds from STD_DEFAULT to every request. more_url() rebuilds the link from the full $url_array, so the default  
+   comes along. Harmless — step 0 is what the page gets anyway — but it makes the url longer than it needs to be and, more importantly, the same mechanism would carry form state (posted field values, 8-prefixed opening values) into the link on an edit page that shows such a  
+   table. html_base::page_url_array() exists for exactly this: it keeps only PAGE_VARS, which now include dls/dlp. Building the link from page_url_array($url_array) instead of $url_array would drop z=0 and the form state in one step. Not fixed, as you asked for review only.
+
+5. The corrected count assertion is unverified. The $rest derivation in phrase_ui_tests.php was written after the run that reported and 1 more vs and 17 more; it lints, but it has not been executed. The rest of that block (row count, dls=20, page 1 starting at poverty) was
+   confirmed by the failing run's actual output.
+
+6. Scope note, not a defect. dlp is wired into the slicing and the url mapping, but no page renders prev/next links yet — the "all" version remains unpaged from the user's side. That is consistent with what was asked (the more link), and the frontend.md update says so.
+
+
+## source
 
 add a field 'last_update' to source
 
 add a 'source_status' table and add a status field to source
 
-1. files::FULL_LOAD_FILES is dead — nothing imports it (src/main/php/cfg/const/files.php:299)
-
-The only reference outside its own declaration is json_validation.php:99. all_unit_write_tests::import_base_data() (src/test/php/unit_write/all_unit_write_tests.php:286-293) still loops over BASE_DATA_FILES and BASE_DATA_PATH_FILES only, and import_test_data() over the    
-three test_files::TEST_DATA_* arrays. So refs.json, the three start-page estimates, theses_complex_simple.json and zurich_htp_impact.json are still loaded by nothing — and worse, the new check now счит counts them as loaded, so the one check that would have caught it stays
-silent. Needs a third loop over files::FULL_LOAD_FILES in import_base_data().
-
-2. The new "file not named by an import const array" check reports ~50 false findings (docs/json_findings.md:218)
-
-53 entries, of which two are real. The rest — words.json, triples.json, values.json, users.json, sources.json, verbs.json, views.json, components.json, formulas.json plus their _update/_undo siblings, the merge/rename/no_update/warning fixtures — are imported, by an       
-individual test through its own const (e.g. import_write_tests.php:132 uses test_files::IMPORT_WORDS). The report text asserts they are "never imported and never tested", which is wrong for all of them. The check needs a third category (a const a test references directly,
-findable by reflection over the test classes or as an explicit allow-list), otherwise the two real findings drown.
-
-3. heat_and_climate_politics.json is still wrapped in a zukunft.com top-level key
-
-It is now the only such file — ai_mediated_communication.json was unwrapped in this change (the 810-line diff is that re-indent, semantically the same data one level up). The wrapper is not a json field the importer reads, so the whole file imports as empty, and it was    
-just added to TEST_DATA_FILES_NOT_REVIEWED. The sibling with the identical structure was left unfixed.
-
-4. CBAM_setup.json and THOMY_test.json are now orphaned
-
-Both were dropped from TEST_DATA_FILES_NOT_REVIEWED because they set a code_id, with a comment saying so. But the doc section added in the same change (docs/llm/testing.md:654) prescribes moving such data to files::SYSTEM_DATA_FILES — that step is missing. Their consts    
-IMPORT_CBAM_SETUP / IMPORT_THOMY_TEST are now referenced nowhere, and both files are permanent findings in the report.
-
-5. Five triple names in co2_waste_kezo.json repeat the auto-generated name — mine, from the unit-field conversion
-
-tonne per year, tonne of CO2, tonne of CO2 per year, kilogram per person, kilogram per person per year each carry an explicit "name" equal to <from> <verb> <to>, which coding.md:160 forbids (the importer builds it).
-
-6. The new IMPORT_SOURCE_NOT_A_NAME branch has no test
-
-value_base.php:521 guards the object-valued source and reports a new msg_id; no fixture exercises it. src/test/resources/import/inconsistency_tests/ is the established home for exactly this (a value_source_not_a_name.json next to triple_has_a_word_name.json).
-
-
-he two assigned lists in CBAM_costs.json name children, not the parent phrase
-
 coding.md:169 says to assign a formula "to the most parent phrase it applies to (bid-ask spread absolut → currency, not each single currency)". I assigned expected value of a tool build to its five operand phrases and ABB total sales 2013 to the six sector triples. For ABB
 in particular, sector is the parent of all six via the file's own is a sector triples, and country.json's equivalent sum assigns to the single parent (assigned_word: "country"). Both are arguably one level too specific.
-
-2. Two format version findings appeared that were not there before
-
-republik_test_init_de.json and republik_test_init_en.json now report no "version" field. This is not from my edits — neither file was touched — but the check only runs on a file with no other finding, so fixing other things in the same run surfaced them. They need a       
-"version": "0.0.3" line.
-
-3. src/test/resources/api/ui_config/ui_config.json differs only in its timestamp (10:37 → 13:15) — a run artifact, worth dropping from the commit.
-
-4. Two things I flagged earlier as id shifts are actually harmless — correcting my own warning: word/list.csv contains no word from any TEST_DATA_FILES_NOT_REVIEWED file (no AI-mediated, SCC, GtCO2eq, …). So the new word acceptability in ai_mediated_communication.json and
-   the expected / usable probability / expected value additions in CBAM_costs.json do not require re-baselining that file. The only baseline touch needed was the second plural, and you have already regenerated it.
-
-5. Still open, deliberately (reported before, unchanged): CBAM_costs.json has no calc-validation, because the Gt→tonne scale is unmodelled and the file's reported EV (29.2 × 10⁹) does not reproduce from its own inputs (30.69 × 10⁹). The two intermediates do match exactly.
-
-
-2. My $dto_start guard misses a render path — 6 snapshots are non-deterministic
-
-I previously reported these as possibly stale leftovers. They are not: the three workflow/ files are modified, i.e. the last run wrote live database data into them, while their siblings are untouched and hold the fixture.
-
-workflow/add_word_wf1/wf1_edit_back_edit_save_cancel.html   [M] LIVE ("… and 4 more")                                                                                                                                                                                            
-workflow/add_formula_wf14/wf14_edit_back.html               [M] LIVE                                                                                                                                                                                                             
-workflow/add_triple_wf4/wf4_edit_back.html                  [M] LIVE
-+ the three workflow_write counterparts
-
-Cause: url_test_base.php:239 decides from the url, ($next_url[url_var::MASK] ?? 0) == views::START_ID. But url_to_html() also falls back to the start view internally when the mask cannot be resolved — and a back step whose back-mask is 0 (visible as 9m=0 in your paste)    
-takes that path. The guard sees 0 != 1, hands over $this->req->dto, and add_start_page_cache() then fills that shared cache from the live API — which is why later steps stay live too.
-
-This is what produced the -0.32 failure you asked about: those files depend on deployment data. The fix is to treat an unresolvable mask as the start view, the same way url_to_html() does. I have not changed it, as you asked for review only.
-
-3. Four new public functions with no test coverage — load_linked_sides, column_tier, child_phrases, load_related_by_ids. All sit on API/db paths that the offline fixtures short-circuit; load_linked_sides is a unit_read loader.
-
-4. code_object_name_exceptions.md grew by one — phrase_list: $page_lst, the allowed several-lists-in-one-scope case, but that file is meant to stay short.
-
-To confirm
-
-The 17 changed views_by_id snapshots only gained phrase-selector options for the column-definition triples (column confidence, column cost, …) — nothing in this diff touches selectors, so it reads as the db re-import again. And the percent fix itself needs a re-import plus
-regeneration before it can be verified; unit/word/list.csv still records type 3 and will change with it.
 
 ## data validation
 
@@ -516,8 +487,6 @@ as the final step reset everything to the pre-test state: restore the per-IP `ma
 ## fine-tuning for next launch
 
 add to the .env (and sample) parameter for the api to allow the cache (or deny) so that e.g. the api for the config just reads the env file checks the user / token and than returns the message from cache one-to-one. Review the debug call so that &debug=9 basically shows only these main steps
-
-moved to [pending_next_launch.md](pending_next_launch.md) to keep this file small; see also [pending_fermi_live.md](pending_prio_2.md)
 
 ### security with low prio
 

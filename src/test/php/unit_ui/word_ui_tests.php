@@ -188,6 +188,8 @@ class word_ui_tests
         // show the formulas assigned to a word as on the default word page
         $t_frm = new test_formulas($t);
         $dto = new data_object();
+        // the cache has no column definitions and a unit test has no api to load them from
+        $dto->online = false;
         $dto->frm_lnk_lst = $t_frm->formula_link_list_ui();
         $dto->frm_lst = $t_frm->formula_list_ui();
         $wrd_minute = new word($t_wrd->word_minute()->api_json());
