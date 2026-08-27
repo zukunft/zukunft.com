@@ -1237,6 +1237,28 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "gram", a measure word and the from of the unit triple "gram per kWh"
+     */
+    function word_gram(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GRAM_ID, word_names::GRAM);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
+     * @return word "kWh", a measure word and the to of the unit triple "gram per kWh"
+     */
+    function word_kwh(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::KWH_ID, word_names::KWH);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
     function word_billion(): word
     {
         $wrd = new word($this->env->usr1);

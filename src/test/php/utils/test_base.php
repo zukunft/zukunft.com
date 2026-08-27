@@ -416,6 +416,11 @@ class test_base
     // switch for the email testing
     const bool TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
 
+    // the time of the test run end shown behind the number of test cases, so that the result
+    // of a run can be told from an earlier run e.g. '6656 test cases at 12:13:14 2026-08-27'
+    const string RESULT_TIME_FORMAT = 'H:i:s Y-m-d';
+    const string RESULT_TIME_SEP = ' at ';
+
     // max time expected for each function execution
     const float TIMEOUT_LIMIT = 0.03; // time limit for normal functions
     const float TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
@@ -5587,7 +5592,7 @@ class test_base
             $errors = $this->error_counter . ' errors<br>';
         }
         $since_start = microtime(true) - $this->start_time();
-        $txt = $this->total_tests . ' test cases<br>';
+        $txt = $this->test_cases_line() . '<br>';
         $txt .= $this->timeout_counter . ' timeouts<br>';
         $txt .= $errors;
         $txt .= '<br>';
@@ -5607,7 +5612,7 @@ class test_base
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
         echo ' (' . $sys->times->report($since_start) . ')';
         echo "\n";
-        echo $this->total_tests . ' test cases';
+        echo $this->test_cases_line();
         echo "\n";
         echo $this->timeout_counter . ' timeouts';
         echo "\n";
@@ -5615,6 +5620,16 @@ class test_base
         echo "\n";
         echo $sys->errors . ' internal errors';
         echo "\n";
+    }
+
+    /**
+     * @return string the number of test cases with the time of the run end
+     *                e.g. '6656 test cases at 12:13:14 2026-08-27'
+     */
+    private function test_cases_line(): string
+    {
+        return $this->total_tests . ' test cases'
+            . self::RESULT_TIME_SEP . new DateTime()->format(self::RESULT_TIME_FORMAT);
     }
 
     /**

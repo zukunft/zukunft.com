@@ -1463,6 +1463,23 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "gram per kWh", a unit triple typed "measure" like its two words, so that
+     *                a table header shows it behind the "in" (see pv_switzerland_co2.json)
+     */
+    function gram_per_kwh(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GRAM_PER_KWH_ID, triple_names::GRAM_PER_KWH);
+        $trp->set_from($t_wrd->word_gram()->phrase());
+        $trp->set_verb($t_vrb->verb_per());
+        $trp->set_to($t_wrd->word_kwh()->phrase());
+        $trp->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
      * @return triple "column potential loss" that defines "potential loss" as a main table column
      */
     function column_potential_loss(): triple

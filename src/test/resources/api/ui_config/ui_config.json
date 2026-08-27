@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-25T15:50:33+00:00",
+    "timestamp": "2026-08-27T12:26:34+00:00",
     "body": {
         "user_profiles": [
             {
@@ -248,9 +248,9 @@
                 "id": 9
             },
             {
-                "name": "text_log_functions",
-                "code_id": "text_log_functions",
-                "description": "",
+                "name": "Import use case data",
+                "code_id": "import_use_case_data",
+                "description": "Import the use case data as the last step of the db setup",
                 "id": 10
             },
             {
@@ -342,6 +342,12 @@
                 "code_id": "text_log_functions",
                 "description": "",
                 "id": 25
+            },
+            {
+                "name": "text_log_functions",
+                "code_id": "text_log_functions",
+                "description": "",
+                "id": 26
             }
         ],
         "sys_log_levels": [
@@ -22562,6 +22568,35 @@
                         "type_id": 214,
                         "code_id": "solution_prio_ranking_table",
                         "ui_msg_code_id": "solution_prio_ranking_table",
+                        "position": 2,
+                        "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 124,
+                "name": "PV in Switzerland emission comparison",
+                "description": "the climate benefit of photovoltaic electricity in Switzerland with and without the displacement concept",
+                "type_id": 11,
+                "code_id": "pv_switzerland_emission_comparison",
+                "components": [
+                    {
+                        "link_id": 1120,
+                        "id": 357,
+                        "name": "Title PV in Switzerland",
+                        "description": "page title: the phrase PV in Switzerland with its from, verb and to",
+                        "type_id": 213,
+                        "code_id": "pv_switzerland_title",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1121,
+                        "id": 358,
+                        "name": "table PV in Switzerland emission comparison",
+                        "description": "the values of PV in Switzerland as a table with the column 'consumption mix' for the comparison without and the column 'displacement mix' for the comparison with the FfE displacement concept; one row per remaining phrase combination, e.g. the avoided emission",
+                        "type_id": 214,
+                        "code_id": "pv_switzerland_emission_table",
                         "position": 2,
                         "position_type": 1
                     }

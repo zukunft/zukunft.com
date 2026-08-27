@@ -89,9 +89,45 @@
     },
     {
       "name": "assumed"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "mayor"
     }
   ],
   "triples": [
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "column (system)",
+      "description": "keyword for columns used by the system components",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_column"
+    },
+    {
+      "name": "mayor column (system)",
+      "description": "keyword for columns that should be shown in a table even if the screen is small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "mayor",
+      "code_id": "system_column_mayor"
+    },
     {
       "from": "PV",
       "verb": "is an acronym for",

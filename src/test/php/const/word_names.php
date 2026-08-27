@@ -134,6 +134,11 @@ class word_names
     const int CLIMATE_ID = 226;
     const string WARMER = 'warmer';
     const int WARMER_ID = 229;
+    // the two measure words of the unit triple "gram per kWh" (see triple_names::GRAM_PER_KWH)
+    const string GRAM = 'gram';
+    const int GRAM_ID = 555;
+    const string KWH = 'kWh';
+    const int KWH_ID = 556;
     const string POPULISM = 'populism';
     const int POPULISM_ID = 233;
     const string POPULISM_COM = 'a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.';

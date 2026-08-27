@@ -228,6 +228,10 @@ class triple_names
     const int POTENTIAL_LOSS_ID = 123;
     const string COLUMN_POTENTIAL_LOSS = 'column potential loss';
     const int COLUMN_POTENTIAL_LOSS_ID = 183;
+    // a unit triple typed "measure", so that a table header puts it behind the "in" like a
+    // measure word (see pv_switzerland_co2.json)
+    const string GRAM_PER_KWH = 'gram per kWh';
+    const int GRAM_PER_KWH_ID = 544;
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 534;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

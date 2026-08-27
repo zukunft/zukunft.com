@@ -319,6 +319,18 @@ class value_list_ui_tests
         $test_name = '... and a cell holds the values of its unit only';
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_units), '2.2, ');
 
+        // a unit can be a triple, e.g. "gram per kWh", which the import types "measure" like
+        // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
+        $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), '', $loss_lst->column_names(), false, true, $loss_lst);
+        $hdr_unit_trp = $lib->html_to_text($lib->str_left_of($tbl_unit_trp, '</tr>'));
+        $test_name = 'a unit triple typed measure is shown behind the "in" of the column header';
+        $t->assert_text_contains($test_name, $hdr_unit_trp,
+            word_names::LOSS . $unit_sep . triple_names::GRAM_PER_KWH);
+        // negative: the unit triple heads no column of its own and does not name a row
+        $test_name = '... and heads no column of its own';
+        $t->assert($test_name, substr_count($hdr_unit_trp, triple_names::GRAM_PER_KWH), 1);
+
         // a defined column can be a triple that no value carries but whose two parts the values
         // carry, e.g. "potential loss" for the values with "potential" and "loss"; it takes those
         // values before the column of one of its parts, because it names more of their phrases

@@ -141,6 +141,15 @@ class import_tests
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->triple_list()->count(), 6);
+        // a triple can carry a phrase type like a word, e.g. the unit triple "hertz per second"
+        // is a measure, so that a table header shows it behind the "in" (see value_list::is_unit)
+        $test_name = 'JSON import keeps the measure type of a triple';
+        $trp = $dto->triple_list()->get_by_name('hertz per second', $msg);
+        $t->assert_true($test_name, $trp?->is_measure() ?? false);
+        // negative: a triple without a type in the json stays a normal phrase
+        $test_name = '... and a triple without a type is no measure';
+        $trp = $dto->triple_list()->get_by_name('global warming', $msg);
+        $t->assert_false($test_name, $trp?->is_measure() ?? true);
 
         $test_name = 'JSON import source count';
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);

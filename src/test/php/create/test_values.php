@@ -793,6 +793,33 @@ class test_values extends test_objects
     }
 
     /**
+     * the loss of two problems in a unit that is a triple typed "measure" (gram per kWh), so
+     * that the table header is expected to show the triple behind the "in" like a measure word
+     *
+     * @return value_list the loss of global warming and of populism in gram per kWh
+     */
+    function value_list_unit_triple(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $loss = $t_wrd->word_loss()->phrase();
+        $unit = $t_trp->gram_per_kwh()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->global_warming()->phrase(), $loss, $unit], 86));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $loss, $unit], 42));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss in a triple unit for frontend unit testing
+     */
+    function value_list_unit_triple_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_unit_triple(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss of the solution of global warming and the confidence of that loss, which
      * names the problem but not the solution, like the "initial effort" of solution_prio.json
      *
