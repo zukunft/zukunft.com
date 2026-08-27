@@ -95,6 +95,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
@@ -151,6 +152,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
@@ -223,6 +225,9 @@ class triple extends sandbox_link_named
             $this->weight = $value;
         }
     }
+
+    // the id of a formula with a boolean result; the triple is only used if the result is true
+    public ?int $condition_id = null;
 
     // to cache the query results
     // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
@@ -319,6 +324,7 @@ class triple extends sandbox_link_named
         $this->name_given = null;
         $this->name_generated = null;
         $this->weight = null;
+        $this->condition_id = null;
         $this->code_id = null;
         $this->usage = null;
         $this->impact = null;
@@ -399,6 +405,9 @@ class triple extends sandbox_link_named
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];
             }
+            if (array_key_exists(triple_fields::FLD_COND_ID, $db_row)) {
+                $this->condition_id = $db_row[triple_fields::FLD_COND_ID];
+            }
             if (array_key_exists(fields::FLD_USAGE, $db_row)) {
                 $this->usage = $db_row[fields::FLD_USAGE];
             }
@@ -434,6 +443,9 @@ class triple extends sandbox_link_named
         }
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
             $this->weight = $api_json[json_fields::WEIGHT];
+        }
+        if (array_key_exists(json_fields::CONDITION_ID, $api_json)) {
+            $this->condition_id = $api_json[json_fields::CONDITION_ID];
         }
 
         if (key_exists(json_fields::TYPE, $api_json)) {
@@ -582,6 +594,19 @@ class triple extends sandbox_link_named
         if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
             $this->weight = $in_ex_json[json_fields::WEIGHT];
         }
+        if (key_exists(json_fields::CONDITION, $in_ex_json)) {
+            // the condition names the formula, so it must be imported before this triple
+            // (see the import file order in cfg/const/files.php)
+            $value = $in_ex_json[json_fields::CONDITION];
+            $frm = new formula($this->get_user());
+            $frm->load_by_name($value, $msg);
+            if ($frm->id() == 0) {
+                $msg->add(msg_id::IMPORT_NOT_FIND_FORMULA, [
+                    msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
+            } else {
+                $this->condition_id = $frm->id();
+            }
+        }
         if (key_exists(json_fields::IMPACT, $in_ex_json)) {
             $this->set_impact($in_ex_json[json_fields::IMPACT]);
         }
@@ -675,6 +700,25 @@ class triple extends sandbox_link_named
         // shows the phrase names (and not only the links) in the api and frontend
         $val_lst->load_phrases($msg);
         $this->values_related = $val_lst;
+    }
+
+    /**
+     * the condition formula is loaded on demand and not kept, because a triple that uses one is
+     * rare and only the page of a single triple names it (see api_json_array)
+     *
+     * @param user_message $msg to collect the problems while loading the formula
+     * @return formula|null the formula that decides if this triple is used,
+     *                      null if the condition points to a formula that no longer exists
+     */
+    private function condition_formula(user_message $msg): ?formula
+    {
+        $result = null;
+        $frm = new formula($this->get_user());
+        $frm->load_by_id($this->condition_id, $msg);
+        if ($frm->id() != 0) {
+            $result = $frm;
+        }
+        return $result;
     }
 
     /**
@@ -782,6 +826,22 @@ class triple extends sandbox_link_named
                     $vars[json_fields::NAME] = $this->generate_name();
                 } elseif ($vars[json_fields::NAME] == '') {
                     $vars[json_fields::NAME] = $this->generate_name();
+                }
+                // the weight and the condition are only sent if set, because the triple default
+                // view shows a field of a triple only if the triple uses it (see show_weight)
+                if ($this->weight != null) {
+                    $vars[json_fields::WEIGHT] = $this->weight;
+                }
+                if ($this->condition_id != null) {
+                    $vars[json_fields::CONDITION_ID] = $this->condition_id;
+                    // the name is included for a page request, so that the triple default view can
+                    // link the condition formula without loading the formula list of the whole pod
+                    if ($with_names) {
+                        $cond = $this->condition_formula($msg);
+                        if ($cond != null) {
+                            $vars[json_fields::CONDITION] = $cond->api_json_array([], $msg, $usr);
+                        }
+                    }
                 }
                 $vars[json_fields::USAGE] = $this->usage;
                 $vars[json_fields::IMPACT] = $this->impact;
@@ -1040,6 +1100,17 @@ class triple extends sandbox_link_named
         // the impact is part of the im- and export so that it round-trips
         if ($this->impact != null) {
             $vars[json_fields::IMPACT] = $this->impact;
+        }
+        // the weight and the condition are part of the im- and export so that they round-trip;
+        // the condition names the formula, because an id is not stable between two pods
+        if ($this->weight != null) {
+            $vars[json_fields::WEIGHT] = $this->weight;
+        }
+        if ($this->condition_id != null) {
+            $cond = $this->condition_formula($msg);
+            if ($cond != null) {
+                $vars[json_fields::CONDITION] = $cond->name();
+            }
         }
 
         return $vars;
@@ -1788,6 +1859,9 @@ class triple extends sandbox_link_named
             // fill the parameters
             if ($this->weight === null and $trp->weight != null) {
                 $this->weight = $trp->weight;
+            }
+            if ($this->condition_id === null and $trp->condition_id != null) {
+                $this->condition_id = $trp->condition_id;
             }
             if ($this->view === null and $trp->view != null) {
                 $this->view = $trp->view;
@@ -2599,6 +2673,11 @@ class triple extends sandbox_link_named
                 $result = true;
             }
         }
+        if ($this->condition_id != null) {
+            if ($this->condition_id != $db_obj->condition_id) {
+                $result = true;
+            }
+        }
         if ($this->usage != null) {
             if ($this->usage != $db_obj->usage) {
                 $result = true;
@@ -3015,6 +3094,7 @@ class triple extends sandbox_link_named
                 triple_fields::FLD_NAME_GIVEN,
                 triple_fields::FLD_NAME_AUTO,
                 triple_fields::FLD_WIGHT,
+                triple_fields::FLD_COND_ID,
                 fields::FLD_USAGE,
                 fields::FLD_IMPACT,
                 fields::FLD_VIEW
@@ -3241,6 +3321,21 @@ class triple extends sandbox_link_named
                 $this->weight,
                 triple_db::FLD_WEIGHT_SQL_TYP,
                 $obj->weight
+            );
+        }
+        if ($obj->condition_id !== $this->condition_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . triple_fields::FLD_COND_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . triple_fields::FLD_COND_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                triple_fields::FLD_COND_ID,
+                $this->condition_id,
+                triple_db::FLD_COND_ID_SQL_TYP,
+                $obj->condition_id
             );
         }
         if ($obj->usage !== $this->usage) {

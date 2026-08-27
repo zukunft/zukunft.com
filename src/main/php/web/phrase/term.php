@@ -372,6 +372,13 @@ class term extends combine_named
                 $vars[json_fields::FROM] = $trp->get_from()->id();
                 $vars[json_fields::VERB] = $trp->get_verb()->id();
                 $vars[json_fields::TO] = $trp->get_to()->id();
+                // like the backend emit the fields are only sent if the triple uses them
+                if ($trp->weight != null) {
+                    $vars[json_fields::WEIGHT] = $trp->weight;
+                }
+                if ($trp->condition_id != null) {
+                    $vars[json_fields::CONDITION_ID] = $trp->condition_id;
+                }
             } elseif ($this->is_formula()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
             } elseif ($this->is_verb()) {

@@ -151,7 +151,20 @@ class test_triples extends test_objects
     {
         $trp = $this->triple();
         $trp->impact = impacts::MAX;
+        // the same weight as units.json sets for the db row of this triple, because the term
+        // list unit test and the term list api read test share the fixture term_list.json,
+        // so the in-memory twin and the db row must create the same api json
+        $trp->weight = 0.5;
         return $trp;
+    }
+
+    /**
+     * @return triple_ui the triple with the fractional weight for frontend unit testing
+     *                   e.g. that the edit form shows the weight 0.5 and not an int-truncated 0
+     */
+    function triple_impact_ui(): triple_ui
+    {
+        return new triple_ui($this->triple_impact()->api_json());
     }
 
     /**

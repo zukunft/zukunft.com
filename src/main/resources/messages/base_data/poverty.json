@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "data_version": "0.0.1",
+  "data_version": "0.0.2",
   "time": "2026-06-18 12:00:00",
   "user": "timon",
   "selection": [
@@ -308,7 +308,10 @@
     {
       "from": "inequality",
       "verb": "influences",
-      "to": "poverty"
+      "to": "poverty",
+      "description": "the weight says how much of the poverty is explained by the inequality; the condition limits the link to a growing population, because a shrinking population changes the poverty for other reasons",
+      "weight": 0.6,
+      "condition": "fertility above replacement (formula)"
     },
     {
       "from": "poverty trap",

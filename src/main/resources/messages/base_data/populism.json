@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "data_version": "0.0.1",
+  "data_version": "0.0.2",
   "time": "2026-06-18 12:00:00",
   "user": "timon",
   "selection": [
@@ -193,7 +193,9 @@
     {
       "from": "social media",
       "verb": "can cause",
-      "to": "disinformation"
+      "to": "disinformation",
+      "description": "social media is one of several causes of disinformation, so the weight says how much of the disinformation it explains",
+      "weight": 0.4
     },
     {
       "from": "social media",

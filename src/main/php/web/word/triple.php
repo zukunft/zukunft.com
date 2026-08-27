@@ -46,6 +46,7 @@ namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
@@ -84,6 +85,7 @@ include_once html_paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -145,6 +147,10 @@ class triple extends sandbox_code_id
     public ?verb $verb = null;
     private ?phrase $to = null;
     public ?float $weight = null;
+    // the id of a formula with a boolean result; the triple is only used if the result is true
+    public ?int $condition_id = null;
+    // the condition formula itself, sent by the api for a page request so that it can be linked
+    public ?formula $condition = null;
     public ?string $plural = null {
         get {
             return $this->plural;
@@ -395,6 +401,14 @@ class triple extends sandbox_code_id
         }
         if (array_key_exists(json_fields::WEIGHT, $json_array)) {
             $this->weight = $json_array[json_fields::WEIGHT];
+        }
+        if (array_key_exists(json_fields::CONDITION_ID, $json_array)) {
+            $this->condition_id = $json_array[json_fields::CONDITION_ID];
+        }
+        if (array_key_exists(json_fields::CONDITION, $json_array)) {
+            $frm = new formula();
+            $frm->api_mapper($json_array[json_fields::CONDITION], $msg);
+            $this->condition = $frm;
         }
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->plural = $json_array[json_fields::PLURAL];

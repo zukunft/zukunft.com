@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1240 of 5666 public functions have at least 2 unit test calls; the 4426 functions below do not
+1241 of 5668 public functions have at least 2 unit test calls; the 4427 functions below do not
 
 ## main backend
 
@@ -4149,7 +4149,6 @@ so same-named functions of several classes share their test calls
     \-- form_field_source_group_or_phrases - 0 unit test calls
     \-- form_field_url - 0 unit test calls
     \-- form_field_view_link_priority - 0 unit test calls
-    \-- form_field_weight - 0 unit test calls
     \-- form_formula - 0 unit test calls
     \-- form_formula_all_fields - 0 unit test calls
     \-- form_formula_expression - 0 unit test calls
@@ -4198,6 +4197,7 @@ so same-named functions of several classes share their test calls
     \-- show_child_view - 0 unit test calls
     \-- show_col_phrase - 0 unit test calls
     \-- show_col_sub_phrase - 0 unit test calls
+    \-- show_condition_formula - 0 unit test calls
     \-- show_description - 0 unit test calls
     \-- show_formula - 0 unit test calls
     \-- show_language_symbol - 0 unit test calls
@@ -4220,6 +4220,7 @@ so same-named functions of several classes share their test calls
     \-- show_start_pos - 0 unit test calls
     \-- show_style - 0 unit test calls
     \-- show_usage - 0 unit test calls
+    \-- show_weight - 0 unit test calls
     \-- title_formula - 0 unit test calls
     \-- title_link - 0 unit test calls
     \-- title_phrase - 1 unit test calls

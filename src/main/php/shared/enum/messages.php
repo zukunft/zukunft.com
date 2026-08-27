@@ -1214,6 +1214,10 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" when importing '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case IMPORT_NOT_FIND_FORMULA = 'Cannot find formula "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
     case FROM_NAME_NOT_EMPTY = 'from name should not be empty at "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '"';
@@ -1997,6 +2001,8 @@ enum messages: string
 
     // word, triple and phrase fields
     case FORM_FIELD_WEIGHT = 'form_field_weight';
+    // the label of the formula that decides if a triple is used
+    case FORM_FIELD_CONDITION_FORMULA = 'form_field_condition_formula';
     case FORM_FIELD_PHRASE_LIST = 'form_field_phrase_list';
 
     // value and result fields

@@ -513,6 +513,18 @@
       "description": "the verb name used in formulas as read only",
       "type": "system_show_field_name_in_formulas",
       "code_id": "show_field_name_in_formulas"
+    },
+    {
+      "name": "system show field weight",
+      "description": "the weight of a triple compared to others as read only",
+      "type": "system_show_field_weight",
+      "code_id": "show_field_weight"
+    },
+    {
+      "name": "system show field condition formula",
+      "description": "the formula that decides if a triple is used, with a link to the formula",
+      "type": "system_show_field_condition_formula",
+      "code_id": "show_field_condition_formula"
     }
   ],
   "views": [
@@ -670,51 +682,61 @@
         },
         {
           "position": "4",
-          "name": "phrase aliases",
+          "name": "system show field weight",
           "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "phrase symbols",
+          "name": "system show field condition formula",
           "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "related phrases without subtitles",
+          "name": "phrase aliases",
           "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "system sub title references",
+          "name": "phrase symbols",
           "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "ref list word",
+          "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
           "position": "9",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
+          "name": "system sub title references",
+          "position_type": "combine"
         },
         {
           "position": "10",
-          "name": "values by triple",
+          "name": "ref list word",
           "position_type": "combine"
         },
         {
           "position": "11",
-          "name": "system sub title formulas",
-          "position_type": "side_or_below"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "12",
-          "name": "formula list",
+          "name": "values by triple",
           "position_type": "combine"
         },
         {
           "position": "13",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "14",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }

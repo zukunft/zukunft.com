@@ -738,12 +738,25 @@ class system_form extends component
      */
     private function show_field_labeled(string $value, msg_id $ui_msg_code_id): string
     {
+        return $this->label_with_html($this->esc($value), $ui_msg_code_id);
+    }
+
+    /**
+     * like show_field_labeled, but for a value that is html already, e.g. the link of a formula,
+     * so the caller is responsible that the given html is safe
+     *
+     * @param string $html_code the html shown behind the label
+     * @param msg_id $ui_msg_code_id the message id of the field label
+     * @return string the html behind its label, '' if the object has no value
+     */
+    private function label_with_html(string $html_code, msg_id $ui_msg_code_id): string
+    {
         global $mtr;
 
         $result = '';
         // a field without a value is not shown at all, so its label would stand alone
-        if ($value != '') {
-            $result = $mtr->txt($ui_msg_code_id) . def::FALLBACK_LABEL_SEPARATOR . $this->esc($value);
+        if ($html_code != '') {
+            $result = $mtr->txt($ui_msg_code_id) . def::FALLBACK_LABEL_SEPARATOR . $html_code;
         }
         return $result;
     }
@@ -789,6 +802,44 @@ class system_form extends component
             }
         } else {
             log_err($dbo::class . ' is not expected to have a calculation formula');
+        }
+        return $result;
+    }
+
+    /**
+     * @param triple|db_object $dbo the triple whose weight is shown
+     * @return string the weight behind its label as read only text (empty if no weight is set)
+     */
+    function show_weight(triple|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a triple has a weight and a mis-assigned seed
+        // component must not stop the page with a fatal
+        if ($dbo instanceof triple) {
+            $result = $this->show_field_labeled((string)($dbo->weight ?? ''), msg_id::FORM_FIELD_WEIGHT);
+        } else {
+            log_err($dbo::class . ' is not expected to have a weight');
+        }
+        return $result;
+    }
+
+    /**
+     * @param triple|db_object $dbo the triple whose condition formula is shown
+     * @return string the linked name of the condition formula behind its label
+     *                (empty if no condition is set or the formula is not known)
+     */
+    function show_condition_formula(triple|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a triple has a condition formula and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof triple) {
+            // the api sends the formula itself for a page request, so the name needs no cache;
+            // name_link() returns safe html, so it is added behind the label unescaped
+            $result = $this->label_with_html(
+                $dbo->condition?->name_link() ?? '', msg_id::FORM_FIELD_CONDITION_FORMULA);
+        } else {
+            log_err($dbo::class . ' is not expected to have a condition formula');
         }
         return $result;
     }

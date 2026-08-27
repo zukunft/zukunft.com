@@ -584,6 +584,11 @@ class component_types
     const int SHOW_LINK_TYPE_ID = 231;
     const string SHOW_ORDER_NBR = "system_show_field_order_nbr";
     const int SHOW_ORDER_NBR_ID = 232;
+    // the weight and the condition formula of a triple e.g. for the triple default page
+    const string SHOW_WEIGHT = "system_show_field_weight";
+    const int SHOW_WEIGHT_ID = 236;
+    const string SHOW_CONDITION_FORMULA = "system_show_field_condition_formula";
+    const int SHOW_CONDITION_FORMULA_ID = 237;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -1034,6 +1039,8 @@ class component_types
         [self::COMPONENT_VIEWS, self::COMPONENT_VIEWS_ID],
         [self::SHOW_LINK_TYPE, self::SHOW_LINK_TYPE_ID],
         [self::SHOW_ORDER_NBR, self::SHOW_ORDER_NBR_ID],
+        [self::SHOW_WEIGHT, self::SHOW_WEIGHT_ID],
+        [self::SHOW_CONDITION_FORMULA, self::SHOW_CONDITION_FORMULA_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],
