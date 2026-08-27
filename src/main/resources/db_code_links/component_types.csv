@@ -238,3 +238,4 @@ component_type_id, type_name, description, code_id
 237, 'show condition formula', 'show the formula that decides if a triple is used with a link to the formula', 'system_show_field_condition_formula'
 238, 'show source', 'show the source of a value with a link to the source', 'system_show_field_source'
 239, 'show last update', 'show the time when a value has been updated by the user or a calculation job', 'system_show_field_last_update'
+240, 'code id field', 'the code id field in a form, only shown to a user whose profile may change the code id', 'system_form_field_code_id'

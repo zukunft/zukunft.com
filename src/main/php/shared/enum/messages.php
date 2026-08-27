@@ -480,6 +480,9 @@ enum messages: string
     case TYPE_CHANGE_NOT_ALLOWED = 'changing the type of the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' is not allowed for your user profile';
+    case CODE_ID_CHANGE_NOT_ALLOWED = 'changing the code id of the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' is not allowed for your user profile';
     case WORD_ID_ADDITIONAL = 'word id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';

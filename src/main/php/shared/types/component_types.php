@@ -96,6 +96,10 @@ class component_types
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
     const int FORM_FIELD_DESCRIPTION_ID = 22;
+    // the code id that links a database row to program code; the input field is only shown
+    // to a user whose profile passes can_set_code_id e.g. on the source add and edit forms
+    const string FORM_FIELD_CODE_ID = "system_form_field_code_id";
+    const int FORM_FIELD_CODE_ID_ID = 240;
 
     // select object fields
     const string FORM_SELECT_PHRASE = "form_select_phrase";
@@ -675,6 +679,7 @@ class component_types
         self::FORM_TITLE,
         self::FORM_FIELD_NAME,
         self::FORM_FIELD_DESCRIPTION,
+        self::FORM_FIELD_CODE_ID,
         self::FORM_FIELD_URL,
         self::FORM_FIELD_DOI,
         self::FORM_FIELD_PLURAL,
@@ -859,6 +864,7 @@ class component_types
         [self::PHRASE_TITLE, self::PHRASE_TITLE_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
+        [self::FORM_FIELD_CODE_ID, self::FORM_FIELD_CODE_ID_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
         [self::FORM_FIELD_DOI, self::FORM_FIELD_DOI_ID],
         [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],

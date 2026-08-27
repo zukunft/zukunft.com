@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1243 of 5670 public functions have at least 2 unit test calls; the 4427 functions below do not
+1250 of 5673 public functions have at least 2 unit test calls; the 4423 functions below do not
 
 ## main backend
 
@@ -3483,7 +3483,6 @@ so same-named functions of several classes share their test calls
     \-- get_description - 0 unit test calls
     \-- get_plural - 0 unit test calls
     \-- get_usage - 0 unit test calls
-    \-- input_valid - 1 unit test calls
     \-- load_by_id - 0 unit test calls
     \-- load_by_id_with_related - 0 unit test calls
     \-- need_all - 0 unit test calls
@@ -4006,7 +4005,6 @@ so same-named functions of several classes share their test calls
     \-- view_selector - 0 unit test calls
 \-- sandbox_code_id
     \-- api_array - 1 unit test calls
-    \-- input_valid - 1 unit test calls
 \-- sandbox_link
     \-- api_array - 1 unit test calls
     \-- link_type - 0 unit test calls
@@ -4031,7 +4029,6 @@ so same-named functions of several classes share their test calls
     \-- calc_view_id - 0 unit test calls
     \-- get_description - 0 unit test calls
     \-- get_usage - 0 unit test calls
-    \-- input_valid - 1 unit test calls
     \-- load_by_name - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_link_plural - 0 unit test calls
@@ -4324,7 +4321,6 @@ so same-named functions of several classes share their test calls
     \-- get_verb - 0 unit test calls
     \-- has_verb - 0 unit test calls
     \-- impact - 0 unit test calls
-    \-- input_valid - 1 unit test calls
     \-- is_hidden - 0 unit test calls
     \-- is_in_use - 0 unit test calls
     \-- is_info - 0 unit test calls
@@ -4524,6 +4520,7 @@ so same-named functions of several classes share their test calls
     \-- url_to_standard - 0 unit test calls
 \-- user
     \-- api_array - 1 unit test calls
+    \-- can_see_code_id - 0 unit test calls
     \-- can_set_type_id - 0 unit test calls
     \-- dsp_changes - 0 unit test calls
     \-- dsp_errors - 0 unit test calls
@@ -4728,7 +4725,6 @@ so same-named functions of several classes share their test calls
     \-- get_plural - 0 unit test calls
     \-- header - 0 unit test calls
     \-- impact - 0 unit test calls
-    \-- input_valid - 1 unit test calls
     \-- is_hidden - 0 unit test calls
     \-- is_in_use - 0 unit test calls
     \-- is_info - 0 unit test calls

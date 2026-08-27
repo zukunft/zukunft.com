@@ -40,11 +40,16 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_tests
@@ -159,6 +164,45 @@ class source_tests
         $test_name = 'a source without doi shows no doi link';
         $src_ui = new source_ui($t_src->source_reserved()->api_json());
         $t->assert($test_name, $ui->source_doi_link($src_ui), '');
+
+        // for sources the code id is a user changeable field, but a code id is only shown to
+        // an admin or a developer and only a developer gets the input field, because only a
+        // profile that passes the backend can_set_code_id may change it
+        global $ui_sys;
+        $form = new system_form();
+        $t_usr = new test_users($t);
+        // source_admin carries the code id, because a source without one renders an empty field
+        $src_ui = new source_ui($t_src->source_admin()->api_json());
+        // remember the session user so the changed global can be restored after the checks
+        $usr_keep = $ui_sys->usr ?? null;
+        $test_name = 'a developer sees the code id input field of a source';
+        $ui_sys->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_text_contains($test_name, $form->form_field_code_id($src_ui), url_var::CODE_ID);
+        $test_name = 'an admin sees the code id of a source as read only text';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $admin_html = $form->form_field_code_id($src_ui);
+        $t->assert_text_contains($test_name, $admin_html, sources::SIB_CODE);
+        $test_name = 'an admin gets no code id input field';
+        $t->assert_false($test_name, str_contains($admin_html, 'name="' . url_var::CODE_ID . '"'));
+        $test_name = 'a normal user does not see the code id of a source';
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $t->assert($test_name, $form->form_field_code_id($src_ui), '');
+        $test_name = 'a test profile user does not see the code id, so the view snapshots stay clean';
+        $ui_sys->usr = new user_ui($t->usr1->api_json());
+        $t->assert($test_name, $form->form_field_code_id($src_ui), '');
+        $ui_sys->usr = $usr_keep;
+        // the confirm check mirrors the backend permission, so an orange warning is
+        // shown on the edit view instead of a refused save
+        $test_name = 'a code id change of a normal user is refused at the confirm check';
+        $chk_msg = new user_message_ui();
+        $chk_msg->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $t->assert_false($test_name, $src_ui->input_valid($chk_msg, url_var::CRUD_UPDATE,
+            [url_var::CODE_ID => 'changed', url_var::PRE . url_var::CODE_ID => sources::SIB_CODE]));
+        $test_name = 'a code id change of a developer passes the confirm check';
+        $chk_msg = new user_message_ui();
+        $chk_msg->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_true($test_name, $src_ui->input_valid($chk_msg, url_var::CRUD_UPDATE,
+            [url_var::CODE_ID => 'changed', url_var::PRE . url_var::CODE_ID => sources::SIB_CODE]));
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_src->source(), $t->usr_system);

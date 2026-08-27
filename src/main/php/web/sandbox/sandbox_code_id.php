@@ -103,6 +103,19 @@ class sandbox_code_id extends sandbox_typed
                     $result = false;
                 }
             }
+            // the code id links a database row to program code, so a change is only permitted
+            // for a system, test or developer user (mirrors the backend can_set_code_id check)
+            $old = $url_array[url_var::PRE . url_var::CODE_ID] ?? null;
+            $new = $url_array[url_var::CODE_ID] ?? null;
+            if ($new != $old) {
+                $usr = $msg->usr;
+                if ($usr == null or !$usr->can_set_code_id()) {
+                    $msg->add_warning_with_vars(msg_id::CODE_ID_CHANGE_NOT_ALLOWED, [
+                        msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+                    ]);
+                    $result = false;
+                }
+            }
         }
         return $result;
     }
@@ -114,7 +127,9 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * the code id is included in the message only to fill up backend object but never to change the code_id via ui
+     * the code id is included in the message to fill up the backend object; a code id *change*
+     * is only written for a user whose profile passes can_set_code_id, which the backend
+     * api_mapper enforces via the privilege-checked set_code_id
      */
     function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {

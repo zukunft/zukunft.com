@@ -6207,6 +6207,8 @@
             hout auto fill in /component/execute/system_form.php
     \-- form_description - section for function form_description not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
+    \-- form_field_code_id - section for function form_field_code_id not yet defined that it should be optional with sho
+            w password but without auto fill in /component/execute/system_form.php
     \-- form_field_plural - section for function form_field_plural not yet defined that it should be optional with show 
             password but without auto fill in /component/execute/system_form.php
     \-- form_field_reverse - section for function form_field_reverse not yet defined that it should be optional with sho
@@ -7606,6 +7608,8 @@
     \-- sees_admin_fields - section for function sees_admin_fields not yet defined that it should be info in /user/user.
             php
     \-- can_set_type_id - section for function can_set_type_id not yet defined that it should be info in /user/user.php
+    \-- can_set_code_id - section for function can_set_code_id not yet defined that it should be info in /user/user.php
+    \-- can_see_code_id - section for function can_see_code_id not yet defined that it should be info in /user/user.php
     \-- profile_name - section for function profile_name not yet defined that it should be info in /user/user.php
     \-- navbar_role - section for function navbar_role not yet defined that it should be info in /user/user.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /user/user.php
@@ -8933,6 +8937,8 @@
         \-- system_form - an editable text field of an edit / add form that also sends the unchanged db value as the
     \-- form_description
         \-- system_form - @param db_object|type_object $dbo
+    \-- form_field_code_id
+        \-- system_form - edit field for the code id that links a database row to program code, e.g. of a source;
     \-- form_field_plural
         \-- system_form - @param db_object $dbo the object
     \-- form_field_reverse

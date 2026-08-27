@@ -1,12 +1,6 @@
 
 # pending - list of planned llm prompts with prio 1
 
-### source
-
-add the missing source db field to the source add and edit views: the code_id field, shown only for users whose profile passes can_set_code_id (for sources the code_id is a user changeable field)
-
-extend the source default view, which today only shows the source name and the related values, with the missing db fields: the source type, the url as a link, the description and the usage
-
 ### ref
 
 show the non-changeable ref db fields last_update (the timestamp of the last successful update of the reference) and impact as display-only info in the ref edit view
@@ -59,7 +53,7 @@ in the logout page add an OK button that calls the back page from the url withou
 
 ## cleanup
 
-change the script that generates docs/code_functions_all.md and limit the length of each line
+check why diff for docs/code_functions_all.md still takes very long
 
 write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
 
@@ -123,7 +117,7 @@ web/value/value_list.php:1352 and :1360 were not migrated — $phr_row->btn_add(
 
 deprecate dsp_edit
 
-decprecate http_old
+deprecate http_old
 
 review $back
 
