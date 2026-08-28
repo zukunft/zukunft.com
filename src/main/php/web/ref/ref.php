@@ -253,7 +253,13 @@ class ref extends sandbox
         } else {
             $this->phr = null;
         }
-        if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
+        if (array_key_exists(json_fields::SOURCE, $json_array)) {
+            // the nested source with the name is sent for a page request,
+            // so the ref default page can link the source
+            $src = new source();
+            $src->api_mapper($json_array[json_fields::SOURCE], $msg);
+            $this->source = $src;
+        } elseif (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
             $this->set_source_by_id($json_array[json_fields::SOURCE_ID]);
         } else {
             $this->source = null;
@@ -427,6 +433,20 @@ class ref extends sandbox
     /*
      * api
      */
+
+    /**
+     * load the reference by id AND ask the backend to include the names of the linked phrase
+     * and of the source, which the ref default page shows as links (see the incl_related
+     * emit of the backend cfg/ref/ref::api_json_array)
+     *
+     * @param int|string $id the database id of the reference to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
 
     /**
      * @return array the json message array to send the updated data to the backend

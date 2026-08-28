@@ -268,6 +268,7 @@ class component_exe extends component
             component_types::SYSTEM_SHOW_REF_KEY => $form->show_ref_key($dbo),
             component_types::SYSTEM_SHOW_REF_SOURCE => $form->show_ref_source($dbo),
             component_types::SYSTEM_SHOW_REF_URL => $form->show_ref_url($dbo),
+            component_types::SHOW_REF_PHRASE => $form->show_ref_phrase($dbo),
             component_types::FORM_FIELD_EXTERNAL_KEY => $form->form_field_ref_key($dbo, $style),
 
             // triple only fields
@@ -437,6 +438,7 @@ class component_exe extends component
             component_types::SHOW_CONDITION_FORMULA => $form->show_condition_formula($dbo),
             component_types::SHOW_SOURCE => $form->show_source($dbo),
             component_types::SHOW_LAST_UPDATE => $form->show_last_update($dbo),
+            component_types::SHOW_IMPACT => $form->show_impact($dbo),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo, $msg),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),

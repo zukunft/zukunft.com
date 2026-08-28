@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1252 of 5674 public functions have at least 2 unit test calls; the 4422 functions below do not
+1255 of 5677 public functions have at least 2 unit test calls; the 4422 functions below do not
 
 ## main backend
 
@@ -20,7 +20,6 @@ so same-named functions of several classes share their test calls
     \-- start_api - 0 unit test calls
     \-- start_api_core - 0 unit test calls
 \-- change
-    \-- date_time_format - 1 unit test calls
     \-- db_field_values_types - 0 unit test calls
     \-- db_fields - 0 unit test calls
     \-- db_values - 0 unit test calls
@@ -3422,7 +3421,6 @@ so same-named functions of several classes share their test calls
     \-- default_id - 0 unit test calls
     \-- selector - 0 unit test calls
 \-- config
-    \-- date_time_format - 1 unit test calls
     \-- dec_point - 0 unit test calls
     \-- load - 0 unit test calls
     \-- percent_decimals - 0 unit test calls
@@ -3929,6 +3927,7 @@ so same-named functions of several classes share their test calls
     \-- external_key - 0 unit test calls
     \-- get_description - 0 unit test calls
     \-- has_phrase - 0 unit test calls
+    \-- load_by_id_with_related - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_tip - 1 unit test calls
     \-- phrase_selector - 0 unit test calls
@@ -4207,10 +4206,11 @@ so same-named functions of several classes share their test calls
     \-- show_phrase_type - 0 unit test calls
     \-- show_plural - 0 unit test calls
     \-- show_plural_reverse - 0 unit test calls
-    \-- show_ref_key - 0 unit test calls
-    \-- show_ref_source - 0 unit test calls
-    \-- show_ref_type - 0 unit test calls
-    \-- show_ref_url - 0 unit test calls
+    \-- show_ref_key - 1 unit test calls
+    \-- show_ref_phrase - 1 unit test calls
+    \-- show_ref_source - 1 unit test calls
+    \-- show_ref_type - 1 unit test calls
+    \-- show_ref_url - 1 unit test calls
     \-- show_reverse - 0 unit test calls
     \-- show_row_phrase - 0 unit test calls
     \-- show_start_pos - 0 unit test calls

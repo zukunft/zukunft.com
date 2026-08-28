@@ -869,25 +869,53 @@ class system_form extends component
     }
 
     /**
-     * @param value|db_object $dbo the value whose last update time is shown
+     * @param value|ref|db_object $dbo the value or reference whose last update time is shown
      * @return string the time of the last update behind its label in the user's time format
-     *                (empty if the value has never been updated e.g. a not yet saved value)
+     *                (empty if the object has never been updated e.g. a not yet saved value)
      */
-    function show_last_update(value|db_object $dbo): string
+    function show_last_update(value|ref|db_object $dbo): string
     {
         global $ui_sys;
 
         $result = '';
-        // guarded by class, because only a value tracks the time of the last update and a
-        // mis-assigned seed component must not stop the page with a fatal
+        // guarded by class, because only a value and a reference track the time of the last
+        // update and a mis-assigned seed component must not stop the page with a fatal
         if ($dbo instanceof value) {
+            $upd = $dbo->last_update;
+        } elseif ($dbo instanceof ref) {
+            // the reference keeps the api time text, so it is parsed here for the display format
+            $upd = null;
             if ($dbo->last_update != null) {
-                $result = $this->show_field_labeled(
-                    date_format($dbo->last_update, $ui_sys->cfg->date_time_format()),
-                    msg_id::SYSTEM_DB_FIELD_LAST_UPDATE);
+                $lib = new library();
+                $upd = $lib->get_datetime($dbo->last_update, $dbo->dsp_id(), 'show last update');
             }
         } else {
+            $upd = null;
             log_err($dbo::class . ' is not expected to have a last update time');
+        }
+        if ($upd != null) {
+            $result = $this->show_field_labeled(
+                date_format($upd, $ui_sys->cfg->date_time_format()),
+                msg_id::SYSTEM_DB_FIELD_LAST_UPDATE);
+        }
+        return $result;
+    }
+
+    /**
+     * @param ref|db_object $dbo the reference whose impact is shown
+     * @return string the impact number behind its label as read only text, because the impact
+     *                is calculated by the system and can never be changed by the user
+     *                (empty if the impact has not yet been calculated)
+     */
+    function show_impact(ref|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because a mis-assigned seed component must not stop the page
+        if ($dbo instanceof ref) {
+            $result = $this->show_field_labeled(
+                (string)($dbo->impact ?? ''), msg_id::SYSTEM_DB_FIELD_IMPACT);
+        } else {
+            log_err($dbo::class . ' is not expected to show the impact');
         }
         return $result;
     }
@@ -997,40 +1025,73 @@ class system_form extends component
      */
     function show_ref_type(ref|db_object $dbo): string
     {
-        return $this->esc($dbo->type_name());
+        return $this->show_field_labeled($dbo->type_name(), msg_id::FORM_SELECT_REF_TYPE);
     }
 
     /**
      * @param ref|db_object $dbo the object
-     * @return string the html code to show the object reference type to the user
+     * @return string the external key of the reference behind its label (empty if not yet set)
      */
     function show_ref_key(ref|db_object $dbo): string
     {
         // a new reference of an add form has no external key yet
-        return $this->esc($dbo->external_key() ?? '');
+        return $this->show_field_labeled($dbo->external_key() ?? '', msg_id::FORM_FIELD_EXTERNAL_KEY);
     }
 
     /**
      * @param ref|db_object $dbo the object
-     * @return string the html code to show the object reference type to the user
+     * @return string the linked name of the source of the reference behind its label
+     *                (empty if no source is set or only the source id is known)
      */
     function show_ref_source(ref|db_object $dbo): string
     {
-        $src_txt = $dbo->source_name();
-        if ($src_txt == null) {
-            $src_txt = '';
+        $result = '';
+        // the api sends the source with the name for a page request; name_link() returns
+        // safe html, so it is added behind the label unescaped
+        if ($dbo->source()?->name() != '') {
+            $result = $this->label_with_html($dbo->source()->name_link(), msg_id::FORM_SELECT_SOURCE);
         }
-        return $this->esc($src_txt);
+        return $result;
     }
 
     /**
      * @param ref|db_object $dbo the object
-     * @return string the html code to show the object reference type to the user
+     * @return string the url of the reference as a link to the external page behind its label
+     *                (empty if no url is set e.g. for a new reference of an add form)
      */
     function show_ref_url(ref|db_object $dbo): string
     {
-        // a new reference of an add form has no url yet
-        return $this->esc($dbo->url() ?? '');
+        $result = '';
+        $url = $dbo->url();
+        if ($url != null and $url != '') {
+            $html = new html_base();
+            // the url is user-settable, but html_base::ref escapes the shown name
+            // and drops the link if the scheme is not one of the allowed ones
+            $result = $this->label_with_html($html->ref($url, $url), msg_id::FORM_FIELD_URL);
+        }
+        return $result;
+    }
+
+    /**
+     * @param ref|db_object $dbo the reference whose linked phrase is shown
+     * @return string the linked name of the word or triple this reference belongs to behind
+     *                its label (empty if the phrase is not set or only its id is known)
+     */
+    function show_ref_phrase(ref|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a reference links a single phrase and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof ref) {
+            // the api sends the phrase with the name for a page request; name_link() returns
+            // safe html, so it is added behind the label unescaped
+            if ($dbo->phrase()->name() != '') {
+                $result = $this->label_with_html($dbo->phrase()->name_link(), msg_id::FORM_SELECT_PHRASE);
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to link a single phrase');
+        }
+        return $result;
     }
 
     /**

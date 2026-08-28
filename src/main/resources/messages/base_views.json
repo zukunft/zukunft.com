@@ -534,9 +534,39 @@
     },
     {
       "name": "system show field last update",
-      "description": "the time when a value has been updated by the user or a calculation job",
+      "description": "the time when a value or a reference has been updated by the user or a calculation job",
       "type": "system_show_field_last_update",
       "code_id": "show_field_last_update"
+    },
+    {
+      "name": "system show field reference phrase",
+      "description": "the word or triple a reference belongs to, with a link to the phrase",
+      "type": "system_show_field_ref_phrase",
+      "code_id": "show_field_ref_phrase"
+    },
+    {
+      "name": "system show field reference type",
+      "description": "the reference type as read only",
+      "type": "system_show_field_ref_type",
+      "code_id": "show_field_ref_type"
+    },
+    {
+      "name": "system show field external key",
+      "description": "the external key of a reference as read only",
+      "type": "system_show_field_ref_key",
+      "code_id": "show_field_ref_key"
+    },
+    {
+      "name": "system show field source",
+      "description": "the source name of a reference as read only",
+      "type": "system_show_field_ref_source",
+      "code_id": "show_field_ref_source"
+    },
+    {
+      "name": "system show field url",
+      "description": "the url of a reference as read only",
+      "type": "system_show_field_ref_url",
+      "code_id": "show_field_ref_url"
     }
   ],
   "views": [
@@ -806,6 +836,40 @@
         },
         {
           "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field reference phrase",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field reference type",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field external key",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field url",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field source",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
           "name": "related values"
         }
       ]

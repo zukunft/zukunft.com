@@ -224,6 +224,9 @@ class component_types
     const int FORM_FIELD_REF_SOURCE_ID = 165;
     const string SYSTEM_SHOW_REF_URL = "system_show_field_ref_url";
     const int FORM_FIELD_REF_URL_ID = 166;
+    // the word or triple this reference belongs to with a link e.g. for the ref default page
+    const string SHOW_REF_PHRASE = "system_show_field_ref_phrase";
+    const int SHOW_REF_PHRASE_ID = 242;
     const string FORM_FIELD_EXTERNAL_KEY = "system_form_field_external_key";
     const int FORM_FIELD_EXTERNAL_KEY_ID = 167;
 
@@ -598,6 +601,9 @@ class component_types
     const int SHOW_SOURCE_ID = 238;
     const string SHOW_LAST_UPDATE = "system_show_field_last_update";
     const int SHOW_LAST_UPDATE_ID = 239;
+    // the system calculated impact of a reference e.g. for the ref edit view
+    const string SHOW_IMPACT = "system_show_field_impact";
+    const int SHOW_IMPACT_ID = 241;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -875,6 +881,7 @@ class component_types
         [self::SYSTEM_SHOW_REF_KEY, self::FORM_FIELD_REF_KEY_ID],
         [self::SYSTEM_SHOW_REF_SOURCE, self::FORM_FIELD_REF_SOURCE_ID],
         [self::SYSTEM_SHOW_REF_URL, self::FORM_FIELD_REF_URL_ID],
+        [self::SHOW_REF_PHRASE, self::SHOW_REF_PHRASE_ID],
         [self::FORM_FIELD_EXTERNAL_KEY, self::FORM_FIELD_EXTERNAL_KEY_ID],
         [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
@@ -1054,6 +1061,7 @@ class component_types
         [self::SHOW_CONDITION_FORMULA, self::SHOW_CONDITION_FORMULA_ID],
         [self::SHOW_SOURCE, self::SHOW_SOURCE_ID],
         [self::SHOW_LAST_UPDATE, self::SHOW_LAST_UPDATE_ID],
+        [self::SHOW_IMPACT, self::SHOW_IMPACT_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

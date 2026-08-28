@@ -6171,6 +6171,8 @@
              without auto fill in /component/execute/system_form.php
     \-- show_last_update - section for function show_last_update not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
+    \-- show_impact - section for function show_impact not yet defined that it should be optional with show password but
+             without auto fill in /component/execute/system_form.php
     \-- show_row_phrase - section for function show_row_phrase not yet defined that it should be optional with show pass
             word but without auto fill in /component/execute/system_form.php
     \-- show_col_phrase - section for function show_col_phrase not yet defined that it should be optional with show pass
@@ -6189,6 +6191,8 @@
             word but without auto fill in /component/execute/system_form.php
     \-- show_ref_url - section for function show_ref_url not yet defined that it should be optional with show password b
             ut without auto fill in /component/execute/system_form.php
+    \-- show_ref_phrase - section for function show_ref_phrase not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
     \-- show_usage - section for function show_usage not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- show_parent_view - section for function show_parent_view not yet defined that it should be optional with show pa
@@ -7231,6 +7235,7 @@
     \-- external_key - section for function external_key not yet defined that it should be set and get in /ref/ref.php
     \-- url - section for function url not yet defined that it should be set and get in /ref/ref.php
     \-- predicate_id - section for function predicate_id not yet defined that it should be set and get in /ref/ref.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /ref/ref.php
     \-- api_array - section for function api_array not yet defined that it should be api in /ref/ref.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /ref/ref.php
     \-- name_link - section for function name_link not yet defined that it should be base in /ref/ref.php
@@ -7238,7 +7243,8 @@
     \-- phrase_selector - section for function phrase_selector not yet defined that it should be select in /ref/ref.php
     \-- source_selector - section for function source_selector not yet defined that it should be select in /ref/ref.php
     \-- display - section for function display not yet defined that it should be select in /ref/ref.php
-    \-- order error - order of section construct and map has difference at url_mapper should be before __construct
+    \-- order error - order of section construct and map has difference at url_mapper should be before __construct,
+            order of section api has difference at api_array should be before load_by_id_with_related
 \-- ref_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/ref_list.php
     \-- list - section for function list not yet defined that it should be display in /ref/ref_list.php
@@ -8900,7 +8906,9 @@
     \-- show_source
         \-- system_form - @param value|db_object $dbo the value whose source is shown
     \-- show_last_update
-        \-- system_form - @param value|db_object $dbo the value whose last update time is shown
+        \-- system_form - @param value|ref|db_object $dbo the value or reference whose last update time is shown
+    \-- show_impact
+        \-- system_form - @param ref|db_object $dbo the reference whose impact is shown
     \-- show_row_phrase
         \-- system_form - @param component|db_object $dbo the component whose row phrase is shown
     \-- show_col_phrase
@@ -8919,6 +8927,8 @@
         \-- system_form - @param ref|db_object $dbo the object
     \-- show_ref_url
         \-- system_form - @param ref|db_object $dbo the object
+    \-- show_ref_phrase
+        \-- system_form - @param ref|db_object $dbo the reference whose linked phrase is shown
     \-- show_usage
         \-- system_form - TODO Prio 1 fill with the correct field
     \-- show_parent_view

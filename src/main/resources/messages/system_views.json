@@ -1877,6 +1877,18 @@
       "type": "system_form_field_code_id",
       "code_id": "form_field_code_id",
       "ui_msg_code_id": "system_db_field_code_id"
+    },
+    {
+      "name": "system show field last update",
+      "description": "the time when a value or a reference has been updated by the user or a calculation job",
+      "type": "system_show_field_last_update",
+      "code_id": "show_field_last_update"
+    },
+    {
+      "name": "system show field impact",
+      "description": "the system calculated impact of a reference as read only, because the user can never change it",
+      "type": "system_show_field_impact",
+      "code_id": "show_field_impact"
     }
   ],
   "views": [
@@ -3484,25 +3496,34 @@
         },
         {
           "position": "17",
-          "name": "system formatter row start"
+          "name": "system show field last update"
         },
         {
           "position": "18",
+          "name": "system show field impact",
+          "position_type": "combine"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "20",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "19",
+          "position": "21",
           "name": "change log ref settings",
           "position_type": "combine"
         },
         {
-          "position": "20",
+          "position": "22",
           "name": "change log ref automatic",
           "position_type": "combine"
         },
         {
-          "position": "21",
+          "position": "23",
           "name": "system formatter row end"
         }
       ]

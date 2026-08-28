@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'ref.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
@@ -42,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -71,7 +73,10 @@ if ($db_con->is_open()) {
         if ($ref_id > 0) {
             $ref = new ref($load_usr);
             $ref->load_by_id($ref_id, $msg);
-            $result = $ref->api_json([], $msg);
+            // INCL_RELATED is opt-in via the ?incl_related=1 url param, so that the default
+            // reference fetch stays small; the ref default page adds the flag to get the
+            // names of the linked phrase and of the source for the field links
+            $result = $ref->api_json(api_type_list::from_url_array($_GET), $msg);
         } else {
             $msg->add_message_text('Cannot load ref because id is missing');
         }
