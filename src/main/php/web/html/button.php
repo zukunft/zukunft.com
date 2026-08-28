@@ -190,17 +190,18 @@ class button
      * display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
      * $back can be either the id of the last used word or the url path
      */
-    function back(string $back = ''): string
+    /**
+     * @param array $url_arr the url parameters of the page to go back to; an empty array leads
+     *                       to the start page, because no calling page is known
+     * @return string the html code of the back button
+     */
+    function back(array $url_arr = []): string
     {
-        if ($back == '') {
-            $back = 1; // temp solution
-        }
         $this->title = 'back';
-        if (is_numeric($back)) {
-            $this->call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE
-                . '&' .url_var::ID . '=' . $back;
+        if ($url_arr == []) {
+            $this->call = api::MAIN_SCRIPT;
         } else {
-            $this->call = $back;
+            $this->call = new html_base()->page_url($url_arr);
         }
         return $this->back_img();
     }
@@ -260,7 +261,7 @@ class button
     /**
      * display a button to add a value
      */
-    function add_value($phr_lst, $type_ids, $back): string
+    function add_value($phr_lst, $type_ids, array $url_arr = []): string
     {
         log_debug("button->add_value");
         $lib = new library();
@@ -286,7 +287,7 @@ class button
             $url_type = $lib->ids_to_url($type_ids, "type");
         }
 
-        $this->call = new html_base()->url_back(views::VALUE_ADD_ID, 0, '', $back) . $url_phr . $url_type;
+        $this->call = new html_base()->url_back(views::VALUE_ADD_ID, 0, '', $url_arr) . $url_phr . $url_type;
         $result = $this->add(msg_id::ADD);
 
         log_debug($result);
@@ -296,7 +297,7 @@ class button
     /**
      * similar to btn_add_value, but uses a simple modal box
      */
-    function add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string
+    function add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, array $url_arr = []): string
     {
         log_debug();
         $result = '';
@@ -334,7 +335,10 @@ class button
         $result .= $html->dsp_form_start($form_name);
         $result .= '            ' . $phr_time->name_dsp();
         $result .= $html->input(url_var::PHRASE_LIST, msg_id::FORM_FIELD_PHRASE_LIST, implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::BACK, msg_id::FORM_FIELD_BACK, $back, html_base::INPUT_HIDDEN);
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->input($key, msg_id::FORM_FIELD_BACK, (string)$val, html_base::INPUT_HIDDEN);
+        }
         $result .= $html->input(url_var::STEP, msg_id::FORM_FIELD_STEP,'1', html_base::INPUT_HIDDEN);
         $result .= $html->input(url_var::VALUE, msg_id::FORM_FIELD_VALUE,  '0', html_base::INPUT_TEXT);
         $result .= '            ' . $common_lst_ex_main->name_dsp();
@@ -359,16 +363,16 @@ class button
     /**
      * display a button to adjust a value
      */
-    function edit_value($phr_lst, $group_id, $back): string
+    function edit_value($phr_lst, $group_id, array $url_arr = []): string
     {
-        log_debug($phr_lst->name() . ",v" . $group_id . ",b" . $back);
+        log_debug($phr_lst->name() . ",v" . $group_id);
 
         if (!empty($phr_lst->ids)) {
             $this->title = "change the value for " . $phr_lst->name();
         } else {
             $this->title = "change this value";
         }
-        $this->call = new html_base()->url_back(views::VALUE_EDIT_ID, $group_id, '', $back);
+        $this->call = new html_base()->url_back(views::VALUE_EDIT_ID, $group_id, '', $url_arr);
         $result = $this->edit(msg_id::EDIT);
         log_debug($result);
         return $result;
@@ -377,16 +381,16 @@ class button
     /**
      * display a button to exclude a value
      */
-    function del_value($phr_lst, $group_id, $back): string
+    function del_value($phr_lst, $group_id, array $url_arr = []): string
     {
-        log_debug($phr_lst->name() . ",v" . $group_id . ",b" . $back);
+        log_debug($phr_lst->name() . ",v" . $group_id);
 
         if (!empty($phr_lst->ids)) {
             $this->title = "delete the value for " . $phr_lst->name();
         } else {
             $this->title = "delete this value";
         }
-        $this->call = new html_base()->url_back(views::VALUE_DEL_ID, $group_id, '', $back);
+        $this->call = new html_base()->url_back(views::VALUE_DEL_ID, $group_id, '', $url_arr);
         $result = $this->del(msg_id::DEL);
         log_debug($result);
         return $result;
@@ -431,23 +435,23 @@ function btn_yesno(string $text, string $url): string
     $b = new button($url);
     return $b->yes_no('', $text);
 }    // button to get the user confirmation
-function btn_back($back_link): string
+function btn_back(array $url_arr = []): string
 {
-    $b = new button($back_link);
-    return $b->back($back_link);
-} // button to remove a filter
+    $b = new button('', $url_arr);
+    return $b->back($url_arr);
+} // button to go back to the calling page
 
 
 // button to add a new value related to some phrases
-function btn_add_value($phr_lst, $type_ids, $back): string
+function btn_add_value($phr_lst, $type_ids, array $url_arr = []): string
 {
     $b = new button();
-    return $b->add_value($phr_lst, $type_ids, $back);
+    return $b->add_value($phr_lst, $type_ids, $url_arr);
 }
 
 // similar to btn_add_value, but uses a simple modal box
-function btn_add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string
+function btn_add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, array $url_arr = []): string
 {
     $b = new button();
-    return $b->add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back);
+    return $b->add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $url_arr);
 }

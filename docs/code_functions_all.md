@@ -6811,6 +6811,8 @@
             es used in the html code in /html/html_base.php
     \-- url_with_back - section for function url_with_back not yet defined that it should be wrapper for internal refere
             nces used in the html code in /html/html_base.php
+    \-- page_url - section for function page_url not yet defined that it should be wrapper for internal references used 
+            in the html code in /html/html_base.php
     \-- url_with_token - section for function url_with_token not yet defined that it should be wrapper for internal refe
             rences used in the html code in /html/html_base.php
     \-- url_api - section for function url_api not yet defined that it should be wrapper for internal references used in
@@ -9275,8 +9277,7 @@
     \-- back_img
         \-- button - html code for a icon to create a new entry
     \-- back
-        \-- button - display a button to go back to the main calling page (several pages have been show to adjust the vi
-                ew of a word, go back to the word not to the view edit pages)
+        \-- button - @param array $url_arr the url parameters of the page to go back to; an empty array leads
     \-- confirm
         \-- button - ask a yes/no question with the default calls
     \-- yes_no
@@ -9350,11 +9351,13 @@
     \-- url_old
         \-- html_base - build a url for link a zukunft.com element
     \-- url_back
-        \-- html_base - remove the trailing slash of a base url, because the script path already starts with one
+        \-- html_base - the url of a view for an object with the calling page as the back part
     \-- pre_url_part
         \-- html_base - Build a URL parameter string with each editable field prefixed with url_var::PRE ('8'),
     \-- url_with_back
         \-- html_base - Build the additional URL parameters for an array, each key prefixed with the given prefix char.
+    \-- page_url
+        \-- html_base - the url of the page that the given url parameters describe, e.g. to return to it
     \-- url_with_token
         \-- html_base - append the anti-csrf session token to a get action link (logout, error_update) so that the
     \-- url_api
@@ -9416,13 +9419,13 @@
     \-- form_session_token
         \-- html_base - the hidden anti-csrf field carrying the session token that the server validates on a submit
     \-- form_end_with_submit
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- button_submit
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- form_submit
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- form_input
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- form_input_password
         \-- html_base - a password input with a css-only "show password" toggle (no javascript,
                  see docs/llm/frontend.md)
@@ -9453,13 +9456,13 @@
     \-- dsp_text_h3
         \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_go_back
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- dsp_btn_text
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- dsp_err
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- dsp_link_hist_box
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- tab_box
         \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- tab_id
@@ -9477,7 +9480,7 @@
     \-- dsp_form_start
         \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_form_end
-        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- div_center
         \-- html_base - centre a html page
     \-- dsp_form_center

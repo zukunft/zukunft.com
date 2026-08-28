@@ -422,7 +422,7 @@ class value extends sandbox_value
     {
         $html = new html_base();
         $lib = new library();
-        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), '', $back);
+        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), '', html_base::url_arr_from_back($back));
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
@@ -438,7 +438,7 @@ class value extends sandbox_value
     function value_edit(user_message $msg, string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_back(views::VALUE_DEFAULT_ID, $this->id(), '', $back);
+        $url = $html->url_back(views::VALUE_DEFAULT_ID, $this->id(), '', html_base::url_arr_from_back($back));
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
@@ -572,7 +572,7 @@ class value extends sandbox_value
         if ($unit_phr_lst->count() > 1) {
             log_err($this->dsp_id() . ' is not expected to have more than one unit');
         }
-        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), '', $back);
+        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), '', html_base::url_arr_from_back($back));
         $name_txt = $phr_lst->name_link_list();
         $val_txt = $this->value($msg);
         if (!$info_phr_lst->is_empty()) {
@@ -890,7 +890,7 @@ class value extends sandbox_value
     function btn_undo_add_value($back): string
     {
         return \Zukunft\ZukunftCom\main\php\web\html\btn_undo('delete this value',
-            new html_base()->url_back(views::VALUE_DEL_ID, $this->id(), '', $back));
+            new html_base()->url_back(views::VALUE_DEL_ID, $this->id(), '', html_base::url_arr_from_back($back)));
     }
 
     // display a value, means create the HTML code that allows to edit the value
@@ -899,7 +899,7 @@ class value extends sandbox_value
         log_debug('value->dsp_tbl_std ');
         $html = new html_base();
         $result = '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg)) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), '', html_base::url_arr_from_back($back)), $this->val_formatted($msg)) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -911,7 +911,7 @@ class value extends sandbox_value
         $html = new html_base();
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg), '', styles::STYLE_USER) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), '', html_base::url_arr_from_back($back)), $this->val_formatted($msg), '', styles::STYLE_USER) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -1329,7 +1329,7 @@ class value extends sandbox_value
         } else {
             $result .= '  is <input type="' . html_base::INPUT_TEXT . '" name="value">';
         }
-        $result .= $html->dsp_form_end("Save", $back);
+        $result .= $html->dsp_form_end("Save", html_base::url_arr_from_back($back));
         $result .= '<br><br>';
         log_debug('load source');
         $src = $this->load_source();
@@ -1347,7 +1347,7 @@ class value extends sandbox_value
         $result .= $this->dsp_protection($script, $back);
 
         $result .= '<br>';
-        $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_back($back);
+        $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_back(html_base::url_arr_from_back($back));
 
         // display the user changes
         log_debug('user changes');

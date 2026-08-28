@@ -706,7 +706,7 @@ class html_base
     function url_old(
         string       $obj_name,
         int|string   $id = 0,
-        ?string      $back = '',
+        array        $url_arr = [],
         string|array $par = '',
         string       $id_ext = ''
     ): string
@@ -722,10 +722,7 @@ class html_base
                 $result .= '&' . $id_ext;
             }
         }
-        if ($back != '') {
-            $result .= '&back=' . $back;
-        }
-        return $result;
+        return $this->url_with_back($result, $url_arr);
     }
 
     /**
@@ -760,11 +757,24 @@ class html_base
         return $result;
     }
 
+    /**
+     * the url of a view for an object with the calling page as the back part
+     *
+     * @param int|string $view the id or the code id of the view to call
+     * @param int|string $id the id of the object to show, 0 for a view without an object
+     * @param string $obj_name unused, kept for the callers that name the parameters by position
+     * @param array $url_arr the url parameters of the calling page, which become the
+     *                       '9'-prefixed back part so that the called page can return to it
+     * @param string|array $par unused, kept for the callers that name the parameters by position
+     * @param string $id_ext an additional url parameter e.g. to link two objects
+     * @param string $base_url the base url of the pod, empty for a relative url
+     * @return string the url of the view
+     */
     function url_back(
         int|string   $view,
         int|string   $id = 0,
         string       $obj_name = '',
-        ?string      $back = '',
+        array        $url_arr = [],
         string|array $par = '',
         string       $id_ext = '',
         string       $base_url = ''
@@ -781,10 +791,7 @@ class html_base
         if ($id_ext != '') {
             $url .= '&' . $id_ext;
         }
-        if ($back != '') {
-            $url .= '&back=' . $back;
-        }
-        return $url;
+        return $this->url_with_back($url, $url_arr);
     }
 
     /**
@@ -908,6 +915,45 @@ class html_base
                 return $url . '?' . $par_ext;
             }
         }
+    }
+
+    /**
+     * the url of the page that the given url parameters describe, e.g. to return to it
+     *
+     * @param array $url_arr the url parameters of the page
+     * @return string the url of the page with the parameters that identify it (url_var::PAGE_VARS)
+     */
+    function page_url(array $url_arr): string
+    {
+        return api::MAIN_SCRIPT . url_var::PAR . http_build_query(self::page_url_array($url_arr));
+    }
+
+    /**
+     * the url parameters of the calling page from the old string form of the back parameter,
+     * which is either the id of the phrase the user has come from or the url of the page
+     *
+     * transitional: the link builders take the url parameters of the calling page as an
+     * array, but the display functions above them still hand the page down as a string
+     * (docs/llm/pending_prio_2.md "replace the $back parameter"); every conversion of such a
+     * function removes one call of this bridge, and the last one removes the bridge
+     *
+     * @param string|null $back the old back parameter: a phrase id, a url or empty
+     * @return array the url parameters of the calling page, empty if no page is known
+     */
+    static function url_arr_from_back(?string $back): array
+    {
+        $result = [];
+        if ($back != null and $back != '') {
+            if (is_numeric($back)) {
+                // the id 0 named no phrase, so it names no page either
+                if ((int)$back > 0) {
+                    $result = [url_var::MASK => views::PHRASE_ID, url_var::ID => (int)$back];
+                }
+            } else {
+                parse_str(parse_url($back, PHP_URL_QUERY) ?? '', $result);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1273,10 +1319,10 @@ class html_base
         string $form_name,
         string $tbl_rows,
         string $submit_name = '',
-        string $back = '',
+        array  $url_arr = [],
         string $del_call = ''): string
     {
-        return $this->form_start($form_name) . $tbl_rows . $this->form_end_with_submit($submit_name, $back, $del_call);
+        return $this->form_start($form_name) . $tbl_rows . $this->form_end_with_submit($submit_name, $url_arr, $del_call);
     }
 
     /**
@@ -1349,43 +1395,18 @@ class html_base
      * @param string $del_call the URL to call for the delete action; empty omits the delete button
      * @return string the HTML code for the form buttons and closing form tag
      */
-    function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
+    /**
+     * the end of a form with the submit button, the cancel link back to the calling page and
+     * an optional delete link; the same as dsp_form_end, kept for the callers that name it
+     *
+     * @param string $submit_name the text of the submit button, empty for the default "save"
+     * @param array $url_arr the url parameters of the calling page, which the cancel link calls
+     * @param string $del_call the url of the delete view or empty if the object cannot be deleted
+     * @return string the html code of the form end
+     */
+    function form_end_with_submit(string $submit_name, array $url_arr, string $del_call = ''): string
     {
-        global $mtr;
-        $result = '';
-        $btn = new button();
-        if (self::UI_USE_BOOTSTRAP) {
-            if ($submit_name == "") {
-                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
-            } else {
-                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $submit_name . '</' . self::BUTTON . '>';
-            }
-            if ($back <> "") {
-                if (is_numeric($back)) {
-                    $result .= $this->ref(api::MAIN_SCRIPT . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                } else {
-                    $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                }
-            }
-            if ($del_call <> '') {
-                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
-            }
-        } else {
-            if ($submit_name == "") {
-                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT . '">';
-            } else {
-                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT .
-                    '" ' . self::VALUE . '="' . $submit_name . '">';
-            }
-            if ($back <> "") {
-                $result .= $btn->back($back);
-            }
-            if ($del_call <> "") {
-                $result .= $btn->del(msg_id::DEL, $del_call);
-            }
-        }
-        $result .= '</' . self::FORM . '>';
-        return $result;
+        return $this->dsp_form_end($submit_name, $url_arr, $del_call);
     }
 
     function button_submit(string $submit_name): string
@@ -1572,7 +1593,7 @@ class html_base
         array  $item_lst,
         string $class,
         string $script_parameter,
-        string $back = ''): string
+        array  $url_arr = []): string
     {
         global $mtr;
         $btn = new button();
@@ -1584,17 +1605,17 @@ class html_base
             // list of all possible view entries
             $row_nbr = $row_nbr + 1;
             $edit_script = $this->edit_url($class);
-            $url = $this->url_old($edit_script, $key, $back);
+            $url = $this->url_old($edit_script, $key, $url_arr);
             $result .= $this->ref($url, $item);
             if ($row_nbr > 1) {
-                $url = $this->url_old($edit_script, $key, $back, '&move_up=' . $key);
+                $url = $this->url_old($edit_script, $key, $url_arr, '&move_up=' . $key);
                 $result .= $this->ref($url, $mtr->txt(msg_id::UP));
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
             if ($row_nbr < $num_rows) {
-                $url = $this->url_old($edit_script, $key, $back, '&move_down=' . $key);
+                $url = $this->url_old($edit_script, $key, $url_arr, '&move_down=' . $key);
                 $result .= $this->ref($url, $mtr->txt(msg_id::DOWN));
             }
             $result .= ' ';
@@ -1614,7 +1635,7 @@ class html_base
      * @param string $back the target for the back / ctrl-z function
      * @return string the html code to display the list
      */
-    function list(array $item_lst, string $class, string $back = ''): string
+    function list(array $item_lst, string $class, array $url_arr = []): string
     {
         $result = "";
 
@@ -1623,14 +1644,14 @@ class html_base
 
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), '', $back);
+                $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), '', $url_arr);
                 $result .= $this->ref($url, $this->esc($item->name()));
                 $result .= '<' . self::BR . '>';
             }
         }
-        $url_add = $this->url_back($class_name . rest_ctrl::CREATE, 0, '', $back);
+        $url_add = $this->url_back($class_name . rest_ctrl::CREATE, 0, '', $url_arr);
         $msg_id = $lib->class_to_add_msg_id($class);
-        $result .= (new button($url_add, $back))->add($msg_id);
+        $result .= (new button($url_add, $url_arr))->add($msg_id);
         $result .= '<' . self::BR . '>';
 
         return $result;
@@ -1701,21 +1722,23 @@ class html_base
     }
 
 // after simple add views e.g. for a value automatically go back to the calling page
-    function dsp_go_back($back, $usr): string
+    /**
+     * redirect to the calling page after an action, so that a reload never repeats the action
+     *
+     * @param array $url_arr the url parameters of the calling page
+     * @param object|null $usr unused, kept for the callers that name the parameters by position;
+     *                         untyped on purpose, so html_base needs no include of the user class
+     * @return string always empty, because the redirect header replaces the page
+     */
+    function dsp_go_back(array $url_arr, ?object $usr = null): string
     {
-        log_debug('dsp_go_back(' . $back . ')');
-
         $result = '';
 
-        if ($back == '') {
+        if ($url_arr == []) {
             log_err("Internal error: go back page missing.", "dsp_header->dsp_go_back");
-            header("Location: view.php?words=1"); // go back to the fallback page
+            header("Location: " . api::MAIN_SCRIPT); // go back to the fallback page
         } else {
-            if (is_numeric($back)) {
-                header("Location: view.php?words=" . $back); // go back to the calling page and try to avoid double change script calls
-            } else {
-                header("Location: " . $back); // go back to the calling page and try to avoid double change script calls
-            }
+            header("Location: " . $this->page_url($url_arr));
         }
 
         return $result;
@@ -1912,7 +1935,17 @@ class html_base
     }
 
 // end a html form
-    function dsp_form_end($submit_name, $back, $del_call = ''): string
+    /**
+     * the end of a form with the submit button, the cancel link back to the calling page and
+     * an optional delete link
+     *
+     * @param string $submit_name the text of the submit button, empty for the default "save"
+     * @param array $url_arr the url parameters of the calling page, which the cancel link calls;
+     *                       an empty array shows no cancel link, because no page is known
+     * @param string $del_call the url of the delete view or empty if the object cannot be deleted
+     * @return string the html code of the form end
+     */
+    function dsp_form_end(string $submit_name, array $url_arr, string $del_call = ''): string
     {
         global $mtr;
         $btn = new button();
@@ -1923,12 +1956,8 @@ class html_base
             } else {
                 $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $submit_name . '</' . self::BUTTON . '>';
             }
-            if ($back <> "") {
-                if (is_numeric($back)) {
-                    $result .= $this->ref(api::MAIN_SCRIPT . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                } else {
-                    $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                }
+            if ($url_arr != []) {
+                $result .= $this->ref($this->page_url($url_arr), $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
             }
             if ($del_call <> '') {
                 $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
@@ -1940,8 +1969,8 @@ class html_base
                 $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT .
                     '" ' . self::VALUE . '="' . $submit_name . '">';
             }
-            if ($back <> "") {
-                $result .= $btn->back($back);
+            if ($url_arr != []) {
+                $result .= $btn->back($url_arr);
             }
             if ($del_call <> "") {
                 $result .= $btn->del(msg_id::DEL, $del_call);

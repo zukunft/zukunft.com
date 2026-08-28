@@ -1483,7 +1483,7 @@ class phrase_list extends sandbox_list_named
      */
     function btn_add_value($back): string
     {
-        $result = \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($this, Null, $back);
+        $result = \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($this, Null, html_base::url_arr_from_back($back));
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';

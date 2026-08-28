@@ -300,7 +300,7 @@ class base_ui_tests
         $sel->selected = 3;
         $body = $html->form_start($sel->form);
         $body .= $sel->display_old();
-        $body .= $html->form_end_with_submit($sel->name, '');
+        $body .= $html->form_end_with_submit($sel->name, []);
         $t->html_test($body, '', 'selector', $t);
         */
 
@@ -611,6 +611,39 @@ class base_ui_tests
         parse_str($url_part["query"], $url_array);
         $result = $html->url_with_back(api::MAIN_SCRIPT . '?m=3&id=123', $url_array);
         $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=3&id=123&9m=1');
+
+        // the link builders take the url parameters of the calling page and add them as the
+        // '9'-prefixed back part, so that the called page can return to the calling page
+        $page_arr = [url_var::MASK => '3', url_var::ID => '123'];
+        $test_name = 'a view url carries the calling page as the back part';
+        $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, '', $page_arr), '9m=3&9id=123');
+        $test_name = '... and an unknown calling page adds no back part';
+        $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, '', []), '9');
+        $test_name = 'an old style script url carries the calling page as the back part';
+        $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
+        $test_name = 'the page url of a url array names the page by its page vars only';
+        $t->assert($test_name, $html->page_url($page_arr + [url_var::STEP => '0']),
+            api::MAIN_SCRIPT . '?m=3&id=123');
+        $test_name = 'the form end links the cancel button to the calling page';
+        $t->assert_text_contains($test_name, $html->dsp_form_end('', $page_arr), 'm=3&amp;id=123');
+        $test_name = '... and shows no cancel button if no calling page is known';
+        $t->assert_text_not_contains($test_name, $html->dsp_form_end('', []), 'btn-outline-secondary');
+        $test_name = 'the back button leads to the calling page';
+        $t->assert_text_contains($test_name, (new button())->back($page_arr), 'm=3&amp;id=123');
+        $test_name = '... and to the start page if no calling page is known';
+        $t->assert_text_contains($test_name, (new button())->back([]), api::MAIN_SCRIPT . '"');
+        // the bridge from the old string back parameter, which the display functions still
+        // hand down until they take the url array themselves (docs/llm/pending_prio_2.md)
+        $test_name = 'a numeric back parameter is the phrase the user has come from';
+        $t->assert($test_name, html_base::url_arr_from_back('5'),
+            [url_var::MASK => views::PHRASE_ID, url_var::ID => 5]);
+        $test_name = 'a url back parameter is split into its url parameters';
+        $t->assert($test_name, html_base::url_arr_from_back(api::MAIN_SCRIPT . '?m=3&id=123'),
+            ['m' => '3', 'id' => '123']);
+        $test_name = '... and an empty back parameter names no calling page';
+        $t->assert($test_name, html_base::url_arr_from_back(''), []);
+        $test_name = '... nor does the phrase id 0, which names no phrase';
+        $t->assert($test_name, html_base::url_arr_from_back('0'), []);
 
         $lib = new library();
         $msg = new user_message_ui();

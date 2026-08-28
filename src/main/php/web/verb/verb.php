@@ -419,7 +419,7 @@ class verb extends sandbox_named
         $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
         $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="confirm" value="1">';
         $result .= $html->dsp_tbl_end();
-        $result .= $html->dsp_form_end('', $back);
+        $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back));
 
         log_debug('verb->dsp_edit ... done');
         return $result;

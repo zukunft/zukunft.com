@@ -297,7 +297,7 @@ class job extends db_object
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url_old(rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
+        $url = $html->url_old(rest_ctrl::VIEW, $this->id(), html_base::url_arr_from_back($back), url_var::WORDS);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 

@@ -778,10 +778,11 @@ class component extends sandbox_code_id
             $this->description);
         if ($add_link <= 0) {
             if ($this->id() > 0) {
-                $result .= $html->dsp_form_end('', $back,
-                    $html->url_back(views::COMPONENT_DEL_ID, $this->id(), '', $back->url_encode()));
+                $url_arr = html_base::url_arr_from_back($back?->url_encode());
+                $result .= $html->dsp_form_end('', $url_arr,
+                    $html->url_back(views::COMPONENT_DEL_ID, $this->id(), '', $url_arr));
             } else {
-                $result .= $html->dsp_form_end('', $back, '');
+                $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back?->url_encode()), '');
             }
         }
 
@@ -936,10 +937,10 @@ class component extends sandbox_code_id
             // TODO Prio 0 activate
             //$result .= $msk_lst->selector($form, 0, url_var::COMPONENT_LINK_LONG);
 
-            $result .= $html->dsp_form_end('', $back);
+            $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back));
         } else {
             $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add('add new',
-                    $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), '', $back, '', 'add_link=1&word=' . $wrd->id));
+                    $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), '', html_base::url_arr_from_back($back), '', 'add_link=1&word=' . $wrd->id));
         }
         $result .= '    </td>';
         $result .= '  </tr>';

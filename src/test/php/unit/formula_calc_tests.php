@@ -129,15 +129,16 @@ class formula_calc_tests
         $back = 0;
         $result = $frm_html->dsp_text($msg_ui, $back, $trm_lst_ui);
         $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&amp;id=';
+        // the links carry no back part, because the formula is shown without a calling page
         $target = '"' . words::PERCENT
             . '" = ( <a href="' . $frm_edit_url
-            . $frm_this->id() . '&amp;back=0">'
+            . $frm_this->id() . '">'
             . word_names::THIS_NAME
             . '</a> - <a href="' . $frm_edit_url
             . $frm_prior->id()
-            . '&amp;back=0">'
+            . '">'
             . word_names::PRIOR_NAME
-            . '</a> ) / <a href="' . $frm_edit_url . '20&amp;back=0">'
+            . '</a> ) / <a href="' . $frm_edit_url . '20">'
             . word_names::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 

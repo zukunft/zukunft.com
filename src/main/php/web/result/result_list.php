@@ -416,7 +416,7 @@ class result_list extends sandbox_list_value
         $html = new html_base();
         $formula_links = '';
         foreach ($this->lst() as $res) {
-            $formula_links .= ' ' . $html->ref($html->url_back(views::FORMULA_EDIT_ID, $res->frm->id, '', $back->url_encode()), $res->number) . ' ';
+            $formula_links .= ' ' . $html->ref($html->url_back(views::FORMULA_EDIT_ID, $res->frm->id, '', html_base::url_arr_from_back($back?->url_encode())), $res->number) . ' ';
         }
         if ($formula_links <> '') {
             $result .= ' (or ' . $formula_links . ')';

@@ -2249,7 +2249,7 @@ class value_list extends ListBase
                             }
 
                             //$result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $common_lst, $back);
-                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
+                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, html_base::url_arr_from_back($back));
                             $modal_nbr++;
                             //$result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back);
                             $result .= '      </td>' . "\n";
@@ -2355,7 +2355,7 @@ class value_list extends ListBase
                                         $type_ids[] = 0;
                                     }
 
-                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_lst, $type_ids, $back);
+                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_lst, $type_ids, html_base::url_arr_from_back($back));
                                     $result .= '      </td>' . "\n";
                                 } else {
                                     $result .= $tbl_value->dsp_tbl($back);
@@ -2388,7 +2388,7 @@ class value_list extends ListBase
                         $type_ids[] = $type_phr->id();
                         $type_ids[] = $type_phr->id();
 
-                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_ids, $type_ids, $back);
+                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_ids, $type_ids, html_base::url_arr_from_back($back));
                         $result .= '      </td>' . "\n";
                         $result .= '  </tr>' . "\n";
                     }
@@ -2544,21 +2544,21 @@ class value_list extends ListBase
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), '', $back);
+                    $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), '', html_base::url_arr_from_back($back));
                     $btn = new button($url, $back);
-                    $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
+                    $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($val_phr_lst, Null, html_base::url_arr_from_back($back));
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), '', $back);
+                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), '', html_base::url_arr_from_back($back));
                 $btn = new button($url, $back);
-                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
+                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, html_base::url_arr_from_back($back));
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), '', $back);
+                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), '', html_base::url_arr_from_back($back));
                 $btn = new button($url, $back);
-                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
+                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, html_base::url_arr_from_back($back));
                 $result .= '    </td>';
                 $result .= '  </tr>';
             }

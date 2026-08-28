@@ -643,7 +643,8 @@ class word extends sandbox_code_id
      */
     function btn_unlink(int $link_id, string $back = ''): string
     {
-        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
+        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id, '',
+            html_base::url_arr_from_back((string)$this->id()));
         return new button($url, $back)->del(msg_id::WORD_UNLINK);
     }
 
@@ -903,7 +904,7 @@ class word extends sandbox_code_id
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url_old(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
+                    $url = $html->url_old(rest_ctrl::VIEW, $is_part_of->id(), [], url_var::WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }

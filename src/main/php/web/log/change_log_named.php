@@ -336,19 +336,20 @@ class change_log_named extends change_log
         $undo_btn = '';
         if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
-                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), '', $back->url_encode());
+                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), '', html_base::url_arr_from_back($back?->url_encode()));
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
-                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), '', $back->url_encode());
+                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), '', html_base::url_arr_from_back($back?->url_encode()));
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url_back(
                     views::FORMULA_EDIT_ID, $this->row_id, '',
-                    $back->url_encode() . '&undo_change=' . $this->id());
+                    html_base::url_arr_from_back($back?->url_encode()), '',
+                    'undo_change=' . $this->id());
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_DEL);
             }
         }

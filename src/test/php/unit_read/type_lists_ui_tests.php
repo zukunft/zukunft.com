@@ -109,7 +109,7 @@ class type_lists_ui_tests
         $test_page .= $ui_cache->src_typ->selector($form) . '<br>';
         $test_page .= $ui_cache->ptc_typ->selector($form) . '<br>';
         $test_page .= $ui_cache->shr_typ->selector($form) . '<br>';
-        $test_page .= $html->form_end_with_submit($form, '');
+        $test_page .= $html->form_end_with_submit($form, []);
 
         $t->html_page_test($test_page, 'types', 'types', $msg);
     }

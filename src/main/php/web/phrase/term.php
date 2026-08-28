@@ -626,7 +626,8 @@ class term extends combine_named
     {
         $btn = new button();
         $html = new html_base();
-        $del_call = $html->url_back(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
+        $del_call = $html->url_back(views::TRIPLE_DEL_ID, $link_id, '',
+            html_base::url_arr_from_back((string)$this->id()));
         $result = '    <td>' . "\n";
         $result .= $btn->del(msg_id::WORD_UNLINK, $del_call);
         $result .= '    </td>' . "\n";

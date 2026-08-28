@@ -660,7 +660,7 @@ class db_object extends TextIdObject
      */
     function obj_url(int|string $view, ?string $back = ''): string
     {
-        return new html_base()->url_back($view, $this->id(), '', $back);
+        return new html_base()->url_back($view, $this->id(), '', html_base::url_arr_from_back($back));
     }
 
 

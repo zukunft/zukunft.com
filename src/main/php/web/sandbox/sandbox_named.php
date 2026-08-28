@@ -329,7 +329,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), '', html_base::url_arr_from_back($back), base_url: $base_url);
         // escape the user settable name (link body); ref() escapes the
         // description that becomes the title attribute
         return $html->ref($url, $this->name(), $this->get_description(), $style);
@@ -354,7 +354,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), '', html_base::url_arr_from_back($back), base_url: $base_url);
         // escape the user settable plural (link body) like name_link escapes the name
         return $html->ref($url, $this->plural_name($lan), $this->get_description(), $style);
     }

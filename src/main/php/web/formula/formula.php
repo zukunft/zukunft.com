@@ -865,7 +865,7 @@ class formula extends sandbox_code_id
         }
         $result .= $html->dsp_form_fld_checkbox(url_var::NEED_ALL, $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';
-        $result .= $html->dsp_form_end('', $back_str);
+        $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back_str));
 
         // list the assigned words
         if ($this->id() > 0) {

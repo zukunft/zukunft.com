@@ -734,7 +734,7 @@ class user extends db_object
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), '', html_base::url_arr_from_back($back), base_url: $base_url);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
