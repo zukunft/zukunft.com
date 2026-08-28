@@ -127,7 +127,7 @@ class word_list extends list_named
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $wrd) {
-            $lnk = $wrd->name_link($back);
+            $lnk = $wrd->name_link(html_base::url_arr_from_back($back));
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);

@@ -46,6 +46,7 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class element extends db_object
 {
@@ -169,10 +171,10 @@ class element extends db_object
     /**
      * return the HTML code for the element name including a link to inspect the element
      *
-     * @param string $back
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @return string
      */
-    function link(string $back = ''): string
+    function link(array $url_arr = []): string
     {
         $result = '';
 
@@ -181,13 +183,15 @@ class element extends db_object
                 // TODO replace with phrase
                 if ($this->obj::class == word::class
                     or $this->obj::class == triple::class) {
-                    $result = $this->obj->name_link($back);
+                    $result = $this->obj->name_link($url_arr);
                 }
                 if ($this->obj::class == verb::class) {
                     $result = $this->obj->name();
                 }
                 if ($this->obj::class == formula::class) {
-                    $result = $this->obj->edit_link($back);
+                    // transitional: edit_link still takes the calling page as a url string
+                    // (docs/llm/pending_prio_2.md "replace the $back parameter", prompt 7)
+                    $result = $this->obj->edit_link(new html_base()->page_url($url_arr));
                 }
             }
         }

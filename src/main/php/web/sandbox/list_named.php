@@ -36,8 +36,10 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class list_named extends ListBase
 {
@@ -67,7 +69,7 @@ class list_named extends ListBase
         $result = array();
         foreach ($this->lst() as $wrd) {
             if (!$wrd->is_hidden($msg)) {
-                $result[] = $wrd->name_link($back);
+                $result[] = $wrd->name_link(html_base::url_arr_from_back($back));
             }
         }
         return $result;

@@ -381,13 +381,13 @@ class component extends sandbox_code_id
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::COMPONENT_EDIT_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -780,7 +780,7 @@ class component extends sandbox_code_id
             if ($this->id() > 0) {
                 $url_arr = html_base::url_arr_from_back($back?->url_encode());
                 $result .= $html->dsp_form_end('', $url_arr,
-                    $html->url_back(views::COMPONENT_DEL_ID, $this->id(), '', $url_arr));
+                    $html->url_back(views::COMPONENT_DEL_ID, $this->id(), $url_arr));
             } else {
                 $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back?->url_encode()), '');
             }
@@ -940,7 +940,7 @@ class component extends sandbox_code_id
             $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back));
         } else {
             $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add('add new',
-                    $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), '', html_base::url_arr_from_back($back), '', 'add_link=1&word=' . $wrd->id));
+                    $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), html_base::url_arr_from_back($back),'add_link=1&word=' . $wrd->id));
         }
         $result .= '    </td>';
         $result .= '  </tr>';

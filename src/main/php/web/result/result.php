@@ -294,7 +294,7 @@ class result extends sandbox_value
         $frm = new formula();
         $frm->load_by_id($this->frm->id(), $msg);
         $frm_html = $frm;
-        $result .= ' based on</br>' . $frm_html->name_link($back);
+        $result .= ' based on</br>' . $frm_html->name_link(html_base::url_arr_from_back($back));
         $result .= ' ' . $frm_html->dsp_text($msg, $back) . "\n";
         $result .= ' ' . $frm_html->btn_edit() . "\n";
         $result .= '</br></br>' . "\n";

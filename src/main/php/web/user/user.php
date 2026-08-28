@@ -727,14 +727,14 @@ class user extends db_object
      */
 
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::USER_ID,
         string $base_url = ''
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', html_base::url_arr_from_back($back), base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 

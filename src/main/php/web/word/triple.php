@@ -812,18 +812,18 @@ class triple extends sandbox_code_id
 
     /**
      * display a triple with a link to the main page for the triple
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::TRIPLE_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
     /**
@@ -833,13 +833,13 @@ class triple extends sandbox_code_id
      */
     function name_link_plural(
         string  $lan = languages::DEFAULT,
-        ?string $back = '',
+        array   $url_arr = [],
         string  $style = '',
         int     $msk_id = views::TRIPLE_ID,
         string  $base_url = ''
     ): string
     {
-        return parent::name_link_plural($lan, $back, $style, $msk_id, $base_url);
+        return parent::name_link_plural($lan, $url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -1016,7 +1016,7 @@ class triple extends sandbox_code_id
      */
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->name_link($back, $style);
+        $cell_text = $this->name_link(html_base::url_arr_from_back($back), $style);
         return (new html_base)->td($cell_text, '', $intent);
     }
 

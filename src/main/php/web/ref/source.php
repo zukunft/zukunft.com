@@ -299,13 +299,13 @@ class source extends sandbox_code_id
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::SOURCE_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
 

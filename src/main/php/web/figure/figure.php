@@ -220,9 +220,9 @@ class figure extends combine_named
         // TODO check if $result .= $this->obj->display_linked($back) can be used
         $html = new html_base();
         if ($this->is_result()) {
-            $url = $html->url_back(views::VALUE_EDIT_ID, $this->obj_id(), '', html_base::url_arr_from_back($back));
+            $url = $html->url_back(views::VALUE_EDIT_ID, $this->obj_id(), html_base::url_arr_from_back($back));
         } else {
-            $url = $html->url_back(views::RESULT_EDIT_ID, $this->obj_id(), '', html_base::url_arr_from_back($back));
+            $url = $html->url_back(views::RESULT_EDIT_ID, $this->obj_id(), html_base::url_arr_from_back($back));
         }
         return $html->ref($url, $this->val_formatted($msg));
     }

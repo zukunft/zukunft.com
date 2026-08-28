@@ -2544,19 +2544,19 @@ class value_list extends ListBase
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), '', html_base::url_arr_from_back($back));
+                    $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), html_base::url_arr_from_back($back));
                     $btn = new button($url, $back);
                     $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($val_phr_lst, Null, html_base::url_arr_from_back($back));
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), '', html_base::url_arr_from_back($back));
+                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), html_base::url_arr_from_back($back));
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, html_base::url_arr_from_back($back));
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), '', html_base::url_arr_from_back($back));
+                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), html_base::url_arr_from_back($back));
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, html_base::url_arr_from_back($back));
                 $result .= '    </td>';

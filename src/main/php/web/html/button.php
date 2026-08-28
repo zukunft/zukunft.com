@@ -287,7 +287,7 @@ class button
             $url_type = $lib->ids_to_url($type_ids, "type");
         }
 
-        $this->call = new html_base()->url_back(views::VALUE_ADD_ID, 0, '', $url_arr) . $url_phr . $url_type;
+        $this->call = new html_base()->url_back(views::VALUE_ADD_ID, 0, $url_arr) . $url_phr . $url_type;
         $result = $this->add(msg_id::ADD);
 
         log_debug($result);
@@ -372,7 +372,7 @@ class button
         } else {
             $this->title = "change this value";
         }
-        $this->call = new html_base()->url_back(views::VALUE_EDIT_ID, $group_id, '', $url_arr);
+        $this->call = new html_base()->url_back(views::VALUE_EDIT_ID, $group_id, $url_arr);
         $result = $this->edit(msg_id::EDIT);
         log_debug($result);
         return $result;
@@ -390,7 +390,7 @@ class button
         } else {
             $this->title = "delete this value";
         }
-        $this->call = new html_base()->url_back(views::VALUE_DEL_ID, $group_id, '', $url_arr);
+        $this->call = new html_base()->url_back(views::VALUE_DEL_ID, $group_id, $url_arr);
         $result = $this->del(msg_id::DEL);
         log_debug($result);
         return $result;

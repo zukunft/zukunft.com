@@ -599,7 +599,7 @@ class word_write_tests
             . '&amp;' . url_var::BACK . url_var::ID . '=' . $back;
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&amp;id=' . $wrd_read->id() . $back_part . '" title="' . word_names::MATH_COM . '">' . word_names::MATH . '</a>';
         $wrd_read_ui = new word_ui($wrd_read->api_json());
-        $result = $wrd_read_ui->name_link($back);
+        $result = $wrd_read_ui->name_link([url_var::MASK => views::PHRASE_ID, url_var::ID => $back]);
         $t->assert('word->display "' . word_names::MATH . '"', $result, $target);
 
         // the frontend load of an existing word fills the object from the api

@@ -143,7 +143,7 @@ class triple_list extends ListBase
         $result = array();
         foreach ($this->lst() as $trp) {
             if (!$trp->is_hidden($msg)) {
-                $result[] = $trp->name_link($back);
+                $result[] = $trp->name_link(html_base::url_arr_from_back($back));
             }
         }
         return $result;
@@ -165,7 +165,7 @@ class triple_list extends ListBase
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $trp) {
-            $lnk = $trp->name_link($back);
+            $lnk = $trp->name_link(html_base::url_arr_from_back($back));
             $cols .= $html->td($lnk);
             $last_trp = $trp;
         }

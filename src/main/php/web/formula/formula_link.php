@@ -46,6 +46,7 @@ include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class formula_link extends sandbox_link
 {
@@ -122,7 +124,7 @@ class formula_link extends sandbox_link
         // which is a normal state and not an error
         if ($this->formula() != null and $this->phrase() != null) {
             global $mtr;
-            $result = $this->formula()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link(NULL, $back);
+            $result = $this->formula()->name_link(html_base::url_arr_from_back($back)) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link(html_base::url_arr_from_back($back));
         }
         return $result;
     }

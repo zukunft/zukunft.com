@@ -48,6 +48,7 @@ include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class view_relation extends sandbox_link
 {
@@ -287,7 +289,7 @@ class view_relation extends sandbox_link
         // which is a normal state and not an error
         if ($this->parent() != null and $this->child() != null) {
             global $mtr;
-            $result = $this->parent()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->child()->name_link(NULL, $back);
+            $result = $this->parent()->name_link(html_base::url_arr_from_back($back)) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->child()->name_link(html_base::url_arr_from_back($back));
         }
         return $result;
     }

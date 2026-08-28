@@ -602,19 +602,19 @@ class word extends sandbox_code_id
 
     /**
      * display a word with a link to the main page for the word
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::WORD_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
     /**
@@ -624,13 +624,13 @@ class word extends sandbox_code_id
      */
     function name_link_plural(
         string  $lan = languages::DEFAULT,
-        ?string $back = '',
+        array   $url_arr = [],
         string  $style = '',
         int     $msk_id = views::WORD_ID,
         string  $base_url = ''
     ): string
     {
-        return parent::name_link_plural($lan, $back, $style, $msk_id, $base_url);
+        return parent::name_link_plural($lan, $url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -643,7 +643,7 @@ class word extends sandbox_code_id
      */
     function btn_unlink(int $link_id, string $back = ''): string
     {
-        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id, '',
+        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id,
             html_base::url_arr_from_back((string)$this->id()));
         return new button($url, $back)->del(msg_id::WORD_UNLINK);
     }
@@ -716,7 +716,7 @@ class word extends sandbox_code_id
      */
     function th(string $back = '', string $style = ''): string
     {
-        return (new html_base)->th($this->name_link($back, $style));
+        return (new html_base)->th($this->name_link(html_base::url_arr_from_back($back), $style));
     }
 
     /**
@@ -734,7 +734,7 @@ class word extends sandbox_code_id
      */
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->name_link($back, $style);
+        $cell_text = $this->name_link(html_base::url_arr_from_back($back), $style);
         return (new html_base)->td($cell_text, '', $intent);
     }
 

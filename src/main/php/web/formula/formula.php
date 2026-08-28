@@ -449,13 +449,13 @@ class formula extends sandbox_code_id
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::FORMULA_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
     /**
@@ -465,7 +465,7 @@ class formula extends sandbox_code_id
      */
     function edit_link(?string $back = ''): string
     {
-        $url = $this->obj_url(views::FORMULA_EDIT_ID, $back);
+        $url = $this->obj_url(views::FORMULA_EDIT_ID, html_base::url_arr_from_back($back));
         $html = new html_base();
         return $html->ref($url, $this->name(), $this->name());
     }
@@ -742,8 +742,8 @@ class formula extends sandbox_code_id
         $exp = $this->expression($msg, $trm_lst);
         $elm_lst = $exp->element_list($msg, $trm_lst);
         foreach ($elm_lst->lst() as $elm) {
-            log_debug("replace " . $elm->name() . " with " . $elm->link($back) . ".");
-            $result = str_replace('"' . $elm->name() . '"', $elm->link($back), $result);
+            log_debug("replace " . $elm->name() . " with " . $elm->link(html_base::url_arr_from_back($back)) . ".");
+            $result = str_replace('"' . $elm->name() . '"', $elm->link(html_base::url_arr_from_back($back)), $result);
         }
 
         log_debug($result);

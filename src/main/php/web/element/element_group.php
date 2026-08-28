@@ -49,6 +49,7 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class element_group extends ListBase
 {
@@ -141,7 +143,7 @@ class element_group extends ListBase
 
         foreach ($this->lst() as $frm_elm) {
             // display the formula element name
-            $result .= $frm_elm->link($back) . ' ';
+            $result .= $frm_elm->link(html_base::url_arr_from_back($back)) . ' ';
         }
 
         return $result;

@@ -500,7 +500,7 @@ class ui_list extends ui_base
             foreach ($ui_sys->typ_lst_cache->msk_sys->lst() as $msk) {
                 foreach ($msk->get_component_list()->lst() as $cmp) {
                     if ($cmp->id() == $dbo->id()) {
-                        $names[$msk->name()] = $msk->name_link('', '', views::VIEW_DEFAULT_ID);
+                        $names[$msk->name()] = $msk->name_link([], '', views::VIEW_DEFAULT_ID);
                     }
                 }
             }

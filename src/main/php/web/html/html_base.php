@@ -762,22 +762,18 @@ class html_base
      *
      * @param int|string $view the id or the code id of the view to call
      * @param int|string $id the id of the object to show, 0 for a view without an object
-     * @param string $obj_name unused, kept for the callers that name the parameters by position
      * @param array $url_arr the url parameters of the calling page, which become the
      *                       '9'-prefixed back part so that the called page can return to it
-     * @param string|array $par unused, kept for the callers that name the parameters by position
      * @param string $id_ext an additional url parameter e.g. to link two objects
      * @param string $base_url the base url of the pod, empty for a relative url
      * @return string the url of the view
      */
     function url_back(
-        int|string   $view,
-        int|string   $id = 0,
-        string       $obj_name = '',
-        array        $url_arr = [],
-        string|array $par = '',
-        string       $id_ext = '',
-        string       $base_url = ''
+        int|string $view,
+        int|string $id = 0,
+        array      $url_arr = [],
+        string     $id_ext = '',
+        string     $base_url = ''
     ): string
     {
         $url = self::base_url_clean($base_url);
@@ -1644,12 +1640,12 @@ class html_base
 
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), '', $url_arr);
+                $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), $url_arr);
                 $result .= $this->ref($url, $this->esc($item->name()));
                 $result .= '<' . self::BR . '>';
             }
         }
-        $url_add = $this->url_back($class_name . rest_ctrl::CREATE, 0, '', $url_arr);
+        $url_add = $this->url_back($class_name . rest_ctrl::CREATE, 0, $url_arr);
         $msg_id = $lib->class_to_add_msg_id($class);
         $result .= (new button($url_add, $url_arr))->add($msg_id);
         $result .= '<' . self::BR . '>';

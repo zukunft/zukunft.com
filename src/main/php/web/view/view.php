@@ -482,7 +482,7 @@ class view extends view_exe
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
             $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back),
-                $html->url_back(views::VIEW_DEL_ID, $this->id(), '', html_base::url_arr_from_back($back)));
+                $html->url_back(views::VIEW_DEL_ID, $this->id(), html_base::url_arr_from_back($back)));
         }
 
         // in edit mode show the assigned words and the hist on the right
@@ -565,20 +565,20 @@ class view extends view_exe
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), '', html_base::url_arr_from_back($back), '', word::class . '=' . $wrd->id() . '&add_entry=-1');
+                $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), html_base::url_arr_from_back($back),word::class . '=' . $wrd->id() . '&add_entry=-1');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
                 $result .= $html->dsp_form_end('',
-                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), '', html_base::url_arr_from_back($back), '', 'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), html_base::url_arr_from_back($back),'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
-                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), '', html_base::url_arr_from_back($back), '', 'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), html_base::url_arr_from_back($back),'word=' . $wrd->id()));
             } else {
                 $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), html_base::url_arr_from_back($back), '', word::class . '=' . $wrd->id() . '&add_entry=1');
                 $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
@@ -659,9 +659,9 @@ class view extends view_exe
             } else {
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = $html->url_back(views::VIEW_EDIT_ID, $view_id, '', html_base::url_arr_from_back($back), '', 'word=' . $wrd_id);
+            $call_edit = $html->url_back(views::VIEW_EDIT_ID, $view_id, html_base::url_arr_from_back($back),'word=' . $wrd_id);
             $result .= $msk->btn_edit() . ' ';
-            $call_del = $html->url_back(views::VIEW_DEL_ID, $view_id, '', html_base::url_arr_from_back($back), '', 'word=' . $wrd_id);
+            $call_del = $html->url_back(views::VIEW_DEL_ID, $view_id, html_base::url_arr_from_back($back),'word=' . $wrd_id);
             $result .= $msk->btn_del() . ' ';
             $result .= '<br>';
         }

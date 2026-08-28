@@ -303,7 +303,7 @@ class sys_log extends log
         if ($usr->is_admin() or $usr->is_system()) {
             $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
             // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-            $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, '', html_base::url_arr_from_back($back), '', $par_status));
+            $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, html_base::url_arr_from_back($back), $par_status));
             $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
         }
         return $html->tr($row);
@@ -368,7 +368,7 @@ class sys_log extends log
             if ($usr->is_admin() or $usr->is_system()) {
                 $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
                 // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-                $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, '', html_base::url_arr_from_back($back), '', $par_status));
+                $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, html_base::url_arr_from_back($back), $par_status));
                 $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
             }
         }

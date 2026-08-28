@@ -190,7 +190,7 @@ class formula_list extends ListBase
         $result = array();
         foreach ($this->lst() as $frm) {
             if (count($result) < $limit) {
-                $result[] = $frm->name_link($back);
+                $result[] = $frm->name_link(html_base::url_arr_from_back($back));
             }
         }
         return $result;

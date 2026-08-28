@@ -52,6 +52,7 @@ include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -189,7 +191,7 @@ class sandbox_list_named extends sandbox_list
         $i = 0;
         foreach ($this->lst() as $sbx) {
             if ($i < $limit) {
-                $result[] = $sbx->name_link($back);
+                $result[] = $sbx->name_link(html_base::url_arr_from_back($back));
                 $i++;
             }
         }

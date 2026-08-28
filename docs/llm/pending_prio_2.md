@@ -11,8 +11,9 @@ if the value if updated use the frontend cache to update the results within the 
 
 ## replace the `$back` parameter by the url array of the calling page
 
-the frontend still hands the calling page down as a `string $back` (an id or a ready url part)
-in 157 functions of 55 files (`src/main/php/web`, two leftovers in `cfg`), while the links are
+the frontend hands the calling page down as a `string $back` (an id or a ready url part) - at
+the start of this change in 157 functions of 55 files (`src/main/php/web`, two leftovers in
+`cfg`), the link builders and the `name_link` family are converted (git history) - while the links are
 built from the url array of the calling page: `html_base::url($view, $id, $url_arr)` turns the
 array into the `9`-prefixed back part (`back_url_part`), `url_par_from_back_part` reads it back
 and `page_url_array` keeps only `url_var::PAGE_VARS` (mask, id, pattern, list size and page).
@@ -34,39 +35,40 @@ as a second parameter next to the array (`component_exe::dsp_entries` and
 `$url_array` locals the prompt does not touch; a test run per commit, because the snapshot
 urls change wherever the back part gains the page vars.
 
-1. done: `html_base` (`url_old`, `url_back`, `form`, `form_end_with_submit`, `list_sort`,
-   `list`, `dsp_go_back`, `dsp_form_end`, new `page_url`) and `button` (`back`, `add_value`,
-   `add_value_fast`, `edit_value`, `del_value`, `btn_back`, `btn_add_value`,
-   `btn_add_value_fast`) take `array $url_arr` and build the '9'-prefixed back part with
-   `url_with_back`; the ~40 callers that still only hold a `string $back` (or a `back_trace`)
-   pass it through the transitional `html_base::url_arr_from_back()` (a phrase id becomes the
-   phrase view with that id, a url is split into its parameters) - every following prompt
-   removes its bridge calls, prompt 13 removes the bridge; still to decide: `url_back` as a
-   thin wrapper of `url($view, $id, $url_arr)` once the `$obj_name` / `$par` positional
-   parameters have no caller left. found while converting, to be fixed with the next prompts:
-   - the old `&back=` was never read: `url_var::BACK` is `'9'`, so `$url_array[url_var::BACK]`
-     in `frontend::url_to_html` (~931) reads a key `9` that no link ever sent and the `back`
-     key was ignored; the `9`-prefixed part is the one `url_par_from_back_part` consumes, so
-     the new links are the first ones that can return to the calling page - delete the dead
-     `$back` read in `url_to_html` with prompt 8
-   - two behaviour changes of the bridge to check on the pages: the cancel link of a form and
-     `button::back` lead to the phrase default view (`m=110&id=<phrase>`) where the old code
-     called `view.php?words=<id>`, and `button::back([])` leads to the start page where the old
-     code hardcoded phrase 1
-   - five urls are still built with the literal `&back=` outside the converted builders and
-     belong to prompts 7 and 8: `formula::dsp_test_and_samples` (~990, ~991, `formula_test.php`),
-     `formula::dsp_unlink_phr` (~1042), `view_exe::dsp_edit` (~491, `script_parameter`) and
-     the commented `triple::dsp_del` (~1172); prompt 13's check must find them
-   - `back_trace::url_encode()` returns the first url of its list; if that url already carries
-     a `9`-prefixed back part, the bridge parses `9m` as a page var and `back_url_part` prefixes
-     it again to `99m` - decide with prompt 11 whether `back_trace` keeps the url array itself,
-     which removes the encode/parse round trip
-   - `page_url` and `url_arr_from_back` are tested in `unit_ui/base_ui_tests` only, which the
-     coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
-2. the `name_link` / `name_link_plural` override family: `sandbox_named`, `type_object`,
-   `word`, `triple`, `formula`, `verb`, `source`, `language`, `user`, `view`, `view_base`,
-   `component`, `value` (`value_link`), `element::link`, `db_object::obj_url` - all in one
-   commit, php forces it; the callers pass the url array they already hold
+the numbers of the remaining prompts are kept, because the text refers to them (1 and 2 are in
+the git history). the display functions above the converted ones still hand the page down as a
+`string $back` (or a `back_trace`) and pass it through the transitional
+`html_base::url_arr_from_back()` (a phrase id becomes the phrase view with that id, a url is
+split into its parameters, `0` and `''` name no page) - every following prompt removes its
+bridge calls, prompt 13 removes the bridge. found while converting, to be fixed with the
+prompts named:
+
+- the old `&back=` was never read: `url_var::BACK` is `'9'`, so `$url_array[url_var::BACK]`
+  in `frontend::url_to_html` (~931) reads a key `9` that no link ever sent and the `back`
+  key was ignored; the `9`-prefixed part is the one `url_par_from_back_part` consumes, so
+  the new links are the first ones that can return to the calling page - delete the dead
+  `$back` read in `url_to_html` with prompt 8
+- two behaviour changes of the bridge to check on the pages: the cancel link of a form and
+  `button::back` lead to the phrase default view (`m=110&id=<phrase>`) where the old code
+  called `view.php?words=<id>`, and `button::back([])` leads to the start page where the old
+  code hardcoded phrase 1
+- five urls are still built with the literal `&back=` outside the converted builders and
+  belong to prompts 7 and 8: `formula::dsp_test_and_samples` (~990, ~991, `formula_test.php`),
+  `formula::dsp_unlink_phr` (~1042), `view_exe::dsp_edit` (~491, `script_parameter`) and
+  the commented `triple::dsp_del` (~1172); prompt 13's check must find them
+- `back_trace::url_encode()` returns the first url of its list; if that url already carries
+  a `9`-prefixed back part, the bridge parses `9m` as a page var and `back_url_part` prefixes
+  it again to `99m` - decide with prompt 11 whether `back_trace` keeps the url array itself,
+  which removes the encode/parse round trip
+- `element::link` hands the page to `formula::edit_link` as `page_url($url_arr)`, because
+  `edit_link` still takes a string (prompt 7 removes that reverse bridge)
+- the four link classes (`component_link`, `formula_link`, `view_relation`, `term_view`)
+  called `name_link(NULL, $back)`, i.e. the back as the *style*; they now pass the bridge as
+  the first argument, so their links carry a back part for the first time - check the
+  snapshots of the change log pages for the added `9m`/`9id`
+- `page_url` and `url_arr_from_back` are tested in `unit_ui/base_ui_tests` only, which the
+  coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
+
 3. the list link family `names_linked` / `display_linked` / `names_link` / `name_link_by_impact`:
    `sandbox_list_named`, `list_named`, `view_list`, `formula_list`, `component_list`,
    `term_list`, `triple_list` (`display`, `names_linked`), `figure`, `figure_list`,

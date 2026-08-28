@@ -315,21 +315,21 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
 
     /**
      * display a word with a link to the main page for the word
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @param int $msk_id the view that shows the object, overwritten by the child class
      * @param string $base_url to set an absolut html path for urls
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::GROUP_EDIT_ID,
         string $base_url = ''
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', html_base::url_arr_from_back($back), base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
         // escape the user settable name (link body); ref() escapes the
         // description that becomes the title attribute
         return $html->ref($url, $this->name(), $this->get_description(), $style);
@@ -340,21 +340,21 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * above a table that shows more than one row
      *
      * @param string $lan the code of the user interface language e.g. "en"
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @return string the html code of the link with the plural name
      */
     function name_link_plural(
         string  $lan = languages::DEFAULT,
-        ?string $back = '',
+        array   $url_arr = [],
         string  $style = '',
         int     $msk_id = views::GROUP_EDIT_ID,
         string  $base_url = ''
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', html_base::url_arr_from_back($back), base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
         // escape the user settable plural (link body) like name_link escapes the name
         return $html->ref($url, $this->plural_name($lan), $this->get_description(), $style);
     }

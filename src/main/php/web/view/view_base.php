@@ -277,13 +277,13 @@ class view_base extends sandbox_code_id
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::VIEW_EDIT_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
     function title(db_object|type_object|combine_named|sandbox_list $dbo, user_message $msg): string

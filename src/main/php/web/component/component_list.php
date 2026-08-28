@@ -37,12 +37,14 @@ include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class component_list extends sandbox_list_named
 {
@@ -94,7 +96,7 @@ class component_list extends sandbox_list_named
         $names = [];
         foreach ($lst as $cmp) {
             if (count($names) < $limit) {
-                $names[] = $cmp->name_link($back, '', $msk_id);
+                $names[] = $cmp->name_link(html_base::url_arr_from_back($back), '', $msk_id);
             }
         }
         return implode(', ', $names);

@@ -616,9 +616,9 @@ class base_ui_tests
         // '9'-prefixed back part, so that the called page can return to the calling page
         $page_arr = [url_var::MASK => '3', url_var::ID => '123'];
         $test_name = 'a view url carries the calling page as the back part';
-        $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, '', $page_arr), '9m=3&9id=123');
+        $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, $page_arr), '9m=3&9id=123');
         $test_name = '... and an unknown calling page adds no back part';
-        $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, '', []), '9');
+        $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, []), '9');
         $test_name = 'an old style script url carries the calling page as the back part';
         $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
         $test_name = 'the page url of a url array names the page by its page vars only';

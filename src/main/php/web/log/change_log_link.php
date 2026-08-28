@@ -97,8 +97,8 @@ class change_log_link extends change_log_named
         $undo_btn = '';
         if ($this->is_formula_link()) {
             $undo_call = $html->url_back(
-                views::FORMULA_EDIT_ID, $this->row_id, '',
-                html_base::url_arr_from_back($back?->url_encode()), '',
+                views::FORMULA_EDIT_ID, $this->row_id,
+                html_base::url_arr_from_back($back?->url_encode()),
                 'undo_change=' . $this->id());
             $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
         }
