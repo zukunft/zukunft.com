@@ -225,8 +225,11 @@ class value_write_tests
         $mio_val_ui->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $msg_ui);
         $fig = $mio_val->figure();
         $fig_ui = $tl->ui_obj($fig, new figure_ui());
-        $result = $fig_ui->display_linked($msg_ui, '1');
-        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $mio_val_ui->id() . '&amp;back=1">1.55</a>';
+        $result = $fig_ui->display_linked($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
+        // the phrase id 1 given as the back parameter becomes the phrase page as the back part
+        $back_part = '&amp;' . url_var::BACK . url_var::MASK . '=' . views::PHRASE_ID
+            . '&amp;' . url_var::BACK . url_var::ID . '=1';
+        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
@@ -235,16 +238,16 @@ class value_write_tests
         $t->assert(', value->display', $result, $target);
 
         // test the HTML code creation including the hyperlink
-        $result = $mio_val_ui->value_edit($msg_ui, '1');
+        $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . '&amp;back=1">1.55</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
         $mio_val_ui->number = values::SAMPLE_INT;
-        $result = $mio_val_ui->value_edit($msg_ui, '1');
+        $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . '&amp;back=1">123\'456</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database

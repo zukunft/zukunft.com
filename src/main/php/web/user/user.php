@@ -43,7 +43,6 @@ include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::LOG . 'user_log_display.php';
 //include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::VIEW . 'view.php';
@@ -66,7 +65,6 @@ use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -727,14 +725,14 @@ class user extends db_object
      */
 
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::USER_ID,
         string $base_url = ''
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
@@ -876,8 +874,9 @@ class user extends db_object
 
     /**
      * display a form with the user parameters such as name or email
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function form_edit($back): string
+    function form_edit(array $url_arr = []): string
     {
         $html = new html_base();
         $result = ''; // reset the html code var
@@ -887,7 +886,10 @@ class user extends db_object
             // the same title as the user default view builds with the system_title_with_object_name component
             $header = $html->text_h2(msg_id::SYSTEM_TITLE_USER->text() . ' "' . $html->esc($this->name) . '"');
             $hidden_fields = $html->form_hidden("id", $this->id);
-            $hidden_fields .= $html->form_hidden("back", $back);
+            // the calling page travels with the form as the '9'-prefixed hidden fields
+            foreach (html_base::back_url_array($url_arr) as $key => $val) {
+                $hidden_fields .= $html->form_hidden($key, (string)$val);
+            }
             $detail_fields = $html->form_text(url_var::USER, $this->name, msg_id::FORM_FIELD_USERNAME);
             $detail_fields .= $html->form_text(url_var::EMAIL, $this->email, msg_id::FORM_FIELD_USER_EMAIL);
             $detail_fields .= $html->form_text(url_var::USER_FIRST_NAME, $this->first_name, msg_id::FORM_FIELD_USER_FIRST_NAME);
@@ -904,16 +906,19 @@ class user extends db_object
     /**
      * display the latest changes of the user
      * TODO add display the latest changes by a user
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
-    function dsp_changes(int $size, int $page, user_message $msg, ?back_trace $back = null): string
+    function dsp_changes(int $size, int $page, user_message $msg, array $url_arr = []): string
     {
         $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(user::class, $this->id(), $size, $page, $msg, '', $back);
+        return $log_ui->dsp_hist(user::class, $this->id(), $size, $page, $msg, '', $url_arr);
     }
 
-    // display the error that are related to the user, so that he can track when they are closed
-    // or display the error that are related to the user, so that he can track when they are closed
-    function dsp_errors(string $dsp_type, user_message $msg, int $size, int $page, string $back): string
+    /**
+     * display the error that are related to the user, so that he can track when they are closed
+     * @param array $url_arr the url vars of the calling page for the back link of the close links
+     */
+    function dsp_errors(string $dsp_type, user_message $msg, int $size, int $page, array $url_arr = []): string
     {
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
@@ -923,11 +928,12 @@ class user extends db_object
         //$err_lst->page = $page;
         //$err_lst->size = $size;
         //$err_lst->dsp_type = $dsp_type;
-        //$err_lst->back = $back;
         if ($err_lst->load($msg)) {
             $err_lst_ui = new sys_log_list();
             $err_lst_ui->set_from_json($err_lst->api_json([], $msg), $msg);
-            $result = $err_lst_ui->get_html($msg);
+            // the requesting user is not (yet) forwarded, so no close link is shown, but the
+            // calling page is, so that a close link can return to it
+            $result = $err_lst_ui->get_html($msg, null, $url_arr);
         }
 
         log_debug('done');

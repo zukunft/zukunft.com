@@ -90,7 +90,7 @@ class type_lists_ui_tests
         $t_val = new test_values($t);
         $cfg->add_phrases($t_phr->list_global_problems_ui(), $msg);
         $cfg->val_lst = $t_val->value_list_solution_prio_ui();
-        $test_page = $msk->show($wrd, $msg, $cfg, '') . '<br><br>';
+        $test_page = $msk->show($wrd, $msg, $cfg) . '<br><br>';
 
         // test the type list selectors; each selector renders its own <label for> tied to
         // its control id, so no extra manual label is added (that produced a dangling
@@ -109,7 +109,7 @@ class type_lists_ui_tests
         $test_page .= $ui_cache->src_typ->selector($form) . '<br>';
         $test_page .= $ui_cache->ptc_typ->selector($form) . '<br>';
         $test_page .= $ui_cache->shr_typ->selector($form) . '<br>';
-        $test_page .= $html->form_end_with_submit($form, '');
+        $test_page .= $html->form_end_with_submit($form, []);
 
         $t->html_page_test($test_page, 'types', 'types', $msg);
     }

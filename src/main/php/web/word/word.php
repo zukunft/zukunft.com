@@ -68,7 +68,6 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
@@ -117,7 +116,6 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -602,19 +600,19 @@ class word extends sandbox_code_id
 
     /**
      * display a word with a link to the main page for the word
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::WORD_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
     /**
@@ -624,13 +622,13 @@ class word extends sandbox_code_id
      */
     function name_link_plural(
         string  $lan = languages::DEFAULT,
-        ?string $back = '',
+        array   $url_arr = [],
         string  $style = '',
         int     $msk_id = views::WORD_ID,
         string  $base_url = ''
     ): string
     {
-        return parent::name_link_plural($lan, $back, $style, $msk_id, $base_url);
+        return parent::name_link_plural($lan, $url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -639,12 +637,16 @@ class word extends sandbox_code_id
      */
 
     /**
+     * @param int $link_id the id of the triple that should be removed
+     * @param array $url_arr the url vars of the calling page for the back link
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_unlink(int $link_id, string $back = ''): string
+    function btn_unlink(int $link_id, array $url_arr = []): string
     {
-        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
-        return new button($url, $back)->del(msg_id::WORD_UNLINK);
+        // after the unlink the user returns to this word
+        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id,
+            [url_var::MASK => views::PHRASE_ID, url_var::ID => $this->id()]);
+        return new button($url, $url_arr)->del(msg_id::WORD_UNLINK);
     }
 
 
@@ -709,13 +711,13 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function th(string $back = '', string $style = ''): string
+    function th(array $url_arr = [], string $style = ''): string
     {
-        return (new html_base)->th($this->name_link($back, $style));
+        return (new html_base)->th($this->name_link($url_arr, $style));
     }
 
     /**
@@ -727,13 +729,13 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function td(string $back = '', string $style = '', int $intent = 0): string
+    function td(array $url_arr = [], string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->name_link($back, $style);
+        $cell_text = $this->name_link($url_arr, $style);
         return (new html_base)->td($cell_text, '', $intent);
     }
 
@@ -770,10 +772,10 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param back_trace $back the last changes to allow undo actions by the user
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with the HTML code to show the last changes of the view of this word
      */
-    function log_view(back_trace $back): string
+    function log_view(array $url_arr = []): string
     {
         $log_ui = new change_log_named();
         return '';
@@ -903,7 +905,7 @@ class word extends sandbox_code_id
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url_old(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
+                    $url = $html->url_old(rest_ctrl::VIEW, $is_part_of->id(), [], url_var::WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
@@ -949,9 +951,9 @@ class word extends sandbox_code_id
      * to review
      */
 
-    function dsp_graph(foaf_direction $direction, user_message $msg, verb_list $link_types, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, user_message $msg, verb_list $link_types, array $url_arr = []): string
     {
-        return $this->phrase()->dsp_graph($direction, $msg, $link_types, $back);
+        return $this->phrase()->dsp_graph($direction, $msg, $link_types, $url_arr);
     }
 
 

@@ -1901,6 +1901,7 @@ class phrase extends combine_named
         return $phr_lst;
     }
 
+    // TODO Prio 1 review
     // create a selector that contains the time words
     // e.g. Q1 can be the first Quarter of a year and in this case the four quarters of a year should be the default selection
     //      if this is the triple "Q1 of 2018" a list of triples of this year should be the default selection

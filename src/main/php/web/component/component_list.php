@@ -72,7 +72,7 @@ class component_list extends sandbox_list_named
      * (unlike the name-sorted parent, because for the components of a view the position order
      * is the meaningful one)
      *
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @param int $limit the max number of component names to add to the list
      *                   (untyped like in the parent, because php does not allow a child
      *                   to add a type to an untyped parent parameter)
@@ -80,7 +80,7 @@ class component_list extends sandbox_list_named
      * @return string the linked component names
      */
     function name_link(
-        string $back = '',
+        array  $url_arr = [],
         $limit = config::LIMIT_NAME_LIST,
         int    $msk_id = views::COMPONENT_DEFAULT_ID
     ): string
@@ -94,7 +94,7 @@ class component_list extends sandbox_list_named
         $names = [];
         foreach ($lst as $cmp) {
             if (count($names) < $limit) {
-                $names[] = $cmp->name_link($back, '', $msk_id);
+                $names[] = $cmp->name_link($url_arr, '', $msk_id);
             }
         }
         return implode(', ', $names);

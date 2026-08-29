@@ -112,17 +112,17 @@ class formula_link extends sandbox_link
     /**
      * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the linked names or an empty string e.g. for a new link of an add form
      */
-    function name_linked(string $back = ''): string
+    function name_linked(array $url_arr = []): string
     {
         $result = '';
         // a new formula link of an add form has no linked objects yet,
         // which is a normal state and not an error
         if ($this->formula() != null and $this->phrase() != null) {
             global $mtr;
-            $result = $this->formula()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link(NULL, $back);
+            $result = $this->formula()->name_link($url_arr) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link($url_arr);
         }
         return $result;
     }

@@ -38,7 +38,6 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::LOG . 'change_log.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::CONST . 'icons.php';
 // the classes of the objects that a change can change, used by the undo icon of the all user
@@ -80,7 +79,6 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\view\term_view;
@@ -236,9 +234,10 @@ class change_log_named extends change_log
      */
 
     /**
+     * @param array $url_arr the url vars of the calling page for the back link of the undo button
      * @return string with the html code to show one row of the changes of sandbox objects e.g. a words
      */
-    function tr(back_trace $back, bool $condensed = false, bool $user_changes = false): string
+    function tr(array $url_arr = [], bool $condensed = false, bool $user_changes = false): string
     {
         global $ui_sys;
         $html = new html_base();
@@ -336,19 +335,18 @@ class change_log_named extends change_log
         $undo_btn = '';
         if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
-                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), '', $back->url_encode());
+                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), $url_arr);
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
-                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), '', $back->url_encode());
+                $undo_call = $html->url_back(views::VALUE_DEL_ID, $this->id(), $url_arr);
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url_back(
-                    views::FORMULA_EDIT_ID, $this->row_id, '',
-                    $back->url_encode() . '&undo_change=' . $this->id());
+                    views::FORMULA_EDIT_ID, $this->row_id, $url_arr, 'undo_change=' . $this->id());
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_DEL);
             }
         }

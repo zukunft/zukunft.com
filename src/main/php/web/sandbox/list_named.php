@@ -48,26 +48,26 @@ class list_named extends ListBase
 
     /**
      * @param user_message $msg to collect the error messages
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with a list of the word names with html links
      * ex. names_linked
      */
-    function name_link(user_message $msg, string $back = ''): string
+    function name_link(user_message $msg, array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($msg, $back));
+        return implode(', ', $this->names_linked($msg, $url_arr));
     }
 
     /**
      * @param user_message $msg to collect the error messages
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return array with a list of the word names with html links
      */
-    function names_linked(user_message $msg, string $back = ''): array
+    function names_linked(user_message $msg, array $url_arr = []): array
     {
         $result = array();
         foreach ($this->lst() as $wrd) {
             if (!$wrd->is_hidden($msg)) {
-                $result[] = $wrd->name_link($back);
+                $result[] = $wrd->name_link($url_arr);
             }
         }
         return $result;

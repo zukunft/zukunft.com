@@ -190,7 +190,7 @@ class phrase_ui_tests
         $cut_limit = 2;
         $rel_lst = $t_phr->list_global_problems_ui();
         $tbl_cut = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
-            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            $msg, $t_phr->list_global_problem_context_ui(), $rel_lst->column_names(),
             false, true, $rel_lst, $cut_limit);
         // the shown rows plus the header row and the "... and n more" row
         $test_name = 'a table with more rows than the limit is cut to the limit';
@@ -209,7 +209,7 @@ class phrase_ui_tests
         // (see value_list::configured_more_limit), so it is expected to equal the fallback const
         $page_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_SIZE => $cut_limit];
         $tbl_page = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
-            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            $msg, $t_phr->list_global_problem_context_ui(), $rel_lst->column_names(),
             false, true, $rel_lst, null, $page_url);
         $test_name = 'the url names the number of rows shown';
         $t->assert($test_name, substr_count($tbl_page, '<' . html_base::TR . '>'), $cut_limit + 2);
@@ -226,7 +226,7 @@ class phrase_ui_tests
         $t->assert_text_contains($test_name, $tbl_page, '>' . triple_names::GLOBAL_WARMING . '</a>');
         $page_url[url_var::DISPLAY_LIST_PAGE] = 1;
         $tbl_page_two = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
-            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            $msg, $t_phr->list_global_problem_context_ui(), $rel_lst->column_names(),
             false, true, $rel_lst, null, $page_url);
         $test_name = 'the second list page does not repeat the first page';
         $t->assert_text_not_contains($test_name, $tbl_page_two, '>' . triple_names::GLOBAL_WARMING . '</a>');
@@ -235,7 +235,7 @@ class phrase_ui_tests
         // the rows behind the second page are all rows without the two pages, so the count is
         // taken from the table with every row instead of assuming the size of the fixture
         $tbl_all = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
-            $msg, $t_phr->list_global_problem_context_ui(), '', $rel_lst->column_names(),
+            $msg, $t_phr->list_global_problem_context_ui(), $rel_lst->column_names(),
             false, true, $rel_lst, value_list_ui::LIMIT_ALL);
         $rest = substr_count($tbl_all, '<' . html_base::TR . '>') - 1 - 2 * $cut_limit;
         $test_name = '... and its tail counts the rows behind the second page only';
@@ -320,7 +320,7 @@ class phrase_ui_tests
         // decides which phrase heads which column
         $test_name = 'without a column definition no column names a phrase of the row';
         $tbl_ranked = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
-            $msg, $t_phr->list_global_problem_context_ui(), '', [], false, true,
+            $msg, $t_phr->list_global_problem_context_ui(), [], false, true,
             $t_phr->list_global_problems_ui());
         $ranked_header = $lib->str_left_of($tbl_ranked, '</tr>');
         $t->assert_text_not_contains($test_name, $ranked_header, '>' . word_names::SOLUTION . '</a>');

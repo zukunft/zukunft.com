@@ -3287,8 +3287,6 @@ so same-named functions of several classes share their test calls
     \-- reload - 0 unit test calls
     \-- selector - 0 unit test calls
     \-- set_from_json - 1 unit test calls
-\-- back_trace
-    \-- url_encode - 0 unit test calls
 \-- button
     \-- add_value - 0 unit test calls
     \-- add_value_fast - 0 unit test calls
@@ -3717,6 +3715,7 @@ so same-named functions of several classes share their test calls
     \-- navbar - 0 unit test calls
     \-- p - 0 unit test calls
     \-- page_html - 0 unit test calls
+    \-- page_url - 0 unit test calls
     \-- page_url_array - 0 unit test calls
     \-- pre_url_array - 0 unit test calls
     \-- pre_url_part - 0 unit test calls

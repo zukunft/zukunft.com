@@ -176,21 +176,21 @@ class type_object
 
     /**
      * display a word with a link to the main page for the word
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @param int $msk_id the view that shows the object, overwritten by the child class
      * @param string $base_url to set an absolut html path for urls
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::GROUP_EDIT_ID,
         string $base_url = ''
     ): string
     {
         $html = new html_base();
-        $url = $html->url_back($msk_id, $this->id(), '', $back, base_url: $base_url);
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
         return $html->ref($url, $this->name(), $this->description, $style);
     }
 

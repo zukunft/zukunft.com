@@ -56,7 +56,6 @@ include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 //include_once html_paths::SANDBOX . 'sandbox_code_id.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
@@ -86,7 +85,6 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
@@ -469,19 +467,19 @@ class component extends sandbox_code_id
 
     /**
      * create the html code to show the component name with the link to change the component parameters
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::COMPONENT_EDIT_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -782,7 +780,7 @@ class component extends sandbox_code_id
      * @param string $phr_col the html code to select the phrase for the column
      * @param string $phr_cols the html code to select the phrase for the second column
      * @param string $dsp_log the html code of the change log
-     * @param string $back the html code to be opened in case of a back action
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int|string $test_form_unique_id counter that disambiguates the field names/ids
      *                   when several forms are stacked on one test page; empty in production
      *                   so the real url vars (name="k") are used, one form per page
@@ -794,7 +792,7 @@ class component extends sandbox_code_id
         string     $phr_col,
         string     $phr_cols,
         string     $dsp_log,
-        string     $back = '',
+        array      $url_arr = [],
         int|string $test_form_unique_id = ''): string
     {
         $html = new html_base();
@@ -811,7 +809,10 @@ class component extends sandbox_code_id
         }
         // only the multi-form test page passes a counter; production keeps name="k"
         $fld_ext = $test_form_unique_id === '' ? '' : '_' . $test_form_unique_id;
-        $hidden_fields .= $html->form_hidden("back", $back);
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $hidden_fields .= $html->form_hidden($key, (string)$val);
+        }
         $hidden_fields .= $html->form_hidden("confirm", '1');
         $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
         $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
@@ -832,23 +833,23 @@ class component extends sandbox_code_id
 
 
     // TODO HTML code to add a view component
-    function dsp_add($add_link, $wrd, $back, user_message $msg): string
+    function dsp_add($add_link, $wrd, array $url_arr, user_message $msg): string
     {
-        return $this->dsp_edit($add_link, $wrd, $back, $msg);
+        return $this->dsp_edit($add_link, $wrd, $url_arr, $msg);
     }
 
     /**
      * HTML code to edit all word fields
      * @param int $add_link the id of the view that should be linked to the word
      * @param word $wrd
-     * @param back_trace|null $back
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string
      */
-    function dsp_edit(int $add_link, word $wrd, ?back_trace $back, user_message $msg): string
+    function dsp_edit(int $add_link, word $wrd, array $url_arr, user_message $msg): string
     {
-        $this->log_debug($this->dsp_id() . ' (called from ' . $back->url_encode() . ')');
         $result = '';
         $html = new html_base();
+        $this->log_debug($this->dsp_id() . ' (called from ' . $html->page_url($url_arr) . ')');
 
         // show the view component name
         if ($this->id() <= 0) {
@@ -872,7 +873,10 @@ class component extends sandbox_code_id
             $result .= $html->dsp_form_id($this->id());
         }
         $result .= $html->dsp_form_hidden("word", $wrd->id());
-        $result .= $html->dsp_form_hidden("back", $wrd->id());
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->dsp_form_hidden($key, $val);
+        }
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
         $result .= $html->form_field(
@@ -891,24 +895,24 @@ class component extends sandbox_code_id
             $this->description);
         if ($add_link <= 0) {
             if ($this->id() > 0) {
-                $result .= $html->dsp_form_end('', $back,
-                    $html->url_back(views::COMPONENT_DEL_ID, $this->id(), '', $back->url_encode()));
+                $result .= $html->dsp_form_end('', $url_arr,
+                    $html->url_back(views::COMPONENT_DEL_ID, $this->id(), $url_arr));
             } else {
-                $result .= $html->dsp_form_end('', $back, '');
+                $result .= $html->dsp_form_end('', $url_arr, '');
             }
         }
 
         if ($this->id() > 0) {
             $result .= '</div>';
 
-            $view_html = $this->linked_views($add_link, $wrd, $msg, $back);
-            $changes = $this->dsp_hist(0, 0, '', $msg, $back);
+            $view_html = $this->linked_views($add_link, $wrd, $msg, $url_arr);
+            $changes = $this->dsp_hist(0, 0, '', $msg, $url_arr);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, 0, '', $back, $msg);
+            $changes = $this->dsp_hist_links(0, 0, '', $url_arr, $msg);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -933,7 +937,7 @@ class component extends sandbox_code_id
      * @param string $phr_col the html code to select the phrase for the column
      * @param string $phr_cols the html code to select the phrase for the second column
      * @param string $dsp_log the html code of the change log
-     * @param string $back the html code to be opened in case of a back action
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code to display the edit page
      */
     function form_edit_new(
@@ -942,7 +946,7 @@ class component extends sandbox_code_id
         string $phr_col,
         string $phr_cols,
         string $dsp_log,
-        string $back = ''): string
+        array  $url_arr = []): string
     {
         $html = new html_base();
         $result = '';
@@ -958,7 +962,10 @@ class component extends sandbox_code_id
             $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
-        $hidden_fields .= $html->form_hidden("back", $back);
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $hidden_fields .= $html->form_hidden($key, (string)$val);
+        }
         $hidden_fields .= $html->form_hidden("confirm", '1');
         $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
         $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
@@ -1012,8 +1019,9 @@ class component extends sandbox_code_id
 
     /**
      * lists of all views where this component is used
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    private function linked_views($add_link, word $wrd, user_message $msg, $back): string
+    private function linked_views($add_link, word $wrd, user_message $msg, array $url_arr): string
     {
         $this->log_debug("id " . $this->id() . " (word " . $wrd->id() . ", add " . $add_link . ").");
 
@@ -1034,9 +1042,10 @@ class component extends sandbox_code_id
         foreach ($msk_lst as $msk) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
-            $result .= '      ' . $msk->name_linked($wrd, $back) . "\n";
+            $result .= '      ' . $msk->name_linked($wrd, $url_arr) . "\n";
             $result .= '    </td>' . "\n";
-            $result .= $this->btn_unlink($msk->id(), $wrd, $back);
+            // TODO Prio 2 create the button to unlink the view from this component (see pending_prio_2.md)
+            $result .= $this->btn_unlink();
             $result .= '  </tr>' . "\n";
         }
 
@@ -1049,10 +1058,10 @@ class component extends sandbox_code_id
             // TODO Prio 0 activate
             //$result .= $msk_lst->selector($form, 0, url_var::COMPONENT_LINK_LONG);
 
-            $result .= $html->dsp_form_end('', $back);
+            $result .= $html->dsp_form_end('', $url_arr);
         } else {
             $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add('add new',
-                    $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), '', $back, '', 'add_link=1&word=' . $wrd->id));
+                    $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), $url_arr, 'add_link=1&word=' . $wrd->id));
         }
         $result .= '    </td>';
         $result .= '  </tr>';
@@ -1070,29 +1079,33 @@ class component extends sandbox_code_id
 
     /**
      * display the history of a view component
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
     function dsp_hist(
         int          $page,
         int          $size,
         string       $call,
         user_message $msg,
-        back_trace   $back
+        array        $url_arr = []
     ): string
     {
-        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ".");
         $result = ''; // reset the html code var
 
         $log_ui = new user_log_display();
-        $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page, $msg);
+        $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page, $msg, $call, $url_arr);
 
         $this->log_debug("done");
         return $result;
     }
 
-    // display the link history of a view component
-    function dsp_hist_links($page, $size, $call, $back, user_message $msg): string
+    /**
+     * display the link history of a view component
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
+     */
+    function dsp_hist_links($page, $size, $call, array $url_arr, user_message $msg): string
     {
-        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ".");
         $result = ''; // reset the html code var
 
         $log_ui = new user_log_display();
@@ -1101,7 +1114,7 @@ class component extends sandbox_code_id
         $log_ui->page = $page;
         $log_ui->size = $size;
         $log_ui->call = $call;
-        $log_ui->back = $back;
+        $log_ui->url_arr = $url_arr;
         $result .= $log_ui->dsp_hist_links($msg);
 
         $this->log_debug("done");

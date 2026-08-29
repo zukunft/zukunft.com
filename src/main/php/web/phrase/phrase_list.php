@@ -1480,10 +1480,11 @@ class phrase_list extends sandbox_list_named
      * TODO review
      * offer the user to add a new value for these phrases
      * similar to value.php/btn_add
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function btn_add_value($back): string
+    function btn_add_value(array $url_arr = []): string
     {
-        $result = \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($this, Null, $back);
+        $result = \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($this, Null, $url_arr);
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';
@@ -1495,7 +1496,7 @@ class phrase_list extends sandbox_list_named
         }
         $url_phr = $this->id_url_long();
 
-        $val_btn_call  = rest_ctrl::PATH_FIXED .'value_add.php?back='.$back.$url_phr;
+        $val_btn_call  = new html_base()->url_with_back(rest_ctrl::PATH_FIXED . 'value_add.php', $url_arr) . $url_phr;
         $result .= \html\btn_add ($val_btn_title, $val_btn_call);
         zu_debug('phrase_list->btn_add_value -> done');
         */
@@ -1506,9 +1507,10 @@ class phrase_list extends sandbox_list_named
      * TODO review
      * shows all phrases that are part of a list
      * e.g. used to display all phrases linked to a word
+     * @param array $url_arr the url vars of the calling page for the back link
      * @returns string the html code to edit a linked word
      */
-    function dsp_graph(phrase $root_phr, user_message $msg, string $back = ''): string
+    function dsp_graph(phrase $root_phr, user_message $msg, array $url_arr = []): string
     {
         log_debug();
         $result = '';
@@ -1520,7 +1522,7 @@ class phrase_list extends sandbox_list_named
             $phr_lst = new phrase_list();
             $phr_lst->set_from_json($this->api_json([], $msg));
             $wrd_lst = $phr_lst->wrd_lst_all($msg);
-            $result .= $wrd_lst->tbl($back);
+            $result .= $wrd_lst->tbl($url_arr);
             foreach ($this->lst() as $phr) {
                 // show the RDF graph for this verb
                 $phr->name();

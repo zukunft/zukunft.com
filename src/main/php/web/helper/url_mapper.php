@@ -135,12 +135,12 @@ class url_mapper
     {
         $main = [];
         $original = [];
-        $back = [];
+        $back_arr = [];
         foreach ($url_array as $key => $val) {
             if (str_starts_with($key, url_var::PRE)) {
                 $original[substr($key, strlen(url_var::PRE))] = $val;
             } elseif (str_starts_with($key, url_var::BACK)) {
-                $back[substr($key, strlen(url_var::BACK))] = $val;
+                $back_arr[substr($key, strlen(url_var::BACK))] = $val;
             } else {
                 $main[$key] = $val;
             }
@@ -149,8 +149,8 @@ class url_mapper
         if (!empty($original)) {
             $json[json_fields::URL_ORIGINAL_DATA] = $this->to_human_assoc($original, $msg);
         }
-        if (!empty($back)) {
-            $json[json_fields::URL_PART_BACK] = $this->to_human_assoc($back, $msg);
+        if (!empty($back_arr)) {
+            $json[json_fields::URL_PART_BACK] = $this->to_human_assoc($back_arr, $msg);
         }
         return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }

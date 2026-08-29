@@ -89,7 +89,7 @@ class ref_list extends ListBase
      * show the references below each other, sorted first so the html order is deterministic
      * and independent of the api/db row order (see the frontend "sort every rendered list" rule)
      * @param phrase_list $context_phr_lst phrases not repeated in the reference name
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
@@ -98,14 +98,14 @@ class ref_list extends ListBase
     function list(
         user_message $msg,
         phrase_list $context_phr_lst = new phrase_list(),
-        string      $back = '',
+        array       $url_arr = [],
         string      $style = '',
         ?int        $limit = null,
         ?int        $page = null
     ): string
     {
         $this->sort_by_impact_and_type();
-        return parent::list($msg, $context_phr_lst, $back, $style, $limit, $page);
+        return parent::list($msg, $context_phr_lst, $url_arr, $style, $limit, $page);
     }
 
     /**

@@ -94,17 +94,17 @@ class job_list extends ListBase
 
     /**
      * show all batch_jobs of the list as table row (ex display)
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code with all batch_jobs of the list
      */
-    function tbl(string $back = ''): string
+    function tbl(array $url_arr = []): string
     {
         $html = new html_base();
         $cols = '';
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst() as $wrd) {
-            $lnk = $wrd->dsp_obj()->display_linked($back);
+        foreach ($this->lst() as $job) {
+            $lnk = $job->display_linked($url_arr);
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);

@@ -812,18 +812,18 @@ class triple extends sandbox_code_id
 
     /**
      * display a triple with a link to the main page for the triple
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::TRIPLE_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
     /**
@@ -833,13 +833,13 @@ class triple extends sandbox_code_id
      */
     function name_link_plural(
         string  $lan = languages::DEFAULT,
-        ?string $back = '',
+        array   $url_arr = [],
         string  $style = '',
         int     $msk_id = views::TRIPLE_ID,
         string  $base_url = ''
     ): string
     {
-        return parent::name_link_plural($lan, $back, $style, $msk_id, $base_url);
+        return parent::name_link_plural($lan, $url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -1010,13 +1010,13 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function td(string $back = '', string $style = '', int $intent = 0): string
+    function td(array $url_arr = [], string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->name_link($back, $style);
+        $cell_text = $this->name_link($url_arr, $style);
         return (new html_base)->td($cell_text, '', $intent);
     }
 
@@ -1163,13 +1163,13 @@ class triple extends sandbox_code_id
     /**
      * display a form to adjust the link between too words or triples
      */
-    function dsp_del(string $back = ''): string
+    function dsp_del(array $url_arr = []): string
     {
         log_debug("triple->dsp_del " . $this->id() . ".");
         $result = ''; // reset the html code var
 
         //$btn = new button();
-        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', rest_ctrl::PATH_FIXED .'link_del.php?id=' . $this->id() . '&back=' . $back);
+        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', new html_base()->url_back(views::TRIPLE_DEL_ID, $this->id(), $url_arr));
         $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
 
         return $result;

@@ -110,7 +110,7 @@ class user_ui_tests
         $t->header($ts);
 
         $usr_ui = new user_ui($t_usr->user_sys_test()->api_json());
-        $test_page = $usr_ui->form_edit(1) . '<br>';
+        $test_page = $usr_ui->form_edit([url_var::MASK => views::PHRASE_ID, url_var::ID => 1]) . '<br>';
 
         $t->subheader($ts . 'system errors');
 

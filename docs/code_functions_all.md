@@ -6825,6 +6825,8 @@
             es used in the html code in /html/html_base.php
     \-- url_with_back - section for function url_with_back not yet defined that it should be wrapper for internal refere
             nces used in the html code in /html/html_base.php
+    \-- page_url - section for function page_url not yet defined that it should be wrapper for internal references used 
+            in the html code in /html/html_base.php
     \-- url_with_token - section for function url_with_token not yet defined that it should be wrapper for internal refe
             rences used in the html code in /html/html_base.php
     \-- url_api - section for function url_api not yet defined that it should be wrapper for internal references used in
@@ -8039,9 +8041,11 @@
         \-- figure_list - @return string with a list of the figure names with html links
     \-- display_linked
         \-- figure - html code to show the value with the possibility to click for the result explanation
-        \-- figure_list - @param string $back the back trace url for the undo functionality
+        \-- figure_list - @param array $url_arr the url parameters of the calling page,
+                 which become the back part of the links
     \-- names_linked
-        \-- figure_list - @param string $back the back trace url for the undo functionality
+        \-- figure_list - @param array $url_arr the url parameters of the calling page,
+                 which become the back part of the links
         \-- list_named - @param user_message $msg to collect the error messages
     \-- br2
         \-- html_base - @return string html code to end a row div
@@ -8162,12 +8166,12 @@
         \-- component - display the history of a view component
         \-- view_exe - display the history of a view
     \-- dsp_hist_links
-        \-- component - display the history of a view component
+        \-- component - display the link history of a view component
         \-- view_exe - display the link history of a view
     \-- log_err
-        \-- component - display the history of a view component
+        \-- component - display the link history of a view component
     \-- log_debug
-        \-- component - display the history of a view component
+        \-- component - display the link history of a view component
     \-- phrase_selector
         \-- component - to select the word or triple
     \-- btn_add_value
@@ -8245,9 +8249,11 @@
     \-- sort_by_impact_and_type
         \-- ref_list - sort the references by impact (highest first) and then by reference type name, with the
     \-- display_linked
-        \-- result_list - @param string $back the back trace url for the undo functionality
+        \-- result_list - @param array $url_arr the url parameters of the calling page,
+                 which become the back part of the links
     \-- table
-        \-- result_list - @return string the html code to show the results as a table to the user
+        \-- result_list - @param phrase_list|null $context_phr_lst the phrases the reader assumes and that are left out 
+                of the header
     \-- display_old
         \-- result_list - create the html code to show the formula results to the user
     \-- load_by_id_with_related
@@ -8257,7 +8263,7 @@
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
     \-- display_admin
-        \-- sys_log_list - @param string $back the back trace url for the undo functionality
+        \-- sys_log_list - @param array $url_arr the url vars of the calling page for the back link of the close links
     \-- get_html
         \-- sys_log_list - display the error that are related to the user, so that he can track when they are closed
     \-- get_html_page
@@ -8265,7 +8271,7 @@
     \-- dsp_list
         \-- verb_list - display a list of elements: replaced b html->list
     \-- names_linked
-        \-- triple_list - @param string $back the back trace url for the undo functionality
+        \-- triple_list - @param array $url_arr the url vars of the calling page for the back link
     \-- tbl
         \-- triple_list - show all triples of the list as table row (ex display)
     \-- graph
@@ -8816,7 +8822,7 @@
     \-- array_to_url
         \-- url_mapper - convert a view code id back to the standard numeric view id, using the loaded view cache
     \-- dsp_log_view
-        \-- hist_log - 
+        \-- hist_log - show the changes of the view
     \-- display
         \-- display_list - TODO Prio 1 review
         \-- html_selector - 
@@ -8852,11 +8858,11 @@
     \-- add_column
         \-- table - 
     \-- dsp_hist
-        \-- user_log_display - for a user log it is always needed to know who wants to seen the log
+        \-- user_log_display - @param array $url_arr the url vars of the calling page for the back link of the undo butt
+                ons
     \-- dsp_hist_links
-        \-- user_log_display - for a user log it is always needed to know who wants to seen the log
-    \-- url_encode
-        \-- back_trace - 
+        \-- user_log_display - @param array $url_arr the url vars of the calling page for the back link of the undo butt
+                ons
     \-- 1
         \-- language_list - 
         \-- view_link_type_list - @return int the database id of the default view link type
@@ -9303,8 +9309,7 @@
     \-- back_img
         \-- button - html code for a icon to create a new entry
     \-- back
-        \-- button - display a button to go back to the main calling page (several pages have been show to adjust the vi
-                ew of a word, go back to the word not to the view edit pages)
+        \-- button - @param array $url_arr the url parameters of the page to go back to; an empty array leads
     \-- confirm
         \-- button - ask a yes/no question with the default calls
     \-- yes_no
@@ -9378,11 +9383,13 @@
     \-- url_old
         \-- html_base - build a url for link a zukunft.com element
     \-- url_back
-        \-- html_base - remove the trailing slash of a base url, because the script path already starts with one
+        \-- html_base - the url of a view for an object with the calling page as the back part
     \-- pre_url_part
         \-- html_base - Build a URL parameter string with each editable field prefixed with url_var::PRE ('8'),
     \-- url_with_back
         \-- html_base - Build the additional URL parameters for an array, each key prefixed with the given prefix char.
+    \-- page_url
+        \-- html_base - the url of the page that the given url parameters describe, e.g. to return to it
     \-- url_with_token
         \-- html_base - append the anti-csrf session token to a get action link (logout, error_update) so that the
     \-- url_api
@@ -9444,13 +9451,13 @@
     \-- form_session_token
         \-- html_base - the hidden anti-csrf field carrying the session token that the server validates on a submit
     \-- form_end_with_submit
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- button_submit
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- form_submit
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- form_input
-        \-- html_base - end a html form with save, cancel and optional delete buttons
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- form_input_password
         \-- html_base - a password input with a css-only "show password" toggle (no javascript,
                  see docs/llm/frontend.md)
@@ -9481,13 +9488,13 @@
     \-- dsp_text_h3
         \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_go_back
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- dsp_btn_text
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- dsp_err
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- dsp_link_hist_box
-        \-- html_base - display a paged, editable list of elements e.g. verbs
+        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- tab_box
         \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- tab_id
@@ -9505,7 +9512,7 @@
     \-- dsp_form_start
         \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
     \-- dsp_form_end
-        \-- html_base - the html id of a tab of a tab box, which is also the url fragment that selects the tab
+        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- div_center
         \-- html_base - centre a html page
     \-- dsp_form_center
@@ -9593,9 +9600,10 @@
         \-- html_base - html unsorted list
 \-- table
     \-- tr
-        \-- change_log_link - @param back_trace|null $back the back trace url for the undo functionality
-        \-- change_log_named - @return string with the html code to show one row of the changes of sandbox objects e.g. 
-                a words
+        \-- change_log_link - @param array $url_arr the url vars of the calling page for the back link of the undo butto
+                n
+        \-- change_log_named - @param array $url_arr the url vars of the calling page for the back link of the undo butt
+                on
     \-- tbl
         \-- change_log_link_list - show all link changes of an object e.g. a word as a table
         \-- change_log_list - show all changes of a named user sandbox object e.g. a word as table

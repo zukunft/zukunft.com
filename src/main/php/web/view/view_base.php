@@ -271,19 +271,19 @@ class view_base extends sandbox_code_id
 
     /**
      * create the html code to show the component name with the link to change the component parameters
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
     function name_link(
-        ?string $back = '',
+        array  $url_arr = [],
         string $style = '',
         int $msk_id = views::VIEW_EDIT_ID,
         string $base_url = ''
     ): string
     {
-        return parent::name_link($back, $style, $msk_id, $base_url);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
     function title(db_object|type_object|combine_named|sandbox_list $dbo, user_message $msg): string
@@ -350,7 +350,7 @@ class view_base extends sandbox_code_id
      * overwrite
      */
 
-    function dsp_navbar(?data_object $cfg = null, string $back = ''): string
+    function dsp_navbar(?data_object $cfg = null, array $url_arr = []): string
     {
         $msg = 'ERROR: dsp_navbar is expected to be overwritten by the child object ' . $this::class;
         log_err($msg);

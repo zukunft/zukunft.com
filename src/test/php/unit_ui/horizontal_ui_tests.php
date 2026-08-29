@@ -249,7 +249,7 @@ class horizontal_ui_tests
                     $cmp_dto = $dto_start;
                 }
                 $part = $cmp->dsp_entries($ui_obj, $msg_ui, $form_name, views::WORD_EDIT_ID, $cmp_dto,
-                    null, '', '', true, [], $test_form_unique_id);
+                    null, '', true, [], $test_form_unique_id);
                 // wrap a field part that references its form by id so the reference resolves
                 if (str_contains($part, ' form="') and !str_contains($part, '<form')) {
                     $part = $html->form_start($form_name) . $part . $html->form_end();

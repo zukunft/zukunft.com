@@ -231,11 +231,11 @@ class sys_log_list
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the close links
      * @return string with a list of the sys_log names with html links
      * ex. names_linked
      */
-    function display_admin(user $usr, string $back = '', string $style = ''): string
+    function display_admin(user $usr, array $url_arr = [], string $style = ''): string
     {
         $html = new html_base();
         $result = '';
@@ -243,7 +243,7 @@ class sys_log_list
             if ($result == '') {
                 $result .= $sys_log->header_admin();
             }
-            $result .= $sys_log->display_admin($usr, $back, $style);
+            $result .= $sys_log->display_admin($usr, $url_arr, $style);
         }
         return $html->tbl($result);
     }
@@ -251,13 +251,12 @@ class sys_log_list
     /**
      * display the error that are related to the user, so that he can track when they are closed
      * or display the error that are related to the user, so that he can track when they are closed
-     * called also from user_display.php/dsp_errors
      * @param user_message $msg to collect error message during the html creation
      * @param user|null $usr e.g. an admin user to allow updating the system errors
-     * @param string $back
+     * @param array $url_arr the url vars of the calling page for the back link of the close links
      * @return string the html code of the system log
      */
-    function get_html(user_message $msg, ?user $usr = null, string $back = ''): string
+    function get_html(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
         $html = new html_base();
         $result = ''; // reset the html code var
@@ -271,7 +270,7 @@ class sys_log_list
                 if ($row_nbr == 1) {
                     $rows .= $this->headline_html();
                 }
-                $rows .= $log_ui->get_html($msg, $usr, $back);
+                $rows .= $log_ui->get_html($msg, $usr, $url_arr);
             }
             $result = $html->tbl($rows);
         }
@@ -297,11 +296,11 @@ class sys_log_list
         return $result;
     }
 
-    function get_html_page(user_message $msg, ?user $usr = null, string $back = ''): string
+    function get_html_page(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
         return $this->get_html_header('System log', $msg)
             . $this->get_html_navbar()
-            . $this->get_html($msg, $usr, $back)
+            . $this->get_html($msg, $usr, $url_arr)
             . $this->get_html_footer();
     }
 

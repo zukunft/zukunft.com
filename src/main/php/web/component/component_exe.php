@@ -105,9 +105,11 @@ class component_exe extends component
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param data_object|null $cfg the context used to create the view
-     * @param string $back the backtrace for undo actions
      * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
+     * @param array $url_arr the url parameters of the page that shows the component, so that
+     *                         the links can return to the page and the "... more" tail can call
+     *                         the same page with the next list size
      * @return string the html code of all view components
      */
     function dsp_entries(
@@ -117,10 +119,9 @@ class component_exe extends component
         int                                                   $msk_id = 0,
         ?data_object                                          $cfg = null,
         ?int                                                  $style_id = null,
-        string                                                $back = '',
         string                                                $pattern = '',
         bool                                                  $test_mode = false,
-        array                                                 $url_array = [],
+        array                                                 $url_arr = [],
         int|string                                            $test_form_unique_id = ''
     ): string
     {
@@ -187,17 +188,17 @@ class component_exe extends component
             // TODO Prio 2 use a changeable spreadsheet for the start view; until it exists this
             // component shows the values of the global problems as a table built from the data
             //component_type::CALC_SHEET => $this->calc_sheet(),
-            component_types::CALC_SHEET => $list->start_list($cfg, $msg, $url_array),
+            component_types::CALC_SHEET => $list->start_list($cfg, $msg, $url_arr),
 
             // system form - components that can only be used for internal system forms
             // general form fields
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
-            component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array, $this->ui_msg_code_id),
-            component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
-            component_types::TITLE_LINK_EDIT => $form->title_link($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
-            component_types::PHRASE_TITLE => $form->title_phrase($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
-            component_types::TITLE_FORMULA_EDIT => $form->title_formula($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
-            component_types::TITLE_VALUE_EDIT => $form->title_value($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_array),
+            component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr, $this->ui_msg_code_id),
+            component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
+            component_types::TITLE_LINK_EDIT => $form->title_link($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
+            component_types::PHRASE_TITLE => $form->title_phrase($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
+            component_types::TITLE_FORMULA_EDIT => $form->title_formula($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
+            component_types::TITLE_VALUE_EDIT => $form->title_value($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
             component_types::FORM_FIELD_CODE_ID => $form->form_field_code_id($dbo),
@@ -302,7 +303,7 @@ class component_exe extends component
             component_types::FORM_PREVIEW => $page->preview(),
 
             // hidden - only used for formatting without functional behaviour
-            component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $url_array),
+            component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $url_arr),
             component_types::FORM_HIDDEN_STEP => $form->form_confirm($msk_id),
 
             // admin - components that only admin user can use
@@ -324,7 +325,7 @@ class component_exe extends component
             component_types::EXPRESSION_LINK => $base->expression_link($dbo),
 
             // buttons
-            component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo, $url_array),
+            component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo, $url_arr),
             component_types::FORM_BUTTON_SAVE => $form->button_save(),
             component_types::FORM_BUTTON_CONFIRM => $form->button_confirm(),
             component_types::FORM_BUTTON_DEL => $form->button_del(),
@@ -340,23 +341,23 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_array),
+            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_arr),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
-            component_types::FORM_CHANGES => $preview->popup_changes($msg, $url_array, $dbo),
-            component_types::FORM_IMPACT => $preview->popup_impact($url_array),
+            component_types::FORM_CHANGES => $preview->popup_changes($msg, $url_arr, $dbo),
+            component_types::FORM_IMPACT => $preview->popup_impact($url_arr),
             component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
             // fixed system pages - usage only allowed for fixed internal system pages
-            component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id, $url_array),
+            component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id, $url_arr),
             component_types::SYSTEM_TITLE_WITH_OBJECT_NAME => $page->title_with_object_name($this->ui_msg_code_id, $dbo),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
-            component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_array),
-            component_types::SYSTEM_BODY_LOGIN => $page->login_body($url_array),
-            component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body($url_array),
-            component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body($url_array),
+            component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_arr),
+            component_types::SYSTEM_BODY_LOGIN => $page->login_body($url_arr),
+            component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body($url_arr),
+            component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body($url_arr),
             component_types::SYSTEM_BODY_LOGOUT => $page->logout_body(),
-            component_types::SYSTEM_BODY_SEARCH => $page->body_search($url_array),
+            component_types::SYSTEM_BODY_SEARCH => $page->body_search($url_arr),
             component_types::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
             component_types::SYSTEM_BODY_VALUE_DETAIL => $page->value_details(),
             component_types::SYSTEM_BODY_RESULT_EXPLAIN => $page->result_explain(),
@@ -391,7 +392,7 @@ class component_exe extends component
             component_types::PHRASE_SYMBOLS => $list->phrase_symbols($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $msg, $cfg->phrase_list()),
-            component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $msg, $cfg),
+            component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $msg, $cfg, $url_arr),
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $msg, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $msg, $cfg),
             component_types::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $msg, $cfg),
@@ -461,10 +462,10 @@ class component_exe extends component
             component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
             component_types::PHRASES_RELATED => $list->phrases_related($msg, $dbo, $cfg),
             component_types::BUTTON_REQUEST => $form->button_request(),
-            component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $msg, $test_mode),
+            component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $msg, $url_arr, $test_mode),
             component_types::CHANGE_LOG_TABLE_PURE => $log->change_log_table_pure($dbo, $log_lst, $msg, $test_mode),
             component_types::USER_SYSTEM_ERRORS => $log->user_system_errors($err_lst, $msg, $this->ui_msg_code_id),
-            component_types::ALL_USER_OVERWRITES => $log->all_user_overwrites($dbo, $log_lst, $msg, $test_mode, $this->ui_msg_code_id, $url_array),
+            component_types::ALL_USER_OVERWRITES => $log->all_user_overwrites($dbo, $log_lst, $msg, $test_mode, $this->ui_msg_code_id, $url_arr),
 
             // view relation only -
             component_types::SYSTEM_FIELD_PARENT_VIEW => $form->show_parent_view($dbo),
@@ -477,14 +478,14 @@ class component_exe extends component
             component_types::LINK => $link->phrase_link($dbo, $form_name, $cfg->phrase_list()),
 
             // table
-            component_types::VALUES_ALL => $base->all($dbo, $back),
+            component_types::VALUES_ALL => $base->all(),
             component_types::VALUES_RELATED => $list->values_by_word($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg),
-            component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns($dbo, $msg, $cfg, false, true, $url_array),
+            component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns($dbo, $msg, $cfg, false, true, $url_arr),
             component_types::VALUE_CHART => $list->value_chart($dbo, $msg, $cfg),
-            component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $msg, $test_mode, $url_array),
-            component_types::NUMERIC_VALUE => $list->num_list($dbo, $back),
+            component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $msg, $test_mode, $url_arr),
+            component_types::NUMERIC_VALUE => $list->num_list(),
 
             // related
             component_types::LIST_REF => $list->ref_list_word($dbo, $msg, $cfg),
@@ -506,10 +507,10 @@ class component_exe extends component
             component_types::VIEW_BEFORE_CHANGE => $preview->view_before($dbo),
 
             // export
-            component_types::JSON_EXPORT => $port->json_export($dbo, $back),
-            component_types::XML_EXPORT => $port->xml_export($dbo, $back),
-            component_types::CSV_EXPORT => $port->csv_export($dbo, $back),
-            component_types::ODS_EXPORT => $port->ods_export($dbo, $back),
+            component_types::JSON_EXPORT => $port->json_export(),
+            component_types::XML_EXPORT => $port->xml_export(),
+            component_types::CSV_EXPORT => $port->csv_export(),
+            component_types::ODS_EXPORT => $port->ods_export(),
 
             component_types::TEXT => $this->text(),
 

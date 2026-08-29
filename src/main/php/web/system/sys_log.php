@@ -278,11 +278,11 @@ class sys_log extends log
 
     /**
      * display a sys_log with a link to the main page for the sys_log
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the close link
      * @param string $style the CSS style that should be used
      * @returns string the html code to show one system log entry for admin users
      */
-    function display_admin(user $usr, ?string $back = '', string $style = ''): string
+    function display_admin(user $usr, array $url_arr = [], string $style = ''): string
     {
         global $mtr, $sys;
 
@@ -303,7 +303,7 @@ class sys_log extends log
         if ($usr->is_admin() or $usr->is_system()) {
             $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
             // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-            $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status));
+            $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
             $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
         }
         return $html->tr($row);
@@ -341,7 +341,11 @@ class sys_log extends log
         return $html->tr($result);
     }
 
-    function get_html(user_message $msg, ?user $usr = null, string $back = ''): string
+    /**
+     * @param user|null $usr e.g. an admin user to allow closing the system log entry
+     * @param array $url_arr the url vars of the calling page for the back link of the close link
+     */
+    function get_html(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
         global $mtr, $sys;
 
@@ -368,7 +372,7 @@ class sys_log extends log
             if ($usr->is_admin() or $usr->is_system()) {
                 $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
                 // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-                $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status));
+                $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
                 $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
             }
         }

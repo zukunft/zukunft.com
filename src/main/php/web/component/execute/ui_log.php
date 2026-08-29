@@ -92,10 +92,16 @@ class ui_log
     /**
      * @return string with the html code that shows the recent changes of this object
      */
-    function system_change_log(db_object $dbo, change_log_list $log_lst, user_message $msg, bool $test_mode = false): string
+    function system_change_log(
+        db_object $dbo,
+        change_log_list $log_lst,
+        user_message $msg,
+        array $url_arr,
+        bool $test_mode = false
+    ): string
     {
         // the pure change log table below uses the same prepared list, so both are sorted equally
-        return $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode)->dsp(null, false, false, $test_mode);
+        return $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode)->dsp($url_arr, false, false, $test_mode);
     }
 
     /**

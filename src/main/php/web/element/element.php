@@ -169,10 +169,10 @@ class element extends db_object
     /**
      * return the HTML code for the element name including a link to inspect the element
      *
-     * @param string $back
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @return string
      */
-    function link(string $back = ''): string
+    function link(array $url_arr = []): string
     {
         $result = '';
 
@@ -181,13 +181,13 @@ class element extends db_object
                 // TODO replace with phrase
                 if ($this->obj::class == word::class
                     or $this->obj::class == triple::class) {
-                    $result = $this->obj->name_link($back);
+                    $result = $this->obj->name_link($url_arr);
                 }
                 if ($this->obj::class == verb::class) {
                     $result = $this->obj->name();
                 }
                 if ($this->obj::class == formula::class) {
-                    $result = $this->obj->edit_link($back);
+                    $result = $this->obj->edit_link($url_arr);
                 }
             }
         }

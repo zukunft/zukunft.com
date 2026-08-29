@@ -655,12 +655,12 @@ class db_object extends TextIdObject
     /**
      * create the html url to create, change or delete this database object
      * @param int|string $view the database id or the code id of the view that should be shown
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the url
      * @returns string the html code
      */
-    function obj_url(int|string $view, ?string $back = ''): string
+    function obj_url(int|string $view, array $url_arr = []): string
     {
-        return new html_base()->url_back($view, $this->id(), '', $back);
+        return new html_base()->url_back($view, $this->id(), $url_arr);
     }
 
 

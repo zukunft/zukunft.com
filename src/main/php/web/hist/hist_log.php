@@ -44,8 +44,11 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 class hist_log
 {
 
-    // show the changes of the view
-    function dsp_log_view(word $wrd, user_message $msg, string $back = ''): string
+    /**
+     * show the changes of the view
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
+     */
+    function dsp_log_view(word $wrd, user_message $msg, array $url_arr = []): string
     {
         $html = new html_base();
         log_debug($wrd->id());
@@ -61,7 +64,7 @@ class hist_log
             }
 
             $wrd_ui = new word();
-            $changes = $wrd_ui->dsp_hist($msg, 1, 20, '', $back);
+            $changes = $wrd_ui->dsp_hist($msg, 1, 20, '', $url_arr);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest view changes related to this word", "change_hist");
                 $result .= $changes;

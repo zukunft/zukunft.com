@@ -345,7 +345,7 @@ class ListBase extends ListOfIdObjects
      * create the html code to show the entries below each other in a vertical list
      *
      * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
-     * @param string $back list of the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
@@ -354,7 +354,7 @@ class ListBase extends ListOfIdObjects
     function list(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        string       $back = '',
+        array        $url_arr = [],
         string       $style = '',
         ?int         $limit = null,
         ?int         $page = null

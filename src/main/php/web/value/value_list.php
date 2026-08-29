@@ -292,7 +292,7 @@ class value_list extends ListBase
      * TODO use a more general parent function
      *
      * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
-     * @param string $back list of the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
@@ -301,7 +301,7 @@ class value_list extends ListBase
     function list(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        string       $back = '',
+        array        $url_arr = [],
         string       $style = '',
         ?int         $limit = null,
         ?int         $page = null
@@ -322,7 +322,7 @@ class value_list extends ListBase
             foreach ($this->lst() as $val) {
                 if ($i <= $limit) {
                     if ($i < $limit) {
-                        $result .= $this->value_line($val, $msg, $context_phr_lst, $back);
+                        $result .= $this->value_line($val, $msg, $context_phr_lst, $url_arr);
                     } else {
                         $diff = $this->count() - $i;
                         if ($diff > 0) {
@@ -342,15 +342,15 @@ class value_list extends ListBase
      *
      * @param value $val the value to render
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and therefore left out of the line
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value line
      */
-    private function value_line(value $val, user_message $msg, phrase_list $context_phr_lst, string $back): string
+    private function value_line(value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
     {
         $html = new html_base();
         // keep the phrases and the value of one value on a single row (text-nowrap) so they are never
         // wrapped and the html snapshot keeps them on one line as well (see library::format_html)
-        $line = $val->grp->name_link_list($context_phr_lst) . ' ' . $val->value_edit($msg, $back);
+        $line = $val->grp->name_link_list($context_phr_lst) . ' ' . $val->value_edit($msg, $url_arr);
         $row = $html->span($line, styles::TEXT_NOWRAP) . $html->lf();
         return $row;
     }
@@ -365,14 +365,14 @@ class value_list extends ListBase
      * see docs/llm/pending_next_launch.md for the feature description
      *
      * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each value line
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
      * @return string the html code to display the grouped values to the user
      */
     function list_most_relevant(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        string       $back = '',
+        array        $url_arr = [],
         string       $style = '',
         ?int         $limit = null
     ): string
@@ -389,9 +389,9 @@ class value_list extends ListBase
             }
             // the values still to be placed; each section consumes the values it groups
             $pool = $this->lst();
-            [$time_html, $pool, $limit] = $this->time_groups($pool, $context_phr_lst, $msg, $back, $limit);
-            [$phrase_html, $pool, $limit] = $this->relevant_phrase_groups($pool, $msg, $context_phr_lst, $back, $limit);
-            $rest_html = $this->impact_group($pool, $msg, $context_phr_lst, $back, $limit);
+            [$time_html, $pool, $limit] = $this->time_groups($pool, $context_phr_lst, $msg, $url_arr, $limit);
+            [$phrase_html, $pool, $limit] = $this->relevant_phrase_groups($pool, $msg, $context_phr_lst, $url_arr, $limit);
+            $rest_html = $this->impact_group($pool, $msg, $context_phr_lst, $url_arr, $limit);
             // the whole grouped list is one 'value-list' container div; the caller style (e.g. the
             // list width) is added as a second css class of that container
             $cls = $style != '' ? styles::VALUE_LIST . ' ' . $style : styles::VALUE_LIST;
@@ -406,7 +406,7 @@ class value_list extends ListBase
      *
      * @param array $pool the values still to be placed
      * @param phrase_list $context_phr_lst phrases left out of each value line
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $budget the number of values that may still be shown on the page
      * @return array [string the html of the time groups,
      *                array the values not put into a rendered time group,
@@ -416,7 +416,7 @@ class value_list extends ListBase
         array        $pool,
         phrase_list  $context_phr_lst,
         user_message $msg,
-        string       $back,
+        array        $url_arr,
         int          $budget
     ): array
     {
@@ -448,7 +448,7 @@ class value_list extends ListBase
             // budget slightly; the values of a skipped group stay in the pool, so the final
             // more tail of impact_group counts them
             if ($budget > 0) {
-                $result .= $this->group_block($time_phr[$id], $buckets[$id], $context_phr_lst, $msg, $back);
+                $result .= $this->group_block($time_phr[$id], $buckets[$id], $context_phr_lst, $msg, $url_arr);
                 $budget = $budget - min(count($buckets[$id]), $per_group);
                 foreach ($buckets[$id] as $val) {
                     $grouped[$val->id()] = true;
@@ -465,7 +465,7 @@ class value_list extends ListBase
      *
      * @param array $pool the values still to be placed
      * @param phrase_list $context_phr_lst phrases left out of each value line
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $budget the number of values that may still be shown on the page
      * @return array [string the html of the phrase groups,
      *                array the values not put into a rendered phrase group,
@@ -475,7 +475,7 @@ class value_list extends ListBase
         array        $pool,
         user_message $msg,
         phrase_list  $context_phr_lst,
-        string       $back,
+        array        $url_arr,
         int          $budget
     ): array
     {
@@ -492,7 +492,7 @@ class value_list extends ListBase
             if ($budget > 0) {
                 [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
                 if (count($members) > $min) {
-                    $result .= $this->group_block($phr, $members, $context_phr_lst, $msg, $back);
+                    $result .= $this->group_block($phr, $members, $context_phr_lst, $msg, $url_arr);
                     $budget = $budget - min(count($members), $per_group);
                     $remaining = $rest;
                 }
@@ -510,13 +510,13 @@ class value_list extends ListBase
      * if a column is still free, the values that share no column phrase fill it ordered by impact
      *
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of the value columns or '' if this list is empty
      */
     function columns_by_phrase(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        string       $back = ''
+        array        $url_arr = []
     ): string
     {
         $result = '';
@@ -532,7 +532,7 @@ class value_list extends ListBase
                 if (count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
                     [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
                     if ($members != []) {
-                        $col_lst[] = $this->group_block($phr, $members, $context_phr_lst, $msg, $back);
+                        $col_lst[] = $this->group_block($phr, $members, $context_phr_lst, $msg, $url_arr);
                         $remaining = $rest;
                     }
                 }
@@ -541,7 +541,7 @@ class value_list extends ListBase
             // limited like every column to the configured number of values
             if ($remaining != [] and count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
                 $col_lst[] = $this->impact_group(
-                    $remaining, $msg, $context_phr_lst, $back, $this->configured_limit($msg));
+                    $remaining, $msg, $context_phr_lst, $url_arr, $this->configured_limit($msg));
             }
             $result = $html->div_row_wrapping_cols($col_lst, $msg);
         }
@@ -557,7 +557,6 @@ class value_list extends ListBase
      * the values that share no column phrase are shown in a last column headed by "Values"
      *
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
-     * @param string $back the last view to suggest the best follow-up view
      * @param array $col_order the defined column phrase names, the most important column first
      * @param bool $with_header true to name the selected phrase centred above the table, false
      *                          where the page already says which phrase the table is about; a
@@ -571,15 +570,15 @@ class value_list extends ListBase
      * @param int|null $limit the max number of rows to show, null for the size named by the url
      *                        or else the configured limit, and self::LIMIT_ALL for every row
      * @param array $url_array the url parameters of the page that shows the table, so that the
-     *                         "... more" tail can call the same page with the next list size and
-     *                         the url can name the list size and the list page; an empty array
-     *                         if the page is not known, e.g. for a table taken out of its page
+     *                         "... more" tail can call the same page with the next list size,
+     *                         the url can name the list size and the list page and the value
+     *                         links can return to the page; an empty array if the page is not
+     *                         known, e.g. for a table taken out of its page
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        string       $back = '',
         array        $col_order = [],
         bool         $with_header = false,
         bool         $with_border = true,
@@ -749,13 +748,13 @@ class value_list extends ListBase
                     // a phrase column names a phrase of the row, a value column its values
                     if (array_key_exists($col_id, $col_phr)) {
                         $row .= $this->cell(
-                            $cells[$row_key][$col_id] ?? [], $msg, $back, $col_style[$col_id]);
+                            $cells[$row_key][$col_id] ?? [], $msg, $url_array, $col_style[$col_id]);
                     } else {
                         $row .= $html->td($phr_cells[$row_key][$col_id] ?? '', $col_style[$col_id]);
                     }
                 }
                 if ($rest_col) {
-                    $row .= $this->cell($cells[$row_key][''] ?? [], $msg, $back, '');
+                    $row .= $this->cell($cells[$row_key][''] ?? [], $msg, $url_array, '');
                 }
                 $rows .= $html->tr($row);
             }
@@ -999,25 +998,25 @@ class value_list extends ListBase
      *
      * @param array $val_lst the values of the cell
      * @param user_message $msg to report a problem of the value display
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the css class of the column, which hides it on the screens its tier excludes
      * @return string the html of the cell, the centre values separated by a comma
      */
-    private function cell(array $val_lst, user_message $msg, string $back, string $style): string
+    private function cell(array $val_lst, user_message $msg, array $url_arr, string $style): string
     {
         $html = new html_base();
         [$centre_lst, $bound, $conf_lst, $title_lst] = $this->sort_cell_values($val_lst, $msg);
         $txt_lst = [];
         $conf_used = [];
         foreach ($centre_lst as $val) {
-            $txt = $val->value_edit($msg, $back);
+            $txt = $val->value_edit($msg, $url_arr);
             $key = $this->range_key($val);
             if (array_key_exists($key, $bound)) {
                 // a range normally has both bounds, but a missing one leaves its place empty
                 $low = $bound[$key][words::LOW] ?? null;
                 $high = $bound[$key][words::HIGH] ?? null;
-                $low_txt = $low?->value_edit($msg, $back) ?? '';
-                $high_txt = $high?->value_edit($msg, $back) ?? '';
+                $low_txt = $low?->value_edit($msg, $url_arr) ?? '';
+                $high_txt = $high?->value_edit($msg, $url_arr) ?? '';
                 $txt .= self::RANGE_START . $low_txt . self::RANGE_SEP . $high_txt . self::RANGE_END;
                 unset($bound[$key]);
             }
@@ -1032,13 +1031,13 @@ class value_list extends ListBase
         // a bound without a centre is shown like a value, so that nothing is lost
         foreach ($bound as $bound_by_word) {
             foreach ($bound_by_word as $val) {
-                $txt_lst[] = $val->value_edit($msg, $back);
+                $txt_lst[] = $val->value_edit($msg, $url_arr);
             }
         }
         // the same for a confidence value that qualifies no value of this cell
         foreach ($conf_lst as $conf_key => $conf_val) {
             if (!in_array($conf_key, $conf_used)) {
-                $txt_lst[] = $conf_val->value_edit($msg, $back);
+                $txt_lst[] = $conf_val->value_edit($msg, $url_arr);
             }
         }
         $title = implode(', ', array_unique($title_lst));
@@ -1570,11 +1569,11 @@ class value_list extends ListBase
      *
      * @param array $pool the remaining values
      * @param phrase_list $context_phr_lst phrases left out of each value name
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $budget the number of values that may still be shown on the page
      * @return string the html of the remaining values as a 'value-items' list, or '' if none remain
      */
-    private function impact_group(array $pool, user_message $msg, phrase_list $context_phr_lst, string $back, int $budget): string
+    private function impact_group(array $pool, user_message $msg, phrase_list $context_phr_lst, array $url_arr, int $budget): string
     {
         $html = new html_base();
         $result = '';
@@ -1590,7 +1589,7 @@ class value_list extends ListBase
             $i = 0;
             foreach ($val_lst->lst() as $val) {
                 if ($i < $limit) {
-                    $items .= $this->value_item($val, $msg, $context_phr_lst, $back);
+                    $items .= $this->value_item($val, $msg, $context_phr_lst, $url_arr);
                 }
                 $i++;
             }
@@ -1611,7 +1610,7 @@ class value_list extends ListBase
      * @param phrase $header the time word or shared phrase shown as the group title
      * @param array $members the values of the group
      * @param phrase_list $context_phr_lst phrases already assumed by the reader
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of the value group (title and item list)
      */
     private function group_block(
@@ -1619,7 +1618,7 @@ class value_list extends ListBase
         array        $members,
         phrase_list  $context_phr_lst,
         user_message $msg,
-        string       $back
+        array        $url_arr
     ): string
     {
         $html = new html_base();
@@ -1640,7 +1639,7 @@ class value_list extends ListBase
         $i = 0;
         foreach ($val_lst->lst() as $val) {
             if ($i < $limit) {
-                $items .= $this->value_item($val, $msg, $ctx, $back);
+                $items .= $this->value_item($val, $msg, $ctx, $url_arr);
             }
             $i++;
         }
@@ -1658,14 +1657,14 @@ class value_list extends ListBase
      *
      * @param value $val the value to render
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and left out of the name
-     * @param string $back the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value list item
      */
-    private function value_item(value $val, user_message $msg, phrase_list $context_phr_lst, string $back): string
+    private function value_item(value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
     {
         $html = new html_base();
         $name = $html->span($val->grp->name_link_list($context_phr_lst), styles::VALUE_NAME);
-        $num = $html->span($val->value_edit($msg, $back), styles::VALUE_NUM);
+        $num = $html->span($val->value_edit($msg, $url_arr), styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
         return $result;
     }
@@ -1951,10 +1950,10 @@ class value_list extends ListBase
     /**
      * @param user_message $msg to collect the error messages
      * @param phrase_list|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
-     * @param string $back
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code to show the values as a table to the user
      */
-    function table(user_message $msg, ?phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(user_message $msg, ?phrase_list $context_phr_lst = null, array $url_arr = []): string
     {
         $html = new html_base();
 
@@ -1996,7 +1995,7 @@ class value_list extends ListBase
                 $header_rows = $html->tr($header);
             }
             $row = $html->td($val->grp->name_link_list($common_phrases));
-            $row .= $html->td($val->value_edit($msg, $back));
+            $row .= $html->td($val->value_edit($msg, $url_arr));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value
             //$btn_del = $val->btn_del();
@@ -2052,7 +2051,7 @@ class value_list extends ListBase
     // creates a table of all values related to a word and a related word and all the sub words of the related word
     // e.g. for "ABB" ($this->phr) list all values for the cash flow statement ($phr_row)
     /*
-    function dsp_table($phr_row, $back, user_message $msg): string
+    function dsp_table($phr_row, array $url_arr, user_message $msg): string
     {
         $usr = $ui_sys->usr;
 
@@ -2176,7 +2175,7 @@ class value_list extends ListBase
             $result .= '  <tr>' . "\n";
             $result .= '    <th></th>' . "\n";
             foreach ($time_lst->lst() as $time_word) {
-                $result .= $time_word->dsp_obj()->dsp_th($back, styles::STYLE_RIGHT);
+                $result .= $time_word->dsp_obj()->dsp_th($url_arr, styles::STYLE_RIGHT);
             }
             $result .= '  </tr>' . "\n";
 
@@ -2248,13 +2247,11 @@ class value_list extends ListBase
                                 $type_ids[] = 0;
                             }
 
-                            //$result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $common_lst, $back);
-                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
+                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $url_arr);
                             $modal_nbr++;
-                            //$result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back);
                             $result .= '      </td>' . "\n";
                         } else {
-                            $result .= $tbl_value->dsp_tbl($back);
+                            $result .= $tbl_value->dsp_tbl($msg, $url_arr);
                             // maybe display the extra words of this value
                         }
                     }
@@ -2355,10 +2352,10 @@ class value_list extends ListBase
                                         $type_ids[] = 0;
                                     }
 
-                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_lst, $type_ids, $back);
+                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_lst, $type_ids, $url_arr);
                                     $result .= '      </td>' . "\n";
                                 } else {
-                                    $result .= $tbl_value->dsp_tbl($back);
+                                    $result .= $tbl_value->dsp_tbl($msg, $url_arr);
                                     // maybe display the extra words of this value
                                 }
                             }
@@ -2388,7 +2385,7 @@ class value_list extends ListBase
                         $type_ids[] = $type_phr->id();
                         $type_ids[] = $type_phr->id();
 
-                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_ids, $type_ids, $back);
+                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($add_phr_ids, $type_ids, $url_arr);
                         $result .= '      </td>' . "\n";
                         $result .= '  </tr>' . "\n";
                     }
@@ -2406,7 +2403,7 @@ class value_list extends ListBase
             $result .= '      <td>' . "\n";
 
             // offer the user to add a new row related word
-            $result .= $phr_row->btn_add($back);
+            $result .= $phr_row->btn_add($msg, $url_arr);
             $result .= '&nbsp;&nbsp;';
 
             // offer the user to add a new value e.g. to add a value for a new year
@@ -2414,7 +2411,7 @@ class value_list extends ListBase
             if (isset($val_main)) {
                 foreach ($time_lst->lst() as $time_wrd) {
                     $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
-                    $result .= $val_main->btn_add($back);
+                    $result .= $val_main->btn_add($url_arr);
                     $result .= '      </td>' . "\n";
                 }
             }
@@ -2438,9 +2435,9 @@ class value_list extends ListBase
      * return the html code to display all values related to a given word
      * $phr->id is the related word that should not be included in the display
      * $this->user()->id() is a parameter, because the viewer must not be the owner of the value
-     * TODO add back
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function html(user_message $msg, $back): string
+    function html(user_message $msg, array $url_arr = []): string
     {
         $lib = new library();
         $html = new html_base();
@@ -2544,21 +2541,19 @@ class value_list extends ListBase
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url_back(views::VALUE_ADD_ID, $val->id(), '', $back);
-                    $btn = new button($url, $back);
-                    $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
+                    $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($val_phr_lst, Null, $url_arr);
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), '', $back);
-                $btn = new button($url, $back);
-                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
+                $url = $html->url_back(views::VALUE_EDIT_ID, $val->id(), $url_arr);
+                $btn = new button($url, $url_arr);
+                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $url_arr);
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), '', $back);
-                $btn = new button($url, $back);
-                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
+                $url = $html->url_back(views::VALUE_DEL_ID, $val->id(), $url_arr);
+                $btn = new button($url, $url_arr);
+                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $url_arr);
                 $result .= '    </td>';
                 $result .= '  </tr>';
             }
@@ -2587,7 +2582,7 @@ class value_list extends ListBase
             if (!empty($common_phr_lst->lst())) {
                 $common_phr_lst->add($this->phr, $msg);
                 $phr_lst_ui = new phrase_list($common_phr_lst->api_json([], $msg));
-                $result .= $phr_lst_ui->btn_add_value($back);
+                $result .= $phr_lst_ui->btn_add_value($url_arr);
             }
         }
 

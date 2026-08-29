@@ -112,7 +112,7 @@ class value_list_ui_tests
         $test_page = $html->text_h2('Value list display test');
         $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($msg_ui, $phr_lst_context_ui) . '<br>';
         $test_page .= 'as long list: ' . $html->lf() .  $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui) . '<br>';
-        $test_page .= 'as long list with small page: ' . $html->lf() .  $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, '', '', 4) . '<br><br>';
+        $test_page .= 'as long list with small page: ' . $html->lf() .  $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, [], '', 4) . '<br><br>';
         $test_page .= 'with units: ' . $html->lf() .  $t_val->list_all_ui($msg)->list_unit($msg_ui,7) . '<br><br>';
         $table_html = $t_val->value_list_most_relevant_ui()->list_most_relevant($msg_ui);
         $test_page .= 'as short and grouped list: ' . $table_html . '<br>';
@@ -224,7 +224,7 @@ class value_list_ui_tests
         // the row limit is checked below, so the column checks ask for every row; else the value
         // that shares no column phrase would be behind the limit and only reachable via the link
         $tbl_html = $t_val->value_list_most_relevant_ui()->table_by_related_columns(
-            $msg_ui, new phrase_list_ui(), '', [], false, true, null, value_list_ui::LIMIT_ALL);
+            $msg_ui, new phrase_list_ui(), [], false, true, null, value_list_ui::LIMIT_ALL);
         $test_name = 'the values are shown as a table';
         $t->assert_text_contains($test_name, $tbl_html, '<table');
         $test_name = 'the top left header cell is empty, because the row phrases differ per row';
@@ -293,7 +293,7 @@ class value_list_ui_tests
         // row although only the value names the solution (see solution_prio.json)
         $wider_lst = $t_phr->list_global_problems_ui();
         $tbl_wider = $t_val->value_list_confidence_wider_ui()->table_by_related_columns(
-            $msg_ui, new phrase_list_ui(), '', $wider_lst->column_names(), false, true, $wider_lst);
+            $msg_ui, new phrase_list_ui(), $wider_lst->column_names(), false, true, $wider_lst);
         $hdr_wider = $lib->html_to_text($lib->str_left_of($tbl_wider, '</tr>'));
         $test_name = 'a confidence that names less than its value opens no column of its own';
         $t->assert($test_name, substr_count($hdr_wider, word_names::LOSS . $unit_sep), 1);
@@ -310,7 +310,7 @@ class value_list_ui_tests
         // the definition "loss" is a phrase that every value carries and heads no column
         $loss_lst = $t_phr->list_columns_loss_ui();
         $tbl_units = $t_val->value_list_two_units_ui()->table_by_related_columns(
-            $msg_ui, new phrase_list_ui(), '', $loss_lst->column_names(), false, true, $loss_lst);
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst);
         $hdr_units = $lib->html_to_text($lib->str_left_of($tbl_units, '</tr>'));
         $test_name = 'a phrase with values in two units gets one column per unit';
         $t->assert($test_name, substr_count($hdr_units, word_names::LOSS . $unit_sep), 2);
@@ -322,7 +322,7 @@ class value_list_ui_tests
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
         $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
-            $msg_ui, new phrase_list_ui(), '', $loss_lst->column_names(), false, true, $loss_lst);
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst);
         $hdr_unit_trp = $lib->html_to_text($lib->str_left_of($tbl_unit_trp, '</tr>'));
         $test_name = 'a unit triple typed measure is shown behind the "in" of the column header';
         $t->assert_text_contains($test_name, $hdr_unit_trp,
@@ -336,7 +336,7 @@ class value_list_ui_tests
         // values before the column of one of its parts, because it names more of their phrases
         $rel_lst = $t_phr->list_columns_potential_loss_ui();
         $tbl_parts = $t_val->value_list_range_ui()->table_by_related_columns(
-            $msg_ui, new phrase_list_ui(), '', $rel_lst->column_names(), false, true, $rel_lst);
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $hdr_parts = $lib->html_to_text($lib->str_left_of($tbl_parts, '</tr>'));
         $test_name = 'a column of two phrases takes the values that carry both';
         $t->assert_text_contains($test_name, $hdr_parts,
@@ -347,7 +347,7 @@ class value_list_ui_tests
         // one phrase they carry
         $rel_lst = $t_phr->list_columns_loss_ui();
         $tbl_one = $t_val->value_list_range_ui()->table_by_related_columns(
-            $msg_ui, new phrase_list_ui(), '', $rel_lst->column_names(), false, true, $rel_lst);
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $hdr_one = $lib->html_to_text($lib->str_left_of($tbl_one, '</tr>'));
         $test_name = 'without the column of two phrases the column of the one phrase is used';
         $t->assert_text_contains($test_name, $hdr_one, word_names::LOSS . $unit_sep);
@@ -369,7 +369,7 @@ class value_list_ui_tests
         // data suggests; five defined columns give five column headers plus the row name header
         $rel_lst = $t_phr->list_columns_ordered_ui();
         $tbl_def = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
-            $msg_ui, new phrase_list_ui(), '', $rel_lst->column_names(), false, true, $rel_lst);
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
         $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 1);
 
@@ -384,18 +384,18 @@ class value_list_ui_tests
         // out of its page still says what it is about
         $test_name = 'with the header the context phrase is linked above the table';
         $tbl_header = $t_val->value_list_most_relevant_ui()
-            ->table_by_related_columns($msg_ui, $phr_lst_context_ui, '', [], true);
+            ->table_by_related_columns($msg_ui, $phr_lst_context_ui, [], true);
         $t->assert_text_contains($test_name,
             $lib->str_left_of($tbl_header, '<table'), '>' . word_names::INHABITANTS . '</a>');
 
         $t->subheader($ts . 'more tail');
-        $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, '', '', 1);
+        $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, [], '', 1);
         $test_name = 'the more tail is a link to the phrase values view';
         $t->assert_text_contains($test_name, $tail_html, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
         $test_name = 'the more tail link selects the page phrase';
         $t->assert_text_contains($test_name, $tail_html, 'id=' . $phr_inhabitant->id());
         $lst_all_ui = $t_val->list_all_ui($msg);
-        $tail_plain = $lst_all_ui->list($msg_ui, new phrase_list_ui(), '', '', 1);
+        $tail_plain = $lst_all_ui->list($msg_ui, new phrase_list_ui(), [], '', 1);
         $test_name = 'without a page phrase the more tail has no link';
         $t->assert_text_not_contains($test_name, $tail_plain, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
         $test_name = 'without a page phrase the more count is still shown';
@@ -408,7 +408,7 @@ class value_list_ui_tests
         $test_name = 'the more tail counts the values that are not shown';
         $t->assert_text_contains($test_name, $tail_plain,
             msg_id::AND_MORE_BEFORE->text() . ' ' . ($lst_all_ui->count() - 1) . ' ' . msg_id::MORE->text());
-        $full_html = $lst_all_ui->list($msg_ui, $phr_lst_context_ui, '', '', $lst_all_ui->count());
+        $full_html = $lst_all_ui->list($msg_ui, $phr_lst_context_ui, [], '', $lst_all_ui->count());
         $test_name = 'a list that shows every value has no more tail';
         $t->assert_text_not_contains($test_name, $full_html, msg_id::MORE->text());
 

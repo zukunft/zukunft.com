@@ -9,6 +9,85 @@ add a quick value change modal box to change just the value
 if the value if updated use the frontend cache to update the results within the frontend cache and report the result updates to the backend
 
 
+## after replacing the `$back` parameter by the url array of the calling page
+
+the conversion is in the git history: every display function of `src/main/php/web` takes the
+url parameters of the calling page as `array $url_arr` and derives the `9`-prefixed back part
+from it (`html_base::url_back` / `url_with_back` / `back_url_array`), the transitional bridge
+`url_arr_from_back` and the `back_trace` class are deleted, and
+`coding_rule_tests::php_web_no_back_param_tests` keeps `$back` and the literal `&back=` out
+of `web/`. what the conversion found and left open:
+
+- **the back part is not reduced to the page vars**: `html_base::back_url_part` and
+  `back_url_array` prefix *every* key of the given array with `9`, although
+  `page_url_array` exists exactly for that reduction (its comment even names the compounds
+  to avoid) and only four call sites do it by hand (`frontend` ~431, `term` ~585, `value`
+  ~505, `system_form` ~495). so every link now carries the form state and the earlier
+  prefixes of the calling page: the regenerated snapshots hold 776 `99m=` (the previous back
+  part prefixed again), `98k=` / `98id=` / `98pf=` (the `8`-prefixed pre values prefixed
+  again), plus `9k`, `9o`, `9fe`, `9fx`, `9s`, `9sp`, `9y`, `9uu`, `9ui`, `9a` and `9z`, and
+  a single href reaches ~700 chars with the formula expression double url-encoded in it.
+  fix `back_url_part` and `back_url_array` to reduce with `page_url_array` first (then only
+  `9m`, `9id`, `9k`-list, `9pattern`, `9dls`, `9dlp` survive), remove the four manual
+  reductions and re-baseline: this touches nearly every snapshot again, so do it before the
+  next html review
+- check on the pages what the first working back links do: the cancel link of a form and
+  `button::back` lead to the phrase default view (`m=110&id=<phrase>`) where the old code
+  called `view.php?words=<id>`, `button::back([])` leads to the start page where the old code
+  hardcoded phrase 1, the links of the four link classes (`component_link`, `formula_link`,
+  `view_relation`, `term_view`) carry a back part for the first time, and a view rendered
+  without a url array (the unit ui tests, `type_lists::show`) now creates links without a
+  back part where `view_exe::show` used to fall back to the phrase view of the shown object
+  - so the callers that know their page should pass its url array
+- five production files include `test_paths::CONST` constants (`frontend.php`,
+  `formula/formula_list.php`, `word/word.php`, `component/execute/ui_list.php`,
+  `component/execute/system_form.php`) - move the values they use to a shared const or the
+  configuration, like the hardcoded `[m=word, id=ZH]` back of `view::dsp_navbar_bs` and
+  `triple_list::tbl` that is replaced by the caller's url array
+- `display_list::display` built its delete link from `script_name . '?id=' . script_parameter
+  . '&del=' . id` and handed the title 'Delete component' to `db_object::btn_del(array
+  $url_arr, string $base_url)`; `script_name` is never set by any caller, so that link was
+  `?id=..&del=..` without a script and the legacy handler is gone - the entry now renders its
+  standard `btn_del($url_arr)`, which leaves `display_list::$script_name` and
+  `$script_parameter` (set by `view::linked_components` and `view_exe::linked_components`)
+  without a reader: wire the real unlink call or delete the two properties with their
+  assignments
+- `phrase::dsp_tbl` compared `is_word()` (a bool) with `word::class` (a string, so the
+  comparison was accidentally truthy) and called `triple::tr('', '', $intent)` with three
+  arguments that `tr()` does not declare and php silently drops; it uses the plain
+  `is_word()` and `tr()` now - a word is rendered as a `<td>` with the intent, a triple as a
+  complete `<tr>` without it, which is inconsistent but is what the pages and the snapshots
+  expect: decide which of the two the function should return
+- `button::$url_arr` is written by the constructor but read by no button function (`back()`
+  uses its own parameter), so the calling page handed to `new button($url, $url_arr)` is
+  dropped - it works today only because the callers already put the back part into `$url`
+  with `url_back()`; either let the button functions fall back to the property or remove the
+  second constructor parameter
+- `component::btn_unlink()` is a placeholder ('Missing unlink') without parameters;
+  `component::linked_views` called it with three arguments that were silently dropped and
+  now calls it without - the button to unlink a view from a component still has to be
+  written like `word::btn_unlink($link_id, $url_arr)`
+- `hist_log::dsp_log_view` calls `word::dsp_hist($msg, 1, 20, '', $url_arr)`, which exists
+  nowhere in the frontend word class, so the view change log of a word is dead code until
+  `word::dsp_hist` is written like `formula::dsp_hist`
+- the review functions `result::explain`, `formula_list::tbl` and `formula_list::display_old`
+  passed the back to functions that never took one (`result::display`, `value_linked`,
+  `display_linked` take a phrase list or nothing, `expression::element_grp_lst` takes the
+  message, `element_group::dsp_values` does not exist, `formula::display_linked` does not
+  exist); the calls now name the existing functions with their real parameters, but the
+  functions are not tested and `formula_list::display_old` still calls `dsp_result` (exists
+  nowhere) and `btn_del` on the backend object `dsp_obj_old()` - decide whether the three
+  are rebuilt on the frontend objects or removed
+- `value::dsp_edit` calls `dsp_time_selector`, `dsp_share` and `dsp_protection`, which name
+  functions that exist nowhere in the frontend, so the mask is dead code until they are
+  written - decide whether the value mask is rebuilt on the form components or `dsp_edit` is
+  removed (the backend `cfg/phrase/phrase.php::dsp_time_selector` that called an equally
+  missing `word::dsp_time_selector` is deleted)
+- `cfg/result/result_list.php::frm_upd_lst` has no caller yet; its `$back` was never a page
+  but the id of the term the update starts from and is `int $trm_id` now
+- `page_url` and the back url builders are tested in `unit_ui/base_ui_tests` only, which the
+  coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
+
 ## start page
 
 add up/down sorting on each column by adding the url_var 'dlo' (display_list_order) and the parameter is the id of the column phrase with an additional 'd' (descending) or 'a'
@@ -314,14 +393,14 @@ each is a small standalone commit):
 - `web/user/user.php::dsp_errors` has no caller and would fatal if it got one: `$err_lst` is the
   **frontend** `sys_log_list`, which has `load_by_user()` but no `load()`; the page it once served
   is the user view rework further down in this file, so delete it there instead of repairing it
+  (only its `string $back` became `array $url_arr` so that the back url rule of
+  `coding_rule_tests` passes; the missing `load()` is untouched)
 - in `test_lib::ui_test_cache` the `$base_msg` of the base view import is also handed to
   `list_all_ui`, so its name no longer says what it collects - split it when that function is
   touched again; the two test runners also name the same web class differently
   (`all_unit_tests` must alias it as `user_message_ui`, `all_ui_tests` uses `user_message`)
 
 ## general code cleanup to prevent future issues
-
-find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 
 fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change -> minor version raise and db_check upgrade script per docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)
 

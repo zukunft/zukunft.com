@@ -593,10 +593,13 @@ class word_write_tests
         $t->assert('word->load type_id for "' . word_names::TEST_RENAMED . '" unchanged now also for user 2', $result, $target);
 
         // display
+        // the phrase id 1 given as the back parameter becomes the phrase page as the back part
         $back = 1;
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&amp;id=' . $wrd_read->id() . '&amp;back=1" title="' . word_names::MATH_COM . '">' . word_names::MATH . '</a>';
+        $back_part = '&amp;' . url_var::BACK . url_var::MASK . '=' . views::PHRASE_ID
+            . '&amp;' . url_var::BACK . url_var::ID . '=' . $back;
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&amp;id=' . $wrd_read->id() . $back_part . '" title="' . word_names::MATH_COM . '">' . word_names::MATH . '</a>';
         $wrd_read_ui = new word_ui($wrd_read->api_json());
-        $result = $wrd_read_ui->name_link($back);
+        $result = $wrd_read_ui->name_link([url_var::MASK => views::PHRASE_ID, url_var::ID => $back]);
         $t->assert('word->display "' . word_names::MATH . '"', $result, $target);
 
         // the frontend load of an existing word fills the object from the api

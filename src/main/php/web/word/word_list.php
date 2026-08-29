@@ -117,17 +117,17 @@ class word_list extends list_named
 
     /**
      * show all words of the list as table row (ex display)
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code with all words of the list
      */
-    function tbl(string $back = ''): string
+    function tbl(array $url_arr = []): string
     {
         $html = new html_base();
         $cols = '';
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $wrd) {
-            $lnk = $wrd->name_link($back);
+            $lnk = $wrd->name_link($url_arr);
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);

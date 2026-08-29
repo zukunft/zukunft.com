@@ -300,7 +300,7 @@ class base_ui_tests
         $sel->selected = 3;
         $body = $html->form_start($sel->form);
         $body .= $sel->display_old();
-        $body .= $html->form_end_with_submit($sel->name, '');
+        $body .= $html->form_end_with_submit($sel->name, []);
         $t->html_test($body, '', 'selector', $t);
         */
 
@@ -407,7 +407,7 @@ class base_ui_tests
         $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
         $res_canton_ui = new value_ui($res_canton->api_json([api_types::INCL_PHRASES]));
-        $res_canton_html = $res_canton_ui->value_edit($msg_ui, '');
+        $res_canton_html = $res_canton_ui->value_edit($msg_ui);
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
@@ -473,7 +473,7 @@ class base_ui_tests
         $wrd = $t->load_word(words::TN_READ);
         $msk = new view($t->usr1);
         $msk->load_by_name(views::TN_READ_RATIO);
-        //$result = $msk->display($wrd, $back);
+        //$result = $msk->display($wrd, $url_arr);
         $target = true;
         //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
         */
@@ -515,9 +515,11 @@ class base_ui_tests
 
 
         $url = $html->url_back(views::WORD_ADD_ID);
-        $back = '1';
+        // this block tests the icon and the title of each button, so no calling page is named;
+        // that the buttons carry the page vars of the url array is tested in the back url section
+        $url_arr = [];
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word">';
-        $result = (new button($url, $back))->add(msg_id::WORD_ADD);
+        $result = (new button($url, $url_arr))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
         // TODO move e.g. because the edit word button is tested already in the unit tests of the object
@@ -525,36 +527,36 @@ class base_ui_tests
         $url = $html->url_back(views::WORD_DEL_ID);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_DEL_ID . '" title="delete word"><i class="far fa-times-circle"></i></a>';
-        $result = (new button($url, $back))->del(msg_id::WORD_DEL);
+        $result = (new button($url, $url_arr))->del(msg_id::WORD_DEL);
         $t->dsp_contains(", btn_del", $target, $result);
 
         $url = $html->url_back(views::WORD_NAME);
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
         $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
-        $result = (new button($url, $back))->undo(msg_id::UNDO);
+        $result = (new button($url, $url_arr))->undo(msg_id::UNDO);
         //$t->assert(", btn_undo", $result, $target);
 
         $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_find.svg" alt=""></a>';
-        $result = (new button($url, $back))->find(msg_id::FIND);
+        $result = (new button($url, $url_arr))->find(msg_id::FIND);
         //$t->assert(", btn_find", $result, $target);
 
         $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
-        $result = (new button($url, $back))->un_filter(msg_id::REMOVE_FILTER);
+        $result = (new button($url, $url_arr))->un_filter(msg_id::REMOVE_FILTER);
         //$t->assert(", btn_unfilter", $result, $target);
 
         $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
         $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=-1">no</a>';
-        $result = (new button($url, $back))->yes_no();
+        $result = (new button($url, $url_arr))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 
         $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
-        $result = (new button($url, $back))->back();
+        $result = (new button($url, $url_arr))->back();
         //$t->assert(", btn_back", $result, $target);
 
         $t->subheader($ts . 'xss escaping');
@@ -612,6 +614,26 @@ class base_ui_tests
         $result = $html->url_with_back(api::MAIN_SCRIPT . '?m=3&id=123', $url_array);
         $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=3&id=123&9m=1');
 
+        // the link builders take the url parameters of the calling page and add them as the
+        // '9'-prefixed back part, so that the called page can return to the calling page
+        $page_arr = [url_var::MASK => '3', url_var::ID => '123'];
+        $test_name = 'a view url carries the calling page as the back part';
+        $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, $page_arr), '9m=3&9id=123');
+        $test_name = '... and an unknown calling page adds no back part';
+        $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, []), '9');
+        $test_name = 'an old style script url carries the calling page as the back part';
+        $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
+        $test_name = 'the page url of a url array names the page by its page vars only';
+        $t->assert($test_name, $html->page_url($page_arr + [url_var::STEP => '0']),
+            api::MAIN_SCRIPT . '?m=3&id=123');
+        $test_name = 'the form end links the cancel button to the calling page';
+        $t->assert_text_contains($test_name, $html->dsp_form_end('', $page_arr), 'm=3&amp;id=123');
+        $test_name = '... and shows no cancel button if no calling page is known';
+        $t->assert_text_not_contains($test_name, $html->dsp_form_end('', []), 'btn-outline-secondary');
+        $test_name = 'the back button leads to the calling page';
+        $t->assert_text_contains($test_name, (new button())->back($page_arr), 'm=3&amp;id=123');
+        $test_name = '... and to the start page if no calling page is known';
+        $t->assert_text_contains($test_name, (new button())->back([]), api::MAIN_SCRIPT . '"');
         $lib = new library();
         $msg = new user_message_ui();
         $url_test = new test_mappers($t);
