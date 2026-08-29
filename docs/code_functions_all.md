@@ -6078,10 +6078,6 @@
             onent.php
     \-- form_edit - section for function form_edit not yet defined that it should be to be replaced in /component/compon
             ent.php
-    \-- dsp_add - section for function dsp_add not yet defined that it should be to review in /component/component.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /component/component.php
-    \-- form_edit_new - section for function form_edit_new not yet defined that it should be to review in /component/com
-            ponent.php
     \-- html - section for function html not yet defined that it should be to review in /component/component.php
     \-- text - section for function text not yet defined that it should be to review in /component/component.php
     \-- word_name - section for function word_name not yet defined that it should be to review in /component/component.p
@@ -6590,8 +6586,7 @@
             ew in /formula/formula.php
     \-- dsp_unlink_phr - section for function dsp_unlink_phr not yet defined that it should be to review in /formula/for
             mula.php
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper,
-            order of section to review has difference at dsp_edit should be before dsp_hist_links
+    \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be object vars in /formula/formula
@@ -8147,13 +8142,6 @@
     \-- form_edit
         \-- component - HTML code to edit all component fields
 \-- to review
-    \-- dsp_add
-        \-- component - HTML code to edit all component fields
-    \-- dsp_edit
-        \-- component - HTML code to edit all word fields
-        \-- view_exe - HTML code to edit all word fields
-    \-- form_edit_new
-        \-- component - HTML code to edit all component fields
     \-- html
         \-- component - @returns string the html code to display this view component
     \-- text
@@ -8162,6 +8150,8 @@
         \-- component - @return string the name of a phrase and give the user the possibility to change the phrase name
     \-- btn_unlink
         \-- component - lists of all views where this component is used
+    \-- 1
+        \-- view_exe - HTML code to edit all word fields
     \-- dsp_hist
         \-- component - display the history of a view component
         \-- view_exe - display the history of a view

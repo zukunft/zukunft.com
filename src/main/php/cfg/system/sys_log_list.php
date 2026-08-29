@@ -78,7 +78,6 @@ class sys_log_list extends list_db_read
     public ?string $dsp_type = '';  //
     public int $page = 0;           //
     public int $size = 0;           //
-    public ?string $back = '';      //
 
 
     /*
