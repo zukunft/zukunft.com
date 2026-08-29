@@ -54,7 +54,6 @@ include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -79,7 +78,6 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_value;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -260,14 +258,14 @@ class result_list extends sandbox_list_value
     function list(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        string       $back = '',
+        array        $url_arr = [],
         string       $style = '',
         ?int         $limit = null,
         ?int         $page = null
     ): string
     {
         $this->sort_by_number();
-        return parent::list($msg, $context_phr_lst, $back, $style, $limit, $page);
+        return parent::list($msg, $context_phr_lst, $url_arr, $style, $limit, $page);
     }
 
 
@@ -290,21 +288,21 @@ class result_list extends sandbox_list_value
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @return string with a list of the result names with html links
      * ex. names_linked
      */
-    function display_linked(string $back = ''): string
+    function display_linked(array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($url_arr));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $limit the max number of entries to show (kept compatible with the parent signature)
      * @return array with a list of the result names with html links
      */
-    protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    protected function names_linked(array $url_arr = [], int $limit = config::LIMIT_NAME_LIST): array
     {
         // sort first so the limited subset and its order do not depend on the api/db row order
         $this->sort_by_number();
@@ -320,9 +318,10 @@ class result_list extends sandbox_list_value
     }
 
     /**
+     * @param phrase_list|null $context_phr_lst the phrases the reader assumes and that are left out of the header
      * @return string the html code to show the results as a table to the user
      */
-    function table(?phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(?phrase_list $context_phr_lst = null): string
     {
         $html = new html_base();
 
@@ -355,7 +354,7 @@ class result_list extends sandbox_list_value
                 $header_rows = $html->tr($header);
             }
             $row = $html->td($res->display_linked($common_phrases));
-            $row .= $html->td($res->value_linked($back));
+            $row .= $html->td($res->value_linked());
             $rows .= $html->tr($row);
         }
 
@@ -366,7 +365,7 @@ class result_list extends sandbox_list_value
      * create the html code to show the formula results to the user
      * TODO move to result_list_min_display
      */
-    function display_old(user_message $msg, string $back = ''): string
+    function display_old(user_message $msg): string
     {
         $lib = new library();
         $html = new html_base();
@@ -395,7 +394,7 @@ class result_list extends sandbox_list_value
                 $phr_lst_ui = new phrase_list($phr_lst->api_json([], $api_msg));
                 $result .= '</tr><tr>';
                 $result .= '<td>' . $phr_lst_ui->name_link() . '</td>';
-                $result .= '<td>' . $res->display_linked($back) . '</td>';
+                $result .= '<td>' . $res->display_linked() . '</td>';
                 $result .= '</tr>';
             }
         }
@@ -407,16 +406,16 @@ class result_list extends sandbox_list_value
 
     /**
      * create the pure html (5) code for all formula links related to this value list
-     * @param back_trace|null $back list of past url calls of the session user
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code part with the formula links
      */
-    function frm_links_html(?back_trace $back = null): string
+    function frm_links_html(array $url_arr = []): string
     {
         $result = '';
         $html = new html_base();
         $formula_links = '';
         foreach ($this->lst() as $res) {
-            $formula_links .= ' ' . $html->ref($html->url_back(views::FORMULA_EDIT_ID, $res->frm->id, html_base::url_arr_from_back($back?->url_encode())), $res->number) . ' ';
+            $formula_links .= ' ' . $html->ref($html->url_back(views::FORMULA_EDIT_ID, $res->frm->id, $url_arr), $res->number) . ' ';
         }
         if ($formula_links <> '') {
             $result .= ' (or ' . $formula_links . ')';

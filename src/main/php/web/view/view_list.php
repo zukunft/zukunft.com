@@ -170,26 +170,26 @@ class view_list extends ListBase
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
-    function name_link(string $back = ''): string
+    function name_link(array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($url_arr));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return array with a list of the view names with html links
      */
-    private function names_linked(string $back = ''): array
+    private function names_linked(array $url_arr = []): array
     {
         // key by name and sort so the rendered order is deterministic and independent
         // of the api/db row order (see the frontend list-sorting rule)
         $views = array();
         foreach ($this->lst() as $msk) {
-            $views[$msk->name()] = $msk->name_link();
+            $views[$msk->name()] = $msk->name_link($url_arr);
         }
         ksort($views, SORT_NATURAL);
         return array_values($views);

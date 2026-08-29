@@ -42,7 +42,6 @@ include_once html_paths::DB . 'sql_db.php';
 //include_once html_paths::HTML . 'html_base.php';
 //include_once html_paths::COMPONENT . 'component_exe.php';
 //include_once html_paths::FORMULA . 'formula.php';
-//include_once html_paths::SYSTEM . 'back_trace.php';
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
@@ -60,7 +59,6 @@ use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
@@ -84,7 +82,7 @@ class user_log_display
     public bool $condensed = True; // display the changes in a few columns with reduced details
     public int $size;              // the page size
     public string $call = '';      // the html page which has call the hist display object
-    public string $back = '';      //
+    public array $url_arr = [];    // the url vars of the calling page for the back link of the undo buttons
 
     /**
      * for a user log it is always needed to know who wants to seen the log
@@ -94,6 +92,9 @@ class user_log_display
         //$this->usr = $usr;
     }
 
+    /**
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
+     */
     function dsp_hist(
         string       $class,
         int|string   $id,
@@ -101,12 +102,12 @@ class user_log_display
         int          $page,
         user_message $msg,
         string       $call = '',
-        ?back_trace  $back = null
+        array        $url_arr = []
     ): string
     {
         $lst = new change_log_list();
         $lst->load_by_object_field($class, $msg, $id, '', null, $size, $page);
-        $result = $lst->tbl($back, $this->condensed);
+        $result = $lst->tbl($url_arr, $this->condensed);
         return '';
     }
 
@@ -115,7 +116,7 @@ class user_log_display
     //   or if a component is added to a display view
     function dsp_hist_links(user_message $msg): string
     {
-        log_debug('user_log_display->dsp_hist_links ' . $this->type . ' id ' . $this->id . ' size ' . $this->size . ' page ' . $this->page . ' call from ' . $this->call . ' original call from ' . $this->back);
+        log_debug('user_log_display->dsp_hist_links ' . $this->type . ' id ' . $this->id . ' size ' . $this->size . ' page ' . $this->page . ' call from ' . $this->call);
 
         // loaded here (not at the top of the file) because change_log_link extends change_log_named,
         // which sits at the root of the bootstrap include chain; a top-level include would close a cycle
@@ -125,12 +126,9 @@ class user_log_display
         $lst = new change_log_link_list();
         $lst->load_by_object($this->type, $msg, $this->id, $this->usr);
 
-        // keep the original call as back trace so the undo links include it
-        $back = new back_trace();
-        $back->url_lst = [$this->back];
-
         log_debug("done");
-        return $lst->tbl($back);
+        // the undo links return to the calling page
+        return $lst->tbl($this->url_arr);
     }
 
 }

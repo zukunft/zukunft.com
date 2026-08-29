@@ -194,14 +194,14 @@ class term_list extends sandbox_list_named
      * e.g. used on the search result page to show the most relevant terms matching the pattern
      * unlike name_link (which sorts by name) the list is sorted by the system calculated impact
      *
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @param int $limit the max number of terms to show
      * @return string the html links of the terms with the highest impact first
      */
-    function name_link_by_impact(string $back = '', int $limit = config::LIMIT_SEARCH_LIST): string
+    function name_link_by_impact(array $url_arr = [], int $limit = config::LIMIT_SEARCH_LIST): string
     {
         $this->sort_by_impact();
-        return implode(', ', $this->names_linked($back, $limit));
+        return implode(', ', $this->names_linked($url_arr, $limit));
     }
 
     /**

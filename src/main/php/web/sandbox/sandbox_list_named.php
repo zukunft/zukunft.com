@@ -52,7 +52,6 @@ include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
-include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -71,7 +70,6 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -169,29 +167,29 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create the html code to display the e.g. the phrases with the most useful link
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with a list of the component names with html links
      * ex. names_linked
      */
-    function name_link(string $back = '', $limit = config::LIMIT_NAME_LIST): string
+    function name_link(array $url_arr = [], $limit = config::LIMIT_NAME_LIST): string
     {
         $this->sort_by_name();
-        return implode(', ', $this->names_linked($back, $limit));
+        return implode(', ', $this->names_linked($url_arr, $limit));
     }
 
     /**
      * an array of the names with a http link
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $limit the max number of entries to show
      * @return array with a list of the component names with html links
      */
-    protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    protected function names_linked(array $url_arr = [], int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
         $i = 0;
         foreach ($this->lst() as $sbx) {
             if ($i < $limit) {
-                $result[] = $sbx->name_link(html_base::url_arr_from_back($back));
+                $result[] = $sbx->name_link($url_arr);
                 $i++;
             }
         }

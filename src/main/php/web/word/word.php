@@ -68,7 +68,6 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
@@ -117,7 +116,6 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -639,13 +637,16 @@ class word extends sandbox_code_id
      */
 
     /**
+     * @param int $link_id the id of the triple that should be removed
+     * @param array $url_arr the url vars of the calling page for the back link
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_unlink(int $link_id, string $back = ''): string
+    function btn_unlink(int $link_id, array $url_arr = []): string
     {
+        // after the unlink the user returns to this word
         $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id,
-            html_base::url_arr_from_back((string)$this->id()));
-        return new button($url, $back)->del(msg_id::WORD_UNLINK);
+            [url_var::MASK => views::PHRASE_ID, url_var::ID => $this->id()]);
+        return new button($url, $url_arr)->del(msg_id::WORD_UNLINK);
     }
 
 
@@ -710,13 +711,13 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function th(string $back = '', string $style = ''): string
+    function th(array $url_arr = [], string $style = ''): string
     {
-        return (new html_base)->th($this->name_link(html_base::url_arr_from_back($back), $style));
+        return (new html_base)->th($this->name_link($url_arr, $style));
     }
 
     /**
@@ -728,13 +729,13 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function td(string $back = '', string $style = '', int $intent = 0): string
+    function td(array $url_arr = [], string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->name_link(html_base::url_arr_from_back($back), $style);
+        $cell_text = $this->name_link($url_arr, $style);
         return (new html_base)->td($cell_text, '', $intent);
     }
 
@@ -771,10 +772,10 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param back_trace $back the last changes to allow undo actions by the user
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with the HTML code to show the last changes of the view of this word
      */
-    function log_view(back_trace $back): string
+    function log_view(array $url_arr = []): string
     {
         $log_ui = new change_log_named();
         return '';
@@ -950,9 +951,9 @@ class word extends sandbox_code_id
      * to review
      */
 
-    function dsp_graph(foaf_direction $direction, user_message $msg, verb_list $link_types, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, user_message $msg, verb_list $link_types, array $url_arr = []): string
     {
-        return $this->phrase()->dsp_graph($direction, $msg, $link_types, $back);
+        return $this->phrase()->dsp_graph($direction, $msg, $link_types, $url_arr);
     }
 
 

@@ -138,6 +138,9 @@ class coding_rule_tests
         $t->subheader($ts . 'frontend config cache');
         $this->php_web_config_from_cache_tests($t);
 
+        $t->subheader($ts . 'frontend back url');
+        $this->php_web_no_back_param_tests($t);
+
         $t->subheader($ts . 'requesting user on the message');
         $this->php_user_message_param_shadow_tests($t);
         $this->php_user_message_user_write_tests($t);
@@ -976,6 +979,60 @@ class coding_rule_tests
         // one summary assertion so that a clean tree also produces a visible pass (see
         // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
         $test_name = 'web/ config from cache checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no file in src/main/php/web/** names the calling page '$back' and that no url
+     * is built with the literal '&back=': the page a link should return to travels as the url
+     * parameters of the calling page (array $url_arr) and is added to a url by
+     * html_base::url_back / url_with_back, which prefix the parameters with url_var::BACK ('9')
+     * so that frontend::url_par_from_back_part can read them back
+     *
+     * the old string form was never read by the frontend (the key 'back' has no url var), so a
+     * hand-built '&back=' url or a $back parameter is a link that cannot return to its page
+     *
+     * each violation produces one failing assertion identifying the file and line; a clean tree
+     * produces the summary assertion only, which checks that at least one file has been scanned
+     *
+     * positive (test fires when it should): a line like "function td(string $back = '')" or
+     *     "'view.php?id=' . $id . '&back=' . $back" inside web/ flags the rule violation
+     * negative (test tolerates good code): "function td(array $url_arr = [])" and
+     *     "$html->url_back(views::WORD_ID, $id, $url_arr)" pass without an assertion;
+     *     the names $back_url, $back_arr, $back_part and $back_icon are not the page parameter
+     *     and are therefore not flagged
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_no_back_param_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array(paths::WEB);
+        $code_files = $lib->array_to_path($file_array);
+        $files_checked = 0;
+        foreach ($code_files as $code_file) {
+            $files_checked++;
+            $ctrl_code = file(paths::WEB . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                // '$back' as a word, so that $back_url, $back_arr, $back_part and $back_icon,
+                // which name a url or an icon instead of the calling page, are not flagged
+                if (preg_match('/\$back\b/', $line)) {
+                    $test_name = 'web/ must name the calling page $url_arr'
+                        . ' but found $back in ' . $code_file . ':' . ($line_idx + 1);
+                    // the offending line is the actual result and no hit is the target
+                    $t->assert($test_name, trim($line));
+                }
+                if (str_contains($line, '&back=')) {
+                    $test_name = 'web/ must add the calling page with url_back or url_with_back'
+                        . ' but found the literal &back= in ' . $code_file . ':' . ($line_idx + 1);
+                    $t->assert($test_name, trim($line));
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass (see
+        // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
+        $test_name = 'web/ back url checked in ' . $files_checked . ' files';
         $t->assert_greater($test_name, 0, $files_checked);
     }
 

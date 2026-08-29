@@ -250,9 +250,12 @@ class result extends sandbox_value
      * review
      */
 
-    // explain a formula result to the user
-    // create an HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
-    function explain(int $lead_phr_id, user_message $msg, $back): string
+    /**
+     * explain a formula result to the user
+     * create an HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
+     * @param array $url_arr the url vars of the calling page for the back link
+     */
+    function explain(int $lead_phr_id, user_message $msg, array $url_arr = []): string
     {
         $lib = new library();
         $html = new html_base();
@@ -278,7 +281,7 @@ class result extends sandbox_value
         }
         $title .= ': ';
         // add the value  to the title
-        $title .= $this->display($back);
+        $title .= $this->display();
         $result .= $html->dsp_text_h1($title);
         log_debug('explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_grp->phrase_list()->dsp_name());
 
@@ -294,8 +297,8 @@ class result extends sandbox_value
         $frm = new formula();
         $frm->load_by_id($this->frm->id(), $msg);
         $frm_html = $frm;
-        $result .= ' based on</br>' . $frm_html->name_link(html_base::url_arr_from_back($back));
-        $result .= ' ' . $frm_html->dsp_text($msg, $back) . "\n";
+        $result .= ' based on</br>' . $frm_html->name_link($url_arr);
+        $result .= ' ' . $frm_html->dsp_text($msg, $url_arr) . "\n";
         $result .= ' ' . $frm_html->btn_edit() . "\n";
         $result .= '</br></br>' . "\n";
 
@@ -305,8 +308,7 @@ class result extends sandbox_value
         // <"journey time max premium" "percent"> is one element group with two elements
         // and these two elements together are used to select the value
         $exp = $frm->expression($msg);
-        //$elm_lst = $exp->element_lst ($back);
-        $elm_grp_lst = $exp->element_grp_lst($back);
+        $elm_grp_lst = $exp->element_grp_lst($msg);
         log_debug("elements loaded (" . $lib->dsp_count($elm_grp_lst->lst()) . " for " . $frm->ref_text() . ")");
 
         $result .= ' where</br>';
@@ -320,8 +322,8 @@ class result extends sandbox_value
             foreach ($elm_grp_lst->lst() as $elm_grp) {
 
                 // display the formula element names and create the element group object
-                $result .= $elm_grp->dsp_names($back) . ' ';
-                log_debug('elm grp name "' . $elm_grp->dsp_names($back) . '" with back "' . $back . '"');
+                $result .= $elm_grp->dsp_names($url_arr) . ' ';
+                log_debug('elm grp name "' . $elm_grp->dsp_names($url_arr) . '"');
 
 
                 // exclude the formula word from the words used to select the formula element values
@@ -341,7 +343,7 @@ class result extends sandbox_value
                 log_debug('words set ' . $elm_grp->phrase_list()->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
                 // finally, display the value used in the formula
-                $result .= ' = ' . $elm_grp->dsp_values($back);
+                $result .= ' = ' . $elm_grp->dsp_values_old($msg, $url_arr);
                 $result .= '</br>';
                 log_debug('next element');
                 $elm_nbr++;

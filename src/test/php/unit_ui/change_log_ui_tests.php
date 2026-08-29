@@ -37,14 +37,12 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SYSTEM . 'back_trace.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_link_list as change_log_link_list_cfg;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_link_list as change_log_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -76,7 +74,7 @@ class change_log_ui_tests
         $test_page = $html->text_h2('Change log display test');
 
         // prepare test data
-        $back = new back_trace();
+        $url_arr = [];
         $api_typ_lst = new api_type_list([api_types::TEST_MODE]);
 
         $test_page .= '<br>changes as a text<br>';
@@ -104,18 +102,18 @@ class change_log_ui_tests
         $test_page .= '<br>simple list of changes of a word<br>';
         $log_lst = $t_log->log_list_named();
         $log_ui = new change_log_list($log_lst->api_json($api_typ_lst));
-        $test_page .= $log_ui->tbl($back);
+        $test_page .= $log_ui->tbl($url_arr);
 
         $test_page .= '<br>condensed list of changes of a word<br>';
         $log_lst = $t_log->log_list_named();
         $log_ui = new change_log_list($log_lst->api_json($api_typ_lst));
-        $test_page .= $log_ui->tbl($back, true, true);
+        $test_page .= $log_ui->tbl($url_arr, true, true);
 
         // the tr changes table (tbl) also shows 'remove user overwrite for view' in the field column
         // when a user sandbox change adds an empty value (see change_log_named::tr)
         $test_page .= '<br>changes table with a removed user overwrite<br>';
         $log_rem_ui = new change_log_list($t_log->log_list_word_changes()->api_json($api_typ_lst));
-        $rem_tbl = $log_rem_ui->tbl($back);
+        $rem_tbl = $log_rem_ui->tbl($url_arr);
         $test_page .= $rem_tbl;
         $test_name = 'the tr changes table shows the remove user overwrite text';
         $t->assert_text_contains($test_name, $rem_tbl, 'remove user overwrite for view');
@@ -123,7 +121,7 @@ class change_log_ui_tests
         // the condensed changes table also shows 'remove user overwrite for view' (without a trailing
         // ': ' because there is no value to show, see change_log_named::tr)
         $test_page .= '<br>condensed changes table with a removed user overwrite<br>';
-        $rem_tbl_cond = $log_rem_ui->tbl($back, true, true);
+        $rem_tbl_cond = $log_rem_ui->tbl($url_arr, true, true);
         $test_page .= $rem_tbl_cond;
         $test_name = 'the condensed changes table shows the remove user overwrite text';
         $t->assert_text_contains($test_name, $rem_tbl_cond, 'remove user overwrite for view');
@@ -194,9 +192,9 @@ class change_log_ui_tests
         $cl_lst->add($cl);
         $log_link_ui = new change_log_link_list_ui($cl_lst->api_json($api_typ_lst));
         $test_name = 'a link change is shown as a link to the new target';
-        $t->assert_text_contains($test_name, $log_link_ui->tbl($back), word_names::MATH);
+        $t->assert_text_contains($test_name, $log_link_ui->tbl($url_arr), word_names::MATH);
         $test_name = 'an empty link change list renders no table row';
-        $t->assert_text_not_contains($test_name, new change_log_link_list_ui()->tbl($back), '<tr');
+        $t->assert_text_not_contains($test_name, new change_log_link_list_ui()->tbl($url_arr), '<tr');
     }
 
 }

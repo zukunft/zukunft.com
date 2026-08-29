@@ -100,13 +100,13 @@ class component_ui_tests
         $cmp = new component_exe();
         $cmp->set_id(0);
         $test_page .= 'add mask<br>';
-        $test_page .= $cmp->form_edit('', '', '', '', '', '', $test_form_unique_id++) . '<br>';
+        $test_page .= $cmp->form_edit('', '', '', '', '', [], $test_form_unique_id++) . '<br>';
         $cmp = new component_exe();
         $cmp->set_id(1);
         $cmp->set_name(components::WORD_NAME);
         $cmp->description = components::WORD_COM;
         $test_page .= 'edit mask<br>';
-        $test_page .= $cmp->form_edit('', '', '', '', '', '', $test_form_unique_id++) . '<br>';
+        $test_page .= $cmp->form_edit('', '', '', '', '', [], $test_form_unique_id++) . '<br>';
         $test_page .= $t->dsp_title_named_edit($cmp, $msg);
         // the filled component has a non default type, share and protection, so its title shows
         // all three parts of the subtitle, which the hand-built component of the line above does

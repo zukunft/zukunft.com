@@ -614,7 +614,8 @@ class term extends combine_named
         $result = '';
         if ($this->is_word()) {
             $wrd = $this->obj();
-            $result .= $wrd->td('', '', $intent);
+            // the cell is rendered without a calling page, so its link carries no back part
+            $result .= $wrd->td([], '', $intent);
         }
         return $result;
     }
@@ -626,8 +627,9 @@ class term extends combine_named
     {
         $btn = new button();
         $html = new html_base();
+        // after the unlink the user returns to this phrase
         $del_call = $html->url_back(views::TRIPLE_DEL_ID, $link_id,
-            html_base::url_arr_from_back((string)$this->id()));
+            [url_var::MASK => views::PHRASE_ID, url_var::ID => $this->id()]);
         $result = '    <td>' . "\n";
         $result .= $btn->del(msg_id::WORD_UNLINK, $del_call);
         $result .= '    </td>' . "\n";
@@ -646,10 +648,10 @@ class term extends combine_named
      * @param string $form
      * @param int $pos
      * @param string $class
-     * @param string $back
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string
      */
-    function dsp_selector(term $type, string $form, int $pos, string $class, string $back = ''): string
+    function dsp_selector(term $type, string $form, int $pos, string $class, array $url_arr = []): string
     {
         // TODO include pattern in the call
         $pattern = '';

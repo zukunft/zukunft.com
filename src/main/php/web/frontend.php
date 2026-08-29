@@ -428,8 +428,8 @@ class frontend
     {
         $result = null;
         if (!$token_valid and $is_logged_in) {
-            $back = html_base::back_url_array(html_base::page_url_array($url_array));
-            $result = array_merge([url_var::MASK => views::LOGIN_ID], $back);
+            $back_arr = html_base::back_url_array(html_base::page_url_array($url_array));
+            $result = array_merge([url_var::MASK => views::LOGIN_ID], $back_arr);
         }
         return $result;
     }
@@ -927,11 +927,6 @@ class frontend
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         $view_words = $url_array[url_var::WORDS] ?? '';
-        if (array_key_exists(url_var::BACK, $url_array)) {
-            $back = $lib->filter_var($url_array[url_var::BACK]); // the word id from which this value change has been called (maybe later any page)
-        } else {
-            $back = '';
-        }
 
         // TODO Prio 1 move to the frontend __construct
         // get the fixed frontend config
@@ -1059,7 +1054,7 @@ class frontend
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
                 $title = $msk_ui->title($dbo, $msg_ui);
-                $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, $back, '', $test_mode, $url_array);
+                $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {

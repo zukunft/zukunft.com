@@ -556,7 +556,8 @@ class phrase extends combine_named
         $result = '';
         if ($this->is_word()) {
             $wrd = $this->obj();
-            $result .= $wrd->td('', '', $intent);
+            // the cell is rendered without a calling page, so its link carries no back part
+            $result .= $wrd->td([], '', $intent);
         }
         return $result;
     }
@@ -594,11 +595,11 @@ class phrase extends combine_named
      * to review
      */
 
-    function dsp_graph(foaf_direction $direction, user_message $msg, ?verb_list $link_types = null, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, user_message $msg, ?verb_list $link_types = null, array $url_arr = []): string
     {
         $phr_lst = new phrase_list();
         if ($phr_lst->load_related($this, $direction, $link_types)) {
-            return $phr_lst->dsp_graph($this, $msg, $back);
+            return $phr_lst->dsp_graph($this, $msg, $url_arr);
         } else {
             return '';
         }
@@ -699,12 +700,13 @@ class phrase extends combine_named
         $result = '';
         if ($this != null) {
             if ($this->obj != null) {
-                // the function dsp_tbl should exist for words and triples
+                // the cell is rendered without a calling page, so its link carries no back part
                 $dsp_obj = $this->obj();
-                if ($this->is_word() == word::class) {
-                    $result = $dsp_obj->td('', '', $intent);
+                if ($this->is_word()) {
+                    $result = $dsp_obj->td([], '', $intent);
                 } else {
-                    $result = $dsp_obj->tr('', '', $intent);
+                    // a triple is shown as a complete table row, which uses no intent
+                    $result = $dsp_obj->tr();
                 }
             }
         }

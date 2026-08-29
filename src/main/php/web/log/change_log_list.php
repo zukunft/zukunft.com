@@ -38,7 +38,6 @@ include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'styles.php';
@@ -59,7 +58,6 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -388,10 +386,10 @@ class change_log_list extends ListBase
 
     /**
      * show all changes of a named user sandbox object e.g. a word as table
-     * @param back_trace|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      * @return string the html code with all words of the list
      */
-    function dsp(?back_trace $back = null, bool $condensed = false, bool $with_users = false, bool $test_mode = false): string
+    function dsp(array $url_arr = [], bool $condensed = false, bool $with_users = false, bool $test_mode = false): string
     {
         $html_text = '';
         foreach ($this->lst() as $chg) {
@@ -407,15 +405,15 @@ class change_log_list extends ListBase
 
     /**
      * show all changes of a named user sandbox object e.g. a word as table
-     * @param back_trace|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      * @return string the html code with all words of the list
      */
-    function tbl(?back_trace $back = null, bool $condensed = false, bool $with_users = false): string
+    function tbl(array $url_arr = [], bool $condensed = false, bool $with_users = false): string
     {
         $html = new html_base();
         $html_text = $this->th($condensed, $with_users);
         foreach ($this->lst() as $chg) {
-            $html_text .= $chg->tr($back, $condensed, $with_users);
+            $html_text .= $chg->tr($url_arr, $condensed, $with_users);
         }
         return $html->tbl($html_text, styles::STYLE_BORDERLESS);
     }
@@ -508,10 +506,10 @@ class change_log_list extends ListBase
         $html = new html_base();
         $result = '';
         if ($more_rows or !$first_page) {
-            $back = !$first_page ? $html->icon(icons::PAGE_BACK) : '';
+            $back_icon = !$first_page ? $html->icon(icons::PAGE_BACK) : '';
             $forward = $more_rows ? $html->icon(icons::PAGE_FORWARD) : '';
             // back button on the left, forward button right-aligned at the end of the table
-            $cells = $html->td($back) . $html->td('');
+            $cells = $html->td($back_icon) . $html->td('');
             foreach ($types_and_actions as $action) {
                 // the grouping is the only entry that adds no column
                 if ($action != change_log_actions::GROUP_BY_TYPE) {

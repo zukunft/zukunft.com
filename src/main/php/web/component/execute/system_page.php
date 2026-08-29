@@ -485,14 +485,15 @@ class system_page extends component
      *                           legacy /http/error_update.php behaviour where anyone but an admin
      *                           saw the permission notice; the same user is forwarded to the
      *                           per-row renderer so each status-change link carries the right context
-     * @param string $back back-link forwarded to each row's status-change link so navigation is preserved
+     * @param array $url_arr the url vars of the calling page, forwarded to each row's
+     *                       status-change link so navigation is preserved
      * @return string the HTML body for the error_update page
      */
     function error_update(
         user_message  $msg,
         ?sys_log_list $errors = null,
         ?user_dsp     $usr = null,
-        string        $back = ''
+        array         $url_arr = []
     ): string
     {
         global $mtr;
@@ -504,7 +505,7 @@ class system_page extends component
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PERMISSION_DENIED));
         } elseif ($errors !== null and !$errors->is_empty()) {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PROGRAM_ISSUES))
-                . $errors->get_html($msg, $usr, $back);
+                . $errors->get_html($msg, $usr, $url_arr);
         } else {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_NO_OPEN));
         }

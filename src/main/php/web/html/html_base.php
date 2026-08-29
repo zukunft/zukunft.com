@@ -698,7 +698,7 @@ class html_base
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @param int|string $id the id of the parameter e.g. 1 for math const
-     * @param string|null $back the back trace calls to return to the original url and for undo
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
@@ -738,7 +738,7 @@ class html_base
      * @param int|string $view the code_id or the database id of the view
      * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
      * @param string $obj_name the object that should be shown e.g. a value
-     * @param string|null $back the back trace calls to return to the original url and for undo
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
@@ -922,34 +922,6 @@ class html_base
     function page_url(array $url_arr): string
     {
         return api::MAIN_SCRIPT . url_var::PAR . http_build_query(self::page_url_array($url_arr));
-    }
-
-    /**
-     * the url parameters of the calling page from the old string form of the back parameter,
-     * which is either the id of the phrase the user has come from or the url of the page
-     *
-     * transitional: the link builders take the url parameters of the calling page as an
-     * array, but the display functions above them still hand the page down as a string
-     * (docs/llm/pending_prio_2.md "replace the $back parameter"); every conversion of such a
-     * function removes one call of this bridge, and the last one removes the bridge
-     *
-     * @param string|null $back the old back parameter: a phrase id, a url or empty
-     * @return array the url parameters of the calling page, empty if no page is known
-     */
-    static function url_arr_from_back(?string $back): array
-    {
-        $result = [];
-        if ($back != null and $back != '') {
-            if (is_numeric($back)) {
-                // the id 0 named no phrase, so it names no page either
-                if ((int)$back > 0) {
-                    $result = [url_var::MASK => views::PHRASE_ID, url_var::ID => (int)$back];
-                }
-            } else {
-                parse_str(parse_url($back, PHP_URL_QUERY) ?? '', $result);
-            }
-        }
-        return $result;
     }
 
     /**
@@ -1387,7 +1359,7 @@ class html_base
     /**
      * end a html form with save, cancel and optional delete buttons
      * @param string $submit_name label for the save button; empty uses the default translated label
-     * @param string $back the URL or word id to return to after cancelling
+     * @param array $url_arr the url vars of the calling page to return to after cancelling
      * @param string $del_call the URL to call for the delete action; empty omits the delete button
      * @return string the HTML code for the form buttons and closing form tag
      */
@@ -1628,7 +1600,7 @@ class html_base
      *
      * @param array $item_lst a list of objects that have at least an id and a name
      * @param string $class the object class name e.g. a view
-     * @param string $back the target for the back / ctrl-z function
+     * @param array $url_arr the url vars of the calling page for the back / ctrl-z function
      * @return string the html code to display the list
      */
     function list(array $item_lst, string $class, array $url_arr = []): string

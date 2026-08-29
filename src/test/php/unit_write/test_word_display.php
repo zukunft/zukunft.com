@@ -80,7 +80,7 @@ function run_word_display_test(all_tests $t): void
     $link_types_ui = new verb_list_ui();
     $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
     $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
-    $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
+    $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     // TODO Prio 1 activate
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
@@ -93,7 +93,7 @@ function run_word_display_test(all_tests $t): void
     $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
     $link_types_ui = new verb_list_ui();
     $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
-    $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
+    $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     // loading the link types and rendering the graph reads from the database, so a semi page timeout is used
     $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
@@ -109,7 +109,7 @@ function run_word_display_test(all_tests $t): void
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
     $link_types_ui = new verb_list_ui();
     $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
-    $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
+    $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
     // TODO Prio 2 activate
@@ -132,7 +132,7 @@ function run_word_display_test(all_tests $t): void
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
     $link_types_ui = new verb_list_ui();
     $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
-    $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
+    $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     $result = $lib->trim_html($result);
     // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has year id', $result, $wrd_year->id());

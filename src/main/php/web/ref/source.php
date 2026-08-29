@@ -294,7 +294,7 @@ class source extends sandbox_code_id
 
     /**
      * display the source name with a link to the main page for the source
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */

@@ -38,14 +38,12 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log_named.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'change_tables.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -58,12 +56,12 @@ class change_log_link extends change_log_named
      */
 
     /**
-     * @param back_trace|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the undo button
      * @param bool $condensed unused, kept to match the change_log_named signature
      * @param bool $user_changes unused, kept to match the change_log_named signature
      * @return string the html code to show one row of the link changes e.g. of a word
      */
-    function tr(?back_trace $back = null, bool $condensed = false, bool $user_changes = false): string
+    function tr(array $url_arr = [], bool $condensed = false, bool $user_changes = false): string
     {
         global $ui_sys;
         $html = new html_base();
@@ -97,9 +95,7 @@ class change_log_link extends change_log_named
         $undo_btn = '';
         if ($this->is_formula_link()) {
             $undo_call = $html->url_back(
-                views::FORMULA_EDIT_ID, $this->row_id,
-                html_base::url_arr_from_back($back?->url_encode()),
-                'undo_change=' . $this->id());
+                views::FORMULA_EDIT_ID, $this->row_id, $url_arr, 'undo_change=' . $this->id());
             $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
         }
         if ($undo_call != '') {

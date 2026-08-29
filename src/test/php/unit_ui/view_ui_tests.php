@@ -413,7 +413,7 @@ class view_ui_tests
         $t_wrd = new test_words($t);
         $wrd = new word($t_wrd->word()->api_json());
         $msk_cols = new view($t_msk->view_side_or_below()->api_json([api_types::INCL_COMPONENTS]));
-        $cols_html = $msk_cols->show($wrd, $msg, $ui->dto, '', '', true);
+        $cols_html = $msk_cols->show($wrd, $msg, $ui->dto, '', true);
         $test_page .= $html->text_h2('side or below columns');
         $test_page .= $cols_html;
         $t->html_page_test($test_page, 'view', 'view', $msg, $base_url, $lan);
@@ -428,7 +428,7 @@ class view_ui_tests
         // rendering the plain view builds the complete component html, so a semi page timeout is used
         $test_name = 'without the side or below position types no minimal width is set';
         $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
-        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
     }
 
 }

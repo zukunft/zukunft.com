@@ -290,36 +290,36 @@ class job extends db_object
 
     /**
      * display a job with a link to the main page for the job
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function display_linked(?string $back = '', string $style = ''): string
+    function display_linked(array $url_arr = [], string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url_old(rest_ctrl::VIEW, $this->id(), html_base::url_arr_from_back($back), url_var::WORDS);
+        $url = $html->url_old(rest_ctrl::VIEW, $this->id(), $url_arr, url_var::WORDS);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the job as a table cell
      */
-    function td(string $back = '', string $style = '', int $intent = 0): string
+    function td(array $url_arr = [], string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->display_linked($back, $style);
+        $cell_text = $this->display_linked($url_arr, $style);
         return (new html_base)->td($cell_text, '', $intent);
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the batch_job as a table cell
      */
-    function th(string $back = '', string $style = ''): string
+    function th(array $url_arr = [], string $style = ''): string
     {
-        return (new html_base)->th($this->display_linked($back, $style));
+        return (new html_base)->th($this->display_linked($url_arr, $style));
     }
 
     /**

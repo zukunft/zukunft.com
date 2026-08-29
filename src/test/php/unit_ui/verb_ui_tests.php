@@ -122,7 +122,7 @@ class verb_ui_tests
         $cfg = new data_object_ui();
         $cfg->trp_lst = $t_trp->triple_list_ui();
         $vrb_is = new verb($t_vrb->verb_is()->api_json());
-        $trp_html = $list->triple_list($vrb_is, $msg, $cfg);
+        $trp_html = $list->triple_list($vrb_is, $msg, $cfg, $url_arr);
         // 'city of Zurich' is one of the test triples that use the 'is' verb
         $test_name = 'the triples that use the verb are listed';
         $t->assert_text_contains($test_name, $trp_html, triple_names::CITY_ZH_NAME);
@@ -132,7 +132,7 @@ class verb_ui_tests
         // a verb that is not used in any triple gets the not-used message instead of an empty page
         $test_name = 'a verb without triples shows the not used message';
         $vrb_unused = new verb($t_vrb->verb()->api_json());
-        $t->assert($test_name, $list->triple_list($vrb_unused, $msg, $cfg),
+        $t->assert($test_name, $list->triple_list($vrb_unused, $msg, $cfg, $url_arr),
             $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES));
     }
 

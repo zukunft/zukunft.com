@@ -43,13 +43,10 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
-include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
-include_once html_paths::SHARED . 'url_var.php';
-include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -59,13 +56,10 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class triple_list extends ListBase
 {
@@ -116,14 +110,14 @@ class triple_list extends ListBase
      * the names are separated by a blank and not by a comma, because each name is already a link
      * and so stands out on its own, whereas a comma between two links adds a line to the page
      *
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @param int|null $limit the max number of triples to show, null for all of them
      * @return string with a list of the triple names with html links
      * ex. names_linked
      */
-    function display(user_message $msg, string $back = '', ?int $limit = null): string
+    function display(user_message $msg, array $url_arr = [], ?int $limit = null): string
     {
-        $names = $this->names_linked($msg, $back);
+        $names = $this->names_linked($msg, $url_arr);
         $result = implode(' ', array_slice($names, 0, $limit ?? count($names)));
         // never cut silently: tell the user that the list continues, but without a number, because
         // the list itself is already cut by the read limit (see cfg/verb/verb::triples_read_limit)
@@ -135,15 +129,15 @@ class triple_list extends ListBase
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return array with a list of the triple names with html links
      */
-    function names_linked(user_message $msg, string $back = ''): array
+    function names_linked(user_message $msg, array $url_arr = []): array
     {
         $result = array();
         foreach ($this->lst() as $trp) {
             if (!$trp->is_hidden($msg)) {
-                $result[] = $trp->name_link(html_base::url_arr_from_back($back));
+                $result[] = $trp->name_link($url_arr);
             }
         }
         return $result;
@@ -151,21 +145,19 @@ class triple_list extends ListBase
 
     /**
      * show all triples of the list as table row (ex display)
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param bool $add_btn set to true for eas allow of similar triples
      * @return string the html code with all triples of the list
      */
-    function tbl(user_message $msg, string $back = '', bool $add_btn = false): string
+    function tbl(user_message $msg, array $url_arr = [], bool $add_btn = false): string
     {
         $html = new html_base();
-        // TODO Prio 0 replace the $back parameter with $url_arr
-        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
         $cols = '';
         $last_trp = null;
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $trp) {
-            $lnk = $trp->name_link(html_base::url_arr_from_back($back));
+            $lnk = $trp->name_link($url_arr);
             $cols .= $html->td($lnk);
             $last_trp = $trp;
         }
@@ -182,7 +174,7 @@ class triple_list extends ListBase
      * shows all words the link to the given word
      * returns the html code to select a word that can be edited
      */
-    function graph(user_message $msg, string $back = ''): string
+    function graph(user_message $msg, array $url_arr = []): string
     {
         global $ui_sys;
 
@@ -191,7 +183,7 @@ class triple_list extends ListBase
 
         // check the all minimal input parameters
         if (isset($this->wrd)) {
-            log_debug('graph->display for ' . $this->wrd->name() . ' called from ' . $back);
+            log_debug('graph->display for ' . $this->wrd->name() . ' called from ' . $html->page_url($url_arr));
         }
         $prev_verb_id = 0;
 
@@ -297,7 +289,7 @@ class triple_list extends ListBase
                     $result .= '  <tr>';
                     $result .= '    <td>';
                     // TODO Prio 1 add a tooltip like "Add similar word",
-                    //                            $html->url_back(views::WORD_ADD_ID, 0, '', (string)$start_id, '', 'verb=' .
+                    //                            $html->url_back(views::WORD_ADD_ID, 0, $url_arr, 'verb=' .
                     //                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id)
                     $result .= '      ' . $lnk->tob()->btn_add();
                     $result .= '    </td>';

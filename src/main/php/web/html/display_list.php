@@ -59,7 +59,7 @@ class display_list extends html_base
      * create the html code for a list that can be sorted using the fixed field "order_nbr"
      * @param string $class the class of the objects in the lis
      */
-    function display(string $class, int $id, string $back = ''): string
+    function display(string $class, int $id, array $url_arr = []): string
     {
         global $mtr;
         $result = '';
@@ -93,7 +93,8 @@ class display_list extends html_base
                 $result .= '</td><td>';
             }
             $result .= ' ';
-            $result .= $entry->btn_del('Delete component', $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
+            // the delete button of the entry leads to its del view and returns to the calling page
+            $result .= $entry->btn_del($url_arr);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td></tr>';
             }

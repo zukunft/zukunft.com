@@ -432,13 +432,13 @@ class value extends sandbox_value
      * create the html code to show only the value formatted based on the user settings
      * with a link to change the value itself or the value parameters
      * @param user_message $msg to collect the error messages
-     * @param string $back the id of the original phrase (TODO Prio 0: to be replace with $url_arr that contains the previuos pages)
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the formatted value with a link to change this value
      */
-    function value_edit(user_message $msg, string $back = ''): string
+    function value_edit(user_message $msg, array $url_arr = []): string
     {
         $html = new html_base();
-        $url = $html->url_back(views::VALUE_DEFAULT_ID, $this->id(), html_base::url_arr_from_back($back));
+        $url = $html->url_back(views::VALUE_DEFAULT_ID, $this->id(), $url_arr);
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
@@ -557,10 +557,10 @@ class value extends sandbox_value
      * and with the information only phrases move the tooltip of the group name
      * and with the group name as a link to see the details of the value
      * @param user_message $msg to collect the error messages
-     * @param string $back the id of the original phrase (TODO Prio 0: to be replace with $url_arr that contains the previuos pages)
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the description with links and the formatted value
      */
-    function with_unit_and_info(user_message $msg, string $back = ''): string
+    function with_unit_and_info(user_message $msg, array $url_arr = []): string
     {
         $html = new html_base();
         $lib = new library();
@@ -572,7 +572,7 @@ class value extends sandbox_value
         if ($unit_phr_lst->count() > 1) {
             log_err($this->dsp_id() . ' is not expected to have more than one unit');
         }
-        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), html_base::url_arr_from_back($back));
+        $url = $html->url_back($lib->class_to_name($this::class), $this->id(), $url_arr);
         $name_txt = $phr_lst->name_link_list();
         $val_txt = $this->value($msg);
         if (!$info_phr_lst->is_empty()) {
@@ -887,52 +887,55 @@ class value extends sandbox_value
      */
 
     // the same as \html\btn_del_value, but with another icon
-    function btn_undo_add_value($back): string
+    function btn_undo_add_value(array $url_arr = []): string
     {
         return \Zukunft\ZukunftCom\main\php\web\html\btn_undo('delete this value',
-            new html_base()->url_back(views::VALUE_DEL_ID, $this->id(), html_base::url_arr_from_back($back)));
+            new html_base()->url_back(views::VALUE_DEL_ID, $this->id(), $url_arr));
     }
 
     // display a value, means create the HTML code that allows to edit the value
-    function dsp_tbl_std(user_message $msg, $back): string
+    function dsp_tbl_std(user_message $msg, array $url_arr = []): string
     {
         log_debug('value->dsp_tbl_std ');
         $html = new html_base();
         $result = '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), html_base::url_arr_from_back($back)), $this->val_formatted($msg)) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), $url_arr), $this->val_formatted($msg)) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
 
     // same as dsp_tbl_std, but in the user-specific color
-    function dsp_tbl_usr(user_message $msg, $back): string
+    function dsp_tbl_usr(user_message $msg, array $url_arr = []): string
     {
         log_debug('value->dsp_tbl_usr');
         $html = new html_base();
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), html_base::url_arr_from_back($back)), $this->val_formatted($msg), '', styles::STYLE_USER) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $this->id(), $url_arr), $this->val_formatted($msg), '', styles::STYLE_USER) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
 
-    function dsp_tbl(user_message $msg, $back): string
+    function dsp_tbl(user_message $msg, array $url_arr = []): string
     {
         log_debug('value->dsp_tbl_std ');
         $result = '';
 
         if ($this->is_std()) {
-            $result .= $this->dsp_tbl_std($msg, $back);
+            $result .= $this->dsp_tbl_std($msg, $url_arr);
         } else {
-            $result .= $this->dsp_tbl_usr($msg, $back);
+            $result .= $this->dsp_tbl_usr($msg, $url_arr);
         }
         return $result;
     }
 
-    // display the history of a value
-    function dsp_hist($page, $size, $call, $back): string
+    /**
+     * display the history of a value
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
+     */
+    function dsp_hist($page, $size, $call, array $url_arr = []): string
     {
-        log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ".");
         $result = ''; // reset the html code var
 
         $log_ui = new user_log_display();
@@ -942,15 +945,18 @@ class value extends sandbox_value
         $log_ui->page = $page;
         $log_ui->size = $size;
         $log_ui->call = $call;
-        $log_ui->back = $back;
+        $log_ui->url_arr = $url_arr;
         //$result .= $log_ui->dsp_hist_old();
 
         log_debug("done");
         return $result;
     }
 
-    // display the history of a value
-    function dsp_hist_links($page, $size, $call, $back): string
+    /**
+     * display the link history of a value
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
+     */
+    function dsp_hist_links($page, $size, $call, array $url_arr = []): string
     {
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
@@ -961,7 +967,7 @@ class value extends sandbox_value
         $log_ui->page = $page;
         $log_ui->size = $size;
         $log_ui->call = $call;
-        $log_ui->back = $back;
+        $log_ui->url_arr = $url_arr;
         //$result .= $log_ui->dsp_hist_links();
 
         log_debug("done");
@@ -978,7 +984,7 @@ class value extends sandbox_value
     // with a preference of the start_word_ids
     /*
      * TODO recreate based on the group
-    function dsp_samples($wrd_id, $start_wrd_ids, $size, $back): string
+    function dsp_samples($wrd_id, $start_wrd_ids, $size, array $url_arr = []): string
     {
         log_debug("value->dsp_samples (" . $wrd_id . ",rt" . implode(",", $start_wrd_ids) . ",size" . $size . ")");
 
@@ -1032,7 +1038,7 @@ class value extends sandbox_value
                 if ($word_names <> "") {
                     // display a row if the value has changed and
                     $result .= '<tr>';
-                    $result .= '<td>' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $group_id, '', $back), $row_value, '', 'grey') . '</td>';
+                    $result .= '<td>' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $group_id, $url_arr), $row_value, '', 'grey') . '</td>';
                     $result .= '<td>' . $word_names . '</td>';
                     $result .= '</tr>';
                     $row_nbr++;
@@ -1048,7 +1054,7 @@ class value extends sandbox_value
         // display the last row if there has been at least one word
         if ($word_names <> "") {
             $result .= '<tr>';
-            $result .= '<td>' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $group_id, '', $back), $row_value, '', 'grey') . '</td>';
+            $result .= '<td>' . $html->ref($html->url_back(views::VALUE_EDIT_ID, $group_id, $url_arr), $row_value, '', 'grey') . '</td>';
             $result .= '<td>' . $word_names . '</td>';
             $result .= '</tr>';
         }
@@ -1060,14 +1066,14 @@ class value extends sandbox_value
     */
 
     // simple modal box to add a value
-    function dsp_add_fast($back): string
+    function dsp_add_fast(array $url_arr = []): string
     {
         $html = new html_base();
         $result = '';
 
         $result .= '  ' . $html->h2('Modal Example');
         $result .= '  <!-- Button to Open the Modal -->';
-        //$result .= '  <a href="/http/value_add.php?back=2" title="add"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
+        //$result .= '  <a href="' . $html->url_back(views::VALUE_ADD_ID, 0, $url_arr) . '" title="add"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
         $result .= '';
 
         return $result;
@@ -1078,7 +1084,7 @@ class value extends sandbox_value
     // $wrd_add is only optional to display the last added phrase at the end
     // TODO: take user unlink of phrases into account
     // save data to the database only if "save" is pressed add and remove the phrase links "on the fly", which means that after the first call the edit view is more or less the same as the add view
-    function dsp_edit($type_ids, user_message $msg, string $back): string
+    function dsp_edit($type_ids, user_message $msg, array $url_arr = []): string
     {
         $result = ''; // reset the html code var
         $lib = new library();
@@ -1099,7 +1105,8 @@ class value extends sandbox_value
                 log_debug('value->dsp_edit ' . $this->dsp_id());
             }
         }
-        $this_url = rest_ctrl::PATH_FIXED . $script . '.php?id=' . $this->id() . '&back=' . $back; // url to call this display again to display the user changes
+        // url to call this display again to display the user changes
+        $this_url = $html->url_with_back(rest_ctrl::PATH_FIXED . $script . '.php?id=' . $this->id(), $url_arr);
 
         // display the words and triples
         $result .= $html->dsp_tbl_start_select();
@@ -1205,10 +1212,10 @@ class value extends sandbox_value
                         '&confirm=1';
                     // url for the case that this phrase should be renamed
                     if ($phr->id() > 0) {
-                        $phrase_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_EDIT . '&id=' . $phr->id . '&back=' . $back;
+                        $phrase_url = $html->url_back(views::WORD_EDIT_ID, $phr->id, $url_arr);
                     } else {
                         $lnk_id = $phr->id * -1;
-                        $phrase_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
+                        $phrase_url = $html->url_back(views::TRIPLE_EDIT_ID, $lnk_id, $url_arr);
                     }
 
                     // show the phrase selector
@@ -1226,7 +1233,7 @@ class value extends sandbox_value
                             /*if (!empty($phr_lst_sel->lst)) {
                 $result .= '      '.$phr_lst_sel->dsp_selector("phrase".$url_pos, $script, $phr->id);
               } else {  */
-                            $result .= '      ' . $phr->dsp_selector($phr->is_wrd, $script, $url_pos, '', $back);
+                            $result .= '      ' . $phr->dsp_selector($phr->is_wrd, $script, $url_pos, '', $url_arr);
                             //}
                             $url_pos++;
 
@@ -1245,7 +1252,7 @@ class value extends sandbox_value
                             }
                             //$result .= '    <input type="' . html_base::INPUT_HIDDEN . '" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
                             $result .= '    <td colspan="2">';
-                            $result .= '      ' . $phr->dsp_selector(0, $script, $url_pos, '', $back);
+                            $result .= '      ' . $phr->dsp_selector(0, $script, $url_pos, '', $url_arr);
                             $url_pos++;
 
                             $result .= '    </td>';
@@ -1270,7 +1277,7 @@ class value extends sandbox_value
                     $result .= '    <td colspan="2">';
 
                     log_debug('show time selector');
-                    $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $back);
+                    $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr);
                     $url_pos++;
 
                     $result .= '    </td>';
@@ -1285,7 +1292,7 @@ class value extends sandbox_value
                 $result .= '    <td colspan="2">';
 
                 log_debug('show time selector');
-                $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $back);
+                $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr);
                 $url_pos++;
 
                 $result .= '    </td>';
@@ -1301,7 +1308,7 @@ class value extends sandbox_value
                     $result .= '    <td colspan="2">';
 
                     $phr_new = new phrase();
-                    //$result .= $phr_new->dsp_selector(null, $script, $url_pos, '', $back);
+                    //$result .= $phr_new->dsp_selector(null, $script, $url_pos, '', $url_arr);
                     $url_pos++;
 
                     $result .= '    </td>';
@@ -1323,41 +1330,44 @@ class value extends sandbox_value
             $lib->ids_to_url($type_ids_new, "type");
         $result .= '  ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add("Add another phrase", $used_url);
         $result .= '  <br><br>';
-        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->input($key, msg_id::FORM_FIELD_BACK, (string)$val, html_base::INPUT_HIDDEN);
+        }
         if ($this->id() > 0) {
             $result .= '  to <input type="' . html_base::INPUT_TEXT . '" name="value" value="' . $this->number() . '">';
         } else {
             $result .= '  is <input type="' . html_base::INPUT_TEXT . '" name="value">';
         }
-        $result .= $html->dsp_form_end("Save", html_base::url_arr_from_back($back));
+        $result .= $html->dsp_form_end("Save", $url_arr);
         $result .= '<br><br>';
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
             $scr_ui = new source($src->api_json([], $msg));
             // TODO Prio 0 add the source selector to the value mask
-            //$result .= $scr_ui->dsp_select($script, $back);
+            //$result .= $scr_ui->dsp_select($script, $url_arr);
             $result .= '<br><br>';
         }
 
         // display the share type
-        $result .= $this->dsp_share($script, $back);
+        $result .= $this->dsp_share($script, $url_arr);
 
         // display the protection type
-        $result .= $this->dsp_protection($script, $back);
+        $result .= $this->dsp_protection($script, $url_arr);
 
         $result .= '<br>';
-        $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_back(html_base::url_arr_from_back($back));
+        $result .= \Zukunft\ZukunftCom\main\php\web\html\btn_back($url_arr);
 
         // display the user changes
         log_debug('user changes');
         if ($this->id() > 0) {
-            $changes = $this->dsp_hist(0, 0, '', $back);
+            $changes = $this->dsp_hist(0, 0, '', $url_arr);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest changes related to this value", "change_hist");
                 $result .= $changes;
             }
-            $changes = $this->dsp_hist_links(0, 0, '', $back);
+            $changes = $this->dsp_hist_links(0, 0, '', $url_arr);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest link changes related to this value", "change_hist");
                 $result .= $changes;
@@ -1368,7 +1378,7 @@ class value extends sandbox_value
                 $main_wrd->load($msg);
                 // TODO Prio 2 activate based on a group load
                 /*
-                $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
+                $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $url_arr);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
                     $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->name_linked(styles::STYLE_GREY) . '" values as an indication', 'change_hist');

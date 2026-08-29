@@ -52,7 +52,6 @@ include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
-include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -68,7 +67,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\view\view;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class component_link extends sandbox_link
 {
@@ -357,17 +355,17 @@ class component_link extends sandbox_link
     /**
      * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the linked names or an empty string e.g. for a new link of an add form
      */
-    function name_linked(string $back = ''): string
+    function name_linked(array $url_arr = []): string
     {
         $result = '';
         // a new component link of an add form has no linked objects yet,
         // which is a normal state and not an error
         if ($this->get_view() != null and $this->get_component() != null) {
             global $mtr;
-            $result = $this->get_view()->name_link(html_base::url_arr_from_back($back)) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->get_component()->name_link(html_base::url_arr_from_back($back));
+            $result = $this->get_view()->name_link($url_arr) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->get_component()->name_link($url_arr);
         }
         return $result;
     }

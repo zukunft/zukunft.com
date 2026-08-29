@@ -101,10 +101,10 @@ class phrase_list_ui_tests
         // test the phrase selector
         $form_name = 'test_phrase_selector';
         $pos = 1;
-        $back = $company_id;
+        $url_arr = [url_var::MASK => views::PHRASE_ID, url_var::ID => $company_id];
         $phr = new phrase($usr);
         $phr->load_by_id($zh_company_id);
-        $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
+        $result = $phr->dsp_selector(Null, $form_name, $pos, '', $url_arr);
         $target = triple_names::COMPANY_ZURICH;
         $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' .
             triple_names::COMPANY_ZURICH . ' selected contains ' .
@@ -117,7 +117,7 @@ class phrase_list_ui_tests
         $trp_ins->load_by_name(triple_names::COMPANY_ZURICH, triple::class);
         $phr = $wrd->phrase();
         $phr_ui = new phrase_dsp($phr->api_json());
-        $result = $phr->dsp_selector($phr_ui, $form_name, $pos, '', $back);
+        $result = $phr->dsp_selector($phr_ui, $form_name, $pos, '', $url_arr);
         $target = $trp_ins->name();
         $t->dsp_contains(', phrase->dsp_selector of type ' . word_names::COMPANY . ' is : ' .
             $result . ' which contains ' . triple_names::COMPANY_ZURICH,

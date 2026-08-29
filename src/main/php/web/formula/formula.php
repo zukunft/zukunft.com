@@ -72,7 +72,6 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view_list.php';
@@ -105,7 +104,6 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
@@ -444,7 +442,7 @@ class formula extends sandbox_code_id
 
     /**
      * display the formula name with a link to the main page for the formula
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
@@ -460,12 +458,12 @@ class formula extends sandbox_code_id
 
     /**
      * display the formula name with a link to change the formula
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @returns string the html code
      */
-    function edit_link(?string $back = ''): string
+    function edit_link(array $url_arr = []): string
     {
-        $url = $this->obj_url(views::FORMULA_EDIT_ID, html_base::url_arr_from_back($back));
+        $url = $this->obj_url(views::FORMULA_EDIT_ID, $url_arr);
         $html = new html_base();
         return $html->ref($url, $this->name(), $this->name());
     }
@@ -733,8 +731,12 @@ class formula extends sandbox_code_id
      * to review
      */
 
-    // create the HTML code to display the formula text in the human-readable format including links to the formula elements
-    function dsp_text(user_message $msg, $back = '', term_list|null $trm_lst = null): string
+    /**
+     * create the HTML code to display the formula text in the human-readable format including links to the formula elements
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     */
+    function dsp_text(user_message $msg, array $url_arr = [], term_list|null $trm_lst = null): string
     {
         log_debug();
         $result = $this->usr_text;
@@ -742,8 +744,8 @@ class formula extends sandbox_code_id
         $exp = $this->expression($msg, $trm_lst);
         $elm_lst = $exp->element_list($msg, $trm_lst);
         foreach ($elm_lst->lst() as $elm) {
-            log_debug("replace " . $elm->name() . " with " . $elm->link(html_base::url_arr_from_back($back)) . ".");
-            $result = str_replace('"' . $elm->name() . '"', $elm->link(html_base::url_arr_from_back($back)), $result);
+            log_debug("replace " . $elm->name() . " with " . $elm->link($url_arr) . ".");
+            $result = str_replace('"' . $elm->name() . '"', $elm->link($url_arr), $result);
         }
 
         log_debug($result);
@@ -752,21 +754,25 @@ class formula extends sandbox_code_id
 
     /**
      * display the history of a formula
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
     function dsp_hist(
         int          $page,
         int          $size,
         user_message $msg,
         string       $call = '',
-        ?back_trace  $back = null
+        array        $url_arr = []
     ): string
     {
         $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(formula::class, $this->id(), $size, $page, $msg, $call, $back);
+        return $log_ui->dsp_hist(formula::class, $this->id(), $size, $page, $msg, $call, $url_arr);
     }
 
-    // display the history of a formula
-    private function dsp_hist_log($page, $size, $call, $back): user_log_display
+    /**
+     * the log display object for the history of this formula
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
+     */
+    private function dsp_hist_log($page, $size, $call, array $url_arr): user_log_display
     {
         $log = new user_log_display();
         $log->id = $this->id();
@@ -774,19 +780,20 @@ class formula extends sandbox_code_id
         $log->page = $page;
         $log->size = $size;
         $log->call = $call;
-        $log->back = $back;
+        $log->url_arr = $url_arr;
         return $log;
     }
 
     /**
      * display the link history of a formula
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
-    function dsp_hist_links(int $page, int $size, user_message $msg, string $call, string $back): string
+    function dsp_hist_links(int $page, int $size, user_message $msg, string $call, array $url_arr = []): string
     {
-        log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ".");
         $result = ''; // reset the html code var
 
-        $log_ui = $this->dsp_hist_log($page, $size, $call, $back);
+        $log_ui = $this->dsp_hist_log($page, $size, $call, $url_arr);
         $result .= $log_ui->dsp_hist_links($msg);
 
         log_debug("done");
@@ -797,8 +804,9 @@ class formula extends sandbox_code_id
      * create the HTML code for the form to adjust a formula
      * $add is the number of new words to be linked
      * $wrd is the word that should be linked (used for a new formula)
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function dsp_edit(int $add, word $wrd, user_message $msg, ?back_trace $back): string
+    function dsp_edit(int $add, word $wrd, user_message $msg, array $url_arr = []): string
     {
         global $ui_sys;
         $usr = $ui_sys->usr;
@@ -806,9 +814,6 @@ class formula extends sandbox_code_id
         log_debug(" for " . $wrd->name());
         $result = '';
         $html = new html_base();
-        // the back trace as the legacy url string for the form fields
-        // and the display functions that still expect a string
-        $back_str = $back?->url_encode() ?? '';
 
         $resolved_text = str_replace('"', '&quot;', $this->usr_text);
 
@@ -832,8 +837,9 @@ class formula extends sandbox_code_id
         $result .= $html->dsp_form_hidden("id", $this->id());
         $result .= $html->dsp_form_hidden("word", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
-        if (trim($back_str) <> '') {
-            $result .= $html->dsp_form_hidden("back", $back_str);
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->dsp_form_hidden($key, $val);
         }
         $result .= '<div class="form-row">';
         $result .= $html->form_field(
@@ -865,7 +871,7 @@ class formula extends sandbox_code_id
         }
         $result .= $html->dsp_form_fld_checkbox(url_var::NEED_ALL, $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';
-        $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back_str));
+        $result .= $html->dsp_form_end('', $url_arr);
 
         // list the assigned words
         if ($this->id() > 0) {
@@ -874,17 +880,17 @@ class formula extends sandbox_code_id
             // list all words linked to the formula and allow to unlink or add new words
             // TODO Prio 1 create the HTML code for a formula link list
             //$lnk_lst = new formula_link_list();
-            $comp_html = $this->dsp_used4words($add, $wrd, $back_str, $msg);
+            $comp_html = $this->dsp_used4words($add, $wrd, $url_arr, $msg);
             // allow to test and refresh the formula and show some sample values
-            $numbers_html = $this->dsp_test_and_samples($msg, $back_str);
+            $numbers_html = $this->dsp_test_and_samples($msg, $url_arr);
             // display the user changes
-            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, $msg, '', $back);
+            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, $msg, '', $url_arr);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, $msg, '', $back_str);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, $msg, '', $url_arr);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -919,10 +925,11 @@ class formula extends sandbox_code_id
 
     /**
      * list all words linked to the formula and allow to unlink or add new words
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function dsp_used4words($add, $wrd, $back, user_message $msg): string
+    function dsp_used4words($add, $wrd, array $url_arr, user_message $msg): string
     {
-        log_debug($this->ref_text . " for " . $wrd->name() . ",back:" . $back);
+        log_debug($this->ref_text . " for " . $wrd->name());
         $result = '';
 
         $html = new html_base();
@@ -936,7 +943,7 @@ class formula extends sandbox_code_id
             foreach ($phr_lst->lst() as $phr_linked) {
                 $result .= '  <tr>' . "\n";
                 $result .= $phr_linked->dsp_tbl(0);
-                $result .= $this->dsp_unlink_phr($phr_linked->id(), $back);
+                $result .= $this->dsp_unlink_phr($phr_linked->id(), $url_arr);
                 $result .= '  </tr>' . "\n";
             }
         }
@@ -964,7 +971,7 @@ class formula extends sandbox_code_id
             if ($this->id() > 0) {
                 $url = $this->obj_url(views::FORMULA_ADD_ID);
                 // TODO check if 'add_link=1' is needed
-                $result .= (new button($url, $back))->add(msg_id::FORMULA_ADD);
+                $result .= (new button($url, $url_arr))->add(msg_id::FORMULA_ADD);
             }
         }
         $result .= '    </td>';
@@ -977,9 +984,11 @@ class formula extends sandbox_code_id
     }
 
 
-    // test and refresh the formula and show some sample values by returning the HTML code
-
-    function dsp_test_and_samples(user_message $msg, string $back = ''): string
+    /**
+     * test and refresh the formula and show some sample values by returning the HTML code
+     * @param array $url_arr the url vars of the calling page for the back link
+     */
+    function dsp_test_and_samples(user_message $msg, array $url_arr = []): string
     {
         global $ui_sys;
         $usr = $ui_sys->usr;
@@ -987,8 +996,9 @@ class formula extends sandbox_code_id
         $result = '<br>';
         $html = new html_base();
 
-        $result .= $html->dsp_btn_text("Test", rest_ctrl::PATH_FIXED . 'formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back);
-        $result .= $html->dsp_btn_text("Refresh results", rest_ctrl::PATH_FIXED . 'formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back . '&refresh=1');
+        $test_url = rest_ctrl::PATH_FIXED . 'formula_test.php?id=' . $this->id() . '&user=' . $usr->id();
+        $result .= $html->dsp_btn_text("Test", $html->url_with_back($test_url, $url_arr));
+        $result .= $html->dsp_btn_text("Refresh results", $html->url_with_back($test_url . '&refresh=1', $url_arr));
 
         $result .= '<br><br>';
 
@@ -1034,13 +1044,18 @@ class formula extends sandbox_code_id
     }
 
 
-    // allow the user to unlink a word
-    function dsp_unlink_phr($phr_id, $back): string
+    /**
+     * allow the user to unlink a word
+     * @param array $url_arr the url vars of the calling page for the back link
+     */
+    function dsp_unlink_phr($phr_id, array $url_arr = []): string
     {
         log_debug($phr_id);
+        $html = new html_base();
         $result = '    <td>' . "\n";
-        $url = rest_ctrl::PATH_FIXED . self::class . rest_ctrl::UPDATE . rest_ctrl::EXT . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id . '&back=' . $back;
-        $result .= (new button($url, $back))->del(msg_id::FORMULA_UNLINK);
+        $url = $html->url_with_back(rest_ctrl::PATH_FIXED . self::class . rest_ctrl::UPDATE . rest_ctrl::EXT
+            . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id, $url_arr);
+        $result .= (new button($url, $url_arr))->del(msg_id::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
     }

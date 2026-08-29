@@ -126,8 +126,7 @@ class formula_calc_tests
         $test_name = 'formula increase; test the display name that can be used for user debugging';
         $frm_html = new formula_ui($frm->api_json());
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
-        $back = 0;
-        $result = $frm_html->dsp_text($msg_ui, $back, $trm_lst_ui);
+        $result = $frm_html->dsp_text($msg_ui, [], $trm_lst_ui);
         $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&amp;id=';
         // the links carry no back part, because the formula is shown without a calling page
         $target = '"' . words::PERCENT
@@ -163,8 +162,7 @@ class formula_calc_tests
             $test_name = 'formula increase; test if the values for an element group are displayed correctly';
             $frm_html = new formula_dsp($frm->api_json());
             $trm_lst_ui = new term_list_dsp($trm_lst->api_json());
-            $back = 0;
-            $result = $frm_html->dsp_text($back, $trm_lst_ui);
+            $result = $frm_html->dsp_text($msg_ui, [], $trm_lst_ui);
             $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
             $t->assert($test_name, $result, $target);
         }

@@ -320,7 +320,7 @@ class verb extends sandbox_named
 
     /**
      * display the verb with a link to the main page for the verb
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
@@ -369,7 +369,10 @@ class verb extends sandbox_named
      */
 
     // show the html form to add or edit a new verb
-    function dsp_edit(string $back = ''): string
+    /**
+     * @param array $url_arr the url vars of the calling page for the back link
+     */
+    function dsp_edit(array $url_arr = []): string
     {
         $html = new html_base();
         log_debug('verb->dsp_edit ' . $this->dsp_id());
@@ -416,10 +419,13 @@ class verb extends sandbox_named
         $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural_reverse" value="' . $this->rev_plural . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
-        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="' . $key . '" value="' . $val . '">';
+        }
         $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="confirm" value="1">';
         $result .= $html->dsp_tbl_end();
-        $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back));
+        $result .= $html->dsp_form_end('', $url_arr);
 
         log_debug('verb->dsp_edit ... done');
         return $result;

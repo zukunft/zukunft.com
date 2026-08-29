@@ -42,7 +42,6 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::LOG . 'change_log_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -54,7 +53,6 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -120,11 +118,10 @@ class formula_ui_tests
 
         // the changes of the increase formula as a table, e.g. the name and expression added
         $t_log = new test_log($t);
-        $back = new back_trace();
         $api_typ_lst = new api_type_list([api_types::TEST_MODE]);
         $log_lst = new change_log_list($t_log->log_list_formula_increase()->api_json($api_typ_lst));
         $test_page .= $html->text_h2('changes of the formula increase');
-        $test_page .= $log_lst->tbl($back);
+        $test_page .= $log_lst->tbl();
 
         // the results of the increase formula as a table of the result phrases and the value
         $t_res = new test_results($t);

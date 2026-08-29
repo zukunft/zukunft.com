@@ -37,14 +37,12 @@ include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
-include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class component_list extends sandbox_list_named
 {
@@ -74,7 +72,7 @@ class component_list extends sandbox_list_named
      * (unlike the name-sorted parent, because for the components of a view the position order
      * is the meaningful one)
      *
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @param int $limit the max number of component names to add to the list
      *                   (untyped like in the parent, because php does not allow a child
      *                   to add a type to an untyped parent parameter)
@@ -82,7 +80,7 @@ class component_list extends sandbox_list_named
      * @return string the linked component names
      */
     function name_link(
-        string $back = '',
+        array  $url_arr = [],
         $limit = config::LIMIT_NAME_LIST,
         int    $msk_id = views::COMPONENT_DEFAULT_ID
     ): string
@@ -96,7 +94,7 @@ class component_list extends sandbox_list_named
         $names = [];
         foreach ($lst as $cmp) {
             if (count($names) < $limit) {
-                $names[] = $cmp->name_link(html_base::url_arr_from_back($back), '', $msk_id);
+                $names[] = $cmp->name_link($url_arr, '', $msk_id);
             }
         }
         return implode(', ', $names);

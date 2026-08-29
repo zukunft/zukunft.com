@@ -46,7 +46,6 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED . 'json_fields.php';
-include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -56,7 +55,6 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class element extends db_object
 {
@@ -189,9 +187,7 @@ class element extends db_object
                     $result = $this->obj->name();
                 }
                 if ($this->obj::class == formula::class) {
-                    // transitional: edit_link still takes the calling page as a url string
-                    // (docs/llm/pending_prio_2.md "replace the $back parameter", prompt 7)
-                    $result = $this->obj->edit_link(new html_base()->page_url($url_arr));
+                    $result = $this->obj->edit_link($url_arr);
                 }
             }
         }

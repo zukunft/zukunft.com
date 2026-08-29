@@ -48,7 +48,6 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
@@ -77,7 +76,6 @@ use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -105,17 +103,18 @@ class view_exe extends view_base
      * @param db_object|type_object|combine_named|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param user_message $msg to collect the messages for the user
      * @param data_object|null $cfg the context used to create the view
-     * @param string $back the history of the user actions to allow rollbacks
      * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
+     * @param array $url_array the url parameters of the page that shows the view, so that the
+     *                         links of the components can return to the page and the
+     *                         "... more" tail can call the same page with the next list size;
+     *                         an empty array if the page is not known
      * @return string the html code for a view: this is the main function of this lib
-     * TODO use backtrace or use a global backtrace var
      */
     function show(
         db_object|type_object|combine_named|sandbox_list $dbo,
         user_message                                     $msg,
         ?data_object                                     $cfg = null,
-        string                                           $back = '',
         string                                           $pattern = '',
         bool                                             $test_mode = false,
         array                                            $url_array = []
@@ -131,17 +130,13 @@ class view_exe extends view_base
         } else {
             $form_name = $this->name();
         }
-        if ($back == '') {
-            $back = $dbo->id();
-        }
 
         if ($this->id() <= 0) {
             $this->log_err("The view id must be loaded to display it.");
         } else {
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open($msg);
-            //$result .= $this->dsp_navbar($cfg, $back);
-            $result .= $this->dsp_entries($dbo, $msg, $cfg, $form_name, $back, $pattern, $test_mode, $url_array);
+            $result .= $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
             $result .= $this->dsp_type_close($msg);
         }
 
@@ -154,9 +149,9 @@ class view_exe extends view_base
      * @param db_object|type_object|combine_named|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param string $back the backtrace for undo actions
      * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
+     * @param array $url_array the url parameters of the page that shows the view (see show)
      * @return string the html code of all view components
      */
     private function dsp_entries(
@@ -164,7 +159,6 @@ class view_exe extends view_base
         user_message                                     $msg,
         ?data_object                                     $cfg = null,
         string                                           $form_name = '',
-        string                                           $back = '',
         string                                           $pattern = '',
         bool                                             $test_mode = false,
         array                                            $url_array = []
@@ -247,7 +241,7 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache, $msg)) {
                     $auto_row = false;
                 }
-                $cmp_html = $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode, $url_array);
+                $cmp_html = $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $pattern, $test_mode, $url_array);
                 // a combined component shares the row with the previous one, but it is still an own
                 // component, so it starts on an own line, e.g. the plural of a word below its
                 // description instead of behind it; a component that creates no html adds no line
@@ -359,8 +353,9 @@ class view_exe extends view_base
 
     /**
      * HTML code to edit all word fields
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function dsp_edit(int $add_cmp, word $wrd, string $back, user_message $msg): string
+    function dsp_edit(int $add_cmp, word $wrd, array $url_arr, user_message $msg): string
     {
         global $ui_sys;
         $usr = $ui_sys->usr;
@@ -380,7 +375,7 @@ class view_exe extends view_base
             $result .= $html->dsp_text_h2('Create a new view (for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         } else {
-            $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $back . ')');
+            $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $html->page_url($url_arr) . ')');
             $script = "view_edit";
             $result .= $html->dsp_text_h2('Edit view "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
@@ -396,7 +391,10 @@ class view_exe extends view_base
         $result .= $html->dsp_form_start($script);
         $result .= $html->dsp_form_id($this->id());
         $result .= $html->dsp_form_hidden("word", $wrd->id);
-        $result .= $html->dsp_form_hidden("back", $back);
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->dsp_form_hidden($key, $val);
+        }
         $result .= $html->dsp_form_hidden("confirm", '1');
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
@@ -411,15 +409,15 @@ class view_exe extends view_base
             $result .= $this->dsp_type_selector($script);
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
-            $result .= $html->dsp_form_end('', html_base::url_arr_from_back($back),
-                $html->url_back(views::VIEW_DEL_ID, $this->id(), html_base::url_arr_from_back($back)));
+            $result .= $html->dsp_form_end('', $url_arr,
+                $html->url_back(views::VIEW_DEL_ID, $this->id(), $url_arr));
         }
 
         // in edit mode show the assigned words and the hist on the right
         if ($this->id() > 0) {
             $result .= '</div>';
 
-            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back, $msg);
+            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $url_arr, $msg);
             if ($ui_sys?->cfg !== null) {
                 $row_limit = $ui_sys->cfg->get_by([triples::ROW_LIMIT, words::DATABASE], $msg, def::FALLBACK_DB_PAGE_ROWS);
             } else {
@@ -427,13 +425,13 @@ class view_exe extends view_base
             }
 
             // collect the history
-            $changes = $this->dsp_hist(0, $row_limit, '', $msg, $back);
+            $changes = $this->dsp_hist(0, $row_limit, '', $msg, $url_arr);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, $row_limit, '', $back, $msg);
+            $changes = $this->dsp_hist_links(0, $row_limit, '', $url_arr, $msg);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -468,8 +466,9 @@ class view_exe extends view_base
 
     /**
      * lists of all view components which are used by this view
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    private function linked_components($add_cmp, $wrd, string $script, $back, user_message $msg): string
+    private function linked_components($add_cmp, $wrd, string $script, array $url_arr, user_message $msg): string
     {
         $html = new html_base();
         global $ui_sys;
@@ -488,8 +487,10 @@ class view_exe extends view_base
             $this->log_debug('loaded');
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
-            $result .= $dsp_list->display(view_exe::class, $this->id(), $back);
+            $back_part = html_base::back_url_part($url_arr);
+            $dsp_list->script_parameter = $this->id() . '&word=' . $wrd->id()
+                . ($back_part == '' ? '' : '&' . $back_part);
+            $result .= $dsp_list->display(view_exe::class, $this->id(), $url_arr);
             $this->log_debug('displayed');
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
@@ -498,23 +499,23 @@ class view_exe extends view_base
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), html_base::url_arr_from_back($back),word::class . '=' . $wrd->id() . '&add_entry=-1');
-                $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
+                $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), $url_arr, word::class . '=' . $wrd->id() . '&add_entry=-1');
+                $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
                 $result .= $html->dsp_form_end('',
-                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), html_base::url_arr_from_back($back),'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
-                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), html_base::url_arr_from_back($back),'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {
-                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), html_base::url_arr_from_back($back), '', word::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
+                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), $url_arr, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
             }
         }
         if (html_base::UI_USE_BOOTSTRAP) {
@@ -530,25 +531,27 @@ class view_exe extends view_base
 
     /**
      * display the history of a view
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
     function dsp_hist(
-        int         $page,
-        int         $size,
-        string      $call,
+        int          $page,
+        int          $size,
+        string       $call,
         user_message $msg,
-        ?back_trace $back = null
+        array        $url_arr = []
     ): string
     {
         $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(view_exe::class, $this->id(), $size, $page, $msg, '', $back);
+        return $log_ui->dsp_hist(view_exe::class, $this->id(), $size, $page, $msg, '', $url_arr);
     }
 
     /**
      * display the link history of a view
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
-    function dsp_hist_links($page, $size, $call, $back, user_message $msg): string
+    function dsp_hist_links($page, $size, $call, array $url_arr, user_message $msg): string
     {
-        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ".");
         $result = ''; // reset the html code var
 
         $log_ui = new user_log_display();
@@ -557,7 +560,7 @@ class view_exe extends view_base
         $log_ui->page = $page;
         $log_ui->size = $size;
         $log_ui->call = $call;
-        $log_ui->back = $back;
+        $log_ui->url_arr = $url_arr;
         $result .= $log_ui->dsp_hist_links($msg);
 
         $this->log_debug("done");
@@ -572,9 +575,9 @@ class view_exe extends view_base
     /**
      * create a selection page where the user can select a view
      * that should be used for a term
-     *
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function selector_page($wrd_id, $back): string
+    function selector_page($wrd_id, array $url_arr = []): string
     {
         $this->log_debug($this->id() . ',' . $wrd_id);
 

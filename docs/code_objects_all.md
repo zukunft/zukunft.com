@@ -424,7 +424,6 @@ the object structure is:
 ├── tableUi - $tbl - create the html code to display a spreadsheet
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
-├── back_traceUi - list of links that the user has called in the past
 ├── sys_log_listUi - the display extension of the system error log api object
 ├── type_listUi
 │   ├── change_action_listUi - the preloaded change log actions used for the html frontend

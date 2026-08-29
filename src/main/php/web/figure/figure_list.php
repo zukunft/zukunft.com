@@ -107,24 +107,24 @@ class figure_list extends ListBase
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @return string with a list of the figure names with html links
      * ex. names_linked
      */
-    function display_linked(user_message $msg, string $back = ''): string
+    function display_linked(user_message $msg, array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($msg, $back));
+        return implode(', ', $this->names_linked($msg, $url_arr));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @return array with a list of the figure names with html links
      */
-    function names_linked(user_message $msg, string $back = ''): array
+    function names_linked(user_message $msg, array $url_arr = []): array
     {
         $names = array();
         foreach ($this->lst() as $fig) {
-            $names[] = $fig->display_linked($msg);
+            $names[] = $fig->display_linked($msg, $url_arr);
         }
         return $names;
     }

@@ -153,12 +153,6 @@ class formula_list extends ListBase
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
-     * @param int $limit the max number of formula names to show
-     * @return string with a list of the formula names with html links
-     * ex. names_linked
-     */
-    /**
      * sort this formula list in place so that the formula with the highest impact is first
      * formulas with the same (or no) impact are sorted by name so that the order is always
      * deterministic and the html does not change between runs e.g. for the snapshot tests
@@ -174,23 +168,29 @@ class formula_list extends ListBase
         $this->set_lst($lst);
     }
 
-    function name_link(string $back = '', int $limit = config::LIMIT_NAME_LIST): string
+    /**
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @param int $limit the max number of formula names to show
+     * @return string with a list of the formula names with html links
+     * ex. names_linked
+     */
+    function name_link(array $url_arr = [], int $limit = config::LIMIT_NAME_LIST): string
     {
         $this->sort_by_impact();
-        return implode(', ', $this->names_link($back, $limit));
+        return implode(', ', $this->names_link($url_arr, $limit));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $limit the max number of formula names to add to the list
      * @return array with a list of the formula names with html links
      */
-    private function names_link(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    private function names_link(array $url_arr = [], int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
         foreach ($this->lst() as $frm) {
             if (count($result) < $limit) {
-                $result[] = $frm->name_link(html_base::url_arr_from_back($back));
+                $result[] = $frm->name_link($url_arr);
             }
         }
         return $result;
@@ -198,18 +198,18 @@ class formula_list extends ListBase
 
     /**
      * show all formulas of the list as table row (ex display)
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code with all formulas of the list
      */
-    function tbl(string $back = ''): string
+    function tbl(array $url_arr = []): string
     {
         $html = new html_base();
         $cols = '';
         $this->sort_by_impact();
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst() as $wrd) {
-            $lnk = $wrd->dsp_obj()->display_linked($back);
+        foreach ($this->lst() as $frm) {
+            $lnk = $frm->name_link($url_arr);
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
@@ -222,7 +222,7 @@ class formula_list extends ListBase
     {
         log_debug('formula_list->display ' . $this->dsp_id());
         $result = '';
-        $back = '';
+        $url_arr = [];
 
         // list all related formula results
         if ($this->lst() != null) {
@@ -234,13 +234,13 @@ class formula_list extends ListBase
                 foreach ($this->lst() as $frm) {
                     // formatting should be moved
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
-                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
+                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($api_msg, $url_arr));
                     $frm_ui = $frm->dsp_obj_old();
                     $api_msg = new user_message(); // not reported: a legacy display function without a message, see display_old
                     $frm_html = new formula($frm->api_json([], $api_msg));
                     $result = '';
                     if ($frm->name_wrd != null) {
-                        $result = $frm_ui->dsp_result($frm->name_wrd->phrase(), $back);
+                        $result = $frm_ui->dsp_result($frm->name_wrd->phrase(), $url_arr);
                     }
                     // if the result is empty use the id to be able to select the formula
                     if ($result == '') {
@@ -248,13 +248,13 @@ class formula_list extends ListBase
                     } else {
                         $result .= ' value ' . $result;
                     }
-                    $result .= ' ' . $frm_html->edit_link($back);
+                    $result .= ' ' . $frm_html->edit_link($url_arr);
                     if ($type == 'short') {
-                        $result .= ' ' . $frm_ui->btn_del($back);
+                        $result .= ' ' . $frm_ui->btn_del($url_arr);
                         $result .= ', ';
                     } else {
-                        $result .= ' (' . $frm_ui->dsp_text($back) . ')';
-                        $result .= ' ' . $frm_ui->btn_del($back);
+                        $result .= ' (' . $frm_html->dsp_text($api_msg, $url_arr) . ')';
+                        $result .= ' ' . $frm_ui->btn_del($url_arr);
                         $result .= ' <br> ';
                     }
                 }

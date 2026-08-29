@@ -68,8 +68,7 @@ class button
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over
     public string $call = ''; // url to call if the user clicks
-    public string $back = ''; // word id, word name or url that should be called after the action is completed
-    public array $url_arr = []; // word id, word name or url that should be called after the action is completed
+    public array $url_arr = []; // the url vars of the page that should be called after the action is completed
 
     /*
      * construct and capsule
@@ -77,16 +76,12 @@ class button
 
     /**
      * @param string $url the url that is called if the button is pressed
-     * @param array|string $url_arr the history of changes by the user to be able to perform correct undo actions
+     * @param array $url_arr the url vars of the calling page to return to after the action
      */
-    function __construct(string $url = '', array|string $url_arr = '')
+    function __construct(string $url = '', array $url_arr = [])
     {
         $this->call = $url;
-        if (is_string($url_arr)) {
-            $this->back = $url_arr;
-        } else {
-            $this->url_arr = $url_arr;
-        }
+        $this->url_arr = $url_arr;
     }
 
 
@@ -188,7 +183,7 @@ class button
 
     /**
      * display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
-     * $back can be either the id of the last used word or the url path
+     * the url array names the page to return to after the action
      */
     /**
      * @param array $url_arr the url parameters of the page to go back to; an empty array leads
@@ -345,7 +340,7 @@ class button
         $result .= '          </form>';
         $result .= '        </div>';
         $result .= '        <div class="modal-footer">';
-        //$result .= dsp_form_end ('', $back);
+        //$result .= dsp_form_end ('', $url_arr);
         $result .= '          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>';
         $result .= '          <button type="submit" class="btn btn-outline-success"   data-dismiss="modal">Save</button>';
         $result .= '        </div>';

@@ -63,14 +63,13 @@ class spacial_cases_ui_tests
 
         // test the type list display functions
         $test_page = $html->text_h2('add word');
-        $back = '';
         $wrd = $t_wrd->word_dsp();
 
         // check if the system views have set
         $msk = $ui->dto->typ_lst_cache->msk_sys->get_by_code_id(view_shared::WORD_ADD);
         $cfg = new data_object();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
-        $test_page .= $msk->show($wrd, $msg, $cfg, $back) . '<br>';
+        $test_page .= $msk->show($wrd, $msg, $cfg) . '<br>';
 
         // TODO review and combine with read db tests
         $t->html_view_test($test_page, view_shared::WORD_ADD);

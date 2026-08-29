@@ -1133,9 +1133,11 @@ class result_list extends sandbox_value_list
      * get the result that needs to be recalculated if one formula has been updated
      * TODO should returns a job_list with all formula results that may need to be updated if a formula is updated
      * @param formula $frm - the formula that has been updated
+     * @param int $trm_id the id of the term from which the update has been triggered; it seeds the
+     *                    list of the "following" terms like "prior" or "next" of the formula
      * $usr - to define which user view should be updated
      */
-    function frm_upd_lst(formula $frm, user_message $msg, string $back): job_list
+    function frm_upd_lst(formula $frm, user_message $msg, int $trm_id): job_list
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
 
@@ -1156,17 +1158,18 @@ class result_list extends sandbox_value_list
         // e.g. for the formula "net profit" the word "sales" & "cost of sales" is used
         // for formulas the formula word is used
         $exp = $frm->expression($msg);
-        $phr_lst_frm_used = $exp->phr_verb_lst($msg, $back);
+        $phr_lst_frm_used = $exp->phr_verb_lst($msg);
         log_debug('formula "' . $frm->name() . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $frm->usr_text . ')');
 
         // get the list of predefined "following" phrases/formulas like "prior" or "next"
-        $trm_lst_back = new term_list($this->get_user());
-        $trm_back = new term($this->get_user());
-        $trm_back->load_by_id($back, $msg);
-        $trm_lst_back->add($trm_back);
-        $trm_lst_back = $frm->load_exp_terms($msg, $trm_lst_back, $exp);
-        $phr_lst_preset_following = $exp->terms_following($msg, $trm_lst_back);
-        $frm_lst_preset_following = $exp->element_special_following_frm($msg, $trm_lst_back);
+        // starting from the term from which the update has been triggered
+        $trm_lst_start = new term_list($this->get_user());
+        $trm_start = new term($this->get_user());
+        $trm_start->load_by_id($trm_id, $msg);
+        $trm_lst_start->add($trm_start);
+        $trm_lst_start = $frm->load_exp_terms($msg, $trm_lst_start, $exp);
+        $phr_lst_preset_following = $exp->terms_following($msg, $trm_lst_start);
+        $frm_lst_preset_following = $exp->element_special_following_frm($msg, $trm_lst_start);
 
         // combine all used predefined phrases/formulas
         $phr_lst_preset = $phr_lst_preset_following;

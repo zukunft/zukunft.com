@@ -48,7 +48,6 @@ function run_user_test(all_tests $t): void
 {
 
 
-    $back = 0;
     $msg = new user_message();
 
     // test the user display after the word changes to have a sample case
@@ -57,7 +56,7 @@ function run_user_test(all_tests $t): void
     $t->header($ts);
 
     $usr_ui = new user_ui($t->usr1->api_json());
-    $result = $usr_ui->form_edit($back);
+    $result = $usr_ui->form_edit();
     $target = users::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 

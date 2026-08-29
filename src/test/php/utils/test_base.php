@@ -1350,7 +1350,7 @@ class test_base
         }
         // render in test mode so that the result is reproducible without backend calls
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', '', true);
+        $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true);
         // return to the default section for the following tests
         $sys->times->switch(system_time_type::DEFAULT);
 

@@ -373,7 +373,7 @@ class ui_list extends ui_base
         } else {
             $row_limit = config::LIMIT_NAME_LIST;
         }
-        $result .= $phr_lst->name_link('', $row_limit);
+        $result .= $phr_lst->name_link([], $row_limit);
         return $result;
     }
 
@@ -388,7 +388,12 @@ class ui_list extends ui_base
      * @param data_object|null $cfg the request cache with the preloaded triples
      * @return string the linked triple names or the message that the verb is not used for triples
      */
-    function triple_list(?db_object $dbo = null, user_message $msg, ?data_object $cfg = null): string
+    function triple_list(
+        ?db_object $dbo = null,
+        user_message $msg,
+        ?data_object $cfg = null,
+        array $url_arr = [],
+    ): string
     {
         global $mtr;
 
@@ -409,7 +414,7 @@ class ui_list extends ui_base
             if ($trp_lst == null) {
                 log_err_msg_ui('the triple cache is missing to select the triples of a verb', $msg);
             } else {
-                $result = $trp_lst->display($msg, '', $this->configured_link_limit($msg));
+                $result = $trp_lst->display($msg, $url_arr, $this->configured_link_limit($msg));
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
                 }
@@ -466,7 +471,7 @@ class ui_list extends ui_base
             if ($cmp_lst == null or $cmp_lst->is_empty()) {
                 $result = $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS);
             } else {
-                $result = $cmp_lst->name_link('', $this->configured_name_list_limit($msg));
+                $result = $cmp_lst->name_link([], $this->configured_name_list_limit($msg));
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for components', $msg);
@@ -833,7 +838,7 @@ class ui_list extends ui_base
         } else {
             $row_limit = config::LIMIT_NAME_LIST;
         }
-        return $frm_lst->name_link('', $row_limit);
+        return $frm_lst->name_link([], $row_limit);
     }
 
     /**
@@ -985,7 +990,7 @@ class ui_list extends ui_base
                 // the url of the page is handed over, so that the "... more" tail can call the
                 // same page with the next list size
                 $result = $val_lst->table_by_related_columns(
-                    $msg, $phr_lst, '', $col_order, $with_header, $with_border, $dto?->phr_lst,
+                    $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
                     null, $url_array);
             }
         }
@@ -1136,9 +1141,9 @@ class ui_list extends ui_base
         }
         // the "most relevant" component groups the values, the plain one just sorts them by impact
         if ($most_relevant) {
-            $result = $val_lst->list_most_relevant($msg, $phr_lst, '', $style_txt);
+            $result = $val_lst->list_most_relevant($msg, $phr_lst, [], $style_txt);
         } else {
-            $result = $val_lst->list($msg, $phr_lst, '', $style_txt);
+            $result = $val_lst->list($msg, $phr_lst, [], $style_txt);
         }
         // wrap the value lines in a block div so each value stays on one line;
         // as a LIST_GROUP component the related-value list is emitted without an
@@ -1198,7 +1203,7 @@ class ui_list extends ui_base
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
-        return $res_lst->list($msg, $phr_lst, '', $style_txt);
+        return $res_lst->list($msg, $phr_lst, [], $style_txt);
     }
 
     /**

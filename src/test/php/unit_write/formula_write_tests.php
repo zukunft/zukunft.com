@@ -356,7 +356,7 @@ class formula_write_tests
         // TODO test without preloaded term list
         $trm_lst = $t_trm->term_list_increase();
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
-        $result = $frm_html->dsp_text($msg_ui, $back, $trm_lst_ui);
+        $result = $frm_html->dsp_text($msg_ui, [], $trm_lst_ui);
         $target = '"' . words::PERCENT
             . '" = ( <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_this->id() . '">' . word_names::THIS_NAME . '</a>'
             . ' - <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_prior->id() . '">' . word_names::PRIOR_NAME . '</a> )'
@@ -365,7 +365,7 @@ class formula_write_tests
 
         // ... in HTML format with link
         $frm_increase = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
-        $result = $frm_html->edit_link($back);
+        $result = $frm_html->edit_link();
         $target = '<a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_increase->id() . '">' . formula_names::SYSTEM_TEST_ADD . '</a>';
         $t->assert('formula->display for ' . $frm->dsp_id(), $result, $target);
 

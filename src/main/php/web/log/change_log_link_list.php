@@ -41,7 +41,6 @@ include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'change_log_link.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
@@ -52,7 +51,6 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -123,17 +121,17 @@ class change_log_link_list extends ListBase
 
     /**
      * show all link changes of an object e.g. a word as a table
-     * @param back_trace|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      * @return string the html code with all link changes of the list
      */
-    function tbl(?back_trace $back = null): string
+    function tbl(array $url_arr = []): string
     {
         $html = new html_base();
         $html_text = '';
         if (!$this->is_empty()) {
             $html_text .= new change_log_link()->th();
             foreach ($this->lst() as $chg) {
-                $html_text .= $chg->tr($back);
+                $html_text .= $chg->tr($url_arr);
             }
         }
         return $html->tbl($html_text, styles::STYLE_BORDERLESS);
