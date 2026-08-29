@@ -492,7 +492,7 @@ class value extends sandbox_value
         // the information only phrases explain the number as its tooltip
         $url = $html->url_with_back(
             $html->url_back(views::VALUE_DEFAULT_ID, $this->id()),
-            html_base::page_url_array($url_arr));
+            $url_arr);
         // value() already returns escaped/safe html, so ref() must not escape it again
         $val_txt = $html->ref($url, $this->value($msg), $info_lst->name_pur(), '', true);
 

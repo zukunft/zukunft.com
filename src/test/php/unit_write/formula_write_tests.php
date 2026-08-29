@@ -90,7 +90,6 @@ class formula_write_tests
         $t_trm = new test_terms($t);
         $t_db = new test_db_load($t);
         $t->name = 'formula->';
-        $back = 0;
         $lib = new library();
         $msg = new user_message($t->usr1);
         $msg_ui = new user_message_ui();

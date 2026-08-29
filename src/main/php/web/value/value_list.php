@@ -1804,7 +1804,9 @@ class value_list extends ListBase
     {
         $result = '';
         if ($url_array != []) {
-            $url_pars = $url_array;
+            // the tail calls the same page, so only the params that name the page are repeated
+            // and the form state or an already prefixed param of the request is dropped
+            $url_pars = html_base::page_url_array($url_array);
             unset($url_pars[url_var::DISPLAY_LIST_PAGE]);
             $url_pars[url_var::DISPLAY_LIST_SIZE] = $this->next_row_limit($row_limit, $msg);
             $result = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);

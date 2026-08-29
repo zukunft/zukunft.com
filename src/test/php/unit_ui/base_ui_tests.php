@@ -591,6 +591,52 @@ class base_ui_tests
         $result = $html->back_url_part($url_array);
         $t->assert($test_name, $result, '');
 
+        // only the params that name the page are prefixed, because the form state does not
+        // name the page and an already prefixed param would get a second prefix
+        $test_name = 'the back part keeps the page vars and drops the form state';
+        $url_part = parse_url('?m=3&id=123&dls=20&dlp=1&z=0&a=r&k=USD&o=the%20dollar');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=3&9id=123&9dls=20&9dlp=1');
+
+        $test_name = '... and never prefixes a prefixed param a second time';
+        // TODO Prio 2 why? actually this would allow a two and more back steps
+        $url_part = parse_url('?m=3&id=123&9m=1&9id=0&8k=USD');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert_text_not_contains($test_name, $result, '99');
+        $test_name = '... neither the back part nor the pre values of the calling page';
+        $t->assert($test_name, $result, '9m=3&9id=123');
+
+        // a page var without a value names nothing, so it is left out of the back part
+        $test_name = 'an empty page var is dropped from the back part';
+        $url_part = parse_url('?m=1&id=0&dlp=0&pattern=');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=1');
+
+        $test_name = '... but the list size zero is kept, because it shows every row';
+        $url_part = parse_url('?m=1&id=0&dls=0');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=1&9dls=0');
+
+        $test_name = '... and a url array without any page value leads to the start page';
+        $t->assert($test_name, $html->page_url([url_var::ID => '0', url_var::STEP => '0']),
+            api::MAIN_SCRIPT);
+
+        $test_name = '... and a search pattern that is no number is kept';
+        $url_part = parse_url('?m=1&id=0&pattern=zh');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=1&9pattern=zh');
+
+        $test_name = 'the hidden back fields of a form name the page only';
+        $url_part = parse_url('?m=3&id=123&z=0&8k=USD');
+        parse_str($url_part["query"], $url_array);
+        $t->assert($test_name, html_base::back_url_array($url_array),
+            ['9m' => '3', '9id' => '123']);
+
         $test_name = 'login url with back part while editing word 123';
         $url_part = parse_url('?m=3&id=123');
         parse_str($url_part["query"], $url_array);

@@ -8,6 +8,9 @@ add a quick value change modal box to change just the value
 
 if the value if updated use the frontend cache to update the results within the frontend cache and report the result updates to the backend
 
+## default views
+
+the $wrd->name_link(), $trp->name_link() or $prh->name_link() function returns at the moment a link to the word or triple default view, but it should lead to the selected page of the word / triple. E.g. for 'PV in Switzerland' the 'calculator' view should be used instead of the triple default view  
 
 ## after replacing the `$back` parameter by the url array of the calling page
 
@@ -16,21 +19,10 @@ url parameters of the calling page as `array $url_arr` and derives the `9`-prefi
 from it (`html_base::url_back` / `url_with_back` / `back_url_array`), the transitional bridge
 `url_arr_from_back` and the `back_trace` class are deleted, and
 `coding_rule_tests::php_web_no_back_param_tests` keeps `$back` and the literal `&back=` out
-of `web/`. what the conversion found and left open:
+of `web/`. a repo wide check finds no `$back` in `web/` and none in a live test any more;
+what is left sits in the backend and in commented out test code (see the last item).
+what the conversion found and left open:
 
-- **the back part is not reduced to the page vars**: `html_base::back_url_part` and
-  `back_url_array` prefix *every* key of the given array with `9`, although
-  `page_url_array` exists exactly for that reduction (its comment even names the compounds
-  to avoid) and only four call sites do it by hand (`frontend` ~431, `term` ~585, `value`
-  ~505, `system_form` ~495). so every link now carries the form state and the earlier
-  prefixes of the calling page: the regenerated snapshots hold 776 `99m=` (the previous back
-  part prefixed again), `98k=` / `98id=` / `98pf=` (the `8`-prefixed pre values prefixed
-  again), plus `9k`, `9o`, `9fe`, `9fx`, `9s`, `9sp`, `9y`, `9uu`, `9ui`, `9a` and `9z`, and
-  a single href reaches ~700 chars with the formula expression double url-encoded in it.
-  fix `back_url_part` and `back_url_array` to reduce with `page_url_array` first (then only
-  `9m`, `9id`, `9k`-list, `9pattern`, `9dls`, `9dlp` survive), remove the four manual
-  reductions and re-baseline: this touches nearly every snapshot again, so do it before the
-  next html review
 - check on the pages what the first working back links do: the cancel link of a form and
   `button::back` lead to the phrase default view (`m=110&id=<phrase>`) where the old code
   called `view.php?words=<id>`, `button::back([])` leads to the start page where the old code
@@ -81,12 +73,27 @@ of `web/`. what the conversion found and left open:
 - `value::dsp_edit` calls `dsp_time_selector`, `dsp_share` and `dsp_protection`, which name
   functions that exist nowhere in the frontend, so the mask is dead code until they are
   written - decide whether the value mask is rebuilt on the form components or `dsp_edit` is
-  removed (the backend `cfg/phrase/phrase.php::dsp_time_selector` that called an equally
-  missing `word::dsp_time_selector` is deleted)
-- `cfg/result/result_list.php::frm_upd_lst` has no caller yet; its `$back` was never a page
-  but the id of the term the update starts from and is `int $trm_id` now
+  removed, together with the backend `dsp_time_selector` of the last item
 - `page_url` and the back url builders are tested in `unit_ui/base_ui_tests` only, which the
   coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
+- the `$back` left outside `web/` after the conversion, all of it unreachable today:
+  - `cfg/phrase/phrase.php::dsp_time_selector($type, $form, $pos, $back, $msg)` is display
+    code in the backend that calls a `word::dsp_time_selector` existing in neither layer,
+    and its only callers are the equally missing frontend `phrase::dsp_time_selector` calls
+    of `value::dsp_edit` - it carries a `TODO Prio 1 review`, so decide it together with the
+    value mask above (move to the frontend with the url array or delete)
+  - the write only properties `cfg/system/sys_log_list.php::$back` and
+    `cfg/formula/formula_list.php::$back` ("the calling stack"): nothing reads them,
+    `formula_write_tests` ~663 is the only line that writes one - delete both with the write
+    or give them a reader
+  - the TODO of `cfg/word/word_list.php` (~10) "check the consistence usage of the parameter
+    $back" describes a parameter that no longer exists - drop the line when the file is
+    touched
+  - commented out test code still calls the retired `http/value_add.php` / `value_edit.php` /
+    `value_del.php` / `formula_add.php` endpoints with `?back=` (`value_ui_tests` ~296-319,
+    `formula_ui_tests` ~386-398, `test_word_display` ~174, `formula_write_tests` ~377-406,
+    `view_write_tests` ~107) and `base_ui_tests` ~558 keeps a `?words=1` target whose assert
+    is commented out - delete these blocks or rebuild them on the current views
 
 ## start page
 
@@ -99,7 +106,8 @@ make the formula column left aligned
 add link to result / value
 
 1. Three orphaned wf5 snapshots, one still showing the deprecated spreadsheet. The current change_triple spine is show → edit → back → edit → save → cancel → …, and assert_step appends every step to the path, so wf5_show_edit_save.html, wf5_show_edit_save_cancel.html and  
-   wf5_show_edit_save_confirmed.html cannot be produced any more — the back excursion now sits between edit and save. They were last written in 765d1647d, and the workflow folders have no unused-file cleanup (that only covers views_by_object/ and views_by_id/).
+   wf5_show_edit_save_confirmed.html cannot be produced any more — the back excursion now sits between edit and save. They were last written in 765d1647d, and the workflow folders have no unused-file cleanup (that only covers views_by_object/ and views_by_id/). the back part makes them easy to find now: after the page var reduction no
+   regenerated file carries a `9` param outside the page vars any more, while 191 files under workflow/ and workflow_write/ (177 of them _url.txt) still show the old form state and the `99…` compounds - so a file with such a param has not been written by the current run.
 
 wf5_show_edit_save_confirmed.html is the awkward one: it is titled Start view and renders the old fixed spreadsheet (Priority | Problem | Costs in trillion USD | Solution | Gain in billion htp, 31.5 / 23.8). That comes from web/html/sheet.php, which is 157 lines of        
 hardcoded rows whose only dispatch is commented out at component_exe.php:189 — dead code the spreadsheet deprecation was meant to reduce to a placeholder. Of the 17 start-view snapshots, 16 now show the new table and this stale one shows the deprecated sheet.
@@ -109,9 +117,8 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
 
 3. load_related_by_ids still has no coverage — the one function of the four that stayed untested, since it is a plain REST call with no seam.
 
-4. The more link carries z=0. The rendered tail is /http/view.php?m=1&z=0&dls=20. z is url_var::STEP, and the 0 is the default that url_mapper::url_to_standard() adds from STD_DEFAULT to every request. more_url() rebuilds the link from the full $url_array, so the default  
-   comes along. Harmless — step 0 is what the page gets anyway — but it makes the url longer than it needs to be and, more importantly, the same mechanism would carry form state (posted field values, 8-prefixed opening values) into the link on an edit page that shows such a  
-   table. html_base::page_url_array() exists for exactly this: it keeps only PAGE_VARS, which now include dls/dlp. Building the link from page_url_array($url_array) instead of $url_array would drop z=0 and the form state in one step. Not fixed, as you asked for review only.
+4. The more link carried z=0 (the STEP default that url_mapper::url_to_standard() adds to every request) and would have carried the form state of an edit page showing such a table, because more_url() rebuilt the link from the full $url_array; it uses
+   html_base::page_url_array() now, like the back part builders, so the tail is /http/view.php?m=1&dls=20 — the snapshots with a more link change accordingly.
 
 5. The corrected count assertion is unverified. The $rest derivation in phrase_ui_tests.php was written after the run that reported and 1 more vs and 17 more; it lints, but it has not been executed. The rest of that block (row count, dls=20, page 1 starting at poverty) was
    confirmed by the failing run's actual output.

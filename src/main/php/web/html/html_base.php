@@ -829,12 +829,16 @@ class html_base
      * Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
      * so the target page can redirect back to the calling page after completing its action.
      *
+     * only the params that identify the page are prefixed (see page_url_array), because the
+     * form state of the calling page does not name the page and an already prefixed param
+     * would be prefixed a second time (e.g. '99m' for a back part or '98k' for a pre value)
+     *
      * @param array $url_array the URL parameters of the calling page e.g. /http/view.php?m=3&id=12
      * @return string the additional URL parameters e.g. '9m=3&9id=123'
      */
     static function back_url_part(array $url_array): string
     {
-        return self::prefixed_url_part($url_array, url_var::BACK);
+        return self::prefixed_url_part(self::page_url_array($url_array), url_var::BACK);
     }
 
     /**
@@ -860,9 +864,16 @@ class html_base
         return $par;
     }
 
+    /**
+     * the same as back_url_part, but as an array e.g. for the hidden fields of a form
+     * so only the page-identifying params are prefixed (see page_url_array)
+     *
+     * @param array $url_arr the url params of the calling page
+     * @return array the page params prefixed with url_var::BACK e.g. ['9m' => 3, '9id' => 123]
+     */
     static function back_url_array(array $url_arr): array
     {
-        return self::prefixed_url_array($url_arr, url_var::BACK);
+        return self::prefixed_url_array(self::page_url_array($url_arr), url_var::BACK);
     }
 
     /**
@@ -870,12 +881,26 @@ class html_base
      * so the back part of an edit link stays short and form state or already '8'/'9'-prefixed
      * params are never prefixed again (e.g. no '99m' or '98k' compounds)
      *
+     * an empty page var names nothing, so it does not travel with the link either: the id 0 that
+     * url_mapper::url_to_standard adds to every request would otherwise repeat in every link of a
+     * page without an object; a zero is only kept where zero is a value (url_var::PAGE_VARS_KEEP_ZERO)
+     *
      * @param array $url_arr the url params of the calling page
-     * @return array only the page-identifying url params e.g. ['m' => 90, 'id' => 1]
+     * @return array only the page-identifying url params with a value e.g. ['m' => 90, 'id' => 1]
      */
     static function page_url_array(array $url_arr): array
     {
-        return array_intersect_key($url_arr, array_flip(url_var::PAGE_VARS));
+        $page_arr = array_intersect_key($url_arr, array_flip(url_var::PAGE_VARS));
+        return array_filter($page_arr, function ($val, $key) {
+            if ($val === null or $val === '') {
+                return false;
+            }
+            if (in_array($key, url_var::PAGE_VARS_KEEP_ZERO)) {
+                return true;
+            }
+            // a non numeric string is never zero, so a search pattern or an id list is kept
+            return $val != 0;
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     static function pre_url_array(array $url_arr): array
@@ -918,10 +943,16 @@ class html_base
      *
      * @param array $url_arr the url parameters of the page
      * @return string the url of the page with the parameters that identify it (url_var::PAGE_VARS)
+     *                or the start page if none of them has a value
      */
     function page_url(array $url_arr): string
     {
-        return api::MAIN_SCRIPT . url_var::PAR . http_build_query(self::page_url_array($url_arr));
+        $page_arr = self::page_url_array($url_arr);
+        // without a page param the main script shows the start page, so no '?' is added
+        if ($page_arr == []) {
+            return api::MAIN_SCRIPT;
+        }
+        return api::MAIN_SCRIPT . url_var::PAR . http_build_query($page_arr);
     }
 
     /**

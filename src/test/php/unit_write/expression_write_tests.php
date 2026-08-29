@@ -69,8 +69,6 @@ class expression_write_tests
         $wrd_total = $t_db->test_word($msg, word_names::TEST_TOTAL);
         $frm_sector = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
 
-        $back = '';
-
         // load formulas for expression testing
         $frm_this = $t_db->load_formula(formula_names::SYSTEM_TEST_THIS);
         $frm = $t_db->load_formula(formula_names::INCREASE);

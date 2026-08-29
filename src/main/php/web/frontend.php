@@ -428,7 +428,7 @@ class frontend
     {
         $result = null;
         if (!$token_valid and $is_logged_in) {
-            $back_arr = html_base::back_url_array(html_base::page_url_array($url_array));
+            $back_arr = html_base::back_url_array($url_array);
             $result = array_merge([url_var::MASK => views::LOGIN_ID], $back_arr);
         }
         return $result;
@@ -779,6 +779,16 @@ class frontend
         $action = $url_array[url_var::ACTION] ?? null;
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
         $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
+
+        // a request can name the button the user has pressed instead of the process step
+        // (e.g. 'a=save' instead of 'z=1'), so the step is derived from the user reaction
+        // (url_var::action_step): save and fill lead to the confirm view, confirm writes the
+        // change and cancel stops the process. a request that names the step keeps it, and a
+        // crud action (e.g. 'a' to add an object) triggers no process step and stays at the base
+        if ($action != null and $step == url_var::STEP_BASE) {
+            $step = url_var::action_step($action);
+            $url_array[url_var::STEP] = $step;
+        }
 
         // central admin mask authorization: refuse to act on an admin only view for a non-admin user
         // and send them to the start view, so an admin action cannot be triggered without the rights
