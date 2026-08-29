@@ -201,6 +201,7 @@ class component_exe extends component
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
             component_types::FORM_FIELD_CODE_ID => $form->form_field_code_id($dbo),
+            component_types::FORM_FIELD_UI_MSG => $form->form_field_ui_msg($dbo),
 
             // select object fields
             component_types::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
@@ -439,6 +440,9 @@ class component_exe extends component
             component_types::SHOW_SOURCE => $form->show_source($dbo),
             component_types::SHOW_LAST_UPDATE => $form->show_last_update($dbo),
             component_types::SHOW_IMPACT => $form->show_impact($dbo),
+            component_types::SHOW_ALL_VALUES_NEEDED => $form->show_all_values_needed($dbo),
+            component_types::SHOW_RESULT_VALUE => $form->show_result_value($dbo),
+            component_types::SHOW_RESULT_FORMULA => $form->show_result_formula($dbo),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo, $msg),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),

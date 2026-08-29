@@ -53,6 +53,7 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 //include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
@@ -61,18 +62,21 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Translator.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'component_types.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'component_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
@@ -92,6 +96,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -172,6 +178,11 @@ class component extends sandbox_code_id
             formula_fields::FLD_ID => url_var::FORMULA,
             component_fields::FLD_COL_PHRASE => url_var::PHRASE_COL,
             component_fields::FLD_COL2_PHRASE => url_var::PHRASE_COL_SUB,
+            fields::FLD_CODE_ID => url_var::CODE_ID,
+            component_fields::FLD_UI_MSG_ID => url_var::UI_MSG_CODE_ID,
+            component_fields::FLD_UI_MSG_ID_VARS => url_var::UI_MSG_CODE_ID_VARS,
+            component_fields::FLD_UI_MSG_ID_EXCEPTION => url_var::UI_MSG_CODE_ID_EXCEPTION,
+            component_fields::FLD_UI_MSG_VAL_EXCEPTION => url_var::UI_MSG_VALUE_EXCEPTION,
             fields::FLD_USAGE => url_var::USAGE,
             fields::FLD_EXCLUDED => url_var::EXCLUDED,
             fields::FLD_SHARE => url_var::SHARE,
@@ -207,7 +218,90 @@ class component extends sandbox_code_id
         if (array_key_exists(url_var::FORMULA, $url_array)) {
             $this->formula_id = $url_array[url_var::FORMULA];
         }
+        // the code links posted by the component form of a system or developer user;
+        // an empty submitted field clears the link, a missing field keeps the loaded one
+        // (the backend refuses a change of a not permitted user)
+        global $mtr;
+        if (array_key_exists(url_var::CODE_ID, $url_array)) {
+            if ($url_array[url_var::CODE_ID] != '') {
+                $this->code_id = $url_array[url_var::CODE_ID];
+            } else {
+                $this->code_id = null;
+            }
+        }
+        if (array_key_exists(url_var::UI_MSG_CODE_ID, $url_array)) {
+            $this->ui_msg_code_id = $this->msg_id_or_null($url_array[url_var::UI_MSG_CODE_ID], $mtr);
+        }
+        if (array_key_exists(url_var::UI_MSG_CODE_ID_VARS, $url_array)) {
+            $this->ui_msg_code_id_vars = $this->msg_id_or_null($url_array[url_var::UI_MSG_CODE_ID_VARS], $mtr);
+        }
+        if (array_key_exists(url_var::UI_MSG_CODE_ID_EXCEPTION, $url_array)) {
+            $this->ui_msg_code_id_exception = $this->msg_id_or_null($url_array[url_var::UI_MSG_CODE_ID_EXCEPTION], $mtr);
+        }
+        if (array_key_exists(url_var::UI_MSG_VALUE_EXCEPTION, $url_array)) {
+            // an edit form without an exception value entry posts an empty string, which is no value
+            if (is_numeric($url_array[url_var::UI_MSG_VALUE_EXCEPTION])) {
+                $this->ui_msg_value_exception = $url_array[url_var::UI_MSG_VALUE_EXCEPTION];
+            } else {
+                $this->ui_msg_value_exception = null;
+            }
+        }
         return $msg;
+    }
+
+    /**
+     * @param string $msg_id_txt the message id text posted by the component form
+     * @param Translator $mtr the message translator that converts the text to the enum
+     * @return msg_id|null the message id enum or null for an empty submitted field
+     */
+    private function msg_id_or_null(string $msg_id_txt, Translator $mtr): ?msg_id
+    {
+        $result = null;
+        if ($msg_id_txt != '') {
+            $result = $mtr->get($msg_id_txt);
+        }
+        return $result;
+    }
+
+    /**
+     * besides the base checks the ui message links are code links like the code id, so a change
+     * is only permitted for a user whose profile passes can_set_code_id (mirrors the backend
+     * can_set_ui_msg_id check); if another user actually changes one a warning is shown the
+     * usual way and the change is not confirmed
+     *
+     * @param user_message $msg with the requesting user and to enrich with a warning per invalid field
+     * @param string $action the crud action of the change; a delete needs no ui message link
+     * @param array $url_array the pending change url with the new values and their '8'-prefixed old values
+     * @return bool true if the entered data can be confirmed
+     */
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
+    {
+        $result = parent::input_valid($msg, $action, $url_array);
+        if ($action != url_var::CRUD_DELETE) {
+            $changed = false;
+            foreach ([
+                         url_var::UI_MSG_CODE_ID,
+                         url_var::UI_MSG_CODE_ID_VARS,
+                         url_var::UI_MSG_CODE_ID_EXCEPTION,
+                         url_var::UI_MSG_VALUE_EXCEPTION
+                     ] as $fld) {
+                $old = $url_array[url_var::PRE . $fld] ?? null;
+                $new = $url_array[$fld] ?? null;
+                if ($new != $old) {
+                    $changed = true;
+                }
+            }
+            if ($changed) {
+                $usr = $msg->usr;
+                if ($usr == null or !$usr->can_set_code_id()) {
+                    $msg->add_warning_with_vars(msg_id::CODE_ID_CHANGE_NOT_ALLOWED, [
+                        msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+                    ]);
+                    $result = false;
+                }
+            }
+        }
+        return $result;
     }
 
 
@@ -634,6 +728,25 @@ class component extends sandbox_code_id
             $used_type_id = $typ_lst->msk_sty->default_id();
         }
         return $typ_lst->msk_sty->selector($form, $used_type_id);
+    }
+
+    /**
+     * create the html code to select the formula that delivers the value
+     * shown by a calculated component
+     * overrides db_object::formula_selector for components
+     * @param string $form the name of the html form
+     * @param formula_list $frm_lst with the suggested formulas
+     * @param string $name the unique html form field name
+     * @return string the html code to select a formula
+     */
+    public function formula_selector(
+        string       $form,
+        formula_list $frm_lst,
+        string       $name = url_var::FORMULA
+    ): string
+    {
+        // no default formula, because most component types show no calculated value
+        return $frm_lst->selector($form, $this->formula_id, $name, msg_id::FORM_SELECT_FORMULA);
     }
 
 

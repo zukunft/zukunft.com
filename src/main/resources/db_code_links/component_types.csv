@@ -241,3 +241,7 @@ component_type_id, type_name, description, code_id
 240, 'code id field', 'the code id field in a form, only shown to a user whose profile may change the code id', 'system_form_field_code_id'
 241, 'show impact', 'show the system calculated impact of a reference without link or form field', 'system_show_field_impact'
 242, 'show reference phrase', 'show the word or triple a reference belongs to with a link to the phrase', 'system_show_field_ref_phrase'
+243, 'show all values needed', 'show if a formula only calculates when all used values exist', 'system_show_field_formula_all_vars'
+244, 'show result value', 'show the calculated number of a result behind its phrase group with links', 'system_show_result_value'
+245, 'show result formula', 'show the formula that calculated a result with a link to the formula', 'system_show_result_formula'
+246, 'ui message fields', 'the user interface message link fields in a form, only shown to a user whose profile may change the code id', 'system_form_field_ui_msg'

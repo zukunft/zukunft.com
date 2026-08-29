@@ -156,6 +156,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Exception;
@@ -1326,6 +1327,7 @@ class test_base
         // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above;
         // the user is given like the api endpoints do (see api/verb/index.php), because a related
         // list is loaded and filtered for a user and a verb carries none of its own
+        $this->fix_volatile_last_update($dbo);
         $dbo_api_msg = $dbo->api_json(
             [api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg, $usr);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
@@ -1358,6 +1360,33 @@ class test_base
         return $this->assert_html_body(
             $this->name . ' view ' . $view_key,
             $actual, $file_path);
+    }
+
+    /**
+     * a page snapshot must be reproducible, but the time of the last update is stamped with the
+     * database time on every write (see sql::NOW in formula::db_fields_changed), so a page that
+     * shows it would differ after every database reset; the volatile time is therefore replaced
+     * by the fixed test time before the api message is created, the same way the volatile session
+     * token is replaced by test_const::DUMMY_SESSION_TOKEN
+     *
+     * the time is only replaced if the object has one, so that a page of an object without a
+     * last update does not suddenly show one
+     *
+     * @param db_object_seq_id|sandbox_multi $dbo the database object that the page shows
+     * @return void
+     */
+    private function fix_volatile_last_update(db_object_seq_id|sandbox_multi $dbo): void
+    {
+        $fixed = new DateTime(test_const::DUMMY_DATETIME);
+        if ($dbo instanceof formula) {
+            if ($dbo->last_update != null) {
+                $dbo->last_update = $fixed;
+            }
+        } elseif ($dbo instanceof sandbox_value or $dbo instanceof ref) {
+            if ($dbo->last_update() != null) {
+                $dbo->set_last_update($fixed);
+            }
+        }
     }
 
     /**

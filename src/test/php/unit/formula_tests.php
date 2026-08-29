@@ -49,10 +49,14 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use DateTime;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
@@ -151,6 +155,25 @@ class formula_tests
         $t->subheader($ts . 'frontend');
         $frm = $t_frm->formula();
         $t->assert_api_to_ui($frm, new formula_ui());
+
+        // the formula default page shows the all values needed flag and the last update time
+        // as display only info; both only if set, so a default formula shows no extra lines
+        global $ui_sys;
+        global $mtr;
+        $form = new system_form();
+        $frm_page = new formula_ui(
+            $t_frm->formula_filled()->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+        $test_name = 'the formula page shows the all values needed flag';
+        $t->assert($test_name, $form->show_all_values_needed($frm_page),
+            $mtr->txt(msg_id::FORM_FIELD_FORMULA_ALL_VARS));
+        $test_name = 'the formula page shows the time of the last update';
+        $t->assert_text_contains($test_name, $form->show_last_update($frm_page),
+            date_format(new DateTime(sys_log_tests::TV_TIME), $ui_sys->cfg->date_time_format()));
+        $frm_plain = new formula_ui($t_frm->formula()->api_json([api_types::TEST_MODE], $msg));
+        $test_name = 'a formula that also calculates with missing values shows no flag line';
+        $t->assert($test_name, $form->show_all_values_needed($frm_plain), '');
+        $test_name = 'a never calculated formula shows no last update line';
+        $t->assert($test_name, $form->show_last_update($frm_plain), '');
 
         $test_name = 'the url array contains the expression and the latex of the formula';
         $frm_ui = new formula_ui($frm->api_json());
@@ -315,6 +338,26 @@ class formula_tests
         $t->assert_ex_and_import($t_frm->formula_filled(), $t->usr_system);
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($t->usr1), $json_file);
+
+        // the 'all values needed' flag is a user changeable db field, so it must survive an
+        // export and import round trip, but like in the api message it is only included if set
+        $test_name = 'the all values needed flag is part of the formula export';
+        $msg_exp = new user_message($t->usr_system); // a buffer of this export block, checked but not merged
+        $frm_exp = $t_frm->formula_filled();
+        $ex_json = $frm_exp->export_json($msg_exp, [], false);
+        $t->assert_true($test_name, $ex_json[json_fields::NEED_ALL_VAL] ?? false);
+        $test_name = 'the all values needed flag survives a formula import';
+        $frm_imp = new formula($t->usr1);
+        $frm_imp->import_mapper($ex_json, $msg_exp);
+        $t->assert_true($test_name, $frm_imp->need_all_val);
+        $test_name = 'a formula without the all values needed flag does not export it';
+        $frm_off = $t_frm->formula();
+        $ex_json_off = $frm_off->export_json($msg_exp, [], false);
+        $t->assert_false($test_name, array_key_exists(json_fields::NEED_ALL_VAL, $ex_json_off));
+        $test_name = 'a formula import without the all values needed flag does not set it';
+        $frm_imp_off = new formula($t->usr1);
+        $frm_imp_off->import_mapper($ex_json_off, $msg_exp);
+        $t->assert_null($test_name, $frm_imp_off->need_all_val);
 
     }
 

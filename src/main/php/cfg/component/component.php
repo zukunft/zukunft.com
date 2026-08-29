@@ -312,11 +312,14 @@ class component extends sandbox_code_id
                 }
             }
             if (array_key_exists(component_fields::FLD_UI_MSG_VAL_EXCEPTION, $db_row)) {
-                $msg_id_txt = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
-                if ($msg_id_txt == null) {
+                // unlike the message ids above this is a number, so the null check is strict:
+                // zero is a valid exception value e.g. of the usage sub title, which shows the
+                // 'no usage' message if the usage is zero
+                $val_exception = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
+                if ($val_exception === null) {
                     $this->ui_msg_value_exception = null;
                 } else {
-                    $this->ui_msg_value_exception = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
+                    $this->ui_msg_value_exception = $val_exception;
                 }
             }
             if (array_key_exists(fields::FLD_STYLE, $db_row)) {
@@ -369,8 +372,9 @@ class component extends sandbox_code_id
                 $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]), $msg);
         }
         if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json) and $msg->usr != null) {
+            // the exception value is a number, not a message id, so it is not translated
             $this->set_ui_msg_value_exception(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]), $msg);
+                $api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION], $msg);
         }
         if (array_key_exists(json_fields::STYLE, $api_json)) {
             $this->set_style_by_id($api_json[json_fields::STYLE]);
@@ -525,7 +529,8 @@ class component extends sandbox_code_id
             if ($this->ui_msg_code_id_exception != null) {
                 $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception;
             }
-            if ($this->ui_msg_value_exception != null) {
+            // strict, because zero is a valid exception value
+            if ($this->ui_msg_value_exception !== null) {
                 $vars[json_fields::UI_MSG_CODE_VAL_EXCEPTION] = $this->ui_msg_value_exception;
             }
             if ($this->get_style_id() > 0) {
@@ -614,7 +619,8 @@ class component extends sandbox_code_id
         if ($this->ui_msg_code_id_exception != null) {
             $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception->value;
         }
-        if ($this->ui_msg_value_exception != null) {
+        // strict, because zero is a valid exception value
+        if ($this->ui_msg_value_exception !== null) {
             $vars[json_fields::UI_MSG_CODE_VAL_EXCEPTION] = $this->ui_msg_value_exception;
         }
         if ($this->style != null) {

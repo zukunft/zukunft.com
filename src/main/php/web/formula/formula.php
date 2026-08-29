@@ -120,8 +120,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use DateTime;
 
 class formula extends sandbox_code_id
 {
@@ -153,6 +155,9 @@ class formula extends sandbox_code_id
     private string $ref_text = '';
     private string $latex = '';            // the formula in latex format
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
+    // the time when a field that may influence the calculated results has been updated,
+    // sent by the api for a page request so that the formula default page can show it
+    public ?DateTime $last_update = null;
     public ?phrase $name_wrd = null;         // the triple object for the formula name:
     // the impact used to sort the triples
     public float $impact = 0.0;
@@ -303,6 +308,11 @@ class formula extends sandbox_code_id
             $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
         } else {
             $this->need_all_val = false;
+        }
+        if (array_key_exists(json_fields::LAST_UPDATE, $json_array)) {
+            $lib = new library();
+            $this->last_update = $lib->get_datetime(
+                $json_array[json_fields::LAST_UPDATE], $this->dsp_id(), 'formula api mapping');
         }
         if (array_key_exists(json_fields::FORMULA_NAME_PHRASE, $json_array)) {
             $this->name_wrd = new phrase($json_array[json_fields::FORMULA_NAME_PHRASE]);

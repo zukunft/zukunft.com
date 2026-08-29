@@ -100,6 +100,10 @@ class component_types
     // to a user whose profile passes can_set_code_id e.g. on the source add and edit forms
     const string FORM_FIELD_CODE_ID = "system_form_field_code_id";
     const int FORM_FIELD_CODE_ID_ID = 240;
+    // the user interface message links of a component; like the code id the input fields are
+    // only shown to a user whose profile passes can_set_code_id on the component add and edit forms
+    const string FORM_FIELD_UI_MSG = "system_form_field_ui_msg";
+    const int FORM_FIELD_UI_MSG_ID = 246;
 
     // select object fields
     const string FORM_SELECT_PHRASE = "form_select_phrase";
@@ -604,6 +608,15 @@ class component_types
     // the system calculated impact of a reference e.g. for the ref edit view
     const string SHOW_IMPACT = "system_show_field_impact";
     const int SHOW_IMPACT_ID = 241;
+    // the all-values-needed flag of a formula e.g. for the formula default page
+    const string SHOW_ALL_VALUES_NEEDED = "system_show_field_formula_all_vars";
+    const int SHOW_ALL_VALUES_NEEDED_ID = 243;
+    // the calculated number with its phrase group and the creating formula
+    // e.g. for the result default page
+    const string SHOW_RESULT_VALUE = "system_show_result_value";
+    const int SHOW_RESULT_VALUE_ID = 244;
+    const string SHOW_RESULT_FORMULA = "system_show_result_formula";
+    const int SHOW_RESULT_FORMULA_ID = 245;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -686,6 +699,7 @@ class component_types
         self::FORM_FIELD_NAME,
         self::FORM_FIELD_DESCRIPTION,
         self::FORM_FIELD_CODE_ID,
+        self::FORM_FIELD_UI_MSG,
         self::FORM_FIELD_URL,
         self::FORM_FIELD_DOI,
         self::FORM_FIELD_PLURAL,
@@ -871,6 +885,7 @@ class component_types
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_CODE_ID, self::FORM_FIELD_CODE_ID_ID],
+        [self::FORM_FIELD_UI_MSG, self::FORM_FIELD_UI_MSG_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
         [self::FORM_FIELD_DOI, self::FORM_FIELD_DOI_ID],
         [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],
@@ -1062,6 +1077,9 @@ class component_types
         [self::SHOW_SOURCE, self::SHOW_SOURCE_ID],
         [self::SHOW_LAST_UPDATE, self::SHOW_LAST_UPDATE_ID],
         [self::SHOW_IMPACT, self::SHOW_IMPACT_ID],
+        [self::SHOW_ALL_VALUES_NEEDED, self::SHOW_ALL_VALUES_NEEDED_ID],
+        [self::SHOW_RESULT_VALUE, self::SHOW_RESULT_VALUE_ID],
+        [self::SHOW_RESULT_FORMULA, self::SHOW_RESULT_FORMULA_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

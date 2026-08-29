@@ -55,7 +55,9 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::RESULT . 'result.php';
 include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
@@ -112,7 +114,9 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\term_view;
@@ -869,18 +873,19 @@ class system_form extends component
     }
 
     /**
-     * @param value|ref|db_object $dbo the value or reference whose last update time is shown
+     * @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
+     *                                                 whose last update time is shown
      * @return string the time of the last update behind its label in the user's time format
      *                (empty if the object has never been updated e.g. a not yet saved value)
      */
-    function show_last_update(value|ref|db_object $dbo): string
+    function show_last_update(sandbox_value|ref|formula|db_object $dbo): string
     {
         global $ui_sys;
 
         $result = '';
-        // guarded by class, because only a value and a reference track the time of the last
-        // update and a mis-assigned seed component must not stop the page with a fatal
-        if ($dbo instanceof value) {
+        // guarded by class, because only a value, a result, a reference and a formula track the
+        // time of the last update and a mis-assigned seed component must not stop the page
+        if ($dbo instanceof sandbox_value or $dbo instanceof formula) {
             $upd = $dbo->last_update;
         } elseif ($dbo instanceof ref) {
             // the reference keeps the api time text, so it is parsed here for the display format
@@ -897,6 +902,72 @@ class system_form extends component
             $result = $this->show_field_labeled(
                 date_format($upd, $ui_sys->cfg->date_time_format()),
                 msg_id::SYSTEM_DB_FIELD_LAST_UPDATE);
+        }
+        return $result;
+    }
+
+    /**
+     * @param result|db_object $dbo the result whose value and phrase group is shown
+     * @return string the result phrases with links followed by the calculated number,
+     *                e.g. 'increase, percent = 0.79%' (empty if no number is calculated yet)
+     */
+    function show_result_value(result|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a result combines a calculated number with a phrase
+        // group and a mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof result) {
+            $msg = new user_message();
+            if ($dbo->val_formatted($msg) != '') {
+                // display_linked() returns safe html links, so it is combined unescaped
+                $result = $dbo->display_linked() . ' = ' . $this->esc($dbo->val_formatted($msg));
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a calculated number');
+        }
+        return $result;
+    }
+
+    /**
+     * @param result|db_object $dbo the result whose creating formula is shown
+     * @return string the linked name of the formula that calculated the result behind its
+     *                label (empty if the formula is not known)
+     */
+    function show_result_formula(result|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a result is created by exactly one formula and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof result) {
+            // the api sends the formula with the name for a page request; name_link() returns
+            // safe html, so it is added behind the label unescaped
+            if ($dbo->frm?->name() != '') {
+                $result = $this->label_with_html($dbo->frm->name_link(), msg_id::FORM_SELECT_FORMULA);
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to be created by a formula');
+        }
+        return $result;
+    }
+
+    /**
+     * @param formula|db_object $dbo the formula whose all-values-needed flag is shown
+     * @return string the translated flag label, because the label alone says all for a boolean
+     *                (empty if the formula calculates also with missing values, the default)
+     */
+    function show_all_values_needed(formula|db_object $dbo): string
+    {
+        global $mtr;
+
+        $result = '';
+        // guarded by class, because only a formula has the all-values-needed flag and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof formula) {
+            if ($dbo->need_all()) {
+                $result = $mtr->txt(msg_id::FORM_FIELD_FORMULA_ALL_VARS);
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have the all values needed flag');
         }
         return $result;
     }
@@ -1290,6 +1361,73 @@ class system_form extends component
             }
         } else {
             log_err($dbo::class . ' is not expected to have a code id');
+        }
+        return $result;
+    }
+
+    /**
+     * edit fields for the user interface message links of a component: the ui message code id
+     * with its vars, its exception message and the exception value; like the code id the fields
+     * are only shown to an admin or a developer (see user::can_see_code_id), and only a user
+     * whose profile may also change them gets the input fields, an admin sees them as read
+     * only text
+     *
+     * @param component|db_object $dbo the component with the ui message links used until now
+     * @return string the html code of the ui message fields, '' if the user may not see them
+     */
+    function form_field_ui_msg(component|db_object $dbo): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        // guarded by class, because only a component has ui message links and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof component) {
+            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+                $val_exp = $dbo->ui_msg_value_exception;
+                if ($ui_sys->usr->can_set_code_id()) {
+                    $result = $this->form_field_tracked(
+                            url_var::UI_MSG_CODE_ID,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID,
+                            $dbo->ui_msg_code_id?->value,
+                            view_styles::COL_SM_4,
+                            $dbo)
+                        . $this->form_field_tracked(
+                            url_var::UI_MSG_CODE_ID_VARS,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_VARS,
+                            $dbo->ui_msg_code_id_vars?->value,
+                            view_styles::COL_SM_4,
+                            $dbo)
+                        . $this->form_field_tracked(
+                            url_var::UI_MSG_CODE_ID_EXCEPTION,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_EXCEPTION,
+                            $dbo->ui_msg_code_id_exception?->value,
+                            view_styles::COL_SM_4,
+                            $dbo)
+                        . $this->form_field_tracked(
+                            url_var::UI_MSG_VALUE_EXCEPTION,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_VALUE_EXCEPTION,
+                            $val_exp === null ? null : strval($val_exp),
+                            view_styles::COL_SM_4,
+                            $dbo);
+                } else {
+                    // an admin may see but not change the ui message links
+                    $result = $this->show_field_labeled(
+                            $dbo->ui_msg_code_id?->value ?? '',
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID)
+                        . $this->show_field_labeled(
+                            $dbo->ui_msg_code_id_vars?->value ?? '',
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_VARS)
+                        . $this->show_field_labeled(
+                            $dbo->ui_msg_code_id_exception?->value ?? '',
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_EXCEPTION)
+                        . $this->show_field_labeled(
+                            $val_exp === null ? '' : strval($val_exp),
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_VALUE_EXCEPTION);
+                }
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have ui message links');
         }
         return $result;
     }

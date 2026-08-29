@@ -534,9 +534,27 @@
     },
     {
       "name": "system show field last update",
-      "description": "the time when a value or a reference has been updated by the user or a calculation job",
+      "description": "the time when an object e.g. a value, a reference or a formula has been updated by the user or a calculation job",
       "type": "system_show_field_last_update",
       "code_id": "show_field_last_update"
+    },
+    {
+      "name": "system show field all values needed",
+      "description": "show if a formula only calculates when all used values exist",
+      "type": "system_show_field_formula_all_vars",
+      "code_id": "show_field_all_values_needed"
+    },
+    {
+      "name": "system show result value",
+      "description": "the calculated number of a result behind its phrase group with links",
+      "type": "system_show_result_value",
+      "code_id": "show_result_value"
+    },
+    {
+      "name": "system show result formula",
+      "description": "the formula that calculated a result, with a link to the formula",
+      "type": "system_show_result_formula",
+      "code_id": "show_result_formula"
     },
     {
       "name": "system show field reference phrase",
@@ -952,21 +970,31 @@
         },
         {
           "position": "6",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
+          "name": "system show field all values needed",
+          "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "related values",
+          "name": "system show field last update",
           "position_type": "combine"
         },
         {
           "position": "8",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "9",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
           "name": "related results",
           "position_type": "side_or_below"
         },
         {
-          "position": "9",
+          "position": "11",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -984,6 +1012,20 @@
       "components": [
         {
           "position": "1",
+          "name": "system show result value"
+        },
+        {
+          "position": "2",
+          "name": "system show result formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "3",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
           "name": "related results"
         }
       ]

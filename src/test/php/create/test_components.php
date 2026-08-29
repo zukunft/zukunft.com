@@ -273,6 +273,18 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component with all fields set incl. the formula but not excluded, so that the api
+     *         message carries all fields e.g. to test the code id, the ui message links and the
+     *         formula selector of the component add and edit forms
+     */
+    function component_filled_all_included(): component
+    {
+        $cmp = $this->component_filled_all();
+        $cmp->include();
+        return $cmp;
+    }
+
+    /**
      * @return component with all fields set and a reserved test name for testing the db write function
      */
     function component_filled_add(): component

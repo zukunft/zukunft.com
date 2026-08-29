@@ -113,7 +113,13 @@ class result extends sandbox_value
     {
         parent::api_mapper($json_array, $msg);
 
-        if (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
+        if (array_key_exists(json_fields::FORMULA, $json_array)) {
+            // the nested formula with the name is sent for a page request,
+            // so the result default page can link the formula that calculated the result
+            $frm = new formula();
+            $frm->api_mapper($json_array[json_fields::FORMULA], $msg);
+            $this->frm = $frm;
+        } elseif (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
             $frm = new formula();
             $frm->set_id($json_array[json_fields::FORMULA_ID]);
             $this->frm = $frm;
@@ -132,6 +138,20 @@ class result extends sandbox_value
     function formula_id(): ?int
     {
         return $this->frm?->id;
+    }
+
+    /**
+     * load the result by id AND ask the backend to include the names of the result phrases
+     * and of the formula that calculated the result, which the result default page shows as
+     * links (see the incl_related emit of the backend cfg/result/result::api_json_array)
+     *
+     * @param int|string $id the group id of the result to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
 

@@ -48,6 +48,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'value_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
@@ -86,6 +88,10 @@ class sandbox_value extends sandbox
             $this->number = $value;
         }
     } // the number calculated by the system
+
+    // the time when this value or result has been updated by the user or a calculation job,
+    // sent by the api for a page request so that the default page can show it
+    public ?DateTime $last_update = null;
     private ?string $text_value = null {
         set {
             $this->text_value = $value;
@@ -255,6 +261,11 @@ class sandbox_value extends sandbox
             $this->grp->api_mapper($json_array[json_fields::PHRASES], $msg);
         } else {
             $msg->add_error_text('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
+        }
+        if (array_key_exists(json_fields::LAST_UPDATE, $json_array)) {
+            $lib = new library();
+            $this->last_update = $lib->get_datetime(
+                $json_array[json_fields::LAST_UPDATE], $this->dsp_id(), 'value api mapping');
         }
         return $msg->is_ok();
     }
