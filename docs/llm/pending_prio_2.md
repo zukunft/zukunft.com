@@ -40,6 +40,10 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
 6. Scope note, not a defect. dlp is wired into the slicing and the url mapping, but no page renders prev/next links yet — the "all" version remains unpaged from the user's side. That is consistent with what was asked (the more link), and the frontend.md update says so.
 
 
+## component
+
+add the linked component selection (linked_component_id) together with its link types (component_link_type_id and link_type_id) to the component add and edit views; blocked by the backend: cfg/component/component.php has no linked component member, FLD_LINK_COMP and FLD_LINK_COMP_TYPE are commented out of db_fields_all and the save path is an explicit `// TODO add FLD_LINK_COMP and FLD_LINK_COMP_TYPE`, so a form field would silently not save; add the backend members, db field lists and save path first, then the selectors on the forms (the formula selection, code_id and ui_msg fields were added to the forms in 2026-08)
+
 ## source
 
 add a field 'last_update' to source

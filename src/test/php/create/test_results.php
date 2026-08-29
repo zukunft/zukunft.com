@@ -33,23 +33,29 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::SHARED_CONST . 'results.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once html_paths::RESULT . 'result.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 class test_results
@@ -136,6 +142,18 @@ class test_results
         $res->set_src_grp($t_grp->group_const());
         $res->set_number(results::TV_INT);
         return $res;
+    }
+
+    /**
+     * @return result_ui the filled result with the time of the last calculation as the api
+     *                   sends it for a page request incl. the names of the result phrases and
+     *                   of the creating formula, so that the result default page can be tested
+     */
+    function result_page_ui(): result_ui
+    {
+        $res = $this->result_main_max();
+        $res->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        return new result_ui($res->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
     }
 
     /**

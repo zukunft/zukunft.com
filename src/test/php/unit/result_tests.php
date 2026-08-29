@@ -43,10 +43,15 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 include_once paths::SHARED_CONST . 'words.php';
 
@@ -183,6 +188,25 @@ class result_tests
 
         $res = $t_res->result_simple_1();
         $t->assert_api_to_ui($res, new result_ui());
+
+        // the result default page shows the calculated number with its phrase group, a link
+        // to the formula that calculated it and the time of the last calculation
+        global $ui_sys;
+        $form = new system_form();
+        $res_page = $t_res->result_page_ui();
+        $test_name = 'the result page shows the number behind the linked result phrases';
+        $t->assert_text_contains($test_name, $form->show_result_value($res_page), ' = ');
+        $test_name = 'the result page links the formula that calculated the result';
+        $t->assert_text_contains($test_name, $form->show_result_formula($res_page), formula_names::SCALE_TO_SEC);
+        $test_name = 'the result page shows the time of the last calculation';
+        $t->assert_text_contains($test_name, $form->show_last_update($res_page),
+            date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
+        // a result that is not yet calculated shows no lonely labels
+        $res_plain = new result_ui($t_res->result_incomplete()->api_json([api_types::TEST_MODE]));
+        $test_name = 'a result without a formula shows no formula line';
+        $t->assert($test_name, $form->show_result_formula($res_plain), '');
+        $test_name = 'a never calculated result shows no last update line';
+        $t->assert($test_name, $form->show_last_update($res_plain), '');
 
     }
 

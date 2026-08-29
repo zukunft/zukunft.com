@@ -1,20 +1,6 @@
 
 # pending - list of planned llm prompts with prio 1
 
-### ref
-
-show the non-changeable ref db fields last_update (the timestamp of the last successful update of the reference) and impact as display-only info in the ref edit view
-
-extend the ref default view, which today only shows the reference name and the related values, with the missing db fields: the linked phrase, the reference type, the external key, the url as a link to the external page, the source, the description and the last_update timestamp
-
-### formula
-
-show the missing db fields in the formula default view: the latex format (rendered, next to the existing expression components), the formula type, the 'all values needed' flag and the timestamp of the last update
-
-### result
-
-extend the result default view, which today only shows the related results, with the missing db fields of the requested result itself: the result value with its phrase group, a link to the formula that calculated it and the timestamp of the last calculation (last_update)
-
 ### view
 
 add the missing db fields to the view add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the usage as display-only info in the edit view, because unlike the other edit views the view edit view has no usage section yet
@@ -22,8 +8,6 @@ add the missing db fields to the view add and edit views: a language selection (
 extend the view default view (view_default, which shows the name with the type, share and protection in the title subtitle plus the description) with the style, the list of linked components and the usage e.g. the terms that use it as their default view; the style needs the style_id api mapping in web/view/view.php first, which the frontend view does not carry yet
 
 ### component
-
-add the missing db fields to the component add and edit views: a formula selection (formula_id, used for the calculated component types), a linked component selection (linked_component_id) together with its link types (component_link_type_id and link_type_id), and, for users whose profile passes can_set_code_id, the code_id and ui_msg_code_id fields (with ui_msg_code_id_vars, ui_msg_code_id_exception and ui_msg_value_exception); show the usage as display-only info in the edit view
 
 extend the component default view (component_default, which shows the name with the type in the title subtitle plus the description) with the style, the row and column phrases and the views that use it
 
@@ -195,6 +179,16 @@ In the base type_list::set_from_json_array(), the verb arm calls $vrb->api_mappe
 ames_one_line() / the sort closures type the entries as verb|type_object while get() uses verb|ref_type|type_object. ref_type extends type_object, so it works, but the two unions should read the same.
 name_tip() entries without a description render as a bare <span>name</span> — a wrapper with neither class nor title. Only "is a" carries a tooltip in the snapshot, since load_dummy() sets no descriptions.
 Still open from earlier: get() opens with count($this->hash) != count($this->lst) and logs probably … are duplicate code_id, which is a false alarm on a duplicates-allowed list and fires on every call. It is the last consumer of the parallel-arrays assumption the rest of this diff removed.
+
+Fixtures are half-regenerated — rerun before committing. Two regeneration runs are mixed in the tree (28-08 22:25 and 29-08 10:05):
+- api/type_lists/type_lists.json is from the older run: its 13 system sub title usage number entries lack ui_msg_value_exception: 0, while ui_config.json has all 13.
+- views_by_id/component/34_component_update_1.html (older run) still renders Used 0 times, while its sibling views_by_object/component/component_edit_component_1.html renders Not used.
+- views_by_object/formula/formula_default_formula_21.html / _26.html still carry the live 29-08-2026 10:31; they pick up the fixed test time only on the next run.
+- Two snapshots from July still show Used 0 times and were never regenerated: workflow/change_triple_by_name_wf8/wf8_show_edit.html and workflow_write/change_word_wf2/wf2_show_edit_back_edit_save_cancel_edit_save_confirmed_edit.html (the second is one of the orphaned wf snapshots already listed in pending_prio_2.md).
+
+api/result/ is untracked — needs git add, and the served copy in /var/www/html needs the new endpoint plus the backend changes before the http api tests run.
+
+api/formula/formula_body.json lost "usage": 7 and "ref_text" while gaining need_all_val. Nothing in this batch removes either; both are db-state dependent (usage is written by a batch job, ref_text on save), so this may flip back on the next regeneration — worth confirming it is intended.
 
 ## prepare
 

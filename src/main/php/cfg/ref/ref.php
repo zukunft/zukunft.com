@@ -440,8 +440,10 @@ class ref extends sandbox_link
             $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::URL] = $this->get_url();
             $vars[json_fields::EXTERNAL_KEY] = $this->external_key;
+            // the phrase name is included for a page request (incl_related), so the ref
+            // default page can link the phrase this reference belongs to
             if ($this->phrase()->id() != 0) {
-                if ($typ_lst->include_phrases()) {
+                if ($typ_lst->include_phrases() or $typ_lst->incl_related()) {
                     $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array($typ_lst, $msg)];
                 } else {
                     $vars[json_fields::PHRASE_ID] = $this->phrase()->id();
@@ -449,6 +451,12 @@ class ref extends sandbox_link
             }
             if ($this->get_source()?->id() != null) {
                 $vars[json_fields::SOURCE_ID] = $this->get_source()?->id();
+                // the source is nested with its name for a page request, so the ref default
+                // page can link the source without an extra api call; unlike the value the
+                // source needs no load here, because set_source_by_id already loads it fully
+                if ($typ_lst->incl_related() and $this->get_source()?->name() != '') {
+                    $vars[json_fields::SOURCE] = $this->get_source()->api_json_array([], $msg, $usr);
+                }
             }
             $vars[json_fields::DESCRIPTION] = $this->description;
             if ($this->impact !== null) {

@@ -128,6 +128,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\result_fields;
 use DateTime;
+use DateTimeInterface;
 
 class result extends sandbox_value
 {
@@ -228,7 +229,11 @@ class result extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, $msg, $ext, result_fields::FLD_ID);
         if ($result) {
-            $this->frm = $db_row[formula_fields::FLD_ID];
+            // only the id is mapped, because the result row does not carry the formula name;
+            // the direct int assign would fatal on the formula typed var (see api_json_array
+            // for the on demand load of the name)
+            $this->frm = new formula($this->get_user());
+            $this->frm->set_id($db_row[formula_fields::FLD_ID]);
             if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                 $this->src_grp->set_id((int)$db_row[result_fields::FLD_SOURCE_GRP]);
             } else {
@@ -419,12 +424,35 @@ class result extends sandbox_value
         }
 
         // add the formula that has created the result
-        if ($this->formula_id() != null) {
+        if ($this->formula_id() != 0) {
             $vars[json_fields::FORMULA_ID] = $this->formula_id();
         }
 
         // add the numeric string itself
         $vars[json_fields::NUMBER] = $this->get_value();
+
+        // the result default page shows the result phrases, a link to the formula that
+        // calculated the result and the time of the last calculation
+        if ($typ_lst->incl_related()) {
+            if (!$typ_lst->include_phrases() and !$typ_lst->phrase_names()) {
+                if (!$this->grp()->phrase_list()->loaded()) {
+                    $this->grp()->load_phrase_names($msg);
+                }
+                $vars[json_fields::PHRASES] = $this->grp()->phrase_list()->api_json_array($typ_lst, $msg);
+            }
+            if ($this->formula_id() != 0) {
+                // the result row only carries the formula id, so the name is loaded on demand
+                if ($this->frm->name() == '' and !$typ_lst->test_mode()) {
+                    $this->frm->load_by_id($this->formula_id(), $msg);
+                }
+                if ($this->frm->name() != '') {
+                    $vars[json_fields::FORMULA] = $this->frm->api_json_array([], $msg, $usr);
+                }
+            }
+            if ($this->last_update() != null) {
+                $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
+            }
+        }
 
         return $vars;
     }

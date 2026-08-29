@@ -34,7 +34,9 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'sources.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -42,12 +44,20 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class ref_tests
 {
@@ -161,6 +171,36 @@ class ref_tests
         $t->subheader($ts . 'frontend');
         $ref = $t_ref->reference_plus();
         $t->assert_api_to_ui($ref, new ref_ui());
+
+        // the ref edit view shows the last update time and the system calculated impact as
+        // display only info, because the user can never change these two db fields
+        global $ui_sys;
+        $form = new system_form();
+        $ref_ui = $t_ref->ref_info_ui();
+        $test_name = 'the ref edit view shows the time of the last update';
+        $t->assert_text_contains($test_name, $form->show_last_update($ref_ui),
+            date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
+        $test_name = 'the ref edit view shows the impact as read only text';
+        $t->assert_text_contains($test_name, $form->show_impact($ref_ui), (string)impacts::MAX);
+        // the ref default page shows the linked phrase, the type, the external key, the url
+        // and the source, each behind the label of the matching form field
+        $test_name = 'the ref page links the phrase the reference belongs to';
+        $t->assert_text_contains($test_name, $form->show_ref_phrase($ref_ui), word_names::PI);
+        $test_name = 'the ref page shows the reference type behind its label';
+        $t->assert_text_contains($test_name, $form->show_ref_type($ref_ui), ref_types::WIKIDATA);
+        $test_name = 'the ref page shows the external key behind its label';
+        $t->assert_text_contains($test_name, $form->show_ref_key($ref_ui), refs::PI_KEY);
+        $test_name = 'the ref page shows the url as a link to the external page';
+        $t->assert_text_contains($test_name, $form->show_ref_url($ref_ui),
+            '<a href="' . refs::PI_URL . '">');
+        $test_name = 'the ref page links the source of the reference';
+        $t->assert_text_contains($test_name, $form->show_ref_source($ref_ui), sources::SIB);
+        // a reference that has never been updated or ranked shows no lonely labels
+        $ref_plain = new ref_ui($t_ref->reference()->api_json([api_types::TEST_MODE]));
+        $test_name = 'a never updated ref shows no last update line';
+        $t->assert($test_name, $form->show_last_update($ref_plain), '');
+        $test_name = 'a not yet ranked ref shows no impact line';
+        $t->assert($test_name, $form->show_impact($ref_plain), '');
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_ref->reference(), $t->usr_system);

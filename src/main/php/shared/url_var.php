@@ -179,6 +179,11 @@ class url_var
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
     const string NAME_GIVEN = 'kg'; // the overwrite name of a triple, group
     const string CODE_ID = 'ki'; // the code id
+    // the user interface message links of a component, only changeable like the code id
+    const string UI_MSG_CODE_ID = 'ku';
+    const string UI_MSG_CODE_ID_VARS = 'kv';
+    const string UI_MSG_CODE_ID_EXCEPTION = 'kx';
+    const string UI_MSG_VALUE_EXCEPTION = 'kn';
     const string PATTERN = 'kp'; // the wildcard pattern to select a list of objects by name
     const string REF = 'l'; // l for data link to external
     const string REF_TYPE = 'lt';
@@ -393,6 +398,10 @@ class url_var
     const string PATTERN_HUMAN = 'pattern'; // part of a name to select a named object such as word, triple, ...
     const string DESCRIPTION_HUMAN = 'description';
     const string CODE_ID_HUMAN = 'code_id';
+    const string UI_MSG_CODE_ID_HUMAN = 'ui_msg_code_id';
+    const string UI_MSG_CODE_ID_VARS_HUMAN = 'ui_msg_code_id_vars';
+    const string UI_MSG_CODE_ID_EXCEPTION_HUMAN = 'ui_msg_code_id_exception';
+    const string UI_MSG_VALUE_EXCEPTION_HUMAN = 'ui_msg_value_exception';
     const string EXCLUDED_HUMAN = 'excluded';
 
     // language
@@ -623,6 +632,10 @@ class url_var
         [self::PATTERN_HUMAN, self::PATTERN],
         [self::DESCRIPTION_HUMAN, self::DESCRIPTION],
         [self::CODE_ID_HUMAN, self::CODE_ID],
+        [self::UI_MSG_CODE_ID_HUMAN, self::UI_MSG_CODE_ID],
+        [self::UI_MSG_CODE_ID_VARS_HUMAN, self::UI_MSG_CODE_ID_VARS],
+        [self::UI_MSG_CODE_ID_EXCEPTION_HUMAN, self::UI_MSG_CODE_ID_EXCEPTION],
+        [self::UI_MSG_VALUE_EXCEPTION_HUMAN, self::UI_MSG_VALUE_EXCEPTION],
         [self::EXCLUDED_HUMAN, self::EXCLUDED],
 
         // language

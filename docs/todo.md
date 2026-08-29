@@ -18,6 +18,9 @@ A proper issue ticket should be created for these TODOs notes:
          keep the carantane user in the original database to avoid dublicate creation and for blacklisting
     TODO check if the 'no change' parameter is used correctly to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
 
+    TODO add to concept that people who have done someting bad should be be mentioned by name to reduce the copycat effect and reactance. 
+    TODO create a list of people who have increased the htp or prevented a decrease in htp like Shuji Nakamura or Andreas Freud   
+
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely
                 and is not user-specific and for easy check how many times the code writes

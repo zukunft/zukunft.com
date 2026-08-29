@@ -39,11 +39,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
+include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -51,14 +53,17 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class test_refs extends test_objects
 {
@@ -192,6 +197,20 @@ class test_refs extends test_objects
         $ref->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $ref->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $ref;
+    }
+
+    /**
+     * @return ref_ui the filled reference with the impact and the time of the last update as
+     *                the api sends them for a page request incl. the names of the linked
+     *                phrase and of the source, so that the display only info fields of the
+     *                ref edit view and the field links of the ref default page can be tested
+     */
+    function ref_info_ui(): ref_ui
+    {
+        $ref = $this->ref_filled();
+        $ref->impact = impacts::MAX;
+        $ref->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        return new ref_ui($ref->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
     }
 
     /**

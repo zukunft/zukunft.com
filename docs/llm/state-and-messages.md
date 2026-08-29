@@ -502,6 +502,13 @@ Seeing and changing are two separate gates on the frontend user:
 below `can_see_code_id()`, editable only with `can_set_code_id()` on top. A new
 renderer that shows a code id anywhere must use the same two gates.
 
+The ui message links of a component (`ui_msg_code_id`, `ui_msg_code_id_vars`,
+`ui_msg_code_id_exception` and `ui_msg_value_exception`) are code links like
+the code id and follow the same two gates:
+`system_form::form_field_ui_msg()` renders them on the component add and edit
+forms, and the backend refuses a change of a not permitted user via the
+privilege-checked `set_ui_msg_*` setters (`can_set_ui_msg_id()`).
+
 ### Never overwrite or reset the accumulated messages
 
 A function receiving `$msg` may only **add** to it — never replace, clear, reset,

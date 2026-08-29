@@ -6052,6 +6052,8 @@
             nent/component.php
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /component/c
             omponent.php
+    \-- input_valid - section for function input_valid not yet defined that it should be construct and map in /component
+            /component.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /component/component.php
     \-- api_array - section for function api_array not yet defined that it should be api in /component/component.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /component/comp
@@ -6171,6 +6173,14 @@
              without auto fill in /component/execute/system_form.php
     \-- show_last_update - section for function show_last_update not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
+    \-- show_result_value - section for function show_result_value not yet defined that it should be optional with show 
+            password but without auto fill in /component/execute/system_form.php
+    \-- show_result_formula - section for function show_result_formula not yet defined that it should be optional with s
+            how password but without auto fill in /component/execute/system_form.php
+    \-- show_all_values_needed - section for function show_all_values_needed not yet defined that it should be optional 
+            with show password but without auto fill in /component/execute/system_form.php
+    \-- show_impact - section for function show_impact not yet defined that it should be optional with show password but
+             without auto fill in /component/execute/system_form.php
     \-- show_row_phrase - section for function show_row_phrase not yet defined that it should be optional with show pass
             word but without auto fill in /component/execute/system_form.php
     \-- show_col_phrase - section for function show_col_phrase not yet defined that it should be optional with show pass
@@ -6189,6 +6199,8 @@
             word but without auto fill in /component/execute/system_form.php
     \-- show_ref_url - section for function show_ref_url not yet defined that it should be optional with show password b
             ut without auto fill in /component/execute/system_form.php
+    \-- show_ref_phrase - section for function show_ref_phrase not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
     \-- show_usage - section for function show_usage not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- show_parent_view - section for function show_parent_view not yet defined that it should be optional with show pa
@@ -6213,6 +6225,8 @@
             ssword but without auto fill in /component/execute/system_form.php
     \-- form_field_code_id - section for function form_field_code_id not yet defined that it should be optional with sho
             w password but without auto fill in /component/execute/system_form.php
+    \-- form_field_ui_msg - section for function form_field_ui_msg not yet defined that it should be optional with show 
+            password but without auto fill in /component/execute/system_form.php
     \-- form_field_plural - section for function form_field_plural not yet defined that it should be optional with show 
             password but without auto fill in /component/execute/system_form.php
     \-- form_field_reverse - section for function form_field_reverse not yet defined that it should be optional with sho
@@ -7231,6 +7245,7 @@
     \-- external_key - section for function external_key not yet defined that it should be set and get in /ref/ref.php
     \-- url - section for function url not yet defined that it should be set and get in /ref/ref.php
     \-- predicate_id - section for function predicate_id not yet defined that it should be set and get in /ref/ref.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /ref/ref.php
     \-- api_array - section for function api_array not yet defined that it should be api in /ref/ref.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /ref/ref.php
     \-- name_link - section for function name_link not yet defined that it should be base in /ref/ref.php
@@ -7238,7 +7253,8 @@
     \-- phrase_selector - section for function phrase_selector not yet defined that it should be select in /ref/ref.php
     \-- source_selector - section for function source_selector not yet defined that it should be select in /ref/ref.php
     \-- display - section for function display not yet defined that it should be select in /ref/ref.php
-    \-- order error - order of section construct and map has difference at url_mapper should be before __construct
+    \-- order error - order of section construct and map has difference at url_mapper should be before __construct,
+            order of section api has difference at api_array should be before load_by_id_with_related
 \-- ref_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/ref_list.php
     \-- list - section for function list not yet defined that it should be display in /ref/ref_list.php
@@ -7267,6 +7283,8 @@
 \-- result
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /result/result.php
     \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /result/result.
+            php
     \-- display - section for function display not yet defined that it should be display in /result/result.php
     \-- name - section for function name is expected to be debug in /result/result.php
     \-- get_description - section for function get_description is expected to be set and get in /result/result.php
@@ -7417,6 +7435,7 @@
     \-- input_valid - section for function input_valid not yet defined that it should be construct and map in /sandbox/s
             andbox_code_id.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_code_id.php
+    \-- order error - order of section construct and map has difference at input_valid should be before api_mapper
 \-- sandbox_link
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_link.php
@@ -7970,10 +7989,11 @@
         \-- formula_link - set the vars of this word frontend object bases on the url array
         \-- sandbox_link - set the vars of this sandbox link object bases on the url array
         \-- sandbox_typed - set the vars of this object bases on the url array
+    \-- input_valid
+        \-- component - besides the base checks the ui message links are code links like the code id, so a change
     \-- api_mapper
         \-- figure_list - set the vars of this figure list based on the given json
         \-- formula_link - set the vars this formula link bases on the api json array
-        \-- sandbox_code_id - set the vars of this object bases on the api json array
         \-- sandbox_link - set the vars this sandbox link bases on the api json array
         \-- sandbox_typed - set the vars of this object bases on the api json array
     \-- __construct
@@ -7983,9 +8003,6 @@
         \-- verb_list - create an empty list, which needs no message; a caller with an api json message
     \-- reset
         \-- data_object - init the data object vars and set the lists based on the given api json
-    \-- input_valid
-        \-- sandbox_code_id - besides the base checks the phrase type may only be changed by a user that is allowed to s
-                et
     \-- to_url_array
         \-- sandbox_typed - @return array parent url array extended with the type id
 \-- api
@@ -8001,7 +8018,6 @@
         \-- element - create an api json array for the backend based on this frontend object
         \-- formula_link - create an api json array for the backend based on this frontend object
         \-- sandbox - @return array the json message array to send the updated data to the backend
-        \-- sandbox_code_id - @return array the json message array to send the updated data to the backend
         \-- sandbox_link - create an api json array for the backend based on this frontend object
         \-- sandbox_typed - @return array the json message array to send the updated data to the backend
         \-- sys_log_list - @return array the json message array to send the updated data to the backend
@@ -8900,7 +8916,15 @@
     \-- show_source
         \-- system_form - @param value|db_object $dbo the value whose source is shown
     \-- show_last_update
-        \-- system_form - @param value|db_object $dbo the value whose last update time is shown
+        \-- system_form - @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
+    \-- show_result_value
+        \-- system_form - @param result|db_object $dbo the result whose value and phrase group is shown
+    \-- show_result_formula
+        \-- system_form - @param result|db_object $dbo the result whose creating formula is shown
+    \-- show_all_values_needed
+        \-- system_form - @param formula|db_object $dbo the formula whose all-values-needed flag is shown
+    \-- show_impact
+        \-- system_form - @param ref|db_object $dbo the reference whose impact is shown
     \-- show_row_phrase
         \-- system_form - @param component|db_object $dbo the component whose row phrase is shown
     \-- show_col_phrase
@@ -8919,6 +8943,8 @@
         \-- system_form - @param ref|db_object $dbo the object
     \-- show_ref_url
         \-- system_form - @param ref|db_object $dbo the object
+    \-- show_ref_phrase
+        \-- system_form - @param ref|db_object $dbo the reference whose linked phrase is shown
     \-- show_usage
         \-- system_form - TODO Prio 1 fill with the correct field
     \-- show_parent_view
@@ -8943,6 +8969,8 @@
         \-- system_form - @param db_object|type_object $dbo
     \-- form_field_code_id
         \-- system_form - edit field for the code id that links a database row to program code, e.g. of a source;
+    \-- form_field_ui_msg
+        \-- system_form - edit fields for the user interface message links of a component: the ui message code id
     \-- form_field_plural
         \-- system_form - @param db_object $dbo the object
     \-- form_field_reverse

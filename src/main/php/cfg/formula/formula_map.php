@@ -160,6 +160,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use DateTime;
+use DateTimeInterface;
 use Exception;
 
 class formula_map extends sandbox_code_id
@@ -436,6 +437,10 @@ class formula_map extends sandbox_code_id
             }
         }
 
+        if (key_exists(json_fields::NEED_ALL_VAL, $in_ex_json)) {
+            $this->need_all_val = $in_ex_json[json_fields::NEED_ALL_VAL];
+        }
+
         if (key_exists(json_fields::IMPACT, $in_ex_json)) {
             $this->impact = $in_ex_json[json_fields::IMPACT];
         }
@@ -503,6 +508,16 @@ class formula_map extends sandbox_code_id
             $vars[json_fields::REF_TEXT] = $this->ref_text;
             $vars[json_fields::LATEX] = $this->latex;
             $vars[json_fields::IMPACT] = $this->impact;
+            // the flag is only sent if set, because the formula default page
+            // shows a field only if the formula uses it
+            if ($this->need_all_val) {
+                $vars[json_fields::NEED_ALL_VAL] = $this->need_all_val;
+            }
+            // the time of the last update is only sent for a page request, so that the
+            // volatile timestamp does not make the api test fixtures unstable
+            if ($this->last_update != null and $typ_lst->incl_related()) {
+                $vars[json_fields::LAST_UPDATE] = $this->last_update->format(DateTimeInterface::ATOM);
+            }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
@@ -1248,6 +1263,12 @@ class formula_map extends sandbox_code_id
         }
         if ($this->latex <> '') {
             $vars[json_fields::LATEX] = $this->latex;
+        }
+
+        // the flag is a user changeable db field, so it is part of the export, but like in the
+        // api message it is only included if set, because false is the database default
+        if ($this->need_all_val) {
+            $vars[json_fields::NEED_ALL_VAL] = $this->need_all_val;
         }
 
         // export the assigned phrases by name, consistent with the import:
