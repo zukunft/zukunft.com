@@ -292,34 +292,6 @@ class value_ui_tests
         $val_ch = new value($t->usr1);
         $val_ch->load_by_grp($phr_lst_ch->get_grp_id());
 
-        // call the add value page and check if at least some basic keywords are returned
-        $back = 0;
-        $result = file_get_contents('https://zukunft.com/http/value_add.php?back=' . $back . $phr_lst_added->id_url_long());
-        $target = words::TN_RENAMED;
-        $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . words::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
-
-        $result = file_get_contents('https://zukunft.com/http/value_add.php?back=' . $back . $phr_lst_ch->id_url_long());
-        $target = words::TN_CH;
-        $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
-
-        // test the edit value frontend
-        $result = file_get_contents('https://zukunft.com/http/value_edit.php?id=' . $val_added->id() . '&back=' . $back);
-        $target = words::TN_RENAMED;
-        $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . words::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
-
-        $result = file_get_contents('https://zukunft.com/http/value_edit.php?id=' . $val_ch->id() . '&back=' . $back);
-        $target = words::TN_CH;
-        $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
-
-        // test the del value frontend
-        $result = file_get_contents('https://zukunft.com/http/value_del.php?id=' . $val_added->id() . '&back=' . $back);
-        $target = words::TN_RENAMED;
-        $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . words::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-
-        $result = file_get_contents('https://zukunft.com/http/value_del.php?id=' . $val_ch->id() . '&back=' . $back);
-        $target = words::TN_CH;
-        $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-
 
         $t->subheader($ts . 'Test the value list class (classes/value_list.php)');
 

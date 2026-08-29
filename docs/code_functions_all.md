@@ -6572,10 +6572,6 @@
             formula.php
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php
-    \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /formula/formula.php
-    \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /formula/for
-            mula.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /formula/formula.php
     \-- is_special - section for function is_special is expected to be info in /formula/formula.php
     \-- dsp_used4words - section for function dsp_used4words not yet defined that it should be to review in /formula/for
             mula.php

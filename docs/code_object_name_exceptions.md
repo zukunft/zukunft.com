@@ -242,7 +242,7 @@ ui_select: $select
 unit_env: $u_env
 url_mapper: $url_map
 user_list: $result, $row_lst, $system_users, $test_usr_list, $usr_lst
-user_log_display: $log, $log_ui
+user_log_display: $log_ui
 user_official_type: $usr_idt
 user_profile: $usr_prf
 user_request: $req

@@ -400,13 +400,6 @@ class formula_write_tests
         //$result = $hist_page;
         //$t->dsp_contains(', formula->dsp_hist_links for ' . $frm->dsp_id(), $target, $result);
 
-        $add = 0;
-        // TODO fix it
-        //$result = $frm_html->dsp_edit($add, $wrd, $back);
-        //$target = 'Formula "System Test Formula"';
-        //$result = $edit_page;
-        //$t->dsp_contains(', formula->dsp_edit for ' . $frm->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-
         // test formula refresh functions
         $usr_msg_elm = $msg->clone_reset();
         $result = $frm->element_refresh($usr_msg_elm);
@@ -659,7 +652,6 @@ class formula_write_tests
         $wrd = new word($t->usr1);
         $wrd->load_by_id($wrd_share->id(), $msg);
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->back = $wrd->id();
         $frm_lst->load_by_phr($wrd->phrase(), $msg);
         // TODO fix it
         //$result = $frm_lst->display();
