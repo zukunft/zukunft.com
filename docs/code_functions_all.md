@@ -8944,11 +8944,12 @@
     \-- show_child_view
         \-- system_form - @param view_relation|db_object $dbo the object
     \-- show_link_type
-        \-- system_form - @param sandbox_link|db_object $dbo the link whose link type is shown
+        \-- system_form - the link type, the order number and the start position stand below each other on the link
     \-- show_start_pos
         \-- system_form - @param view_relation|db_object $dbo the view relation whose start position is shown
     \-- show_order_nbr
-        \-- system_form - used by the link default page and as the current value of the link form field
+        \-- system_form - @param formula_link|component_link|term_view|db_object $dbo the link whose order number is sho
+                wn
     \-- result
         \-- system_form - TODO Prio 1 fill with the correct field
     \-- used_as_text

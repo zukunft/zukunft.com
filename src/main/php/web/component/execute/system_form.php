@@ -48,7 +48,6 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
-include_once html_paths::CONST . 'def.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
@@ -129,7 +128,6 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\web\const\def as def_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -425,14 +423,17 @@ class system_form extends component
     private function type_subtitle(word|db_object $dbo, user_message $msg): string
     {
         global $ui_sys;
-        if (in_array($dbo::class, def_ui::TYPE_CLASSES)) {
-            // the type name links to the type page that lists the other phrases of this type
-            // and the fixed code rules linked to this phrase type
-            // TODO Prio 3 point this to the dedicated phrase type page once it exists
-            return $this->type_link($ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class), $dbo->type_id($msg));
-        } else {
+        // an object class without a type list e.g. a link has no type and therefore no type
+        // subtitle; asking the type list also covers the page classes that extend the object
+        // class (e.g. component_exe extends component), which an exact class match would miss
+    $typ_lst = $ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class);
+        if ($typ_lst == null) {
             return '';
         }
+        // the type name links to the type page that lists the other phrases of this type
+        // and the fixed code rules linked to this phrase type
+        // TODO Prio 3 point this to the dedicated phrase type page once it exists
+        return $this->type_link($typ_lst, $dbo->type_id($msg));
     }
 
     /**
@@ -769,7 +770,7 @@ class system_form extends component
 
     /**
      * @param view|component|component_link|db_object $dbo the object whose display style is shown
-     * @return string the user-readable name of the display style (empty if no style is set)
+     * @return string the labeled name of the display style (empty if no style is set)
      */
     function show_style(view|component|component_link|db_object $dbo): string
     {
@@ -781,7 +782,9 @@ class system_form extends component
         if ($dbo instanceof view or $dbo instanceof component or $dbo instanceof component_link) {
             $style_id = $dbo->get_style_id();
             if ($style_id != null) {
-                $result = $this->esc($ui_sys?->typ_lst_cache?->msk_sty?->name($style_id) ?? '');
+                $result = $this->show_field_labeled(
+                    $ui_sys?->typ_lst_cache?->msk_sty?->name($style_id) ?? '',
+                    msg_id::FORM_SELECT_VIEW_STYLE);
             }
         } else {
             log_err($dbo::class . ' is not expected to have a display style');
@@ -994,13 +997,13 @@ class system_form extends component
     /**
      * @param component|db_object $dbo the component whose row phrase is shown
      * @param phrase_list $phr_lst the request cache with the preloaded phrases
-     * @return string the linked name of the row phrase (empty if not set or not known)
+     * @return string the labeled link of the row phrase (empty if not set or not known)
      */
     function show_row_phrase(component|db_object $dbo, phrase_list $phr_lst): string
     {
         $result = '';
         if ($dbo instanceof component) {
-            $result = $this->component_phrase($dbo->row_phrase, $phr_lst);
+            $result = $this->component_phrase($dbo->row_phrase, $phr_lst, msg_id::FORM_SELECT_PHRASE_ROW);
         } else {
             log_err($dbo::class . ' is not expected to have a row phrase');
         }
@@ -1010,13 +1013,13 @@ class system_form extends component
     /**
      * @param component|db_object $dbo the component whose column phrase is shown
      * @param phrase_list $phr_lst the request cache with the preloaded phrases
-     * @return string the linked name of the column phrase (empty if not set or not known)
+     * @return string the labeled link of the column phrase (empty if not set or not known)
      */
     function show_col_phrase(component|db_object $dbo, phrase_list $phr_lst): string
     {
         $result = '';
         if ($dbo instanceof component) {
-            $result = $this->component_phrase($dbo->col_phrase, $phr_lst);
+            $result = $this->component_phrase($dbo->col_phrase, $phr_lst, msg_id::FORM_SELECT_PHRASE_COL);
         } else {
             log_err($dbo::class . ' is not expected to have a column phrase');
         }
@@ -1026,13 +1029,13 @@ class system_form extends component
     /**
      * @param component|db_object $dbo the component whose sub column phrase is shown
      * @param phrase_list $phr_lst the request cache with the preloaded phrases
-     * @return string the linked name of the sub column phrase (empty if not set or not known)
+     * @return string the labeled link of the sub column phrase (empty if not set or not known)
      */
     function show_col_sub_phrase(component|db_object $dbo, phrase_list $phr_lst): string
     {
         $result = '';
         if ($dbo instanceof component) {
-            $result = $this->component_phrase($dbo->col_sub_phrase, $phr_lst);
+            $result = $this->component_phrase($dbo->col_sub_phrase, $phr_lst, msg_id::FORM_SELECT_PHRASE_COL_SUB);
         } else {
             log_err($dbo::class . ' is not expected to have a sub column phrase');
         }
@@ -1040,20 +1043,21 @@ class system_form extends component
     }
 
     /**
-     * the linked name of one layout phrase (row, column or sub column) of a component; the
+     * the labeled link of one layout phrase (row, column or sub column) of a component; the
      * shared part of show_row_phrase, show_col_phrase and show_col_sub_phrase
      * @param int|null $phr_id the id of the layout phrase or null if the field is not set
      * @param phrase_list $phr_lst the request cache with the preloaded phrases
-     * @return string the linked phrase name (empty if the phrase is not set or not known)
+     * @param msg_id $ui_msg_code_id the message id of the field label
+     * @return string the labeled phrase link (empty if the phrase is not set or not known)
      */
-    private function component_phrase(?int $phr_id, phrase_list $phr_lst): string
+    private function component_phrase(?int $phr_id, phrase_list $phr_lst, msg_id $ui_msg_code_id): string
     {
         $result = '';
         if ($phr_id != null) {
             // resolve the name from the request cache, because the page url and the api
             // message only carry the phrase id
             $phr = $phr_lst->get($phr_id);
-            $result = $phr?->name_link() ?? '';
+            $result = $this->label_with_html($phr?->name_link() ?? '', $ui_msg_code_id);
         }
         return $result;
     }
@@ -1194,15 +1198,21 @@ class system_form extends component
     }
 
     /**
+     * the link type, the order number and the start position stand below each other on the link
+     * pages, so each carries a label; the label is not taken from a form field, because one show
+     * component serves the formula link, the term view, the component link and the view relation,
+     * which all name their type field differently (see show_field_labeled)
+     *
      * @param sandbox_link|db_object $dbo the link whose link type is shown
-     * @return string the user-readable name of the link type (empty if no type is set)
+     * @return string the labeled name of the link type (empty if no type is set)
      */
     function show_link_type(sandbox_link|db_object $dbo): string
     {
         $result = '';
         // guarded by class so that a mis-assigned seed component cannot fatal
         if ($dbo instanceof sandbox_link) {
-            $result = $this->esc($dbo->link_type()?->name());
+            $result = $this->show_field_labeled(
+                $dbo->link_type()?->name() ?? '', msg_id::SHOW_FIELD_LINK_TYPE);
         } else {
             log_err($dbo::class . ' is not expected to have a link type');
         }
@@ -1211,9 +1221,19 @@ class system_form extends component
 
     /**
      * @param view_relation|db_object $dbo the view relation whose start position is shown
-     * @return string the start position of the relation (empty if no start position is set)
+     * @return string the labeled start position (empty if no start position is set)
      */
     function show_start_pos(view_relation|db_object $dbo): string
+    {
+        return $this->show_field_labeled($this->start_pos($dbo), msg_id::SHOW_FIELD_START_POS);
+    }
+
+    /**
+     * the plain start position, used as the current value of the view relation form field
+     * @param view_relation|db_object $dbo the view relation whose start position is read
+     * @return string the start position of the relation (empty if no start position is set)
+     */
+    private function start_pos(view_relation|db_object $dbo): string
     {
         $result = '';
         // guarded by class so that a mis-assigned seed component cannot fatal
@@ -1226,11 +1246,20 @@ class system_form extends component
     }
 
     /**
-     * used by the link default page and as the current value of the link form field
      * @param formula_link|component_link|term_view|db_object $dbo the link whose order number is shown
-     * @return string the order number of the link (empty if no order number is set)
+     * @return string the labeled order number (empty if no order number is set)
      */
     function show_order_nbr(formula_link|component_link|term_view|db_object $dbo): string
+    {
+        return $this->show_field_labeled($this->order_nbr($dbo), msg_id::SHOW_FIELD_ORDER_NBR);
+    }
+
+    /**
+     * the plain order number, used as the current value of the link form field
+     * @param formula_link|component_link|term_view|db_object $dbo the link whose order number is read
+     * @return string the order number of the link (empty if no order number is set)
+     */
+    private function order_nbr(formula_link|component_link|term_view|db_object $dbo): string
     {
         $result = '';
         // TODO Prio 2 add an order number to term_view, until then it shows an empty text
@@ -1689,7 +1718,7 @@ class system_form extends component
         return $html->form_field(
             url_var::FORMULA_LINK_PRIO,
             msg_id::FORM_FIELD_FORMULA_LINK_PRIO,
-            $this->show_order_nbr($dbo),
+            $this->order_nbr($dbo),
             html_base::INPUT_INT
         );
     }
@@ -1718,8 +1747,8 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::POSITION,
-            msg_id::FORM_FIELD_COMPONENT_LINK,
-            $this->show_order_nbr($dbo),
+            msg_id::FORM_SELECT_COMPONENT_LINK_ORDER_NUMBER,
+            $this->order_nbr($dbo),
             html_base::INPUT_INT
         );
     }
@@ -1733,8 +1762,8 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::POSITION,
-            msg_id::FORM_FIELD_COMPONENT_LINK,
-            $this->show_start_pos($dbo),
+            msg_id::FORM_FIELD_VIEW_RELATION_START_POS,
+            $this->start_pos($dbo),
             html_base::INPUT_INT,
             '',
             view_styles::COL_SM_1

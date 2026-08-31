@@ -32,7 +32,6 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -98,15 +97,15 @@ class verb_ui_tests
         // the matching form field, because without it the user cannot tell which value is which
         $test_name = 'the reverse name of the verb is shown as read only text with its label';
         $t->assert($test_name, $form->show_reverse($vrb_filled),
-            $this->labeled(msg_id::FORM_FIELD_REVERSE, verbs::MEASURE_REVERSE));
+            $t->labeled(msg_id::FORM_FIELD_REVERSE, verbs::MEASURE_REVERSE));
 
         $test_name = 'the plural of the verb is shown as read only text with its label';
         $t->assert($test_name, $form->show_plural($vrb_filled),
-            $this->labeled(msg_id::FORM_FIELD_PLURAL, verbs::MEASURE_PLURAL));
+            $t->labeled(msg_id::FORM_FIELD_PLURAL, verbs::MEASURE_PLURAL));
 
         $test_name = 'the plural of the reverse name of the verb is shown as read only text with its label';
         $t->assert($test_name, $form->show_plural_reverse($vrb_filled),
-            $this->labeled(msg_id::FORM_FIELD_PLURAL_REVERSE, verbs::MEASURE_REV_PLURAL));
+            $t->labeled(msg_id::FORM_FIELD_PLURAL_REVERSE, verbs::MEASURE_REV_PLURAL));
 
         // a verb without the language forms shows an empty text and never a php warning
         $vrb_empty = new verb($t_vrb->verb()->api_json());
@@ -134,20 +133,6 @@ class verb_ui_tests
         $vrb_unused = new verb($t_vrb->verb()->api_json());
         $t->assert($test_name, $list->triple_list($vrb_unused, $msg, $cfg, $url_arr),
             $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES));
-    }
-
-    /**
-     * a read only field value as system_form::show_field_labeled creates it, so that the expected
-     * text of a test does not repeat the label text and stays independent of the translation
-     *
-     * @param msg_id $ui_msg_code_id the message id of the field label
-     * @param string $value the expected field value
-     * @return string the expected text of the read only field
-     */
-    private function labeled(msg_id $ui_msg_code_id, string $value): string
-    {
-        global $mtr;
-        return $mtr->txt($ui_msg_code_id) . def::FALLBACK_LABEL_SEPARATOR . $value;
     }
 
 }

@@ -7,10 +7,6 @@ add the missing db fields to the view add and edit views: a language selection (
 
 extend the view default view (view_default, which shows the name with the type, share and protection in the title subtitle plus the description) with the style, the list of linked components and the usage e.g. the terms that use it as their default view; the style needs the style_id api mapping in web/view/view.php first, which the frontend view does not carry yet
 
-### component
-
-extend the component default view (component_default, which shows the name with the type in the title subtitle plus the description) with the style, the row and column phrases and the views that use it
-
 ### view link
 
 add the missing db field to the view link add and edit views: the description field (a user changeable term_view db field); additionally the forms show fields without a term_view db column: a view style select in both forms and a priority field in the add form resp. the component link order number field in the edit form, so either add the style and priority columns to the term_view table (see the priority TODO in term_view.php and form_field_view_link_priority) or remove these form fields, and use the same priority component in the add and the edit form
@@ -18,8 +14,6 @@ add the missing db field to the view link add and edit views: the description fi
 ### formula link
 
 the formula link add and edit views show a description field, but the formula_link table has no description column; either add the description column to the formula_link table or remove the description field from both forms
-
-the label of the component link order number and of the view relation start position is the same msg_id FORM_FIELD_COMPONENT_LINK, so both fields are labelled 'Component link' instead of naming the field; give each its own msg_id with en/de translations
 
 the term_view (view link) has no priority or order column, so form_field_view_link_priority submits url_var::VIEW_TERM_LINK_PRIO with the fallback text 'prio missing' and no mapper reads it; this is the open decision of the 'view link' section above (add the column or remove the form field)
 

@@ -131,8 +131,9 @@ class view_ui_tests
         // view_default), so the api message of a view must carry the style id
         $test_name = 'the style of a view is sent to the frontend';
         $t->assert_true($test_name, $msk_filled->get_style_id() > 0);
-        $test_name = 'the style of a view is shown with its user-readable name';
-        $t->assert($test_name, $sfm->show_style($msk_filled), view_styles::COL_SM_4_NAME);
+        $test_name = 'the style of a view is shown with its user-readable name and its label';
+        $t->assert($test_name, $sfm->show_style($msk_filled),
+            $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_4_NAME));
         // a view without a style shows an empty text and never a php warning
         $test_name = 'a view without a style shows an empty text';
         $t->assert($test_name, $sfm->show_style($msk), '');
@@ -323,7 +324,7 @@ class view_ui_tests
         $t->subheader($ts . 'link fields');
 
         // the term view default page shows how the term is linked to the view (see base_views.json
-        // term_view_default); a term view has no order number yet (see system_form::show_order_nbr)
+        // term_view_default); a term view has no order number yet (see system_form::order_nbr)
         // the default type is never sent to the frontend (see sandbox_link::api_json_array), so
         // like the style of a component the field stays empty as long as the default applies
         $test_name = 'the term view page shows no link type for the default type';
@@ -336,7 +337,8 @@ class view_ui_tests
         $trm_msk_sel->set_predicate(view_link_types::SELECTED_WORD);
         $trm_msk_sel_ui = new term_view_ui($trm_msk_sel->api_json(
             [api_types::TEST_MODE, api_types::INCL_RELATED]));
-        $t->assert($test_name, $sfm->show_link_type($trm_msk_sel_ui), view_link_types::SELECTED_WORD_NAME);
+        $t->assert($test_name, $sfm->show_link_type($trm_msk_sel_ui),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, view_link_types::SELECTED_WORD_NAME));
 
         // the view relation default page additionally shows where in the parent view the
         // components of the child view are added (see base_views.json view_relation_default)
@@ -347,10 +349,12 @@ class view_ui_tests
         $mrl_del->set_relation_type(view_relation_types::REMOVE);
         $mrl_del_ui = new view_relation_ui($mrl_del->api_json(
             [api_types::TEST_MODE, api_types::INCL_RELATED]));
-        $t->assert($test_name, $sfm->show_link_type($mrl_del_ui), view_relation_types::REMOVE_NAME);
+        $t->assert($test_name, $sfm->show_link_type($mrl_del_ui),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, view_relation_types::REMOVE_NAME));
 
         $test_name = 'the view relation page shows the start position';
-        $t->assert($test_name, $sfm->show_start_pos($mrl), (string)$t_msk->view_relation()->start_pos);
+        $t->assert($test_name, $sfm->show_start_pos($mrl),
+            $t->labeled(msg_id::SHOW_FIELD_START_POS, (string)$t_msk->view_relation()->start_pos));
         $test_name = 'a fresh view relation shows no start position';
         $t->assert($test_name, $sfm->show_start_pos($mrl_new), '');
 

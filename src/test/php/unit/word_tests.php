@@ -59,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -446,7 +447,11 @@ class word_tests
         $t->assert_true($test_name, $cfg->class_to_type_list(word_ui::class) === $cfg->phr_typ);
         $test_name = 'formula returns the formula type list';
         $t->assert_true($test_name, $cfg->class_to_type_list(formula::class) === $cfg->frm_typ);
-        // a class without a type list returns null and logs an error on purpose;
+        // the page class of an object extends the object class, so it must find the same type
+        // list, e.g. so that the component page can show the component type in its subtitle
+        $test_name = 'the component page class returns the component type list';
+        $t->assert_true($test_name, $cfg->class_to_type_list(component_exe::class) === $cfg->cmp_typ);
+        // a class without a type list returns null, which is the normal case e.g. for a link
         $test_name = 'type_lists->class_to_type_list returns null for a class without a type list';
         $t->assert_true($test_name, $cfg->class_to_type_list('class_without_a_type_list') === null);
 

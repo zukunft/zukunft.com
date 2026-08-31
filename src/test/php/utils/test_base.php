@@ -142,6 +142,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -956,6 +957,21 @@ class test_base
             $result = $haystack;
         }
         return $this->assert($msg, $result, $needle, $exe_max_time, $comment);
+    }
+
+    /**
+     * a read only field value as system_form::show_field_labeled creates it e.g. 'Plural: are',
+     * so that the expected text of a test does not repeat the label text and stays independent
+     * of the translation
+     *
+     * @param msg_id $ui_msg_code_id the message id of the field label
+     * @param string $value the expected field value behind the label
+     * @return string the expected text of the read only field
+     */
+    function labeled(msg_id $ui_msg_code_id, string $value): string
+    {
+        global $mtr;
+        return $mtr->txt($ui_msg_code_id) . def_shared::FALLBACK_LABEL_SEPARATOR . $value;
     }
 
     /**

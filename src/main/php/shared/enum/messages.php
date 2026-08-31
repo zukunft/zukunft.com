@@ -2030,7 +2030,6 @@ enum messages: string
 
     // view fields
     case FORM_FIELD_VIEW_TERM_LINK_PRIO = 'form_field_view_term_link_prio';
-    case FORM_FIELD_COMPONENT_LINK = 'form_field_component_link';
 
     // export fields
     case FORM_FIELD_SELECTION_NAME = 'system_form_selection_name';
@@ -2132,6 +2131,12 @@ enum messages: string
     // access select fields
     case FORM_SELECT_SHARE_TYPE = 'form_select_share';
     case FORM_SELECT_PROTECTION_TYPE = 'form_select_protection';
+
+    // labels of read only page fields whose component serves several object types, so that the
+    // label of one matching form field cannot be reused (see system_form::show_field_labeled)
+    case SHOW_FIELD_LINK_TYPE = 'show_field_link_type';
+    case SHOW_FIELD_ORDER_NBR = 'show_field_order_nbr';
+    case SHOW_FIELD_START_POS = 'show_field_start_pos';
 
     // TODO review
     case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';

@@ -283,13 +283,15 @@ class formula_ui_tests
         $t->subheader($ts . 'link fields');
 
         // the fields of the formula link default page (see base_views.json)
-        $test_name = 'the link type of a formula link is shown with its user-readable name';
-        $t->assert($test_name, $sfm->show_link_type($lnk), formula_link_types::TIME_PERIOD_NAME);
+        $test_name = 'the link type of a formula link is shown with its user-readable name and its label';
+        $t->assert($test_name, $sfm->show_link_type($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, formula_link_types::TIME_PERIOD_NAME));
         $test_name = 'a formula link without a type shows an empty text';
         $t->assert($test_name, $sfm->show_link_type($lnk_new), '');
 
-        $test_name = 'the order number of a formula link is shown';
-        $t->assert($test_name, $sfm->show_order_nbr($lnk), (string)test_const::FORMULA_LINK_ORDER_NBR);
+        $test_name = 'the order number of a formula link is shown with its label';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)test_const::FORMULA_LINK_ORDER_NBR));
         $test_name = 'a formula link without an order number shows an empty text';
         $t->assert($test_name, $sfm->show_order_nbr($lnk_new), '');
 
@@ -301,9 +303,10 @@ class formula_ui_tests
             url_var::FORMULA_LINK_PRIO => (string)test_const::FORMULA_LINK_ORDER_NBR,
             url_var::OWNER => users::SYSTEM_TEST_NAME
         ], $msg, $ui_sys);
-        $t->assert($test_name, $sfm->show_link_type($lnk_fld_url), formula_link_types::TIME_PERIOD_NAME);
+        $t->assert($test_name, $sfm->show_link_type($lnk_fld_url),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, formula_link_types::TIME_PERIOD_NAME));
         $t->assert($test_name . ' and the order number', $sfm->show_order_nbr($lnk_fld_url),
-            (string)test_const::FORMULA_LINK_ORDER_NBR);
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)test_const::FORMULA_LINK_ORDER_NBR));
 
         $test_name = 'the owner of a formula link is shown';
         $t->assert($test_name, $sfm->show_owner($lnk_fld_url), users::SYSTEM_TEST_NAME);

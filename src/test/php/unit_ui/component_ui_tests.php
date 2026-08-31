@@ -141,6 +141,11 @@ class component_ui_tests
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::COMPONENT_EDIT_ID);
         $test_name = 'the component title has a subtitle for the type, share and protection';
         $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+        // the component page is rendered by component_exe, which extends component, so the type
+        // list is found for the page class as well (see type_lists::class_to_type_list)
+        $test_name = 'the component subtitle names the component type';
+        $t->assert_text_contains($test_name, $ttl_html,
+            $ui_sys->typ_lst_cache->cmp_typ->name($cmp_filled->type_id($msg)));
         // a component without a type shows no empty subtitle brackets
         $test_name = 'a component without a type shows no subtitle';
         $cmp_plain = new component($t_cmp->component_add()->api_json());
@@ -152,9 +157,11 @@ class component_ui_tests
 
         // the component default page shows the style, the owner, the calculation formula and the
         // three layout phrases (see base_views.json component_default); the names are resolved
-        // from the request caches, because the page url only carries the ids
-        $test_name = 'the style of a component is shown with its user-readable name';
-        $t->assert($test_name, $sfm->show_style($cmp_filled), view_styles::COL_SM_4_NAME);
+        // from the request caches, because the page url only carries the ids; the style and the
+        // three layout phrases stand below each other, so each carries the label of its form field
+        $test_name = 'the style of a component is shown with its user-readable name and its label';
+        $t->assert($test_name, $sfm->show_style($cmp_filled),
+            $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_4_NAME));
         $test_name = 'a component without a style shows an empty text';
         $t->assert($test_name, $sfm->show_style($cmp_plain), '');
 
@@ -172,12 +179,15 @@ class component_ui_tests
         $test_name = 'a component without a formula shows an empty text';
         $t->assert($test_name, $sfm->show_formula($cmp_plain), '');
 
-        $test_name = 'the row phrase of a component is shown with a link';
-        $t->assert_text_contains($test_name, $sfm->show_row_phrase($cmp_filled, $ui_sys->phr_lst), words::YEAR_CAP);
-        $test_name = 'the column phrase of a component is shown with a link';
-        $t->assert_text_contains($test_name, $sfm->show_col_phrase($cmp_filled, $ui_sys->phr_lst), word_names::CANTON);
-        $test_name = 'the sub column phrase of a component is shown with a link';
-        $t->assert_text_contains($test_name, $sfm->show_col_sub_phrase($cmp_filled, $ui_sys->phr_lst), word_names::CITY);
+        $test_name = 'the row phrase of a component is shown with its label and a link';
+        $t->assert_text_order($test_name, $sfm->show_row_phrase($cmp_filled, $ui_sys->phr_lst),
+            $mtr->txt(msg_id::FORM_SELECT_PHRASE_ROW), words::YEAR_CAP);
+        $test_name = 'the column phrase of a component is shown with its label and a link';
+        $t->assert_text_order($test_name, $sfm->show_col_phrase($cmp_filled, $ui_sys->phr_lst),
+            $mtr->txt(msg_id::FORM_SELECT_PHRASE_COL), word_names::CANTON);
+        $test_name = 'the sub column phrase of a component is shown with its label and a link';
+        $t->assert_text_order($test_name, $sfm->show_col_sub_phrase($cmp_filled, $ui_sys->phr_lst),
+            $mtr->txt(msg_id::FORM_SELECT_PHRASE_COL_SUB), word_names::CITY);
         $test_name = 'a component without a row phrase shows an empty text';
         $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst), '');
 
@@ -321,13 +331,17 @@ class component_ui_tests
 
         // the component link default page shows the fields that the user can change on the link
         // itself: where the component is placed within the view, in which order, with which style
-        // and who owns the link (see base_views.json component_link_default)
+        // and who owns the link (see base_views.json component_link_default); the three fields
+        // stand below each other, so each carries its label
         $test_name = 'the component link page shows the position type as the link type';
-        $t->assert($test_name, $sfm->show_link_type($lnk), position_types::SIDE_NAME);
+        $t->assert($test_name, $sfm->show_link_type($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, position_types::SIDE_NAME));
         $test_name = 'the component link page shows the order number';
-        $t->assert($test_name, $sfm->show_order_nbr($lnk), (string)$lnk->order_nbr);
+        $t->assert($test_name, $sfm->show_order_nbr($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)$lnk->order_nbr));
         $test_name = 'the component link page shows the style that overwrites the component style';
-        $t->assert($test_name, $sfm->show_style($lnk), view_styles::COL_SM_8_NAME);
+        $t->assert($test_name, $sfm->show_style($lnk),
+            $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_8_NAME));
 
         // a fresh link has no position type and no style of its own, so the fields stay empty
         // instead of showing a wrong default
