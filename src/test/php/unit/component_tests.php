@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -193,6 +195,7 @@ class component_tests
 
         // the usage sub title shows the 'no usage' message if the usage matches the exception value
         global $mtr;
+        $lib = new library();
         $test_name = 'the usage sub title shows the no usage message if the usage is zero';
         $page = new system_page();
         $sub_title = $page->system_sub_tile_var(
@@ -202,6 +205,14 @@ class component_tests
         $sub_title = $page->system_sub_tile_var(
             msg_id::FORM_SUB_TITLE_USAGE, 3, msg_id::FORM_SUB_TITLE_VAR_USAGE, 0, msg_id::FORM_SUB_TITLE_NO_USAGE);
         $t->assert_false($test_name, str_contains($sub_title, $mtr->txt(msg_id::FORM_SUB_TITLE_NO_USAGE)));
+        $t->assert_text_contains($test_name . ' in the plural', $sub_title,
+            $lib->msg_var_replace(msg_id::SYS_MSG_USAGE->value, msg_id::VAR_USAGE, 3));
+        // a single usage needs the singular, because "Used 1 times" is wrong
+        $test_name = 'the usage sub title shows the singular if the object is used once';
+        $sub_title = $page->system_sub_tile_var(
+            msg_id::FORM_SUB_TITLE_USAGE, 1, msg_id::FORM_SUB_TITLE_VAR_USAGE, 0, msg_id::FORM_SUB_TITLE_NO_USAGE);
+        $t->assert_text_contains($test_name, $sub_title,
+            $lib->msg_var_replace(msg_id::SYS_MSG_USAGE_ONE->value, msg_id::VAR_USAGE, 1));
 
         $t->subheader($ts . 'component frontend');
         $t->assert_api_to_ui($cmp, new component_ui());

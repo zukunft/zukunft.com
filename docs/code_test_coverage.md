@@ -3197,7 +3197,7 @@ so same-named functions of several classes share their test calls
     \-- json_merge_str - 0 unit test calls
     \-- key_num_sort - 0 unit test calls
     \-- lst_not_in - 0 unit test calls
-    \-- msg_var_replace - 0 unit test calls
+    \-- msg_var_replace - 1 unit test calls
     \-- msg_var_text - 0 unit test calls
     \-- not_msg - 0 unit test calls
     \-- php_class_from_code - 0 unit test calls

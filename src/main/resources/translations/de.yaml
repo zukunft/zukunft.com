@@ -108,7 +108,7 @@ messages:
   info_view_has_no_components: "diese Ansicht hat keine Komponenten"
   info_not_used_in_views: "in keiner Ansicht verwendet"
   system_sub_title_components: "Komponenten"
-  system_sub_title_no_usage: "Nicht verwendet"
+  system_sub_title_no_usage: "Noch nicht verwendet"
   system_sub_title_my: "Meine"
   system_sub_title_others: "Andere"
   others_tbl_user: "Benutzer"

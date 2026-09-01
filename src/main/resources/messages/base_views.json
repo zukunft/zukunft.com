@@ -1255,14 +1255,18 @@
         },
         {
           "position": "5",
-          "name": "system sub title components"
+          "name": "system sub title usage number"
         },
         {
           "position": "6",
-          "name": "view components"
+          "name": "system sub title components"
         },
         {
           "position": "7",
+          "name": "view components"
+        },
+        {
+          "position": "8",
           "name": "view page tab box"
         }
       ]

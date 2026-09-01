@@ -1607,6 +1607,11 @@ enum messages: string
         . self::VAR_START . self::VAR_USAGE . self::VAR_END
         . ' times';
 
+    // the singular of SYS_MSG_USAGE, because "Used 1 times" is wrong
+    case SYS_MSG_USAGE_ONE = 'Used '
+        . self::VAR_START . self::VAR_USAGE . self::VAR_END
+        . ' time';
+
 
     case JOB_FORMULA_MISSING = 'Job '
         . self::VAR_START . self::VAR_ID . self::VAR_END

@@ -57,7 +57,7 @@ messages:
   form_title_confirm_del: "Confirm adding"
   system_sub_title_usage: "Usage"
   system_sub_title_value_usage: "Used z$VarUsage$z times"
-  system_sub_title_no_usage: "Not used"
+  system_sub_title_no_usage: "Not yet used"
   system_sub_title_triples: "used for"
   system_sub_title_components: "Components"
   system_sub_title_description: "Description"

@@ -1,10 +1,6 @@
 
 # pending - list of planned llm prompts with prio 1
 
-### view
-
-extend the view default view (view_default, which shows the name with the type, share and protection in the title subtitle plus the description) with the style, the list of linked components and the usage e.g. the terms that use it as their default view; the style needs the style_id api mapping in web/view/view.php first, which the frontend view does not carry yet
-
 ### view link
 
 add the missing db field to the view link add and edit views: the description field (a user changeable term_view db field); additionally the forms show fields without a term_view db column: a view style select in both forms and a priority field in the add form resp. the component link order number field in the edit form, so either add the style and priority columns to the term_view table (see the priority TODO in term_view.php and form_field_view_link_priority) or remove these form fields, and use the same priority component in the add and the edit form
