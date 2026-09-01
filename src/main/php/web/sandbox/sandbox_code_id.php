@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -42,6 +43,7 @@ include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -59,6 +61,29 @@ class sandbox_code_id extends sandbox_typed
     /*
      * construct and map
      */
+
+    /**
+     * set the vars of this object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $msg, $dto);
+        // only set when posted, because the code id field is only shown to a user whose
+        // profile may change it, so a form without the field must keep the loaded code id;
+        // an empty submitted field clears it (a not permitted change is refused by input_valid)
+        if (array_key_exists(url_var::CODE_ID, $url_array)) {
+            if ($url_array[url_var::CODE_ID] != '') {
+                $this->code_id = $url_array[url_var::CODE_ID];
+            } else {
+                $this->code_id = null;
+            }
+        }
+        return $msg;
+    }
 
     /**
      * set the vars of this object bases on the api json array

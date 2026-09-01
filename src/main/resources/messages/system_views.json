@@ -4497,36 +4497,40 @@
         },
         {
           "position": "7",
-          "name": "system form select view style"
+          "name": "system form field code id"
         },
         {
           "position": "8",
+          "name": "system form select view style"
+        },
+        {
+          "position": "9",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system formatter row right"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system form button cancel"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "system form button save"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system formatter row end"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system form end"
         }
       ]
@@ -4566,37 +4570,54 @@
         },
         {
           "position": "7",
-          "name": "system form select view style"
+          "name": "system form field code id"
         },
         {
           "position": "8",
+          "name": "system form select view style"
+        },
+        {
+          "position": "9",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system formatter row right"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system form button cancel"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "system form button save"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system formatter row end"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system form end"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "17",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "18",
+          "name": "system formatter row end"
         }
       ]
     },

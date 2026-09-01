@@ -216,17 +216,11 @@ class component extends sandbox_code_id
         if (array_key_exists(url_var::FORMULA, $url_array)) {
             $this->formula_id = $url_array[url_var::FORMULA];
         }
-        // the code links posted by the component form of a system or developer user;
+        // the ui message links posted by the component form of a system or developer user;
         // an empty submitted field clears the link, a missing field keeps the loaded one
-        // (the backend refuses a change of a not permitted user)
+        // (the backend refuses a change of a not permitted user); the code id itself is
+        // mapped by the parent, because every sandbox_code_id object has one
         global $mtr;
-        if (array_key_exists(url_var::CODE_ID, $url_array)) {
-            if ($url_array[url_var::CODE_ID] != '') {
-                $this->code_id = $url_array[url_var::CODE_ID];
-            } else {
-                $this->code_id = null;
-            }
-        }
         if (array_key_exists(url_var::UI_MSG_CODE_ID, $url_array)) {
             $this->ui_msg_code_id = $this->msg_id_or_null($url_array[url_var::UI_MSG_CODE_ID], $mtr);
         }

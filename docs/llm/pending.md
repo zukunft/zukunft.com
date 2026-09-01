@@ -3,8 +3,6 @@
 
 ### view
 
-add the missing db fields to the view add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the usage as display-only info in the edit view, because unlike the other edit views the view edit view has no usage section yet
-
 extend the view default view (view_default, which shows the name with the type, share and protection in the title subtitle plus the description) with the style, the list of linked components and the usage e.g. the terms that use it as their default view; the style needs the style_id api mapping in web/view/view.php first, which the frontend view does not carry yet
 
 ### view link

@@ -41,13 +41,18 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -141,6 +146,44 @@ class view_tests
         $msk = $t_msk->view_protected();
         $t->assert_api($msk);
         $t->assert_api_to_ui($msk, new view_ui());
+
+        // the view add and edit form has a code id field like the source and the component form,
+        // but a code id is only shown to an admin or a developer and only a developer gets the
+        // input field, because only a profile that passes the backend can_set_code_id may change it
+        global $ui_sys;
+        $form = new system_form();
+        $t_usr = new test_users($t);
+        // view_filled_included carries the code id, because a view without one renders an empty field
+        $msk_ui = new view_ui($t_msk->view_filled_included()->api_json());
+        // remember the session user so the changed global can be restored after the checks
+        $usr_keep = $ui_sys->usr ?? null;
+        $test_name = 'a developer sees the code id input field of a view';
+        $ui_sys->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_text_contains($test_name, $form->form_field_code_id($msk_ui),
+            'name="' . url_var::CODE_ID . '"');
+        $test_name = 'an admin sees the code id of a view as read only text';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $admin_html = $form->form_field_code_id($msk_ui);
+        $t->assert_text_contains($test_name, $admin_html, views::START_CODE);
+        $test_name = 'an admin gets no code id input field';
+        $t->assert_false($test_name, str_contains($admin_html, 'name="' . url_var::CODE_ID . '"'));
+        $test_name = 'a normal user does not see the code id of a view';
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $t->assert($test_name, $form->form_field_code_id($msk_ui), '');
+        $test_name = 'a test profile user does not see the code id, so the view snapshots stay clean';
+        $ui_sys->usr = new user_ui($t->usr1->api_json());
+        $t->assert($test_name, $form->form_field_code_id($msk_ui), '');
+        $ui_sys->usr = $usr_keep;
+
+        // the posted code id is mapped by web/sandbox/sandbox_code_id, so the view needs no
+        // mapper of its own, unlike the code id of the source and the component before
+        $test_name = 'the code id posted by the view form is mapped onto the view';
+        $msk_posted = new view_ui();
+        $msk_posted->url_mapper([url_var::CODE_ID => views::START_CODE], new user_message_ui());
+        $t->assert($test_name, $msk_posted->code_id, views::START_CODE);
+        $test_name = 'an emptied code id field of the view form clears the code id';
+        $msk_posted->url_mapper([url_var::CODE_ID => ''], new user_message_ui());
+        $t->assert_true($test_name, $msk_posted->code_id === null);
 
         $t->subheader($ts . 'with components api');
         $msk = $t_msk->view_with_components();

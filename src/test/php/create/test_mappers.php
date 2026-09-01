@@ -2031,6 +2031,7 @@ class test_mappers
         $url_array[] = [url_var::OWNER, $msk->get_user()->name()];
         $url_array[] = [url_var::SHARE, $msk->share_id()];
         $url_array[] = [url_var::PROTECTION, $msk->protection_id()];
+        $url_array[] = [url_var::USAGE, $msk->usage];
         return $url_array;
     }
 
