@@ -497,6 +497,8 @@ class test_views extends test_objects
         global $sys;
         $trm_msk = $this->term_view();
         $trm_msk->description = 'add usage and log of a word';
+        $trm_msk->order_nbr = test_const::TERM_VIEW_ORDER_NBR;
+        $trm_msk->set_style(view_styles::COL_SM_8, new user_message($this->env->usr1));
         $trm_msk->exclude();
         $trm_msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $trm_msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));

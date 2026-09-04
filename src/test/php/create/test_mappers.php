@@ -986,8 +986,12 @@ class test_mappers
             case component_types::FORM_SELECT_FORMULA_LINK_PRIORITY:
                 $obj = $t_frm->formula_link_filled();
                 break;
+            // the view link components are shown on view_link_add and view_link_edit,
+            // so they are rendered with a term view and never with a view relation
             case component_types::FORM_SELECT_TERM:
             case component_types::FORM_SELECT_TERMS:
+            case component_types::FORM_SELECT_VIEW_LINK_TYPE:
+            case component_types::FORM_SELECT_VIEW_LINK_PRIORITY:
                 $obj = $t_msk->term_view_filled();
                 break;
             case component_types::FORM_FIELD_SOURCE_GROUP:
@@ -1019,8 +1023,6 @@ class test_mappers
             case component_types::SYSTEM_FIELD_CHILD_VIEW:
             case component_types::SHOW_FIELD_RELATION_TYPE:
             case component_types::SHOW_FIELD_START_POS:
-            case component_types::FORM_SELECT_VIEW_LINK_TYPE:
-            case component_types::FORM_SELECT_VIEW_LINK_PRIORITY:
             case component_types::FORM_SELECT_VIEW_RELATION_TYPE:
             case component_types::FORM_FIELD_VIEW_RELATION_START_POS:
                 $obj = $t_msk->view_relation_filled();
@@ -1028,11 +1030,13 @@ class test_mappers
             case component_types::FORM_SELECT_COMPONENT:
             case component_types::FORM_SELECT_COMPONENTS:
             case component_types::FORM_SELECT_COMPONENT_TYPE:
-            case component_types::FORM_SELECT_COMPONENT_STYLE:
                 $obj = $t_cmp->component_filled();
                 break;
+            // the component style select is shown on component_link_add and component_link_edit,
+            // because the link style overwrites the style of the linked component
             case component_types::FORM_SELECT_COMPONENT_LINK_TYPE:
             case component_types::FORM_SELECT_COMPONENT_POS_TYPE:
+            case component_types::FORM_SELECT_COMPONENT_STYLE:
             case component_types::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER:
                 $obj = $t_cmp->component_link_filled();
                 break;
@@ -2054,6 +2058,8 @@ class test_mappers
         $url_array[] = [url_var::VIEW, $msk_lnk->get_view()->id()];
         $url_array[] = [url_var::TERM, $msk_lnk->term()->id()];
         $url_array[] = [url_var::DESCRIPTION, $msk_lnk->description];
+        $url_array[] = [url_var::VIEW_TERM_LINK_PRIO, $msk_lnk->order_nbr];
+        $url_array[] = [url_var::STYLE, $msk_lnk->get_style_id()];
         $url_array[] = [url_var::TYPE, $msk_lnk->predicate_id()];
         $url_array[] = [url_var::SHARE, $msk_lnk->share_id()];
         $url_array[] = [url_var::PROTECTION, $msk_lnk->protection_id()];

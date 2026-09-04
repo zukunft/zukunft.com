@@ -4,6 +4,8 @@ PREPARE term_view_norm_by_ids (bigint[]) AS
                view_link_type_id,
                view_id,
                description,
+               order_nbr,
+               view_style_id,
                excluded,
                share_type_id,
                protect_id,

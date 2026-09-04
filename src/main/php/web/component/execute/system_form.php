@@ -769,17 +769,20 @@ class system_form extends component
     }
 
     /**
-     * @param view|component|component_link|db_object $dbo the object whose display style is shown
+     * @param view|component|component_link|term_view|db_object $dbo the object whose display style is shown
      * @return string the labeled name of the display style (empty if no style is set)
      */
-    function show_style(view|component|component_link|db_object $dbo): string
+    function show_style(view|component|component_link|term_view|db_object $dbo): string
     {
         global $ui_sys;
         $result = '';
-        // guarded by class, because only a view, a component and a component link have a display
-        // style (the link style overwrites the style of the linked component) and a mis-assigned
+        // guarded by class, because only a view, a component and the two links have a display
+        // style (the link style overwrites the style of the linked object) and a mis-assigned
         // seed component must not stop the page with a fatal
-        if ($dbo instanceof view or $dbo instanceof component or $dbo instanceof component_link) {
+        if ($dbo instanceof view
+            or $dbo instanceof component
+            or $dbo instanceof component_link
+            or $dbo instanceof term_view) {
             $style_id = $dbo->get_style_id();
             if ($style_id != null) {
                 $result = $this->show_field_labeled(
@@ -1262,11 +1265,12 @@ class system_form extends component
     private function order_nbr(formula_link|component_link|term_view|db_object $dbo): string
     {
         $result = '';
-        // TODO Prio 2 add an order number to term_view, until then it shows an empty text
         // guarded by class so that a mis-assigned seed component cannot fatal
-        if ($dbo instanceof formula_link or $dbo instanceof component_link) {
+        if ($dbo instanceof formula_link
+            or $dbo instanceof component_link
+            or $dbo instanceof term_view) {
             $result = (string)($dbo->order_nbr ?? '');
-        } elseif (!$dbo instanceof term_view) {
+        } else {
             log_err($dbo::class . ' is not expected to have an order number');
         }
         return $result;
@@ -1724,16 +1728,19 @@ class system_form extends component
     }
 
     /**
+     * shows the current order number, so that saving the form does not drop it
+     * @param term_view|db_object $dbo the view link that is added or changed
      * @return string the html code to request the view link priority
      */
-    function form_field_view_link_priority(db_object $dbo): string
+    function form_field_view_link_priority(term_view|db_object $dbo): string
     {
         // TODO Prio 2 add priority to view relation
         $html = new html_base();
         return $html->form_field(
             url_var::VIEW_TERM_LINK_PRIO,
             msg_id::FORM_FIELD_VIEW_TERM_LINK_PRIO,
-            'prio missing'
+            $this->order_nbr($dbo),
+            html_base::INPUT_INT
         );
     }
 

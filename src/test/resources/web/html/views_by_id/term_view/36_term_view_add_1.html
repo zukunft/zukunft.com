@@ -493,13 +493,10 @@
                         View style
                     </label>
                     <select class="form-control" name="cs" form="view_link_add" id="cs_form_select_view_style" >
-                        <option value="0" selected>
-                            please select ...
-                        </option>
                         <option value="1"  >
                             1/3 width
                         </option>
-                        <option value="2"  >
+                        <option value="2"  selected >
                             2/3 width
                         </option>
                         <option value="3"  >
@@ -515,11 +512,22 @@
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="view_term_link">
-                            View term link
+                        <label for="priority">
+                            Priority
                         </label>
-                        <input class="form-control" type="text" name="dp" id="view_term_link" value="prio missing">
+                        <input class="form-control" type="text" name="dp" id="priority" value="4">
                     </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="description">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="o" id="description" value="add usage and log of a word">
+                    </div>
+                    <input type="hidden" name="8o" value="add usage and log of a word">
+                </div>
+                <div class="row col-md-12">
                     <div class="form-group col-md-4">
                         <label for="s_form_select_share_type">
                             Share

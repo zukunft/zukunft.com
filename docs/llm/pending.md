@@ -1,15 +1,19 @@
 
 # pending - list of planned llm prompts with prio 1
 
-### view link
-
-add the missing db field to the view link add and edit views: the description field (a user changeable term_view db field); additionally the forms show fields without a term_view db column: a view style select in both forms and a priority field in the add form resp. the component link order number field in the edit form, so either add the style and priority columns to the term_view table (see the priority TODO in term_view.php and form_field_view_link_priority) or remove these form fields, and use the same priority component in the add and the edit form
-
 ### formula link
 
 the formula link add and edit views show a description field, but the formula_link table has no description column; either add the description column to the formula_link table or remove the description field from both forms
 
-the term_view (view link) has no priority or order column, so form_field_view_link_priority submits url_var::VIEW_TERM_LINK_PRIO with the fallback text 'prio missing' and no mapper reads it; this is the open decision of the 'view link' section above (add the column or remove the form field)
+in formula_link_add and formula_link_edit the formula link type select has the position_type 'side' directly after 'system form field description', but the description is shown with view_styles::COL_SM_12 and 'side' adds the component to the same row (only 'below' closes a row, see view_exe.php), so the select is added to an already full row and wraps; these two are the only add or edit views where a 'side' component follows the description, everywhere else the next component starts a new row, so change the position_type of the formula link type select to 'below'
+
+### ref
+
+in ref_add and ref_edit 'system form field url' has the position_type 'side' directly after 'system form select source', but form_field_url falls back to view_styles::COL_SM_12 if the component defines no style, which is the case here, so the url field is added to the row of the source select and wraps; this is the same overflow as in the formula link section above, only the other way round (there the full width field is followed by a 'side' component, here the full width field itself is the 'side' one), so either give the url component a style that fits beside the source select or change its position_type to 'below'; the full width form fields are description, url and doi
+
+### source
+
+source_add and source_edit show 'system form select view' on position 10, but the source has no default view: sources and user_sources have no view_id column (unlike words, where view_id is the default mask of the word), cfg/ref/source.php and source_db.php have no view field, web/ref/source.php url_mapper does not read url_var::VIEW and db_fld_to_url has no view entry; the selector of web/ref/source.php only filters the list to view_types::SOURCE and reads the generic view_id of web/sandbox/sandbox.php, which is never filled for a source, so the select always shows the list default and the selection is dropped when the form is saved; either add the view_id column to the source table or remove the component from both forms, the same decision that the view link has solved by adding the style column to the term_view table; note that ref_add and ref_edit do not show the component although web/ref/ref.php has the same selector
 
 ## workflows
 

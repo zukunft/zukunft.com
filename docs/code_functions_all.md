@@ -7767,6 +7767,8 @@
 \-- term_view
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/term_v
             iew.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be construct and map in /view/te
+            rm_view.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be construct and map in /view/
             term_view.php
     \-- api_array - section for function api_array not yet defined that it should be api in /view/term_view.php
@@ -7777,7 +7779,7 @@
     \-- view - section for function view not yet defined that it should be interface in /view/term_view.php
     \-- term_linked - section for function term_linked not yet defined that it should be interface in /view/term_view.ph
             p
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
+    \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
 \-- view
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /view/view.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be api in /view/view.php
@@ -8900,7 +8902,8 @@
     \-- show_name_in_formulas
         \-- system_form - @param verb|db_object $dbo the verb
     \-- show_style
-        \-- system_form - @param view|component|component_link|db_object $dbo the object whose display style is shown
+        \-- system_form - @param view|component|component_link|term_view|db_object $dbo the object whose display style i
+                s shown
     \-- show_formula
         \-- system_form - @param component|db_object $dbo the component whose calculation formula is shown
     \-- show_weight
@@ -8995,7 +8998,7 @@
     \-- form_field_formula_link_priority
         \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_field_view_link_priority
-        \-- system_form - @return string the html code to request the view link priority
+        \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_field_component_link_order_number
         \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_view_relation_pos

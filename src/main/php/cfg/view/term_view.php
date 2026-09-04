@@ -52,8 +52,10 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -73,6 +75,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -80,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -114,6 +118,11 @@ class term_view extends sandbox_link
     const string TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const string FLD_ID = 'term_view_id';
     const string FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+    // the order number is called priority in the frontend and the api
+    const string FLD_ORDER = fields::FLD_ORDER_NBR;
+    const string FLD_ORDER_COM = 'to set the priority of the views linked to one term';
+    const sql_par_type FLD_ORDER_SQL_TYP = sql_par_type::INT;
+    const string FLD_STYLE_COM = 'the display style of the view if it is shown for this term';
     // the names of the linked objects as the list query joins them; the suffix is the position
     // of the join, so both must match the join order of term_view_list::load_sql_by_ids
     const string FLD_VIEW_NAME_JOINED = view_fields::FLD_NAME . '1';
@@ -129,12 +138,20 @@ class term_view extends sandbox_link
     const array FLD_NAMES_USR = array(
         fields::FLD_DESCRIPTION
     );
+    // list of the user-specific numeric database field names
+    const array FLD_NAMES_NUM_USR = array(
+        self::FLD_ORDER,
+        fields::FLD_STYLE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
+    );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
-    // TODO Prio 2 add an order number like the formula link and the component link,
-    //      because the view link edit form already shows an order number field
     const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
+        self::FLD_ORDER,
+        fields::FLD_STYLE,
         fields::FLD_DESCRIPTION,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
@@ -148,11 +165,15 @@ class term_view extends sandbox_link
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const array FLD_LST_MUST_BUT_STD_ONLY = array(
+        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ORDER_COM],
+        [fields::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
+        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ORDER_COM],
+        [fields::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
@@ -167,6 +188,10 @@ class term_view extends sandbox_link
      */
 
     public ?string $description = null;
+    // to set the priority of the views linked to one term
+    public ?int $order_nbr = null;
+    // the style that overwrites the view style if the view is shown for this term
+    private ?type_object $style = null;
 
 
     /*
@@ -188,6 +213,8 @@ class term_view extends sandbox_link
         parent::reset($keep_user);
         $this->set_predicate_id(null);
         $this->description = null;
+        $this->order_nbr = null;
+        $this->style = null;
     }
 
     /**
@@ -218,6 +245,12 @@ class term_view extends sandbox_link
                 $this->set_term($trm);
                 $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
                 $this->description = $db_row[fields::FLD_DESCRIPTION];
+                if (key_exists(self::FLD_ORDER, $db_row)) {
+                    $this->order_nbr = $db_row[self::FLD_ORDER];
+                }
+                if (key_exists(fields::FLD_STYLE, $db_row)) {
+                    $this->set_style_by_id($db_row[fields::FLD_STYLE]);
+                }
                 // the list query joins the names of both linked objects, so that the link can
                 // name them e.g. in the change log; a load by id has no join and no names
                 if (array_key_exists(self::FLD_VIEW_NAME_JOINED, $db_row)) {
@@ -263,6 +296,13 @@ class term_view extends sandbox_link
         }
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
             $this->description = $api_json[json_fields::DESCRIPTION];
+        }
+        // priority is the api name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $api_json)) {
+            $this->order_nbr = $api_json[json_fields::PRIORITY];
+        }
+        if (array_key_exists(json_fields::STYLE, $api_json)) {
+            $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
 
         return $msg->is_ok();
@@ -364,6 +404,13 @@ class term_view extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
             $this->description = $in_ex_json[json_fields::DESCRIPTION];;
         }
+        // priority is the json name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $in_ex_json)) {
+            $this->order_nbr = $in_ex_json[json_fields::PRIORITY];
+        }
+        if (array_key_exists(json_fields::STYLE, $in_ex_json)) {
+            $this->set_style($in_ex_json[json_fields::STYLE], $msg);
+        }
 
         return $msg->is_ok();
     }
@@ -406,6 +453,13 @@ class term_view extends sandbox_link
 
         if ($this->description != null) {
             $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        // priority is the api name of the order_nbr db field
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+        if ($this->get_style_id() != null) {
+            $vars[json_fields::STYLE] = $this->get_style_id();
         }
 
         // a page request needs the names of the linked objects for the link title subtitle
@@ -513,6 +567,52 @@ class term_view extends sandbox_link
         }
     }
 
+    /**
+     * set the style of this link by the code id, which the im- and export uses
+     *
+     * @param string|null $code_id the code id of the display style
+     * @param user_message $msg to report a style code id that is not found
+     * @return void
+     */
+    function set_style(?string $code_id, user_message $msg): void
+    {
+        global $sys;
+        $this->style = null;
+        if ($code_id != null) {
+            if ($sys->typ_lst->msk_sty->has_code_id($code_id)) {
+                $this->style = $sys->typ_lst->msk_sty->get_by_code_id($code_id);
+            } else {
+                $msg->add(msg_id::VIEW_STYLE_NOT_FOUND, [
+                    msg_id::VAR_NAME => $code_id
+                ]);
+            }
+        }
+    }
+
+    /**
+     * set the style of this link by the database id, which the db and the api use
+     *
+     * @param int|null $style_id the database id of the display style
+     * @return void
+     */
+    function set_style_by_id(?int $style_id): void
+    {
+        global $sys;
+        if ($style_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $sys->typ_lst->msk_sty->get($style_id);
+        }
+    }
+
+    /**
+     * @return int|null the database id of the style or null if the view style should be used
+     */
+    function get_style_id(): ?int
+    {
+        return $this->style?->id();
+    }
+
 
     /*
      * info
@@ -534,6 +634,12 @@ class term_view extends sandbox_link
         parent::delta($std_obj, $result);
         if ($std_obj->description !== $this->description) {
             $result->description = $this->description;
+        }
+        if ($std_obj->order_nbr !== $this->order_nbr) {
+            $result->order_nbr = $this->order_nbr;
+        }
+        if ($std_obj->get_style_id() !== $this->get_style_id()) {
+            $result->set_style_by_id($this->get_style_id());
         }
         return $result;
     }
@@ -557,6 +663,12 @@ class term_view extends sandbox_link
         $msg = parent::fill($obj, $usr_req);
         if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
+        }
+        if ($this->order_nbr === null and $obj->order_nbr != null) {
+            $this->order_nbr = $obj->order_nbr;
+        }
+        if ($this->get_style_id() === null and $obj->get_style_id() != null) {
+            $this->set_style_by_id($obj->get_style_id());
         }
         return $msg;
     }
@@ -763,6 +875,14 @@ class term_view extends sandbox_link
         if ($this->description != null) {
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
+        // priority is the json name of the order_nbr db field
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+        // the export uses the code id of the style, because the database id can differ per pod
+        if ($this->get_style_id() != null) {
+            $vars[json_fields::STYLE] = $sys->typ_lst->msk_sty->code_id($this->get_style_id());
+        }
 
         return $vars;
     }
@@ -785,6 +905,8 @@ class term_view extends sandbox_link
             [
                 fields::FLD_DESCRIPTION,
                 view_link_type::FLD_ID,
+                self::FLD_ORDER,
+                fields::FLD_STYLE,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -848,6 +970,39 @@ class term_view extends sandbox_link
                 $this->predicate_id(),
                 $obj->predicate_id(),
                 $sys->typ_lst->msk_lnk_typ);
+        }
+
+        if ($obj->order_nbr !== $this->order_nbr) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_ORDER),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_ORDER,
+                $this->order_nbr,
+                self::FLD_ORDER_SQL_TYP,
+                $obj->order_nbr
+            );
+        }
+
+        if ($obj->get_style_id() !== $this->get_style_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_STYLE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_STYLE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_type_field(
+                fields::FLD_STYLE,
+                view_style::FLD_NAME,
+                $this->get_style_id(),
+                $obj->get_style_id(),
+                $sys->typ_lst->msk_sty
+            );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }

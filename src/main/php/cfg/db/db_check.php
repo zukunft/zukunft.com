@@ -36,6 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::DB . 'sql_field_type.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
@@ -52,6 +53,7 @@ include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_USER . 'user_type_list.php';
 include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -82,6 +84,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -498,7 +501,17 @@ class db_check
     function db_upgrade_0_0_4(sql_db $db_con, user_message $msg): string
     {
         $cfg = new config();
+        $lib = new library();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
+
+        // the priority and the style added to the view link
+        $trm_msk = $lib->class_to_name(term_view::class);
+        $trm_msk_usr = sql_db::USER_PREFIX . $trm_msk;
+        $result .= $db_con->add_column($trm_msk, term_view::FLD_ORDER, sql_field_type::INT->value, $msg);
+        $result .= $db_con->add_column($trm_msk_usr, term_view::FLD_ORDER, sql_field_type::INT->value, $msg);
+        $result .= $db_con->add_column($trm_msk, fields::FLD_STYLE, sql_field_type::INT_SMALL->value, $msg);
+        $result .= $db_con->add_column($trm_msk_usr, fields::FLD_STYLE, sql_field_type::INT_SMALL->value, $msg);
+
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.4 has failed';

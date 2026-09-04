@@ -53,6 +53,8 @@ class test_const
     const int FORMULA_LINK_ORDER_NBR = 2;
     // the order number logged as a change of the filled component link
     const int COMPONENT_LINK_ORDER_NBR = 3;
+    // the order number of the filled view link
+    const int TERM_VIEW_ORDER_NBR = 4;
     // the start position logged as a change of the filled view relation
     const int VIEW_RELATION_START_POS = 16;
     // impact used for unit testing

@@ -3877,6 +3877,8 @@ CREATE TABLE IF NOT EXISTS term_views
     view_id           bigint       NOT NULL,
     view_link_type_id smallint     NOT NULL DEFAULT 1 COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
     user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the term_view',
+    order_nbr         bigint   DEFAULT NULL COMMENT 'to set the priority of the views linked to one term',
+    view_style_id     smallint DEFAULT NULL COMMENT 'the display style of the view if it is shown for this term',
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -3902,6 +3904,8 @@ CREATE TABLE IF NOT EXISTS user_term_views
     term_view_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
     user_id           bigint       NOT NULL COMMENT 'the changer of the term_view',
     view_link_type_id smallint DEFAULT NULL,
+    order_nbr         bigint   DEFAULT NULL COMMENT 'to set the priority of the views linked to one term',
+    view_style_id     smallint DEFAULT NULL COMMENT 'the display style of the view if it is shown for this term',
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -6331,7 +6335,8 @@ ALTER TABLE term_views
     ADD KEY term_views_term_idx (term_id),
     ADD KEY term_views_view_idx (view_id),
     ADD KEY term_views_view_link_type_idx (view_link_type_id),
-    ADD KEY term_views_user_idx (user_id);
+    ADD KEY term_views_user_idx (user_id),
+    ADD KEY term_views_view_style_idx (view_style_id);
 
 --
 -- indexes for table user_term_views
@@ -6340,7 +6345,8 @@ ALTER TABLE term_views
 ALTER TABLE user_term_views
     ADD KEY user_term_views_term_view_idx (term_view_id),
     ADD KEY user_term_views_user_idx (user_id),
-    ADD KEY user_term_views_view_link_type_idx (view_link_type_id);
+    ADD KEY user_term_views_view_link_type_idx (view_link_type_id),
+    ADD KEY user_term_views_view_style_idx (view_style_id);
 
 -- --------------------------------------------------------
 
@@ -7487,7 +7493,8 @@ ALTER TABLE user_views
 ALTER TABLE term_views
     ADD CONSTRAINT term_views_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
-    ADD CONSTRAINT term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT term_views_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);
 
 --
 -- constraints for table user_term_views
@@ -7496,7 +7503,8 @@ ALTER TABLE term_views
 ALTER TABLE user_term_views
     ADD CONSTRAINT user_term_views_term_view_fk FOREIGN KEY (term_view_id) REFERENCES term_views (term_view_id),
     ADD CONSTRAINT user_term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+    ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
+    ADD CONSTRAINT user_term_views_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);
 
 -- --------------------------------------------------------
 

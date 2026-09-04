@@ -703,9 +703,10 @@ class component extends sandbox_code_id
 
     /**
      * create the HTML code to select a view style
+     * the style of this component is preselected if set, else the default style
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the phrase type
+     * @return string the html code to select the view style
      */
     function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
@@ -715,11 +716,11 @@ class component extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_type_id = $this->type_id($msg);
-        if ($used_type_id == null) {
-            $used_type_id = $typ_lst->msk_sty->default_id();
+        $used_style_id = $this->style_id;
+        if ($used_style_id == null) {
+            $used_style_id = $typ_lst->msk_sty->default_id();
         }
-        return $typ_lst->msk_sty->selector($form, $used_type_id);
+        return $typ_lst->msk_sty->selector($form, $used_style_id);
     }
 
     /**

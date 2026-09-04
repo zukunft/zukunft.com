@@ -191,6 +191,21 @@ class component_ui_tests
         $test_name = 'a component without a row phrase shows an empty text';
         $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst), '');
 
+        $t->subheader($ts . 'select');
+
+        // the component add and edit form preselects the style that the component has now, so that
+        // saving the form does not silently change it; the expected html is the same selector
+        // asked for the expected id, so the test does not depend on the html format
+        $sty_lst = $ui_sys->typ_lst_cache->msk_sty;
+        $test_name = 'the style selector preselects the style of the component';
+        $t->assert($test_name,
+            $cmp_filled->style_selector(views::COMPONENT_EDIT, $ui_sys->typ_lst_cache, $msg),
+            $sty_lst->selector(views::COMPONENT_EDIT, view_styles::COL_SM_4_ID));
+        $test_name = 'a component without a style preselects the default style';
+        $t->assert($test_name,
+            $cmp_plain->style_selector(views::COMPONENT_ADD, $ui_sys->typ_lst_cache, $msg),
+            $sty_lst->selector(views::COMPONENT_ADD, $sty_lst->default_id()));
+
         $t->subheader($ts . 'component views');
 
         // the component default page lists the views that use the component; the views come from

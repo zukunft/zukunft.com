@@ -897,3 +897,7 @@ change_field_id,change_field_name,table_id,description
 896,view_relation_type_id,110,
 897,doi,20,
 898,doi,21,
+899,order_nbr,89,
+900,order_nbr,91,
+901,view_style_id,89,
+902,view_style_id,91,
