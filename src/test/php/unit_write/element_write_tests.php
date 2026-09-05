@@ -55,7 +55,6 @@ class element_write_tests
         global $sys;
 
         // init
-        $back = 0;
         $t_db = new test_db_load($t);
         $msg = new user_message($t->usr1);
 

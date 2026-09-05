@@ -242,7 +242,7 @@ class json_fields
 
     // batch job fields
     const string TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
-    const string PRIORITY = 'priority'; // of the batch job
+    const string PRIORITY = 'priority'; // of the batch job and the api name of the order_nbr db field of the links
     const string TIME_START = 'start_time'; // e.g. the timestamp of a log entry
     const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry

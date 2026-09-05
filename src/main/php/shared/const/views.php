@@ -276,6 +276,7 @@ class views
     const int TRIPLE_ID = 92;
     const string SOURCE = 'source_default';
     const int SOURCE_ID = 93;
+    const string SOURCE_NAME = 'Source';
     const string REF = 'ref_default';
     const int REF_ID = 94;
     const string LANGUAGE = 'language_default';

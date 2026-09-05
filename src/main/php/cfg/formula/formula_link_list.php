@@ -95,6 +95,7 @@ class formula_link_list extends sandbox_link_list
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
         $sc->set_fields(array(formula_fields::FLD_ID, phrase::FLD_ID));
+        $sc->set_usr_fields(formula_link::FLD_NAMES_USR);
         $sc->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user-specific phrase with the same SQL statement
         $sc->set_join_fields(

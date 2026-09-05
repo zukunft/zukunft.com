@@ -86,6 +86,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -98,6 +99,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -120,6 +122,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -132,6 +135,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class source extends sandbox_code_id
 {
@@ -162,6 +166,8 @@ class source extends sandbox_code_id
     public ?string $url = null;
     // the digital object identifier of the source e.g. 10.5281/zenodo.19443909 used to create the url to doi.org
     public ?string $doi = null;
+    // the default view of this source; usually only the id is set, the name is loaded for the export
+    public ?view $view = null;
 
     // the views that can show this source; populated lazily by load_views_related() and only
     // emitted via api_json_array() under the INCL_RELATED flag, so the views tab of the default
@@ -199,6 +205,7 @@ class source extends sandbox_code_id
         parent::reset($keep_user);
         $this->url = null;
         $this->doi = null;
+        $this->view = null;
     }
 
     /**
@@ -226,6 +233,9 @@ class source extends sandbox_code_id
         if ($result) {
             $this->url = $db_row[fields::FLD_URL];
             $this->doi = $db_row[fields::FLD_DOI];
+            if (($db_row[fields::FLD_VIEW] ?? null) != null) {
+                $this->set_view_id($db_row[fields::FLD_VIEW]);
+            }
         }
         return $msg->is_ok();
     }
@@ -246,6 +256,11 @@ class source extends sandbox_code_id
         }
         if (array_key_exists(json_fields::DOI, $api_json)) {
             $this->doi = $api_json[json_fields::DOI];
+        }
+        // TODO Prio 1 review and try to simplify
+        // the api sends the id of the default view, the export the name
+        if (($api_json[json_fields::VIEW] ?? 0) != 0) {
+            $this->set_view_id($api_json[json_fields::VIEW]);
         }
 
         return $msg->is_ok();
@@ -272,6 +287,18 @@ class source extends sandbox_code_id
         }
         if (key_exists(json_fields::DOI, $in_ex_json)) {
             $this->doi = $in_ex_json[json_fields::DOI];
+        }
+        if (key_exists(json_fields::VIEW, $in_ex_json)) {
+            $msk_name = $in_ex_json[json_fields::VIEW];
+            $msk = $dto?->get_view_by_name($msk_name, $msg);
+            if ($msk == null) {
+                $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [
+                    msg_id::VAR_ID => $this->dsp_id(),
+                    msg_id::VAR_NAME => $msk_name
+                ]);
+            } else {
+                $this->view = $msk;
+            }
         }
         // json_fields::AUTHOR, PUBLISHER and PUBLISH_DATE are allowed in the import json, but
         // the source object has no field for them, see the TODO Prio 2 of json_fields::AUTHOR
@@ -302,6 +329,10 @@ class source extends sandbox_code_id
             $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::URL] = $this->url;
             $vars[json_fields::DOI] = $this->doi;
+            // the id of the default view, so that the edit form can preselect it
+            if ($this->get_view_id() > 0) {
+                $vars[json_fields::VIEW] = $this->get_view_id();
+            }
             // the views, changes and overwrites tabs of the source default page
             if ($typ_lst->incl_related()) {
                 if ($this->views_related == null and !$typ_lst->test_mode()) {
@@ -336,9 +367,9 @@ class source extends sandbox_code_id
 
     /**
      * load the views that can show this source into the in-memory views_related list so that
-     * api_json_array() can emit them under the INCL_RELATED flag; a source has no view of its
-     * own (the sources table has no view id), so the related views are all views of the source
-     * view type, which is what the views tab offers the user to switch to
+     * api_json_array() can emit them under the INCL_RELATED flag; the related views are all
+     * views of the source view type, which is what the views tab offers the user to switch to,
+     * independent of the default view of this source
      *
      * @param user_message $msg to collect any problem while loading the views
      * @return void
@@ -390,6 +421,15 @@ class source extends sandbox_code_id
         if ($this->doi <> '') {
             $vars[json_fields::DOI] = $this->doi;
         }
+        // the export names the default view, because the id differs between pods
+        if ($this->get_view_id() > 0) {
+            if ($this->view->name() == '' and $do_load) {
+                $this->reload_view($msg);
+            }
+            if ($this->view->name() != '') {
+                $vars[json_fields::VIEW] = $this->view->name();
+            }
+        }
 
         return $vars;
     }
@@ -416,6 +456,25 @@ class source extends sandbox_code_id
             return parent::set_type_by_name(
                 $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $msg);
         }
+    }
+
+    /**
+     * @param int $id the id of the default view that should be remembered
+     */
+    function set_view_id(int $id): void
+    {
+        if ($this->view == null) {
+            $this->view = new view($this->get_user());
+        }
+        $this->view->id = $id;
+    }
+
+    /**
+     * @return int the id of the default view for this source or zero if no view is preferred
+     */
+    function get_view_id(): int
+    {
+        return $this->view?->id() ?? 0;
     }
 
 
@@ -467,6 +526,19 @@ class source extends sandbox_code_id
             source_db::FLD_NAMES_USR,
             source_db::FLD_NAMES_NUM_USR
         );
+    }
+
+    /**
+     * load the default view by its id to get the name, which the row mapper does not read
+     * @param user_message $msg to collect the message if the view cannot be loaded
+     * @return void
+     */
+    private function reload_view(user_message $msg): void
+    {
+        $msk = new view($this->get_user());
+        if ($msk->load_by_id($this->get_view_id(), $msg)) {
+            $this->view = $msk;
+        }
     }
 
     /**
@@ -527,6 +599,11 @@ class source extends sandbox_code_id
                 $result = true;
             }
         }
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
+                $result = true;
+            }
+        }
         return $result;
     }
 
@@ -549,6 +626,9 @@ class source extends sandbox_code_id
         }
         if ($std_obj->doi !== $this->doi) {
             $result->doi = $this->doi;
+        }
+        if ($std_obj->get_view_id() !== $this->get_view_id()) {
+            $result->view = $this->view;
         }
         return $result;
     }
@@ -573,6 +653,9 @@ class source extends sandbox_code_id
         }
         if ($this->doi === null and $obj->doi != null) {
             $this->doi = $obj->doi;
+        }
+        if ($this->view === null and $obj->view != null) {
+            $this->view = $obj->view;
         }
         return $msg;
     }
@@ -729,6 +812,7 @@ class source extends sandbox_code_id
             parent::db_fields_all(),
             [
                 source_fields::FLD_TYPE,
+                fields::FLD_VIEW,
                 fields::FLD_URL,
                 fields::FLD_DOI,
             ],
@@ -770,6 +854,21 @@ class source extends sandbox_code_id
                 $this->type_id($msg),
                 type_object::FLD_ID_SQL_TYP,
                 $obj->type_id($msg)
+            );
+        }
+        if ($obj->get_view_id() !== $this->get_view_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_VIEW,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_VIEW),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                fields::FLD_VIEW,
+                view_fields::FLD_NAME,
+                $this->view,
+                $obj->view
             );
         }
         if ($obj->url !== $this->url) {

@@ -208,7 +208,12 @@ class system_page extends component
 
                 // TODO Prio 1 move to a general function
                 if ($msg_id == msg_id::FORM_SUB_TITLE_VAR_USAGE->value) {
-                    $msg_txt = msg_id::SYS_MSG_USAGE;
+                    // a single usage needs the singular, because "Used 1 times" is wrong
+                    if ($value_numeric === 1) {
+                        $msg_txt = msg_id::SYS_MSG_USAGE_ONE;
+                    } else {
+                        $msg_txt = msg_id::SYS_MSG_USAGE;
+                    }
                     $msg_txt = $lib->msg_var_replace(
                         $msg_txt->value,
                         msg_id::VAR_USAGE,

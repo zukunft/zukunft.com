@@ -103,9 +103,6 @@ class formula_list extends sandbox_list_named
     // array $lst are the loaded formula objects
     // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user-specific formulas
 
-    // TODO move to display object: in memory only fields
-    public ?string $back = null;         // the calling stack
-
 
     /*
      * construct and map

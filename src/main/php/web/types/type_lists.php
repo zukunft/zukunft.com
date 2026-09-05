@@ -36,11 +36,9 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use Zukunft\ZukunftCom\main\php\web\const\def;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::COMPONENT . 'component.php';
-//include_once html_paths::CONST . 'def.php';
 //include_once html_paths::FORMULA . 'formula.php';
 //include_once html_paths::REF . 'ref.php';
 //include_once html_paths::REF . 'source.php';
@@ -161,23 +159,23 @@ class type_lists
      * e.g. the phrase type list for a word or triple
      *
      * @param string $class the class name of the object whose type list is requested e.g. word::class
-     * @return type_list|null the matching type list or null with an error if the object has no type list
+     * @return type_list|null the matching type list or null if the object has no type list
      */
     function class_to_type_list(string $class): ?type_list
     {
-        if (in_array($class, def::TYPE_CLASSES)) {
-            return match ($class) {
-                word_ui::class, triple::class => $this->phr_typ,
-                source::class => $this->src_typ,
-                ref::class => $this->ref_typ,
-                formula::class => $this->frm_typ,
-                view::class => $this->msk_typ,
-                component::class => $this->cmp_typ,
-                default => $this->no_type_list($class),
-            };
-        } else {
-            return null;
-        }
+        // matched with is_a, because the class of the page that shows an object may extend the
+        // object class (e.g. component_exe extends component) and then names the same type list;
+        // '::class' is a compile time string, so this needs none of the object classes to be
+        // loaded, which the include list above cannot do without a circular include
+        return match (true) {
+            is_a($class, word_ui::class, true), is_a($class, triple::class, true) => $this->phr_typ,
+            is_a($class, source::class, true) => $this->src_typ,
+            is_a($class, ref::class, true) => $this->ref_typ,
+            is_a($class, formula::class, true) => $this->frm_typ,
+            is_a($class, view::class, true) => $this->msk_typ,
+            is_a($class, component::class, true) => $this->cmp_typ,
+            default => null,
+        };
     }
 
     /**
@@ -202,17 +200,6 @@ class type_lists
             default => null,
         };
         return $result;
-    }
-
-    /**
-     * log an error that the given object class does not have a type list and return null
-     * @param string $class the class name of the object that does not have a type list
-     * @return type_list|null always null
-     */
-    private function no_type_list(string $class): ?type_list
-    {
-        log_err('no type list defined for the class ' . $class);
-        return null;
     }
 
     /**

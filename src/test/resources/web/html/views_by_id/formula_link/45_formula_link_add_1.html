@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&amp;id=45&amp;9m=45&amp;9a=a&amp;9id=1&amp;9k=scale%20minute%20to%20sec%20to%20minute&amp;9y=2&amp;9p=100&amp;9f=1&amp;9fp=2&amp;9s=3&amp;9sp=2&amp;9z=0">
+                                    <a href="/http/view.php?m=31&amp;id=45&amp;9m=45&amp;9id=1">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&amp;9m=45&amp;9a=a&amp;9id=1&amp;9k=scale%20minute%20to%20sec%20to%20minute&amp;9y=2&amp;9p=100&amp;9f=1&amp;9fp=2&amp;9s=3&amp;9sp=2&amp;9z=0">
+                                    <a href="/http/view.php?m=30&amp;9m=45&amp;9id=1">
                                         add view
                                     </a>
                                 </li>
@@ -111,17 +111,17 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=61&amp;9m=45&amp;9a=a&amp;9id=1&amp;9k=scale%20minute%20to%20sec%20to%20minute&amp;9y=2&amp;9p=100&amp;9f=1&amp;9fp=2&amp;9s=3&amp;9sp=2&amp;9z=0">
+                                    <a href="/http/view.php?m=61&amp;9m=45&amp;9id=1">
                                         Log in
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=60&amp;9m=45&amp;9a=a&amp;9id=1&amp;9k=scale%20minute%20to%20sec%20to%20minute&amp;9y=2&amp;9p=100&amp;9f=1&amp;9fp=2&amp;9s=3&amp;9sp=2&amp;9z=0">
+                                    <a href="/http/view.php?m=60&amp;9m=45&amp;9id=1">
                                         Signup
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings?9m=45&amp;9a=a&amp;9id=1&amp;9k=scale%20minute%20to%20sec%20to%20minute&amp;9y=2&amp;9p=100&amp;9f=1&amp;9fp=2&amp;9s=3&amp;9sp=2&amp;9z=0">
+                                    <a href="/settings?9m=45&amp;9id=1">
                                         Settings
                                     </a>
                                 </li>
@@ -388,30 +388,21 @@
                         </option>
                     </datalist>
                 </div>
-                <div class="row col-md-12">
-                    <div class="form-group col-md-12">
-                        <label for="description">
-                            Description
-                        </label>
-                        <input class="form-control" type="text" name="o" id="description">
-                    </div>
-                    <input type="hidden" name="8o" value="">
-                    <div class="form-group col-md-4">
-                        <label for="ft_form_select_formula_link_type">
-                            Link type
-                        </label>
-                        <select class="form-control" name="ft" form="formula_link_add" id="ft_form_select_formula_link_type" >
-                            <option value="1"  >
-                                default
-                            </option>
-                            <option value="0"  >
-                                ---
-                            </option>
-                            <option value="2"  selected >
-                                time period based
-                            </option>
-                        </select>
-                    </div>
+                <div class="form-group col-md-4">
+                    <label for="ft_form_select_formula_link_type">
+                        Link type
+                    </label>
+                    <select class="form-control" name="ft" form="formula_link_add" id="ft_form_select_formula_link_type" >
+                        <option value="1"  >
+                            default
+                        </option>
+                        <option value="0"  >
+                            ---
+                        </option>
+                        <option value="2"  selected >
+                            time period based
+                        </option>
+                    </select>
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
@@ -420,6 +411,17 @@
                         </label>
                         <input class="form-control" type="text" name="fp" id="priority" value="2">
                     </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="description">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="o" id="description">
+                    </div>
+                    <input type="hidden" name="8o" value="">
+                </div>
+                <div class="row col-md-12">
                     <div class="form-group col-md-4">
                         <label for="s_form_select_share_type">
                             Share

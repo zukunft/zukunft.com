@@ -39,6 +39,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CREATE . 'test_links.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\create\test_links;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -117,6 +119,16 @@ class term_view_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the order number sets the priority of the views linked to one term
+        $lnk_reordered = $lnk->clone_all();
+        $lnk_reordered->order_nbr = 1;
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk);
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the style overwrites the style of the linked view
+        $lnk_styled = $lnk->clone_all();
+        $lnk_styled->set_style_by_id(view_styles::COL_SM_8_ID);
+        $t->assert_sql_update($sc, $lnk_styled, $lnk);
+        $t->assert_sql_update($sc, $lnk_styled, $lnk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'term_view sql delete');
         $t->assert_sql_delete($sc, $lnk);

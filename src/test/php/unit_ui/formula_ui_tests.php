@@ -283,15 +283,22 @@ class formula_ui_tests
         $t->subheader($ts . 'link fields');
 
         // the fields of the formula link default page (see base_views.json)
-        $test_name = 'the link type of a formula link is shown with its user-readable name';
-        $t->assert($test_name, $sfm->show_link_type($lnk), formula_link_types::TIME_PERIOD_NAME);
+        $test_name = 'the link type of a formula link is shown with its user-readable name and its label';
+        $t->assert($test_name, $sfm->show_link_type($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, formula_link_types::TIME_PERIOD_NAME));
         $test_name = 'a formula link without a type shows an empty text';
         $t->assert($test_name, $sfm->show_link_type($lnk_new), '');
 
-        $test_name = 'the order number of a formula link is shown';
-        $t->assert($test_name, $sfm->show_order_nbr($lnk), (string)test_const::FORMULA_LINK_ORDER_NBR);
+        $test_name = 'the order number of a formula link is shown with its label';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)test_const::FORMULA_LINK_ORDER_NBR));
         $test_name = 'a formula link without an order number shows an empty text';
         $t->assert($test_name, $sfm->show_order_nbr($lnk_new), '');
+
+        $test_name = 'the description of a formula link is shown';
+        $t->assert($test_name, $sfm->show_description($lnk), test_const::FORMULA_LINK_COM);
+        $test_name = 'a formula link without a description shows an empty text';
+        $t->assert($test_name, $sfm->show_description($lnk_new), '');
 
         // the same fields for a page requested by url instead of by api
         $test_name = 'the link type and the order number of a page url are shown';
@@ -299,11 +306,15 @@ class formula_ui_tests
         $lnk_fld_url->url_mapper([
             url_var::TYPE => (string)formula_link_types::TIME_PERIOD_ID,
             url_var::FORMULA_LINK_PRIO => (string)test_const::FORMULA_LINK_ORDER_NBR,
+            url_var::DESCRIPTION => test_const::FORMULA_LINK_COM,
             url_var::OWNER => users::SYSTEM_TEST_NAME
         ], $msg, $ui_sys);
-        $t->assert($test_name, $sfm->show_link_type($lnk_fld_url), formula_link_types::TIME_PERIOD_NAME);
+        $t->assert($test_name, $sfm->show_link_type($lnk_fld_url),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, formula_link_types::TIME_PERIOD_NAME));
         $t->assert($test_name . ' and the order number', $sfm->show_order_nbr($lnk_fld_url),
-            (string)test_const::FORMULA_LINK_ORDER_NBR);
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)test_const::FORMULA_LINK_ORDER_NBR));
+        $t->assert($test_name . ' and the description', $sfm->show_description($lnk_fld_url),
+            test_const::FORMULA_LINK_COM);
 
         $test_name = 'the owner of a formula link is shown';
         $t->assert($test_name, $sfm->show_owner($lnk_fld_url), users::SYSTEM_TEST_NAME);
@@ -316,12 +327,20 @@ class formula_ui_tests
             test_const::FORMULA_LINK_ORDER_NBR);
         $test_name = 'the page url of a formula link without an order number has no order number';
         $t->assert($test_name, $lnk_new->to_url_array($msg)[url_var::FORMULA_LINK_PRIO] ?? '', '');
+        $test_name = 'the page url of a formula link carries the description';
+        $t->assert($test_name, $lnk->to_url_array($msg)[url_var::DESCRIPTION] ?? '',
+            test_const::FORMULA_LINK_COM);
+        $test_name = 'the page url of a formula link without a description has no description';
+        $t->assert($test_name, $lnk_new->to_url_array($msg)[url_var::DESCRIPTION] ?? '', '');
 
         $test_name = 'the order number db field is mapped to its url var';
         $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_ORDER_NBR] ?? '',
             url_var::FORMULA_LINK_PRIO);
+        $test_name = 'the description db field is mapped to its url var';
+        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_DESCRIPTION] ?? '',
+            url_var::DESCRIPTION);
         $test_name = 'a db field that a formula link does not have has no url var';
-        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_DESCRIPTION] ?? '', '');
+        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_STYLE] ?? '', '');
 
         $t->subheader($ts . 'link tabs');
 

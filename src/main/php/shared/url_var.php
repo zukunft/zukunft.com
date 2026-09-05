@@ -325,6 +325,14 @@ class url_var
         self::DISPLAY_LIST_PAGE,
     ];
 
+    // the page vars where a zero is a value and not the "not set" default, so that
+    // page_url_array keeps them: a list size of zero is value_list::LIMIT_ALL, i.e. the user
+    // has expanded the list to every row, which a back link must repeat; for every other page
+    // var a zero names nothing (no view, no object, the first list page) and is dropped
+    const array PAGE_VARS_KEEP_ZERO = [
+        self::DISPLAY_LIST_SIZE,
+    ];
+
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
     // form) and must never be written to a log or reflected in a page; used to redact the post array
     // before it is logged in http/view.php (see without_secrets)

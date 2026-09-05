@@ -93,8 +93,13 @@ class values
 
     // list of values that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
+    // the two inhabitants values are written by value_write_tests; without them here only the
+    // in-memory test_cleanup::$test_val_ids removes them, so an aborted run leaves them in the
+    // database and the next read test finds them on the word default page of 'inhabitants'
     const array TEST_VALUES = array(
         [word_names::TEST_ADD_GROUP_PRIME],
+        [word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020],
+        [word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019],
     );
 
 }

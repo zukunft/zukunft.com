@@ -269,7 +269,7 @@ class triple extends sandbox_link_named
 
     // only used for the export object
     // name of the default view for this word
-    private ?view $view {
+    public ?view $view {
         set {
             $this->view = $value;
         }

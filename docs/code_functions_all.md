@@ -6078,10 +6078,6 @@
             onent.php
     \-- form_edit - section for function form_edit not yet defined that it should be to be replaced in /component/compon
             ent.php
-    \-- dsp_add - section for function dsp_add not yet defined that it should be to review in /component/component.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /component/component.php
-    \-- form_edit_new - section for function form_edit_new not yet defined that it should be to review in /component/com
-            ponent.php
     \-- html - section for function html not yet defined that it should be to review in /component/component.php
     \-- text - section for function text not yet defined that it should be to review in /component/component.php
     \-- word_name - section for function word_name not yet defined that it should be to review in /component/component.p
@@ -6576,10 +6572,6 @@
             formula.php
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php
-    \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /formula/formula.php
-    \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /formula/for
-            mula.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /formula/formula.php
     \-- is_special - section for function is_special is expected to be info in /formula/formula.php
     \-- dsp_used4words - section for function dsp_used4words not yet defined that it should be to review in /formula/for
             mula.php
@@ -6590,8 +6582,7 @@
             ew in /formula/formula.php
     \-- dsp_unlink_phr - section for function dsp_unlink_phr not yet defined that it should be to review in /formula/for
             mula.php
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper,
-            order of section to review has difference at dsp_edit should be before dsp_hist_links
+    \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be object vars in /formula/formula
@@ -7275,6 +7266,7 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /ref/source.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/source.php
     \-- api_array - section for function api_array not yet defined that it should be api in /ref/source.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be url in /ref/source.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /ref/source.php
     \-- name_link - section for function name_link not yet defined that it should be base in /ref/source.php
     \-- source_selector - section for function source_selector not yet defined that it should be select in /ref/source.p
@@ -7434,6 +7426,8 @@
             dbox.php
     \-- is_excluded - section for function is_excluded is expected to be info in /sandbox/sandbox.php
 \-- sandbox_code_id
+    \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
+            dbox_code_id.php
     \-- input_valid - section for function input_valid not yet defined that it should be construct and map in /sandbox/s
             andbox_code_id.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_code_id.php
@@ -7774,6 +7768,8 @@
 \-- term_view
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/term_v
             iew.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be construct and map in /view/te
+            rm_view.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be construct and map in /view/
             term_view.php
     \-- api_array - section for function api_array not yet defined that it should be api in /view/term_view.php
@@ -7784,7 +7780,7 @@
     \-- view - section for function view not yet defined that it should be interface in /view/term_view.php
     \-- term_linked - section for function term_linked not yet defined that it should be interface in /view/term_view.ph
             p
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
+    \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
 \-- view
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /view/view.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be api in /view/view.php
@@ -8147,13 +8143,6 @@
     \-- form_edit
         \-- component - HTML code to edit all component fields
 \-- to review
-    \-- dsp_add
-        \-- component - HTML code to edit all component fields
-    \-- dsp_edit
-        \-- component - HTML code to edit all word fields
-        \-- view_exe - HTML code to edit all word fields
-    \-- form_edit_new
-        \-- component - HTML code to edit all component fields
     \-- html
         \-- component - @returns string the html code to display this view component
     \-- text
@@ -8162,6 +8151,8 @@
         \-- component - @return string the name of a phrase and give the user the possibility to change the phrase name
     \-- btn_unlink
         \-- component - lists of all views where this component is used
+    \-- 1
+        \-- view_exe - HTML code to edit all word fields
     \-- dsp_hist
         \-- component - display the history of a view component
         \-- view_exe - display the history of a view
@@ -8912,7 +8903,8 @@
     \-- show_name_in_formulas
         \-- system_form - @param verb|db_object $dbo the verb
     \-- show_style
-        \-- system_form - @param view|component|component_link|db_object $dbo the object whose display style is shown
+        \-- system_form - @param view|component|component_link|term_view|db_object $dbo the object whose display style i
+                s shown
     \-- show_formula
         \-- system_form - @param component|db_object $dbo the component whose calculation formula is shown
     \-- show_weight
@@ -8958,11 +8950,12 @@
     \-- show_child_view
         \-- system_form - @param view_relation|db_object $dbo the object
     \-- show_link_type
-        \-- system_form - @param sandbox_link|db_object $dbo the link whose link type is shown
+        \-- system_form - the link type, the order number and the start position stand below each other on the link
     \-- show_start_pos
         \-- system_form - @param view_relation|db_object $dbo the view relation whose start position is shown
     \-- show_order_nbr
-        \-- system_form - used by the link default page and as the current value of the link form field
+        \-- system_form - @param formula_link|component_link|term_view|db_object $dbo the link whose order number is sho
+                wn
     \-- result
         \-- system_form - TODO Prio 1 fill with the correct field
     \-- used_as_text
@@ -9006,7 +8999,7 @@
     \-- form_field_formula_link_priority
         \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_field_view_link_priority
-        \-- system_form - @return string the html code to request the view link priority
+        \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_field_component_link_order_number
         \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_view_relation_pos
@@ -9159,11 +9152,11 @@
     \-- link_type
         \-- formula_link - @return type_object|null the formula link type object from the preloaded cache
     \-- get_description
-        \-- formula_link - TODO Prio 1 check if the formula description is needed
+        \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- formula_name
-        \-- formula_link - TODO Prio 1 check if the formula description is needed
+        \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- phrase_name
-        \-- formula_link - TODO Prio 1 check if the formula description is needed
+        \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- percent_decimals
         \-- config - 
     \-- dec_point
@@ -9208,7 +9201,8 @@
         \-- formula_link - TODO Prio 1 review and add else error message
 \-- url
     \-- to_url_array
-        \-- formula_link - @return array parent url array extended with the order number, without empty strings
+        \-- formula_link - @return array parent url array extended with the order number and the description,
+                 without empty strings
     \-- db_fld_to_url
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s

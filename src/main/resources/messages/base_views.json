@@ -1255,14 +1255,18 @@
         },
         {
           "position": "5",
-          "name": "system sub title components"
+          "name": "system sub title usage number"
         },
         {
           "position": "6",
-          "name": "view components"
+          "name": "system sub title components"
         },
         {
           "position": "7",
+          "name": "view components"
+        },
+        {
+          "position": "8",
           "name": "view page tab box"
         }
       ]
@@ -1339,10 +1343,14 @@
         },
         {
           "position": "4",
-          "name": "system show field owner"
+          "name": "system show field description"
         },
         {
           "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
           "name": "link tab box"
         }
       ]
@@ -1363,14 +1371,22 @@
         },
         {
           "position": "3",
-          "name": "system show field description"
+          "name": "system show field order number"
         },
         {
           "position": "4",
-          "name": "system show field owner"
+          "name": "system show field style"
         },
         {
           "position": "5",
+          "name": "system show field description"
+        },
+        {
+          "position": "6",
+          "name": "system show field owner"
+        },
+        {
+          "position": "7",
           "name": "link tab box"
         }
       ]

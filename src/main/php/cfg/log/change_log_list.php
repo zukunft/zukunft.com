@@ -931,20 +931,14 @@ class change_log_list extends list_db_read
         global $sys;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
-        $lib = new library();
-        $table_name = $lib->class_to_table($class);
-        $table_id = $sys->typ_lst->cng_tbl->id($table_name);
+        $table_id = $this->change_table_id($class);
+        $usr_table_id = $this->change_table_id($class, true);
         if ($field_name != '') {
             $table_field_name = $table_id . $field_name;
             $table_field_id = $sys->typ_lst->cng_fld->id($table_field_name);
         } else {
             $table_field_id = $table_id;
         }
-        // a change of a user sandbox row is logged to the user overlay table (e.g. user_words),
-        // so the all-changes query must select the changes of both tables,
-        // so that the test cleanup can remove the complete change log of a test row
-        // before deleting the row (see test_base::delete_change_log_of_obj); checked without auto-adding the table
-        $usr_table_id = $sys->typ_lst->cng_tbl->id(sql_db::TBL_USER_PREFIX . $table_name, false);
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
         if ($field_name == '' and $usr_table_id > 0) {
@@ -1055,12 +1049,45 @@ class change_log_list extends list_db_read
         if ($class == value::class) {
             $sc->add_where(group_fields::FLD_ID, $id);
         } else {
+            // a row id is unique only within a table, so without the table filter the changes of
+            // every object with the same id (the word, the triple, the view ... with this id)
+            // compete for the row limit and the changes of the requested object are cut off
+            // TODO replace 'l2' with a var or const
+            $tbl_ids = [$this->change_table_id($class)];
+            $usr_table_id = $this->change_table_id($class, true);
+            if ($usr_table_id > 0) {
+                $tbl_ids[] = $usr_table_id;
+            }
+            $sc->add_where(change_field::FLD_TABLE, $tbl_ids, sql_par_type::INT_LIST, 'l2');
             $sc->add_where(change_log::FLD_ROW_ID, $id);
         }
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * the change table id that logs the changes of an object of the given class: the table of the
+     * object or, because a user change is logged for the user overlay table (e.g. user_words for
+     * a word), the id of the overlay table; not every class has an overlay table, so the overlay
+     * id is not positive if the class has none (checked without auto-adding the table)
+     *
+     * @param string $class the class of the changed object e.g. word::class
+     * @param bool $usr_tbl true to get the id of the user overlay table instead of the object table
+     * @return int the change table id or not positive if the class has no user overlay table
+     */
+    private function change_table_id(string $class, bool $usr_tbl = false): int
+    {
+        global $sys;
+        $lib = new library();
+        $table_name = $lib->class_to_table($class);
+        if ($usr_tbl) {
+            $result = $sys->typ_lst->cng_tbl->id(sql_db::TBL_USER_PREFIX . $table_name, false);
+        } else {
+            $result = $sys->typ_lst->cng_tbl->id($table_name);
+        }
+        return $result;
     }
 
     /**

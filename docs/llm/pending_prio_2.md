@@ -8,6 +8,9 @@ add a quick value change modal box to change just the value
 
 if the value if updated use the frontend cache to update the results within the frontend cache and report the result updates to the backend
 
+## default views
+
+the $wrd->name_link(), $trp->name_link() or $prh->name_link() function returns at the moment a link to the word or triple default view, but it should lead to the selected page of the word / triple. E.g. for 'PV in Switzerland' the 'calculator' view should be used instead of the triple default view  
 
 ## after replacing the `$back` parameter by the url array of the calling page
 
@@ -16,21 +19,10 @@ url parameters of the calling page as `array $url_arr` and derives the `9`-prefi
 from it (`html_base::url_back` / `url_with_back` / `back_url_array`), the transitional bridge
 `url_arr_from_back` and the `back_trace` class are deleted, and
 `coding_rule_tests::php_web_no_back_param_tests` keeps `$back` and the literal `&back=` out
-of `web/`. what the conversion found and left open:
+of `web/`. a repo wide check finds no `$back` in `web/` and none in a live test any more;
+what is left sits in the backend and in commented out test code (see the last item).
+what the conversion found and left open:
 
-- **the back part is not reduced to the page vars**: `html_base::back_url_part` and
-  `back_url_array` prefix *every* key of the given array with `9`, although
-  `page_url_array` exists exactly for that reduction (its comment even names the compounds
-  to avoid) and only four call sites do it by hand (`frontend` ~431, `term` ~585, `value`
-  ~505, `system_form` ~495). so every link now carries the form state and the earlier
-  prefixes of the calling page: the regenerated snapshots hold 776 `99m=` (the previous back
-  part prefixed again), `98k=` / `98id=` / `98pf=` (the `8`-prefixed pre values prefixed
-  again), plus `9k`, `9o`, `9fe`, `9fx`, `9s`, `9sp`, `9y`, `9uu`, `9ui`, `9a` and `9z`, and
-  a single href reaches ~700 chars with the formula expression double url-encoded in it.
-  fix `back_url_part` and `back_url_array` to reduce with `page_url_array` first (then only
-  `9m`, `9id`, `9k`-list, `9pattern`, `9dls`, `9dlp` survive), remove the four manual
-  reductions and re-baseline: this touches nearly every snapshot again, so do it before the
-  next html review
 - check on the pages what the first working back links do: the cancel link of a form and
   `button::back` lead to the phrase default view (`m=110&id=<phrase>`) where the old code
   called `view.php?words=<id>`, `button::back([])` leads to the start page where the old code
@@ -81,12 +73,27 @@ of `web/`. what the conversion found and left open:
 - `value::dsp_edit` calls `dsp_time_selector`, `dsp_share` and `dsp_protection`, which name
   functions that exist nowhere in the frontend, so the mask is dead code until they are
   written - decide whether the value mask is rebuilt on the form components or `dsp_edit` is
-  removed (the backend `cfg/phrase/phrase.php::dsp_time_selector` that called an equally
-  missing `word::dsp_time_selector` is deleted)
-- `cfg/result/result_list.php::frm_upd_lst` has no caller yet; its `$back` was never a page
-  but the id of the term the update starts from and is `int $trm_id` now
+  removed, together with the backend `dsp_time_selector` of the last item
 - `page_url` and the back url builders are tested in `unit_ui/base_ui_tests` only, which the
   coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
+- the `$back` left outside `web/` after the conversion, all of it unreachable today:
+  - `cfg/phrase/phrase.php::dsp_time_selector($type, $form, $pos, $back, $msg)` is display
+    code in the backend that calls a `word::dsp_time_selector` existing in neither layer,
+    and its only callers are the equally missing frontend `phrase::dsp_time_selector` calls
+    of `value::dsp_edit` - it carries a `TODO Prio 1 review`, so decide it together with the
+    value mask above (move to the frontend with the url array or delete)
+  - the write only properties `cfg/system/sys_log_list.php::$back` and
+    `cfg/formula/formula_list.php::$back` ("the calling stack"): nothing reads them,
+    `formula_write_tests` ~663 is the only line that writes one - delete both with the write
+    or give them a reader
+  - the TODO of `cfg/word/word_list.php` (~10) "check the consistence usage of the parameter
+    $back" describes a parameter that no longer exists - drop the line when the file is
+    touched
+  - commented out test code still calls the retired `http/value_add.php` / `value_edit.php` /
+    `value_del.php` / `formula_add.php` endpoints with `?back=` (`value_ui_tests` ~296-319,
+    `formula_ui_tests` ~386-398, `test_word_display` ~174, `formula_write_tests` ~377-406,
+    `view_write_tests` ~107) and `base_ui_tests` ~558 keeps a `?words=1` target whose assert
+    is commented out - delete these blocks or rebuild them on the current views
 
 ## start page
 
@@ -99,7 +106,8 @@ make the formula column left aligned
 add link to result / value
 
 1. Three orphaned wf5 snapshots, one still showing the deprecated spreadsheet. The current change_triple spine is show → edit → back → edit → save → cancel → …, and assert_step appends every step to the path, so wf5_show_edit_save.html, wf5_show_edit_save_cancel.html and  
-   wf5_show_edit_save_confirmed.html cannot be produced any more — the back excursion now sits between edit and save. They were last written in 765d1647d, and the workflow folders have no unused-file cleanup (that only covers views_by_object/ and views_by_id/).
+   wf5_show_edit_save_confirmed.html cannot be produced any more — the back excursion now sits between edit and save. They were last written in 765d1647d, and the workflow folders have no unused-file cleanup (that only covers views_by_object/ and views_by_id/). the back part makes them easy to find now: after the page var reduction no
+   regenerated file carries a `9` param outside the page vars any more, while 191 files under workflow/ and workflow_write/ (177 of them _url.txt) still show the old form state and the `99…` compounds - so a file with such a param has not been written by the current run.
 
 wf5_show_edit_save_confirmed.html is the awkward one: it is titled Start view and renders the old fixed spreadsheet (Priority | Problem | Costs in trillion USD | Solution | Gain in billion htp, 31.5 / 23.8). That comes from web/html/sheet.php, which is 157 lines of        
 hardcoded rows whose only dispatch is commented out at component_exe.php:189 — dead code the spreadsheet deprecation was meant to reduce to a placeholder. Of the 17 start-view snapshots, 16 now show the new table and this stale one shows the deprecated sheet.
@@ -109,15 +117,26 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
 
 3. load_related_by_ids still has no coverage — the one function of the four that stayed untested, since it is a plain REST call with no seam.
 
-4. The more link carries z=0. The rendered tail is /http/view.php?m=1&z=0&dls=20. z is url_var::STEP, and the 0 is the default that url_mapper::url_to_standard() adds from STD_DEFAULT to every request. more_url() rebuilds the link from the full $url_array, so the default  
-   comes along. Harmless — step 0 is what the page gets anyway — but it makes the url longer than it needs to be and, more importantly, the same mechanism would carry form state (posted field values, 8-prefixed opening values) into the link on an edit page that shows such a  
-   table. html_base::page_url_array() exists for exactly this: it keeps only PAGE_VARS, which now include dls/dlp. Building the link from page_url_array($url_array) instead of $url_array would drop z=0 and the form state in one step. Not fixed, as you asked for review only.
+4. The more link carried z=0 (the STEP default that url_mapper::url_to_standard() adds to every request) and would have carried the form state of an edit page showing such a table, because more_url() rebuilt the link from the full $url_array; it uses
+   html_base::page_url_array() now, like the back part builders, so the tail is /http/view.php?m=1&dls=20 — the snapshots with a more link change accordingly.
 
 5. The corrected count assertion is unverified. The $rest derivation in phrase_ui_tests.php was written after the run that reported and 1 more vs and 17 more; it lints, but it has not been executed. The rest of that block (row count, dls=20, page 1 starting at poverty) was
    confirmed by the failing run's actual output.
 
 6. Scope note, not a defect. dlp is wired into the slicing and the url mapping, but no page renders prev/next links yet — the "all" version remains unpaged from the user's side. That is consistent with what was asked (the more link), and the frontend.md update says so.
 
+
+## view
+
+list the terms that use a view as their default view on the view default page (m=114), the same way the component default page lists the views that use the component ('system sub title views' plus 'component views'). Blocked by a missing reverse lookup: cfg/view/view.php has load_by_term (the view of a term) and add_term / del_term, but nothing loads the terms of a view; cfg/view/term_view_list.php has only load_by_ids, cfg/word/word_list.php has load_by_ids, load_by_grp_id and load_by_type but no view_id at all, and there is no web/view/term_view_list.php, so the frontend has no list class to render either. Add the backend loader (term_view_list::load_by_view resp. word_list / triple_list by default view), the api field of the view page request, the frontend list class, the component type with its executor entry and the component in base_views.json. The usage number was added to the view default page in 2026-09; the style and the component list were already there
+
+## view link
+
+the style selector of the frontend is copied four times: web/view/view_base.php, web/view/term_view.php (added with the term_view style column in 2026-09), web/component/component_link.php (component_style_selector) and web/component/component.php all have the same body - fall back to $ui_sys->typ_lst_cache, take the own style id, else the default of msk_sty. Push it to a common parent once the style member itself is shared; today web/view/view_base.php holds a protected style_id and the two link classes a private one, so there is nothing to pull up yet. That the copies drift is not theoretical: the one in web/component/component.php preselected with $this->type_id($msg), the component type, instead of the style id until 2026-09. The same duplication is on the cfg side, where cfg/view/view.php, cfg/component/component.php, cfg/component/component_link.php and cfg/view/term_view.php each repeat set_style / set_style_by_id / get_style_id (see the 'TODO Prio 1 change to style_id' in cfg/view/view.php)
+
+## language of a name
+
+add the language selection (language_id, preselected with the user language) to the add and edit views of the objects whose user table has a language: the word, the triple and the view (user_words, user_triples and user_views all have language_id in their primary key with the default 1). Blocked by the backend and by the user: neither the cfg nor the web sandbox hierarchy has a language member at all (a `grep -i language` over cfg/sandbox, cfg/word/word.php and cfg/view/view.php finds only the 'move plural to language forms' TODOs), the language column is not in the *_fields ALL_NAMES lists, cfg/user/user.php and web/user/user.php carry no language either, so there is nothing to preselect from, and url_var::LANGUAGE ('q') is the ui language of the request, not a field of the object. There is also no form select component for a language yet (only the admin language symbol field and the list of the language_select page). So a form field would post a value that no mapper reads and no save path writes. Add the language member to the sandbox hierarchy, the db field lists and the save path, plus the language of the user, then the selector component and the form entries; the code_id field and the usage of the view forms were added in 2026-08 (see the view section of pending.md)
 
 ## component
 
@@ -172,6 +191,10 @@ the value overwrites are now listed: a value change is never written to the chan
 so a user page load runs thirteen change log queries instead of one; if that becomes too slow, the alternative is one union query per group id type (prime, norm, big), which needs the same column count in every union arm and is why value_list::load_by_ids splits by type today
 
 a value is named by the phrases of its group, so change_log_list::load_row_names calls the new sandbox_list::load_names_related after load_by_ids, which value_list overrides with load_phrases; that is one extra query per listed value, so a list of many value changes is worth revisiting once value_list can load the phrases of all its groups with one query
+
+## test value and result leftovers survive an aborted write test run
+
+test_cleanup::cleanup_objects_ex_user() runs $t_wrd->cleanup() but has $t_val->cleanup(), $t_res->cleanup() and $t_grp->cleanup() commented out (since the function was added in de52d9c08), so the test words are deleted while the values and results that use them stay. After that the leftover row cannot be found by phrase names any more, because one of its phrases no longer exists, and only a database reset removes it. That is what makes a read test fail with extra rows on the word default page of 'inhabitants' (2026-09: the 987'654'321 of value_write_tests and the 0.79% result of the test increase formula assigned to 'System Test Word Percent'). The two value groups of value_write_tests are now in values::TEST_VALUES so the by-name cleanup covers them while the words still exist; the remaining step is to enable the value, result and group cleanup in cleanup_objects_ex_user before the word cleanup - they were switched off deliberately, so check first why
 
 ## code cleanup
 The cleanup deleted 14 snapshots and the blast radius is wider than the orphan case. delete_unused_files() removes every .html under views_by_object/ that this run did not write. That is correct for a full run, but a partial run — test_part.php, a single test class, or
@@ -810,13 +833,33 @@ the legacy controller http_old/view_del.php has been replaced by the view_del vi
 
 add an in-use check to the delete of a view: web/view/view.php has no input_valid override, so unlike web/word/word.php::input_valid (msg_id::DELETE_IN_USE via is_in_use) a view can be deleted even if it is still the default view of a word or a triple, or if components are still linked to it. Add the check to the frontend view object (and the matching negative test) so the user gets a warning instead of dangling references. The old controller did not check this either, so this is not a regression of the migration but a gap of both
 
+### component edit view (missing parts of the legacy web/component/component.php::dsp_edit)
+
+The following parts have no equivalent yet and block the removal (see the TODO Prio 0 at component.php:883).
+
+add a sample phrase context to the component edit view to simulate the result: dsp_edit carried the word it has been called for as a hidden 'word' field (component.php:875) and showed it in the title ('Edit the view component "<name>" (used for <word>)', component.php:861, with a ref_view link to the phrase page). The new view knows only the component id, so a component opened from a word page loses the word, and the preview (component_types::FORM_PREVIEW -> web/component/execute/system_page.php::preview, still a 'preview placeholder') has no phrase to render the component for. Add the phrase to the url resp. as a hidden field and use it for the title and the preview
+
+add the list of the views that use a component to the component edit view: dsp_edit showed it with component::linked_views (component.php:1024) as a table with one row per view (view::name_linked), an unlink button per row and an 'add new' button that reopened the edit mask with 'add_link=1&word=<id>' to link a further view. The component_edit view has no such component, and the 'system form linked views' component of component_add is not a replacement, because component_types::FORM_TABLE_LINKED_VIEWS resolves via system_form::form_table_linked_view to sandbox::view_selector, i.e. to a single dropdown to pick one view. Reuse the component_link views (views::COMPONENT_LINK_ADD_ID ff) for the link and the unlink step and add a test per step. The unlink button of the old function was a placeholder anyway, see the component::btn_unlink entry in the '$back parameter' section above
+
+add the change log to the component edit view: dsp_edit showed it with component::dsp_hist (component.php:1084) in a 'Changes' box with the fallback text 'Nothing changed yet.'. The component 'change log component' (component type change_log, code id change_log_component) is already defined in src/main/resources/messages/system_views.json but is used by no view, so it is enough to add it to the component_edit view together with the 'system sub title log' heading, the same way word_edit pairs the two
+
+add the link change log to the component edit view: dsp_edit showed it with component::dsp_hist_links (component.php:1106) in a 'Link changes' box with the fallback text 'No component have been added or removed yet.'. Unlike the change log this has no component at all: shared/types/component_types.php has no const and web/component/component_exe.php has no match entry for web/log/user_log_display::dsp_hist_links. Add the component type, the executor entry and the component in system_views.json. The same is missing for the view, the value and the formula, so add one component type that reads the object from the db_object of the view instead of one per class
+
+add a delete button to the component edit view: dsp_edit rendered it via dsp_form_end with url_back(views::COMPONENT_DEL_ID, ...) (component.php:899), the component_edit view ends with the cancel and the save button only. This is not only a missing button: the only other links to views::COMPONENT_DEL_ID are in view.php resp. view_exe.php::linked_components, which are dead as well (see the view edit view section above), so /http/view.php?m=35 has no live caller and a component cannot be deleted from the frontend at all
+
+remove web/component/component.php::dsp_edit, dsp_add, linked_views, btn_unlink, dsp_hist and dsp_hist_links once the parts above are part of the component_edit view; dsp_hist and dsp_hist_links of the component have no caller besides dsp_edit
+
 ### formula add view (missing parts of the retired http_old/formula_add.php)
 
-the legacy controller http_old/formula_add.php has been replaced by the formula_add view called via /http/view.php?m=24 (views::FORMULA_ADD_ID), which the 'add formula' button already uses (web/formula/formula.php::VIEW_ADD). The new form has all fields of the old controller (name, formula expression, description, formula type and the 'need all values' flag) plus the default view, the share and the protection type, and it saves through the confirm step. The old controller had no caller left in the program code, only in a commented out block of src/test/php/unit_ui/formula_ui_tests.php that calls the page of the productive server via file_get_contents. The following parts have no equivalent yet.
+the legacy controller http_old/formula_add.php has been replaced by the formula_add view called via /http/view.php?m=24 (views::FORMULA_ADD_ID). The new form has all fields of the old controller (name, formula expression, description, formula type and the 'need all values' flag) plus the latex expression, the default view, the share and the protection type, and it saves through the confirm step. The old controller had no caller left in the program code, only in a commented out block of src/test/php/unit_ui/formula_ui_tests.php that calls the page of the productive server via file_get_contents. The following parts have no equivalent yet.
+
+give the formula add view a caller: no page of the frontend links to /http/view.php?m=24 (checked over all html snapshots in src/test/resources/web/html/views_by_id), so a formula can currently only be added by typing the url. web/formula/formula.php sets VIEW_ADD_ID and inherits btn_add from web/sandbox/db_object.php, but nothing calls it, and the only 'add formula' button in the program code is in the dead formula::dsp_used4words (formula.php:982), which was reached through the retired controllers only. Add the button to the formula list of a word and of a triple (component 'formulas list word' -> web/component/execute/ui_list.php::formula_list, which today renders formula_list::name_link only) and let it carry the phrase of the calling page
 
 assign the new formula to a phrase while adding it, as the old controller did with the 'word' url parameter (formula::link_phrase_and_save after the save): a formula that is not assigned to any phrase is not shown anywhere, so today a formula added via /http/view.php?m=24 disappears for the user. Add the phrase selector to the formula add form, read it in web/formula/formula.php::url_mapper and save the formula link after the formula. The old check 'Word missing; Internal error, because a formula should always be linked to a word or a list of words.' belongs to this, but as a user warning of formula::input_valid, not as an internal error
 
 add the missing input checks to web/formula/formula.php::input_valid, which today does not exist, so only the empty name warning of sandbox_named::input_valid is shown: warn if the formula expression is empty ('Formula text missing; Please define how the calculation should be done.') and if the name is already used by a word, verb, triple or formula (the term namespace check of the old controller via formula::get_term and term::id_used_msg_text, see also the word add view section above)
+
+show the phrase the new formula is created for in the title of the formula add view: the old page opened with 'Add new formula for <word>' (web/formula/formula.php::dsp_edit at :831, using the word of the calling page), the new view has the fixed title 'Add a new formula'. This is part of the phrase assignment above: as long as the view does not know the phrase, neither the title nor the preselection of the phrase selector can show it
 
 remove the commented out block in src/test/php/unit_ui/formula_ui_tests.php that tests the retired formula_add.php and formula_edit.php pages of the productive server via file_get_contents('https://zukunft.com/...'); a unit test must never call an external server. Replace it with a page test of the formula add view (m=24) based on the local html snapshot
 
@@ -825,6 +868,8 @@ remove the commented out block in src/test/php/unit_ui/formula_ui_tests.php that
 the legacy controller http_old/formula_edit.php has been replaced by the formula_edit view called via /http/view.php?m=25 (views::FORMULA_EDIT_ID), which the 'change formula' button already uses (web/formula/formula.php::VIEW_EDIT). The new form has all fields of the old controller (name, formula expression, description, formula type and the 'need all values' flag) plus the default view, the share and the protection type, it shows the assigned words and triples, the results, the related formulas and the change log, and it saves through the confirm step. The old controller had no caller left in the program code, only in commented out blocks of src/test/php/unit_ui/formula_ui_tests.php and src/test/php/unit_write/formula_write_tests.php. What is missing is the maintenance of the phrase assignments.
 
 make the assigned words and triples of the formula edit view (m=25) changeable: today they are only shown as links. The old controller could link another phrase to the formula (url_var::LINK_PHRASE 'fl' -> formula::link_phrase_and_save), unlink a phrase (url_var::UNLINK_PHRASE -> formula::unlink_phrase) and show a phrase selector to pick the phrase to link ('add_link'). Add an unlink button per assigned phrase and one add button with a phrase selector, both writing through the standard confirm flow, and add a test per step. This is the same missing assignment as in the formula add view above, so solve both together
+
+restore the guard that a special formula may only be changed by an admin: the old page hid the expression field if formula::is_special (a formula like 'this' or 'next', whose result is hardcoded) and the user is no admin (web/formula/formula.php::dsp_edit at :869), the new form always shows it, because web/component/execute/system_form.php::form_formula_expression has no such check. Found while checking http_old/formula_add.php, which rendered its form with the same dsp_edit, but a new formula is never special, so this affects the edit view only
 
 after a formula has been changed the results that depend on it must be updated: the old controller had the trigger for it (formula::needs_res_upd -> assign_phr_lst, with the calc call already commented out). Check whether the backend save of a formula updates the depending results and if not, add the update and a test that a changed formula expression changes the result of an assigned phrase
 

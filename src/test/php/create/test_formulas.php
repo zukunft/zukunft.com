@@ -518,6 +518,7 @@ class test_formulas extends test_objects
     {
         global $sys;
         $lnk = $this->formula_link();
+        $lnk->description = test_const::FORMULA_LINK_COM;
         $lnk->exclude();
         $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));

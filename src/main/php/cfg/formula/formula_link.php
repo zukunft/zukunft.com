@@ -143,6 +143,7 @@ class formula_link extends sandbox_link
         user_db::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
+        fields::FLD_DESCRIPTION,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
         fields::FLD_PROTECT
@@ -151,6 +152,10 @@ class formula_link extends sandbox_link
     const array FLD_NAMES_LINK = array(
         formula_fields::FLD_ID,
         phrase::FLD_ID
+    );
+    // all text database field names that the user can change
+    const array FLD_NAMES_USR = array(
+        fields::FLD_DESCRIPTION
     );
     // all numeric database field names that the user can change
     const array FLD_NAMES_NUM_USR = array(
@@ -164,6 +169,7 @@ class formula_link extends sandbox_link
     const array ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
+        fields::FLD_DESCRIPTION,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
         fields::FLD_PROTECT
@@ -172,6 +178,7 @@ class formula_link extends sandbox_link
     const array FLD_LST_USER_CAN_CHANGE = array(
         [formula_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
@@ -191,6 +198,8 @@ class formula_link extends sandbox_link
 
     // database fields additional to the user sandbox_link fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
+    // why the formula applies to the phrase e.g. which time period the increase is for
+    public ?string $description = null;
 
 
     /*
@@ -224,6 +233,7 @@ class formula_link extends sandbox_link
         $this->reset_objects($usr);
 
         $this->order_nbr = null;
+        $this->description = null;
         $this->predicate_id = null;
     }
 
@@ -264,6 +274,9 @@ class formula_link extends sandbox_link
                 $this->phrase()->set_obj_from_id($db_row[phrase::FLD_ID]);
                 $this->predicate_id = $db_row[formula_link_type::FLD_ID];
                 $this->order_nbr = $db_row[formula_link::FLD_ORDER];
+                if (key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                    $this->description = $db_row[fields::FLD_DESCRIPTION];
+                }
                 // the list query joins the names of both linked objects, so that the link can
                 // name them e.g. in the change log; a load by id has no join and no names
                 if (array_key_exists(self::FLD_FORMULA_NAME_JOINED, $db_row)) {
@@ -308,6 +321,9 @@ class formula_link extends sandbox_link
         }
         if (array_key_exists(json_fields::PRIORITY, $api_json)) {
             $this->order_nbr = $api_json[json_fields::PRIORITY];
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->description = $api_json[json_fields::DESCRIPTION];
         }
 
         return $msg->is_ok();
@@ -411,6 +427,9 @@ class formula_link extends sandbox_link
         if (array_key_exists(json_fields::PRIORITY, $in_ex_json)) {
             $this->order_nbr = $in_ex_json[json_fields::PRIORITY];
         }
+        if (array_key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
+        }
 
         return $msg->is_ok();
     }
@@ -454,6 +473,9 @@ class formula_link extends sandbox_link
         // priority is the api name of the order_nbr db field
         if ($this->order_nbr != null) {
             $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
         }
 
         // a page request needs the names of the linked objects for the link title subtitle
@@ -743,6 +765,7 @@ class formula_link extends sandbox_link
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES_LINK);
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
@@ -892,6 +915,9 @@ class formula_link extends sandbox_link
         if ($this->order_nbr != null) {
             $vars[json_fields::PRIORITY] = $this->order_nbr;
         }
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
 
         return $vars;
     }
@@ -924,6 +950,9 @@ class formula_link extends sandbox_link
         if ($std_obj->order_nbr !== $this->order_nbr) {
             $result->order_nbr = $this->order_nbr;
         }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
         return $result;
     }
 
@@ -944,6 +973,9 @@ class formula_link extends sandbox_link
         $msg = parent::fill($obj, $usr_req);
         if ($this->order_nbr === null and $obj->order_nbr != null) {
             $this->order_nbr = $obj->order_nbr;
+        }
+        if ($this->description === null and $obj->description != null) {
+            $this->description = $obj->description;
         }
         return $msg;
     }
@@ -1042,6 +1074,7 @@ class formula_link extends sandbox_link
             parent::db_all_fields_link($sc_par_lst),
             [
                 self::FLD_ORDER,
+                fields::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1106,6 +1139,21 @@ class formula_link extends sandbox_link
                 $this->pos(),
                 self::FLD_ORDER_SQL_TYP,
                 $obj->pos()
+            );
+        }
+        if ($obj->description !== $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                fields::FLD_DESCRIPTION,
+                $this->description,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
+                $obj->description
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));

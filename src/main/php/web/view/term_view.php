@@ -90,6 +90,10 @@ class term_view extends sandbox_link
      */
 
     public ?string $description = null;
+    // to set the priority of the views linked to one term
+    public ?int $order_nbr = null;
+    // the style that overwrites the view style if the view is shown for this term
+    private ?int $style_id = null;
 
 
     /*
@@ -121,8 +125,28 @@ class term_view extends sandbox_link
             if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
                 $this->description = $url_array[url_var::DESCRIPTION];
             }
+            if (array_key_exists(url_var::VIEW_TERM_LINK_PRIO, $url_array)) {
+                $this->order_nbr = $url_array[url_var::VIEW_TERM_LINK_PRIO];
+            }
+            if (array_key_exists(url_var::STYLE, $url_array)) {
+                $this->style_id = $url_array[url_var::STYLE];
+            }
         }
         return $msg;
+    }
+
+    /**
+     * @return array parent url array extended with the description and the order number,
+     *         without empty strings, so that the apply link of the 'others' tab knows
+     *         the value that the user has set until now (see ui_preview)
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::DESCRIPTION] = $this->description;
+        $url_array[url_var::VIEW_TERM_LINK_PRIO] = $this->order_nbr;
+        $url_array[url_var::STYLE] = $this->style_id;
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
     }
 
     /**
@@ -135,6 +159,8 @@ class term_view extends sandbox_link
     {
         return [
             view_fields::FLD_LINK_TYPE => url_var::TYPE,
+            fields::FLD_ORDER_NBR => url_var::VIEW_TERM_LINK_PRIO,
+            fields::FLD_STYLE => url_var::STYLE,
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             fields::FLD_EXCLUDED => url_var::EXCLUDED,
             fields::FLD_SHARE => url_var::SHARE,
@@ -175,6 +201,13 @@ class term_view extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
             $this->description = $json_array[json_fields::DESCRIPTION];
         }
+        // priority is the api name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $json_array)) {
+            $this->order_nbr = $json_array[json_fields::PRIORITY];
+        }
+        if (array_key_exists(json_fields::STYLE, $json_array)) {
+            $this->style_id = $json_array[json_fields::STYLE];
+        }
         return $msg->is_ok();
     }
 
@@ -195,6 +228,9 @@ class term_view extends sandbox_link
         $vars[json_fields::VIEW_ID] = $this->view()?->id();
         $vars[json_fields::TERM_ID] = $this->term_linked()?->id();
         $vars[json_fields::DESCRIPTION] = $this->description;
+        // priority is the api name of the order_nbr db field
+        $vars[json_fields::PRIORITY] = $this->order_nbr;
+        $vars[json_fields::STYLE] = $this->style_id;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -264,6 +300,14 @@ class term_view extends sandbox_link
     }
 
     /**
+     * @return int|null the style of this link, which overwrites the style of the linked view
+     */
+    function get_style_id(): ?int
+    {
+        return $this->style_id;
+    }
+
+    /**
      * @return type_object|null the view link type object from the preloaded cache, which says how
      *         the term is linked to the view, or null if the link uses the default type
      */
@@ -308,7 +352,7 @@ class term_view extends sandbox_link
     /**
      * create the html code to select the view style
      * overrides db_object::style_selector; reuses the shared msk_sty cache
-     * term_view itself has no style_id, so the default style is preselected
+     * the style of this link is preselected if set, else the default style
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the preloaded view styles
      * @return string the html code to select the view style
@@ -321,7 +365,10 @@ class term_view extends sandbox_link
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_id = $typ_lst->msk_sty->default_id();
+        $used_id = $this->style_id;
+        if ($used_id == null) {
+            $used_id = $typ_lst->msk_sty->default_id();
+        }
         return $typ_lst->msk_sty->selector($form, $used_id);
     }
 

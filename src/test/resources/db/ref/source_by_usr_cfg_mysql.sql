@@ -5,7 +5,9 @@ PREPARE source_by_usr_cfg FROM
                `url`,
                doi,
                source_type_id,
+               view_id,
                `usage`,
                excluded
           FROM user_sources
-         WHERE source_id = ? AND user_id = ?';
+         WHERE source_id = ?
+           AND user_id = ?';

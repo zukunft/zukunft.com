@@ -107,7 +107,10 @@ class test_objects
             } elseif (in_array($obj::class, def::VALUE_CLASSES)) {
                 $phr_lst = new phrase_list($obj->get_user());
                 $phr_lst->load_by_names($obj_name, $msg);
-                if (!$phr_lst->is_empty()) {
+                // a value is named by its complete group, so a phrase list that misses one name
+                // (e.g. because its test word is not created yet or has already been deleted)
+                // names another value and must never be deleted
+                if ($phr_lst->count() == count($obj_name)) {
                     $grp = new group($obj->get_user());
                     $grp->set_phrase_list($phr_lst);
                     // remove the value's change log before the value is deleted, but only if at least

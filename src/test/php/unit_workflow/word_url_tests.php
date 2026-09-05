@@ -229,9 +229,10 @@ class word_url_tests extends url_test_base
         $t->subheader($ts . 'confirm change');
 
         // simulate the user pressing save on the 'Change word' edit form:
-        // url_user_reaction routes the still unconfirmed change (step = STEP_CONFIRM) to the
-        // confirm change view (views::CONFIRM_EDIT) built by url_to_action, which shows the
-        // pending change before it is written to the database (docs/llm/state-and-messages.md)
+        // the request names the user reaction (action = save), which url_to_action turns into
+        // the confirm step (url_var::action_step), so the still unconfirmed change is routed to
+        // the confirm change view (views::CONFIRM_EDIT), which shows the pending change before
+        // it is written to the database (docs/llm/state-and-messages.md)
         // never use read test objects e.g. like math in this section
         $test_name = 'pressing save shows the confirm change view with the pending change';
         $msg->usr = $usr_ui;
@@ -245,14 +246,17 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::BACK] = $wrd_ui->id();
         $usr_backend = $t->usr1;
         $req = new user_request($usr_backend, $msg, $ui->dto, false, true);
-        // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
-        $url_arr[url_var::STEP] = url_var::ACTION_SAVE;
+        // the 'save' user action sets the confirm step, so url_to_action returns the confirm change view
+        $url_arr[url_var::ACTION] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
         // the assert follows the confirm change view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, $wrd_ui->name(), $t::TIMEOUT_LIMIT_PAGE_LONG);
-        // the pending change is carried into the confirm view as a url-encoded form/back parameter
-        // (the human-readable change preview component is not yet implemented)
-        $t->assert_text_contains($test_name, $result, rawurlencode($wrd_ui->get_description()));
+        $test_name = '... and the page shown is the confirm change view';
+        $t->assert_text_contains($test_name, $result, 'id="mask" value="' . views::CONFIRM_EDIT_ID . '"');
+        $test_name = '... with the pending change';
+        // the pending change is shown as the value of the changed field, so the user sees what
+        // will be saved before confirming it
+        $t->assert_text_contains($test_name, $result, $wrd_ui->get_description());
 
         // url_to_action routes the unconfirmed save to the confirm change view url
         $test_name = 'url_to_action routes the unconfirmed save to the confirm change view';
