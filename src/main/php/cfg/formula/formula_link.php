@@ -143,6 +143,7 @@ class formula_link extends sandbox_link
         user_db::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
+        fields::FLD_DESCRIPTION,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
         fields::FLD_PROTECT

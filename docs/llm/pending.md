@@ -39,14 +39,6 @@ if the 'views tab' add after the view name a link to edit the view and make the 
 
 fix the view selector link in the word_default page
 
-1. The standard load misses the description. formula_link_norm_by_id.sql and formula_link_norm_by_ids.sql were not regenerated because those queries take their columns from formula_link::FLD_NAMES, which still lacks the description. So load_standard reads a link without   
-   its description. A save then compares the user's text against an empty standard, and the user page shows no standard value for it. The one-line fix is to add fields::FLD_DESCRIPTION to FLD_NAMES next to the order number, which is how the field list of the term view     
-   covers it. Two norm fixtures regenerate afterwards.
-2. Sixteen old fixtures are orphaned but still tracked. The field count in the fixture name grew by one digit, so the run wrote new files instead of updating the old ones. The old files stay on disk and in git and need git rm: the insert, insert_log, update and update_log
-   files with the 8-digit codes (formula_link_insert_01551000, formula_link_insert_111000_user, formula_link_insert_log_01551000, formula_link_insert_log_01551111, formula_link_insert_log_111000_user, formula_link_update_00002000, formula_link_update_log_00042000,         
-   formula_link_update_log_002000_user, each with its _mysql twin).
-3. One new fixture is untracked. formula_link_by_usr_cfg_mysql.sql needs git add; the other new fixtures are already staged.
-
 ### verb default view
 
 a cut list shows that it continues, but not by how much: the verb page ends the triples with '...' without a number, because the loaded list is itself cut by the read limit, so the number of the remaining triples is not known (unlike value_list::more_tail, which knows the count within the loaded list). the exact number needs its own count query, the same open point as the per type count of the user page

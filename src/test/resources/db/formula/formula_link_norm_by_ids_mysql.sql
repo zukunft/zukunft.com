@@ -5,6 +5,7 @@ PREPARE formula_link_norm_by_ids FROM
                user_id,
                formula_link_type_id,
                order_nbr,
+               description,
                excluded,
                share_type_id,
                protect_id
