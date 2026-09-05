@@ -1,5 +1,5 @@
-PREPARE formula_link_by_usr_cfg (bigint, bigint) AS
-    SELECT     formula_link_id,
+PREPARE formula_link_by_usr_cfg FROM
+   'SELECT     formula_link_id,
                formula_link_type_id,
                order_nbr,
                description,
@@ -7,5 +7,5 @@ PREPARE formula_link_by_usr_cfg (bigint, bigint) AS
                share_type_id,
                protect_id
           FROM user_formula_links
-         WHERE formula_link_id = $1
-           AND user_id = $2;
+         WHERE formula_link_id = ?
+           AND user_id = ?';

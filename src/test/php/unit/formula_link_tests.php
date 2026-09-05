@@ -47,11 +47,9 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
@@ -63,7 +61,6 @@ class formula_link_tests
     {
 
         // init
-        $lib = new library();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
@@ -107,10 +104,7 @@ class formula_link_tests
         $t->assert_sql_changing_users_by_ids($sc, $lnk);
 
         // sql to load the user formula link by id
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_sql_user_changes($db_con->sql_creator())->sql;
-        $expected_sql = $t->file(test_paths::DB_FORMULA . 'formula_link_by_usr_cfg.sql');
-        $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $t->assert_sql_user_changes($sc, $lnk);
 
         $t->subheader($ts . 'formula link sql write');
         $lnk = $t_frm->formula_link();
@@ -126,6 +120,12 @@ class formula_link_tests
         $lnk_reordered->order_nbr = 1;
         $t->assert_sql_update($sc, $lnk_reordered, $lnk);
         $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the description says why the formula applies to the phrase
+        $lnk_described = clone $lnk;
+        $lnk_described->description = test_const::FORMULA_LINK_COM;
+        $t->assert_sql_update($sc, $lnk_described, $lnk);
+        $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
+        $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
@@ -146,6 +146,7 @@ class formula_link_tests
             phrase::FLD_ID => word_names::MINUTE_ID,
             formula_link_type::FLD_ID => null,
             formula_link::FLD_ORDER => test_const::FORMULA_LINK_ORDER_NBR,
+            fields::FLD_DESCRIPTION => test_const::FORMULA_LINK_COM,
             fields::FLD_EXCLUDED => null,
             fields::FLD_SHARE => null,
             fields::FLD_PROTECT => null,
@@ -156,14 +157,19 @@ class formula_link_tests
         $lnk_row->row_mapper_sandbox($db_row, $msg);
         $t->assert($test_name, $lnk_row->name(),
             formula_names::SCALE_TO_SEC . ' to ' . word_names::MINUTE);
+        $test_name = 'the description of a row is mapped';
+        $t->assert($test_name, $lnk_row->description, test_const::FORMULA_LINK_COM);
 
         // a load by id has no join, so the names stay empty instead of showing a wrong name
         $test_name = 'a row without the joined names leaves the formula name empty';
         unset($db_row[formula_link::FLD_FORMULA_NAME_JOINED]);
         unset($db_row[formula_link::FLD_PHRASE_NAME_JOINED]);
+        unset($db_row[fields::FLD_DESCRIPTION]);
         $lnk_id_only = new formula_link($t->usr1);
         $lnk_id_only->row_mapper_sandbox($db_row, $msg);
         $t->assert($test_name, $lnk_id_only->formula()->name() ?? '', '');
+        $test_name = 'a row without a description leaves the description empty';
+        $t->assert($test_name, $lnk_id_only->description ?? '', '');
 
         /*
         $t->subheader($ts . 'im- and export');

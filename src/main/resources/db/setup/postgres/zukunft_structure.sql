@@ -3009,6 +3009,7 @@ CREATE TABLE IF NOT EXISTS formula_links
     user_id              bigint   DEFAULT NULL,
     formula_link_type_id smallint DEFAULT NULL,
     order_nbr            bigint   DEFAULT NULL,
+    description          text     DEFAULT NULL,
     formula_id           bigint       NOT NULL,
     phrase_id            bigint       NOT NULL,
     excluded             smallint DEFAULT NULL,
@@ -3033,6 +3034,7 @@ CREATE TABLE IF NOT EXISTS user_formula_links
     user_id              bigint       NOT NULL,
     formula_link_type_id smallint DEFAULT NULL,
     order_nbr            bigint   DEFAULT NULL,
+    description          text     DEFAULT NULL,
     excluded             smallint DEFAULT NULL,
     share_type_id        smallint DEFAULT NULL,
     protect_id           smallint DEFAULT NULL

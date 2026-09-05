@@ -1343,10 +1343,14 @@
         },
         {
           "position": "4",
-          "name": "system show field owner"
+          "name": "system show field description"
         },
         {
           "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
           "name": "link tab box"
         }
       ]

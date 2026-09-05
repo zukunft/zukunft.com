@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-09-03T08:50:05+00:00",
+    "timestamp": "2026-09-05T17:06:11+00:00",
     "body": {
         "user_profiles": [
             {
@@ -6592,6 +6592,18 @@
                 "code_id": "91view_style_id",
                 "description": "",
                 "id": 902
+            },
+            {
+                "name": "12description",
+                "code_id": "12description",
+                "description": "",
+                "id": 903
+            },
+            {
+                "name": "13description",
+                "code_id": "13description",
+                "description": "",
+                "id": 904
             }
         ],
         "db_cache_types": [
@@ -18276,34 +18288,34 @@
                     },
                     {
                         "link_id": 749,
-                        "id": 131,
-                        "name": "system form field description",
-                        "description": "the description field in a form",
-                        "type_id": 22,
-                        "code_id": "form_field_description",
-                        "ui_msg_code_id": "form_field_description",
-                        "position": 6,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 750,
                         "id": 185,
                         "name": "system form select formula link type",
                         "description": "selector for the link type of a formula to a term",
                         "type_id": 100,
                         "code_id": "form_field_formula_link_type",
                         "ui_msg_code_id": "form_select_formula_link_type",
-                        "position": 7,
+                        "position": 6,
                         "position_type": 2
                     },
                     {
-                        "link_id": 751,
+                        "link_id": 750,
                         "id": 186,
                         "name": "system form formula link priority",
                         "description": "priority number for this link to a term",
                         "type_id": 127,
                         "code_id": "form_field_formula_link_priority",
                         "ui_msg_code_id": "form_select_formula_link_priority",
+                        "position": 7,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 751,
+                        "id": 131,
+                        "name": "system form field description",
+                        "description": "the description field in a form",
+                        "type_id": 22,
+                        "code_id": "form_field_description",
+                        "ui_msg_code_id": "form_field_description",
                         "position": 8,
                         "position_type": 1
                     },
@@ -18316,7 +18328,7 @@
                         "code_id": "form_field_share_type",
                         "ui_msg_code_id": "form_select_share",
                         "position": 9,
-                        "position_type": 2
+                        "position_type": 1
                     },
                     {
                         "link_id": 753,
@@ -18445,34 +18457,34 @@
                     },
                     {
                         "link_id": 764,
-                        "id": 131,
-                        "name": "system form field description",
-                        "description": "the description field in a form",
-                        "type_id": 22,
-                        "code_id": "form_field_description",
-                        "ui_msg_code_id": "form_field_description",
-                        "position": 6,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 765,
                         "id": 185,
                         "name": "system form select formula link type",
                         "description": "selector for the link type of a formula to a term",
                         "type_id": 100,
                         "code_id": "form_field_formula_link_type",
                         "ui_msg_code_id": "form_select_formula_link_type",
-                        "position": 7,
+                        "position": 6,
                         "position_type": 2
                     },
                     {
-                        "link_id": 766,
+                        "link_id": 765,
                         "id": 186,
                         "name": "system form formula link priority",
                         "description": "priority number for this link to a term",
                         "type_id": 127,
                         "code_id": "form_field_formula_link_priority",
                         "ui_msg_code_id": "form_select_formula_link_priority",
+                        "position": 7,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 766,
+                        "id": 131,
+                        "name": "system form field description",
+                        "description": "the description field in a form",
+                        "type_id": 22,
+                        "code_id": "form_field_description",
+                        "ui_msg_code_id": "form_field_description",
                         "position": 8,
                         "position_type": 1
                     },
@@ -18485,7 +18497,7 @@
                         "code_id": "form_field_share_type",
                         "ui_msg_code_id": "form_select_share",
                         "position": 9,
-                        "position_type": 2
+                        "position_type": 1
                     },
                     {
                         "link_id": 768,
@@ -22853,22 +22865,32 @@
                     },
                     {
                         "link_id": 1131,
-                        "id": 343,
-                        "name": "system show field owner",
-                        "description": "the name of the user who owns the object as read only",
-                        "type_id": 224,
-                        "code_id": "show_field_owner",
+                        "id": 199,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
                         "position": 4,
                         "position_type": 1
                     },
                     {
                         "link_id": 1132,
+                        "id": 343,
+                        "name": "system show field owner",
+                        "description": "the name of the user who owns the object as read only",
+                        "type_id": 224,
+                        "code_id": "show_field_owner",
+                        "position": 5,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1133,
                         "id": 353,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
                         "type_id": 199,
                         "code_id": "view_tab_box_link",
-                        "position": 5,
+                        "position": 6,
                         "position_type": 1
                     }
                 ]
@@ -22881,7 +22903,7 @@
                 "code_id": "term_view_default",
                 "components": [
                     {
-                        "link_id": 1133,
+                        "link_id": 1134,
                         "id": 341,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22891,7 +22913,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1134,
+                        "link_id": 1135,
                         "id": 351,
                         "name": "system show field link type",
                         "description": "the name of the link type of a link as read only",
@@ -22901,7 +22923,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1135,
+                        "link_id": 1136,
                         "id": 352,
                         "name": "system show field order number",
                         "description": "the order number of a link as read only",
@@ -22911,7 +22933,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1136,
+                        "link_id": 1137,
                         "id": 342,
                         "name": "system show field style",
                         "description": "the name of the display style of a view or component as read only",
@@ -22921,7 +22943,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1137,
+                        "link_id": 1138,
                         "id": 199,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -22931,7 +22953,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1138,
+                        "link_id": 1139,
                         "id": 343,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -22941,7 +22963,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1139,
+                        "link_id": 1140,
                         "id": 353,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
@@ -22960,7 +22982,7 @@
                 "code_id": "component_link_default",
                 "components": [
                     {
-                        "link_id": 1140,
+                        "link_id": 1141,
                         "id": 341,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -22970,7 +22992,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1141,
+                        "link_id": 1142,
                         "id": 351,
                         "name": "system show field link type",
                         "description": "the name of the link type of a link as read only",
@@ -22980,7 +23002,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1142,
+                        "link_id": 1143,
                         "id": 352,
                         "name": "system show field order number",
                         "description": "the order number of a link as read only",
@@ -22990,7 +23012,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1143,
+                        "link_id": 1144,
                         "id": 342,
                         "name": "system show field style",
                         "description": "the name of the display style of a view or component as read only",
@@ -23000,7 +23022,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1144,
+                        "link_id": 1145,
                         "id": 343,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -23010,7 +23032,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1145,
+                        "link_id": 1146,
                         "id": 353,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
@@ -23029,7 +23051,7 @@
                 "code_id": "view_relation_default",
                 "components": [
                     {
-                        "link_id": 1146,
+                        "link_id": 1147,
                         "id": 341,
                         "name": "Link title",
                         "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
@@ -23039,7 +23061,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1147,
+                        "link_id": 1148,
                         "id": 351,
                         "name": "system show field link type",
                         "description": "the name of the link type of a link as read only",
@@ -23049,7 +23071,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1148,
+                        "link_id": 1149,
                         "id": 358,
                         "name": "system show field start position",
                         "description": "the position in the parent view where the child view of a view relation starts as read only",
@@ -23059,7 +23081,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1149,
+                        "link_id": 1150,
                         "id": 199,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -23069,7 +23091,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1150,
+                        "link_id": 1151,
                         "id": 343,
                         "name": "system show field owner",
                         "description": "the name of the user who owns the object as read only",
@@ -23079,7 +23101,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1151,
+                        "link_id": 1152,
                         "id": 353,
                         "name": "link tab box",
                         "description": "tab box with the change log and the user overwrites of this link",
@@ -23098,7 +23120,7 @@
                 "code_id": "calculator",
                 "components": [
                     {
-                        "link_id": 1152,
+                        "link_id": 1153,
                         "id": 328,
                         "name": "phrase title",
                         "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
@@ -23108,7 +23130,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1153,
+                        "link_id": 1154,
                         "id": 329,
                         "name": "table with related columns",
                         "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
@@ -23127,7 +23149,7 @@
                 "code_id": "solution_prio_validation",
                 "components": [
                     {
-                        "link_id": 1154,
+                        "link_id": 1155,
                         "id": 367,
                         "name": "Title solution priority",
                         "description": "page title: the global problems ranked by their potential loss",
@@ -23138,7 +23160,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1155,
+                        "link_id": 1156,
                         "id": 368,
                         "name": "table problem ranking by potential loss",
                         "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",

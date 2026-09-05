@@ -88,6 +88,8 @@ class formula_link extends sandbox_link
 
     // database fields additional to the user sandbox_link fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
+    // why the formula applies to the phrase e.g. which time period the increase is for
+    public ?string $description = null;
 
 
     /**
@@ -159,6 +161,9 @@ class formula_link extends sandbox_link
             if (array_key_exists(url_var::FORMULA_LINK_PRIO, $url_array)) {
                 $this->order_nbr = $url_array[url_var::FORMULA_LINK_PRIO];
             }
+            if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+                $this->description = $url_array[url_var::DESCRIPTION];
+            }
         }
         return $msg;
     }
@@ -197,6 +202,9 @@ class formula_link extends sandbox_link
         if (array_key_exists(json_fields::PRIORITY, $json_array)) {
             $this->order_nbr = $json_array[json_fields::PRIORITY];
         }
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->description = $json_array[json_fields::DESCRIPTION];
+        }
         return $msg->is_ok();
     }
 
@@ -218,6 +226,7 @@ class formula_link extends sandbox_link
         $vars[json_fields::PHRASE_ID] = $this->phrase()?->id();
         // priority is the api name of the order_nbr db field
         $vars[json_fields::PRIORITY] = $this->order_nbr;
+        $vars[json_fields::DESCRIPTION] = $this->description;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -227,12 +236,13 @@ class formula_link extends sandbox_link
      */
 
     /**
-     * @return array parent url array extended with the order number, without empty strings
+     * @return array parent url array extended with the order number and the description, without empty strings
      */
     function to_url_array(user_message $msg): array
     {
         $url_array = parent::to_url_array($msg);
         $url_array[url_var::FORMULA_LINK_PRIO] = $this->order_nbr;
+        $url_array[url_var::DESCRIPTION] = $this->description;
         return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
     }
 
@@ -243,6 +253,7 @@ class formula_link extends sandbox_link
     {
         return [
             fields::FLD_ORDER_NBR => url_var::FORMULA_LINK_PRIO,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             fields::FLD_EXCLUDED => url_var::EXCLUDED,
             fields::FLD_SHARE => url_var::SHARE,
             fields::FLD_PROTECT => url_var::PROTECTION,
@@ -288,12 +299,11 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * TODO Prio 1 check if the formula description is needed
-     * @return string the display value of the tooltip where null is an empty string
+     * @return string the description of this formula link or an empty string if not set
      */
     function get_description(): string
     {
-        return '';
+        return $this->description ?? '';
     }
 
     function formula_name(): ?string

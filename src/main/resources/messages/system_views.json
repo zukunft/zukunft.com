@@ -5569,21 +5569,20 @@
         },
         {
           "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
           "name": "system form select formula link type",
           "position_type": "side"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form formula link priority"
         },
         {
+          "position": "8",
+          "name": "system form field description"
+        },
+        {
           "position": "9",
-          "name": "system form select share type",
-          "position_type": "side"
+          "name": "system form select share type"
         },
         {
           "position": "10",
@@ -5643,21 +5642,20 @@
         },
         {
           "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
           "name": "system form select formula link type",
           "position_type": "side"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form formula link priority"
         },
         {
+          "position": "8",
+          "name": "system form field description"
+        },
+        {
           "position": "9",
-          "name": "system form select share type",
-          "position_type": "side"
+          "name": "system form select share type"
         },
         {
           "position": "10",

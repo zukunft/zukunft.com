@@ -5,6 +5,7 @@ PREPARE formula_link_list_by_frm_id FROM
                s.formula_id,
                s.phrase_id,
                l.phrase_type_id AS phrase_type_id1,
+               IF(u.description          IS NULL, s.description,          u.description)          AS description,
                IF(u.formula_link_type_id IS NULL, s.formula_link_type_id, u.formula_link_type_id) AS formula_link_type_id,
                IF(u.order_nbr            IS NULL, s.order_nbr,            u.order_nbr)            AS order_nbr,
                IF(u.excluded             IS NULL, s.excluded,             u.excluded)             AS excluded,

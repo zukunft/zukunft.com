@@ -9151,11 +9151,11 @@
     \-- link_type
         \-- formula_link - @return type_object|null the formula link type object from the preloaded cache
     \-- get_description
-        \-- formula_link - TODO Prio 1 check if the formula description is needed
+        \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- formula_name
-        \-- formula_link - TODO Prio 1 check if the formula description is needed
+        \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- phrase_name
-        \-- formula_link - TODO Prio 1 check if the formula description is needed
+        \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- percent_decimals
         \-- config - 
     \-- dec_point
@@ -9200,7 +9200,8 @@
         \-- formula_link - TODO Prio 1 review and add else error message
 \-- url
     \-- to_url_array
-        \-- formula_link - @return array parent url array extended with the order number, without empty strings
+        \-- formula_link - @return array parent url array extended with the order number and the description,
+                 without empty strings
     \-- db_fld_to_url
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s

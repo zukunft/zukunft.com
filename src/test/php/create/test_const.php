@@ -51,6 +51,8 @@ class test_const
     const int DUMMY_USAGE_COMPONENT = 2;
     // the order number of the filled formula link
     const int FORMULA_LINK_ORDER_NBR = 2;
+    // the description of the filled formula link
+    const string FORMULA_LINK_COM = 'System Test description for a formula link';
     // the order number logged as a change of the filled component link
     const int COMPONENT_LINK_ORDER_NBR = 3;
     // the order number of the filled view link
