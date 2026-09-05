@@ -58,6 +58,7 @@ class source_fields
         fields::FLD_URL,
         fields::FLD_DOI,
         self::FLD_TYPE,
+        fields::FLD_VIEW,
         fields::FLD_USAGE,
         fields::FLD_EXCLUDED
     );

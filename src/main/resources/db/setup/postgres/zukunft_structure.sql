@@ -1636,6 +1636,7 @@ CREATE TABLE IF NOT EXISTS sources
     source_name    varchar(255)     NOT NULL,
     description    text         DEFAULT NULL,
     source_type_id smallint     DEFAULT NULL,
+    view_id        bigint       DEFAULT NULL,
     url            text         DEFAULT NULL,
     doi            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
@@ -1651,6 +1652,7 @@ COMMENT ON COLUMN sources.user_id        IS 'the owner / creator of the source';
 COMMENT ON COLUMN sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
 COMMENT ON COLUMN sources.description    IS 'the user-specific description of the source for mouse over helps';
 COMMENT ON COLUMN sources.source_type_id IS 'link to the source type';
+COMMENT ON COLUMN sources.view_id        IS 'the default mask for this source';
 COMMENT ON COLUMN sources.url            IS 'the url of the source';
 COMMENT ON COLUMN sources.doi            IS 'the digital object identifier of the source used to create the url to doi.org';
 COMMENT ON COLUMN sources.code_id        IS 'to select sources used by this program';
@@ -1670,6 +1672,7 @@ CREATE TABLE IF NOT EXISTS user_sources
     source_name    varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
     source_type_id smallint     DEFAULT NULL,
+    view_id        bigint       DEFAULT NULL,
     url            text         DEFAULT NULL,
     doi            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
@@ -1685,6 +1688,7 @@ COMMENT ON COLUMN user_sources.user_id        IS 'the changer of the source';
 COMMENT ON COLUMN user_sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
 COMMENT ON COLUMN user_sources.description    IS 'the user-specific description of the source for mouse over helps';
 COMMENT ON COLUMN user_sources.source_type_id IS 'link to the source type';
+COMMENT ON COLUMN user_sources.view_id        IS 'the default mask for this source';
 COMMENT ON COLUMN user_sources.url            IS 'the url of the source';
 COMMENT ON COLUMN user_sources.doi            IS 'the digital object identifier of the source used to create the url to doi.org';
 COMMENT ON COLUMN user_sources.code_id        IS 'to select sources used by this program';
@@ -6093,6 +6097,7 @@ CREATE INDEX source_types_type_name_idx ON source_types (type_name);
 CREATE INDEX sources_user_idx        ON sources (user_id);
 CREATE INDEX sources_source_name_idx ON sources (source_name);
 CREATE INDEX sources_source_type_idx ON sources (source_type_id);
+CREATE INDEX sources_view_idx ON sources (view_id);
 
 --
 -- indexes for table user_sources
@@ -6103,6 +6108,7 @@ CREATE INDEX user_sources_source_idx      ON user_sources (source_id);
 CREATE INDEX user_sources_user_idx        ON user_sources (user_id);
 CREATE INDEX user_sources_source_name_idx ON user_sources (source_name);
 CREATE INDEX user_sources_source_type_idx ON user_sources (source_type_id);
+CREATE INDEX user_sources_view_idx ON user_sources (view_id);
 
 -- --------------------------------------------------------
 
@@ -7606,7 +7612,8 @@ ALTER TABLE user_groups_big
 ALTER TABLE sources
     ADD CONSTRAINT sources_source_name_uk UNIQUE (source_name),
     ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id),
+    ADD CONSTRAINT sources_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- constraints for table user_sources
@@ -7615,7 +7622,8 @@ ALTER TABLE sources
 ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id),
+    ADD CONSTRAINT user_sources_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 -- --------------------------------------------------------
 

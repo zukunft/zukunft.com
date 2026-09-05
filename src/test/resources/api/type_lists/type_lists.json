@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-09-05T06:45:05+00:00",
+    "timestamp": "2026-09-05T19:28:24+00:00",
     "body": {
         "user_profiles": [
             {
@@ -6508,6 +6508,18 @@
                 "code_id": "13description",
                 "description": "",
                 "id": 904
+            },
+            {
+                "name": "20view_id",
+                "code_id": "20view_id",
+                "description": "",
+                "id": 905
+            },
+            {
+                "name": "21view_id",
+                "code_id": "21view_id",
+                "description": "",
+                "id": 906
             }
         ],
         "db_cache_types": [

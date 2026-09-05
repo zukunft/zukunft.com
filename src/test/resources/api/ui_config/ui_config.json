@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-09-05T17:06:11+00:00",
+    "timestamp": "2026-09-05T19:49:17+00:00",
     "body": {
         "user_profiles": [
             {
@@ -6604,6 +6604,18 @@
                 "code_id": "13description",
                 "description": "",
                 "id": 904
+            },
+            {
+                "name": "20view_id",
+                "code_id": "20view_id",
+                "description": "",
+                "id": 905
+            },
+            {
+                "name": "21view_id",
+                "code_id": "21view_id",
+                "description": "",
+                "id": 906
             }
         ],
         "db_cache_types": [

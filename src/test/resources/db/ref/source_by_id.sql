@@ -10,6 +10,7 @@ PREPARE source_by_id (bigint, bigint) AS
                CASE WHEN (u.doi         <> ''  IS NOT TRUE) THEN s.doi            ELSE u.doi            END AS doi,
                CASE WHEN (u.description <> ''  IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
                CASE WHEN (u.source_type_id     IS     NULL) THEN s.source_type_id ELSE u.source_type_id END AS source_type_id,
+               CASE WHEN (u.view_id            IS     NULL) THEN s.view_id        ELSE u.view_id        END AS view_id,
                CASE WHEN (u.excluded           IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded,
                CASE WHEN (u.share_type_id      IS     NULL) THEN s.share_type_id  ELSE u.share_type_id  END AS share_type_id,
                CASE WHEN (u.protect_id         IS     NULL) THEN s.protect_id     ELSE u.protect_id     END AS protect_id

@@ -1679,6 +1679,7 @@ CREATE TABLE IF NOT EXISTS sources (
     source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
     description    text         DEFAULT NULL COMMENT 'the user-specific description of the source for mouse over helps',
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
+    view_id        bigint       DEFAULT NULL COMMENT 'the default mask for this source',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     doi            text         DEFAULT NULL COMMENT 'the digital object identifier of the source used to create the url to doi.org',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
@@ -1708,6 +1709,7 @@ CREATE TABLE IF NOT EXISTS user_sources (
     source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
     description    text         DEFAULT NULL COMMENT 'the user-specific description of the source for mouse over helps',
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
+    view_id        bigint       DEFAULT NULL COMMENT 'the default mask for this source',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     doi            text         DEFAULT NULL COMMENT 'the digital object identifier of the source used to create the url to doi.org',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
@@ -5285,7 +5287,8 @@ ALTER TABLE source_types
 ALTER TABLE sources
     ADD KEY sources_user_idx (user_id),
     ADD KEY sources_source_name_idx (source_name),
-    ADD KEY sources_source_type_idx (source_type_id);
+    ADD KEY sources_source_type_idx (source_type_id),
+    ADD KEY sources_view_idx (view_id);
 
 --
 -- indexes for table user_sources
@@ -5294,7 +5297,8 @@ ALTER TABLE user_sources
     ADD KEY user_sources_source_idx (source_id),
     ADD KEY user_sources_user_idx (user_id),
     ADD KEY user_sources_source_name_idx (source_name),
-    ADD KEY user_sources_source_type_idx (source_type_id);
+    ADD KEY user_sources_source_type_idx (source_type_id),
+    ADD KEY user_sources_view_idx (view_id);
 
 -- --------------------------------------------------------
 
@@ -6835,7 +6839,8 @@ ALTER TABLE user_groups_big
 ALTER TABLE sources
     ADD CONSTRAINT sources_source_name_uk UNIQUE (source_name),
     ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id),
+    ADD CONSTRAINT sources_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- constraints for table user_sources
@@ -6843,7 +6848,8 @@ ALTER TABLE sources
 ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id),
+    ADD CONSTRAINT user_sources_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 -- --------------------------------------------------------
 

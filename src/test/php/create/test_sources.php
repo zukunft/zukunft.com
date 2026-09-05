@@ -56,7 +56,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_sources extends test_objects
 {
@@ -115,8 +114,11 @@ class test_sources extends test_objects
     function source_filled(): source
     {
         global $sys;
+        $t_msk = new test_views($this->env);
         $src = $this->source();
         $src->doi = sources::TEST_DOI;
+        // the view with its name, so that the export can name it
+        $src->view = $t_msk->view_source();
         $src->exclude();
         $src->set_share_id($sys->typ_lst->shr_typ->id(share_type_shared::GROUP));
         $src->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::USER));

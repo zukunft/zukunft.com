@@ -55,6 +55,7 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'triple.php';
@@ -76,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -237,6 +239,9 @@ class horizontal_tests
                 $dto->add_source($filled_obj->src, $msg);
             } elseif ($class == word::class) {
                 $dto->add_view($filled_obj->get_view($msg), $msg);
+            } elseif ($class == source::class) {
+                // the import resolves the default view by its name via the import cache
+                $dto->add_view($filled_obj->view, $msg);
             } elseif ($class == triple::class) {
                 $dto->add_phrase($filled_obj->get_from(), $msg);
                 $dto->add_phrase($filled_obj->get_to(), $msg);

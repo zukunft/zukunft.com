@@ -44,6 +44,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 
@@ -70,9 +72,11 @@ class source_db
     // *_SQL_TYP is the sql data type used for the field
     const sql_field_type FLD_URL_SQL_TYP = sql_field_type::TEXT;
     const sql_field_type FLD_DOI_SQL_TYP = sql_field_type::TEXT;
+    const sql_field_type FLD_VIEW_SQL_TYP = sql_field_type::INT;
     const string FLD_CODE_ID_COM = 'to select sources used by this program';
     const string FLD_URL_COM = 'the url of the source';
     const string FLD_DOI_COM = 'the digital object identifier of the source used to create the url to doi.org';
+    const string FLD_VIEW_COM = 'the default mask for this source';
 
     // list of fields that MUST be set by one user
     const array FLD_LST_MUST_BE_IN_STD = array(
@@ -86,6 +90,7 @@ class source_db
     const array FLD_LST_USER_CAN_CHANGE = array(
         [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', source_fields::FLD_DESCRIPTION_COM],
         [source_fields::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, source_type::class, source_fields::FLD_TYPE_COM],
+        [fields::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
         [fields::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [fields::FLD_DOI, self::FLD_DOI_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DOI_COM],
         [fields::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
@@ -107,6 +112,7 @@ class source_db
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         source_fields::FLD_TYPE,
+        fields::FLD_VIEW,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
         fields::FLD_PROTECT

@@ -188,6 +188,16 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view the default view of a source with the name, so that the export can name it
+     */
+    function view_source(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::SOURCE_ID, views::SOURCE_NAME);
+        return $msk;
+    }
+
+    /**
      * @return view with sample data to show mainly related words that are relevant in sciences
      */
     function view_historic(): view

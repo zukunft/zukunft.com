@@ -5,7 +5,9 @@ PREPARE source_by_usr_cfg (bigint, bigint) AS
                url,
                doi,
                source_type_id,
+               view_id,
                usage,
                excluded
           FROM user_sources
-         WHERE source_id = $1 AND user_id = $2;
+         WHERE source_id = $1
+           AND user_id = $2;

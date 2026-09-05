@@ -245,6 +245,38 @@ class source_ui_tests
         } else {
             $ui_sys->usr = $usr_tab_keep;
         }
+
+        $t->subheader($ts . 'default view');
+
+        // the default view of a source is the mask shown when the user opens the source and the
+        // view select of the source forms preselects it (see system_views.json source_add)
+        $test_name = 'the default view of a source is sent to the frontend';
+        $t->assert($test_name, $src_filled->view_id(), views::SOURCE_ID);
+        $test_name = 'a source without a default view has no view id';
+        $t->assert_null($test_name, $src_no_url->view_id());
+
+        $test_name = 'the default view of a page url is read';
+        $src = new source();
+        $src->url_mapper([url_var::VIEW => (string)views::SOURCE_ID], $msg, $ui_sys);
+        $t->assert($test_name, $src->view_id(), views::SOURCE_ID);
+        $test_name = 'a page url without a view leaves the view id empty';
+        $src = new source();
+        $src->url_mapper([url_var::NAME => sources::BFS], $msg, $ui_sys);
+        $t->assert_null($test_name, $src->view_id());
+
+        $test_name = 'the page url of a source carries the default view';
+        $t->assert($test_name, $src_filled->to_url_array($msg)[url_var::VIEW] ?? '', views::SOURCE_ID);
+        $test_name = 'the page url of a source without a default view has no view';
+        $t->assert($test_name, $src_no_url->to_url_array($msg)[url_var::VIEW] ?? '', '');
+
+        $test_name = 'the view db field of a source is mapped to its url var';
+        $t->assert($test_name, $src_filled->db_fld_to_url()[fields::FLD_VIEW] ?? '', url_var::VIEW);
+
+        // the select sends the opening view as the '8'-prefixed pre value like the other fields
+        $test_name = 'the view select of the source form carries the default view as pre value';
+        $sel_html = $src_filled->view_selector(views::SOURCE_EDIT, $t_msk->view_list_ui(), $msg);
+        $t->assert_text_contains($test_name, $sel_html,
+            'name="' . url_var::PRE . url_var::VIEW . '" value="' . views::SOURCE_ID . '"');
     }
 
 }

@@ -7,6 +7,7 @@ PREPARE source_norm_by_id FROM
                doi,
                description,
                source_type_id,
+               view_id,
                excluded,
                share_type_id,
                protect_id,

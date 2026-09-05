@@ -7266,6 +7266,7 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /ref/source.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/source.php
     \-- api_array - section for function api_array not yet defined that it should be api in /ref/source.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be url in /ref/source.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /ref/source.php
     \-- name_link - section for function name_link not yet defined that it should be base in /ref/source.php
     \-- source_selector - section for function source_selector not yet defined that it should be select in /ref/source.p

@@ -37,8 +37,12 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
@@ -122,6 +126,12 @@ class source_tests
         $src_only_excluded->exclude();
         $t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::EXCLUDE]);
         $t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
+        // the default view is the mask shown when the user opens the source
+        $src_viewed = clone $src;
+        $src_viewed->set_view_id(views::SOURCE_ID);
+        $t->assert_sql_update($sc, $src_viewed, $src);
+        $t->assert_sql_update($sc, $src_viewed, $src, [sql_type::USER]);
+        $t->assert_sql_update($sc, $src_viewed, $src, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql delete');
         $t->assert_sql_delete($sc, $src);
@@ -131,6 +141,35 @@ class source_tests
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $src, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
+
+        $t->subheader($ts . 'row mapper');
+
+        $test_name = 'the default view of a row is mapped';
+        // TODO Prio 1 use test_sources function and row mapper function
+        $db_row = [
+            source_fields::FLD_ID => sources::BFS_ID,
+            sql_db::TBL_USER_PREFIX . source_fields::FLD_ID => null,
+            user_db::FLD_ID => $t->usr1->id(),
+            source_fields::FLD_NAME => sources::BFS,
+            fields::FLD_DESCRIPTION => sources::BFS_COM,
+            source_fields::FLD_TYPE => null,
+            fields::FLD_VIEW => views::SOURCE_ID,
+            fields::FLD_URL => sources::BFS_ULR,
+            fields::FLD_DOI => null,
+            fields::FLD_CODE_ID => null,
+            fields::FLD_USAGE => null,
+            fields::FLD_EXCLUDED => null,
+            fields::FLD_SHARE => null,
+            fields::FLD_PROTECT => null,
+        ];
+        $src = new source($t->usr1);
+        $src->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $src->get_view_id(), views::SOURCE_ID);
+        $test_name = 'a row without a default view leaves the view empty';
+        $db_row[fields::FLD_VIEW] = null;
+        $src = new source($t->usr1);
+        $src->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $src->get_view_id(), 0);
 
         $t->subheader($ts . 'base object handling');
         $src = $t_src->source_filled();

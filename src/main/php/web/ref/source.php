@@ -65,6 +65,7 @@ include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::MODEL_REF . 'source_db.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -140,6 +141,9 @@ class source extends sandbox_code_id
             } else {
                 $this->doi = null;
             }
+            if (($url_array[url_var::VIEW] ?? null) != null) {
+                $this->view_id = $url_array[url_var::VIEW];
+            }
         }
         return $msg;
     }
@@ -198,6 +202,7 @@ class source extends sandbox_code_id
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             fields::FLD_URL => url_var::URL,
             fields::FLD_DOI => url_var::DOI,
+            fields::FLD_VIEW => url_var::VIEW,
             fields::FLD_CODE_ID => url_var::CODE_ID,
         ];
     }
@@ -243,6 +248,7 @@ class source extends sandbox_code_id
         } else {
             $this->doi = null;
         }
+        $this->view_id = $json_array[json_fields::VIEW] ?? null;
         // only the source page asks for the values, so a missing list is not an empty list
         if (is_array($json_array[json_fields::VALUES] ?? null)) {
             $val_lst = new value_list();
@@ -263,7 +269,23 @@ class source extends sandbox_code_id
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::URL] = $this->url;
         $vars[json_fields::DOI] = $this->doi;
+        $vars[json_fields::VIEW] = $this->view_id;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * @return array parent url array extended with the default view of this source, without empty strings
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::VIEW] = $this->view_id;
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
     }
 
 
@@ -359,7 +381,13 @@ class source extends sandbox_code_id
             $view_id = $msk_lst->default_id($this);
         }
         $msk_lst = $msk_lst->only_type(view_types::SOURCE, $msg);
-        return $msk_lst->selector($form, $view_id, $name, $msg_id);
+        // the opening view id as '8'-prefixed pre value, so that the confirm view can detect
+        // whether the user has changed the view (see url_var::PRE and word::view_selector)
+        $html = new html_base();
+        $pre_view = $this->pre_value(url_var::VIEW) ?? (string)$view_id;
+        $result = $msk_lst->selector($form, $view_id, $name, $msg_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::VIEW, $pre_view);
+        return $result;
     }
 
 }

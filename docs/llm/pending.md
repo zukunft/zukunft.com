@@ -1,13 +1,9 @@
 
 # pending - list of planned llm prompts with prio 1
 
-### ref
+## views
 
-in ref_add and ref_edit 'system form field url' has the position_type 'side' directly after 'system form select source', but form_field_url falls back to view_styles::COL_SM_12 if the component defines no style, which is the case here, so the url field is added to the row of the source select and wraps; this is the same overflow that the formula link forms had (a full width field followed by a 'side' component), only the other way round (here the full width field itself is the 'side' one), so either give the url component a style that fits beside the source select or change its position_type to 'below'; the full width form fields are description, url and doi
-
-### source
-
-add the view_id column to the source table: source_add and source_edit show 'system form select view' on position 10, but the source has no default view: sources and user_sources have no view_id column (unlike words, where view_id is the default mask of the word), cfg/ref/source.php and source_db.php have no view field, web/ref/source.php url_mapper does not read url_var::VIEW and db_fld_to_url has no view entry; the selector of web/ref/source.php only filters the list to view_types::SOURCE and reads the generic view_id of web/sandbox/sandbox.php, which is never filled for a source, so the select always shows the list default and the selection is dropped when the form is saved; the same decision that the view link has solved by adding the style column to the term_view table; note that ref_add and ref_edit do not show the component although web/ref/ref.php has the same selector
+check if the views_by_id are 'useful'
 
 ## workflows
 
