@@ -66,6 +66,7 @@ class sources
     const int TRUST_ME_BRO_ID = 11;
     const string TRUST_ME_BRO = 'my estimates';
     const string SYSTEM_TEST_ADD = 'System Test Source';
+    const int SYSTEM_TEST_ADD_ID = 995; // fixed snapshot id of the add workflow source (like word_names::TEST_ADD_ID)
     const string SYSTEM_TEST_ADD_COM = 'System Test Source Description';
     const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Source added via sql function';

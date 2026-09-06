@@ -1,0 +1,19 @@
+GET
+http://localhost/http/view.php?k=System+Test+Source&o=System+Test+Source+Description&ur=https%3A%2F%2Fwww.zukunft.com%2F&do=10.5281%2Fzenodo.19443909&st=4&s=1&sp=1&id=0&9m=93&m=54&z=2&submit=
+/http/view.php?k=System+Test+Source&o=System+Test+Source+Description&ur=https%3A%2F%2Fwww.zukunft.com%2F&do=10.5281%2Fzenodo.19443909&st=4&s=1&sp=1&id=0&9m=93&m=54&z=2&submit=
+/http/view.php?name=System+Test+Source&description=System+Test+Source+Description&url=https%3A%2F%2Fwww.zukunft.com%2F&doi=10.5281%2Fzenodo.19443909&source_type=4&share=1&protection=1&id=0&9mask_id=source_default&mask_id=confirm_add&step=confirmed&
+{
+    "name": "System Test Source",
+    "description": "System Test Source Description",
+    "url": "https://www.zukunft.com/",
+    "doi": "10.5281/zenodo.19443909",
+    "source_type": "4",
+    "share": "1",
+    "protection": "1",
+    "id": "0",
+    "mask_id": "confirm_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "source_default"
+    }
+}

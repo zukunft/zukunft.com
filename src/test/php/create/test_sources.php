@@ -43,18 +43,24 @@ include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class test_sources extends test_objects
@@ -196,6 +202,54 @@ class test_sources extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->source_list());
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the url of an empty source used to open the add source form
+     *
+     * @return array the source url parameters of a new source
+     */
+    static function source_new_url(user_message_ui $msg): array
+    {
+        $src_ui = new source_ui();
+        return $src_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url of the added test source
+     *
+     * @return array the source url parameters of the added test source
+     */
+    function source_add_url(user_message_ui $msg): array
+    {
+        $src_ui = new source_ui($this->source_add()->api_json());
+        return $src_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url parameters posted by the 'Add new source' form on save, used by the add_source
+     * workflow test to show the new source in the confirm add view (docs/llm/testing.md);
+     * the share and protection ids are the defaults of a newly added source; the object id and
+     * the back target are added by the workflow step, not here
+     *
+     * @return array the add form url parameters of the new source
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => sources::SYSTEM_TEST_ADD,
+            url_var::DESCRIPTION => sources::SYSTEM_TEST_ADD_COM,
+            url_var::URL => sources::SYSTEM_TEST_ADD_URL,
+            url_var::DOI => sources::TEST_DOI,
+            url_var::SOURCE_TYPE => source_types::PDF_ID,
+            url_var::SHARE => share_type_shared::PUBLIC_ID,
+            url_var::PROTECTION => protect_type_shared::NO_PROTECT_ID
+        ];
     }
 
 }
