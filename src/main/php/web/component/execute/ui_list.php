@@ -1046,7 +1046,7 @@ class ui_list extends ui_base
     }
 
     /**
-     * the values that name the given source with the unit and the phrases of each value,
+     * the values that name the given source grouped by their phrases like the default word view,
      * used by the source default page
      *
      * @param source|db_object|null $dbo the source whose values should be listed
@@ -1080,7 +1080,8 @@ class ui_list extends ui_base
             if ($val_lst == null) {
                 log_err_msg_ui('the value cache is missing to select the values of a source', $msg);
             } else {
-                $result = $this->value_list_unit($val_lst, $msg, $style_id);
+                // the source is the context of the page, so no phrase is left out of the value lines
+                $result = $this->value_list($val_lst, new phrase_list(), $msg, $style_id, true);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES);
                 }

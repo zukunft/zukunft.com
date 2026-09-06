@@ -301,7 +301,7 @@
     },
     {
       "name": "view tab box",
-      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of the shown object",
       "type": "view_tab_box",
       "code_id": "view_tab_box_word"
     },
@@ -332,7 +332,7 @@
     },
     {
       "name": "source doi link",
-      "description": "show the doi of a source as a link to doi.org",
+      "description": "show the doi of a source behind its label as a link to doi.org",
       "type": "source_doi_link",
       "code_id": "source_doi_link"
     },
@@ -375,13 +375,13 @@
     },
     {
       "name": "source url link",
-      "description": "show the url of a source as a link to the source",
+      "description": "show the url of a source behind its label as a link to the source",
       "type": "source_url_link",
       "code_id": "source_url_link"
     },
     {
       "name": "source values",
-      "description": "the values that name this source with the unit and the phrases of each value",
+      "description": "the values that name this source grouped by their phrases like the default word view",
       "type": "values_by_source",
       "code_id": "source_values"
     },
@@ -814,31 +814,43 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "system sub title description",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "source url link"
+          "name": "system show field description",
+          "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "source doi link"
+          "name": "source url link",
+          "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "system sub title usage number"
+          "name": "source doi link",
+          "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "system sub title values"
+          "name": "system sub title usage number",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "7",
-          "name": "source values"
+          "name": "system sub title values",
+          "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "source tab box"
+          "name": "source values",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "source tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -854,41 +866,58 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "system sub title description",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "system show field reference phrase",
+          "name": "system show field description",
           "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "system show field reference type",
+          "name": "system show field reference phrase",
           "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "system show field external key",
+          "name": "system show field reference type",
           "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "system show field url",
+          "name": "system show field external key",
           "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "system show field source",
+          "name": "system show field url",
           "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "system show field last update",
+          "name": "system show field source",
           "position_type": "combine"
         },
         {
           "position": "9",
-          "name": "related values"
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "11",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },

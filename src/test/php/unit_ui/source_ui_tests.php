@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -131,10 +132,28 @@ class source_ui_tests
         $test_name = 'a source without a url shows an empty text';
         $t->assert($test_name, $base->source_url_link($src_no_url), '');
 
+        // the first column of the source page shows the url and the doi behind their label
+        // (see the 'source url link' and 'source doi link' of base_views.json source_default)
+        $test_name = 'the source url is shown behind its label';
+        $t->assert_text_contains($test_name, $sfm->show_source_url($src),
+            $mtr->txt(msg_id::FORM_FIELD_URL) . def::FALLBACK_LABEL_SEPARATOR);
+
+        // without a url the label would stand alone, so nothing at all is shown
+        $test_name = 'a source without a url shows no url label';
+        $t->assert($test_name, $sfm->show_source_url($src_no_url), '');
+
+        $test_name = 'the source doi is shown behind its label';
+        $t->assert_text_contains($test_name, $sfm->show_source_doi($src_filled),
+            $mtr->txt(msg_id::FORM_FIELD_DOI) . def::FALLBACK_LABEL_SEPARATOR);
+
+        // the reserved test source has no doi, so neither the label nor a dead link is shown
+        $test_name = 'a source without a doi shows no doi label';
+        $t->assert($test_name, $sfm->show_source_doi($src), '');
+
         $t->subheader($ts . 'values of a source');
 
-        // the source default view lists the values that name this source with the unit and the
-        // phrases of each value, so that the user sees what has been taken from the source
+        // the second column of the source page lists the values that name this source grouped by
+        // their phrases like the default word view, so the user sees what has been taken from it
         $list = new ui_list();
         $dto = new data_object_ui();
         $dto->val_lst = $t_val->list_by_source_ui();

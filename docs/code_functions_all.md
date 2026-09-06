@@ -6167,6 +6167,10 @@
             with show password but without auto fill in /component/execute/system_form.php
     \-- show_source - section for function show_source not yet defined that it should be optional with show password but
              without auto fill in /component/execute/system_form.php
+    \-- show_source_url - section for function show_source_url not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
+    \-- show_source_doi - section for function show_source_doi not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
     \-- show_last_update - section for function show_last_update not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
     \-- show_result_value - section for function show_result_value not yet defined that it should be optional with show 
@@ -8740,7 +8744,7 @@
     \-- values_by_triple
         \-- ui_list - show a list of values related to the given triple
     \-- values_by_source
-        \-- ui_list - the values that name the given source with the unit and the phrases of each value,
+        \-- ui_list - the values that name the given source grouped by their phrases like the default word view,
     \-- results_by_word
         \-- ui_list - show a list of values related to the given object
     \-- result_list
@@ -8913,6 +8917,10 @@
         \-- system_form - @param triple|db_object $dbo the triple whose condition formula is shown
     \-- show_source
         \-- system_form - @param value|db_object $dbo the value whose source is shown
+    \-- show_source_url
+        \-- system_form - @param source|db_object $dbo the source whose url is shown
+    \-- show_source_doi
+        \-- system_form - @param source|db_object $dbo the source whose doi is shown
     \-- show_last_update
         \-- system_form - @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
     \-- show_result_value

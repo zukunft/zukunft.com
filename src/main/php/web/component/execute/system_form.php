@@ -44,6 +44,7 @@ include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::FORMULA . 'formula_list.php';
@@ -53,6 +54,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::RESULT . 'result_list.php';
@@ -100,6 +102,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -876,6 +879,27 @@ class system_form extends component
             log_err($dbo::class . ' is not expected to have a source');
         }
         return $result;
+    }
+
+    /**
+     * @param source|db_object $dbo the source whose url is shown
+     * @return string the url of the source as a link behind its label (empty if the source has no url)
+     */
+    function show_source_url(source|db_object $dbo): string
+    {
+        // the link is created by ui_base, so the url escaping lives in one place
+        return $this->label_with_html(new ui_base()->source_url_link($dbo), msg_id::FORM_FIELD_URL);
+    }
+
+    /**
+     * @param source|db_object $dbo the source whose doi is shown
+     * @return string the doi of the source as a link to doi.org behind its label
+     *                (empty if the source has no doi)
+     */
+    function show_source_doi(source|db_object $dbo): string
+    {
+        // the link is created by ui_base, so the doi escaping lives in one place
+        return $this->label_with_html(new ui_base()->source_doi_link($dbo), msg_id::FORM_FIELD_DOI);
     }
 
     /**

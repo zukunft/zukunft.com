@@ -5,6 +5,10 @@
 
 check if the views_by_id are 'useful'
 
+### components
+
+
+
 ## workflows
 
 add the missing workflows for the main objects e.g. source, ref, view, component. Compared to the word workflows the workflows only need one back test.
