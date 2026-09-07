@@ -1,0 +1,22 @@
+GET
+http://localhost/http/view.php?k=System+Test+Source&ur=https%3A%2F%2Fapi.zukunft.com%2F&o=System+Test+Source+Description+Changed&d=93&8k=System+Test+Source&8ur=https%3A%2F%2Fapi.zukunft.com%2F&9id=995&id=995&8id=995&9m=93&m=55&z=2&submit=
+/http/view.php?k=System+Test+Source&ur=https%3A%2F%2Fapi.zukunft.com%2F&o=System+Test+Source+Description+Changed&d=93&8k=System+Test+Source&8ur=https%3A%2F%2Fapi.zukunft.com%2F&9id=995&id=995&8id=995&9m=93&m=55&z=2&submit=
+/http/view.php?name=System+Test+Source&url=https%3A%2F%2Fapi.zukunft.com%2F&description=System+Test+Source+Description+Changed&view_id=93&8name=System+Test+Source&8url=https%3A%2F%2Fapi.zukunft.com%2F&9id=995&id=995&8id=995&9mask_id=source_default&mask_id=confirm_update&step=confirmed&
+{
+    "name": "System Test Source",
+    "url": "https://api.zukunft.com/",
+    "description": "System Test Source Description Changed",
+    "view_id": "93",
+    "id": "995",
+    "mask_id": "confirm_update",
+    "step": "confirmed",
+    "url_part_original_data": {
+        "name": "System Test Source",
+        "url": "https://api.zukunft.com/",
+        "id": "995"
+    },
+    "url_part_back": {
+        "id": "995",
+        "mask_id": "source_default"
+    }
+}

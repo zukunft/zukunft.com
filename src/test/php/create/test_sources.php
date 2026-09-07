@@ -40,6 +40,7 @@ include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
@@ -250,6 +252,31 @@ class test_sources extends test_objects
             url_var::SHARE => share_type_shared::PUBLIC_ID,
             url_var::PROTECTION => protect_type_shared::NO_PROTECT_ID
         ];
+    }
+
+    /**
+     * the filled source url posted by the edit form in the second change_source round, mirroring
+     * test_formulas::fill_url_array: the first round only changed the url, so the fill round changes
+     * the description and adds the default view that the add form leaves unset; the '8'-prefixed
+     * opening values are the state the source has after the first round, so the confirm view shows
+     * only the description and the view as changed
+     *
+     * @param int $id the database id of the source the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $msg = new user_message_ui();
+        $url_arr = $this->source_add_url($msg);
+        // the workflow step adds the current db id of the test source, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::URL] = sources::TEST_URL_CHANGED;
+        $url_arr[url_var::DESCRIPTION] = sources::TEST_DESCRIPTION_CHANGED;
+        $url_arr[url_var::VIEW] = views::SOURCE_ID;
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::URL] = $url_arr[url_var::URL];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
     }
 
 }

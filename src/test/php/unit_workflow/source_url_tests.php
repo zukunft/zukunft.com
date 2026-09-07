@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_REF . 'source.php';
@@ -43,6 +44,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::CREATE . 'test_sources.php';
 include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
@@ -53,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -81,8 +84,9 @@ class source_url_tests extends url_test_base
         $t->subheader($this->ts . 'workflow');
 
         // the snapshot unit test only renders the steps
-        // for the write tests the same workflow is used with do_it = true
+        // for the write tests the same workflows are used with do_it = true
         $this->add_source_workflow(workflows::WF_ADD_SOURCE_NBR);
+        $this->change_source_workflow(workflows::WF_CHANGE_SOURCE_NBR);
     }
 
     /**
@@ -144,6 +148,106 @@ class source_url_tests extends url_test_base
     }
 
     /**
+     * run the change_source edit workflow and snapshot the html after every user action, mirroring
+     * change_word_workflow: the back excursion aborts the change without writing, then the url is
+     * changed and the confirm writes it; a second round then changes the description and fills the
+     * default view that the add form leaves unset, and confirms again. the word workflows already
+     * cover the cancel excursion of a change, so this workflow keeps only the back step (see
+     * docs/llm/pending.md). snapshots go into
+     * src/test/resources/web/html/workflow/change_source_wf<nbr>/ (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 20 for wf20
+     * @param bool $do_it false to only render the steps, true to also write the confirmed change
+     */
+    protected function change_source_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        $msg = new user_message();
+        // the change_source workflow runs on the 'System Test Source' (added by the add_source
+        // workflow of a write run), never on real data; resolve its current database id by name
+        // and set the fixed snapshot id of the test source
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_SOURCE, $this->t->usr1, sources::SYSTEM_TEST_ADD_ID, $do_it);
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $src = new source($this->t->usr1);
+        $this->wf_id = $src->load_by_name(sources::SYSTEM_TEST_ADD, $msg);
+        // in a read-only run the add workflow has not written the source, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = sources::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = sources::SYSTEM_TEST_ADD_ID;
+
+        // initial url with the added source; the url carries the current db id of the source so the
+        // rendered buttons and the confirmed write target the real row (the snapshot files normalize
+        // the id back to the fixed test id)
+        $t_src = new test_sources($this->t);
+        $url_arr = $t_src->source_add_url($this->msg);
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::SOURCE_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+
+        // show: display the test source in its default source view
+        $this->assert_step(workflows::SHOW, $url_arr, views::SOURCE_ID);
+
+        // edit: open the source edit view
+        $html = $this->assert_step(workflows::EDIT, $url_arr, views::SOURCE_EDIT_ID);
+
+        // the next back step presses this edit view's cancel button, so it must point to the source view
+        $this->assert_button_url($html, views::SOURCE_ID, $this->step_path);
+
+        // back: leave the edit view without a change and return to the source view (no write)
+        $this->assert_step(workflows::BACK, $url_arr, views::SOURCE_ID);
+
+        // edit: re-open the edit view to make the change
+        $this->assert_step(workflows::EDIT, $url_arr, views::SOURCE_EDIT_ID);
+
+        // user is typing the new source url
+        $url_arr[url_var::URL] = sources::TEST_URL_CHANGED;
+
+        // save: press save on the edit form which shows the confirm change view
+        $this->assert_step(workflows::SAVE, $url_arr, views::SOURCE_EDIT_ID);
+
+        // confirmed: confirm the pending change so it is actually written to the database (with do_it
+        // true); the confirm form posts the confirm update mask, because url_to_action only routes a
+        // confirmed change of an edit mask to the database write (see views::EDIT_MASKS_IDS)
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // a write run must actually persist the change, so check the new url in the database;
+        // usr1 owns the source added by the add_source workflow (see url_test_base::init),
+        // so the change is written to the usr1 standard row and is read back as usr1
+        if ($do_it) {
+            $this->assert_source_in_db('change_source workflow has changed the source',
+                sources::SYSTEM_TEST_ADD, $this->t->usr1, sources::TEST_URL_CHANGED);
+        }
+
+        // the second round changes the description and fills the default view that the add form
+        // leaves unset; the fill url carries the refreshed '8' opening values (the changed url is now
+        // the saved state), so its keys win the union and the confirm shows only the new fields
+        $fill = $t_src->fill_url_array($this->wf_id);
+        $url_arr = $fill + $url_arr;
+
+        // edit: re-open the edit view to fill the remaining fields
+        $this->assert_step(workflows::EDIT, $url_arr, views::SOURCE_EDIT_ID);
+
+        // fill: press save on the edit form with every field filled which shows the confirm change view;
+        // unlike the single-field save above the confirm view now shows every changed field
+        $this->assert_step(workflows::FILL, $url_arr, views::SOURCE_EDIT_ID);
+
+        // confirmed: confirm the filled change so it is also written to the database (with do_it true)
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // a write run must persist the filled fields, so check the previously unset default view is
+        // now set in the database; the source page view is the one the fill url selects
+        if ($do_it) {
+            $this->assert_source_filled_in_db('change_source workflow has filled the source',
+                sources::SYSTEM_TEST_ADD, $this->t->usr1, views::SOURCE_ID);
+        }
+    }
+
+    /**
      * check that the workflow test source exists in the database with the expected url, used by the
      * add write workflow to verify the confirmed step was actually persisted (mirrors
      * formula_url_tests::assert_formula_in_db)
@@ -160,6 +264,25 @@ class source_url_tests extends url_test_base
         $src->load_by_name($name, $msg);
         $this->t->assert($test_name, $src->name(), $name);
         $this->t->assert($test_name, $src->url, $url);
+    }
+
+    /**
+     * check that the second change_source round actually filled the default view of the test source,
+     * used by the change write workflow to verify the filled confirm step was persisted (mirrors
+     * word_url_tests::assert_word_filled_in_db)
+     *
+     * @param string $test_name the description of the assertion
+     * @param string $name the name of the test source in the database
+     * @param user $usr the user whose database version (base or user sandbox) is checked
+     * @param int $view_id the expected default view id of the test source in the database
+     */
+    private function assert_source_filled_in_db(string $test_name, string $name, user $usr, int $view_id): void
+    {
+        $msg = new user_message();
+        $src = new source($usr);
+        $src->load_by_name($name, $msg);
+        $this->t->assert($test_name, $src->name(), $name);
+        $this->t->assert($test_name, $src->view?->id() ?? 0, $view_id);
     }
 
 }

@@ -6,7 +6,8 @@
     -------------------------------------------------------
 
     runs the same workflows as source_url_tests but with do_it true, so each confirmed step is
-    written to the database and the snapshots go into the parallel workflow_write folder
+    written to the database and the snapshots go into the parallel workflow_write folder; the
+    change workflow runs after the add, because it changes the source the add has written
     (see docs/llm/testing.md)
 
     This file is part of zukunft.com - calc with words
@@ -61,9 +62,10 @@ class source_write_url_tests extends source_url_tests
         // remove any test source left over from a previous run
         $this->cleanup_test_sources($t);
 
-        // run the same workflow as source_url_tests but with do_it true
+        // run the same workflows as source_url_tests but with do_it true
         // so each confirmed step is persisted and check if the database is actually updated
         $this->add_source_workflow(workflows::WF_ADD_SOURCE_NBR, true);
+        $this->change_source_workflow(workflows::WF_CHANGE_SOURCE_NBR, true);
 
         $t->subheader($this->ts . 'cleanup');
 

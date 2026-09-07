@@ -1,0 +1,18 @@
+GET
+http://localhost/http/view.php?id=995&k=System+Test+Source&8id=995&8k=System+Test+Source&9m=93&9id=995&m=13&z=0
+/http/view.php?id=995&k=System+Test+Source&8id=995&8k=System+Test+Source&9m=93&9id=995&m=13&z=0
+/http/view.php?id=995&name=System+Test+Source&8id=995&8name=System+Test+Source&9mask_id=source_default&9id=995&mask_id=source_edit&step=no&
+{
+    "id": "995",
+    "name": "System Test Source",
+    "mask_id": "source_edit",
+    "step": "no",
+    "url_part_original_data": {
+        "id": "995",
+        "name": "System Test Source"
+    },
+    "url_part_back": {
+        "mask_id": "source_default",
+        "id": "995"
+    }
+}
