@@ -861,19 +861,26 @@ class system_form extends component
 
     /**
      * @param value|db_object $dbo the value whose source is shown
+     * @param source_list|null $src_lst the frontend cache used to name a source known by id only
      * @return string the linked name of the source behind its label
      *                (empty if the value has no source or the source is not known)
      */
-    function show_source(value|db_object $dbo): string
+    function show_source(value|db_object $dbo, ?source_list $src_lst = null): string
     {
         $result = '';
         // guarded by class, because only a value links a source and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof value) {
-            // the api sends the source itself for a page request, so the name needs no cache;
+            $src = $dbo->src;
+            // the api sends the source itself for a page request, but a value built from a url
+            // carries only the source id (see value::set_source_id), so the name of such a source
+            // is taken from the frontend cache - without it the page would show no source at all
+            if ($src?->name() == '' and $src?->id() != 0) {
+                $src = $src_lst?->get($src->id());
+            }
             // name_link() returns safe html, so it is added behind the label unescaped
-            if ($dbo->src?->name() != '') {
-                $result = $this->label_with_html($dbo->src->name_link(), msg_id::FORM_SELECT_SOURCE);
+            if ($src?->name() != '') {
+                $result = $this->label_with_html($src->name_link(), msg_id::FORM_SELECT_SOURCE);
             }
         } else {
             log_err($dbo::class . ' is not expected to have a source');

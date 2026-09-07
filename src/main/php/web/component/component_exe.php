@@ -438,7 +438,7 @@ class component_exe extends component
             component_types::SHOW_ORDER_NBR => $form->show_order_nbr($dbo),
             component_types::SHOW_WEIGHT => $form->show_weight($dbo),
             component_types::SHOW_CONDITION_FORMULA => $form->show_condition_formula($dbo),
-            component_types::SHOW_SOURCE => $form->show_source($dbo),
+            component_types::SHOW_SOURCE => $form->show_source($dbo, $cfg->source_list()),
             component_types::SHOW_LAST_UPDATE => $form->show_last_update($dbo),
             component_types::SHOW_IMPACT => $form->show_impact($dbo),
             component_types::SHOW_ALL_VALUES_NEEDED => $form->show_all_values_needed($dbo),

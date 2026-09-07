@@ -7,7 +7,7 @@ check if the views_by_id are 'useful'
 
 ### value
 
-add a source add link
+add to the value default view a column with similar values e.g. in case of pi show other math const values sorted by impact 
 
 ### components
 

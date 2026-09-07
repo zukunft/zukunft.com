@@ -193,10 +193,16 @@ class test_sources extends test_objects
         return $msk;
     }
 
+    /**
+     * @return source_list the sources of the frontend render cache (test_lib::ui_test_cache), so it
+     *                     holds the reserved source too, which the test values name and which the
+     *                     value page needs to show the source of a value built from a url
+     */
     function source_list(): source_list
     {
         $lst = new source_list($this->env->usr1);
         $lst->add($this->source_filled_included());
+        $lst->add($this->source_reserved());
         return $lst;
     }
 

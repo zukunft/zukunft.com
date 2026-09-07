@@ -49,6 +49,7 @@ include_once paths::MODEL_VALUE . 'value_time.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -71,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
@@ -145,6 +147,18 @@ class test_values extends test_objects
         $val = $this->value($msg);
         $val->set_source($t_src->source_filled_included());
         return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
+    /**
+     * @return value_ui the standard test value whose source is known by its id only, which is the
+     *                  state of a value built from a url (see value::set_source_id), used to test
+     *                  that the value page names such a source from the frontend cache
+     */
+    function value_source_by_id_ui(user_message $msg): value_ui
+    {
+        $val_ui = new value_ui($this->value($msg)->api_json([api_types::INCL_PHRASES], $msg));
+        $val_ui->set_source_id(sources::BFS_ID);
+        return $val_ui;
     }
 
     function value_incomplete(user_message $msg): value

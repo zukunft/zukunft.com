@@ -132,6 +132,9 @@ class system_views_read_tests
         // VALUE
         // PI (3.14) is the example for the related-phrase links and the grey value of the "Value title" component
         $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_ID, $cfg);
+        // the pi number of units.json names the "mathematical constant" source, so it is the example
+        // for the "system show field value source" component of the value default view
+        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_MATH_ID, $cfg);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
