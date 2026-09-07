@@ -486,6 +486,54 @@ class test_components extends test_objects
         return $lst;
     }
 
+    /**
+     * the components of a view with two text fields that share one line
+     * e.g. to test the same line position type
+     *
+     * the first component uses the default position type, so it opens the line that the second
+     * one continues, which is how the value default page shows the last update and the source
+     *
+     * @param view $msk the view to link the components to
+     * @return component_link_list with the two fields of one line
+     */
+    function components_same_line(view $msk): component_link_list
+    {
+        $lst = new component_link_list($this->env->usr1);
+        $fields = [
+            [components::LINE_FIRST_ID, components::LINE_FIRST_NAME, null],
+            [components::LINE_SECOND_ID, components::LINE_SECOND_NAME, position_types::SAME_LINE],
+        ];
+        $pos = 1;
+        foreach ($fields as [$id, $name, $pos_type]) {
+            $lnk = new component_link($this->env->usr1);
+            $lnk->set($pos, $msk, $this->component_text($id, $name), $pos);
+            if ($pos_type != null) {
+                $lnk->set_pos_type($pos_type);
+            }
+            $lst->add_link($lnk);
+            $pos++;
+        }
+        return $lst;
+    }
+
+    /**
+     * the components of a view whose only component continues a line that no component has
+     * started, e.g. to test that the same line separator never stands alone
+     *
+     * @param view $msk the view to link the component to
+     * @return component_link_list with the single leading same line component
+     */
+    function components_same_line_alone(view $msk): component_link_list
+    {
+        $lst = new component_link_list($this->env->usr1);
+        $lnk = new component_link($this->env->usr1);
+        $lnk->set(1, $msk, $this->component_text(
+            components::LINE_SECOND_ID, components::LINE_SECOND_NAME), 1);
+        $lnk->set_pos_type(position_types::SAME_LINE);
+        $lst->add_link($lnk);
+        return $lst;
+    }
+
     function component_link_add(): component_link
     {
         $t_msk = new test_views($this->env);

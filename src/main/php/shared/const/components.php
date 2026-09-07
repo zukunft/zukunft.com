@@ -61,6 +61,12 @@ class components
     const string COL_FOURTH_NAME = 'fourth column';
     const int COL_FOURTH_ID = 904;
 
+    // text components to test the same line position type
+    const string LINE_FIRST_NAME = 'first field';
+    const int LINE_FIRST_ID = 905;
+    const string LINE_SECOND_NAME = 'second field';
+    const int LINE_SECOND_ID = 906;
+
     // for system views
     const string FORM_TITLE = 'form_title';
     const string FORM_TITLE_NAME = 'form title';

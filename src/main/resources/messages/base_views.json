@@ -968,40 +968,35 @@
         },
         {
           "position": "2",
-          "name": "main value"
+          "name": "system show field last update",
+          "style": "fields-in-line"
         },
         {
           "position": "3",
           "name": "system show field value source",
-          "position_type": "combine"
+          "position_type": "same_line"
         },
         {
           "position": "4",
-          "name": "system show field last update",
-          "position_type": "combine"
+          "name": "system sub title values"
         },
         {
           "position": "5",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
-        },
-        {
-          "position": "6",
           "name": "similar values",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "6",
           "name": "system sub title results",
-          "position_type": "side_or_below"
+          "position_type": "side_or_first_below"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "results of value",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "8",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }

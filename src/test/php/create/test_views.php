@@ -362,6 +362,29 @@ class test_views extends test_objects
         return $msk;
     }
 
+    /**
+     * @return view with two text fields that share one line like the last update and the
+     *              source of the value default page
+     */
+    function view_same_line(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_same_line($msk);
+        return $msk;
+    }
+
+    /**
+     * @return view whose only component continues a line that no component has started
+     */
+    function view_same_line_alone(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_same_line_alone($msk);
+        return $msk;
+    }
+
     function view_word_add(): view
     {
         $t_cmp = new test_components($this->env);

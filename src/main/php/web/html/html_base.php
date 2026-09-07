@@ -151,6 +151,9 @@ class html_base
     const string TITLE_HTML = 'title'; // title attribute e.g. for tooltips
     const string TITLE = 'title';      // <title> element in <head>
     const string TYPE = 'type';
+    // separates two short fields that share one line e.g. the about and the privacy link of the
+    // footer or the last update and the source of a value; the blanks are part of the separator
+    const string MIDDLE_DOT = ' &middot; ';
     const string P = 'p';
     const string DIV = 'div';
     const string UL = 'ul';

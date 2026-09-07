@@ -457,6 +457,24 @@ class view_ui_tests
         $test_name = 'without the side or below position types no minimal width is set';
         $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
         $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+
+
+        $t->subheader($ts . 'same line');
+
+        // a same line component continues the line of the previous component separated by a
+        // middle dot, which is how the value default page shows the last update and the source;
+        // the two fields are adjacent in the html, so neither of them is wrapped in an own div
+        // like a combined component would be (see position_types::COMBINE)
+        $msk_line = new view($t_msk->view_same_line()->api_json([api_types::INCL_COMPONENTS]));
+        $test_name = 'the two fields share one line separated by a middle dot';
+        $t->assert_text_contains($test_name, $msk_line->show($wrd, $msg, $ui->dto, '', true),
+            components::LINE_FIRST_NAME . html_base::MIDDLE_DOT . components::LINE_SECOND_NAME);
+
+        // a separator without a field in front of it would show a dot at the start of the line
+        $test_name = 'a same line component that starts the line shows no separator';
+        $msk_alone = new view($t_msk->view_same_line_alone()->api_json([api_types::INCL_COMPONENTS]));
+        $t->assert_text_not_contains($test_name,
+            $msk_alone->show($wrd, $msg, $ui->dto, '', true), html_base::MIDDLE_DOT);
     }
 
 }

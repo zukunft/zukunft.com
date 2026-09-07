@@ -248,6 +248,12 @@ class view_exe extends view_base
                 if ($pos_type == position_types::COMBINE and $cmp_html != '') {
                     $cmp_html = $html->div($cmp_html);
                 }
+                // a same-line component continues the line of the previous one, so a middle dot
+                // separates the two fields e.g. the last update and the source of a value; with
+                // an empty row the previous field is missing and the dot would stand alone
+                if ($pos_type == position_types::SAME_LINE and $cmp_html != '' and $row != '') {
+                    $cmp_html = html_base::MIDDLE_DOT . $cmp_html;
+                }
                 $row .= $cmp_html;
 
                 // remember the style to apply it to the complete row or column

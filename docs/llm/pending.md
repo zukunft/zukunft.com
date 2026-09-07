@@ -7,7 +7,7 @@ check if the views_by_id are 'useful'
 
 ### value
 
-remove the main value placeholder and show the last update and the source field in one line separated by a model dot
+in src/test/resources/web/html/views_by_object/value/value_default_value_32824.html the 'values' column headline should be 'related values' and should contain other 'mathematical constant', so look for a triple with the 'is a' verb and select other values that have corresponding 'is a' verbs
 
 ### components
 

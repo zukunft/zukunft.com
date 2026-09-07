@@ -15,6 +15,21 @@ body {
     text-align: left;
 }
 
+/* opt-in for a row whose short fields read as one centred line, e.g. the last update and the */
+/* source of the default value view; the row keeps the bootstrap "row" class, which would make */
+/* every child a full width flex item and put each field on an own line, so the flex layout is */
+/* switched back to inline text that the body centre alignment then centres as one line */
+.fields-in-line {
+    display: block;
+    width: 100%;    /* keep the full width of the replaced col-md-12 row style */
+    text-align: center;
+}
+
+.fields-in-line > * {
+    display: inline;
+    width: auto;
+}
+
 /* header / navbar */
 .site-header {
     background: #f9fafb; /* Light grey-blue background for the top header */
