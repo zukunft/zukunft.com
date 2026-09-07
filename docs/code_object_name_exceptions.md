@@ -109,7 +109,7 @@ component_type: $cmp_typ
 component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
-data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_empty, $dto_no_links, $dto_prio, $dto_start, $dto_ui, $res_cfg
+data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_empty, $dto_no_links, $dto_prio, $dto_sim, $dto_start, $dto_ui, $res_cfg
 db_cache: $cac, $db_cache
 db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta
@@ -235,7 +235,7 @@ ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port
 ui_link: $link
-ui_list: $list
+ui_list: $list, $lst_ui
 ui_preview: $preview
 ui_rank: $rank
 ui_select: $select

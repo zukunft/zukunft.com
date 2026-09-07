@@ -55,6 +55,8 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
@@ -80,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -124,6 +127,11 @@ class value extends sandbox_value
      */
 
     public ?source $src = null;
+
+    // the values that share a phrase with this value and the results that use it, filled only if
+    // the value has been loaded for its page (see load_by_id_with_related), otherwise null
+    public ?value_list $values_similar = null;
+    public ?result_list $results_related = null;
 
 
     /*
@@ -187,6 +195,22 @@ class value extends sandbox_value
             $src = new source();
             $src->api_mapper($json_array[json_fields::SOURCE], $msg);
             $this->src = $src;
+        }
+        // only the value page asks for the similar values and the results, so a missing list is
+        // not an empty list (see source::api_mapper for the same pattern with the source values)
+        if (is_array($json_array[json_fields::VALUES] ?? null)) {
+            $val_lst = new value_list();
+            $val_lst->api_mapper($json_array[json_fields::VALUES]);
+            $this->values_similar = $val_lst;
+        } else {
+            $this->values_similar = null;
+        }
+        if (is_array($json_array[json_fields::RESULTS] ?? null)) {
+            $res_lst = new result_list();
+            $res_lst->api_mapper($json_array[json_fields::RESULTS]);
+            $this->results_related = $res_lst;
+        } else {
+            $this->results_related = null;
         }
 
         return $msg->is_ok();

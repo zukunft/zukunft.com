@@ -1,6 +1,6 @@
-PREPARE result_list_by_phr_lst_p3 FROM
-   'SELECT     NULL AS group_id,
-               NULL AS user_group_id,
+PREPARE result_list_by_phr_lst_p1 (bigint, text, bigint) AS
+    SELECT     '' AS group_id,
+               '' AS user_group_id,
                phrase_id_1,
                phrase_id_2,
                phrase_id_3,
@@ -19,12 +19,10 @@ PREPARE result_list_by_phr_lst_p3 FROM
                0 AS change_user_id,
                0 AS share_type_id
           FROM results_standard_prime
-         WHERE ( phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? )
-           AND ( phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? )
-           AND ( phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? )
+         WHERE ( phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 )
 
-  UNION SELECT NULL AS group_id,
-               NULL AS user_group_id,
+  UNION SELECT '' AS group_id,
+               '' AS user_group_id,
                phrase_id_1,
                phrase_id_2,
                phrase_id_3,
@@ -43,12 +41,10 @@ PREPARE result_list_by_phr_lst_p3 FROM
                0 AS change_user_id,
                0 AS share_type_id
           FROM results_standard_main
-         WHERE ( phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ? )
-           AND ( phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ? )
-           AND ( phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ? )
+         WHERE ( phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 OR phrase_id_4 = $1 OR phrase_id_5 = $1 OR phrase_id_6 = $1 OR phrase_id_7 = $1 )
 
   UNION SELECT group_id,
-               NULL AS user_group_id,
+               '' AS user_group_id,
                0 AS phrase_id_1,
                0 AS phrase_id_2,
                0 AS phrase_id_3,
@@ -67,9 +63,7 @@ PREPARE result_list_by_phr_lst_p3 FROM
                0 AS change_user_id,
                0 AS share_type_id
           FROM results_standard
-         WHERE group_id like ?
-           AND group_id like ?
-           AND group_id like ?
+         WHERE group_id like $2
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -84,21 +78,19 @@ PREPARE result_list_by_phr_lst_p3 FROM
                s.user_id,
                s.source_group_id,
                s.formula_id,
-               IF(u.numeric_value IS NULL, s.numeric_value, u.numeric_value) AS numeric_value,
-               IF(u.last_update   IS NULL, s.last_update,   u.last_update)   AS last_update,
-               IF(u.excluded      IS NULL, s.excluded,      u.excluded)      AS excluded,
-               IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id,
+               CASE WHEN (u.numeric_value IS     NULL) THEN s.numeric_value ELSE u.numeric_value END AS numeric_value,
+               CASE WHEN (u.last_update   IS     NULL) THEN s.last_update   ELSE u.last_update   END AS last_update,
+               CASE WHEN (u.excluded      IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
+               CASE WHEN (u.protect_id    IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id,
                u.user_id AS change_user_id,
                u.share_type_id
           FROM results s
      LEFT JOIN user_results u ON s.group_id = u.group_id
-                             AND u.user_id = ?
-         WHERE s.group_id like ?
-           AND s.group_id like ?
-           AND s.group_id like ?
+                             AND u.user_id = $3
+         WHERE s.group_id like $2
 
-  UNION SELECT NULL AS group_id,
-               NULL AS user_group_id,
+  UNION SELECT '' AS group_id,
+               '' AS user_group_id,
                s.phrase_id_1,
                s.phrase_id_2,
                s.phrase_id_3,
@@ -108,12 +100,12 @@ PREPARE result_list_by_phr_lst_p3 FROM
                0 AS phrase_id_7,
                0 AS phrase_id_8,
                s.user_id,
-               cast(s.source_group_id as char),
+               s.source_group_id::text,
                s.formula_id,
-               IF(u.numeric_value IS NULL, s.numeric_value, u.numeric_value) AS numeric_value,
-               IF(u.last_update   IS NULL, s.last_update,   u.last_update)   AS last_update,
-               IF(u.excluded      IS NULL, s.excluded,      u.excluded)      AS excluded,
-               IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id,
+               CASE WHEN (u.numeric_value IS     NULL) THEN s.numeric_value ELSE u.numeric_value END AS numeric_value,
+               CASE WHEN (u.last_update   IS     NULL) THEN s.last_update   ELSE u.last_update   END AS last_update,
+               CASE WHEN (u.excluded      IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
+               CASE WHEN (u.protect_id    IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id,
                u.user_id AS change_user_id,
                u.share_type_id
           FROM results_prime s
@@ -121,13 +113,11 @@ PREPARE result_list_by_phr_lst_p3 FROM
                                    AND s.phrase_id_2 = u.phrase_id_2
                                    AND s.phrase_id_3 = u.phrase_id_3
                                    AND s.phrase_id_4 = u.phrase_id_4
-                                   AND u.user_id = ?
-         WHERE ( s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? )
-           AND ( s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? )
-           AND ( s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? )
+                                   AND u.user_id = $3
+         WHERE ( s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1 )
 
-  UNION SELECT NULL AS group_id,
-               NULL AS user_group_id,
+  UNION SELECT '' AS group_id,
+               '' AS user_group_id,
                s.phrase_id_1,
                s.phrase_id_2,
                s.phrase_id_3,
@@ -137,12 +127,12 @@ PREPARE result_list_by_phr_lst_p3 FROM
                s.phrase_id_7,
                s.phrase_id_8,
                s.user_id,
-               cast(s.source_group_id as char),
+               s.source_group_id::text,
                s.formula_id,
-               IF(u.numeric_value IS NULL, s.numeric_value, u.numeric_value) AS numeric_value,
-               IF(u.last_update   IS NULL, s.last_update,   u.last_update)   AS last_update,
-               IF(u.excluded      IS NULL, s.excluded,      u.excluded)      AS excluded,
-               IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id,
+               CASE WHEN (u.numeric_value IS     NULL) THEN s.numeric_value ELSE u.numeric_value END AS numeric_value,
+               CASE WHEN (u.last_update   IS     NULL) THEN s.last_update   ELSE u.last_update   END AS last_update,
+               CASE WHEN (u.excluded      IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
+               CASE WHEN (u.protect_id    IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id,
                u.user_id AS change_user_id,
                u.share_type_id
           FROM results_main s
@@ -154,10 +144,8 @@ PREPARE result_list_by_phr_lst_p3 FROM
                                   AND s.phrase_id_6 = u.phrase_id_6
                                   AND s.phrase_id_7 = u.phrase_id_7
                                   AND s.phrase_id_8 = u.phrase_id_8
-                                  AND u.user_id = ?
-         WHERE ( s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ? )
-           AND ( s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ? )
-           AND ( s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ? )
+                                  AND u.user_id = $3
+         WHERE ( s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1 OR s.phrase_id_5 = $1 OR s.phrase_id_6 = $1 OR s.phrase_id_7 = $1 OR s.phrase_id_8 = $1 )
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -172,15 +160,13 @@ PREPARE result_list_by_phr_lst_p3 FROM
                s.user_id,
                s.source_group_id,
                s.formula_id,
-               IF(u.numeric_value IS NULL, s.numeric_value, u.numeric_value) AS numeric_value,
-               IF(u.last_update   IS NULL, s.last_update,   u.last_update)   AS last_update,
-               IF(u.excluded      IS NULL, s.excluded,      u.excluded)      AS excluded,
-               IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id,
+               CASE WHEN (u.numeric_value IS     NULL) THEN s.numeric_value ELSE u.numeric_value END AS numeric_value,
+               CASE WHEN (u.last_update   IS     NULL) THEN s.last_update   ELSE u.last_update   END AS last_update,
+               CASE WHEN (u.excluded      IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
+               CASE WHEN (u.protect_id    IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id,
                u.user_id AS change_user_id,
                u.share_type_id
           FROM results_big s
      LEFT JOIN user_results_big u ON s.group_id = u.group_id
-                                 AND u.user_id = ?
-         WHERE s.group_id like ?
-           AND s.group_id like ?
-           AND s.group_id like ?';
+                                 AND u.user_id = $3
+         WHERE s.group_id like $2;

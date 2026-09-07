@@ -226,14 +226,14 @@ class value_list extends ListBase
     }
 
     /**
-     * get a list with the values related directly to the given word, triple or source
+     * get a list with the values related directly to the given word, triple, source or value
      *
-     * @param word|triple|source|formula|db_object|type_object|null $dbo to filter the values
+     * @param word|triple|source|value|formula|db_object|type_object|null $dbo to filter the values
      * @return value_list with only the direct linked values
      */
     function filter(
         user_message $msg,
-        word|triple|source|formula|db_object|type_object|null $dbo = null,
+        word|triple|source|value|formula|db_object|type_object|null $dbo = null,
         ?phrase_list $ctx_lst = null
     ): value_list
     {
@@ -256,6 +256,18 @@ class value_list extends ListBase
                 // a value without a source belongs to no source, so the null source id must not
                 // match the id 0 of a source that is not yet written to the database
                 if ($val->source_id() != null and $val->source_id() == $dbo->id()) {
+                    $val_lst->add($val, $msg);
+                }
+            }
+        }
+        if ($dbo::class == value::class) {
+            // the values similar to the given value are the values that share a phrase with it
+            // e.g. the other mathematical constants of pi; the value itself is never similar to
+            // itself, so it is left out like value::load_values_similar does
+            $phr_names = $dbo->grp->phr_lst()->names();
+            foreach ($this->lst() as $val) {
+                if ($val->id() != $dbo->id()
+                    and array_intersect($phr_names, $val->grp->phr_lst()->names()) != []) {
                     $val_lst->add($val, $msg);
                 }
             }
@@ -2530,11 +2542,12 @@ class value_list extends ListBase
                 $ref_edit = $val->dsp_obj()->ref_edit();
                 $result .= '      ' . $dsp_phr_lst->name_linked() . $ref_edit;
                 log_debug('linked words ' . $val->id . ' done');
-                // to review
-                // list the related results
-                $res_lst = new result_list();
-                $res_lst->load_by_val($val, $msg);
-                $result .= $res_lst->frm_links_html();
+                // list the results that use this value; they are sent with the value of a page
+                // request (see value::api_mapper), because the frontend never loads from the
+                // database itself - the backend result_list::load_by_val selects them
+                if ($val->results_related != null) {
+                    $result .= $val->results_related->frm_links_html($url_arr);
+                }
                 $result .= '    </td>';
                 log_debug('formula results ' . $val->id . ' loaded');
 

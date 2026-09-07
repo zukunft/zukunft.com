@@ -44,8 +44,8 @@ a message that is filled and then goes out of scope loses every error it collect
 
 ```
 frontend: /component/execute/system_form.php:957 - $msg = new user_message();
-frontend: /value/value.php:536 - $msg = new user_message(); // a local buffer, the tooltip lookup has no user relevant message
-frontend: /value/value.php:593 - $warning = new user_message();
+frontend: /value/value.php:560 - $msg = new user_message(); // a local buffer, the tooltip lookup has no user relevant message
+frontend: /value/value.php:617 - $warning = new user_message();
 main backend: /formula/expression.php:1139 - $msg = new user_message();
 ```
 

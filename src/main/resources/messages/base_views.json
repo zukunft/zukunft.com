@@ -585,6 +585,25 @@
       "description": "the url of a reference as read only",
       "type": "system_show_field_ref_url",
       "code_id": "show_field_ref_url"
+    },
+    {
+      "name": "system sub title results",
+      "description": "show the language specific sub title for a result list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_results",
+      "ui_msg_code_id": "system_sub_title_results"
+    },
+    {
+      "name": "similar values",
+      "description": "the values that share a phrase with this value sorted by impact e.g. the other mathematical constants of pi",
+      "type": "values_similar",
+      "code_id": "values_similar"
+    },
+    {
+      "name": "results of value",
+      "description": "the results that use this value e.g. the increase calculated from it",
+      "type": "results_by_value",
+      "code_id": "results_by_value"
     }
   ],
   "views": [
@@ -963,7 +982,28 @@
         },
         {
           "position": "5",
-          "name": "value tab box"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "6",
+          "name": "similar values",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system sub title results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "8",
+          "name": "results of value",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },

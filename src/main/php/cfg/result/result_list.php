@@ -1278,12 +1278,17 @@ class result_list extends sandbox_value_list
     }
 
     /**
-     * load all results related to one value
-     * TODO check if this is needed
+     * load all results related to one value, i.e. the results that use the phrases of the value
+     * e.g. the results shown in the results column of the value default page
+     * (see value::load_results_related)
      * TODO review: split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
+     *
+     * @param value_base $val the value whose results should be loaded
+     * @param user_message $msg to collect the loading problems for the requesting user
+     * @return bool true if loading has been successful
      */
-    function load_by_val(value_base $val, user_message $msg): string
+    function load_by_val(value_base $val, user_message $msg): bool
     {
         $phr_lst = $val->phr_lst();
         return $this->load_by_phrase_list($phr_lst, $msg);

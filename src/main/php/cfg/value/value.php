@@ -53,11 +53,14 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -66,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -73,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
@@ -111,6 +116,16 @@ class value extends value_base
     // via api_json_array() under the INCL_RELATED flag, so the views tab of the default value
     // view can offer the views to switch to
     public ?view_list $views_related = null;
+
+    // the values that share a phrase with this value e.g. the other math constants of pi;
+    // populated lazily by load_values_similar() and emitted like views_related, so the similar
+    // values column of the default value view can list them
+    public ?value_list $values_similar = null;
+
+    // the results that use this value e.g. the increase calculated from it; populated lazily by
+    // load_results_related() and emitted like views_related, so the results column of the
+    // default value view can list them
+    public ?result_list $results_related = null;
 
 
     /*
@@ -238,6 +253,30 @@ class value extends value_base
             }
             $vars = array_merge($vars,
                 new sandbox_related()->views_array($this->views_related, $msg, $usr));
+            // a value that is not yet written has no phrases to compare, so it has no similar
+            // values and no results, whereas the views above are the same for every value
+            if ($this->values_similar == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_values_similar($msg);
+            }
+            if ($this->values_similar != null and !$this->values_similar->is_empty()) {
+                // drop the values the requester may not read, so the list cannot disclose another
+                // user's private value (idor), the same gate that source::api_json_array uses
+                $this->values_similar->filter_readable_by($usr);
+                // INCL_PHRASES so each value carries its group phrases, which the frontend
+                // needs for the value name
+                $vars[json_fields::VALUES] = $this->values_similar->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            }
+            if ($this->results_related == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_results_related($msg);
+            }
+            if ($this->results_related != null and !$this->results_related->is_empty()) {
+                // a result can be based on a value the requester may not read, so the same
+                // idor gate as for the similar values above
+                $this->results_related->filter_readable_by($usr);
+                $vars[json_fields::RESULTS] = $this->results_related->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            }
             $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
             $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
@@ -263,6 +302,42 @@ class value extends value_base
         $msk_lst = new view_list($this->get_user());
         $msk_lst->load_by_type($sys->typ_lst->msk_typ->id(view_types::VALUE), $msg);
         $this->views_related = $msk_lst;
+    }
+
+    /**
+     * load the values that share a phrase with this value into the in-memory values_similar list
+     * so that api_json_array() can emit them under the INCL_RELATED flag, which the 'similar
+     * values' component of the value default page shows: for pi these are the other values of the
+     * mathematical constants, because they share the phrase that names them
+     *
+     * the values are selected with 'or', because a value that shares one phrase is already
+     * similar; this value itself is removed, because a page never lists what it shows
+     *
+     * @param user_message $msg to collect any problem while loading the values
+     * @return void
+     */
+    function load_values_similar(user_message $msg): void
+    {
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_phr_lst($this->phr_lst(), $msg, true, value_list::read_limit());
+        $val_lst->remove($this);
+        $val_lst->load_names_related($msg);
+        $this->values_similar = $val_lst;
+    }
+
+    /**
+     * load the results that use this value into the in-memory results_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'results of value'
+     * component of the value default page shows e.g. the increase calculated from this value
+     *
+     * @param user_message $msg to collect any problem while loading the results
+     * @return void
+     */
+    function load_results_related(user_message $msg): void
+    {
+        $res_lst = new result_list($this->get_user());
+        $res_lst->load_by_val($this, $msg);
+        $this->results_related = $res_lst;
     }
 
     /*

@@ -480,6 +480,11 @@ class component_types
     const int LIST_VALUES_BY_TRIPLE_ID = 151;
     const string LIST_VALUES_BY_SOURCE = "values_by_source";
     const int LIST_VALUES_BY_SOURCE_ID = 152;
+    // the similar values and the results of the value default page
+    const string LIST_VALUES_SIMILAR = "values_similar";
+    const int LIST_VALUES_SIMILAR_ID = 247;
+    const string LIST_RESULTS_BY_VALUE = "results_by_value";
+    const int LIST_RESULTS_BY_VALUE_ID = 248;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
     const int LIST_FORMULAS_OF_VERB_ID = 148;
     const string LIST_FORMULAS_OF_PARENTS = "formulas_of_parents";

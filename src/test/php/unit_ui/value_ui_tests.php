@@ -47,11 +47,13 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -235,6 +237,55 @@ class value_ui_tests
         // a value without any source shows no source line
         $test_name = 'a value without a source shows no source line';
         $t->assert($test_name, $sfm->show_source($val_no_src), '');
+
+
+        $t->subheader($ts . 'similar values and results');
+
+        // the value default page shows the values that share a phrase with the shown value in one
+        // column and the results that use it in the next (see base_views.json value_default)
+        $val_rel = $t_val->value_page_related_ui($msg);
+        $lst_ui = new ui_list();
+        $sim_html = $lst_ui->values_similar($val_rel, $msg_ui);
+
+        $test_name = 'the similar values of pi list the other mathematical constants';
+        $t->assert_text_contains($test_name, $sim_html, triple_names::E);
+
+        // a value is never listed among its own similar values (see value_list::remove)
+        $test_name = 'pi is not listed among its own similar values';
+        $t->assert_text_not_contains($test_name, $sim_html, triple_names::PI_SYMBOL_NAME);
+
+        // the results column lists the results that use the value, each with its phrase and number
+        $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
+        $test_name = 'the results of a value are shown with their phrase and their number';
+        $t->assert_text_order($test_name, $res_html, word_names::MATH, (string)results::TV_INT);
+
+        // a value that is not used for results says so instead of showing an empty table
+        $val_no_res = $t_val->value_page_ui($msg);
+        $val_no_res->results_related = new result_list();
+        $test_name = 'a value without results shows the not used message';
+        $t->assert($test_name, $lst_ui->results_by_value($val_no_res, $msg_ui),
+            $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS));
+
+        // a value built from an url carries no similar values (only a page request loads them),
+        // so the values of the page cache that share a phrase with it are shown instead; the
+        // zurich values share the phrases zurich, inhabitants and 2019, so they are similar
+        $val_url = $tl->ui_value($t_val->people_zh());
+        $dto_sim = new data_object();
+        // INCL_PHRASES so each cached value carries its group phrases, which the filter compares
+        $dto_sim->val_lst = $tl->list_to_ui($t_val->value_list_zh(), [api_types::INCL_PHRASES]);
+        $sim_cache_html = $lst_ui->values_similar($val_url, $msg_ui, $dto_sim);
+
+        // the phrases of the shown value are the context of the column and left out of the lines,
+        // so the canton value is named by the phrases that the shown value does not have
+        $test_name = 'without the loaded list the similar values come from the page cache';
+        $t->assert_text_contains($test_name, $sim_cache_html, word_names::CANTON);
+
+        // the shown value is never similar to itself, so the cache keeps every value but that one;
+        // the rendered lines cannot show this, because the phrases of the shown value are the
+        // context of the column and are left out of every line
+        $sim_lst = $dto_sim->val_lst->filter($msg_ui, $val_url);
+        $test_name = '... and the shown value itself is not among them';
+        $t->assert($test_name, $sim_lst->count(), $dto_sim->val_lst->count() - 1);
 
 
         $t->subheader($ts . 'view tab box');

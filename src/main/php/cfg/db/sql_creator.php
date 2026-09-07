@@ -708,6 +708,27 @@ class sql_creator
     }
 
     /**
+     * the placeholder of a field that a table of a union query does not have
+     *
+     * an id field that can be either int or text (e.g. the source_group_id, see
+     * def::MIXED_ID_FIELDS) is a text column in the tables that do have it, so its placeholder
+     * must be a text too - a numeric zero would make postgres refuse the union with
+     * "UNION types integer and character do not match"
+     *
+     * @param string $field the database field name that is missing in this table of the union
+     * @return string the sql placeholder value including the surrounding blanks
+     */
+    private function dummy_value(string $field): string
+    {
+        if (in_array($field, def::MIXED_ID_FIELDS)) {
+            $result = " '' ";
+        } else {
+            $result = " 0 ";
+        }
+        return $result;
+    }
+
+    /**
      * define the fields that should be returned in a select query with dummy values for a union query
      * @param array $field_lst list of the non-user-specific fields that should be loaded from the database
      */
@@ -3151,12 +3172,12 @@ class sql_creator
                 if ($this->field_lst_num_dummy != '') {
                     if (is_array($this->field_lst_num_dummy)) {
                         if (in_array($field, $this->field_lst_num_dummy)) {
-                            $result .= " 0 " . sql::AS . " " . $field;
+                            $result .= $this->dummy_value($field) . sql::AS . " " . $field;
                             $fld_used = true;
                         }
                     } else {
                         if ($field == $this->field_lst_num_dummy) {
-                            $result .= " 0 " . sql::AS . " " . $field;
+                            $result .= $this->dummy_value($field) . sql::AS . " " . $field;
                             $fld_used = true;
                         }
                     }

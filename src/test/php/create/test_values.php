@@ -150,6 +150,24 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_ui the pi value as the api sends it for a page request, with the other
+     *                  mathematical constants as the similar values and with the results that
+     *                  use it, so that the similar values and the results column of the value
+     *                  default page can be tested; pi is not part of its own similar values,
+     *                  like value::load_values_similar removes it
+     */
+    function value_page_related_ui(user_message $msg): value_ui
+    {
+        $t_res = new test_results($this->env);
+        $val = $this->value_pi();
+        $similar = $this->value_list_math();
+        $similar->remove($val);
+        $val->values_similar = $similar;
+        $val->results_related = $t_res->result_list();
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
+    /**
      * @return value_ui the standard test value whose source is known by its id only, which is the
      *                  state of a value built from a url (see value::set_source_id), used to test
      *                  that the value page names such a source from the frontend cache
