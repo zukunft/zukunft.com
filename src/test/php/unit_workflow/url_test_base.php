@@ -424,6 +424,9 @@ class url_test_base
         // which vary per run; replace each change log time with a dummy time sequence (see below)
         $html = $this->normalize_change_log_time($html);
         $html = $this->normalize_navbar_role($html);
+        // link to the pod like the views_by_id and views_by_object snapshots, so that a step opened
+        // in the ide does not link to the ide preview server port (see test_base::link_to_pod)
+        $html = $this->t->link_to_pod($html, THIS_URL);
         $this->t->assert_html_page($test_name, $html, $test_name);
     }
 
@@ -445,6 +448,9 @@ class url_test_base
         // which vary per run; replace each change log time with a dummy time sequence (see below)
         $html = $this->normalize_change_log_time($html);
         $html = $this->normalize_navbar_role($html);
+        // link to the pod like the views_by_id and views_by_object snapshots, so that a step opened
+        // in the ide does not link to the ide preview server port (see test_base::link_to_pod)
+        $html = $this->t->link_to_pod($html, THIS_URL);
         $this->t->assert_html_page($test_name, $html, $test_name);
     }
 

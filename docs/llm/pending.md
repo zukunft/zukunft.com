@@ -9,7 +9,7 @@ check if the views_by_id are 'useful'
 
 add to the value default view a column with similar values e.g. in case of pi show other math const values sorted by impact and add another column with results where the value has been used and move the view and changes tab to a third column 
 
-remove the main value placeholder and show
+remove the main value placeholder and show the last update and the source field in one line separated by a model dot
 
 ### components
 
