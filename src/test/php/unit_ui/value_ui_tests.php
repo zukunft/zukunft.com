@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -286,6 +287,29 @@ class value_ui_tests
         $sim_lst = $dto_sim->val_lst->filter($msg_ui, $val_url);
         $test_name = '... and the shown value itself is not among them';
         $t->assert($test_name, $sim_lst->count(), $dto_sim->val_lst->count() - 1);
+
+        // a value built from an url carries no results either, so the results of the page cache
+        // that are based on all phrases of the value are shown instead; the cache holds the
+        // result of the math phrase and the result of the percent phrase
+        $t_res = new test_results($t);
+        $dto_res = new data_object();
+        // INCL_PHRASES so each cached result carries its group phrases, which the filter compares
+        $dto_res->res_lst = new result_list(
+            $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]));
+
+        // the math phrase of the shown value is the context of the column and left out of the
+        // lines, so the result is recognised by its number
+        $val_math = $tl->ui_value($t_val->value_for_phrases([$t_wrd->word()->phrase()]));
+        $test_name = 'without the loaded list the results come from the page cache';
+        $t->assert_text_contains($test_name,
+            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), (string)results::TV_INT);
+
+        // the cache holds the results of the whole page, so a value that no cached result is
+        // based on shows the not used message and never another value's results
+        $test_name = '... and only the results that are based on the shown value';
+        $t->assert($test_name,
+            $lst_ui->results_by_value($tl->ui_value($t_val->value_pi()), $msg_ui, $dto_res),
+            $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS));
 
 
         $t->subheader($ts . 'view tab box');

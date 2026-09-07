@@ -1116,8 +1116,12 @@ class ui_list extends ui_base
             log_err_msg_ui('the value is missing to select the results', $msg);
         } elseif ($dbo::class == value::class) {
             // like the similar values the results are loaded only for the value page, so a value
-            // built from an url falls back to the results of the page cache
-            $res_lst = $dbo->results_related ?? $dto?->res_lst;
+            // built from an url falls back to the results of the page cache that are based on
+            // all phrases of the value (see result_list::filter)
+            $res_lst = $dbo->results_related;
+            if ($res_lst == null and $dto?->res_lst != null) {
+                $res_lst = $dto->res_lst->filter($dbo);
+            }
             if ($res_lst == null) {
                 log_err_msg_ui('the result cache is missing to select the results', $msg);
             } elseif ($res_lst->is_empty()) {

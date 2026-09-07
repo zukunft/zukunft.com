@@ -87,9 +87,10 @@ class sandbox_related
     function views_array(?view_list $msk_lst, user_message $msg, ?user $usr): array
     {
         $vars = [];
+        // drop the related views the requester may not read (idor); dropped before the empty
+        // check, else a list of only unreadable views is emitted as an empty json list
+        $msk_lst?->filter_readable_by($usr);
         if ($msk_lst != null and !$msk_lst->is_empty()) {
-            // drop the related views the requester may not read (idor)
-            $msk_lst->filter_readable_by($usr);
             $vars[json_fields::VIEWS] = $msk_lst->api_json_array([], $msg, $usr);
         }
         return $vars;

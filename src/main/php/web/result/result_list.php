@@ -198,12 +198,13 @@ class result_list extends sandbox_list_value
     }
 
     /**
-     * get a list with the results related directly to the given formula, word, triple or source
+     * get a list with the results related directly to the given formula, word, triple, source
+     * or value
      *
-     * @param word|triple|source|formula|db_object|null $dbo to filter the values
+     * @param word|triple|source|value|formula|db_object|null $dbo to filter the values
      * @return result_list with only the direct linked values
      */
-    function filter(word|triple|source|formula|db_object|null $dbo = null): result_list
+    function filter(word|triple|source|value|formula|db_object|null $dbo = null): result_list
     {
         $res_lst = new result_list();
         if ($dbo::class == formula::class) {
@@ -223,6 +224,17 @@ class result_list extends sandbox_list_value
         if ($dbo::class == source::class) {
             foreach ($this->lst() as $res) {
                 if ($res->source_id() == $dbo->id()) {
+                    $res_lst->add_result($res);
+                }
+            }
+        }
+        if ($dbo::class == value::class) {
+            // the results of a value are the results based on all its phrases, because the
+            // backend result_list::load_by_val selects them with 'and' (the default of
+            // load_by_phrase_list), unlike the similar values which share only one phrase
+            $phr_names = $dbo->grp->phr_lst()->names();
+            foreach ($this->lst() as $res) {
+                if (array_diff($phr_names, $res->grp->phr_lst()->names()) == []) {
                     $res_lst->add_result($res);
                 }
             }

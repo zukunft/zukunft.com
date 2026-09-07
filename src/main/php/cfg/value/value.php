@@ -258,10 +258,12 @@ class value extends value_base
             if ($this->values_similar == null and !$typ_lst->test_mode() and $this->id() != 0) {
                 $this->load_values_similar($msg);
             }
+            // drop the values the requester may not read, so the list cannot disclose another
+            // user's private value (idor), the same gate that source::api_json_array uses;
+            // dropped before the empty check, else a list of only unreadable values is emitted
+            // as an empty json list, which tells the frontend that the value has been asked
+            $this->values_similar?->filter_readable_by($usr);
             if ($this->values_similar != null and !$this->values_similar->is_empty()) {
-                // drop the values the requester may not read, so the list cannot disclose another
-                // user's private value (idor), the same gate that source::api_json_array uses
-                $this->values_similar->filter_readable_by($usr);
                 // INCL_PHRASES so each value carries its group phrases, which the frontend
                 // needs for the value name
                 $vars[json_fields::VALUES] = $this->values_similar->api_json_array(
@@ -270,10 +272,10 @@ class value extends value_base
             if ($this->results_related == null and !$typ_lst->test_mode() and $this->id() != 0) {
                 $this->load_results_related($msg);
             }
+            // a result can be based on a value the requester may not read, so the same
+            // idor gate as for the similar values above
+            $this->results_related?->filter_readable_by($usr);
             if ($this->results_related != null and !$this->results_related->is_empty()) {
-                // a result can be based on a value the requester may not read, so the same
-                // idor gate as for the similar values above
-                $this->results_related->filter_readable_by($usr);
                 $vars[json_fields::RESULTS] = $this->results_related->api_json_array(
                     new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
             }

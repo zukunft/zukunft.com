@@ -9209,7 +9209,7 @@
     \-- get_by_formula
         \-- result_list - add a formula result to the list
     \-- filter
-        \-- result_list - get a list with the results related directly to the given formula, word, triple or source
+        \-- result_list - get a list with the results related directly to the given formula, word, triple, source
     \-- is_empty
         \-- sys_log_list - @return bool true when the list contains no entries; mirrors the ListBase API so callers
     \-- head

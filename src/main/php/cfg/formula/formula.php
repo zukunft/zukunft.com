@@ -854,9 +854,10 @@ class formula extends formula_map
         if ($this->phrases_related == null and !$typ_lst->test_mode()) {
             $this->load_phrases_related($msg);
         }
+        // drop the assigned phrases the requester may not read (idor); dropped before the empty
+        // check, else a list of only unreadable phrases is emitted as an empty json list
+        $this->phrases_related?->filter_readable_by($usr);
         if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
-            // drop the assigned phrases the requester may not read (idor)
-            $this->phrases_related->filter_readable_by($usr);
             // INCL_PHRASES so each assigned phrase carries its name (and description for the
             // tooltip) needed by the subtitle links, sorted by impact in the frontend
             $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
@@ -865,9 +866,9 @@ class formula extends formula_map
         if ($this->latex_terms == null and !$typ_lst->test_mode()) {
             $this->load_latex_terms($msg);
         }
+        // drop the latex terms the requester may not read (idor)
+        $this->latex_terms?->filter_readable_by($usr);
         if ($this->latex_terms != null and !$this->latex_terms->is_empty()) {
-            // drop the latex terms the requester may not read (idor)
-            $this->latex_terms->filter_readable_by($usr);
             // INCL_PHRASES so each latex term carries its name (and description for the
             // tooltip) needed by the "expression_latex_link" component to create the links
             $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
