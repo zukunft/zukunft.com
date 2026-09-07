@@ -1592,8 +1592,40 @@ class test_base
     function assert_html_body(string $test_name, string $body, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
         $msg_ui = new user_message_ui();
-        $actual = $this->html_page($body, $msg_ui);
+        $actual = $this->link_to_pod($this->html_page($body, $msg_ui), THIS_URL);
         return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
+    }
+
+    // the html attributes of a snapshot page that carry a root relative url to the pod
+    const array POD_URL_ATTRIBUTES = [html_base::HREF, html_base::SRC, html_base::ACTION];
+
+    /**
+     * point every root relative url of a snapshot page to the pod, so that the saved page opened
+     * from the file system or from an ide preview server links to the pod and not to the file path
+     * resp. to the preview port (e.g. localhost:63343); beside the links this also covers the
+     * images, the stylesheets and the form actions
+     *
+     * a fragment link (e.g. the '#changes' of the css tab box) and an already absolute link stay
+     * as they are, so the tabs of the saved page still work - which a html base tag would break,
+     * because it resolves a fragment link against the base url too
+     *
+     * public, because every snapshot tree applies it on its own: views_by_object via
+     * assert_html_body, views_by_id via system_view_ui_tests::assert_views_by_id
+     *
+     * @param string $html the rendered html page
+     * @param string $base_url the pod url e.g. THIS_URL
+     * @return string the html page with the pod url in front of every root relative url
+     */
+    function link_to_pod(string $html, string $base_url): string
+    {
+        $url = rtrim($base_url, '/');
+        $relative = [];
+        $absolute = [];
+        foreach (self::POD_URL_ATTRIBUTES as $attribute) {
+            $relative[] = $attribute . '="/';
+            $absolute[] = $attribute . '="' . $url . '/';
+        }
+        return str_replace($relative, $absolute, $html);
     }
 
     /**
