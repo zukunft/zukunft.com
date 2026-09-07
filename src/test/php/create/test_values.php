@@ -134,6 +134,19 @@ class test_values extends test_objects
         return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
     }
 
+    /**
+     * @return value_ui the standard test value with the source that test_sources::source_list_ui
+     *                  offers, so that the source selector of the value form can preselect it
+     *                  (the page value uses the reserved source, which is not in that list)
+     */
+    function value_form_ui(user_message $msg): value_ui
+    {
+        $t_src = new test_sources($this->env);
+        $val = $this->value($msg);
+        $val->set_source($t_src->source_filled_included());
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
     function value_incomplete(user_message $msg): value
     {
         $t_grp = new test_groups($this->env);

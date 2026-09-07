@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -173,6 +175,40 @@ class value_ui_tests
             html_base::TITLE_HTML . '="' . word_names::MIO_COM . '"');
         $test_name = '... and the symbol itself is still shown and linked';
         $t->assert_text_contains($test_name, $lam_dto, '>' . word_names::MIO_SHORT . '</a>');
+
+
+        $t->subheader($ts . 'source selector');
+
+        // the source field of the value add and edit form offers to add a new source and, if a
+        // source is selected, to change it, so the user can create a missing source without
+        // leaving the value form (see value::source_crud_links and system_views.json value_edit)
+        // the form value carries the source that the frontend source list offers, so the selector
+        // can preselect it; the page value uses the reserved source, which is not in that list
+        $t_src = new test_sources($t);
+        $val_src = $t_val->value_form_ui($msg);
+        $sel_html = $val_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+
+        $test_name = 'the source selector links to the add source view';
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::SOURCE_ADD_ID);
+        $test_name = '... with the add icon';
+        $t->assert_text_contains($test_name, $sel_html, icons::ADD);
+
+        // the change icon targets the selected source, not the value itself
+        $test_name = 'the source selector links to the edit view of the selected source';
+        $t->assert_text_contains($test_name, $sel_html,
+            url_var::MASK . '=' . views::SOURCE_EDIT_ID . '&amp;id=' . sources::BFS_ID);
+        $test_name = '... and preselects the source of the value';
+        $t->assert_text_contains($test_name, $sel_html,
+            '<option value="' . sources::BFS_ID . '"  selected >');
+
+        // a value without a source has nothing to change, so only the add icon is shown
+        $val_no_src = new value($t_val->value($msg)->api_json([api_types::INCL_PHRASES]));
+        $sel_no_src = $val_no_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+        $test_name = 'a value without a source shows no edit source link';
+        $t->assert_text_not_contains($test_name, $sel_no_src,
+            url_var::MASK . '=' . views::SOURCE_EDIT_ID);
+        $test_name = '... but still offers to add a source';
+        $t->assert_text_contains($test_name, $sel_no_src, url_var::MASK . '=' . views::SOURCE_ADD_ID);
 
 
         $t->subheader($ts . 'view tab box');

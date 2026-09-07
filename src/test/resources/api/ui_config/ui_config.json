@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-09-07T00:18:15+00:00",
+    "timestamp": "2026-09-07T09:42:25+00:00",
     "body": {
         "user_profiles": [
             {
@@ -13740,56 +13740,56 @@
                     },
                     {
                         "link_id": 344,
-                        "id": 138,
-                        "name": "system form field value",
-                        "description": "the numeric value field in a form",
-                        "type_id": 139,
-                        "code_id": "form_field_value",
-                        "ui_msg_code_id": "form_field_value",
-                        "position": 5,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 345,
-                        "id": 131,
-                        "name": "system form field description",
-                        "description": "the description field in a form",
-                        "type_id": 22,
-                        "code_id": "form_field_description",
-                        "ui_msg_code_id": "form_field_description",
-                        "position": 6,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 346,
-                        "id": 147,
-                        "name": "system form select source",
-                        "description": "select one source",
-                        "type_id": 118,
-                        "code_id": "form_select_source",
-                        "ui_msg_code_id": "form_select_source",
-                        "position": 7,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 347,
-                        "id": 149,
-                        "name": "system form select ref",
-                        "description": "select one ref",
-                        "type_id": 120,
-                        "code_id": "form_select_ref",
-                        "ui_msg_code_id": "form_select_ref",
-                        "position": 8,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 348,
                         "id": 168,
                         "name": "system form select value type",
                         "description": "selector for the value type",
                         "type_id": 123,
                         "code_id": "form_field_value_type",
                         "ui_msg_code_id": "form_select_value_type",
+                        "position": 5,
+                        "position_type": 2
+                    },
+                    {
+                        "link_id": 345,
+                        "id": 138,
+                        "name": "system form field value",
+                        "description": "the numeric value field in a form",
+                        "type_id": 139,
+                        "code_id": "form_field_value",
+                        "ui_msg_code_id": "form_field_value",
+                        "position": 6,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 346,
+                        "id": 131,
+                        "name": "system form field description",
+                        "description": "the description field in a form",
+                        "type_id": 22,
+                        "code_id": "form_field_description",
+                        "ui_msg_code_id": "form_field_description",
+                        "position": 7,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 347,
+                        "id": 147,
+                        "name": "system form select source",
+                        "description": "select one source",
+                        "type_id": 118,
+                        "code_id": "form_select_source",
+                        "ui_msg_code_id": "form_select_source",
+                        "position": 8,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 348,
+                        "id": 149,
+                        "name": "system form select ref",
+                        "description": "select one ref",
+                        "type_id": 120,
+                        "code_id": "form_select_ref",
+                        "ui_msg_code_id": "form_select_ref",
                         "position": 9,
                         "position_type": 1
                     },
@@ -13911,56 +13911,56 @@
                     },
                     {
                         "link_id": 359,
-                        "id": 138,
-                        "name": "system form field value",
-                        "description": "the numeric value field in a form",
-                        "type_id": 139,
-                        "code_id": "form_field_value",
-                        "ui_msg_code_id": "form_field_value",
-                        "position": 5,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 360,
-                        "id": 131,
-                        "name": "system form field description",
-                        "description": "the description field in a form",
-                        "type_id": 22,
-                        "code_id": "form_field_description",
-                        "ui_msg_code_id": "form_field_description",
-                        "position": 6,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 361,
-                        "id": 147,
-                        "name": "system form select source",
-                        "description": "select one source",
-                        "type_id": 118,
-                        "code_id": "form_select_source",
-                        "ui_msg_code_id": "form_select_source",
-                        "position": 7,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 362,
-                        "id": 149,
-                        "name": "system form select ref",
-                        "description": "select one ref",
-                        "type_id": 120,
-                        "code_id": "form_select_ref",
-                        "ui_msg_code_id": "form_select_ref",
-                        "position": 8,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 363,
                         "id": 168,
                         "name": "system form select value type",
                         "description": "selector for the value type",
                         "type_id": 123,
                         "code_id": "form_field_value_type",
                         "ui_msg_code_id": "form_select_value_type",
+                        "position": 5,
+                        "position_type": 2
+                    },
+                    {
+                        "link_id": 360,
+                        "id": 138,
+                        "name": "system form field value",
+                        "description": "the numeric value field in a form",
+                        "type_id": 139,
+                        "code_id": "form_field_value",
+                        "ui_msg_code_id": "form_field_value",
+                        "position": 6,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 361,
+                        "id": 131,
+                        "name": "system form field description",
+                        "description": "the description field in a form",
+                        "type_id": 22,
+                        "code_id": "form_field_description",
+                        "ui_msg_code_id": "form_field_description",
+                        "position": 7,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 362,
+                        "id": 147,
+                        "name": "system form select source",
+                        "description": "select one source",
+                        "type_id": 118,
+                        "code_id": "form_select_source",
+                        "ui_msg_code_id": "form_select_source",
+                        "position": 8,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 363,
+                        "id": 149,
+                        "name": "system form select ref",
+                        "description": "select one ref",
+                        "type_id": 120,
+                        "code_id": "form_select_ref",
+                        "ui_msg_code_id": "form_select_ref",
                         "position": 9,
                         "position_type": 1
                     },
