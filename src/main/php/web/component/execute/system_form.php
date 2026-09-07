@@ -44,6 +44,7 @@ include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::FORMULA . 'formula_list.php';
@@ -53,6 +54,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::RESULT . 'result_list.php';
@@ -100,6 +102,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -858,24 +861,52 @@ class system_form extends component
 
     /**
      * @param value|db_object $dbo the value whose source is shown
+     * @param source_list|null $src_lst the frontend cache used to name a source known by id only
      * @return string the linked name of the source behind its label
      *                (empty if the value has no source or the source is not known)
      */
-    function show_source(value|db_object $dbo): string
+    function show_source(value|db_object $dbo, ?source_list $src_lst = null): string
     {
         $result = '';
         // guarded by class, because only a value links a source and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof value) {
-            // the api sends the source itself for a page request, so the name needs no cache;
+            $src = $dbo->src;
+            // the api sends the source itself for a page request, but a value built from a url
+            // carries only the source id (see value::set_source_id), so the name of such a source
+            // is taken from the frontend cache - without it the page would show no source at all
+            if ($src?->name() == '' and $src?->id() != 0) {
+                $src = $src_lst?->get($src->id());
+            }
             // name_link() returns safe html, so it is added behind the label unescaped
-            if ($dbo->src?->name() != '') {
-                $result = $this->label_with_html($dbo->src->name_link(), msg_id::FORM_SELECT_SOURCE);
+            if ($src?->name() != '') {
+                $result = $this->label_with_html($src->name_link(), msg_id::FORM_SELECT_SOURCE);
             }
         } else {
             log_err($dbo::class . ' is not expected to have a source');
         }
         return $result;
+    }
+
+    /**
+     * @param source|db_object $dbo the source whose url is shown
+     * @return string the url of the source as a link behind its label (empty if the source has no url)
+     */
+    function show_source_url(source|db_object $dbo): string
+    {
+        // the link is created by ui_base, so the url escaping lives in one place
+        return $this->label_with_html(new ui_base()->source_url_link($dbo), msg_id::FORM_FIELD_URL);
+    }
+
+    /**
+     * @param source|db_object $dbo the source whose doi is shown
+     * @return string the doi of the source as a link to doi.org behind its label
+     *                (empty if the source has no doi)
+     */
+    function show_source_doi(source|db_object $dbo): string
+    {
+        // the link is created by ui_base, so the doi escaping lives in one place
+        return $this->label_with_html(new ui_base()->source_doi_link($dbo), msg_id::FORM_FIELD_DOI);
     }
 
     /**

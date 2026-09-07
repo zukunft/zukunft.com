@@ -329,6 +329,8 @@ messages:
   form_phrase_type_to: "to type"
   info_not_used_for_formulas: "not used for formulas"
   info_not_used_for_values: "not used for values"
+  info_not_used_for_results: "not used for results"
+  info_no_similar_values: "no similar values"
   info_view_has_no_components: "this view has no components"
   info_not_used_in_views: "not used in any view"
   undo: "undo"

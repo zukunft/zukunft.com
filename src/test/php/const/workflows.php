@@ -190,6 +190,21 @@ class workflows
     // the id of the current word_login workflow; increase it to add the next snapshot set
     const int WF_WORD_LOGIN_NBR = 18;
 
+    // the add_source workflow name used for the snapshot folder and the test subheader:
+    // a new source is entered in the add form and written after the user has confirmed the add;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_ADD_SOURCE = 'add_source';
+    // the id of the current add_source workflow; increase it to add the next snapshot set
+    const int WF_ADD_SOURCE_NBR = 19;
+
+    // the change_source workflow name used for the snapshot folder and the test subheader:
+    // the url of the added source is changed in the edit form and written after the user has
+    // confirmed the change, then a second round fills the still-missing default view;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_SOURCE = 'change_source';
+    // the id of the current change_source workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_SOURCE_NBR = 20;
+
     /**
      * the user process step that a user reaction action triggers
      *

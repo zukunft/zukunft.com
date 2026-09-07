@@ -396,6 +396,8 @@
     \-- order error - order of section construct and map has difference at api_mapper should be before clone_reset
 \-- value
     \-- load_views_related - section for function load_views_related is expected to be load in /value/value.php
+    \-- load_values_similar - section for function load_values_similar is expected to be load in /value/value.php
+    \-- load_results_related - section for function load_results_related is expected to be load in /value/value.php
     \-- delta - section for function delta is expected to be del in /value/value.php
 \-- verb
     \-- common_mapper - section for function common_mapper not yet defined that it should be construct and map in /verb/
@@ -565,6 +567,10 @@
         \-- view - create an array for the api json creation
     \-- load_views_related
         \-- value - load the views that can show this value into the in-memory views_related list so that
+    \-- load_values_similar
+        \-- value - load the values that share a phrase with this value into the in-memory values_similar list
+    \-- load_results_related
+        \-- value - load the results that use this value into the in-memory results_related list so that
     \-- load_triples_related
         \-- verb - load the triples that use this verb into the in-memory list so that api_json_array() can
 \-- im- and export
@@ -6167,6 +6173,10 @@
             with show password but without auto fill in /component/execute/system_form.php
     \-- show_source - section for function show_source not yet defined that it should be optional with show password but
              without auto fill in /component/execute/system_form.php
+    \-- show_source_url - section for function show_source_url not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
+    \-- show_source_doi - section for function show_source_doi not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
     \-- show_last_update - section for function show_last_update not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
     \-- show_result_value - section for function show_result_value not yet defined that it should be optional with show 
@@ -6464,6 +6474,8 @@
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
+    \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
+    \-- results_by_value - section for function results_by_value missing in /component/execute/ui_list.php
     \-- values_by_source - section for function values_by_source missing in /component/execute/ui_list.php
     \-- results_by_word - section for function results_by_word missing in /component/execute/ui_list.php
     \-- result_list - section for function result_list missing in /component/execute/ui_list.php
@@ -8739,8 +8751,12 @@
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
     \-- values_by_triple
         \-- ui_list - show a list of values related to the given triple
+    \-- values_similar
+        \-- ui_list - the values that share a phrase with the given value grouped by their phrases like the
+    \-- results_by_value
+        \-- ui_list - the results that use the given value as a table, used by the results column of the value
     \-- values_by_source
-        \-- ui_list - the values that name the given source with the unit and the phrases of each value,
+        \-- ui_list - the values that name the given source grouped by their phrases like the default word view,
     \-- results_by_word
         \-- ui_list - show a list of values related to the given object
     \-- result_list
@@ -8913,6 +8929,10 @@
         \-- system_form - @param triple|db_object $dbo the triple whose condition formula is shown
     \-- show_source
         \-- system_form - @param value|db_object $dbo the value whose source is shown
+    \-- show_source_url
+        \-- system_form - @param source|db_object $dbo the source whose url is shown
+    \-- show_source_doi
+        \-- system_form - @param source|db_object $dbo the source whose doi is shown
     \-- show_last_update
         \-- system_form - @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
     \-- show_result_value
@@ -9189,7 +9209,7 @@
     \-- get_by_formula
         \-- result_list - add a formula result to the list
     \-- filter
-        \-- result_list - get a list with the results related directly to the given formula, word, triple or source
+        \-- result_list - get a list with the results related directly to the given formula, word, triple, source
     \-- is_empty
         \-- sys_log_list - @return bool true when the list contains no entries; mirrors the ListBase API so callers
     \-- head

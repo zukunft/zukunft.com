@@ -3010,11 +3010,14 @@
         },
         {
           "position": "6",
-          "name": "system form field url"
+          "name": "system form field url",
+          "style": "col-md-8"
         },
         {
           "position": "7",
-          "name": "system form field doi"
+          "name": "system form field doi",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "8",
@@ -3091,11 +3094,14 @@
         },
         {
           "position": "6",
-          "name": "system form field url"
+          "name": "system form field url",
+          "style": "col-md-8"
         },
         {
           "position": "7",
-          "name": "system form field doi"
+          "name": "system form field doi",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "8",
@@ -3601,23 +3607,24 @@
         },
         {
           "position": "5",
-          "name": "system form field value"
+          "name": "system form select value type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form field description"
+          "name": "system form field value"
         },
         {
           "position": "7",
-          "name": "system form select source"
+          "name": "system form field description"
         },
         {
           "position": "8",
-          "name": "system form select ref"
+          "name": "system form select source"
         },
         {
           "position": "9",
-          "name": "system form select value type"
+          "name": "system form select ref"
         },
         {
           "position": "10",
@@ -3672,23 +3679,24 @@
         },
         {
           "position": "5",
-          "name": "system form field value"
+          "name": "system form select value type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form field description"
+          "name": "system form field value"
         },
         {
           "position": "7",
-          "name": "system form select source"
+          "name": "system form field description"
         },
         {
           "position": "8",
-          "name": "system form select ref"
+          "name": "system form select source"
         },
         {
           "position": "9",
-          "name": "system form select value type"
+          "name": "system form select ref"
         },
         {
           "position": "10",

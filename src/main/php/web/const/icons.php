@@ -44,6 +44,8 @@ class icons
 
     // Font Awesome solid (fas) — the full css class string ready to drop into class="..."
     const string EDIT = 'fas fa-edit';
+    // shown behind a selector to add a new object of the selected type e.g. a source of a value
+    const string ADD = 'fas fa-plus';
     const string GLOBE = 'fas fa-globe';
     const string USER_CIRCLE = 'fas fa-user-circle';
     // shown e.g. behind a reference to link to a (potential) job that refreshes the referenced data

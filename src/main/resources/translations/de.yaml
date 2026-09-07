@@ -105,6 +105,8 @@ messages:
   update: "aktualisieren"
   extends: "erweitert"
   info_not_used_for_values: "nicht für Werte verwendet"
+  info_not_used_for_results: "nicht für Ergebnisse verwendet"
+  info_no_similar_values: "keine ähnlichen Werte"
   info_view_has_no_components: "diese Ansicht hat keine Komponenten"
   info_not_used_in_views: "in keiner Ansicht verwendet"
   system_sub_title_components: "Komponenten"

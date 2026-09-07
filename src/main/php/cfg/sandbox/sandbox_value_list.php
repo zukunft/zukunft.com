@@ -410,7 +410,12 @@ class sandbox_value_list extends sandbox_list
                 $sc->add_where_no_par('', group_fields::FLD_ID, $spt, $grp_pos);
             }
         }
-        $qp->sql = $sc->sql(0, true, false);
+        // this is one select of a union, and the source group id is a bigint in the prime and the
+        // main tables but a text in the group keyed tables, so the numeric ones are cast to text -
+        // else postgres refuses the union with "UNION types text and bigint do not match"
+        // (see def::MIXED_ID_FIELDS and sql_creator::dummy_value for the tables without the field)
+        $num_id = ($this->is_prime($sc_par_lst) or $this->is_main($sc_par_lst));
+        $qp->sql = $sc->sql(0, true, false, true, $num_id);
         $qp->par = $sc->get_par();
 
         return $qp;

@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -54,6 +55,8 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
@@ -72,12 +75,14 @@ include_once html_paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -122,6 +127,11 @@ class value extends sandbox_value
      */
 
     public ?source $src = null;
+
+    // the values that share a phrase with this value and the results that use it, filled only if
+    // the value has been loaded for its page (see load_by_id_with_related), otherwise null
+    public ?value_list $values_similar = null;
+    public ?result_list $results_related = null;
 
 
     /*
@@ -185,6 +195,22 @@ class value extends sandbox_value
             $src = new source();
             $src->api_mapper($json_array[json_fields::SOURCE], $msg);
             $this->src = $src;
+        }
+        // only the value page asks for the similar values and the results, so a missing list is
+        // not an empty list (see source::api_mapper for the same pattern with the source values)
+        if (is_array($json_array[json_fields::VALUES] ?? null)) {
+            $val_lst = new value_list();
+            $val_lst->api_mapper($json_array[json_fields::VALUES]);
+            $this->values_similar = $val_lst;
+        } else {
+            $this->values_similar = null;
+        }
+        if (is_array($json_array[json_fields::RESULTS] ?? null)) {
+            $res_lst = new result_list();
+            $res_lst->api_mapper($json_array[json_fields::RESULTS]);
+            $this->results_related = $res_lst;
+        } else {
+            $this->results_related = null;
         }
 
         return $msg->is_ok();
@@ -702,6 +728,10 @@ class value extends sandbox_value
     }
 
     /**
+     * the source selector of the value add and edit form followed by the icons to add a new source
+     * or to change the selected one, so the user can create the missing source without leaving the
+     * value form (see system_views.json value_add and value_edit)
+     *
      * @param string $form
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
@@ -713,7 +743,31 @@ class value extends sandbox_value
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
+        // the selected entry is the source of this value, not the value itself
+        $selected = $this->src?->id() ?? 0;
+        return $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE)
+            . $this->source_crud_links($selected);
+    }
+
+    /**
+     * the add and change icons shown behind the source selector of the value form
+     *
+     * @param int $src_id the database id of the selected source, 0 if the value has no source yet
+     * @return string the html code of the add icon and, for a selected source, of the change icon
+     */
+    private function source_crud_links(int $src_id): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $result = $html->ref($html->url_back(views::SOURCE_ADD_ID), $html->icon(icons::ADD),
+            $mtr->txt(msg_id::SOURCE_ADD), styles::HEADING_ICON_INLINE, true);
+        // without a selected source there is nothing to change, so only the add icon is shown
+        if ($src_id != 0) {
+            $result .= $html->ref($html->url_back(views::SOURCE_EDIT_ID, $src_id), $html->icon(icons::EDIT),
+                $mtr->txt(msg_id::SOURCE_EDIT), styles::HEADING_ICON_INLINE, true);
+        }
+        return $result;
     }
 
     /**

@@ -345,11 +345,12 @@ class source extends sandbox_code_id
                 if ($this->values_related == null and !$typ_lst->test_mode() and $this->id() != 0) {
                     $this->load_values_related($msg);
                 }
+                // drop the values the requester may not read, so the list cannot disclose
+                // another user's private value of this source (idor), the same gate that
+                // word::api_json_array uses for the values of a word; dropped before the empty
+                // check, else a list of only unreadable values is emitted as an empty json list
+                $this->values_related?->filter_readable_by($usr);
                 if ($this->values_related != null and !$this->values_related->is_empty()) {
-                    // drop the values the requester may not read, so the list cannot disclose
-                    // another user's private value of this source (idor), the same gate that
-                    // word::api_json_array uses for the values of a word
-                    $this->values_related->filter_readable_by($usr);
                     // INCL_PHRASES so each value carries its group phrases, which the frontend
                     // needs for the value name
                     $vars[json_fields::VALUES] = $this->values_related->api_json_array(

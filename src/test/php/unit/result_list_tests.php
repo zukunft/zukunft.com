@@ -40,12 +40,14 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class result_list_tests
@@ -61,6 +63,7 @@ class result_list_tests
         $t_res = new test_results($t);
         $t_phr = new test_phrases($t);
         $t_frm = new test_formulas($t);
+        $t_val = new test_values($t);
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
         $res_lst = new result_list($t->usr1);
@@ -83,6 +86,9 @@ class result_list_tests
         $test_name = 'load a list of results that are a based on all phrases of a list '
             . 'e.g. to update the results if the value has been updated';
         $this->assert_sql_by_src($test_name, $t_phr->canton_zh_phrase_list(), $t);
+        $test_name = 'load the results that use a value '
+            . 'e.g. the results shown in the results column of the pi value page';
+        $this->assert_sql_by_val($test_name, $t_val->value_pi(), $t);
 
         $grp = new group($t->usr1);
         $grp->set_id(2);
@@ -232,6 +238,45 @@ class result_list_tests
             $sc->set_db_type(sql_db::MYSQL);
             $qp = $res_lst->load_sql_by_src($sc, $phr_lst);
             $t->assert_qp($qp, $sc->db_type, $test_name);
+        }
+    }
+
+    /**
+     * result list by value
+     * SQL statement creation test
+     *
+     * result_list::load_by_val selects the results by the phrases of the given value, which is how
+     * the results column of the value default page is filled (see value::load_results_related);
+     * the query unions the result tables, so the source group id of the tables that do not have it
+     * must be an empty text and never a zero, because the group id is a text column in the tables
+     * that do have it (see sql_creator::dummy_value and def::MIXED_ID_FIELDS)
+     *
+     * not using assert_sql_by_phr_lst, because the query is named after the phrase list and would
+     * else overwrite the snapshot of the phrase list test
+     *
+     * @param string $test_name the description of the test
+     * @param value $val the value whose results should be loaded
+     * @param test_cleanup $t the forwarded testing object
+     */
+    private function assert_sql_by_val(
+        string       $test_name,
+        value        $val,
+        test_cleanup $t): void
+    {
+        // create objects
+        $sc = new sql_creator();
+        $res_lst = new result_list($t->usr1);
+
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $res_lst->load_sql_by_phr_lst($sc, $val->phr_lst());
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name, '_by_val');
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $res_lst->load_sql_by_phr_lst($sc, $val->phr_lst());
+            $t->assert_qp($qp, $sc->db_type, $test_name, '_by_val');
         }
     }
 

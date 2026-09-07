@@ -40,16 +40,20 @@ include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -64,6 +68,8 @@ use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -173,6 +179,137 @@ class value_ui_tests
             html_base::TITLE_HTML . '="' . word_names::MIO_COM . '"');
         $test_name = '... and the symbol itself is still shown and linked';
         $t->assert_text_contains($test_name, $lam_dto, '>' . word_names::MIO_SHORT . '</a>');
+
+
+        $t->subheader($ts . 'source selector');
+
+        // the source field of the value add and edit form offers to add a new source and, if a
+        // source is selected, to change it, so the user can create a missing source without
+        // leaving the value form (see value::source_crud_links and system_views.json value_edit)
+        // the form value carries the source that the frontend source list offers, so the selector
+        // can preselect it; the page value uses the reserved source, which is not in that list
+        $t_src = new test_sources($t);
+        $val_src = $t_val->value_form_ui($msg);
+        $sel_html = $val_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+
+        $test_name = 'the source selector links to the add source view';
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::SOURCE_ADD_ID);
+        $test_name = '... with the add icon';
+        $t->assert_text_contains($test_name, $sel_html, icons::ADD);
+
+        // the change icon targets the selected source, not the value itself
+        $test_name = 'the source selector links to the edit view of the selected source';
+        $t->assert_text_contains($test_name, $sel_html,
+            url_var::MASK . '=' . views::SOURCE_EDIT_ID . '&amp;id=' . sources::BFS_ID);
+        $test_name = '... and preselects the source of the value';
+        $t->assert_text_contains($test_name, $sel_html,
+            '<option value="' . sources::BFS_ID . '"  selected >');
+
+        // a value without a source has nothing to change, so only the add icon is shown
+        $val_no_src = new value($t_val->value($msg)->api_json([api_types::INCL_PHRASES]));
+        $sel_no_src = $val_no_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+        $test_name = 'a value without a source shows no edit source link';
+        $t->assert_text_not_contains($test_name, $sel_no_src,
+            url_var::MASK . '=' . views::SOURCE_EDIT_ID);
+        $test_name = '... but still offers to add a source';
+        $t->assert_text_contains($test_name, $sel_no_src, url_var::MASK . '=' . views::SOURCE_ADD_ID);
+
+
+        $t->subheader($ts . 'show source');
+
+        // a value built from a url carries only the source id, so the value page names the source
+        // from the frontend cache; without this the page would show no source at all
+        // (see system_form::show_source and base_views.json value_default)
+        $sfm = new system_form();
+        $val_src_id = $t_val->value_source_by_id_ui($msg);
+        $test_name = 'the source known by id only is named from the frontend cache';
+        $t->assert_text_contains($test_name, $sfm->show_source($val_src_id, $t_src->source_list_ui()),
+            sources::BFS);
+
+        // without the cache the id cannot be resolved, so no half filled source line is shown
+        $test_name = 'without the cache the source known by id only is not shown';
+        $t->assert($test_name, $sfm->show_source($val_src_id), '');
+
+        // the api sends the source with its name for a page request, so no cache is needed
+        $test_name = 'the source sent by the api is shown without the cache';
+        $t->assert_text_contains($test_name, $sfm->show_source($t_val->value_form_ui($msg)),
+            sources::BFS);
+
+        // a value without any source shows no source line
+        $test_name = 'a value without a source shows no source line';
+        $t->assert($test_name, $sfm->show_source($val_no_src), '');
+
+
+        $t->subheader($ts . 'similar values and results');
+
+        // the value default page shows the values that share a phrase with the shown value in one
+        // column and the results that use it in the next (see base_views.json value_default)
+        $val_rel = $t_val->value_page_related_ui($msg);
+        $lst_ui = new ui_list();
+        $sim_html = $lst_ui->values_similar($val_rel, $msg_ui);
+
+        $test_name = 'the similar values of pi list the other mathematical constants';
+        $t->assert_text_contains($test_name, $sim_html, triple_names::E);
+
+        // a value is never listed among its own similar values (see value_list::remove)
+        $test_name = 'pi is not listed among its own similar values';
+        $t->assert_text_not_contains($test_name, $sim_html, triple_names::PI_SYMBOL_NAME);
+
+        // the results column lists the results that use the value, each with its phrase and number
+        $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
+        $test_name = 'the results of a value are shown with their phrase and their number';
+        $t->assert_text_order($test_name, $res_html, word_names::MATH, (string)results::TV_INT);
+
+        // a value that is not used for results says so instead of showing an empty table
+        $val_no_res = $t_val->value_page_ui($msg);
+        $val_no_res->results_related = new result_list();
+        $test_name = 'a value without results shows the not used message';
+        $t->assert($test_name, $lst_ui->results_by_value($val_no_res, $msg_ui),
+            $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS));
+
+        // a value built from an url carries no similar values (only a page request loads them),
+        // so the values of the page cache that share a phrase with it are shown instead; the
+        // zurich values share the phrases zurich, inhabitants and 2019, so they are similar
+        $val_url = $tl->ui_value($t_val->people_zh());
+        $dto_sim = new data_object();
+        // INCL_PHRASES so each cached value carries its group phrases, which the filter compares
+        $dto_sim->val_lst = $tl->list_to_ui($t_val->value_list_zh(), [api_types::INCL_PHRASES]);
+        $sim_cache_html = $lst_ui->values_similar($val_url, $msg_ui, $dto_sim);
+
+        // the phrases of the shown value are the context of the column and left out of the lines,
+        // so the canton value is named by the phrases that the shown value does not have
+        $test_name = 'without the loaded list the similar values come from the page cache';
+        $t->assert_text_contains($test_name, $sim_cache_html, word_names::CANTON);
+
+        // the shown value is never similar to itself, so the cache keeps every value but that one;
+        // the rendered lines cannot show this, because the phrases of the shown value are the
+        // context of the column and are left out of every line
+        $sim_lst = $dto_sim->val_lst->filter($msg_ui, $val_url);
+        $test_name = '... and the shown value itself is not among them';
+        $t->assert($test_name, $sim_lst->count(), $dto_sim->val_lst->count() - 1);
+
+        // a value built from an url carries no results either, so the results of the page cache
+        // that are based on all phrases of the value are shown instead; the cache holds the
+        // result of the math phrase and the result of the percent phrase
+        $t_res = new test_results($t);
+        $dto_res = new data_object();
+        // INCL_PHRASES so each cached result carries its group phrases, which the filter compares
+        $dto_res->res_lst = new result_list(
+            $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]));
+
+        // the math phrase of the shown value is the context of the column and left out of the
+        // lines, so the result is recognised by its number
+        $val_math = $tl->ui_value($t_val->value_for_phrases([$t_wrd->word()->phrase()]));
+        $test_name = 'without the loaded list the results come from the page cache';
+        $t->assert_text_contains($test_name,
+            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), (string)results::TV_INT);
+
+        // the cache holds the results of the whole page, so a value that no cached result is
+        // based on shows the not used message and never another value's results
+        $test_name = '... and only the results that are based on the shown value';
+        $t->assert($test_name,
+            $lst_ui->results_by_value($tl->ui_value($t_val->value_pi()), $msg_ui, $dto_res),
+            $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS));
 
 
         $t->subheader($ts . 'view tab box');

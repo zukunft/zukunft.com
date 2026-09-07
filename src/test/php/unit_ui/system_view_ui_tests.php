@@ -631,7 +631,9 @@ class system_view_ui_tests
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
                 $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
-                $t->assert_html_page($test_name, $html, $file_path);
+                // link to the pod like the views_by_object snapshots, so that a snapshot opened in
+                // the ide does not link to the ide preview server port (see test_base::link_to_pod)
+                $t->assert_html_page($test_name, $t->link_to_pod($html, THIS_URL), $file_path);
             }
         }
         // remove test files not used any more

@@ -33,8 +33,10 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
@@ -46,6 +48,8 @@ class reference_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $mtr;
+
         $html = new html_base();
         $t_ref = new test_refs($t);
         $msg = new user_message();
@@ -93,6 +97,25 @@ class reference_ui_tests
         $t->assert($test_name, $ref_new->phrase()->id(), 0);
         $test_name = 'the phrase of a linked reference is the linked phrase';
         $t->assert_true($test_name, $ref->phrase()->id() != 0);
+
+        $t->subheader($ts . 'view tab box');
+
+        // the third column of the reference page shows the tab box like the source page
+        // (see the 'view tab box' of base_views.json ref_default); a reference is a sandbox
+        // object, so the same renderer builds the change log and the overwrite tabs for it
+        $list = new ui_list();
+        $log_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"';
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        // test mode so the change log table is built without loading it from the database
+        $tab_html = $list->view_tab_box($ref_filled, $msg, true);
+
+        $test_name = 'the reference page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+
+        // an empty tab is dropped, so a reference whose api message carries no related
+        // views shows no views tab instead of an empty one
+        $test_name = 'a reference without related views shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
     }
 
 }

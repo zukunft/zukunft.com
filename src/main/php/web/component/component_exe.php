@@ -395,6 +395,8 @@ class component_exe extends component
             component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $msg, $cfg, $url_arr),
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $msg, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $msg, $cfg),
+            component_types::LIST_VALUES_SIMILAR => $list->values_similar($dbo, $msg, $cfg, $style_id),
+            component_types::LIST_RESULTS_BY_VALUE => $list->results_by_value($dbo, $msg, $cfg),
             component_types::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $msg, $cfg),
             component_types::LIST_FORMULAS_OF_PARENTS => $list->formulas_of_parents($dbo),
             component_types::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $msg, $cfg, $test_mode),
@@ -438,7 +440,7 @@ class component_exe extends component
             component_types::SHOW_ORDER_NBR => $form->show_order_nbr($dbo),
             component_types::SHOW_WEIGHT => $form->show_weight($dbo),
             component_types::SHOW_CONDITION_FORMULA => $form->show_condition_formula($dbo),
-            component_types::SHOW_SOURCE => $form->show_source($dbo),
+            component_types::SHOW_SOURCE => $form->show_source($dbo, $cfg->source_list()),
             component_types::SHOW_LAST_UPDATE => $form->show_last_update($dbo),
             component_types::SHOW_IMPACT => $form->show_impact($dbo),
             component_types::SHOW_ALL_VALUES_NEEDED => $form->show_all_values_needed($dbo),
@@ -455,8 +457,8 @@ class component_exe extends component
 
             // name display components for admin-editable system objects
             component_types::SOURCE_NAME => $base->source_name($dbo),
-            component_types::SOURCE_DOI_LINK => $base->source_doi_link($dbo),
-            component_types::SOURCE_URL_LINK => $base->source_url_link($dbo),
+            component_types::SOURCE_DOI_LINK => $form->show_source_doi($dbo),
+            component_types::SOURCE_URL_LINK => $form->show_source_url($dbo),
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
             component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),

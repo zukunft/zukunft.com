@@ -851,11 +851,13 @@ class triple extends sandbox_link_named
                     if ($this->values_related == null and !$typ_lst->test_mode()) {
                         $this->load_values_related($msg);
                     }
+                    // drop the values the requester may not read so the related-value list
+                    // cannot disclose another user's private/personal value attached to this
+                    // triple (idor); see sandbox_multi::is_readable_by, same gate as api/valueList;
+                    // dropped before the empty check, else a list of only unreadable values is
+                    // emitted as an empty json list, which says the list has been asked
+                    $this->values_related?->filter_readable_by($usr);
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
-                        // drop the values the requester may not read so the related-value list
-                        // cannot disclose another user's private/personal value attached to this
-                        // triple (idor); see sandbox_multi::is_readable_by, same gate as api/valueList
-                        $this->values_related->filter_readable_by($usr);
                         // INCL_PHRASES so each value carries its group phrases, which the
                         // frontend needs for the value name and to sort the list by impact
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
@@ -864,9 +866,9 @@ class triple extends sandbox_link_named
                     if ($this->formulas_related == null and !$typ_lst->test_mode()) {
                         $this->load_formulas_related($msg);
                     }
+                    // drop the related formulas the requester may not read (idor)
+                    $this->formulas_related?->filter_readable_by($usr);
                     if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
-                        // drop the related formulas the requester may not read (idor)
-                        $this->formulas_related->filter_readable_by($usr);
                         // a fresh api_type_list (no INCL_RELATED) so the formulas emit only
                         // their own name, id and impact, which the frontend needs to render
                         // and sort the list by impact, without recursing back into relations
@@ -876,9 +878,9 @@ class triple extends sandbox_link_named
                     if ($this->references_related == null and !$typ_lst->test_mode()) {
                         $this->load_references_related($msg);
                     }
+                    // drop the related references the requester may not read (idor)
+                    $this->references_related?->filter_readable_by($usr);
                     if ($this->references_related != null and !$this->references_related->is_empty()) {
-                        // drop the related references the requester may not read (idor)
-                        $this->references_related->filter_readable_by($usr);
                         $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
                             new api_type_list(), $msg, $usr);
                     }
@@ -886,9 +888,9 @@ class triple extends sandbox_link_named
                     if ($this->views_related == null and !$typ_lst->test_mode()) {
                         $this->load_views_related($msg);
                     }
+                    // drop the related views the requester may not read (idor)
+                    $this->views_related?->filter_readable_by($usr);
                     if ($this->views_related != null and !$this->views_related->is_empty()) {
-                        // drop the related views the requester may not read (idor)
-                        $this->views_related->filter_readable_by($usr);
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $msg, $usr);
                     }

@@ -52,6 +52,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::TYPES . 'type_object.php';
 //include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::USER . 'user_message.php';
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
@@ -1046,7 +1048,97 @@ class ui_list extends ui_base
     }
 
     /**
-     * the values that name the given source with the unit and the phrases of each value,
+     * the values that share a phrase with the given value grouped by their phrases like the
+     * default word view, used by the similar values column of the value default page: for pi
+     * these are the other values of the mathematical constants
+     *
+     * the list is sorted by impact by the grouped renderer (see value_list::list_most_relevant),
+     * so the most relevant similar value is shown first
+     *
+     * @param value|db_object|null $dbo the value whose similar values should be listed
+     * @param user_message $msg to report an unexpected selection object
+     * @param data_object|null $dto the data cache used if the value has not been loaded for its page
+     * @param int|null $style_id the optional list column style
+     * @return string the similar values or the message that the value has no similar values
+     */
+    function values_similar(
+        value|db_object|null $dbo,
+        user_message         $msg,
+        ?data_object         $dto = null,
+        ?int                 $style_id = null
+    ): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the value is missing to select the similar values', $msg);
+        } elseif ($dbo::class == value::class) {
+            // a value loaded for its page carries its similar values (see load_values_similar),
+            // whereas a value built from an url carries none, so the values of the page cache
+            // that share a phrase with it are used (see value_list::filter)
+            $val_lst = $dbo->values_similar;
+            if ($val_lst == null and $dto?->val_lst != null) {
+                $val_lst = $dto->val_lst->filter($msg, $dbo);
+            }
+            // without the preloaded values the list cannot be created, and showing the none-found
+            // message would tell the user that the value has no similar values, which is not known here
+            if ($val_lst == null) {
+                log_err_msg_ui('the value cache is missing to select the similar values', $msg);
+            } else {
+                // the value itself is the context of the column, so its phrases are left out
+                $result = $this->value_list($val_lst, $dbo->grp->phr_lst(), $msg, $style_id, true);
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NO_SIMILAR_VALUES);
+                }
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to have similar values', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the results that use the given value as a table, used by the results column of the value
+     * default page e.g. the increase that has been calculated from this value
+     *
+     * @param value|db_object|null $dbo the value whose results should be listed
+     * @param user_message $msg to report an unexpected selection object
+     * @param data_object|null $dto the data cache used if the value has not been loaded for its page
+     * @return string the results of the value or the message that the value is not used for results
+     */
+    function results_by_value(value|db_object|null $dbo, user_message $msg, ?data_object $dto = null): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the value is missing to select the results', $msg);
+        } elseif ($dbo::class == value::class) {
+            // like the similar values the results are loaded only for the value page, so a value
+            // built from an url falls back to the results of the page cache that are based on
+            // all phrases of the value (see result_list::filter)
+            $res_lst = $dbo->results_related;
+            if ($res_lst == null and $dto?->res_lst != null) {
+                $res_lst = $dto->res_lst->filter($dbo);
+            }
+            if ($res_lst == null) {
+                log_err_msg_ui('the result cache is missing to select the results', $msg);
+            } elseif ($res_lst->is_empty()) {
+                // the list is asked, not the rendered html, because result_list::table returns
+                // the empty table tags for an empty list, which would tell the user nothing
+                $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS);
+            } else {
+                $result = $res_lst->table($dbo->grp->phr_lst());
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to have results', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the values that name the given source grouped by their phrases like the default word view,
      * used by the source default page
      *
      * @param source|db_object|null $dbo the source whose values should be listed
@@ -1080,7 +1172,8 @@ class ui_list extends ui_base
             if ($val_lst == null) {
                 log_err_msg_ui('the value cache is missing to select the values of a source', $msg);
             } else {
-                $result = $this->value_list_unit($val_lst, $msg, $style_id);
+                // the source is the context of the page, so no phrase is left out of the value lines
+                $result = $this->value_list($val_lst, new phrase_list(), $msg, $style_id, true);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES);
                 }
