@@ -135,6 +135,10 @@ class system_views_read_tests
         // the pi number of units.json names the "mathematical constant" source, so it is the example
         // for the "system show field value source" component of the value default view
         $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_MATH_ID, $cfg);
+        // the target price earning ratio of companies.json is shared personally and protected for
+        // users, so it is the example for the share and protection subtitle of the "Value title"
+        // component, which shows nothing for a value with the default types like the pi values
+        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::TARGET_PE_RATIO_ID, $cfg);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA

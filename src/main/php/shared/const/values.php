@@ -63,6 +63,10 @@ class values
     // the group id of the Euler's constant value in the seeded database, keyed by the
     // "Euler's constant" triple (Euler 'name of' constant, see the value in units.json)
     const int E_CONST_ID = 32771;
+    // the group id of the target price earning ratio of companies.json, which is the only seeded
+    // value with a share and a protection type that are not the default, so it is the example for
+    // the share and protection subtitle of the value default view
+    const int TARGET_PE_RATIO_ID = 33393;
     const int TRANSITION_OF_CS = 9192631770;
     const int SPEED_OF_LIGHT = 299792458;
     const string SPEED_OF_LIGHT_TXT = "299'792'458";

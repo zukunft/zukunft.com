@@ -1182,6 +1182,15 @@
         "2016"
       ],
       "number": "6512"
+    },
+    {
+      "words": [
+        "Target Price Earning Ratio"
+      ],
+      "number": "15",
+      "share": "personal",
+      "protection": "user_protection",
+      "source": "my estimates"
     }
   ],
   "components": [
