@@ -1871,6 +1871,7 @@ enum messages: string
     case FORM_SUB_TITLE_DESCRIPTION = 'system_sub_title_description';
     case FORM_SUB_TITLE_REF = 'system_sub_title_references';
     case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
+    case FORM_SUB_TITLE_RELATED_VALUES = 'system_sub_title_related_values';
     case FORM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
     case FORM_SUB_TITLE_ASSIGNED_PHRASES = 'system_sub_title_assigned_phrases';
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';

@@ -551,26 +551,43 @@ class type_lists
     // TODO add similar functions for all cache types
     function get_html_by_id(int $id, user_message $msg): string
     {
+        $result = '';
         $msk = $this->get_view_by_id($id);
-        $wrd = new word_ui();
-        return $msk->show($wrd, $msg);
+        // a view the cache does not have cannot be shown, and a fatal here would prevent the
+        // three duties of error handling: the sys log entry, the admin info and the user message
+        if ($msk == null) {
+            log_err_msg_ui('the system view with id ' . $id . ' is missing in the frontend cache', $msg);
+        } else {
+            $result = $msk->show(new word_ui(), $msg);
+        }
+        return $result;
     }
 
+    /**
+     * the system views are filled once per request by set_system_views, but a request that could
+     * not read them (e.g. an api call that failed) must report the missing cache instead of a
+     * fatal, so the cache is asked null safe and the caller decides what to do without the view
+     */
     function get_view_by_id(int $id): ?view
     {
-        return $this->msk_sys->get($id);
+        return $this->msk_sys?->get($id);
     }
 
     function get_view(string $code_id): ?view
     {
-        return $this->msk_sys->get_by_code_id($code_id);
+        return $this->msk_sys?->get_by_code_id($code_id);
     }
 
     function get_html(string $code_id, user_message $msg): string
     {
+        $result = '';
         $msk = $this->get_view($code_id);
-        $wrd = new word_ui();
-        return $msk->show($wrd, $msg);
+        if ($msk == null) {
+            log_err_msg_ui('the system view "' . $code_id . '" is missing in the frontend cache', $msg);
+        } else {
+            $result = $msk->show(new word_ui(), $msg);
+        }
+        return $result;
     }
 
     function log_err(string $msg): void

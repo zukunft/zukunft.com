@@ -51,6 +51,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
@@ -117,8 +119,8 @@ class value extends value_base
     // view can offer the views to switch to
     public ?view_list $views_related = null;
 
-    // the values that share a phrase with this value e.g. the other math constants of pi;
-    // populated lazily by load_values_similar() and emitted like views_related, so the similar
+    // the values of the same category as this value e.g. the other math constants of pi;
+    // populated lazily by load_values_similar() and emitted like views_related, so the related
     // values column of the default value view can list them
     public ?value_list $values_similar = null;
 
@@ -307,23 +309,34 @@ class value extends value_base
     }
 
     /**
-     * load the values that share a phrase with this value into the in-memory values_similar list
-     * so that api_json_array() can emit them under the INCL_RELATED flag, which the 'similar
-     * values' component of the value default page shows: for pi these are the other values of the
-     * mathematical constants, because they share the phrase that names them
+     * load the values of the same category into the in-memory values_similar list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'similar values'
+     * component of the value default page shows: for pi these are the other mathematical
+     * constants, because the phrase "Pi (math)" that names the pi value is a mathematical
+     * constant and so is the phrase "𝑒 (math)" that names the 𝑒 value
      *
-     * the values are selected with 'or', because a value that shares one phrase is already
-     * similar; this value itself is removed, because a page never lists what it shows
+     * the category is the 'is a' parent of the phrases of this value (see phrase_list::categories,
+     * which also covers a value named by an 'is a' triple like pi), so the siblings are the
+     * children of that parent (see phrase_list::are, which also keeps the parent itself, so a
+     * value assigned to the category is related too)
+     *
+     * the values are selected with 'or', because a value of one category is already related;
+     * this value itself is removed, because a page never lists what it shows
      *
      * @param user_message $msg to collect any problem while loading the values
      * @return void
      */
     function load_values_similar(user_message $msg): void
     {
+        $cat_lst = $this->phr_lst()->categories($msg);
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_phr_lst($this->phr_lst(), $msg, true, value_list::read_limit());
-        $val_lst->remove($this);
-        $val_lst->load_names_related($msg);
+        // without a category nothing is related, and loading by the own phrases would list every
+        // value that happens to share a phrase instead of the values of the same kind
+        if (!$cat_lst->is_empty()) {
+            $val_lst->load_by_phr_lst($cat_lst->are($msg), $msg, true, value_list::read_limit());
+            $val_lst->remove($this);
+            $val_lst->load_names_related($msg);
+        }
         $this->values_similar = $val_lst;
     }
 

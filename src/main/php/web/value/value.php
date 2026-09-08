@@ -128,7 +128,7 @@ class value extends sandbox_value
 
     public ?source $src = null;
 
-    // the values that share a phrase with this value and the results that use it, filled only if
+    // the values of the same category as this value and the results that use it, filled only if
     // the value has been loaded for its page (see load_by_id_with_related), otherwise null
     public ?value_list $values_similar = null;
     public ?result_list $results_related = null;

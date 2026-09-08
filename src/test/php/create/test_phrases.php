@@ -329,7 +329,7 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_trp->triple_pi_name()->phrase());
-        $lst->add($t_trp->triple_e()->phrase());
+        $lst->add($t_trp->triple_e_name()->phrase());
         return $lst;
     }
 

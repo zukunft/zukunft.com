@@ -261,9 +261,10 @@ class value_list extends ListBase
             }
         }
         if ($dbo::class == value::class) {
-            // the values similar to the given value are the values that share a phrase with it
-            // e.g. the other mathematical constants of pi; the value itself is never similar to
-            // itself, so it is left out like value::load_values_similar does
+            // the backend selects the values of the same category (see value::load_values_similar),
+            // but the category needs the 'is a' links, which the page cache does not carry and the
+            // frontend must not read from the database, so a shared phrase is the fallback here;
+            // the value itself is never similar to itself, so it is left out like the backend does
             $phr_names = $dbo->grp->phr_lst()->names();
             foreach ($this->lst() as $val) {
                 if ($val->id() != $dbo->id()

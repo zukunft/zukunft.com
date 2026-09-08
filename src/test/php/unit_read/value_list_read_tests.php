@@ -94,18 +94,18 @@ class value_list_read_tests
         // TODO check why order may changes
         if ($target != $result) {
             $target = '2.718281828459 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-                . triple_names::E_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
+                . triple_names::E_NUM_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
         }
         if ($target != $result) {
             $target = '3.1415926535898 / 2.718281828459 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-                . triple_names::PI_ID . ',,, / -' . triple_names::E_ID . ',,,) for user 3 (zukunft.com system test)';
+                . triple_names::PI_ID . ',,, / -' . triple_names::E_NUM_ID . ',,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
         $target = '3.1415926535898 / 2.718281828459 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-            . triple_names::PI_ID . ',,, / -' . triple_names::E_ID . ',,,) for user 3 (zukunft.com system test)';
+            . triple_names::PI_ID . ',,, / -' . triple_names::E_NUM_ID . ',,,) for user 3 (zukunft.com system test)';
         if ($target != $result) {
             $target = '2.718281828459 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-                . triple_names::E_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
+                . triple_names::E_NUM_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
         }
         $test_name = 'A value list with pi and e matches the expected result';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
@@ -129,10 +129,10 @@ class value_list_read_tests
         $val_lst->load_by_phr_lst($phr_lst, $msg, true);
         $result = $val_lst->dsp_id();
         $target = '2.718281828459 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-            . triple_names::E_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
+            . triple_names::E_NUM_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
         if ($target != $result) {
             $target = '3.1415926535898 / 2.718281828459 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-                . triple_names::PI_ID . ',,, / -' . triple_names::E_ID . ',,,) for user 3 (zukunft.com system test)';
+                . triple_names::PI_ID . ',,, / -' . triple_names::E_NUM_ID . ',,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
 

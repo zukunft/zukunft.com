@@ -568,7 +568,7 @@
     \-- load_views_related
         \-- value - load the views that can show this value into the in-memory views_related list so that
     \-- load_values_similar
-        \-- value - load the values that share a phrase with this value into the in-memory values_similar list
+        \-- value - load the values of the same category into the in-memory values_similar list so that
     \-- load_results_related
         \-- value - load the results that use this value into the in-memory results_related list so that
     \-- load_triples_related
@@ -2663,6 +2663,8 @@
     \-- direct_children - section for function direct_children not yet defined that it should be im- and export in /phra
             se/phrase_list.php
     \-- is - section for function is not yet defined that it should be im- and export in /phrase/phrase_list.php
+    \-- categories - section for function categories not yet defined that it should be im- and export in /phrase/phrase_
+            list.php
     \-- are - section for function are is expected to be foaf in /phrase/phrase_list.php
     \-- contains - section for function contains not yet defined that it should be im- and export in /phrase/phrase_list
             .php
@@ -8513,13 +8515,13 @@
     \-- get_html_by_id
         \-- type_lists - set the vars of this log html object bases on the api json array
     \-- get_view_by_id
-        \-- type_lists - set the vars of this log html object bases on the api json array
+        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
     \-- get_view
-        \-- type_lists - set the vars of this log html object bases on the api json array
+        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
     \-- get_html
-        \-- type_lists - set the vars of this log html object bases on the api json array
+        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
     \-- log_err
-        \-- type_lists - set the vars of this log html object bases on the api json array
+        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
 \-- load
     \-- load_by_view_id
         \-- component_list - the component names with a link to each component as a comma separated list, sorted by
@@ -8752,7 +8754,7 @@
     \-- values_by_triple
         \-- ui_list - show a list of values related to the given triple
     \-- values_similar
-        \-- ui_list - the values that share a phrase with the given value grouped by their phrases like the
+        \-- ui_list - the values of the same category as the given value grouped by their phrases like the
     \-- results_by_value
         \-- ui_list - the results that use the given value as a table, used by the results column of the value
     \-- values_by_source

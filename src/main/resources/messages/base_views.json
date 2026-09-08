@@ -604,6 +604,13 @@
       "description": "the results that use this value e.g. the increase calculated from it",
       "type": "results_by_value",
       "code_id": "results_by_value"
+    },
+    {
+      "name": "system sub title related values",
+      "description": "show the language specific sub title for the values related to the shown value",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_related_values",
+      "ui_msg_code_id": "system_sub_title_related_values"
     }
   ],
   "views": [
@@ -968,40 +975,35 @@
         },
         {
           "position": "2",
-          "name": "main value"
+          "name": "system show field last update",
+          "style": "fields-in-line"
         },
         {
           "position": "3",
           "name": "system show field value source",
-          "position_type": "combine"
+          "position_type": "same_line"
         },
         {
           "position": "4",
-          "name": "system show field last update",
-          "position_type": "combine"
+          "name": "system sub title related values"
         },
         {
           "position": "5",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
-        },
-        {
-          "position": "6",
           "name": "similar values",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "6",
           "name": "system sub title results",
-          "position_type": "side_or_below"
+          "position_type": "side_or_first_below"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "results of value",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "8",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }

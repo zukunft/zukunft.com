@@ -956,7 +956,15 @@ class frontend
         if (is_numeric($view)) {
             $view_id = $view;
             $msk = $this->dto->typ_lst_cache->get_view_by_id($view_id);
-            $view_code_id = $msk?->code_id ?? '';
+            // a view id that the cache does not know is reported and answered with the start view
+            // like the code id below, because rendering without a view would fatal
+            if ($msk == null) {
+                log_err('view with id ' . $view_id . ' not found');
+                $view_id = views::START_ID;
+                $view_code_id = views::START_CODE;
+            } else {
+                $view_code_id = $msk->code_id;
+            }
         } else {
             $msk = $this->dto->typ_lst_cache->get_view($view);
             if ($msk == null) {

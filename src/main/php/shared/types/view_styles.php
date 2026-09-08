@@ -63,6 +63,11 @@ class view_styles
     const string TEXT_LEFT = 'text-left';
     const string TEXT_LEFT_NAME = 'left aligned';
     const int TEXT_LEFT_ID = 5;
+    // keep the short fields of a row on one centred line instead of one line per field
+    const string FIELDS_IN_LINE_COM = 'show the fields of the row on one centred line';
+    const string FIELDS_IN_LINE = 'fields-in-line';
+    const string FIELDS_IN_LINE_NAME = 'fields in one line';
+    const int FIELDS_IN_LINE_ID = 6;
 
 
     // list of the styles used for unit testing

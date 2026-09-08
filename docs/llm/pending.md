@@ -7,8 +7,6 @@ check if the views_by_id are 'useful'
 
 ### value
 
-remove the main value placeholder and show the last update and the source field in one line separated by a model dot
-
 ### components
 
 ### to fix:
