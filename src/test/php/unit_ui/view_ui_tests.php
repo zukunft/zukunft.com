@@ -53,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -159,6 +160,16 @@ class view_ui_tests
         $t->assert_text_contains($test_name, $cmp_html, components::WORD_NAME);
         $test_name = 'the listed components link to the component default page';
         $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_DEFAULT_ID);
+        // each component is one table row with the position number, the linked name and
+        // the position type name, so the page shows the layout order of the view
+        $test_name = 'the position number of the first component is shown';
+        $t->assert_text_contains($test_name, $cmp_html, $html->td('1'));
+        $test_name = 'the position type of the first component is shown';
+        $t->assert_text_contains($test_name, $cmp_html, $html->td(position_types::BELOW_NAME));
+        $test_name = 'the components are sorted by their position in the view';
+        $cmp_lst = $ui_sys->typ_lst_cache->get_view_by_id($msk->id())->get_component_list();
+        $sorted = $cmp_lst->sorted_by_position();
+        $t->assert($test_name, $sorted[0]->position <= $sorted[count($sorted) - 1]->position, true);
 
         // a view that is not in the cache or has no components gets the no-components message
         $test_name = 'a view without components shows the no-components message';

@@ -6139,6 +6139,8 @@
             p
     \-- name_link - section for function name_link not yet defined that it should be display in /component/component_lis
             t.php
+    \-- sorted_by_position - section for function sorted_by_position not yet defined that it should be display in /compo
+            nent/component_list.php
 \-- system_form
     \-- form_tile - section for function form_tile missing in /component/execute/system_form.php
     \-- title_named - section for function title_named missing in /component/execute/system_form.php
@@ -8209,6 +8211,8 @@
                 $dbo)
     \-- name_link
         \-- component_list - the component names with a link to each component as a comma separated list, sorted by
+    \-- sorted_by_position
+        \-- component_list - the components sorted by the position in the view and by the name for the components
     \-- system_change_log
         \-- ui_log - @return string with the html code that shows the recent changes of this object
     \-- change_log_table_pure
@@ -8534,7 +8538,7 @@
         \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
 \-- load
     \-- load_by_view_id
-        \-- component_list - the component names with a link to each component as a comma separated list, sorted by
+        \-- component_list - the components sorted by the position in the view and by the name for the components
     \-- load_by_formula_id
         \-- formula_link_list - get the formula link that use this formula from the backend via api
     \-- load
@@ -8732,7 +8736,7 @@
     \-- triple_list
         \-- ui_list - the triples that use the given verb as a blank separated list of the triple names with a
     \-- view_components
-        \-- ui_list - the components of the given view as a comma separated list of the component names with a
+        \-- ui_list - the components of the given view as a table with one row per component showing the
     \-- component_views
         \-- ui_list - the views that use the given component as a comma separated list of the view names with
     \-- formula_list

@@ -450,12 +450,13 @@ class ui_list extends ui_base
     }
 
     /**
-     * the components of the given view as a comma separated list of the component names with a
-     * link to each component, sorted by the position in the view, used by the view default page
+     * the components of the given view as a table with one row per component showing the
+     * position number, the component name with a link to the component and the position type,
+     * sorted by the position in the view, used by the view default, add and edit pages
      *
      * @param db_object|null $dbo the view whose components should be listed
      * @param user_message $msg to report a missing cache or an unexpected selection object
-     * @return string the linked component names or the message that the view has no components
+     * @return string the component table or the message that the view has no components
      */
     function view_components(?db_object $dbo, user_message $msg): string
     {
@@ -475,7 +476,19 @@ class ui_list extends ui_base
             if ($cmp_lst == null or $cmp_lst->is_empty()) {
                 $result = $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS);
             } else {
-                $result = $cmp_lst->name_link([], $this->configured_name_list_limit($msg));
+                // the table is not cut by the configured name list limit, because the position
+                // numbers are only useful if complete and the number of components of one view
+                // is bounded by its layout; the position type name comes from the type cache
+                $html = new html_base();
+                $pos_typ_lst = $ui_sys->typ_lst_cache->pos_typ;
+                $rows = '';
+                foreach ($cmp_lst->sorted_by_position() as $cmp) {
+                    $rows .= $html->tr(
+                        $html->td((string)$cmp->position)
+                        . $html->td($cmp->name_link([], '', views::COMPONENT_DEFAULT_ID))
+                        . $html->td($pos_typ_lst?->name($cmp->pos_type_id) ?? ''));
+                }
+                $result = $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for components', $msg);

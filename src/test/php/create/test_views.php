@@ -396,10 +396,10 @@ class test_views extends test_objects
     {
         $t_trm = new test_terms($this->env);
         $msk = $this->view();
-        $lst = new term_view_list($this->env->usr1);
-        $lst->add(0, $msk, $t_trm->term());
-        $lst->add(0, $msk, $t_trm->term_triple_pi());
-        $msk->trm_msk_lst = $lst;
+        $lnk_lst = new term_view_list($this->env->usr1);
+        $lnk_lst->add(0, $msk, $t_trm->term());
+        $lnk_lst->add(0, $msk, $t_trm->term_triple_pi());
+        $msk->trm_msk_lst = $lnk_lst;
         return $msk;
     }
 

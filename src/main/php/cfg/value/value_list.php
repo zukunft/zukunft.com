@@ -458,7 +458,15 @@ class value_list extends sandbox_value_list
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
             $db_lst = $db_con_used->get($qp, $msg);
-            $result = $this->rows_mapper_multi($db_lst, $qp->ext, $msg, $load_all);
+            // get() returns false only when the sql query itself failed (an empty result is []),
+            // so guard it like sandbox_list::load_sys: log the failed load and report 'nothing
+            // loaded' instead of passing false into rows_mapper_multi(array), which would abort
+            // the whole request with a TypeError
+            if ($db_lst === false) {
+                log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
+            } else {
+                $result = $this->rows_mapper_multi($db_lst, $qp->ext, $msg, $load_all);
+            }
         }
         return $result;
     }

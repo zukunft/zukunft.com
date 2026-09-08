@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-412 of 5701 public functions have at least 2 unit test calls; the 5289 functions below do not
+412 of 5702 public functions have at least 2 unit test calls; the 5290 functions below do not
 
 ## main backend
 
@@ -4181,6 +4181,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- load_by_view_id - 1 unit test calls shared by 2 classes
     \-- name_link - 0 unit test calls shared by 21 classes
+    \-- sorted_by_position - 1 unit test calls
 \-- component_type_list
     \-- default_id - 0 unit test calls shared by 44 classes
     \-- selector - 2 unit test calls shared by 23 classes
@@ -4549,7 +4550,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- tbl_start_pur - 0 unit test calls
     \-- tbl_start_select - 0 unit test calls
     \-- tbody - 0 unit test calls
-    \-- td - 0 unit test calls shared by 4 classes
+    \-- td - 2 unit test calls shared by 4 classes
     \-- text_h1 - 0 unit test calls
     \-- text_h2 - 0 unit test calls
     \-- text_h3 - 0 unit test calls
@@ -4585,7 +4586,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_user_id - 0 unit test calls shared by 3 classes
     \-- start_time - 0 unit test calls shared by 2 classes
     \-- status - 0 unit test calls shared by 2 classes
-    \-- td - 0 unit test calls shared by 4 classes
+    \-- td - 2 unit test calls shared by 4 classes
     \-- th - 0 unit test calls shared by 4 classes
     \-- tr - 0 unit test calls shared by 6 classes
     \-- type - 0 unit test calls shared by 6 classes
@@ -5181,7 +5182,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_verb - 2 unit test calls shared by 3 classes
     \-- set_verb_by_id - 0 unit test calls
     \-- similar - 1 unit test calls shared by 3 classes
-    \-- td - 0 unit test calls shared by 4 classes
+    \-- td - 2 unit test calls shared by 4 classes
     \-- term - 8 unit test calls shared by 13 classes
     \-- to_url_array - 16 unit test calls shared by 10 classes
     \-- tr - 0 unit test calls shared by 6 classes
@@ -5231,7 +5232,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- get_html - 1 unit test calls shared by 3 classes
     \-- get_html_by_id - 0 unit test calls
     \-- get_view - 4 unit test calls shared by 7 classes
-    \-- get_view_by_id - 0 unit test calls
+    \-- get_view_by_id - 1 unit test calls
     \-- log_err - 0 unit test calls shared by 5 classes
     \-- phrase_types - 0 unit test calls
     \-- set_change_action_list - 0 unit test calls
@@ -5526,7 +5527,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- dsp_navbar - 0 unit test calls shared by 2 classes
-    \-- get_component_list - 0 unit test calls
+    \-- get_component_list - 1 unit test calls
     \-- get_style_id - 1 unit test calls shared by 8 classes
     \-- load_by_id_with - 0 unit test calls
     \-- log_debug - 0 unit test calls shared by 3 classes
@@ -5616,7 +5617,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- sandbox_fld_order - 1 unit test calls shared by 5 classes
     \-- set_type - 1 unit test calls shared by 14 classes
     \-- similar - 1 unit test calls shared by 3 classes
-    \-- td - 0 unit test calls shared by 4 classes
+    \-- td - 2 unit test calls shared by 4 classes
     \-- term - 8 unit test calls shared by 13 classes
     \-- th - 0 unit test calls shared by 4 classes
     \-- to_url_array - 16 unit test calls shared by 10 classes

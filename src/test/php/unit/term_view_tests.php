@@ -89,12 +89,12 @@ class term_view_tests
         // of the view pages lists (see view::load_terms_related); the names of the term and the
         // view are joined like for the load by ids, so the terms can be linked without a reload
         $test_name = 'load the terms that use a view';
-        $lst = new term_view_list($t->usr1);
+        $lnk_lst = new term_view_list($t->usr1);
         $sc->reset(sql_db::POSTGRES);
-        $qp = $lst->load_sql_by_view($sc, $t_msk->view());
+        $qp = $lnk_lst->load_sql_by_view($sc, $t_msk->view());
         $t->assert_qp($qp, $sc->db_type, $test_name);
         $sc->reset(sql_db::MYSQL);
-        $qp = $lst->load_sql_by_view($sc, $t_msk->view());
+        $qp = $lnk_lst->load_sql_by_view($sc, $t_msk->view());
         $t->assert_qp($qp, $sc->db_type, $test_name);
         $t->assert_sql_changing_users_by_ids($sc, $lnk);
         // TODO check if all links have the check
