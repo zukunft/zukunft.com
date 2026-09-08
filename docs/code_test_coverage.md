@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1334 of 5694 public functions have at least 2 unit test calls; the 4360 functions below do not
+1343 of 5695 public functions have at least 2 unit test calls; the 4352 functions below do not
 
 ## main backend
 
@@ -495,7 +495,6 @@ so same-named functions of several classes share their test calls
     \-- load_dummy - 0 unit test calls
 \-- export_type_list
     \-- ignore_from - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- set - 0 unit test calls
 \-- expression
     \-- element_grp_lst - 1 unit test calls
@@ -653,7 +652,6 @@ so same-named functions of several classes share their test calls
     \-- load_sql_by_word_ref - 0 unit test calls
     \-- load_sql_like - 0 unit test calls
     \-- missing_ids - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- save_with_cache - 0 unit test calls
     \-- save_with_cache_slow - 0 unit test calls
     \-- term_lst_of_names - 0 unit test calls
@@ -1039,6 +1037,7 @@ so same-named functions of several classes share their test calls
     \-- assume_time - 0 unit test calls
     \-- best_matching_time - 1 unit test calls
     \-- categories - 0 unit test calls
+    \-- category_members - 0 unit test calls
     \-- common - 0 unit test calls
     \-- concat_unique - 0 unit test calls
     \-- contains - 0 unit test calls
@@ -1110,7 +1109,6 @@ so same-named functions of several classes share their test calls
     \-- parents - 0 unit test calls
     \-- phrase_ids - 0 unit test calls
     \-- prime_only - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- scaling_lst - 0 unit test calls
     \-- sort_by_id - 0 unit test calls
     \-- sort_rev_by_id - 0 unit test calls
@@ -2183,7 +2181,6 @@ so same-named functions of several classes share their test calls
     \-- no_id_return - 0 unit test calls
     \-- no_log - 0 unit test calls
     \-- num_user_fields - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- set - 0 unit test calls
     \-- txt_user_fields - 0 unit test calls
     \-- use_named_par - 0 unit test calls
@@ -2310,7 +2307,6 @@ so same-named functions of several classes share their test calls
     \-- load_sql_like - 0 unit test calls
     \-- merge_by_name - 0 unit test calls
     \-- name_pos_lst - 1 unit test calls
-    \-- remove - 0 unit test calls
     \-- term_by_obj_id - 0 unit test calls
     \-- term_ids - 0 unit test calls
     \-- triple_by_id - 0 unit test calls
@@ -2771,7 +2767,6 @@ so same-named functions of several classes share their test calls
     \-- phr_lst_all - 0 unit test calls
     \-- phrase_groups - 0 unit test calls
     \-- read_limit - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- remove_list - 0 unit test calls
     \-- set_grp_ids - 0 unit test calls
     \-- sort - 1 unit test calls
@@ -3055,7 +3050,6 @@ so same-named functions of several classes share their test calls
     \-- parents - 0 unit test calls
     \-- percent_lst - 0 unit test calls
     \-- phrase_lst_of_names - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- scaling_lst - 0 unit test calls
     \-- time_lst - 0 unit test calls
     \-- time_useful - 0 unit test calls
@@ -3128,7 +3122,6 @@ so same-named functions of several classes share their test calls
     \-- link_details - 0 unit test calls
     \-- no_key_fill - 0 unit test calls
     \-- phrase_names - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- set - 0 unit test calls
     \-- test_mode - 0 unit test calls
     \-- with_excluded - 0 unit test calls
@@ -3874,7 +3867,6 @@ so same-named functions of several classes share their test calls
     \-- parents - 0 unit test calls
     \-- phrase_selector - 0 unit test calls
     \-- plural - 0 unit test calls
-    \-- remove - 0 unit test calls
     \-- result_phrases_most_relevant - 0 unit test calls
     \-- scaling_list - 0 unit test calls
     \-- select_file - 0 unit test calls

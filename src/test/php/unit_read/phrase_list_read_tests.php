@@ -185,6 +185,16 @@ class phrase_list_read_tests
         $test_name = 'a triple with another verb than is a has no category';
         $t->assert($test_name, $lst_sym->categories($msg)->names(), []);
 
+        // the members of a category are the triples that link to it, because a value is keyed by
+        // that triple (the pi value by "Pi (math)") and not by the linked word "Pi"
+        $test_name = 'the members of the category of pi are the math constant triples';
+        $t->assert_contains($test_name, $lst->categories($msg)->category_members($msg)->names(),
+            [triple_names::PI, triple_names::E_NUM]);
+
+        // nothing is linked to the symbol triple as its category, so it has no member but itself
+        $test_name = 'a phrase that is no category has no members but itself';
+        $t->assert($test_name, $lst_sym->category_members($msg)->count(), 1);
+
     }
 
 }

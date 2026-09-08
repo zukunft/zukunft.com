@@ -317,8 +317,9 @@ class value extends value_base
      *
      * the category is the 'is a' parent of the phrases of this value (see phrase_list::categories,
      * which also covers a value named by an 'is a' triple like pi), so the siblings are the
-     * children of that parent (see phrase_list::are, which also keeps the parent itself, so a
-     * value assigned to the category is related too)
+     * members of that category (see phrase_list::category_members, which returns the 'is a'
+     * triples that carry the values and keeps the category itself, so a value assigned to the
+     * category is related too)
      *
      * the values are selected with 'or', because a value of one category is already related;
      * this value itself is removed, because a page never lists what it shows
@@ -333,7 +334,7 @@ class value extends value_base
         // without a category nothing is related, and loading by the own phrases would list every
         // value that happens to share a phrase instead of the values of the same kind
         if (!$cat_lst->is_empty()) {
-            $val_lst->load_by_phr_lst($cat_lst->are($msg), $msg, true, value_list::read_limit());
+            $val_lst->load_by_phr_lst($cat_lst->category_members($msg), $msg, true, value_list::read_limit());
             $val_lst->remove($this);
             $val_lst->load_names_related($msg);
         }

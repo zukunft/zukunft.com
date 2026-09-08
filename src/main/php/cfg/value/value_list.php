@@ -1182,11 +1182,11 @@ class value_list extends sandbox_value_list
     function remove(?value $val): bool
     {
         $result = false;
-        // the id is compared with the loaded object, not handed to get() as a bool, which would
-        // ask for the object with the key 1 (see value::load_values_similar for a caller)
-        if ($this->get($val->id()) != null) {
-            $this->unset($val->id());
-            $result = true;
+        // unset() takes the position within the list and not the id, so the id is resolved by
+        // unset_by_id; handing the id to unset() removed nothing and left e.g. a value in its
+        // own related values (see value::load_values_similar for a caller)
+        if ($val != null) {
+            $result = $this->unset_by_id($val->id());
         }
         return $result;
     }

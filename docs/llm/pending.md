@@ -7,6 +7,17 @@ check if the views_by_id are 'useful'
 
 ### value
 
+1. Only one of the three value pages exercises the feature — correctly. 32773 (π, verb 29 is symbol for) and 33393 (Target PE ratio, verb 36 kind of) have no is a parent, so no similar values is the right output for both. Their snapshots are unchanged, which is the expected result rather than a missed regeneration.
+
+2. The reverse direction is not snapshotted. There is no value_default_value_32825.html, so "the 𝑒 page lists pi" is covered only by the symmetry of category_members(), not by a baseline. One more assert_view(views::VALUE, …, values::E_ID, $cfg) in system_views_read_tests.php would close that, and would also pin the re-keyed E_ID = 32825.
+
+3. code_test_coverage.md now overstates coverage for seven unrelated remove() functions. The diff drops 8 remove - 0 unit test calls lines while I tested exactly one. The scanner counts by function name across classes — its own header says so — so my two calls in unit/value_list_tests.php cleared the name for every class that has a remove(). Not introduced by this change,                                                                                            
+   but it is a visible and misleading side effect of it.
+
+4. category_members reports 0 unit test calls in the same doc, because the scanner reads only src/test/php/unit and the test is in unit_read (correct per the tier rule, since it reads the DB). Same situation as categories.
+
+5. Known limitation worth recording. A value keyed by a symbol triple (π (unit symbol)) gets no related values, because reaching mathematical constant needs a second hop through is symbol for → Pi → is a. That was the deliberate choice when you picked the re-keying option; a pending_prio_2.md line would keep it visible.
+
 ### components
 
 ### to fix:

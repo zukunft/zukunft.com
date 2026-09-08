@@ -2665,6 +2665,8 @@
     \-- is - section for function is not yet defined that it should be im- and export in /phrase/phrase_list.php
     \-- categories - section for function categories not yet defined that it should be im- and export in /phrase/phrase_
             list.php
+    \-- category_members - section for function category_members not yet defined that it should be im- and export in /ph
+            rase/phrase_list.php
     \-- are - section for function are is expected to be foaf in /phrase/phrase_list.php
     \-- contains - section for function contains not yet defined that it should be im- and export in /phrase/phrase_list
             .php
