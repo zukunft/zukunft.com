@@ -7,6 +7,55 @@ check if the views_by_id are 'useful'
 
 ### value
 
+in the views tab of src/test/resources/web/html/views_by_object/value/value_default_value_32824.html and the views tabs of all other views change '                        <div class="css-tab" id="views">
+<a href="#views" class="css-tab-label">
+Views
+</a>
+<div class="css-tab-pane">
+<div class="container">
+<div>
+<div class="col-md-12">
+view preview
+</div>
+Display Number
+<a href="http://localhost/http/view.php?m=96&amp;id=32824">
+view
+</a>
+<a href="http://localhost/http/view.php?m=19&amp;id=32824">
+switch
+</a>
+</div>
+</div>
+</div>
+</div>
+'
+ to something like
+
+'                        <div class="css-tab" id="views">
+<a href="#views" class="css-tab-label">
+Views
+</a>
+<div class="css-tab-pane">
+<div class="container">
+<div>
+<div class="col-md-12">
+view preview
+</div>
+<a href="http://localhost/http/view.php?m=96&amp;id=32824" title="show 'Pi (math)' with the 'Display Number' view">
+Display Number
+</a>
+<a href="http://localhost/http/view.php?... url parameter to change the view of id=32824 ..." title="adjust 'Pi (math)' so that it is always shown with the 'Display Number' view">
+<i class="fas fa-shuffle"></i>
+</a>
+<a href="http://localhost/http/view.php?... url parameter to edit the view ..." title="change the 'Display Number' view">
+<i class="fas fa-edit"></i>
+</a>
+</div>
+</div>
+</div>
+</div>
+'
+
 1. Only one of the three value pages exercises the feature — correctly. 32773 (π, verb 29 is symbol for) and 33393 (Target PE ratio, verb 36 kind of) have no is a parent, so no similar values is the right output for both. Their snapshots are unchanged, which is the expected result rather than a missed regeneration.
 
 2. The reverse direction is not snapshotted. There is no value_default_value_32825.html, so "the 𝑒 page lists pi" is covered only by the symmetry of category_members(), not by a baseline. One more assert_view(views::VALUE, …, values::E_ID, $cfg) in system_views_read_tests.php would close that, and would also pin the re-keyed E_ID = 32825.

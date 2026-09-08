@@ -87,6 +87,7 @@ class source_url_tests extends url_test_base
         // for the write tests the same workflows are used with do_it = true
         $this->add_source_workflow(workflows::WF_ADD_SOURCE_NBR);
         $this->change_source_workflow(workflows::WF_CHANGE_SOURCE_NBR);
+        $this->del_source_workflow(workflows::WF_DEL_SOURCE_NBR);
     }
 
     /**
@@ -248,6 +249,83 @@ class source_url_tests extends url_test_base
     }
 
     /**
+     * run the del_source workflow and snapshot the html after every user action, mirroring
+     * del_word_workflow: the back excursion leaves the delete form and the cancel excursion
+     * discards the deletion in the confirm view, both without writing, and only the final
+     * confirmed step removes the source. snapshots go into
+     * src/test/resources/web/html/workflow/del_source_wf<nbr>/ (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 21 for wf21
+     * @param bool $do_it false to only render the steps, true to also delete the source
+     */
+    protected function del_source_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        $msg = new user_message();
+        // the del_source workflow runs on the 'System Test Source' (added by the add_source workflow
+        // of a write run); resolve its current database id by name and set the fixed snapshot id
+        $this->wf_start($wf_nbr, workflows::WF_DEL_SOURCE, $this->t->usr1, sources::SYSTEM_TEST_ADD_ID, $do_it);
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $src = new source($this->t->usr1);
+        $this->wf_id = $src->load_by_name(sources::SYSTEM_TEST_ADD, $msg);
+        // in a read-only run the add workflow has not written the source, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = sources::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = sources::SYSTEM_TEST_ADD_ID;
+
+        // initial url with the added source; the url carries the current db id of the source so the
+        // confirmed delete targets the real row (the snapshot files normalize the id back to the
+        // fixed test id)
+        $t_src = new test_sources($this->t);
+        $url_arr = $t_src->source_add_url($this->msg);
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
+
+        // show: display the test source in its default source view
+        $this->assert_step(workflows::SHOW, $url_arr, views::SOURCE_ID);
+
+        // edit: open the delete confirmation form
+        $this->assert_step(workflows::EDIT, $url_arr, views::SOURCE_DEL_ID);
+
+        // back: leave the delete form without deleting and return to the source view (no write)
+        $this->assert_step(workflows::BACK, $url_arr, views::SOURCE_ID);
+
+        // edit: re-open the delete form
+        $this->assert_step(workflows::EDIT, $url_arr, views::SOURCE_DEL_ID);
+
+        // save: press delete on the form which shows the confirm delete view
+        $this->assert_step(workflows::SAVE, $url_arr, views::SOURCE_DEL_ID);
+
+        // cancel: discard the deletion in the confirm view and return to the source view (no write)
+        $this->assert_step(workflows::CANCEL, $url_arr, views::SOURCE_ID);
+
+        // edit: re-open the delete form
+        $this->assert_step(workflows::EDIT, $url_arr, views::SOURCE_DEL_ID);
+
+        // save: press delete again which shows the confirm delete view
+        $this->assert_step(workflows::SAVE, $url_arr, views::SOURCE_DEL_ID);
+
+        // confirmed: confirm the deletion so the source is actually removed from the database (with
+        // $do_it true); the confirm mask does not encode the object type, so carry the '9'-prefixed
+        // back target = the source view + id (as the real confirm form does), otherwise dbo_for_url
+        // falls back to the default word object and the delete would target a word
+        $url_arr[url_var::BACK . url_var::MASK] = views::SOURCE_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_DEL_ID);
+
+        // a write run must actually delete the source; a non-owner delete is a soft delete, so check
+        // the source is flagged as excluded in the user sandbox rather than physically removed
+        if ($do_it) {
+            $this->assert_source_removed('del_source workflow has removed the source');
+        }
+    }
+
+    /**
      * check that the workflow test source exists in the database with the expected url, used by the
      * add write workflow to verify the confirmed step was actually persisted (mirrors
      * formula_url_tests::assert_formula_in_db)
@@ -283,6 +361,22 @@ class source_url_tests extends url_test_base
         $src->load_by_name($name, $msg);
         $this->t->assert($test_name, $src->name(), $name);
         $this->t->assert($test_name, $src->view?->id() ?? 0, $view_id);
+    }
+
+    /**
+     * check that the workflow test source has been removed from the database, used by the del write
+     * workflow to verify the confirmed step was actually persisted (mirrors
+     * word_url_tests::assert_word_removed); a non-owner delete only excludes the source in the user
+     * sandbox, so both states count as removed
+     *
+     * @param string $test_name the description of the assertion
+     */
+    private function assert_source_removed(string $test_name): void
+    {
+        $msg = new user_message();
+        $src = new source($this->t->usr1);
+        $src->load_by_name(sources::SYSTEM_TEST_ADD, $msg);
+        $this->t->assert_true($test_name, $src->id() == 0 || $src->is_excluded());
     }
 
 }

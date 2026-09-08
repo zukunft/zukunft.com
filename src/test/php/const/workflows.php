@@ -205,6 +205,13 @@ class workflows
     // the id of the current change_source workflow; increase it to add the next snapshot set
     const int WF_CHANGE_SOURCE_NBR = 20;
 
+    // the del_source workflow name used for the snapshot folder and the test subheader:
+    // the added source is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_word)
+    const string WF_DEL_SOURCE = 'del_source';
+    // the id of the current del_source workflow; increase it to add the next snapshot set
+    const int WF_DEL_SOURCE_NBR = 21;
+
     /**
      * the user process step that a user reaction action triggers
      *
