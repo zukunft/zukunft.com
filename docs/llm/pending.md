@@ -7,28 +7,6 @@ check if the views_by_id are 'useful'
 
 ### value
 
-1. Only one of the three value pages exercises the feature — correctly. 32773 (π, verb 29 is symbol for) and 33393 (Target PE ratio, verb 36 kind of) have no is a parent, so no similar values is the right output for both. Their snapshots are unchanged, which is the expected result rather than a missed regeneration.
-
-2. The reverse direction is not snapshotted. There is no value_default_value_32825.html, so "the 𝑒 page lists pi" is covered only by the symmetry of category_members(), not by a baseline. One more assert_view(views::VALUE, …, values::E_ID, $cfg) in system_views_read_tests.php would close that, and would also pin the re-keyed E_ID = 32825.
-
-3. code_test_coverage.md now overstates coverage for seven unrelated remove() functions. The diff drops 8 remove - 0 unit test calls lines while I tested exactly one. The scanner counts by function name across classes — its own header says so — so my two calls in unit/value_list_tests.php cleared the name for every class that has a remove(). Not introduced by this change,                                                                                            
-   but it is a visible and misleading side effect of it.
-
-4. category_members reports 0 unit test calls in the same doc, because the scanner reads only src/test/php/unit and the test is in unit_read (correct per the tier rule, since it reads the DB). Same situation as categories.
-
-5. Known limitation worth recording. A value keyed by a symbol triple (π (unit symbol)) gets no related values, because reaching mathematical constant needs a second hop through is symbol for → Pi → is a. That was the deliberate choice when you picked the re-keying option; a pending_prio_2.md line would keep it visible.
-
-6. A pre-existing empty name surfaces three more times. value_default_value_32773.html now carries show '' with the 'Display Number' view in its tooltips. That value's page heading is already empty in HEAD (<h4 class="heading-inline"><span class="grey"></span></h4>) — the π (unit symbol) value renders neither name nor number — so the tooltip is a new window onto an old                                                                                               
-   rendering/data problem, not something this change introduced. Worth its own pending.md line; nothing to do here.
-
-7. BUTTON_VIEW_OPEN / BUTTON_VIEW_SWITCH are now dead. Enum cases and the "view" / "switch" yaml lines have no caller left. Kept deliberately — a message id is an external contract and retiring one is your call — but they should be either removed in this commit or noted.
-
-8. No German. de.yaml has no button_* block at all, so the three tooltips join their siblings on the "translation missing" fallback rather than being a lone German entry.
-
-9. edit_link - 0 unit test calls in code_test_coverage.md — the scanner counts only src/test/php/unit, and the coverage is in unit_ui (value_ui_tests, six asserts: the &amp;d= preselect, the icon, the name-as-link, both name-bearing tooltips, the m=31 view-edit link). Same situation as categories / category_members.
-
-10. Minor, on my own code. tip() runs two msg_var_replace() calls — fine at two, but a third placeholder would want a loop. And open_link() / switch_link() keep $dbo_name = '' optional although the only caller always passes it; a required parameter would be honest, but that's a signature tidy the task didn't ask for.
-
 ### components
 
 ### to fix:

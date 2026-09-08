@@ -1315,3 +1315,15 @@ formula_text (internal {f1} expression) is derived from the posted user expressi
 last_update is set by the calculation, usage is shown read-only as the usage number sub title,
 impact and usage overwrites are the separate admin GUI pending entry, and excluded is handled by
 the delete workflow
+
+## related values of a value keyed by a symbol triple
+
+the related values column of the value default view lists the values of the same 'is a' category
+(see value::load_values_similar and phrase_list::categories), which is one hop: the phrase that
+names the value must itself be the 'is a' triple (e.g. "Pi (math)" = Pi is a mathematical
+constant). a value keyed by a symbol triple like "π (unit symbol)" (π is symbol for Pi) reaches
+the category only with a second hop through the symbol link (π → Pi → is a mathematical constant),
+so its page shows no related values. this was the deliberate choice when the e value was re-keyed
+from the symbol to the math triple instead of adding the extra hop; if values keyed by a symbol
+should show their siblings too, categories() needs to follow 'is symbol for' and 'name of' before
+the 'is a' step (see verbs::CATEGORY_VERBS)

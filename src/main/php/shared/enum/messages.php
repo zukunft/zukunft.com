@@ -2166,8 +2166,6 @@ enum messages: string
     case FORM_BUTTON_DEL = 'form_button_del';
     // the tooltip of the refresh icon beside a form field label
     case FORM_BUTTON_REFRESH = 'form_button_refresh';
-    case BUTTON_VIEW_OPEN = 'button_view_open';
-    case BUTTON_VIEW_SWITCH = 'button_view_switch';
     // the tooltips of the views tab of an object page: show the object with the view, set the view
     // as the default view of the object and change the view itself (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
