@@ -2168,6 +2168,11 @@ enum messages: string
     case FORM_BUTTON_REFRESH = 'form_button_refresh';
     case BUTTON_VIEW_OPEN = 'button_view_open';
     case BUTTON_VIEW_SWITCH = 'button_view_switch';
+    // the tooltips of the views tab of an object page: show the object with the view, set the view
+    // as the default view of the object and change the view itself (see view::open_link)
+    case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
+    case BUTTON_VIEW_SWITCH_TIP = 'button_view_switch_tip';
+    case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';

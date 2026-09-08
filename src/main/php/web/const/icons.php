@@ -44,6 +44,8 @@ class icons
 
     // Font Awesome solid (fas) — the full css class string ready to drop into class="..."
     const string EDIT = 'fas fa-edit';
+    // shown in the views tab of an object page to set the view as the default view of the object
+    const string VIEW_SWITCH = 'fas fa-shuffle';
     // shown behind a selector to add a new object of the selected type e.g. a source of a value
     const string ADD = 'fas fa-plus';
     const string GLOBE = 'fas fa-globe';

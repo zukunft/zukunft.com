@@ -759,13 +759,15 @@ class ui_list extends ui_base
         $html = new html_base();
         foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
             $preview = $html->div('view preview', view_styles::COL_SM_12);
-            // the switch button opens the edit view of the shown object, which differs
-            // per class, so the edit view id of the object is passed to the link builder
-            $buttons = $msk->open_link($dbo->id())
-                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID);
-            // escape the view name (div emits its body raw and the name is user input); the
-            // preview and buttons around it are already-built html (stored xss via view name)
-            $result .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
+            // the view name links to the object shown with the view, the switch icon opens the
+            // edit view of the shown object with this view preselected as its default view, and
+            // the edit icon changes the view itself; the edit view of the object differs per
+            // class, so its id is passed to the link builder. the links escape the names (stored
+            // xss via a user given name), so the div gets already-built html only
+            $links = $msk->open_link($dbo->id(), $dbo->name())
+                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $dbo->name())
+                . ' ' . $msk->edit_link();
+            $result .= $html->div($preview . $links);
         }
         return $result;
     }

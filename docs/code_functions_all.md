@@ -7815,6 +7815,7 @@
     \-- log_err - section for function log_err is expected to be log in /view/view.php
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
+    \-- edit_link - section for function edit_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
     \-- order error - order of section to review has difference at log_err should be before selector_page
 \-- view_base
