@@ -56,9 +56,10 @@ class values
     const int PI_SYMBOL_ID = 5;
     CONST float SAMPLE_ZERO = 0.0;
     CONST float E = 2.718281828459045235360; // Euler number
-    // the group id of the e value in the seeded database, keyed by the "𝑒 (unit symbol)"
-    // triple (see triple_names::E_ID and the 𝑒 value in units.json)
-    const int E_ID = 32826;
+    // the group id of the e value in the seeded database, keyed by the "𝑒 (math)" triple like the
+    // pi value is keyed by "Pi (math)", because the number is the value of the constant and not of
+    // its symbol, which is what makes 𝑒 a related value of pi (see value::load_values_similar)
+    const int E_ID = 32825;
     CONST float E_CONST = 0.57721566490153; // Euler const
     // the group id of the Euler's constant value in the seeded database, keyed by the
     // "Euler's constant" triple (Euler 'name of' constant, see the value in units.json)

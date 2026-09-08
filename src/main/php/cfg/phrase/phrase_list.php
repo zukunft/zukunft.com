@@ -1059,6 +1059,45 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the categories of the phrases of this list e.g. "mathematical constant" for "Pi (math)"
+     *
+     * a word is linked to its category by an 'is a' triple, so is() finds the category by
+     * following the links up from the word; a triple with the verb 'is a' is itself that link,
+     * and nothing links away from it, so its category is the phrase it points to: "Pi (math)"
+     * is "Pi is a mathematical constant" and is() alone returns nothing for it
+     *
+     * the phrase of a group carries the object id only, so the verb and the target of a triple
+     * are read from the database here before they can be used
+     *
+     * @param user_message $msg to collect the problems while reading the triples
+     * @return phrase_list the categories of the phrases of this list without duplicates
+     */
+    function categories(user_message $msg): phrase_list
+    {
+        $cat_lst = $this->is($msg);
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                // is_triple() answers by the class of the object or by the sign of the phrase id,
+                // whereas id_obj() needs the object, so without it the triple with the id zero
+                // would be read here and the category would be missing without any message
+                $trp_id = $phr->id_obj();
+                if ($trp_id == 0) {
+                    log_err_msg('the triple of ' . $phr->dsp_id()
+                        . ' is not loaded, so its category cannot be read', $msg);
+                } else {
+                    $trp = new triple($this->get_user());
+                    $trp->load_by_id($trp_id, $msg);
+                    if ($trp->get_verb_code_id() == verbs::IS) {
+                        $cat_lst->add($trp->get_to());
+                    }
+                }
+            }
+        }
+        log_debug($this->dsp_id() . ' is a ' . $cat_lst->dsp_name());
+        return $cat_lst;
+    }
+
+    /**
      * get the related phrase
      * e.g. for "city" it will return "Zurich", "Bern" and "Geneva"
      *

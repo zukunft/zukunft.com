@@ -181,7 +181,12 @@ class Translator
                     msg_id::VAR_ERROR_TEXT => $error->getMessage()
                 ]);
                 $msg_txt = $msg->var_message_text();
-                log_err($msg_txt);
+                // a warning and not an error, because a message id that the database has and the
+                // code does not is the normal state between a seed data import and the deploy of
+                // the matching code: an error is echoed as a critical error page (see log_msg and
+                // text_log::MSG_LEVEL), which would turn one missing label into a dead page for
+                // every request, while the warning still tells the admin via the sys log
+                log_warning($msg_txt);
                 return msg_id::ERROR_TEXT;
             }
         }

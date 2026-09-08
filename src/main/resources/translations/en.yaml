@@ -63,6 +63,7 @@ messages:
   system_sub_title_description: "Description"
   system_sub_title_references: "References"
   system_sub_title_values: "Values"
+  system_sub_title_related_values: "Related values"
   system_sub_title_formulas: "Formulas"
   system_sub_title_assigned_phrases: "Assigned words and triples"
   system_sub_title_results: "Results"

@@ -1048,8 +1048,8 @@ class ui_list extends ui_base
     }
 
     /**
-     * the values that share a phrase with the given value grouped by their phrases like the
-     * default word view, used by the similar values column of the value default page: for pi
+     * the values of the same category as the given value grouped by their phrases like the
+     * default word view, used by the related values column of the value default page: for pi
      * these are the other values of the mathematical constants
      *
      * the list is sorted by impact by the grouped renderer (see value_list::list_most_relevant),

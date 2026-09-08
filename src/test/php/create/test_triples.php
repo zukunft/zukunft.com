@@ -727,6 +727,23 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "𝑒 (math)" that carries the e number value in the seeded database,
+     *                like "Pi (math)" carries the pi value (see triple_pi_name)
+     */
+    function triple_e_name(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::E_NUM_ID, triple_names::E_NUM);
+        $trp->description = triple_names::E_COM;
+        $trp->set_from($this->triple_euler_number()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->triple()->phrase());
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
      * @return triple to test the sql insert via function
      */
     function triple_add_by_func(user_message $msg): triple

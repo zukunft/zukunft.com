@@ -158,6 +158,33 @@ class phrase_list_read_tests
         $t->assert($test_name,
             $col_phr?->obj()?->get_from()?->obj()?->get_from()?->name(), word_names::LOSS);
 
+
+        $t->subheader($ts . 'categories');
+
+        // the phrase that names the pi value is the triple "Pi is a mathematical constant", so
+        // the triple itself is the link to the category and nothing links away from it, which is
+        // why is() finds nothing and categories() has to read the target of the triple
+        $lst = new phrase_list($t->usr1);
+        $pi = new phrase($t->usr1);
+        $pi->set_obj_from_id(triple_names::PI_ID * -1);
+        $lst->add($pi);
+
+        $test_name = 'an is-a triple has no category by following the links up';
+        $t->assert($test_name, $lst->is($msg)->names(), []);
+
+        $test_name = '... but the target of the triple is its category';
+        $t->assert_contains($test_name, $lst->categories($msg)->names(), triple_names::MATH_CONST);
+
+        // the symbol triple links with "is symbol for" and not with "is a", so its target is the
+        // named number and not a category, which the verb check keeps out of the list
+        $lst_sym = new phrase_list($t->usr1);
+        $e_sym = new phrase($t->usr1);
+        $e_sym->set_obj_from_id(triple_names::E_ID * -1);
+        $lst_sym->add($e_sym);
+
+        $test_name = 'a triple with another verb than is a has no category';
+        $t->assert($test_name, $lst_sym->categories($msg)->names(), []);
+
     }
 
 }

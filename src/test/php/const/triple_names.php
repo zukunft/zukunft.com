@@ -60,6 +60,8 @@ class triple_names
     const string EULER_NUMBER_COM = 'The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.';
     const string E = '𝑒 (unit symbol)';
     const int E_ID = 58;
+    const string E_NUM = '𝑒 (math)';
+    const int E_NUM_ID = 57;
     const string E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
     const string PI = 'Pi (math)';
     const string PI_NAME = 'Pi (math)';
