@@ -425,6 +425,7 @@
     \-- component_links - section for function component_links not yet defined that it should be set and get in /view/vi
             ew.php
     \-- load_components - section for function load_components is expected to be load in /view/view.php
+    \-- load_terms_related - section for function load_terms_related is expected to be load in /view/view.php
     \-- load_components_sql - section for function load_components_sql is expected to be load in /view/view.php
     \-- name_field - section for function name_field is expected to be sql fields in /view/view.php
     \-- all_sandbox_fields - section for function all_sandbox_fields is expected to be sql fields in /view/view.php
@@ -1126,6 +1127,8 @@
 \-- load related
     \-- load_components
         \-- view - load all parts of this view for this user
+    \-- load_terms_related
+        \-- view - load the terms that use this view into the in-memory trm_msk_lst so that api_json_array()
     \-- load_components_sql
         \-- view - create an SQL statement to retrieve all view components of a view
 \-- load helper
@@ -3999,6 +4002,9 @@
             php
 \-- term_view_list
     \-- load_by_ids - section for function load_by_ids is expected to be load in /view/term_view_list.php
+    \-- load_by_view - section for function load_by_view is expected to be load in /view/term_view_list.php
+    \-- term_list - section for function term_list not yet defined that it should be load sql in /view/term_view_list.ph
+            p
     \-- order error - order of section load sql has difference at load_sql_by_ids should be before load_sql
 \-- view_list
     \-- load_sql_names - section for function load_sql_names is expected to be load sql in /view/view_list.php
@@ -6468,6 +6474,7 @@
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
     \-- view_tab_box - section for function view_tab_box missing in /component/execute/ui_list.php
+    \-- view_terms - section for function view_terms missing in /component/execute/ui_list.php
     \-- link_list_word - section for function link_list_word is expected to be link in /component/execute/ui_list.php
     \-- num_list - section for function num_list missing in /component/execute/ui_list.php
     \-- formulas - section for function formulas missing in /component/execute/ui_list.php
@@ -8738,6 +8745,8 @@
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
         \-- ui_list - HTML for the col-4 tab box of a sandbox object page: a "Views" tab with the related views
+    \-- view_terms
+        \-- ui_list - the terms that use the given view as links, used by the used by column of the view add and
     \-- link_list_word
         \-- ui_list - @param db_object $dbo the word, triple or formula object that should be shown to the user
     \-- num_list

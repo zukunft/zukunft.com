@@ -247,3 +247,4 @@ component_type_id, type_name, description, code_id
 246, 'ui message fields', 'the user interface message link fields in a form, only shown to a user whose profile may change the code id', 'system_form_field_ui_msg'
 247, 'values similar', 'show the values that share a phrase with the shown value sorted by impact e.g. the other mathematical constants of pi', 'values_similar'
 248, 'results of value', 'show the results that use the shown value e.g. the increase calculated from it', 'results_by_value'
+249, 'terms of view', 'show the terms that use the shown view e.g. for the used by column of the view add and edit pages', 'terms_of_view'

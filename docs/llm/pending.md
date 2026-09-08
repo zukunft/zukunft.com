@@ -5,7 +5,9 @@
 
 check if the views_by_id are 'useful'
 
-### value
+### view default
+
+in the view default view e.g. '' show in four columns like in the word default view the terms where the view is used based on the term_views table / object and like until now the components that are linked to the view with the order number and the position type and like now the changes tab similar to the word default view
 
 ### components
 
@@ -16,6 +18,11 @@ check if the views_by_id are 'useful'
 3. src/test/resources/unit/user/list.csv drops row 13 (::1) — that's a local test-environment artifact (a guest user created by an HTTP request), not a consequence of this change. It probably shouldn't ride along in this commit.
 4. Limit before sort — load_values_similar() reads with value_list::read_limit(), but the impact sort happens in the renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
 5. Minor: value::api_json_array applies filter_readable_by after the is_empty() check, so a list that filters down to nothing still emits an empty values array. sql()'s docblock still lacks @param lines for $union / $num_id (pre-existing).
+6. Run noise to restore. change_log_list_word_1.json / _word_name.json drifted again (ids 7005 → 7084 — the per-import change-log counter), and ui_config.json carries its timestamp line. Neither belongs to this change.
+7. The id shift is +4 and clean. 88 base components moved (92 changed lines in component/list.csv) and every later component link with them (~1280 lines). No *_ID const above 92 pins a seeded component, so nothing is silently mis-pinned — but it belongs in the commit body, per the seed-id rule.
+8. Two new entries in code_object_name_exceptions.md, one avoidable. $msk_terms is a legitimate second view in one scope; $lst for a term_view_list is not — the class's suggested name is $lnk_lst and it's used in test_views::view_with_terms() and the new term_view_tests block, both mine. A rename keeps the list flat.
+9. Minor, pre-existing. On view_add the tab box shows an empty Changes tab — change_log_table_pure() emits the header row for zero rows, so the tab is never dropped. Same behaviour as the formula-link page noted earlier; not introduced here.
+10. Mixed content. The tree also holds the earlier system_views_read_tests lines (the 𝑒 snapshot and the view-default snapshot), so one commit carries two concerns; acceptable, but the message below names only the feature.
 
 ## workflows
 

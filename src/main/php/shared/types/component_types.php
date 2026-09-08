@@ -595,6 +595,9 @@ class component_types
     // the views that use the shown component e.g. for the component default page
     const string COMPONENT_VIEWS = "views_of_component";
     const int COMPONENT_VIEWS_ID = 230;
+    // the terms that use the shown view e.g. for the used by column of the view add and edit pages
+    const string VIEW_TERMS = "terms_of_view";
+    const int VIEW_TERMS_ID = 249;
     // the type and the order number of a link e.g. for the formula link default page
     const string SHOW_LINK_TYPE = "system_show_field_link_type";
     const int SHOW_LINK_TYPE_ID = 231;
@@ -1077,6 +1080,7 @@ class component_types
         [self::SHOW_PHRASE_COL, self::SHOW_PHRASE_COL_ID],
         [self::SHOW_PHRASE_COL_SUB, self::SHOW_PHRASE_COL_SUB_ID],
         [self::COMPONENT_VIEWS, self::COMPONENT_VIEWS_ID],
+        [self::VIEW_TERMS, self::VIEW_TERMS_ID],
         [self::SHOW_LINK_TYPE, self::SHOW_LINK_TYPE_ID],
         [self::SHOW_ORDER_NBR, self::SHOW_ORDER_NBR_ID],
         [self::SHOW_WEIGHT, self::SHOW_WEIGHT_ID],

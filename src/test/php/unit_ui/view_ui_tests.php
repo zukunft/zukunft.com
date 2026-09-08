@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -164,6 +165,24 @@ class view_ui_tests
         $msk_empty = new view($t_msk->view_add()->api_json());
         $t->assert($test_name, $list->view_components($msk_empty, $msg),
             $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS));
+
+
+        $t->subheader($ts . 'view terms');
+
+        // the view add and edit pages list the terms that use the view; the terms come with the
+        // view of a page request, so the fixture sets them like the backend load does and the
+        // api emits them under the related flag (see view::api_json_array)
+        $msk_terms = new view($t_msk->view_with_terms()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $test_name = 'the terms that use a view are listed as links';
+        $trm_html = $list->view_terms($msk_terms, $msg);
+        $t->assert_text_contains($test_name, $trm_html, word_names::MATH);
+        $test_name = '... for a triple term as well';
+        $t->assert_text_contains($test_name, $trm_html, triple_names::PI_SYMBOL_NAME);
+
+        // a new view of the add form is used by no term yet
+        $test_name = 'a view without terms shows the not used message';
+        $t->assert($test_name, $list->view_terms($msk_empty, $msg),
+            $mtr->txt(msg_id::INFO_NOT_USED_BY_TERMS));
 
 
         $t->subheader($ts . 'view tab box');

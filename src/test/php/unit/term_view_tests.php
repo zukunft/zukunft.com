@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\create\test_links;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_view_tests
@@ -62,6 +63,7 @@ class term_view_tests
         // init
         $sc = new sql_creator();
         $t_lnk = new test_links($t);
+        $t_msk = new test_views($t);
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
@@ -83,6 +85,17 @@ class term_view_tests
         // the same two queries for many objects at once, which the user page uses to read the
         // standard values and the other users of all changed objects of one type with one query
         $t->assert_sql_standard_by_ids($sc, $lnk);
+        // the term views of one view are the terms that use the view, which the used by column
+        // of the view pages lists (see view::load_terms_related); the names of the term and the
+        // view are joined like for the load by ids, so the terms can be linked without a reload
+        $test_name = 'load the terms that use a view';
+        $lst = new term_view_list($t->usr1);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $lst->load_sql_by_view($sc, $t_msk->view());
+        $t->assert_qp($qp, $sc->db_type, $test_name);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $lst->load_sql_by_view($sc, $t_msk->view());
+        $t->assert_qp($qp, $sc->db_type, $test_name);
         $t->assert_sql_changing_users_by_ids($sc, $lnk);
         // TODO check if all links have the check
         $t->assert_sql_by_link($sc, $lnk);

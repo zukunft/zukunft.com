@@ -156,6 +156,9 @@ class system_views_read_tests
         // FORMULA TEST
         // RESULT
         // VIEW
+        // the word default view is the example for the view default page, because it is the view
+        // that every word page opens with, so it is the view a user is most likely to look at
+        $t->assert_view(views::VIEW, $t->usr1, new view($t->usr1), views::WORD_ID, $cfg);
         $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
         $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
         $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);

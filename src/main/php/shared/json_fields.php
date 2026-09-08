@@ -390,6 +390,8 @@ class json_fields
     const string VIEW = 'view'; // the view as a sub array
     // list of views
     const string VIEWS = 'views';
+    // list of terms e.g. the terms that use a view
+    const string TERMS = 'terms';
 
     // name of the component that is part of a view
     const string COMPONENT_ID = 'component_id';

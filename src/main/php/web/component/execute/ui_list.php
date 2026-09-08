@@ -51,6 +51,7 @@ include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::TYPES . 'type_object.php';
@@ -88,6 +89,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -768,6 +770,37 @@ class ui_list extends ui_base
                 . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $dbo->name())
                 . ' ' . $msk->edit_link();
             $result .= $html->div($preview . $links);
+        }
+        return $result;
+    }
+
+    /**
+     * the terms that use the given view as links, used by the used by column of the view add and
+     * edit pages: the terms come with the view of a page request (see view::api_json_array),
+     * because no frontend cache carries the term views
+     *
+     * @param view|db_object|null $dbo the view whose terms should be listed
+     * @param user_message $msg to report an unexpected selection object
+     * @return string the term links or the message that no term uses the view
+     */
+    function view_terms(?db_object $dbo, user_message $msg): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the view is missing to list the terms that use it', $msg);
+        } elseif ($dbo::class == view::class) {
+            // the backend leaves out an empty term list and a new view of the add form has no
+            // terms yet, so a missing list is the normal "not used" state and not an error
+            $trm_lst = $dbo->terms_related;
+            if ($trm_lst == null or $trm_lst->is_empty()) {
+                $result = $mtr->txt(msg_id::INFO_NOT_USED_BY_TERMS);
+            } else {
+                $result = $trm_lst->name_link([], $this->configured_name_list_limit($msg));
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to be a selection for terms', $msg);
         }
         return $result;
     }

@@ -41,6 +41,7 @@ include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -382,6 +384,22 @@ class test_views extends test_objects
         $t_cmp = new test_components($this->env);
         $msk = $this->view();
         $msk->cmp_lnk_lst = $t_cmp->components_same_line_alone($msk);
+        return $msk;
+    }
+
+    /**
+     * @return view the start view with the terms that use it, set in memory like a page request
+     *              loads them (see view::load_terms_related), e.g. to test the used by column
+     *              of the view add and edit pages with a word and a triple term
+     */
+    function view_with_terms(): view
+    {
+        $t_trm = new test_terms($this->env);
+        $msk = $this->view();
+        $lst = new term_view_list($this->env->usr1);
+        $lst->add(0, $msk, $t_trm->term());
+        $lst->add(0, $msk, $t_trm->term_triple_pi());
+        $msk->trm_msk_lst = $lst;
         return $msk;
     }
 
