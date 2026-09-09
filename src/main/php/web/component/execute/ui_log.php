@@ -113,6 +113,8 @@ class ui_log
      * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @return string the html code of the borderless when / who / what change log table
+     *                or an empty string for an object that is not yet in the database, so that
+     *                the tab box drops the tab (like user_overwrites_table_pure)
      */
     function change_log_table_pure(
         db_object       $dbo,
@@ -121,10 +123,18 @@ class ui_log
         bool            $test_mode = false
     ): string
     {
-        // use the same filtered, sorted and row-limited list as system_change_log, so the borderless
-        // table is sorted with the same parameters as the previously used change log
-        $log_lst = $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode);
-        return $this->table_pure($log_lst, $msg, $test_mode);
+        $result = '';
+        // an object without a database id does not exist yet (e.g. the object of an add form), so it
+        // can never have a change log and the table would show nothing but the when / who / what
+        // header; an existing object keeps the tab even if the log is empty here, because the log of
+        // a rendered page can be empty just because it has not been loaded (e.g. in test mode)
+        if ($dbo->id() != 0) {
+            // use the same filtered, sorted and row-limited list as system_change_log, so the
+            // borderless table is sorted with the same parameters as the previously used change log
+            $log_lst = $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode);
+            $result = $this->table_pure($log_lst, $msg, $test_mode);
+        }
+        return $result;
     }
 
     /**

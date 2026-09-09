@@ -3,8 +3,6 @@
 
 ## views
 
-in add view such as src/test/resources/web/html/workflow/add_view_wf22/wf22_edit.html do not show the changes tab
-
 in the add confirm pages such as src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save.html do not show the from page because it is always empty or not set
 
 add unit tests for to_url_array. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
@@ -13,15 +11,36 @@ see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_view workflow tests
 
-
-
 ## components
 
-...
+see /docs/llm/coding.md and add to src/test/resources/web/html/views_by_object/component a test page that shows a real mostly filled component with the component_default view
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/add_source_wf19 workflow create the add_component workflow tests
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_component workflow tests
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_component workflow tests
+
+## refs
+
+see /docs/llm/coding.md and add to src/test/resources/web/html/views_by_object/ref a test page that shows a real mostly filled reference with the ref_default view
+
+where the reference is shown e.g. in http://localhost/http/view.php?m=90&id=381 add an edit icon next to the refresh icon that links to the ref edit view for the reference e.g. wikidata
+
+where the reference is shown e.g. in http://localhost/http/view.php?m=90&id=381 add at the end of the list a plus icon to add a reference to the e.g. word
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/add_source_wf19 workflow create the add_ref workflow tests
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_ref workflow tests
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_ref workflow tests
 
 ## workflows
 
-add the missing workflows for the main objects e.g. ref, view, component. Compared to the word workflows the workflows only need one back test.
+add the missing workflows link workflows
+
+add the missing workflows quick workflows such 
+
 
 ## views
 
