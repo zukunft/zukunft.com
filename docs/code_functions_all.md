@@ -7808,6 +7808,7 @@
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
 \-- view
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /view/view.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be api in /view/view.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be api in /view/view.php
     \-- dsp_navbar - section for function dsp_navbar not yet defined that it should be api in /view/view.php
     \-- dsp_navbar_no_view - section for function dsp_navbar_no_view not yet defined that it should be api in /view/view

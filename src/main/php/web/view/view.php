@@ -133,6 +133,23 @@ class view extends view_exe
     }
 
     /**
+     * @return array parent url array with the type and the style url vars of the view form,
+     *         without empty values, so that a form submission can be built from a view object
+     *         (e.g. by the add_view workflow test) and the undo link of the 'my' tab finds the
+     *         current type and style (see ui_preview::overwrite_confirm_link); the view form
+     *         posts the type as url_var::VIEW_TYPE, so the generic type key of the parent is
+     *         replaced (unlike term_view, whose type is the predicate of url_var::TYPE)
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        unset($url_array[url_var::TYPE]);
+        $url_array[url_var::VIEW_TYPE] = $this->type_id($msg);
+        $url_array[url_var::STYLE] = $this->get_style_id();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
      * @return array all sandbox view db field names mapped to their url var key so that the undo
      *              link of the 'my' tab can change any overwritten field (see
      *              ui_preview::overwrite_confirm_link); the keys match view_fields::ALL_NAMES

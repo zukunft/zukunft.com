@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-412 of 5702 public functions have at least 2 unit test calls; the 5290 functions below do not
+412 of 5703 public functions have at least 2 unit test calls; the 5291 functions below do not
 
 ## main backend
 
@@ -4281,7 +4281,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- source_type_selector - 0 unit test calls shared by 2 classes
     \-- style_selector - 2 unit test calls shared by 4 classes
     \-- term - 8 unit test calls shared by 13 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- update - 1 unit test calls shared by 5 classes
     \-- url - 0 unit test calls shared by 7 classes
     \-- url_is_add_action - 0 unit test calls
@@ -4358,7 +4358,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_ref_text - 2 unit test calls shared by 2 classes
     \-- set_usr_text - 0 unit test calls
     \-- term - 8 unit test calls shared by 13 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
     \-- user_expression - 0 unit test calls shared by 2 classes
     \-- view_selector - 1 unit test calls shared by 9 classes
@@ -4378,7 +4378,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- phrase_name - 2 unit test calls shared by 4 classes
     \-- set_formula - 0 unit test calls shared by 4 classes
     \-- set_phrase - 0 unit test calls shared by 4 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
 \-- formula_link_list
     \-- api_mapper - 16 unit test calls shared by 100 classes
@@ -4812,7 +4812,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_owner_name - 0 unit test calls
     \-- share_id - 4 unit test calls shared by 5 classes
     \-- share_type_selector - 0 unit test calls shared by 2 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
     \-- view_selector - 1 unit test calls shared by 9 classes
 \-- sandbox_code_id
@@ -4856,13 +4856,13 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- name_tip - 1 unit test calls shared by 15 classes
     \-- save_view - 0 unit test calls shared by 2 classes
     \-- set_description - 5 unit test calls shared by 10 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
 \-- sandbox_typed
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- set_type_id - 0 unit test calls shared by 7 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- type_id - 8 unit test calls shared by 10 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
 \-- sandbox_value
@@ -4898,7 +4898,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- sandbox_fld_order - 1 unit test calls shared by 5 classes
     \-- source_selector - 0 unit test calls shared by 4 classes
     \-- source_type_selector - 0 unit test calls shared by 2 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- url - 0 unit test calls shared by 7 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
     \-- view_selector - 1 unit test calls shared by 9 classes
@@ -5134,7 +5134,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_view_id - 0 unit test calls shared by 6 classes
     \-- style_selector - 2 unit test calls shared by 4 classes
     \-- term_linked - 0 unit test calls
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
     \-- view_link_type_selector - 0 unit test calls shared by 2 classes
 \-- text_log
@@ -5184,7 +5184,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- similar - 1 unit test calls shared by 3 classes
     \-- td - 2 unit test calls shared by 4 classes
     \-- term - 8 unit test calls shared by 13 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- tr - 0 unit test calls shared by 6 classes
     \-- type - 0 unit test calls shared by 6 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
@@ -5523,6 +5523,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- open_link - 0 unit test calls
     \-- selector_page - 0 unit test calls shared by 2 classes
     \-- switch_link - 0 unit test calls
+    \-- to_url_array - 16 unit test calls shared by 11 classes
 \-- view_base
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
@@ -5620,7 +5621,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- td - 2 unit test calls shared by 4 classes
     \-- term - 8 unit test calls shared by 13 classes
     \-- th - 0 unit test calls shared by 4 classes
-    \-- to_url_array - 16 unit test calls shared by 10 classes
+    \-- to_url_array - 16 unit test calls shared by 11 classes
     \-- tr - 0 unit test calls shared by 6 classes
     \-- url_mapper - 18 unit test calls shared by 26 classes
     \-- view_selector - 1 unit test calls shared by 9 classes

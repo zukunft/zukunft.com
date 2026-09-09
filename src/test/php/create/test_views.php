@@ -49,7 +49,10 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -66,7 +69,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_views extends test_objects
@@ -579,6 +585,44 @@ class test_views extends test_objects
         //$msk_lnk->set_parent($this->view_filled_add());
         //$msk_lnk->set_child($this->view_part_filled_add());
         return $msk_lnk;
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the url of an empty view as the add view form shows it, used by the add_view workflow test
+     * to open the form (mirrors test_sources::source_new_url)
+     *
+     * @return array the url parameters of a view that is not yet created
+     */
+    static function view_new_url(user_message_ui $msg): array
+    {
+        $msk_ui = new view_ui();
+        return $msk_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url parameters posted by the 'Add new view' form on save, used by the add_view workflow
+     * test to show the new view in the confirm add view (docs/llm/testing.md); the type is the
+     * standard view type and the share and protection ids are the defaults of a newly added view,
+     * which the add form preselects; the object id and the back target are added by the workflow
+     * step, not here (mirrors test_sources::add_url_array)
+     *
+     * @return array the add form url parameters of the new view
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => views::TEST_ADD_NAME,
+            url_var::DESCRIPTION => views::TEST_ADD_COM,
+            url_var::VIEW_TYPE => view_types::DEFAULT_ID,
+            url_var::STYLE => view_styles::COL_SM_4_ID,
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
     }
 
 }

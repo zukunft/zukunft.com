@@ -1,0 +1,18 @@
+GET
+http://localhost/http/view.php?k=System+Test+View&o=System+Test+View+Description&dt=1&cs=1&s=1&sp=1&id=0&9m=114&m=54&z=2&submit=
+/http/view.php?k=System+Test+View&o=System+Test+View+Description&dt=1&cs=1&s=1&sp=1&id=0&9m=114&m=54&z=2&submit=
+/http/view.php?name=System+Test+View&description=System+Test+View+Description&view_type=1&style=1&share=1&protection=1&id=0&9mask_id=view_default&mask_id=confirm_add&step=confirmed&
+{
+    "name": "System Test View",
+    "description": "System Test View Description",
+    "view_type": "1",
+    "style": "1",
+    "share": "1",
+    "protection": "1",
+    "id": "0",
+    "mask_id": "confirm_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "view_default"
+    }
+}

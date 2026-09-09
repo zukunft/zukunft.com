@@ -45,6 +45,7 @@ include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'source_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'view_write_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -75,6 +76,7 @@ class all_write_workflow_tests
             new triple_write_url_tests()->run($t);
             new formula_write_url_tests()->run($t);
             new source_write_url_tests()->run($t);
+            new view_write_url_tests()->run($t);
 
             /*
              * TODO Prio 1 easy workflow
