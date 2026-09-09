@@ -3,8 +3,6 @@
 
 ## views
 
-in the add confirm pages such as src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save.html do not show the from page because it is always empty or not set
-
 add unit tests for to_url_array. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_view workflow tests
@@ -37,10 +35,21 @@ see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/
 
 ## workflows
 
-add the missing workflows link workflows
+add the missing workflows link workflows such as
 
-add the missing workflows quick workflows such 
+- link a formula to a phrase
+- unlink a formula from a phrase
+- link a component to a view
+- unlink a component from a view
+- link a view to a term
+- unlink a view from a term
+- add a child view to a view
+- remove a child view from a view
 
+add the missing workflows quick workflows such as
+
+- add a word
+- change a value
 
 ## views
 

@@ -46,6 +46,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -196,7 +198,8 @@ class ui_preview extends ui_base
      * show the pending field changes as a centered three column table so the user can confirm them:
      * the field label in the first column, the old 'from' value (grey, from the '8'-prefixed url) in
      * the second and the new 'to' value (in the 'changed' color) in the third; one row per field whose
-     * new url value differs from its '8'-prefixed old value. the table is centered and its width follows
+     * new url value differs from its '8'-prefixed old value. for an add mask the 'from' column is left
+     * out, because a new object has no old values. the table is centered and its width follows
      * the config 'side width' screen breakpoints (8/12 very wide, 10/12 wide, 12/12 normal/small)
      *
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
@@ -235,13 +238,18 @@ class ui_preview extends ui_base
                 $hidden .= $html->form_hidden($key, (string)$val);
             }
         }
-        $rows = $this->change_rows($url_array, $dbo, $msg);
+        // an add creates the object, so it has no previous values: the 'from' column would be empty
+        // in every row and is therefore left out, which makes the table a two column field / to list
+        $ex_from = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
+        $rows = $this->change_rows($url_array, $dbo, $msg, $ex_from);
         $result = $hidden;
         if ($rows != '') {
-            $head = $html->thead($html->tr(
-                $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
-                . $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM))
-                . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO))));
+            $head_row = $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD));
+            if (!$ex_from) {
+                $head_row .= $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM));
+            }
+            $head_row .= $html->th($mtr->txt(msg_id::CHANGE_TBL_TO));
+            $head = $html->thead($html->tr($head_row));
             $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
         }
         // the component brings its own centered row (matching its "side" position in the confirm
@@ -261,12 +269,14 @@ class ui_preview extends ui_base
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being changed, used
      *        for the db field order and the field labels; only a db object has an own field order, for
      *        the other objects (e.g. a language) the labels are derived from the url keys
+     * @param bool $ex_from true to leave out the 'from' column, e.g. for an add where there is no old value
      * @return string the html table rows, one per changed field
      */
     private function change_rows(
         array                                                 $url_array,
         db_object|type_object|combine_named|sandbox_list|null $dbo,
-        user_message                                          $msg
+        user_message                                          $msg,
+        bool                                                  $ex_from = false
     ): string
     {
         global $mtr;
@@ -288,7 +298,7 @@ class ui_preview extends ui_base
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
                     if ($sees_admin or !in_array($db_fld, fields::LOG_ADMIN_ONLY)) {
-                        $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $msg, $db_fld);
+                        $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $msg, $db_fld, $ex_from);
                     }
                 }
             }
@@ -297,7 +307,7 @@ class ui_preview extends ui_base
             // without the object context the url key cannot be mapped to a real db field code id of
             // change_fields.csv and a guessed code id would trigger a missing translation error
             foreach ($this->changed_fields($url_array) as $url_key) {
-                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key), $msg);
+                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key), $msg, '', $ex_from);
             }
         }
         return $rows;
@@ -334,6 +344,7 @@ class ui_preview extends ui_base
      * @param string $url_key the url var short key that carries the field value
      * @param string $label the translated field name shown in the first column
      * @param string $db_fld the db field name, used to show the type name instead of the id for a type field
+     * @param bool $ex_from true to leave out the 'from' column, e.g. for an add where there is no old value
      * @return string the html table row, or an empty string if the field did not change
      */
     private function change_row(
@@ -341,7 +352,8 @@ class ui_preview extends ui_base
         string       $url_key,
         string       $label,
         user_message $msg,
-        string       $db_fld = ''
+        string       $db_fld = '',
+        bool         $ex_from = false
     ): string
     {
         $html = new html_base();
@@ -349,12 +361,14 @@ class ui_preview extends ui_base
         $new = $url_array[$url_key] ?? '';
         $old = $url_array[url_var::PRE . $url_key] ?? '';
         if ($new != $old) {
-            $from_text = $this->field_value($db_fld, (string)$old, $msg, $url_key);
             $to_text = $this->field_value($db_fld, (string)$new, $msg, $url_key);
-            $field = $html->td($label);
-            $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
-            $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
-            $result = $html->tr($field . $from . $to);
+            $cells = $html->td($label);
+            if (!$ex_from) {
+                $from_text = $this->field_value($db_fld, (string)$old, $msg, $url_key);
+                $cells .= $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
+            }
+            $cells .= $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
+            $result = $html->tr($cells);
         }
         return $result;
     }
