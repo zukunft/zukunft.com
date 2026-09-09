@@ -1895,6 +1895,32 @@
       "description": "the system calculated impact of a reference as read only, because the user can never change it",
       "type": "system_show_field_impact",
       "code_id": "show_field_impact"
+    },
+    {
+      "name": "system sub title terms",
+      "description": "show the language specific sub title for the terms that use the shown view",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_terms",
+      "ui_msg_code_id": "system_sub_title_terms"
+    },
+    {
+      "name": "view terms",
+      "description": "the terms that use the shown view with a link to each term",
+      "type": "terms_of_view",
+      "code_id": "view_terms"
+    },
+    {
+      "name": "system sub title components",
+      "description": "show the language specific sub title for a component list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_components",
+      "ui_msg_code_id": "system_sub_title_components"
+    },
+    {
+      "name": "view components",
+      "description": "the components of the shown view sorted by their position with a link to each component",
+      "type": "components_of_view",
+      "code_id": "view_components"
     }
   ],
   "views": [
@@ -4482,6 +4508,49 @@
         {
           "position": "15",
           "name": "system form end"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "17",
+          "name": "system sub title terms",
+          "style": "col-md-4"
+        },
+        {
+          "position": "18",
+          "name": "view terms",
+          "position_type": "combine"
+        },
+        {
+          "position": "19",
+          "name": "system sub title components",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "20",
+          "name": "view components",
+          "position_type": "combine"
+        },
+        {
+          "position": "21",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "22",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "23",
+          "name": "system form tab box",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "24",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -4567,6 +4636,41 @@
         },
         {
           "position": "18",
+          "name": "system sub title terms",
+          "style": "col-md-4"
+        },
+        {
+          "position": "19",
+          "name": "view terms",
+          "position_type": "combine"
+        },
+        {
+          "position": "20",
+          "name": "system sub title components",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "21",
+          "name": "view components",
+          "position_type": "combine"
+        },
+        {
+          "position": "22",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "23",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "24",
+          "name": "system form tab box",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "25",
           "name": "system formatter row end"
         }
       ]

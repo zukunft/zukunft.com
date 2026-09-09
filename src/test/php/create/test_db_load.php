@@ -1403,6 +1403,10 @@ class test_db_load
             $lib = new library();
             $created = $t->assert_result_api_get($ui_cfg, $msg, [api_types::HEADER, api_types::INCL_COMPONENTS]);
             if ($this->api_json_usable($created)) {
+                // remove the volatile fields e.g. the message timestamp before saving, so that the
+                // stored file does not change with every database reset; the compare ignores
+                // the volatile fields anyway (see test_api::json_remove_volatile)
+                $created = $t->json_remove_volatile($created);
                 $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath($ui_cfg::class);
                 $t->update_path_file($filepath, $lib->json_for_dev($created));
             }
@@ -1417,6 +1421,10 @@ class test_db_load
             $lib = new library();
             $created = $t->assert_result_api_get_list(type_lists::class);
             if ($this->api_json_usable($created)) {
+                // remove the volatile fields e.g. the message timestamp before saving, so that the
+                // stored file does not change with every database reset; the compare ignores
+                // the volatile fields anyway (see test_api::json_remove_volatile)
+                $created = $t->json_remove_volatile($created);
                 $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath(type_lists::class);
                 $t->update_path_file($filepath, $lib->json_for_dev($created));
             }

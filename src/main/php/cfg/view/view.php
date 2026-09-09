@@ -81,12 +81,14 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -124,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -173,8 +176,10 @@ class view extends sandbox_code_id
     // in memory only fields
     // all links to the component objects in correct order
     public ?component_link_list $cmp_lnk_lst;
-    // list of terms that use this view / mask
-    private ?term_view_list $trm_msk_lst;
+    // list of terms that use this view / mask; collected while importing and loaded lazily by
+    // load_terms_related() for a page request, so that the used by column of the view pages
+    // can list the terms (emitted by api_json_array like the components)
+    public ?term_view_list $trm_msk_lst;
 
     // the default display style for this component which can be overwritten by the link
     // TODO Prio 1 change to style_id because the style objects are part of the $sys object
@@ -485,6 +490,18 @@ class view extends sandbox_code_id
                     if ($owner_name != null) {
                         $vars[json_fields::OWNER] = $owner_name;
                     }
+                }
+                // the terms that use this view for the used by column of the view pages; a view
+                // that is not yet written cannot be used by a term, so nothing is loaded for it
+                if ($this->trm_msk_lst == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                    $this->load_terms_related($msg);
+                }
+                // drop the terms the requester may not read (idor) before the empty check, else a
+                // list of only unreadable terms is emitted as an empty json list
+                $trm_lst = $this->trm_msk_lst?->term_list();
+                $trm_lst?->filter_readable_by($usr);
+                if ($trm_lst != null and !$trm_lst->is_empty()) {
+                    $vars[json_fields::TERMS] = $trm_lst->api_json_array(new api_type_list(), $msg, $usr);
                 }
                 $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
                 $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
@@ -865,6 +882,21 @@ class view extends sandbox_code_id
         log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
 
         return $result;
+    }
+
+    /**
+     * load the terms that use this view into the in-memory trm_msk_lst so that api_json_array()
+     * can emit them under the INCL_RELATED flag, which the 'view terms' component of the view
+     * add and edit pages shows as the used by column
+     *
+     * @param user_message $msg to collect any problem while loading the term views
+     * @return void
+     */
+    function load_terms_related(user_message $msg): void
+    {
+        $lst = new term_view_list($this->get_user());
+        $lst->load_by_view($this, $msg);
+        $this->trm_msk_lst = $lst;
     }
 
     /**

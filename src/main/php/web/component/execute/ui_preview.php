@@ -349,8 +349,8 @@ class ui_preview extends ui_base
         $new = $url_array[$url_key] ?? '';
         $old = $url_array[url_var::PRE . $url_key] ?? '';
         if ($new != $old) {
-            $from_text = $this->field_value($db_fld, (string)$old, $msg);
-            $to_text = $this->field_value($db_fld, (string)$new, $msg);
+            $from_text = $this->field_value($db_fld, (string)$old, $msg, $url_key);
+            $to_text = $this->field_value($db_fld, (string)$new, $msg, $url_key);
             $field = $html->td($label);
             $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
             $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
@@ -363,15 +363,23 @@ class ui_preview extends ui_base
      * the display text of a single field value: for a type-id field (share, protection, phrase type, ...)
      * the type name from the request cache (or 'not set' when unset), otherwise the raw value unchanged
      *
-     * @param string $db_fld the db field name whose value is shown
+     * @param string $db_fld the db field name whose value is shown, empty for an object without a db field order
      * @param string $value the raw url value of the field (a type id for a type field)
+     * @param string $url_key the url var short key that carries the value, used to find the type list
+     *                        if the db field name is unknown
      * @return string the value to show to the user
      */
-    private function field_value(string $db_fld, string $value, user_message $msg): string
+    private function field_value(string $db_fld, string $value, user_message $msg, string $url_key = ''): string
     {
         global $ui_sys, $mtr;
         $result = $value;
         $type_list = $ui_sys?->typ_lst_cache?->field_to_type_list($db_fld);
+        if ($type_list == null) {
+            // an object without a db field order reaches this without a db field name, so fall back
+            // to the url key, which names the type list just as well for the type fields that have
+            // their own url var (see type_lists::url_key_to_type_list)
+            $type_list = $ui_sys?->typ_lst_cache?->url_key_to_type_list($url_key);
+        }
         if ($type_list != null) {
             if ($value == '' or $value == '0') {
                 $result = $mtr->txt(msg_id::NOT_SET);

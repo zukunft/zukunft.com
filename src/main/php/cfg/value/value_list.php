@@ -458,7 +458,15 @@ class value_list extends sandbox_value_list
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
             $db_lst = $db_con_used->get($qp, $msg);
-            $result = $this->rows_mapper_multi($db_lst, $qp->ext, $msg, $load_all);
+            // get() returns false only when the sql query itself failed (an empty result is []),
+            // so guard it like sandbox_list::load_sys: log the failed load and report 'nothing
+            // loaded' instead of passing false into rows_mapper_multi(array), which would abort
+            // the whole request with a TypeError
+            if ($db_lst === false) {
+                log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
+            } else {
+                $result = $this->rows_mapper_multi($db_lst, $qp->ext, $msg, $load_all);
+            }
         }
         return $result;
     }
@@ -1182,11 +1190,11 @@ class value_list extends sandbox_value_list
     function remove(?value $val): bool
     {
         $result = false;
-        // the id is compared with the loaded object, not handed to get() as a bool, which would
-        // ask for the object with the key 1 (see value::load_values_similar for a caller)
-        if ($this->get($val->id()) != null) {
-            $this->unset($val->id());
-            $result = true;
+        // unset() takes the position within the list and not the id, so the id is resolved by
+        // unset_by_id; handing the id to unset() removed nothing and left e.g. a value in its
+        // own related values (see value::load_values_similar for a caller)
+        if ($val != null) {
+            $result = $this->unset_by_id($val->id());
         }
         return $result;
     }

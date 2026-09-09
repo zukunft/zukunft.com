@@ -37,6 +37,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
@@ -129,6 +131,52 @@ class term_view_list extends sandbox_link_list
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
         return $this->load($qp, $msg);
+    }
+
+    /**
+     * set the SQL query parameters to load the term views of one view, which are the terms that
+     * use the view e.g. for the used by column of the view edit page
+     * @param sql_creator $sc with the target db_type set
+     * @param view $msk the view whose term views should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_view(sql_creator $sc, view $msk): sql_par
+    {
+        $qp = $this->load_sql($sc, 'view');
+        $sc->add_where(term_view::FLD_TO, $msk->id());
+        // also load the names of both linked objects like load_sql_by_ids, so that the term
+        // of each link can be named and linked without a further load
+        $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_fields::FLD_ID, '', true);
+        $sc->set_join_usr_fields(term::FLD_NAMES_USR_NAME, term::class, term::FLD_ID, '', true);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * load the term views of one view, which are the terms that use the view
+     * @param view $msk the view whose term views should be loaded
+     * @param user_message $msg to collect the loading problems for the requesting user
+     * @return bool true if at least one term view found
+     */
+    function load_by_view(view $msk, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_view($db_con->sql_creator(), $msk);
+        return $this->load($qp, $msg);
+    }
+
+    /**
+     * @return term_list the terms of the term views, so that the terms can be sent to the
+     *                   frontend and shown as links like any other term list
+     */
+    function term_list(): term_list
+    {
+        $trm_lst = new term_list($this->get_user());
+        foreach ($this->lst() as $lnk) {
+            $trm_lst->add($lnk->term());
+        }
+        return $trm_lst;
     }
 
 }

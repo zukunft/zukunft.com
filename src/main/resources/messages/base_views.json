@@ -611,6 +611,19 @@
       "type": "system_sub_title",
       "code_id": "system_sub_title_related_values",
       "ui_msg_code_id": "system_sub_title_related_values"
+    },
+    {
+      "name": "system sub title terms",
+      "description": "show the language specific sub title for the terms that use the shown view",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_terms",
+      "ui_msg_code_id": "system_sub_title_terms"
+    },
+    {
+      "name": "view terms",
+      "description": "the terms that use the shown view with a link to each term",
+      "type": "terms_of_view",
+      "code_id": "view_terms"
     }
   ],
   "views": [
@@ -1318,27 +1331,38 @@
         },
         {
           "position": "3",
-          "name": "system show field owner"
+          "name": "system show field owner",
+          "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "system show field style"
+          "name": "system show field style",
+          "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "system sub title usage number"
+          "name": "system sub title terms",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "6",
-          "name": "system sub title components"
+          "name": "view terms",
+          "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "view components"
+          "name": "system sub title components",
+          "position_type": "side_or_below"
         },
         {
           "position": "8",
-          "name": "view page tab box"
+          "name": "view components",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "view page tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },

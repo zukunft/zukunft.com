@@ -3,23 +3,29 @@
 
 ## views
 
-check if the views_by_id are 'useful'
+in add view such as src/test/resources/web/html/workflow/add_view_wf22/wf22_edit.html do not show the changes tab
 
-### value
+in the add confirm pages such as src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save.html do not show the from page because it is always empty or not set
 
-### components
+add unit tests for to_url_array. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
 
-### to fix:
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_view workflow tests
 
-1. Asymmetric fallback — ui_list.php:1115 uses $dbo->results_related ?? $dto?->res_lst, handing back the whole page result cache unfiltered, while the sibling values_similar() runs $dto->val_lst->filter($msg, $dbo). A value built from a URL would list results that don't use it. The values_similar path is the correct model.
-2. Component id shift — the new components went at the end of base_views.json, which is not the last-imported file, so ids 367→369 … 372→374 shifted (solution_prio, PV in Switzerland, company ratios) and component_link/list.csv churned ~1120 lines. Legitimate per the seed-id rule, but it should be reported in the commit, and any pinned *_ID const for those components must be re-baselined.
-3. src/test/resources/unit/user/list.csv drops row 13 (::1) — that's a local test-environment artifact (a guest user created by an HTTP request), not a consequence of this change. It probably shouldn't ride along in this commit.
-4. Limit before sort — load_values_similar() reads with value_list::read_limit(), but the impact sort happens in the renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
-5. Minor: value::api_json_array applies filter_readable_by after the is_empty() check, so a list that filters down to nothing still emits an empty values array. sql()'s docblock still lacks @param lines for $union / $num_id (pre-existing).
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_view workflow tests
+
+
+
+## components
+
+...
 
 ## workflows
 
-add the missing workflows for the main objects e.g. source, ref, view, component. Compared to the word workflows the workflows only need one back test.
+add the missing workflows for the main objects e.g. ref, view, component. Compared to the word workflows the workflows only need one back test.
+
+## views
+
+check if the views_by_id are 'useful'
 
 ## admin
 
@@ -28,6 +34,10 @@ add to the admin menu a page that shows the system errors
 ## main pages
 
 in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
+
+## maybe to fix:
+
+1. Limit before sort — load_values_similar() reads with value_list::read_limit(), but the impact sort happens in the renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
 
 ## cleanup
 

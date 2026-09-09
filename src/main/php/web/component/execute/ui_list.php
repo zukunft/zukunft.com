@@ -51,6 +51,7 @@ include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::TYPES . 'type_object.php';
@@ -88,6 +89,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -448,12 +450,13 @@ class ui_list extends ui_base
     }
 
     /**
-     * the components of the given view as a comma separated list of the component names with a
-     * link to each component, sorted by the position in the view, used by the view default page
+     * the components of the given view as a table with one row per component showing the
+     * position number, the component name with a link to the component and the position type,
+     * sorted by the position in the view, used by the view default, add and edit pages
      *
      * @param db_object|null $dbo the view whose components should be listed
      * @param user_message $msg to report a missing cache or an unexpected selection object
-     * @return string the linked component names or the message that the view has no components
+     * @return string the component table or the message that the view has no components
      */
     function view_components(?db_object $dbo, user_message $msg): string
     {
@@ -473,7 +476,19 @@ class ui_list extends ui_base
             if ($cmp_lst == null or $cmp_lst->is_empty()) {
                 $result = $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS);
             } else {
-                $result = $cmp_lst->name_link([], $this->configured_name_list_limit($msg));
+                // the table is not cut by the configured name list limit, because the position
+                // numbers are only useful if complete and the number of components of one view
+                // is bounded by its layout; the position type name comes from the type cache
+                $html = new html_base();
+                $pos_typ_lst = $ui_sys->typ_lst_cache->pos_typ;
+                $rows = '';
+                foreach ($cmp_lst->sorted_by_position() as $cmp) {
+                    $rows .= $html->tr(
+                        $html->td((string)$cmp->position)
+                        . $html->td($cmp->name_link([], '', views::COMPONENT_DEFAULT_ID))
+                        . $html->td($pos_typ_lst?->name($cmp->pos_type_id) ?? ''));
+                }
+                $result = $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for components', $msg);
@@ -759,13 +774,46 @@ class ui_list extends ui_base
         $html = new html_base();
         foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
             $preview = $html->div('view preview', view_styles::COL_SM_12);
-            // the switch button opens the edit view of the shown object, which differs
-            // per class, so the edit view id of the object is passed to the link builder
-            $buttons = $msk->open_link($dbo->id())
-                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID);
-            // escape the view name (div emits its body raw and the name is user input); the
-            // preview and buttons around it are already-built html (stored xss via view name)
-            $result .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
+            // the view name links to the object shown with the view, the switch icon opens the
+            // edit view of the shown object with this view preselected as its default view, and
+            // the edit icon changes the view itself; the edit view of the object differs per
+            // class, so its id is passed to the link builder. the links escape the names (stored
+            // xss via a user given name), so the div gets already-built html only
+            $links = $msk->open_link($dbo->id(), $dbo->name())
+                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $dbo->name())
+                . ' ' . $msk->edit_link();
+            $result .= $html->div($preview . $links);
+        }
+        return $result;
+    }
+
+    /**
+     * the terms that use the given view as links, used by the used by column of the view add and
+     * edit pages: the terms come with the view of a page request (see view::api_json_array),
+     * because no frontend cache carries the term views
+     *
+     * @param view|db_object|null $dbo the view whose terms should be listed
+     * @param user_message $msg to report an unexpected selection object
+     * @return string the term links or the message that no term uses the view
+     */
+    function view_terms(?db_object $dbo, user_message $msg): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the view is missing to list the terms that use it', $msg);
+        } elseif ($dbo::class == view::class) {
+            // the backend leaves out an empty term list and a new view of the add form has no
+            // terms yet, so a missing list is the normal "not used" state and not an error
+            $trm_lst = $dbo->terms_related;
+            if ($trm_lst == null or $trm_lst->is_empty()) {
+                $result = $mtr->txt(msg_id::INFO_NOT_USED_BY_TERMS);
+            } else {
+                $result = $trm_lst->name_link([], $this->configured_name_list_limit($msg));
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to be a selection for terms', $msg);
         }
         return $result;
     }

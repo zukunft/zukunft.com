@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -67,6 +68,7 @@ include_once html_paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -110,6 +112,10 @@ class view_base extends sandbox_code_id
 
     // code_id is used for system views
     protected component_list $cmp_lst;
+
+    // the terms that use this view, filled only if the view has been loaded for its page
+    // (see load_by_id_with_related), otherwise null
+    public ?term_list $terms_related = null;
 
     // objects that should be displayed (only one is supposed to be not null)
     // the word, triple or formula object that should be shown to the user
@@ -166,6 +172,15 @@ class view_base extends sandbox_code_id
         $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
             $cmp_lst->api_mapper($json_array[json_fields::COMPONENTS]);
+        }
+        // only a page request asks for the terms that use the view, and the backend leaves out
+        // an empty list, so a missing list means no terms (see value::api_mapper for the pattern)
+        if (is_array($json_array[json_fields::TERMS] ?? null)) {
+            $trm_lst = new term_list();
+            $trm_lst->api_mapper($json_array[json_fields::TERMS]);
+            $this->terms_related = $trm_lst;
+        } else {
+            $this->terms_related = null;
         }
         // set the objects (e.g. word)
         if (array_key_exists(api::API_WORD, $json_array)) {

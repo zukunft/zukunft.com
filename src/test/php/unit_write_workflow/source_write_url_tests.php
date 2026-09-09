@@ -64,8 +64,10 @@ class source_write_url_tests extends source_url_tests
 
         // run the same workflows as source_url_tests but with do_it true
         // so each confirmed step is persisted and check if the database is actually updated
+        // the add must run first because the change and delete workflows load the source it created
         $this->add_source_workflow(workflows::WF_ADD_SOURCE_NBR, true);
         $this->change_source_workflow(workflows::WF_CHANGE_SOURCE_NBR, true);
+        $this->del_source_workflow(workflows::WF_DEL_SOURCE_NBR, true);
 
         $t->subheader($this->ts . 'cleanup');
 

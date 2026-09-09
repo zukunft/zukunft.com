@@ -425,6 +425,7 @@
     \-- component_links - section for function component_links not yet defined that it should be set and get in /view/vi
             ew.php
     \-- load_components - section for function load_components is expected to be load in /view/view.php
+    \-- load_terms_related - section for function load_terms_related is expected to be load in /view/view.php
     \-- load_components_sql - section for function load_components_sql is expected to be load in /view/view.php
     \-- name_field - section for function name_field is expected to be sql fields in /view/view.php
     \-- all_sandbox_fields - section for function all_sandbox_fields is expected to be sql fields in /view/view.php
@@ -1126,6 +1127,8 @@
 \-- load related
     \-- load_components
         \-- view - load all parts of this view for this user
+    \-- load_terms_related
+        \-- view - load the terms that use this view into the in-memory trm_msk_lst so that api_json_array()
     \-- load_components_sql
         \-- view - create an SQL statement to retrieve all view components of a view
 \-- load helper
@@ -2665,6 +2668,8 @@
     \-- is - section for function is not yet defined that it should be im- and export in /phrase/phrase_list.php
     \-- categories - section for function categories not yet defined that it should be im- and export in /phrase/phrase_
             list.php
+    \-- category_members - section for function category_members not yet defined that it should be im- and export in /ph
+            rase/phrase_list.php
     \-- are - section for function are is expected to be foaf in /phrase/phrase_list.php
     \-- contains - section for function contains not yet defined that it should be im- and export in /phrase/phrase_list
             .php
@@ -3997,6 +4002,9 @@
             php
 \-- term_view_list
     \-- load_by_ids - section for function load_by_ids is expected to be load in /view/term_view_list.php
+    \-- load_by_view - section for function load_by_view is expected to be load in /view/term_view_list.php
+    \-- term_list - section for function term_list not yet defined that it should be load sql in /view/term_view_list.ph
+            p
     \-- order error - order of section load sql has difference at load_sql_by_ids should be before load_sql
 \-- view_list
     \-- load_sql_names - section for function load_sql_names is expected to be load sql in /view/view_list.php
@@ -6131,6 +6139,8 @@
             p
     \-- name_link - section for function name_link not yet defined that it should be display in /component/component_lis
             t.php
+    \-- sorted_by_position - section for function sorted_by_position not yet defined that it should be display in /compo
+            nent/component_list.php
 \-- system_form
     \-- form_tile - section for function form_tile missing in /component/execute/system_form.php
     \-- title_named - section for function title_named missing in /component/execute/system_form.php
@@ -6466,6 +6476,7 @@
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
     \-- view_tab_box - section for function view_tab_box missing in /component/execute/ui_list.php
+    \-- view_terms - section for function view_terms missing in /component/execute/ui_list.php
     \-- link_list_word - section for function link_list_word is expected to be link in /component/execute/ui_list.php
     \-- num_list - section for function num_list missing in /component/execute/ui_list.php
     \-- formulas - section for function formulas missing in /component/execute/ui_list.php
@@ -7613,6 +7624,8 @@
             s in /types/type_lists.php
     \-- field_to_type_list - section for function field_to_type_list not yet defined that it should be type list by clas
             s in /types/type_lists.php
+    \-- url_key_to_type_list - section for function url_key_to_type_list not yet defined that it should be type list by 
+            class in /types/type_lists.php
     \-- log_err - section for function log_err is expected to be log in /types/type_lists.php
 \-- type_object
     \-- id - section for function id not yet defined that it should be set and get in /types/type_object.php
@@ -7797,6 +7810,9 @@
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
 \-- view
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /view/view.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be api in /view/view.php
+    \-- sandbox_fld_order - section for function sandbox_fld_order not yet defined that it should be api in /view/view.p
+            hp
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be api in /view/view.php
     \-- dsp_navbar - section for function dsp_navbar not yet defined that it should be api in /view/view.php
     \-- dsp_navbar_no_view - section for function dsp_navbar_no_view not yet defined that it should be api in /view/view
@@ -7813,6 +7829,7 @@
     \-- log_err - section for function log_err is expected to be log in /view/view.php
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
+    \-- edit_link - section for function edit_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
     \-- order error - order of section to review has difference at log_err should be before selector_page
 \-- view_base
@@ -8199,6 +8216,8 @@
                 $dbo)
     \-- name_link
         \-- component_list - the component names with a link to each component as a comma separated list, sorted by
+    \-- sorted_by_position
+        \-- component_list - the components sorted by the position in the view and by the name for the components
     \-- system_change_log
         \-- ui_log - @return string with the html code that shows the recent changes of this object
     \-- change_log_table_pure
@@ -8524,7 +8543,7 @@
         \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
 \-- load
     \-- load_by_view_id
-        \-- component_list - the component names with a link to each component as a comma separated list, sorted by
+        \-- component_list - the components sorted by the position in the view and by the name for the components
     \-- load_by_formula_id
         \-- formula_link_list - get the formula link that use this formula from the backend via api
     \-- load
@@ -8722,7 +8741,7 @@
     \-- triple_list
         \-- ui_list - the triples that use the given verb as a blank separated list of the triple names with a
     \-- view_components
-        \-- ui_list - the components of the given view as a comma separated list of the component names with a
+        \-- ui_list - the components of the given view as a table with one row per component showing the
     \-- component_views
         \-- ui_list - the views that use the given component as a comma separated list of the view names with
     \-- formula_list
@@ -8735,6 +8754,8 @@
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
         \-- ui_list - HTML for the col-4 tab box of a sandbox object page: a "Views" tab with the related views
+    \-- view_terms
+        \-- ui_list - the terms that use the given view as links, used by the used by column of the view add and
     \-- link_list_word
         \-- ui_list - @param db_object $dbo the word, triple or formula object that should be shown to the user
     \-- num_list
@@ -9714,5 +9735,7 @@
     \-- field_to_type_list
         \-- type_lists - map a type-id db field name to its preloaded type list so a caller can show the type name inste
                 ad of the id
+    \-- url_key_to_type_list
+        \-- type_lists - map a type-id url var key to its preloaded type list, used by the change preview of an object
 ```
 

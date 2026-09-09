@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -66,6 +67,7 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
@@ -128,6 +130,31 @@ class view extends view_exe
     function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
         return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
+     * @return array parent url array with the type and the style url vars of the view form,
+     *         without empty values, so that a form submission can be built from a view object
+     *         (e.g. by the add_view workflow test) and the undo link of the 'my' tab finds the
+     *         current type and style (see ui_preview::overwrite_confirm_link); the view form
+     *         posts the type as url_var::VIEW_TYPE, so the generic type key of the parent is
+     *         replaced (unlike term_view, whose type is the predicate of url_var::TYPE)
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        unset($url_array[url_var::TYPE]);
+        $url_array[url_var::VIEW_TYPE] = $this->type_id($msg);
+        $url_array[url_var::STYLE] = $this->get_style_id();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
+     * @return array the ordered db field names of a view used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return view_fields::ALL_NAMES;
     }
 
     /**
@@ -687,40 +714,74 @@ class view extends view_exe
      */
 
     /**
-     * the 'view' button that opens the given object rendered with this view
+     * the view name as a link that opens the given object rendered with this view, used by the
+     * views tab of an object page (see ui_list::view_previews)
      * TODO Prio 3 add the back trace url so the user can return after opening the view
      *
      * @param int|string $dbo_id the id of the object to open in this view, a string for a value
-     * @return string the html link of the open button
+     * @param string $dbo_name the name of the object for the tooltip e.g. "Pi (math)"
+     * @return string the html link with the view name and the tooltip
      */
-    function open_link(int|string $dbo_id): string
+    function open_link(int|string $dbo_id, string $dbo_name = ''): string
     {
-        global $mtr;
         $html = new html_base();
         $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $this->id()
             . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id;
-        return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_OPEN));
+        // a view without a name cannot be linked by it, and ref() would fatal on the null
+        return $html->ref($url, $this->name() ?? '', $this->tip(msg_id::BUTTON_VIEW_SHOW_TIP, $dbo_name));
     }
 
     /**
-     * the 'switch' button that opens the edit view of the shown object where this view can be
-     * set as the default view of that object; the edit view id comes from the caller, because
-     * a triple and a formula are changed with another view than a word
-     * TODO Prio 2 preselect this view as the default view of the object and add the back trace url,
-     *      so the switch is again a one-click action as it was in the retired http_old/word_edit.php
-     *      (see docs/llm/pending_next_launch.md)
+     * the switch icon that opens the edit view of the shown object with this view preselected as
+     * the default view of that object, so the switch is a one-click action: the edit form reads
+     * the preselected view from url_var::VIEW (see word::url_mapper); the edit view id comes from
+     * the caller, because a triple and a formula are changed with another view than a word
+     * TODO Prio 3 add the back trace url so the user can return after the switch
      *
      * @param int|string $dbo_id the id of the object whose default view should be set to this view
      * @param int $edit_msk_id the id of the edit view of the object e.g. word::VIEW_EDIT_ID
-     * @return string the html link of the switch button
+     * @param string $dbo_name the name of the object for the tooltip e.g. "Pi (math)"
+     * @return string the html link with the switch icon and the tooltip
      */
-    function switch_link(int|string $dbo_id, int $edit_msk_id): string
+    function switch_link(int|string $dbo_id, int $edit_msk_id, string $dbo_name = ''): string
     {
-        global $mtr;
         $html = new html_base();
         $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $edit_msk_id
-            . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id;
-        return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_SWITCH));
+            . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id
+            . url_var::ADD . url_var::VIEW . url_var::EQ . $this->id();
+        return $html->ref($url, $html->icon(icons::VIEW_SWITCH),
+            $this->tip(msg_id::BUTTON_VIEW_SWITCH_TIP, $dbo_name), '', true);
+    }
+
+    /**
+     * the edit icon that opens the edit form of this view itself, used beside the switch icon
+     * in the views tab of an object page
+     *
+     * @return string the html link with the edit icon and the tooltip
+     */
+    function edit_link(): string
+    {
+        $html = new html_base();
+        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::VIEW_EDIT_ID
+            . url_var::ADD . url_var::ID . url_var::EQ . $this->id();
+        return $html->ref($url, $html->icon(icons::EDIT),
+            $this->tip(msg_id::BUTTON_VIEW_EDIT_TIP), '', true);
+    }
+
+    /**
+     * the tooltip of a views tab link with the object and the view name filled in; ref() escapes
+     * the tooltip, so the user given names are handed over raw
+     *
+     * @param msg_id $msg_id the tooltip message with the name placeholders
+     * @param string $dbo_name the name of the shown object, empty if the message has no object
+     * @return string the tooltip text in the user language
+     */
+    private function tip(msg_id $msg_id, string $dbo_name = ''): string
+    {
+        global $mtr;
+        $lib = new library();
+        $result = $lib->msg_var_replace($mtr->txt($msg_id), msg_id::VAR_NAME, $dbo_name);
+        return $lib->msg_var_replace($result, msg_id::VAR_VIEW_NAME, $this->name());
     }
 
     /**

@@ -1227,6 +1227,8 @@ class sql_creator
      * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @param bool $prepare can be set to false the created sql parts of a union query
+     * @param bool $union true if this select is one part of a union, so the fields of the other tables get a placeholder
+     * @param bool $num_id true if this union part reads a table with a numeric id, so a mixed id field is cast to text (see def::MIXED_ID_FIELDS)
      * @return string the created SQL statement in the previous set dialect
      */
     function sql(

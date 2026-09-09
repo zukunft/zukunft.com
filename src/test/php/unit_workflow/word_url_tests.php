@@ -404,8 +404,13 @@ class word_url_tests extends url_test_base
         // save: press save which shows the confirm add view
         $this->assert_step(workflows::SAVE, $url_arr, views::WORD_ADD_ID);
 
-        // save: press confirm which shows the previous view
+        // save: press confirm which shows the added word in its own default view
         // TODO Prio 2 with the green message that zu word has been added
+        // the confirm mask does not encode the object type, so carry the '9'-prefixed back target =
+        // the word view (as the real confirm form does), which is also the page the user returns to
+        // after the add: with the word id assigned by the write in a write run and with the entered
+        // field values in a run that does not write (see frontend::action_crud)
+        $url_arr[url_var::BACK . url_var::MASK] = views::WORD_ID;
         $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_ADD_ID);
 
         // a write run must actually create the word, so check it is now in the database

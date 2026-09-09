@@ -391,6 +391,7 @@ class views
     // TC_* means 'test code id'
     // TI_* means 'test id'
     const string TEST_ADD_NAME = 'System Test View';
+    const int TEST_ADD_ID = 994; // fixed snapshot id of the add workflow view (like word_names::TEST_ADD_ID)
     const string TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
     const string TEST_ADD_COM = 'System Test View Description';
     const string TEST_ADD = 'System Test View Code Id';

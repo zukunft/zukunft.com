@@ -502,7 +502,7 @@ class base_ui_tests
         $t->assert($test_name, $wrd->btn_add(), $target);
 
         $test_name = 'a sandbox object e.g. source change button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::SOURCE_EDIT_ID . '&amp;id=1" title="source_edit"><i class="far fa-edit"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::SOURCE_EDIT_ID . '&amp;id=1" title="change source"><i class="far fa-edit"></i></a>';
         $src = new source();
         $src->set_from_json($t_src->source_reserved()->api_json(), $msg);
         $t->assert($test_name, $src->btn_edit(), $target);

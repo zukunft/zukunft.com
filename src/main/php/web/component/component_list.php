@@ -85,19 +85,28 @@ class component_list extends sandbox_list_named
         int    $msk_id = views::COMPONENT_DEFAULT_ID
     ): string
     {
-        // sorted by the position in the view and by the name for the components
-        // that share a position, so the html order never depends on the api row
-        // order (see docs/llm/frontend.md)
-        $lst = $this->lst();
-        usort($lst, fn(component $a, component $b) => $a->position <=> $b->position
-            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
         $names = [];
-        foreach ($lst as $cmp) {
+        foreach ($this->sorted_by_position() as $cmp) {
             if (count($names) < $limit) {
                 $names[] = $cmp->name_link($url_arr, '', $msk_id);
             }
         }
         return implode(', ', $names);
+    }
+
+    /**
+     * the components sorted by the position in the view and by the name for the components
+     * that share a position, so the html order never depends on the api row order
+     * (see docs/llm/frontend.md); used by the name list and the component table of a view
+     *
+     * @return array of component objects in the layout order of the view
+     */
+    function sorted_by_position(): array
+    {
+        $lst = $this->lst();
+        usort($lst, fn(component $a, component $b) => $a->position <=> $b->position
+            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
+        return $lst;
     }
 
     /*

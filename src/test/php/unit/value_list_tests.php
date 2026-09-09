@@ -151,6 +151,18 @@ class value_list_tests
         $empty_keep_lst->keep_most_relevant(5);
         $t->assert($test_name, $empty_keep_lst->count(), 0);
 
+        $t->subheader($ts . 'remove');
+        // the list is keyed by the value id, so remove must resolve the id to the position in the
+        // list (see value_list::remove), else the value stays e.g. in its own related values
+        $test_name = 'removing a value of the list drops it';
+        $math_lst = $t_val->value_list_math();
+        $t->assert($test_name, $math_lst->remove($t_val->value_pi()), true);
+        $test_name = '... so only the other math constant is left';
+        $t->assert($test_name, $math_lst->count(), 1);
+        $test_name = 'removing a value that is not in the list reports false and keeps the list';
+        $t->assert($test_name, $math_lst->remove($t_val->value_pi()), false);
+        $t->assert($test_name . ' size', $math_lst->count(), 1);
+
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
         $api_json = $t_val->value_list($msg)->api_json();

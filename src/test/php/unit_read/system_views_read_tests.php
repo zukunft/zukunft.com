@@ -130,11 +130,16 @@ class system_views_read_tests
         // REF
         $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
         // VALUE
-        // PI (3.14) is the example for the related-phrase links and the grey value of the "Value title" component
-        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_ID, $cfg);
-        // the pi number of units.json names the "mathematical constant" source, so it is the example
-        // for the "system show field value source" component of the value default view
+        // the pi number of units.json is the example for the related-phrase links and the grey value
+        // of the "Value title" component and, because it names the "mathematical constant" source,
+        // for the "system show field value source" component of the value default view; the pi value
+        // keyed by the "π (unit symbol)" triple (values::PI_ID) exists only as a unit test fixture and
+        // not in the seeded database, so it would snapshot an empty page
         $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_MATH_ID, $cfg);
+        // the e number is the other mathematical constant, so its page is the example for the related
+        // values column in the reverse direction (e lists pi like pi lists e) and pins the group id of
+        // the value keyed by the "𝑒 (math)" triple (values::E_ID)
+        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::E_ID, $cfg);
         // the target price earning ratio of companies.json is shared personally and protected for
         // users, so it is the example for the share and protection subtitle of the "Value title"
         // component, which shows nothing for a value with the default types like the pi values
@@ -151,6 +156,9 @@ class system_views_read_tests
         // FORMULA TEST
         // RESULT
         // VIEW
+        // the word default view is the example for the view default page, because it is the view
+        // that every word page opens with, so it is the view a user is most likely to look at
+        $t->assert_view(views::VIEW, $t->usr1, new view($t->usr1), views::WORD_ID, $cfg);
         $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
         $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
         $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);

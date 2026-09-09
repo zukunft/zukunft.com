@@ -1034,6 +1034,12 @@ class frontend
                 $dbo->url_mapper($url_array, $msg_ui, $dto);
             }
         } else {
+            // an object without an id is not yet in the database (e.g. the page shown after the
+            // confirmed add of a run that does not write), so it can only be filled from the url;
+            // without this the page of the just entered object would render empty
+            if ($this->url_has_object_values($url_array) and $dbo instanceof db_object_ui) {
+                $dbo->url_mapper($url_array, $msg_ui, $dto);
+            }
             // get last term used by the user or a default value
             if ($usr != null) {
                 $wrd = $usr->last_term();
@@ -1939,12 +1945,25 @@ class frontend
      */
     private function url_has_object_values(array $url_array): bool
     {
-        $result = false;
+        return $this->url_object_values($url_array) != [];
+    }
+
+    /**
+     * the object field values of a url without the control vars that select the view, the object and
+     * the render mode and without the '9'-prefixed back navigation targets, e.g. to carry the posted
+     * values of a simulated write to the following page (see action_crud)
+     *
+     * @param array $url_array the parsed url
+     * @return array the url keys and values that are object field values
+     */
+    private function url_object_values(array $url_array): array
+    {
+        $result = [];
         foreach ($url_array as $key => $val) {
             if (!in_array($key, url_var::CONTROL_VARS)
                 and $key != rest_ctrl::PAR_VIEW_NEW_ID
                 and !str_starts_with($key, url_var::BACK)) {
-                $result = true;
+                $result[$key] = $val;
             }
         }
         return $result;
@@ -2009,13 +2028,23 @@ class frontend
         // id as the '9'-prefixed back target, so the user returns to the changed object; the id of
         // the just saved object is preferred over the back id, because the id can change with the
         // write, e.g. a rename by a user that cannot change the standard row creates a new database
-        // row and the old id of the back target would show an empty view
+        // row and the old id of the back target would show an empty view.
+        // an add has no back id at all, because the object did not exist when the confirm view was
+        // built, so the id assigned by the write (see db_object::add_via_api) is added here; without
+        // it the user would land on the object's own default view with id 0, i.e. an empty page.
+        // the start view shows no object, so it never gets an id
         $back_url = $this->url_to_back_url($url_array);
         if ($crud != url_var::CRUD_DELETE
             and $dbo instanceof db_object_ui
             and $dbo->id() != 0
-            and array_key_exists(url_var::ID, $back_url)) {
+            and ($back_url[url_var::MASK] ?? views::START_ID) != views::START_ID) {
             $back_url[url_var::ID] = $dbo->id();
+        } elseif (!$do_it and $crud != url_var::CRUD_DELETE) {
+            // a simulated write ($do_it false, e.g. a workflow snapshot test) has created no
+            // database row, so there is no id to show the object by; the posted field values are
+            // kept in the url instead, so that the following page shows the object as it would
+            // have been created rather than the empty object of the id-less view
+            $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;
     }

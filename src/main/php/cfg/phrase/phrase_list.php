@@ -1098,6 +1098,30 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the members of the categories of this list e.g. "Pi (math)" and "𝑒 (math)" for
+     * "mathematical constant", so the counterpart of categories()
+     *
+     * a member is linked to its category by an 'is a' triple and a value of the member is keyed
+     * by that triple (the pi value by "Pi (math)"), so the linking triples are returned and not
+     * the linked words: are() dissolves a category triple into its words first (see wrd_lst_all)
+     * and returns the words below them, so it can never return the phrases that carry the values
+     *
+     * the list itself is kept, so a value assigned to the category is a member too
+     *
+     * @param user_message $msg to collect the problems while reading the triples
+     * @return phrase_list the linking triples of the categories and the categories themselves
+     */
+    function category_members(user_message $msg): phrase_list
+    {
+        global $sys;
+
+        $mbr_lst = $this->load_linking_triples($sys->verb(verbs::IS), foaf_direction::DOWN, $msg);
+        $mbr_lst->merge($this);
+        log_debug($this->dsp_id() . ' are ' . $mbr_lst->dsp_name());
+        return $mbr_lst;
+    }
+
+    /**
      * get the related phrase
      * e.g. for "city" it will return "Zurich", "Bern" and "Geneva"
      *

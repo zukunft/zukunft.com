@@ -323,9 +323,11 @@ class value_ui_tests
         $val_related = $t_val->value($msg);
         $val_related->views_related = $t_msk->view_list_word();
         $val_related->changes_related = $t_log->log_list_value();
-        // test mode so the backend emits the two given lists without loading them from the database
+        // test mode so the backend emits the two given lists without loading them from the database;
+        // INCL_PHRASES like a page request, because the value is named by its phrases and the views
+        // tab names the value in the tooltips
         $val_json = json_decode($val_related->api_json(
-            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+            [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg), true);
 
         $test_name = 'the views of a value are sent to the frontend';
         $t->assert_true($test_name, ($val_json[json_fields::VIEWS] ?? []) != []);
@@ -364,6 +366,29 @@ class value_ui_tests
         // value edit view and never the word edit view (see view::switch_link)
         $test_name = '... and a switch button that opens the value edit view';
         $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VALUE_EDIT_ID);
+        // the switch preselects the view as the default view of the value in the edit form, so the
+        // switch is a one-click action, and it is an icon with the view and the value in the tooltip
+        // the escaped url separator in front keeps 'd=' apart from the 'id=' of the object
+        $test_name = '... which preselects the view as the default view of the value';
+        $t->assert_text_contains($test_name, $tab_html, '&amp;' . url_var::VIEW . url_var::EQ);
+        $test_name = '... shown as a switch icon';
+        $t->assert_text_contains($test_name, $tab_html, icons::VIEW_SWITCH);
+        // the tooltips name the value and the view; the link builder escapes the tooltip, so the
+        // expected text is escaped the same way (the quotes around the names become entities)
+        $test_name = 'the value of the tab box carries its name for the tooltips';
+        $t->assert_true($test_name, $val_tab->name() != '');
+        $test_name = '... with the value and the view name in the switch tooltip';
+        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
+            "adjust '" . $val_tab->name() . "' so that it is always shown with the '" . views::SCIENCE . "' view", ENT_QUOTES));
+        // the view name itself links to the value shown with that view
+        $test_name = '... and the view name links to the value shown with the view';
+        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
+            "show '" . $val_tab->name() . "' with the '" . views::SCIENCE . "' view", ENT_QUOTES) . '">' . views::SCIENCE . '</a>');
+        // the edit icon opens the view edit form for the view, not for the value
+        $test_name = '... and an edit icon that opens the edit form of the view';
+        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VIEW_EDIT_ID);
+        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
+            "change the '" . views::SCIENCE . "' view", ENT_QUOTES));
 
         $test_name = 'the value page shows the changes tab';
         $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);

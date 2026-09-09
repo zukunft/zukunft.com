@@ -53,9 +53,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -158,12 +160,40 @@ class view_ui_tests
         $t->assert_text_contains($test_name, $cmp_html, components::WORD_NAME);
         $test_name = 'the listed components link to the component default page';
         $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_DEFAULT_ID);
+        // each component is one table row with the position number, the linked name and
+        // the position type name, so the page shows the layout order of the view
+        $test_name = 'the position number of the first component is shown';
+        $t->assert_text_contains($test_name, $cmp_html, $html->td('1'));
+        $test_name = 'the position type of the first component is shown';
+        $t->assert_text_contains($test_name, $cmp_html, $html->td(position_types::BELOW_NAME));
+        $test_name = 'the components are sorted by their position in the view';
+        $cmp_lst = $ui_sys->typ_lst_cache->get_view_by_id($msk->id())->get_component_list();
+        $sorted = $cmp_lst->sorted_by_position();
+        $t->assert($test_name, $sorted[0]->position <= $sorted[count($sorted) - 1]->position, true);
 
         // a view that is not in the cache or has no components gets the no-components message
         $test_name = 'a view without components shows the no-components message';
         $msk_empty = new view($t_msk->view_add()->api_json());
         $t->assert($test_name, $list->view_components($msk_empty, $msg),
             $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS));
+
+
+        $t->subheader($ts . 'view terms');
+
+        // the view add and edit pages list the terms that use the view; the terms come with the
+        // view of a page request, so the fixture sets them like the backend load does and the
+        // api emits them under the related flag (see view::api_json_array)
+        $msk_terms = new view($t_msk->view_with_terms()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $test_name = 'the terms that use a view are listed as links';
+        $trm_html = $list->view_terms($msk_terms, $msg);
+        $t->assert_text_contains($test_name, $trm_html, word_names::MATH);
+        $test_name = '... for a triple term as well';
+        $t->assert_text_contains($test_name, $trm_html, triple_names::PI_SYMBOL_NAME);
+
+        // a new view of the add form is used by no term yet
+        $test_name = 'a view without terms shows the not used message';
+        $t->assert($test_name, $list->view_terms($msk_empty, $msg),
+            $mtr->txt(msg_id::INFO_NOT_USED_BY_TERMS));
 
 
         $t->subheader($ts . 'view tab box');

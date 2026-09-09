@@ -6,7 +6,7 @@
     -------------------------------------
 
     creates the markdown report docs/code_test_coverage.md with all public source functions
-    that are called less than twice in the unit tests of src/test/php/unit
+    that are called less than twice in the unit tests of the src/test/php/unit* folders
 
     a function call counts as a unit test when it is between a '$test_name = ...' line
     and the last '$t->assert...' or '$this->assert...' line of the same code block,
@@ -52,6 +52,19 @@ class code_test_coverage
     // the number of unit test calls every function should at least have (positive and negative test)
     const int MIN_TESTS = 2;
 
+    // the unit test folders that are scanned for test calls: every tier counts, because a database
+    // read or a page render test covers a function as well as a pure unit test (see the tiers in
+    // docs/llm/testing.md); listed explicitly, because scandir fatals on a folder that does not exist
+    const array TEST_TIERS = [
+        test_paths::UNIT,
+        test_paths::UNIT_READ,
+        test_paths::UNIT_API,
+        test_paths::UNIT_UI,
+        test_paths::UNIT_WRITE,
+        test_paths::UNIT_WORKFLOW,
+        test_paths::UNIT_WRITE_WORKFLOW,
+    ];
+
     // a line that starts a unit test block
     private const string TEST_NAME_PATTERN = '/\$test_name\s*=/';
     // an assert call of the test harness that ends the counted part of a test block
@@ -76,17 +89,27 @@ class code_test_coverage
      */
     function md(): string
     {
-        $cnt_lst = $this->test_call_counts(test_paths::UNIT);
+        $cnt_lst = [];
+        foreach (self::TEST_TIERS as $path) {
+            $this->test_call_counts($path, $cnt_lst);
+        }
         $sec_lst = [
             'main backend' => paths::MODEL,
             'shared' => paths::SHARED,
             'frontend' => paths::WEB
         ];
+        // the functions of every section are scanned once, because the number of classes that
+        // declare a function name is needed across the sections before a section is reported
+        $src_lst = [];
+        foreach ($sec_lst as $sec => $path) {
+            $src_lst[$sec] = $this->source_functions($path);
+        }
+        $share_lst = $this->name_share_counts($src_lst);
         $fnc_cnt = 0;
         $low_cnt = 0;
         $body_txt = '';
-        foreach ($sec_lst as $sec => $path) {
-            $body_txt .= $this->section_md($sec, $path, $cnt_lst, $fnc_cnt, $low_cnt);
+        foreach ($src_lst as $sec => $cls_lst) {
+            $body_txt .= $this->section_md($sec, $cls_lst, $cnt_lst, $share_lst, $fnc_cnt, $low_cnt);
         }
         $md_txt = '# Unit test coverage' . "\n";
         $md_txt .= "\n";
@@ -94,8 +117,9 @@ class code_test_coverage
         $md_txt .= "\n";
         $md_txt .= 'a function call counts as a unit test when it is between a $test_name assignment' . "\n";
         $md_txt .= 'and the last assert of the same block (a block ends at the next empty line)' . "\n";
-        $md_txt .= 'in a test file of src/test/php/unit; the count is by function name,' . "\n";
-        $md_txt .= 'so same-named functions of several classes share their test calls' . "\n";
+        $md_txt .= 'in a test file of the src/test/php/unit* folders; the count is by function name' . "\n";
+        $md_txt .= 'and cannot tell the classes apart, so a name that several classes declare needs' . "\n";
+        $md_txt .= self::MIN_TESTS . ' calls per class and is listed as shared otherwise' . "\n";
         $md_txt .= "\n";
         $md_txt .= ($fnc_cnt - $low_cnt) . ' of ' . $fnc_cnt . ' public functions have at least '
             . self::MIN_TESTS . ' unit test calls; the ' . $low_cnt . ' functions below do not' . "\n";
@@ -107,30 +131,42 @@ class code_test_coverage
      * build the markdown section of one source folder with one row
      * per class function that has less than MIN_TESTS unit test calls
      *
+     * a function name that several classes declare gets the same count for each of them, because
+     * a test call does not tell which class it hits; so such a name needs MIN_TESTS calls per
+     * declaring class and is listed with the number of sharing classes otherwise, else the calls
+     * of one class would hide the missing tests of the others
+     *
      * @param string $sec the section name e.g. 'main backend'
-     * @param string $path the source folder of the section e.g. paths::MODEL
+     * @param array $cls_lst map of class name to its public function names (see source_functions)
      * @param array $cnt_lst map of function name to the number of unit test calls
+     * @param array $share_lst map of function name to the number of classes that declare it
      * @param int $fnc_cnt (in/out) total number of public functions checked
      * @param int $low_cnt (in/out) number of functions with less than MIN_TESTS calls
      * @return string the markdown section with the class tree of the undertested functions
      */
     private function section_md(
         string $sec,
-        string $path,
+        array  $cls_lst,
         array  $cnt_lst,
+        array  $share_lst,
         int    &$fnc_cnt,
         int    &$low_cnt
     ): string
     {
         $md_txt = '';
-        foreach ($this->source_functions($path) as $class => $fnc_lst) {
+        foreach ($cls_lst as $class => $fnc_lst) {
             $fnc_cnt += count($fnc_lst);
             $row_txt = '';
             foreach ($fnc_lst as $fnc) {
                 $cnt = $cnt_lst[$fnc] ?? 0;
-                if ($cnt < self::MIN_TESTS) {
+                $share = $share_lst[$fnc] ?? 1;
+                if ($cnt < self::MIN_TESTS * $share) {
                     $low_cnt++;
-                    $row_txt .= '    \-- ' . $fnc . ' - ' . $cnt . ' unit test calls' . "\n";
+                    $row_txt .= '    \-- ' . $fnc . ' - ' . $cnt . ' unit test calls';
+                    if ($share > 1) {
+                        $row_txt .= ' shared by ' . $share . ' classes';
+                    }
+                    $row_txt .= "\n";
                 }
             }
             if ($row_txt != '') {
@@ -202,16 +238,37 @@ class code_test_coverage
     }
 
     /**
+     * the number of classes that declare each function name across all sections, which is
+     * the number of classes that a test call of that name may belong to (see section_md)
+     *
+     * @param array $src_lst map of section name to its map of class name to function names
+     * @return array map of function name to the number of declaring classes
+     */
+    private function name_share_counts(array $src_lst): array
+    {
+        $result = [];
+        foreach ($src_lst as $cls_lst) {
+            foreach ($cls_lst as $fnc_lst) {
+                foreach ($fnc_lst as $fnc) {
+                    $result[$fnc] = ($result[$fnc] ?? 0) + 1;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * count per function name how often it is called in the unit test blocks
-     * of all test files below the given folder
+     * of all test files below the given folder and add the counts to the given map,
+     * so that the tiers of TEST_TIERS accumulate into one map
      *
      * @param string $path the unit test folder to scan e.g. test_paths::UNIT
-     * @return array map of function name to the number of unit test calls
+     * @param array $cnt_lst (in/out) map of function name to the number of unit test calls
+     * @return void
      */
-    private function test_call_counts(string $path): array
+    private function test_call_counts(string $path, array &$cnt_lst): void
     {
         $lib = new library();
-        $result = [];
         foreach ($lib->array_to_path($lib->dir_to_array($path)) as $code_file) {
             if (str_ends_with($code_file, '.php')) {
                 $lines = file($path . $code_file);
@@ -220,7 +277,7 @@ class code_test_coverage
                 $block = [];
                 foreach ($lines as $line) {
                     if (trim($line) == '') {
-                        $this->count_block_calls($block, $result);
+                        $this->count_block_calls($block, $cnt_lst);
                         $block = [];
                     } elseif ($block != [] or preg_match(self::TEST_NAME_PATTERN, $line)) {
                         $block[] = $line;
@@ -228,7 +285,6 @@ class code_test_coverage
                 }
             }
         }
-        return $result;
     }
 
     /**
