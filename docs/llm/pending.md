@@ -17,8 +17,6 @@ see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/
 
 ## refs
 
-see /docs/llm/coding.md and add to src/test/resources/web/html/views_by_object/ref a test page that shows a real mostly filled reference with the ref_default view
-
 where the reference is shown e.g. in http://localhost/http/view.php?m=90&id=381 add an edit icon next to the refresh icon that links to the ref edit view for the reference e.g. wikidata
 
 where the reference is shown e.g. in http://localhost/http/view.php?m=90&id=381 add at the end of the list a plus icon to add a reference to the e.g. word
