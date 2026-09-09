@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -163,6 +165,11 @@ class system_views_read_tests
         $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
         $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);
         // COMPONENT
+        // the cash flow statement is the only seeded component with a row and a column phrase, so
+        // it is the example that fills every field of the component page except the style, the
+        // formula and the sub column phrase, and it is used by the "company sheet" view, so the
+        // views list of the page has an entry
+        $t->assert_view(views::COMPONENT, $t->usr1, new component($t->usr1), components::CASH_FLOW_ID, $cfg);
         $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
         $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
         $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);

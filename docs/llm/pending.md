@@ -9,8 +9,6 @@ see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/
 
 ## components
 
-see /docs/llm/coding.md and add to src/test/resources/web/html/views_by_object/component a test page that shows a real mostly filled component with the component_default view
-
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/add_source_wf19 workflow create the add_component workflow tests
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_component workflow tests

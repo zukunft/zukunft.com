@@ -229,11 +229,12 @@ class triple_tests
         $t->assert($test_name . ' and the verb', $trp_url[url_var::VERB], verbs::PART_ID);
         $t->assert($test_name . ' and the to phrase', $trp_url[url_var::PHRASE_TO], word_names::TEST_ADD_TO_ID);
 
+        // the expected weight is the same fractional one as in the edit form test above, which
+        // test_triples::triple_impact sets to match the db row of units.json
         $test_name = 'the url array of a triple contains the weight, plural and impact';
         $trp_ui = $t_trp->triple_impact_ui();
         $trp_ui->plural = triple_names::MATH_CONST_PLURAL;
         $trp_url = $trp_ui->to_url_array($msg_ui);
-        // the same fractional weight as the edit form test above, set by test_triples::triple_impact
         $t->assert($test_name, $trp_url[url_var::WEIGHT], 0.5);
         $t->assert($test_name . ' and the plural', $trp_url[url_var::PLURAL], triple_names::MATH_CONST_PLURAL);
         $t->assert($test_name . ' and the impact', $trp_url[url_var::IMPACT], impacts::MAX);
@@ -245,7 +246,9 @@ class triple_tests
         $t->assert($test_name, $trp_url[url_var::ID], 0);
         $t->assert_contains_not($test_name . ' and no unset field', array_keys($trp_url), [
             url_var::PHRASE_FROM, url_var::VERB, url_var::PHRASE_TO, url_var::WEIGHT,
-            url_var::PLURAL, url_var::USAGE, url_var::IMPACT]);
+            url_var::PLURAL, url_var::USAGE, url_var::IMPACT,
+            url_var::NAME, url_var::DESCRIPTION, url_var::TYPE,
+            url_var::SHARE, url_var::PROTECTION, url_var::OWNER]);
 
         $t->subheader($ts . 'url mapping of phrases posted by name');
         // the datalist edit fields submit the shown phrase name instead of the id, so the url
