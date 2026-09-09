@@ -59,6 +59,7 @@ class view_fields
     // used to identify if there are some user-specific changes
     // and to fix the order in a useful way for the change confirm view
     const array ALL_NAMES = array(
+        self::FLD_NAME,
         fields::FLD_DESCRIPTION,
         self::FLD_TYPE,
         fields::FLD_STYLE,

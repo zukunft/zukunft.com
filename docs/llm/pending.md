@@ -1,6 +1,15 @@
 
 # pending - list of planned llm prompts with prio 1
 
+## views
+
+1. The confirmed page renders an empty view (view "", no components). Identical in add_source (wf19 shows the same empty source page) and identical in the write run, so it is the known add-confirm behaviour, not a defect of this workflow.
+2. Read and write fixture sets are byte-identical (10/10). Same for add_source (10/10) — an add workflow starts with no object, so nothing the write changes is visible. The del/change workflows do differ (6 files in wf21). Expected, not a sign the write run did nothing; the db assertion in the test is what proves the write.
+3. Run noise: ui_config.json carries only a timestamp change (2026-09-08T22:24 → 2026-09-09T05:32), nothing else. Does not belong to this change.
+4. test_views.php lost its trailing newline (HEAD ended }\n, worktree ends }). Cosmetic, from the append.
+5. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
+
+
 ## components
 
 ...

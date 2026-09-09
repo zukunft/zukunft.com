@@ -150,6 +150,14 @@ class view extends view_exe
     }
 
     /**
+     * @return array the ordered db field names of a view used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return view_fields::ALL_NAMES;
+    }
+
+    /**
      * @return array all sandbox view db field names mapped to their url var key so that the undo
      *              link of the 'my' tab can change any overwritten field (see
      *              ui_preview::overwrite_confirm_link); the keys match view_fields::ALL_NAMES

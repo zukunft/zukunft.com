@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-412 of 5703 public functions have at least 2 unit test calls; the 5291 functions below do not
+412 of 5705 public functions have at least 2 unit test calls; the 5293 functions below do not
 
 ## main backend
 
@@ -4273,7 +4273,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- ref_type_selector - 0 unit test calls shared by 2 classes
     \-- result_selector - 0 unit test calls
     \-- reverse - 0 unit test calls shared by 2 classes
-    \-- sandbox_fld_order - 1 unit test calls shared by 5 classes
+    \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
     \-- set_from_json - 8 unit test calls shared by 9 classes
     \-- set_id - 5 unit test calls shared by 10 classes
     \-- share_type_selector - 0 unit test calls shared by 2 classes
@@ -4353,7 +4353,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- name_link - 0 unit test calls shared by 21 classes
     \-- need_all - 0 unit test calls shared by 2 classes
     \-- ref_text - 0 unit test calls shared by 2 classes
-    \-- sandbox_fld_order - 1 unit test calls shared by 5 classes
+    \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
     \-- set_latex - 0 unit test calls shared by 2 classes
     \-- set_ref_text - 2 unit test calls shared by 2 classes
     \-- set_usr_text - 0 unit test calls
@@ -4895,7 +4895,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- name_link - 0 unit test calls shared by 21 classes
     \-- name_tip - 1 unit test calls shared by 15 classes
-    \-- sandbox_fld_order - 1 unit test calls shared by 5 classes
+    \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
     \-- source_selector - 0 unit test calls shared by 4 classes
     \-- source_type_selector - 0 unit test calls shared by 2 classes
     \-- to_url_array - 16 unit test calls shared by 11 classes
@@ -5172,7 +5172,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- phrase - 17 unit test calls shared by 11 classes
     \-- phrase_selector - 0 unit test calls shared by 6 classes
     \-- phrase_type_selector - 0 unit test calls shared by 3 classes
-    \-- sandbox_fld_order - 1 unit test calls shared by 5 classes
+    \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
     \-- set - 1 unit test calls shared by 16 classes
     \-- set_from - 4 unit test calls shared by 3 classes
     \-- set_from_by_id - 1 unit test calls
@@ -5261,6 +5261,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_view_relation_types - 0 unit test calls
     \-- set_view_styles - 0 unit test calls
     \-- set_view_types - 0 unit test calls
+    \-- url_key_to_type_list - 0 unit test calls
 \-- type_object
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
@@ -5521,6 +5522,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- log_err - 0 unit test calls shared by 5 classes
     \-- name_linked - 0 unit test calls shared by 10 classes
     \-- open_link - 0 unit test calls
+    \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
     \-- selector_page - 0 unit test calls shared by 2 classes
     \-- switch_link - 0 unit test calls
     \-- to_url_array - 16 unit test calls shared by 11 classes
@@ -5615,7 +5617,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- phrase - 17 unit test calls shared by 11 classes
     \-- phrase_selector - 0 unit test calls shared by 6 classes
     \-- phrase_type_selector - 0 unit test calls shared by 3 classes
-    \-- sandbox_fld_order - 1 unit test calls shared by 5 classes
+    \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
     \-- set_type - 1 unit test calls shared by 14 classes
     \-- similar - 1 unit test calls shared by 3 classes
     \-- td - 2 unit test calls shared by 4 classes

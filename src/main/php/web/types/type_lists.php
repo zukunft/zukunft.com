@@ -84,6 +84,7 @@ include_once html_paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'component_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -106,6 +107,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class type_lists
 {
@@ -197,6 +199,35 @@ class type_lists
             formula_fields::FLD_TYPE => $this->frm_typ,
             view_fields::FLD_TYPE => $this->msk_typ,
             component_fields::FLD_TYPE => $this->cmp_typ,
+            default => null,
+        };
+        return $result;
+    }
+
+    /**
+     * map a type-id url var key to its preloaded type list, used by the change preview of an object
+     * that has no db field order yet (see ui_preview::change_rows), so that a confirm view shows the
+     * type name instead of the raw id for every object; the generic url_var::TYPE is not listed,
+     * because the same key carries the phrase, source, ref, formula, view and component type and
+     * without the object the type list cannot be told apart
+     *
+     * @param string $url_key the url var short key e.g. url_var::SHARE
+     * @return type_list|null the matching type list or null if the key does not carry a type id
+     */
+    function url_key_to_type_list(string $url_key): ?type_list
+    {
+        $result = match ($url_key) {
+            url_var::SHARE => $this->shr_typ,
+            url_var::PROTECTION => $this->ptc_typ,
+            url_var::STYLE => $this->msk_sty,
+            url_var::PHRASE_TYPE => $this->phr_typ,
+            url_var::SOURCE_TYPE => $this->src_typ,
+            url_var::REF_TYPE => $this->ref_typ,
+            url_var::FORMULA_TYPE => $this->frm_typ,
+            url_var::VIEW_TYPE => $this->msk_typ,
+            url_var::COMPONENT_TYPE => $this->cmp_typ,
+            url_var::POSITION_TYPE => $this->pos_typ,
+            url_var::LINK_TYPE => $this->cmp_lnk_typ,
             default => null,
         };
         return $result;

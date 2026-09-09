@@ -7624,6 +7624,8 @@
             s in /types/type_lists.php
     \-- field_to_type_list - section for function field_to_type_list not yet defined that it should be type list by clas
             s in /types/type_lists.php
+    \-- url_key_to_type_list - section for function url_key_to_type_list not yet defined that it should be type list by 
+            class in /types/type_lists.php
     \-- log_err - section for function log_err is expected to be log in /types/type_lists.php
 \-- type_object
     \-- id - section for function id not yet defined that it should be set and get in /types/type_object.php
@@ -7809,6 +7811,8 @@
 \-- view
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /view/view.php
     \-- to_url_array - section for function to_url_array not yet defined that it should be api in /view/view.php
+    \-- sandbox_fld_order - section for function sandbox_fld_order not yet defined that it should be api in /view/view.p
+            hp
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be api in /view/view.php
     \-- dsp_navbar - section for function dsp_navbar not yet defined that it should be api in /view/view.php
     \-- dsp_navbar_no_view - section for function dsp_navbar_no_view not yet defined that it should be api in /view/view
@@ -9731,5 +9735,7 @@
     \-- field_to_type_list
         \-- type_lists - map a type-id db field name to its preloaded type list so a caller can show the type name inste
                 ad of the id
+    \-- url_key_to_type_list
+        \-- type_lists - map a type-id url var key to its preloaded type list, used by the change preview of an object
 ```
 
