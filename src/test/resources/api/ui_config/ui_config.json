@@ -4,7 +4,6 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-09-09T05:32:35+00:00",
     "body": {
         "user_profiles": [
             {
@@ -342,12 +341,6 @@
                 "code_id": "text_log_functions",
                 "description": "",
                 "id": 25
-            },
-            {
-                "name": "text_log_functions",
-                "code_id": "text_log_functions",
-                "description": "",
-                "id": 26
             }
         ],
         "sys_log_levels": [
