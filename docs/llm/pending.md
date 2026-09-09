@@ -3,10 +3,16 @@
 
 ## views
 
-the page after a confirmed add now shows the added object instead of an empty page: a write run redirects to the object's own view with the id assigned by the write, and a simulated run (do_it false) keeps the posted field values in the url so the page shows the object as it would have been created (see frontend::action_crud and url_to_html). done for add_view (wf22) and add_source (wf19), which return to the object's own default view. second step: adapt the same for the add_word (wf1) and add_triple (wf4) workflows, which still return to the start view after the confirmed add, and check the other workflows that end on a confirmed step
+in add view such as src/test/resources/web/html/workflow/add_view_wf22/wf22_edit.html do not show the changes tab
 
-1. test_views.php lost its trailing newline (HEAD ended }\n, worktree ends }). Cosmetic, from the append.
-2. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
+in the add confirm pages such as src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save.html do not show the from page because it is always empty or not set
+
+add unit tests for to_url_array. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_view workflow tests
+
+see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_view workflow tests
+
 
 
 ## components
