@@ -3,8 +3,6 @@
 
 ## views
 
-add unit tests for to_url_array. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
-
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_view workflow tests
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_view workflow tests
@@ -48,8 +46,12 @@ add the missing workflows link workflows such as
 
 add the missing workflows quick workflows such as
 
-- add a word
+- add a word or select a phrase
 - change a value
+- change a result
+- select a term and add it to a formula
+
+add group add, change and del workflows
 
 ## views
 

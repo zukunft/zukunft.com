@@ -149,6 +149,19 @@ class view_ui_tests
         $test_name = 'a view without a known owner shows an empty text';
         $t->assert($test_name, $sfm->show_owner($msk), '');
 
+        // the confirm and the undo link of a view are built from its page url, so the url array of a
+        // view carries the type in the view type url var that the view form posts and not in the
+        // generic type var of the parent (see view::to_url_array), plus the style
+        $test_name = 'the page url of a view carries the view type and the style';
+        $msk_url_arr = $msk_filled->to_url_array($msg);
+        $t->assert($test_name, $msk_url_arr[url_var::VIEW_TYPE] ?? '', $msk_filled->type_id($msg));
+        $t->assert($test_name . ' and the style', $msk_url_arr[url_var::STYLE] ?? '', view_styles::COL_SM_4_ID);
+        $t->assert_contains_not($test_name . ' and not the generic type', array_keys($msk_url_arr), url_var::TYPE);
+        $test_name = 'the page url of a view without a type and a style has neither';
+        $msk_url_arr = $msk->to_url_array($msg);
+        $t->assert_contains_not($test_name, array_keys($msk_url_arr),
+            [url_var::TYPE, url_var::VIEW_TYPE, url_var::STYLE]);
+
         $t->subheader($ts . 'view components');
 
         // the view default page lists the components of the shown view sorted by their position;
@@ -369,6 +382,20 @@ class view_ui_tests
             $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_8_NAME));
         $test_name = 'a fresh term view shows no style';
         $t->assert($test_name, $sfm->show_style(new term_view_ui()), '');
+
+        // the undo link of the 'my' tab needs the value before the change from the page url
+        $test_name = 'the page url of a term view carries the order number, style and description';
+        $trm_msk_url_arr = $trm_msk->to_url_array($msg);
+        $t->assert($test_name, $trm_msk_url_arr[url_var::VIEW_TERM_LINK_PRIO] ?? '',
+            test_const::TERM_VIEW_ORDER_NBR);
+        $t->assert($test_name . ' and the style', $trm_msk_url_arr[url_var::STYLE] ?? '',
+            view_styles::COL_SM_8_ID);
+        $t->assert($test_name . ' and the description', $trm_msk_url_arr[url_var::DESCRIPTION] ?? '',
+            $trm_msk->get_description());
+        $test_name = 'the page url of a fresh term view has none of the three';
+        $trm_msk_url_arr = new term_view_ui()->to_url_array($msg);
+        $t->assert_contains_not($test_name, array_keys($trm_msk_url_arr),
+            [url_var::VIEW_TERM_LINK_PRIO, url_var::STYLE, url_var::DESCRIPTION]);
 
         $test_name = 'the term view page shows a link type that differs from the default';
         $trm_msk_sel = $t_msk->term_view_filled_included();

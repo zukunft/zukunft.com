@@ -44,6 +44,8 @@ class triple_names
     const string MATH_CONST_GIVEN = 'math const';
     const int MATH_CONST_ID = 1;
     const string MATH_CONST_COM = 'A mathematical constant that never changes e.g. Pi';
+    // only used in memory by the frontend unit tests, because the seed import has no triple plural
+    const string MATH_CONST_PLURAL = 'mathematical constants';
     const string PI_SYMBOL = 'π (unit symbol)';
     const string PI_SYMBOL_NAME = 'π (unit symbol)';
     const int PI_SYMBOL_ID = 5;

@@ -45,8 +45,10 @@ include_once paths::MODEL_WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CREATE . 'test_users.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
@@ -67,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -82,6 +85,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -362,15 +366,46 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
 
-        $test_name = 'the url array contains the filled plural';
+        // the url array is the inverse of url_mapper: it carries the fields of the word and of its
+        // parent classes that the edit form posts and leaves out the fields that are not set, so
+        // that a union with a posted url never masks a posted value with an empty one
+        $test_name = 'the url array of a word contains the id, name and description';
         $wrd_ui = $t_wrd->word_dsp();
+        $url_arr = $wrd_ui->to_url_array($msg_ui);
+        $t->assert($test_name, $url_arr[url_var::ID], word_names::MATH_ID);
+        $t->assert($test_name . ' and the name', $url_arr[url_var::NAME], word_names::MATH);
+        $t->assert($test_name . ' and the description', $url_arr[url_var::DESCRIPTION], word_names::MATH_COM);
+
+        $test_name = 'the url array of a word contains the type, share, protection and owner';
+        $wrd_ui->set_type_id(phrase_types::MEASURE_ID);
+        $wrd_ui->share_id = share_types::PUBLIC_ID;
+        $wrd_ui->protection_id = protection_types::ADMIN_ID;
+        $wrd_ui->set_owner_name(users::SYSTEM_TEST_NAME);
+        $url_arr = $wrd_ui->to_url_array($msg_ui);
+        $t->assert($test_name, $url_arr[url_var::TYPE], phrase_types::MEASURE_ID);
+        $t->assert($test_name . ' and the share', $url_arr[url_var::SHARE], share_types::PUBLIC_ID);
+        $t->assert($test_name . ' and the protection', $url_arr[url_var::PROTECTION], protection_types::ADMIN_ID);
+        $t->assert($test_name . ' and the owner', $url_arr[url_var::OWNER], users::SYSTEM_TEST_NAME);
+
+        $test_name = 'the url array of a word contains the plural, usage, impact and default view';
         $wrd_ui->plural = word_names::MATH_PLURAL;
+        $wrd_ui->usage = test_const::DUMMY_USAGE_WORD;
+        $wrd_ui->impact = test_const::DUMMY_IMPACT;
+        $wrd_ui->view_id = views::WORD_ID;
         $url_arr = $wrd_ui->to_url_array($msg_ui);
         $t->assert($test_name, $url_arr[url_var::PLURAL], word_names::MATH_PLURAL);
-        $test_name = 'an empty plural is excluded from the url array';
-        $wrd_ui->plural = '';
-        $url_arr = $wrd_ui->to_url_array($msg_ui);
-        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::PLURAL);
+        $t->assert($test_name . ' and the usage', $url_arr[url_var::USAGE], test_const::DUMMY_USAGE_WORD);
+        $t->assert($test_name . ' and the impact', $url_arr[url_var::IMPACT], test_const::DUMMY_IMPACT);
+        $t->assert($test_name . ' and the view', $url_arr[url_var::VIEW], views::WORD_ID);
+
+        // the add form starts with a word where no field is set, so its url array carries only the
+        // id, which is still zero because the word is created by the confirm submit
+        $test_name = 'the url array of a new word contains only the id';
+        $url_arr = new word_ui()->to_url_array($msg_ui);
+        $t->assert($test_name, $url_arr[url_var::ID], 0);
+        $t->assert_contains_not($test_name . ' and no unset field', array_keys($url_arr), [
+            url_var::NAME, url_var::DESCRIPTION, url_var::TYPE, url_var::SHARE, url_var::PROTECTION,
+            url_var::OWNER, url_var::PLURAL, url_var::USAGE, url_var::IMPACT, url_var::VIEW]);
 
 
         $t->subheader($ts . 'subtitle with phrase limit');
