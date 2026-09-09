@@ -91,6 +91,8 @@ class component_db
     // *_SQL_TYP: the sql field type used for this field
     const sql_field_type FLD_UI_MSG_ID_SQL_TYP = sql_field_type::CODE_ID;
     const sql_field_type FLD_LINK_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
+    const sql_field_type FLD_LINK_COMP_SQL_TYP = sql_field_type::INT;
+    const sql_field_type FLD_LINK_COMP_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
     const string FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
     const string FLD_STYLE_COM = 'the default display style for this component';
 
@@ -152,6 +154,8 @@ class component_db
         component_fields::FLD_ROW_PHRASE,
         component_fields::FLD_LINK_TYPE,
         formula_fields::FLD_ID,
+        component_fields::FLD_LINK_COMP,
+        component_fields::FLD_LINK_COMP_TYPE,
         component_fields::FLD_COL_PHRASE,
         component_fields::FLD_COL2_PHRASE,
         fields::FLD_EXCLUDED,

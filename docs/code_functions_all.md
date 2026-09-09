@@ -6179,6 +6179,8 @@
             ithout auto fill in /component/execute/system_form.php
     \-- show_formula - section for function show_formula not yet defined that it should be optional with show password b
             ut without auto fill in /component/execute/system_form.php
+    \-- show_linked_component - section for function show_linked_component not yet defined that it should be optional wi
+            th show password but without auto fill in /component/execute/system_form.php
     \-- show_weight - section for function show_weight not yet defined that it should be optional with show password but
              without auto fill in /component/execute/system_form.php
     \-- show_condition_formula - section for function show_condition_formula not yet defined that it should be optional 
@@ -8537,10 +8539,12 @@
         \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
     \-- get_view
         \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
+    \-- get_component_by_id
+        \-- type_lists - the components are cached as part of the system views, so a component is found by the
     \-- get_html
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
+        \-- type_lists - the components are cached as part of the system views, so a component is found by the
     \-- log_err
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
+        \-- type_lists - the components are cached as part of the system views, so a component is found by the
 \-- load
     \-- load_by_view_id
         \-- component_list - the components sorted by the position in the view and by the name for the components
@@ -8946,6 +8950,8 @@
                 s shown
     \-- show_formula
         \-- system_form - @param component|db_object $dbo the component whose calculation formula is shown
+    \-- show_linked_component
+        \-- system_form - the component page names the linked component together with the type of that link, because
     \-- show_weight
         \-- system_form - @param triple|db_object $dbo the triple whose weight is shown
     \-- show_condition_formula
@@ -8957,7 +8963,7 @@
     \-- show_source_doi
         \-- system_form - @param source|db_object $dbo the source whose doi is shown
     \-- show_last_update
-        \-- system_form - @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
+        \-- system_form - unlike a user-settable field the last update time is written by the system, so an unset
     \-- show_result_value
         \-- system_form - @param result|db_object $dbo the result whose value and phrase group is shown
     \-- show_result_formula
@@ -8965,7 +8971,7 @@
     \-- show_all_values_needed
         \-- system_form - @param formula|db_object $dbo the formula whose all-values-needed flag is shown
     \-- show_impact
-        \-- system_form - @param ref|db_object $dbo the reference whose impact is shown
+        \-- system_form - like the last update time the impact is written by the system, so a not yet ranked
     \-- show_row_phrase
         \-- system_form - @param component|db_object $dbo the component whose row phrase is shown
     \-- show_col_phrase

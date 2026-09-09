@@ -136,9 +136,10 @@ class view_ui_tests
         $test_name = 'the style of a view is shown with its user-readable name and its label';
         $t->assert($test_name, $sfm->show_style($msk_filled),
             $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_4_NAME));
-        // a view without a style shows an empty text and never a php warning
-        $test_name = 'a view without a style shows an empty text';
-        $t->assert($test_name, $sfm->show_style($msk), '');
+        // a view without a style shows the style label without a name and never a php warning
+        $test_name = 'a view without a style shows only the style label';
+        $t->assert($test_name, $sfm->show_style($msk),
+            $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, ''));
 
         // the view default page shows the owner (the user who created the view and defines the
         // standard values), which the page url resp. the api message carries as the user name
@@ -322,7 +323,8 @@ class view_ui_tests
 
         // a page url that names only the two linked objects carries no order number
         $test_name = 'a term view shows an empty order number';
-        $t->assert($test_name, $sfm->show_order_nbr($trm_msk_url), '');
+        $t->assert($test_name, $sfm->show_order_nbr($trm_msk_url),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, ''));
 
         // the view relation default page uses the same link title (see base_views.json
         // view_relation_default)
@@ -368,11 +370,13 @@ class view_ui_tests
         // the term view default page shows how the term is linked to the view, with which priority
         // and in which style (see base_views.json term_view_default)
         // the default type is never sent to the frontend (see sandbox_link::api_json_array), so
-        // like the style of a component the field stays empty as long as the default applies
+        // like the style of a component the field keeps its label as long as the default applies
         $test_name = 'the term view page shows no link type for the default type';
-        $t->assert($test_name, $sfm->show_link_type($trm_msk), '');
+        $t->assert($test_name, $sfm->show_link_type($trm_msk),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, ''));
         $test_name = 'a fresh term view shows no link type';
-        $t->assert($test_name, $sfm->show_link_type(new term_view_ui()), '');
+        $t->assert($test_name, $sfm->show_link_type(new term_view_ui()),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, ''));
 
         $test_name = 'the term view page shows the order number';
         $t->assert($test_name, $sfm->show_order_nbr($trm_msk),
@@ -381,7 +385,8 @@ class view_ui_tests
         $t->assert($test_name, $sfm->show_style($trm_msk),
             $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_8_NAME));
         $test_name = 'a fresh term view shows no style';
-        $t->assert($test_name, $sfm->show_style(new term_view_ui()), '');
+        $t->assert($test_name, $sfm->show_style(new term_view_ui()),
+            $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, ''));
 
         // the undo link of the 'my' tab needs the value before the change from the page url
         $test_name = 'the page url of a term view carries the order number, style and description';
@@ -408,7 +413,8 @@ class view_ui_tests
         // the view relation default page additionally shows where in the parent view the
         // components of the child view are added (see base_views.json view_relation_default)
         $test_name = 'the view relation page shows no link type for the default type';
-        $t->assert($test_name, $sfm->show_link_type($mrl), '');
+        $t->assert($test_name, $sfm->show_link_type($mrl),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, ''));
         $test_name = 'the view relation page shows a relation type that differs from the default';
         $mrl_del = $t_msk->view_relation_filled_included();
         $mrl_del->set_relation_type(view_relation_types::REMOVE);
@@ -421,7 +427,8 @@ class view_ui_tests
         $t->assert($test_name, $sfm->show_start_pos($mrl),
             $t->labeled(msg_id::SHOW_FIELD_START_POS, (string)$t_msk->view_relation()->start_pos));
         $test_name = 'a fresh view relation shows no start position';
-        $t->assert($test_name, $sfm->show_start_pos($mrl_new), '');
+        $t->assert($test_name, $sfm->show_start_pos($mrl_new),
+            $t->labeled(msg_id::SHOW_FIELD_START_POS, ''));
 
 
         $t->subheader($ts . 'link select');

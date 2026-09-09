@@ -195,7 +195,9 @@ class ref_tests
             '<a href="' . refs::PI_URL . '">');
         $test_name = 'the ref page links the source of the reference';
         $t->assert_text_contains($test_name, $form->show_ref_source($ref_ui), sources::SIB);
-        // a reference that has never been updated or ranked shows no lonely labels
+        // the last update and the impact are written by the system, so a reference that has
+        // never been updated or ranked shows no lonely labels; unlike a user-settable field
+        // there is nothing the user could fill in behind them
         $ref_plain = new ref_ui($t_ref->reference()->api_json([api_types::TEST_MODE]));
         $test_name = 'a never updated ref shows no last update line';
         $t->assert($test_name, $form->show_last_update($ref_plain), '');

@@ -57,6 +57,7 @@ messages:
   form_select_component_link_order_number: "Reihenfolge"
   form_field_view_relation_start_pos: "Startposition"
   show_field_link_type: "Verknüpfungstyp"
+  show_field_linked_component: "Verknüpfte Komponente"
   show_field_order_nbr: "Reihenfolge"
   show_field_start_pos: "Startposition"
   reset_submit: "Passwort zurücksetzen"

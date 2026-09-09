@@ -5549,18 +5549,15 @@
         },
         {
           "position": "5",
-          "name": "system show view relation type",
-          "position_type": "side"
+          "name": "system show view relation type"
         },
         {
           "position": "6",
-          "name": "system show view relation start position",
-          "position_type": "side"
+          "name": "system show view relation start position"
         },
         {
           "position": "7",
-          "name": "system show child view",
-          "position_type": "side"
+          "name": "system show child view"
         },
         {
           "position": "8",

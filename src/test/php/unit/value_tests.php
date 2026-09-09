@@ -39,6 +39,7 @@ include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -478,10 +480,12 @@ class value_tests
         $test_name = 'the value page shows the time of the last update';
         $t->assert_text_contains($test_name, $form->show_last_update($val_page),
             date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
-        // a value without a source or an update time shows no lonely labels
+        // a value without a source or an update time shows the labels of the empty fields
         $val_plain = $t_val->people_zh_canton_mio_symbol_ui();
-        $test_name = 'a value without a source shows no source line';
-        $t->assert($test_name, $form->show_source($val_plain), '');
+        $test_name = 'a value without a source shows only the source label';
+        $t->assert($test_name, $form->show_source($val_plain),
+            $t->labeled(msg_id::FORM_SELECT_SOURCE, ''));
+        // the last update is written by the system, so it shows no lonely label
         $test_name = 'a value without an update time shows no last update line';
         $t->assert($test_name, $form->show_last_update($val_plain), '');
 

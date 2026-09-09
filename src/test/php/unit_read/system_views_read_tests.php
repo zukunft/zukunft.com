@@ -171,11 +171,11 @@ class system_views_read_tests
         $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
         $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);
         // COMPONENT
-        // the cash flow statement is the only seeded component with a row and a column phrase, so
-        // it is the example that fills every field of the component page except the style, the
-        // formula and the sub column phrase, and it is used by the "company sheet" view, so the
-        // views list of the page has an entry
-        $t->assert_view(views::COMPONENT, $t->usr1, new component($t->usr1), components::CASH_FLOW_ID, $cfg);
+        // the solution priority title is the example of a component with a description and a type
+        // that is used by a view, so the views list of the page has an entry; the style, the
+        // formula and the linked component of this component are not set, so the page shows the
+        // three labels without a value
+        $t->assert_view(views::COMPONENT, $t->usr1, new component($t->usr1), components::SOLUTION_PRIO_TITLE_ID, $cfg);
         $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
         $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
         $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);

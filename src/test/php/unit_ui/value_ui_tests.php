@@ -226,18 +226,21 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $sfm->show_source($val_src_id, $t_src->source_list_ui()),
             sources::BFS);
 
-        // without the cache the id cannot be resolved, so no half filled source line is shown
-        $test_name = 'without the cache the source known by id only is not shown';
-        $t->assert($test_name, $sfm->show_source($val_src_id), '');
+        // without the cache the id cannot be resolved, so the source line shows only its label
+        // and never a half filled source name
+        $test_name = 'without the cache the source known by id only is not named';
+        $t->assert($test_name, $sfm->show_source($val_src_id),
+            $t->labeled(msg_id::FORM_SELECT_SOURCE, ''));
 
         // the api sends the source with its name for a page request, so no cache is needed
         $test_name = 'the source sent by the api is shown without the cache';
         $t->assert_text_contains($test_name, $sfm->show_source($t_val->value_form_ui($msg)),
             sources::BFS);
 
-        // a value without any source shows no source line
-        $test_name = 'a value without a source shows no source line';
-        $t->assert($test_name, $sfm->show_source($val_no_src), '');
+        // a value without any source shows the source label without a name
+        $test_name = 'a value without a source shows only the source label';
+        $t->assert($test_name, $sfm->show_source($val_no_src),
+            $t->labeled(msg_id::FORM_SELECT_SOURCE, ''));
 
 
         $t->subheader($ts . 'similar values and results');

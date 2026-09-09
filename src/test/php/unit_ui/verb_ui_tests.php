@@ -107,12 +107,15 @@ class verb_ui_tests
         $t->assert($test_name, $form->show_plural_reverse($vrb_filled),
             $t->labeled(msg_id::FORM_FIELD_PLURAL_REVERSE, verbs::MEASURE_REV_PLURAL));
 
-        // a verb without the language forms shows an empty text and never a php warning
+        // a verb without the language forms shows the label of the empty field and never a
+        // php warning, because the label tells the user that the form is simply not set
         $vrb_empty = new verb($t_vrb->verb()->api_json());
-        $test_name = 'a verb without a reverse name shows an empty text';
-        $t->assert($test_name, $form->show_reverse($vrb_empty), '');
-        $test_name = 'a verb without a plural reverse name shows an empty text';
-        $t->assert($test_name, $form->show_plural_reverse($vrb_empty), '');
+        $test_name = 'a verb without a reverse name shows only the reverse label';
+        $t->assert($test_name, $form->show_reverse($vrb_empty),
+            $t->labeled(msg_id::FORM_FIELD_REVERSE, ''));
+        $test_name = 'a verb without a plural reverse name shows only the plural reverse label';
+        $t->assert($test_name, $form->show_plural_reverse($vrb_empty),
+            $t->labeled(msg_id::FORM_FIELD_PLURAL_REVERSE, ''));
 
         $t->subheader($ts . 'triples of a verb');
 

@@ -50,10 +50,11 @@ class components
     const string MATRIX_COM = 'changeable sheet with words, number and formulas';
     const int MATRIX_ID = 2;
 
-    // the "Cash Flow Statement" component of companies.json, the only component of the seed data
-    // with a row and a column phrase, so it is the sample object of the component default page;
+    // the "Title solution priority" component of solution_prio.json, the sample object of the
+    // component default page, because it has a description and a type and is used by a view;
     // the id is the import position, so re-baseline it from unit/component/list.csv after a reset
-    const int CASH_FLOW_ID = 374;
+    const string SOLUTION_PRIO_TITLE_NAME = 'Title solution priority';
+    const int SOLUTION_PRIO_TITLE_ID = 373;
 
     // text components to test the side or below position types
     // with ids that are far above the component ids used in the database

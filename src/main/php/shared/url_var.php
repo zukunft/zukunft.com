@@ -99,6 +99,7 @@ class url_var
     const string PHRASE_COL = 'c2';
     const string PHRASE_COL_SUB = 'c3';
     const string COMPONENT_LINK = 'cl'; // to link a component to a view
+    const string LINKED_COMPONENT = 'ck'; // the component that a component links to
     const string POSITION_TYPE = 'cp';
     const string STYLE = 'cs';
     const string COMPONENT_TYPE = 'ct';
@@ -523,6 +524,7 @@ class url_var
     const string COMPONENT_HUMAN = 'component_id';
     const string COMPONENT_TYPE_HUMAN = 'component_type';
     const string COMPONENT_LINK_HUMAN = 'component_link_id'; // link a component to a view
+    const string LINKED_COMPONENT_HUMAN = 'linked_component_id';
     const string COMPONENT_LINK_TYPE_HUMAN = 'component_link_type';
     const string LINK_TYPE_HUMAN = 'link_type';
     const string POSITION_TYPE_HUMAN = 'position_type';
@@ -749,6 +751,7 @@ class url_var
         [self::COMPONENT_HUMAN, self::COMPONENT],
         [self::COMPONENT_TYPE_HUMAN, self::COMPONENT_TYPE],
         [self::COMPONENT_LINK_HUMAN, self::COMPONENT_LINK],
+        [self::LINKED_COMPONENT_HUMAN, self::LINKED_COMPONENT],
         [self::COMPONENT_LINK_TYPE_HUMAN, self::COMPONENT_LINK_TYPE],
         [self::LINK_TYPE_HUMAN, self::LINK_TYPE],
         [self::POSITION_TYPE_HUMAN, self::POSITION_TYPE],

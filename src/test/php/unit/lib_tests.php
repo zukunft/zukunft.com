@@ -120,6 +120,10 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT, $t);
         $test_name = 'sql_format select MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_MYSQL, $t);
+        $test_name = 'sql_format select of a joined object';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED, $t);
+        $test_name = 'sql_format select of a joined object MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED_MYSQL, $t);
         $test_name = 'sql_format select union';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UNION, $t);
         $test_name = 'sql_format select union MariaSQL';
@@ -138,6 +142,21 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE_MYSQL, $t);
         $test_name = 'sql_format create table with user table and comments';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_CREATE_USER, $t);
+
+        // a malformed insert (e.g. the extra comma of the change log generator, see
+        // docs/llm/pending_prio_2.md) has more columns than values, so it cannot be placed on the
+        // column grid; it is kept on one line instead of reading a value that does not exist
+        $body = 'CREATE OR REPLACE FUNCTION t (_a bigint) RETURNS bigint AS $$ BEGIN '
+            . 'INSERT INTO changes (user_id, new_value,, row_id) SELECT _a,_a,_a ; '
+            . 'END $$ LANGUAGE plpgsql; PREPARE t_call (bigint) AS SELECT t ($1); SELECT t (1::bigint);';
+        $test_name = 'sql_format keeps an insert with a missing value on one line';
+        $t->assert_text_contains($test_name, $lib->sql_format($body),
+            'INSERT INTO changes (user_id, new_value,, row_id) SELECT _a,_a,_a;');
+        // the column names of a matching insert are indented by the sigil of their value, so
+        // that each name starts above the name part of the value below it
+        $test_name = 'sql_format aligns the same insert once the columns and values match';
+        $t->assert_text_contains($test_name, $lib->sql_format(str_replace(',,', ',', $body)),
+            'INSERT INTO changes ( user_id, new_value, row_id)');
 
         // json_compact_format recreates the compact layout of the import files (e.g.
         // travel_scoring_value_list.json) from the standard php json pretty print

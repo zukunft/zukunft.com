@@ -172,7 +172,8 @@ class formula_tests
         $frm_plain = new formula_ui($t_frm->formula()->api_json([api_types::TEST_MODE], $msg));
         $test_name = 'a formula that also calculates with missing values shows no flag line';
         $t->assert($test_name, $form->show_all_values_needed($frm_plain), '');
-        $test_name = 'a never calculated formula shows no last update line';
+        // the last update is written by the system, so it shows no lonely label
+        $test_name = 'a never updated formula shows no last update line';
         $t->assert($test_name, $form->show_last_update($frm_plain), '');
 
         $test_name = 'the url array contains the expression and the latex of the formula';

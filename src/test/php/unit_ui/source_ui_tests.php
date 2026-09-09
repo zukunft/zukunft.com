@@ -138,17 +138,20 @@ class source_ui_tests
         $t->assert_text_contains($test_name, $sfm->show_source_url($src),
             $mtr->txt(msg_id::FORM_FIELD_URL) . def::FALLBACK_LABEL_SEPARATOR);
 
-        // without a url the label would stand alone, so nothing at all is shown
-        $test_name = 'a source without a url shows no url label';
-        $t->assert($test_name, $sfm->show_source_url($src_no_url), '');
+        // without a url the label stands alone, which tells the user that the source has a url
+        // field that is not filled yet
+        $test_name = 'a source without a url shows only the url label';
+        $t->assert($test_name, $sfm->show_source_url($src_no_url),
+            $t->labeled(msg_id::FORM_FIELD_URL, ''));
 
         $test_name = 'the source doi is shown behind its label';
         $t->assert_text_contains($test_name, $sfm->show_source_doi($src_filled),
             $mtr->txt(msg_id::FORM_FIELD_DOI) . def::FALLBACK_LABEL_SEPARATOR);
 
-        // the reserved test source has no doi, so neither the label nor a dead link is shown
-        $test_name = 'a source without a doi shows no doi label';
-        $t->assert($test_name, $sfm->show_source_doi($src), '');
+        // the reserved test source has no doi, so the label is shown without a dead link
+        $test_name = 'a source without a doi shows only the doi label';
+        $t->assert($test_name, $sfm->show_source_doi($src),
+            $t->labeled(msg_id::FORM_FIELD_DOI, ''));
 
         $t->subheader($ts . 'values of a source');
 

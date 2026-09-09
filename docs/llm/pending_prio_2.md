@@ -1327,3 +1327,49 @@ so its page shows no related values. this was the deliberate choice when the e v
 from the symbol to the math triple instead of adding the extra hop; if values keyed by a symbol
 should show their siblings too, categories() needs to follow 'is symbol for' and 'name of' before
 the 'is a' step (see verbs::CATEGORY_VERBS)
+
+## the linked component of a component has no form field
+
+the component page now shows the linked component with its link type (components.linked_component_id
+and components.component_link_type_id, base_views.json "system show field linked component"), and
+the two fields travel over the database, the api and the page url like every other component field,
+but neither the component add nor the component edit view has a select for them, so today only an
+api or url call can set the link. the same gap exists for the older link_type_id, so both fields
+need one change that adds a component selector and a component link type selector to the component
+form and covers them in the add and change component workflow tests
+
+## the change log sql generator emits an empty field at the new_id position
+
+two committed fixtures contain a double comma, which is invalid sql:
+src/test/resources/db/triple/triple_insert_log_111150000000001_user.sql has
+'INSERT INTO changes (..., new_value, new_id,, row_id)' (7 column slots for 6 values) and
+src/test/resources/db/log/change_values_big_insert.sql has the parameter list
+'(bigint,smallint,smallint,numeric,,text)' (6 type slots for 5 parameters). in both the empty
+slot sits exactly where the new_id of a typed field is written, so a field is added to the column
+resp. the parameter list with an empty name or type while its value is not added.
+
+library::sql_format is not the source: formatting the same statement with the stray comma removed
+produces a correct aligned line. change::db_field_values_types adds every field with a real name,
+so the empty entry appears further down, where sql_par_field_list is turned into the column and
+parameter lists of the insert (see sql_creator::sql_insert_log and var_name_new_id).
+
+since the fix of the sql_format_insert fatal, sql_format keeps the malformed statement on one line
+instead of placing it on the column grid, like every other statement it cannot parse, so the
+broken sql is visible in the fixture itself; fixing the generator changes the two fixtures and
+needs its own change
+
+## the column style of a read only show component is not applied
+
+view_exe::dsp_entries appends a 'side' component to the current row without a wrapper and uses
+its style only as the style of the whole row (the last component of the row wins), so a per
+component column style works for a form component, which wraps itself in its style div in
+html_base::form_field, but not for a read only 'system show ...' component, whose renderer
+returns plain text.
+
+the visible effect is in src/test/resources/web/html/views_by_id/ref/17_ref_del_29.html, where
+'Reference type: wikidataExternal key: Q167' and 'source: URL:' are glued into one line although
+the ref_del components carry col-md-4 and col-md-8. the same symptom in view_relation_del was
+fixed by dropping the 'side', because its show components carry no style at all and were never
+meant to share a row; ref_del instead wants the two column layout, so the fix is to let a show
+component wrap its own style div like a form field does, which changes every page that gives a
+show component a style and needs its own change

@@ -45,7 +45,6 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -243,25 +242,23 @@ class view_tests
         $target = '<span title="the default view for words" data-toggle="tooltip">Word</span>';
         $t->assert($test_name, $dsp_text, $target);
 
-        // sql to load the view components
+        // sql to load the view components; asserted via assert_qp like every other sql test, so
+        // that the fixture is named after the prepared statement and follows the component field
+        // list on its own - the hand-read file before did not and fell behind the field list
+        // it is kept next to the other component queries of a view
+        // (component_list_by_view_id, component_link_list_by_view_id)
+        $t->resource_path = 'db/component/';
         $msk = new view($t->usr1);
         $msk->id = 2;
 
-        $lib = new library();
+        // assert_qp also checks that the prepared sql name is unique
         $db_con = new sql_db();
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $msk->load_components_sql($db_con)->sql;
-        $expected_sql = $t->file('db/component/components_by_view_id.sql');
-        $t->assert('view->load_components_sql by view id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($msk->load_components_sql($db_con)->name);
+        $t->assert_qp($msk->load_components_sql($db_con), $db_con->db_type);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $msk->load_components_sql($db_con)->sql;
-        $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
-        $t->assert('view->load_components_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $t->assert_qp($msk->load_components_sql($db_con), $db_con->db_type);
 
 
         /*

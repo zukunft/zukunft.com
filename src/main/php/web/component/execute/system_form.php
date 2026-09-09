@@ -744,7 +744,7 @@ class system_form extends component
      *
      * @param string $value the field value of the object
      * @param msg_id $ui_msg_code_id the message id of the field label
-     * @return string the escaped value behind its label, '' if the object has no value
+     * @return string the escaped value behind its label
      */
     private function show_field_labeled(string $value, msg_id $ui_msg_code_id): string
     {
@@ -755,25 +755,26 @@ class system_form extends component
      * like show_field_labeled, but for a value that is html already, e.g. the link of a formula,
      * so the caller is responsible that the given html is safe
      *
+     * an empty value keeps its label, because the view definition decides which fields a page
+     * shows and the label is what tells the user that the object has this field and that it is
+     * not set yet (see docs/llm/frontend.md); a field that only the system writes is the
+     * exception and shows nothing when it is empty, because there the label would promise an
+     * entry that the user cannot make (see show_last_update and show_impact)
+     *
      * @param string $html_code the html shown behind the label
      * @param msg_id $ui_msg_code_id the message id of the field label
-     * @return string the html behind its label, '' if the object has no value
+     * @return string the html behind its label
      */
     private function label_with_html(string $html_code, msg_id $ui_msg_code_id): string
     {
         global $mtr;
 
-        $result = '';
-        // a field without a value is not shown at all, so its label would stand alone
-        if ($html_code != '') {
-            $result = $mtr->txt($ui_msg_code_id) . def::FALLBACK_LABEL_SEPARATOR . $html_code;
-        }
-        return $result;
+        return $mtr->txt($ui_msg_code_id) . def::FALLBACK_LABEL_SEPARATOR . $html_code;
     }
 
     /**
      * @param view|component|component_link|term_view|db_object $dbo the object whose display style is shown
-     * @return string the labeled name of the display style (empty if no style is set)
+     * @return string the labeled name of the display style (the label alone if no style is set)
      */
     function show_style(view|component|component_link|term_view|db_object $dbo): string
     {
@@ -786,12 +787,9 @@ class system_form extends component
             or $dbo instanceof component
             or $dbo instanceof component_link
             or $dbo instanceof term_view) {
-            $style_id = $dbo->get_style_id();
-            if ($style_id != null) {
-                $result = $this->show_field_labeled(
-                    $ui_sys?->typ_lst_cache?->msk_sty?->name($style_id) ?? '',
-                    msg_id::FORM_SELECT_VIEW_STYLE);
-            }
+            $result = $this->show_field_labeled(
+                $ui_sys?->typ_lst_cache?->msk_sty?->name($dbo->get_style_id()) ?? '',
+                msg_id::FORM_SELECT_VIEW_STYLE);
         } else {
             log_err($dbo::class . ' is not expected to have a display style');
         }
@@ -800,7 +798,8 @@ class system_form extends component
 
     /**
      * @param component|db_object $dbo the component whose calculation formula is shown
-     * @return string the linked name of the formula (empty if no formula is set or known)
+     * @return string the linked name of the formula behind its label
+     *                (the label alone if no formula is set or known)
      */
     function show_formula(component|db_object $dbo): string
     {
@@ -809,14 +808,50 @@ class system_form extends component
         // guarded by class, because only a component links a calculation formula and a
         // mis-assigned seed component must not stop the page with a fatal
         if ($dbo instanceof component) {
+            $html_code = '';
+            // resolve the name from the request cache, because the page url and the
+            // api message only carry the formula id
             if ($dbo->formula_id != null) {
-                // resolve the name from the request cache, because the page url and the
-                // api message only carry the formula id
                 $frm = $ui_sys?->frm_lst?->get($dbo->formula_id);
-                $result = $frm?->name_link() ?? '';
+                // name_link() returns safe html, so it is added behind the label unescaped
+                $html_code = $frm?->name_link() ?? '';
             }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_FORMULA);
         } else {
             log_err($dbo::class . ' is not expected to have a calculation formula');
+        }
+        return $result;
+    }
+
+    /**
+     * the component page names the linked component together with the type of that link, because
+     * the type says how the two components belong together and is meaningless without the name
+     *
+     * @param component|db_object $dbo the component whose linked component is shown
+     * @return string the linked name of the linked component with its link type behind the label
+     *                (the label alone if no component is linked or the linked one is not known)
+     */
+    function show_linked_component(component|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a component links another component and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof component) {
+            // resolve the name from the request cache, because the page url and the
+            // api message only carry the component id
+            $cmp = $ui_sys?->typ_lst_cache?->get_component_by_id($dbo->linked_component_id);
+            // name_link() returns safe html, so it is added behind the label unescaped
+            $html_code = $cmp?->name_link([], '', views::COMPONENT_DEFAULT_ID) ?? '';
+            $type_name = $ui_sys?->typ_lst_cache?->cmp_lnk_typ?->name($dbo->component_link_type_id);
+            // the link type says how the two components belong together, so it is only useful
+            // behind the name of the linked component
+            if ($html_code != '' and $type_name != '') {
+                $html_code .= ' (' . $this->esc($type_name) . ')';
+            }
+            $result = $this->label_with_html($html_code, msg_id::SHOW_FIELD_LINKED_COMPONENT);
+        } else {
+            log_err($dbo::class . ' is not expected to link another component');
         }
         return $result;
     }
@@ -879,9 +914,11 @@ class system_form extends component
                 $src = $src_lst?->get($src->id());
             }
             // name_link() returns safe html, so it is added behind the label unescaped
+            $html_code = '';
             if ($src?->name() != '') {
-                $result = $this->label_with_html($src->name_link(), msg_id::FORM_SELECT_SOURCE);
+                $html_code = $src->name_link();
             }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_SOURCE);
         } else {
             log_err($dbo::class . ' is not expected to have a source');
         }
@@ -910,6 +947,10 @@ class system_form extends component
     }
 
     /**
+     * unlike a user-settable field the last update time is written by the system, so an unset
+     * time shows nothing at all instead of the lonely label: the label of an empty field tells
+     * the user that the object has a field that they can still fill, which does not apply here
+     *
      * @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
      *                                                 whose last update time is shown
      * @return string the time of the last update behind its label in the user's time format
@@ -978,9 +1019,11 @@ class system_form extends component
         if ($dbo instanceof result) {
             // the api sends the formula with the name for a page request; name_link() returns
             // safe html, so it is added behind the label unescaped
+            $html_code = '';
             if ($dbo->frm?->name() != '') {
-                $result = $this->label_with_html($dbo->frm->name_link(), msg_id::FORM_SELECT_FORMULA);
+                $html_code = $dbo->frm->name_link();
             }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_FORMULA);
         } else {
             log_err($dbo::class . ' is not expected to be created by a formula');
         }
@@ -1010,6 +1053,9 @@ class system_form extends component
     }
 
     /**
+     * like the last update time the impact is written by the system, so a not yet ranked
+     * reference shows nothing at all instead of the lonely label (see show_last_update)
+     *
      * @param ref|db_object $dbo the reference whose impact is shown
      * @return string the impact number behind its label as read only text, because the impact
      *                is calculated by the system and can never be changed by the user
@@ -1020,8 +1066,11 @@ class system_form extends component
         $result = '';
         // guarded by class, because a mis-assigned seed component must not stop the page
         if ($dbo instanceof ref) {
-            $result = $this->show_field_labeled(
-                (string)($dbo->impact ?? ''), msg_id::SYSTEM_DB_FIELD_IMPACT);
+            // strict, because zero is a calculated impact and not a missing one
+            if ($dbo->impact !== null) {
+                $result = $this->show_field_labeled(
+                    (string)$dbo->impact, msg_id::SYSTEM_DB_FIELD_IMPACT);
+            }
         } else {
             log_err($dbo::class . ' is not expected to show the impact');
         }
@@ -1086,14 +1135,14 @@ class system_form extends component
      */
     private function component_phrase(?int $phr_id, phrase_list $phr_lst, msg_id $ui_msg_code_id): string
     {
-        $result = '';
+        $html_code = '';
         if ($phr_id != null) {
             // resolve the name from the request cache, because the page url and the api
             // message only carry the phrase id
             $phr = $phr_lst->get($phr_id);
-            $result = $this->label_with_html($phr?->name_link() ?? '', $ui_msg_code_id);
+            $html_code = $phr?->name_link() ?? '';
         }
-        return $result;
+        return $this->label_with_html($html_code, $ui_msg_code_id);
     }
 
     /**
@@ -1154,13 +1203,13 @@ class system_form extends component
      */
     function show_ref_source(ref|db_object $dbo): string
     {
-        $result = '';
         // the api sends the source with the name for a page request; name_link() returns
         // safe html, so it is added behind the label unescaped
+        $html_code = '';
         if ($dbo->source()?->name() != '') {
-            $result = $this->label_with_html($dbo->source()->name_link(), msg_id::FORM_SELECT_SOURCE);
+            $html_code = $dbo->source()->name_link();
         }
-        return $result;
+        return $this->label_with_html($html_code, msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
@@ -1170,15 +1219,15 @@ class system_form extends component
      */
     function show_ref_url(ref|db_object $dbo): string
     {
-        $result = '';
+        $html_code = '';
         $url = $dbo->url();
         if ($url != null and $url != '') {
             $html = new html_base();
             // the url is user-settable, but html_base::ref escapes the shown name
             // and drops the link if the scheme is not one of the allowed ones
-            $result = $this->label_with_html($html->ref($url, $url), msg_id::FORM_FIELD_URL);
+            $html_code = $html->ref($url, $url);
         }
-        return $result;
+        return $this->label_with_html($html_code, msg_id::FORM_FIELD_URL);
     }
 
     /**
@@ -1194,9 +1243,11 @@ class system_form extends component
         if ($dbo instanceof ref) {
             // the api sends the phrase with the name for a page request; name_link() returns
             // safe html, so it is added behind the label unescaped
+            $html_code = '';
             if ($dbo->phrase()->name() != '') {
-                $result = $this->label_with_html($dbo->phrase()->name_link(), msg_id::FORM_SELECT_PHRASE);
+                $html_code = $dbo->phrase()->name_link();
             }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_PHRASE);
         } else {
             log_err($dbo::class . ' is not expected to link a single phrase');
         }

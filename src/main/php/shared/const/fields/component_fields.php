@@ -83,6 +83,8 @@ class component_fields
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
         formula_fields::FLD_ID,
+        self::FLD_LINK_COMP,
+        self::FLD_LINK_COMP_TYPE,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
         fields::FLD_USAGE,
