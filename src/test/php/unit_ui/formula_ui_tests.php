@@ -286,14 +286,16 @@ class formula_ui_tests
         $test_name = 'the link type of a formula link is shown with its user-readable name and its label';
         $t->assert($test_name, $sfm->show_link_type($lnk),
             $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, formula_link_types::TIME_PERIOD_NAME));
-        $test_name = 'a formula link without a type shows an empty text';
-        $t->assert($test_name, $sfm->show_link_type($lnk_new), '');
+        $test_name = 'a formula link without a type shows only the link type label';
+        $t->assert($test_name, $sfm->show_link_type($lnk_new),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, ''));
 
         $test_name = 'the order number of a formula link is shown with its label';
         $t->assert($test_name, $sfm->show_order_nbr($lnk),
             $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)test_const::FORMULA_LINK_ORDER_NBR));
-        $test_name = 'a formula link without an order number shows an empty text';
-        $t->assert($test_name, $sfm->show_order_nbr($lnk_new), '');
+        $test_name = 'a formula link without an order number shows only the order number label';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk_new),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, ''));
 
         $test_name = 'the description of a formula link is shown';
         $t->assert($test_name, $sfm->show_description($lnk), test_const::FORMULA_LINK_COM);

@@ -1,0 +1,23 @@
+GET
+http://localhost/http/view.php?id=992&p=5&ek=System+Test+Reference+External+Key&y=2&8id=992&8p=5&8ek=System+Test+Reference+External+Key&8y=2&9m=94&9id=992&ur=https%3A%2F%2Fapi.zukunft.com%2F&m=16&z=1&submit=
+/http/view.php?id=992&p=5&ek=System+Test+Reference+External+Key&y=2&8id=992&8p=5&8ek=System+Test+Reference+External+Key&8y=2&9m=94&9id=992&ur=https%3A%2F%2Fapi.zukunft.com%2F&m=16&z=1&submit=
+/http/view.php?id=992&phrase_id=5&external_key=System+Test+Reference+External+Key&type=2&8id=992&8phrase_id=5&8external_key=System+Test+Reference+External+Key&8type=2&9mask_id=ref_default&9id=992&url=https%3A%2F%2Fapi.zukunft.com%2F&mask_id=ref_edit&step=confirm&
+{
+    "id": "992",
+    "phrase_id": "5",
+    "external_key": "System Test Reference External Key",
+    "type": "2",
+    "url": "https://api.zukunft.com/",
+    "mask_id": "ref_edit",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "992",
+        "phrase_id": "5",
+        "external_key": "System Test Reference External Key",
+        "type": "2"
+    },
+    "url_part_back": {
+        "mask_id": "ref_default",
+        "id": "992"
+    }
+}

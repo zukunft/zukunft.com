@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 class result_tests
 {
@@ -201,10 +203,12 @@ class result_tests
         $test_name = 'the result page shows the time of the last calculation';
         $t->assert_text_contains($test_name, $form->show_last_update($res_page),
             date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
-        // a result that is not yet calculated shows no lonely labels
+        // a result that is not yet calculated shows the labels of the empty fields
         $res_plain = new result_ui($t_res->result_incomplete()->api_json([api_types::TEST_MODE]));
-        $test_name = 'a result without a formula shows no formula line';
-        $t->assert($test_name, $form->show_result_formula($res_plain), '');
+        $test_name = 'a result without a formula shows only the formula label';
+        $t->assert($test_name, $form->show_result_formula($res_plain),
+            $t->labeled(msg_id::FORM_SELECT_FORMULA, ''));
+        // the last update is written by the system, so it shows no lonely label
         $test_name = 'a never calculated result shows no last update line';
         $t->assert($test_name, $form->show_last_update($res_plain), '');
 

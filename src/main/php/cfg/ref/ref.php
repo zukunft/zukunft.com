@@ -78,6 +78,7 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
@@ -119,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
@@ -876,16 +878,29 @@ class ref extends sandbox_link
      */
 
     /**
-     * load a verb by the verb name
-     * @param string $external_key_name the name of the external key for the reference
-     * @return int the id of the verb found and zero if nothing is found
+     * a reference has no name, so the external key takes its place e.g. for the generic test
+     * cleanup by name (test_base::write_named_cleanup), which the parent otherwise never finds
+     * @param string $name the external key of the reference e.g. Q167 for pi in wikidata
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return int the id of the reference found and zero if nothing is found
+     */
+    function load_by_name(string $name, user_message $msg): int
+    {
+        return $this->load_by_ex_key($name, $msg);
+    }
+
+    /**
+     * load a reference by its external key
+     * @param string $external_key_name the external key of the reference e.g. Q167 for pi in wikidata
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return int the id of the reference found and zero if nothing is found
      */
     function load_by_ex_key(string $external_key_name, user_message $msg): int
     {
         global $db_con;
 
         log_debug($external_key_name);
-        $qp = $this->load_sql_by_id($db_con, $external_key_name);
+        $qp = $this->load_sql_by_ex_key($db_con->sql_creator(), $external_key_name);
         return $this->load($qp, $msg);
     }
 
@@ -971,6 +986,24 @@ class ref extends sandbox_link
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);
         $sc->add_where(ref_fields::FLD_TYPE, $type_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a ref by its external key from the database;
+     * the external key can be changed by a user, so the user overlay is compared too
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $external_key the unique key of the reference in the external system
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ex_key(sql_creator $sc, string $external_key): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ex_key');
+        $sc->add_where(ref_fields::FLD_EX_KEY, $external_key, sql_par_type::TEXT_USR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1365,6 +1398,16 @@ class ref extends sandbox_link
         log_debug($this->dsp_id());
 
         global $db_con;
+
+        // the type is part of the prime index, so a reference without a type can neither be checked
+        // for duplicates nor written; refuse it here instead of failing in the duplicate check
+        if ($this->predicate_id() == null) {
+            $msg->add(msg_id::REFERENCE_TYPE_MISSING, [
+                msg_id::VAR_TYPE => $this->predicate_id(),
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+            return false;
+        }
 
         // check e.g. if a preserved name is used and if yes add a message and solution to $msg
         if ($this->check_save($msg)) {

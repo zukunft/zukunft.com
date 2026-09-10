@@ -253,6 +253,7 @@
     \-- type - section for function type not yet defined that it should be preloaded in /ref/ref.php
     \-- load_sql - section for function load_sql is expected to be load sql in /ref/ref.php
     \-- load_sql_by_link_ids - section for function load_sql_by_link_ids is expected to be load sql in /ref/ref.php
+    \-- load_sql_by_ex_key - section for function load_sql_by_ex_key is expected to be load sql in /ref/ref.php
     \-- all_sandbox_fields - section for function all_sandbox_fields is expected to be sql fields in /ref/ref.php
     \-- reload_objects - section for function reload_objects is expected to be related in /ref/ref.php
     \-- from_field - section for function from_field is expected to be sql fields in /ref/ref.php
@@ -263,7 +264,8 @@
     \-- needs_to - section for function needs_to not yet defined that it should be info in /ref/ref.php
     \-- delta - section for function delta is expected to be del in /ref/ref.php
     \-- add - section for function add not yet defined that it should be save in /ref/ref.php
-    \-- order error - order of section info has difference at delta should be before needs_db_update
+    \-- order error - order of section load has difference at load_standard_by_type_link should be before load_by_ex_key
+            ,order of section info has difference at delta should be before needs_db_update
 \-- source
     \-- load_views_related - section for function load_views_related is expected to be load in /ref/source.php
     \-- load_values_related - section for function load_values_related is expected to be load in /ref/source.php
@@ -6064,6 +6066,10 @@
 
 ```
 \-- component
+    \-- api_class - section for function api_class not yet defined that it should be construct and map in /component/com
+            ponent.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be construct and map in /compone
+            nt/component.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be construct and map in /compo
             nent/component.php
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /component/c
@@ -6179,6 +6185,8 @@
             ithout auto fill in /component/execute/system_form.php
     \-- show_formula - section for function show_formula not yet defined that it should be optional with show password b
             ut without auto fill in /component/execute/system_form.php
+    \-- show_linked_component - section for function show_linked_component not yet defined that it should be optional wi
+            th show password but without auto fill in /component/execute/system_form.php
     \-- show_weight - section for function show_weight not yet defined that it should be optional with show password but
              without auto fill in /component/execute/system_form.php
     \-- show_condition_formula - section for function show_condition_formula not yet defined that it should be optional 
@@ -7264,6 +7272,7 @@
     \-- url - section for function url not yet defined that it should be set and get in /ref/ref.php
     \-- predicate_id - section for function predicate_id not yet defined that it should be set and get in /ref/ref.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /ref/ref.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be api in /ref/ref.php
     \-- api_array - section for function api_array not yet defined that it should be api in /ref/ref.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /ref/ref.php
     \-- name_link - section for function name_link not yet defined that it should be base in /ref/ref.php
@@ -7276,6 +7285,7 @@
 \-- ref_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/ref_list.php
     \-- list - section for function list not yet defined that it should be display in /ref/ref_list.php
+    \-- add_link - section for function add_link not yet defined that it should be display in /ref/ref_list.php
     \-- sort_by_impact_and_type - section for function sort_by_impact_and_type not yet defined that it should be display
              in /ref/ref_list.php
 \-- source
@@ -7383,9 +7393,12 @@
     \-- id - section for function id not yet defined that it should be set and get in /sandbox/db_object.php
     \-- api_par_from_url - section for function api_par_from_url not yet defined that it should be load in /sandbox/db_o
             bject.php
+    \-- api_class - section for function api_class not yet defined that it should be load in /sandbox/db_object.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /sandbox/db_object.php
     \-- api_json - section for function api_json not yet defined that it should be interface in /sandbox/db_object.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /sandbox/db_object.php
+    \-- edit_icon_link - section for function edit_icon_link not yet defined that it should be buttons in /sandbox/db_ob
+            ject.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /sandbox/db_object.php
     \-- btn_add_sbx - section for function btn_add_sbx not yet defined that it should be buttons in /sandbox/db_object.p
@@ -7514,6 +7527,7 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_typed.php
     \-- type_id - section for function type_id not yet defined that it should be set and get in /sandbox/sandbox_typed.p
             hp
+    \-- order error - order of section construct and map has difference at to_url_array should be before api_mapper
 \-- sandbox_value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_value.php
@@ -7807,9 +7821,10 @@
     \-- view - section for function view not yet defined that it should be interface in /view/term_view.php
     \-- term_linked - section for function term_linked not yet defined that it should be interface in /view/term_view.ph
             p
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
+    \-- order error - order of section construct and map has difference at to_url_array should be before url_mapper
 \-- view
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /view/view.php
+    \-- url_mapper - section for function url_mapper not yet defined that it should be api in /view/view.php
     \-- to_url_array - section for function to_url_array not yet defined that it should be api in /view/view.php
     \-- sandbox_fld_order - section for function sandbox_fld_order not yet defined that it should be api in /view/view.p
             hp
@@ -7983,7 +7998,7 @@
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php
     \-- math - section for function math not yet defined that it should be fixed in /word/word.php
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
+    \-- order error - order of section construct and map has difference at to_url_array should be before input_valid
 \-- word_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /word/word_list.php
     \-- tbl - section for function tbl not yet defined that it should be table in /word/word_list.php
@@ -8011,20 +8026,22 @@
 
 ```
 \-- construct and map
+    \-- api_class
+        \-- component - @return string the component class for every renderer subclass (component_exe, system_form,
+    \-- to_url_array
+        \-- component - @return array parent url array with the type and the style url vars of the component form,
     \-- db_fld_to_url
         \-- component - @return array all sandbox component db field names mapped to their url var key so that the
     \-- url_mapper
         \-- component - set the vars of this component bases on the url array
         \-- formula_link - set the vars of this word frontend object bases on the url array
         \-- sandbox_link - set the vars of this sandbox link object bases on the url array
-        \-- sandbox_typed - set the vars of this object bases on the url array
     \-- input_valid
         \-- component - besides the base checks the ui message links are code links like the code id, so a change
     \-- api_mapper
         \-- figure_list - set the vars of this figure list based on the given json
         \-- formula_link - set the vars this formula link bases on the api json array
         \-- sandbox_link - set the vars this sandbox link bases on the api json array
-        \-- sandbox_typed - set the vars of this object bases on the api json array
     \-- __construct
         \-- frontend - define the settings for this word object
         \-- data_object - init the data object vars and set the lists based on the given api json
@@ -8032,8 +8049,6 @@
         \-- verb_list - create an empty list, which needs no message; a caller with an api json message
     \-- reset
         \-- data_object - init the data object vars and set the lists based on the given api json
-    \-- to_url_array
-        \-- sandbox_typed - @return array parent url array extended with the type id
 \-- api
     \-- api_mapper
         \-- component - TODO all set_from_json_array functions should only use json_fields not api::FLD
@@ -8048,7 +8063,6 @@
         \-- formula_link - create an api json array for the backend based on this frontend object
         \-- sandbox - @return array the json message array to send the updated data to the backend
         \-- sandbox_link - create an api json array for the backend based on this frontend object
-        \-- sandbox_typed - @return array the json message array to send the updated data to the backend
         \-- sys_log_list - @return array the json message array to send the updated data to the backend
     \-- load_by_id_with_related
         \-- component - load the component by id AND ask the backend to include the owner, the change log and the
@@ -8270,6 +8284,8 @@
     \-- list
         \-- ref_list - show the references below each other, sorted first so the html order is deterministic
         \-- verb_list - set the vars of a term object based on the given json
+    \-- add_link
+        \-- ref_list - a small plus icon shown at the end of the reference list of a phrase that opens the ref add
     \-- sort_by_impact_and_type
         \-- ref_list - sort the references by impact (highest first) and then by reference type name, with the
     \-- display_linked
@@ -8446,10 +8462,8 @@
         \-- combine_named - @return string|null the plural of the word, triple, formula or verb
     \-- set_type_id
         \-- combine_named - TODO review and use only frontend objects
-        \-- sandbox_typed - @return array the json message array to send the updated data to the backend
     \-- type_id
         \-- combine_named - @return int|null the type id of the word, triple, formula or verb
-        \-- sandbox_typed - @return array the json message array to send the updated data to the backend
     \-- url_mapper
         \-- sandbox - set the vars of this object bases on the url array
     \-- to_url_array
@@ -8537,10 +8551,12 @@
         \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
     \-- get_view
         \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
+    \-- get_component_by_id
+        \-- type_lists - the components are cached as part of the system views, so a component is found by the
     \-- get_html
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
+        \-- type_lists - the components are cached as part of the system views, so a component is found by the
     \-- log_err
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
+        \-- type_lists - the components are cached as part of the system views, so a component is found by the
 \-- load
     \-- load_by_view_id
         \-- component_list - the components sorted by the position in the view and by the name for the components
@@ -8946,6 +8962,8 @@
                 s shown
     \-- show_formula
         \-- system_form - @param component|db_object $dbo the component whose calculation formula is shown
+    \-- show_linked_component
+        \-- system_form - the component page names the linked component together with the type of that link, because
     \-- show_weight
         \-- system_form - @param triple|db_object $dbo the triple whose weight is shown
     \-- show_condition_formula
@@ -8957,7 +8975,7 @@
     \-- show_source_doi
         \-- system_form - @param source|db_object $dbo the source whose doi is shown
     \-- show_last_update
-        \-- system_form - @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
+        \-- system_form - unlike a user-settable field the last update time is written by the system, so an unset
     \-- show_result_value
         \-- system_form - @param result|db_object $dbo the result whose value and phrase group is shown
     \-- show_result_formula
@@ -8965,7 +8983,7 @@
     \-- show_all_values_needed
         \-- system_form - @param formula|db_object $dbo the formula whose all-values-needed flag is shown
     \-- show_impact
-        \-- system_form - @param ref|db_object $dbo the reference whose impact is shown
+        \-- system_form - like the last update time the impact is written by the system, so a not yet ranked
     \-- show_row_phrase
         \-- system_form - @param component|db_object $dbo the component whose row phrase is shown
     \-- show_col_phrase

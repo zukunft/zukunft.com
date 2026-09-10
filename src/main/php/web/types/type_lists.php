@@ -609,6 +609,28 @@ class type_lists
         return $this->msk_sys?->get_by_code_id($code_id);
     }
 
+    /**
+     * the components are cached as part of the system views, so a component is found by the
+     * view that uses it; a component that no view uses is not in the cache and returns null
+     *
+     * @param int|null $id the database id of the wanted component or null if the field is not set
+     * @return component|null the component of the request cache or null if it is not cached
+     */
+    function get_component_by_id(?int $id): ?component
+    {
+        $result = null;
+        if ($id != null and $this->msk_sys != null) {
+            foreach ($this->msk_sys->lst() as $msk) {
+                foreach ($msk->get_component_list()->lst() as $cmp) {
+                    if ($cmp->id() == $id) {
+                        $result = $cmp;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
     function get_html(string $code_id, user_message $msg): string
     {
         $result = '';

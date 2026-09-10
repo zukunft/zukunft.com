@@ -432,6 +432,7 @@ class component_exe extends component
             component_types::VIEW_COMPONENTS => $list->view_components($dbo, $msg),
             component_types::VIEW_TERMS => $list->view_terms($dbo, $msg),
             component_types::SHOW_FORMULA => $form->show_formula($dbo),
+            component_types::SHOW_LINKED_COMPONENT => $form->show_linked_component($dbo),
             component_types::SHOW_NAME_IN_FORMULAS => $form->show_name_in_formulas($dbo),
             component_types::SHOW_PHRASE_ROW => $form->show_row_phrase($dbo, $cfg->phrase_list()),
             component_types::SHOW_PHRASE_COL => $form->show_col_phrase($dbo, $cfg->phrase_list()),

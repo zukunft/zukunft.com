@@ -2146,6 +2146,7 @@ enum messages: string
     // labels of read only page fields whose component serves several object types, so that the
     // label of one matching form field cannot be reused (see system_form::show_field_labeled)
     case SHOW_FIELD_LINK_TYPE = 'show_field_link_type';
+    case SHOW_FIELD_LINKED_COMPONENT = 'show_field_linked_component';
     case SHOW_FIELD_ORDER_NBR = 'show_field_order_nbr';
     case SHOW_FIELD_START_POS = 'show_field_start_pos';
 

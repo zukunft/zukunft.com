@@ -54,8 +54,11 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CREATE . 'test_objects.php';
@@ -78,8 +81,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
 class test_components extends test_objects
 {
@@ -648,6 +654,80 @@ class test_components extends test_objects
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_form_end(), $pos);
         return $lst;
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the url of an empty component as the add component form shows it, used by the add_component
+     * workflow test to open the form (mirrors test_sources::source_new_url)
+     *
+     * @return array the url parameters of a component that is not yet created
+     */
+    static function component_new_url(user_message_ui $msg): array
+    {
+        $cmp_ui = new component_ui();
+        return $cmp_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url of the added test component, used by the change_component workflow test to open the
+     * edit form (mirrors test_views::view_add_url)
+     *
+     * @return array the component url parameters of the added test component
+     */
+    function component_add_url(user_message_ui $msg): array
+    {
+        $cmp_ui = new component_ui($this->component_add()->api_json());
+        return $cmp_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url parameters posted by the 'Add new view component' form on save, used by the
+     * add_component workflow test to show the new component in the confirm add view
+     * (docs/llm/testing.md); the share and protection ids are the defaults of a newly added
+     * component, which the add form preselects; the row, column and formula selects stay empty
+     * like a text component has them; the object id and the back target are added by the workflow
+     * step, not here (mirrors test_sources::add_url_array)
+     *
+     * @return array the add form url parameters of the new component
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => components::TEST_ADD_NAME,
+            url_var::DESCRIPTION => components::TEST_ADD_COM,
+            url_var::COMPONENT_TYPE => component_types::TEXT_ID,
+            url_var::STYLE => view_styles::COL_SM_4_ID,
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
+    }
+
+    /**
+     * the filled component url posted by the edit form in the second change_component round,
+     * mirroring test_views::fill_url_array: the first round only changed the style, so the fill
+     * round also changes the description; the '8'-prefixed opening values are the state the
+     * component has after the first round, so the confirm view shows only the description as changed
+     *
+     * @param int $id the database id of the component the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $msg = new user_message_ui();
+        $url_arr = $this->component_add_url($msg);
+        // the workflow step adds the current db id of the test component, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;
+        $url_arr[url_var::DESCRIPTION] = components::TEST_DESCRIPTION_CHANGED;
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::STYLE] = $url_arr[url_var::STYLE];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
     }
 
 }

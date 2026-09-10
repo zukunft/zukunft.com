@@ -61,9 +61,12 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -148,6 +151,58 @@ class component_tests
         $t->assert_api_json($cmp);
         $cmp = $t_cmp->component();
         $t->assert_api($cmp);
+
+        // the component page names the component that the shown component links to, so the two
+        // link fields must survive the way from the database row over the api to the frontend
+        // and back from the page url to the backend
+        $msg_lnk = new user_message($t->usr_system); // a buffer of this link block, checked but not merged
+        $test_name = 'the linked component and its type are read from the database row';
+        $cmp_lnk = new component($t->usr1);
+        // like the rows of a user sandbox query the row carries the user config id and the owner
+        $db_row_lnk = [
+            component_fields::FLD_ID => components::WORD_ID,
+            sql_db::TBL_USER_PREFIX . component_fields::FLD_ID => null,
+            user_db::FLD_ID => $t->usr1->id(),
+            component_fields::FLD_NAME => components::WORD_NAME,
+            component_fields::FLD_LINK_COMP => components::MATRIX_ID,
+            component_fields::FLD_LINK_COMP_TYPE => component_link_types::ALWAYS_ID,
+        ];
+        $cmp_lnk->row_mapper_sandbox($db_row_lnk, $msg_lnk);
+        $t->assert($test_name, $cmp_lnk->linked_component_id, components::MATRIX_ID);
+        $t->assert($test_name . ' type', $cmp_lnk->component_link_type_id, component_link_types::ALWAYS_ID);
+        $test_name = 'the linked component and its type are part of the api message';
+        $api_lnk = json_decode($cmp_lnk->api_json(), true);
+        $t->assert($test_name, $api_lnk[json_fields::LINKED_COMPONENT] ?? null, components::MATRIX_ID);
+        $t->assert($test_name . ' type', $api_lnk[json_fields::COMPONENT_LINK_TYPE] ?? null,
+            component_link_types::ALWAYS_ID);
+        $test_name = 'the frontend keeps the linked component of the api message';
+        $cmp_lnk_ui = new component_ui($cmp_lnk->api_json());
+        $t->assert($test_name, $cmp_lnk_ui->linked_component_id, components::MATRIX_ID);
+        $t->assert($test_name . ' type', $cmp_lnk_ui->component_link_type_id, component_link_types::ALWAYS_ID);
+        // a component that links no other component is the normal case, so the field stays null
+        // and the api message does not carry it at all
+        $test_name = 'a component without a linked component keeps the field empty';
+        $cmp_no_lnk = new component($t->usr1);
+        unset($db_row_lnk[component_fields::FLD_LINK_COMP]);
+        unset($db_row_lnk[component_fields::FLD_LINK_COMP_TYPE]);
+        $cmp_no_lnk->row_mapper_sandbox($db_row_lnk, $msg_lnk);
+        $t->assert_null($test_name, $cmp_no_lnk->linked_component_id);
+        $test_name = 'a component without a linked component sends no linked component';
+        $api_no_lnk = json_decode($cmp_no_lnk->api_json(), true);
+        $t->assert_false($test_name, array_key_exists(json_fields::LINKED_COMPONENT, $api_no_lnk));
+        // the page url of the component edit form posts the two fields back to the backend
+        $test_name = 'a posted linked component and its type are mapped to the frontend component';
+        $cmp_lnk_url_ui = new component_ui($t_cmp->component()->api_json());
+        $cmp_lnk_url_ui->url_mapper([
+            url_var::ID => $cmp_lnk_url_ui->id(),
+            url_var::LINKED_COMPONENT => (string)components::MATRIX_ID,
+            url_var::COMPONENT_LINK_TYPE => (string)component_link_types::ALWAYS_ID
+        ], new user_message_ui());
+        $t->assert($test_name, $cmp_lnk_url_ui->linked_component_id, components::MATRIX_ID);
+        $t->assert($test_name . ' type', $cmp_lnk_url_ui->component_link_type_id,
+            component_link_types::ALWAYS_ID);
+        $test_name = 'the linked component mapping reports no problem';
+        $t->assert_true($test_name, $msg_lnk->is_ok());
 
         // zero is a valid ui message exception value e.g. of the usage sub title, which shows
         // the 'no usage' message if the usage is zero, so it must not be treated like null
@@ -333,6 +388,25 @@ class component_tests
         $cmp_imp->import_mapper([json_fields::ROW => words::YEAR_CAP], $msg_imp, new data_object($t->usr1));
         $t->assert($test_name, $cmp_imp->row_phrase?->name(), words::YEAR_CAP);
         $t->assert($test_name . ' and a zero id', $cmp_imp->row_phrase?->id(), 0);
+
+        // a component type that the type list does not have yet (e.g. a type added to
+        // component_types.csv but not yet written to the database) is named once and the type
+        // stays unset, because the not-found marker of the id lookup would be read back by
+        // every later user of the type as another unknown type id (see view::check_rows_closed)
+        $test_name = 'an unknown component type of an import is named in the message';
+        $cmp_imp = new component($t->usr1);
+        $cmp_imp->import_mapper([json_fields::TYPE_NAME => test_const::TYPE_NOT_IN_LIST], $msg_imp);
+        $t->assert_text_contains($test_name, $msg_imp->text(), test_const::TYPE_NOT_IN_LIST);
+        $test_name = 'an unknown component type of an import leaves the type unset';
+        $t->assert_null($test_name, $cmp_imp->type_id);
+        $msg_imp->reset();
+        // the type of a known component type is set and nothing is reported
+        $test_name = 'a known component type of an import is set';
+        $cmp_imp = new component($t->usr1);
+        $cmp_imp->import_mapper([json_fields::TYPE_NAME => component_types::TEXT], $msg_imp);
+        $t->assert($test_name, $cmp_imp->type_id, component_types::TEXT_ID);
+        $t->assert_true($test_name . ' without a warning', $msg_imp->is_ok());
+        $msg_imp->reset();
 
         $t->subheader($ts . 'component no update import');
 

@@ -13,6 +13,8 @@ PREPARE component_norm_by_ids FROM
                word_id_row,
                link_type_id,
                formula_id,
+               linked_component_id,
+               component_link_type_id,
                word_id_col,
                word_id_col2,
                excluded,

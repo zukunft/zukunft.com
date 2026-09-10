@@ -162,6 +162,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
@@ -976,16 +977,26 @@ class library
         $multi_step = false;
         foreach ($this->sql_split($body, ';') as $stm) {
             if (preg_match('/^INSERT INTO (\S+) \((.+?)\) SELECT (.+?)( RETURNING (.+))?$/', $stm, $prt)) {
-                $ins = [
-                    'tbl' => $prt[1],
-                    'cols' => $this->sql_split($prt[2]),
-                    'vals' => $this->sql_split($prt[3]),
-                    'returning' => trim($prt[5] ?? ''),
-                ];
-                $by_tbl[$prt[1]][] = $ins;
-                $parsed[] = ['type' => 'insert', 'ins' => $ins];
-                if ($ins['returning'] != '') {
-                    $multi_step = true;
+                $cols = $this->sql_split($prt[2]);
+                $vals = $this->sql_split($prt[3]);
+                // the grid pairs every column with its value, so a statement whose two lists
+                // have a different length cannot be placed on it; like every other unexpected
+                // statement of this class it is kept on a single line, which shows the broken
+                // sql (e.g. an empty column name from an extra comma) as it is
+                if (count($cols) != count($vals)) {
+                    $parsed[] = ['type' => 'plain', 'stm' => $stm];
+                } else {
+                    $ins = [
+                        'tbl' => $prt[1],
+                        'cols' => $cols,
+                        'vals' => $vals,
+                        'returning' => trim($prt[5] ?? ''),
+                    ];
+                    $by_tbl[$prt[1]][] = $ins;
+                    $parsed[] = ['type' => 'insert', 'ins' => $ins];
+                    if ($ins['returning'] != '') {
+                        $multi_step = true;
+                    }
                 }
             } elseif (str_starts_with($stm, 'UPDATE ')) {
                 $parsed[] = ['type' => 'update', 'stm' => $stm];
@@ -1052,6 +1063,9 @@ class library
     /**
      * format one insert statement on the shared grid of its table
      * each column name is aligned with the name part of the matching select value
+     *
+     * the columns and the values are pairwise, which sql_format_body has checked, so that a
+     * malformed statement stays on one line there instead of reading a value that does not exist
      *
      * @param array $ins the parsed insert statement with the table, columns, values and returning part
      * @param array $widths the max cell width per position of the table grid
@@ -1200,6 +1214,9 @@ class library
     ): string
     {
         // collect the widths of the case or if fields for the alignment
+        // every user field shares one column width and every standard field another, so a field
+        // is always padded with the width of its own column: padding it with the width of the
+        // other column drops the separating space as soon as it is the longer one
         $case_text_u = 0; // the longest user field checked as text e.g. u.description
         $case_u = 0;      // the longest user field e.g. u.phrase_type_id
         $case_s = 0;      // the longest standard field e.g. s.phrase_type_id
@@ -1210,10 +1227,10 @@ class library
                 if ($prt[2] != '') {
                     $case_text_u = max($case_text_u, strlen($prt[1]));
                 }
-                $case_u = max($case_u, strlen($prt[1]));
+                $case_u = max($case_u, strlen($prt[1]), strlen($prt[5]));
                 $case_s = max($case_s, strlen($prt[4]));
             } elseif (preg_match($if_pattern, $fld, $prt)) {
-                $case_u = max($case_u, strlen($prt[1]));
+                $case_u = max($case_u, strlen($prt[1]), strlen($prt[3]));
                 $case_s = max($case_s, strlen($prt[2]));
             }
         }
@@ -1230,7 +1247,7 @@ class library
                 }
                 $line = 'CASE WHEN (' . $cond . ') THEN '
                     . str_pad($prt[4], $case_s + 1) . 'ELSE '
-                    . str_pad($prt[5], $case_s + 1) . 'END AS ' . $prt[6];
+                    . str_pad($prt[5], $case_u + 1) . 'END AS ' . $prt[6];
             } elseif (preg_match($if_pattern, $fld, $prt)) {
                 $line = 'IF(' . str_pad($prt[1], $case_u + 1) . 'IS NULL, '
                     . str_pad($prt[2] . ',', $case_s + 2)
@@ -4389,6 +4406,23 @@ class library
                 break;
         }
         return $msg_id;
+    }
+
+    /**
+     * the api route folder of an object class as used in the api url, e.g. 'formulaLink' for a
+     * formula_link; the reference folder is named by the full word unlike the class, so this
+     * exception is mapped here once for the frontend calls and the api tests
+     *
+     * @param string $class including the namespace of the frontend or the backend class
+     * @return string the api route folder name
+     */
+    function class_to_api_route(string $class): string
+    {
+        $name = self::class_to_name($class);
+        if ($name == self::class_to_name(ref::class)) {
+            $name = url_var::REF_API;
+        }
+        return $this->camelize_ex_1($name);
     }
 
     /**

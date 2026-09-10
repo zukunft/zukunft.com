@@ -153,11 +153,41 @@ class component extends sandbox_code_id
     public ?int $link_type_id = null;
     // the id of the formula used to calculate the component content e.g. for a chart
     public ?int $formula_id = null;
+    // the component that this component links to and the type that says how the two are linked
+    public ?int $linked_component_id = null;
+    public ?int $component_link_type_id = null;
 
 
     /*
      * construct and map
      */
+
+    /**
+     * @return string the component class for every renderer subclass (component_exe, system_form,
+     *                system_page), because the api has one component route and the user sees a
+     *                "component", never the internal renderer name
+     */
+    function api_class(): string
+    {
+        return self::class;
+    }
+
+    /**
+     * @return array parent url array with the type and the style url vars of the component form,
+     *         without empty values, so that a form submission can be built from a component object
+     *         (e.g. by the add_component workflow test) and the undo link of the 'my' tab finds the
+     *         current type and style (see ui_preview::overwrite_confirm_link); the component form
+     *         posts the type as url_var::COMPONENT_TYPE, so the generic type key of the parent is
+     *         replaced, just like in view::to_url_array
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        unset($url_array[url_var::TYPE]);
+        $url_array[url_var::COMPONENT_TYPE] = $this->type_id($msg);
+        $url_array[url_var::STYLE] = $this->get_style_id();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
 
     /**
      * @return array all sandbox component db field names mapped to their url var key so that the
@@ -174,6 +204,8 @@ class component extends sandbox_code_id
             component_fields::FLD_ROW_PHRASE => url_var::PHRASE_ROW,
             component_fields::FLD_LINK_TYPE => url_var::LINK_TYPE,
             formula_fields::FLD_ID => url_var::FORMULA,
+            component_fields::FLD_LINK_COMP => url_var::LINKED_COMPONENT,
+            component_fields::FLD_LINK_COMP_TYPE => url_var::COMPONENT_LINK_TYPE,
             component_fields::FLD_COL_PHRASE => url_var::PHRASE_COL,
             component_fields::FLD_COL2_PHRASE => url_var::PHRASE_COL_SUB,
             fields::FLD_CODE_ID => url_var::CODE_ID,
@@ -198,6 +230,11 @@ class component extends sandbox_code_id
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         parent::url_mapper($url_array, $msg, $dto);
+        // the component form posts the type as url_var::COMPONENT_TYPE (see to_url_array), which
+        // the parent does not read, so without this branch an added component loses its type
+        if (array_key_exists(url_var::COMPONENT_TYPE, $url_array)) {
+            $this->set_type_id($url_array[url_var::COMPONENT_TYPE]);
+        }
         if (array_key_exists(url_var::STYLE, $url_array)) {
             $this->style_id = $url_array[url_var::STYLE];
         }
@@ -215,6 +252,12 @@ class component extends sandbox_code_id
         }
         if (array_key_exists(url_var::FORMULA, $url_array)) {
             $this->formula_id = $url_array[url_var::FORMULA];
+        }
+        if (array_key_exists(url_var::LINKED_COMPONENT, $url_array)) {
+            $this->linked_component_id = $url_array[url_var::LINKED_COMPONENT];
+        }
+        if (array_key_exists(url_var::COMPONENT_LINK_TYPE, $url_array)) {
+            $this->component_link_type_id = $url_array[url_var::COMPONENT_LINK_TYPE];
         }
         // the ui message links posted by the component form of a system or developer user;
         // an empty submitted field clears the link, a missing field keeps the loaded one
@@ -387,6 +430,16 @@ class component extends sandbox_code_id
         } else {
             $this->formula_id = null;
         }
+        if (array_key_exists(json_fields::LINKED_COMPONENT, $json_array)) {
+            $this->linked_component_id = $json_array[json_fields::LINKED_COMPONENT];
+        } else {
+            $this->linked_component_id = null;
+        }
+        if (array_key_exists(json_fields::COMPONENT_LINK_TYPE, $json_array)) {
+            $this->component_link_type_id = $json_array[json_fields::COMPONENT_LINK_TYPE];
+        } else {
+            $this->component_link_type_id = null;
+        }
         return $msg->is_ok();
     }
 
@@ -433,6 +486,12 @@ class component extends sandbox_code_id
         }
         if ($this->formula_id != 0) {
             $vars[json_fields::FORMULA_ID] = $this->formula_id;
+        }
+        if ($this->linked_component_id != 0) {
+            $vars[json_fields::LINKED_COMPONENT] = $this->linked_component_id;
+        }
+        if ($this->component_link_type_id != 0) {
+            $vars[json_fields::COMPONENT_LINK_TYPE] = $this->component_link_type_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

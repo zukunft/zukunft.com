@@ -107,11 +107,15 @@ class MapObject
             return new result($usr);
         } elseif ($ui_obj::class == view_ui::class) {
             return new view($usr);
-        } elseif ($ui_obj::class == component_ui::class) {
+        } elseif ($ui_obj instanceof component_ui) {
+            // instanceof, because the frontend builds the component_exe renderer for the component
+            // masks (see frontend::view_id_to_dbo_ui) and a confirmed add converts that subclass
             return new component($usr);
         } elseif ($ui_obj::class == view_relation_ui::class) {
             return new view_relation($usr);
         } else {
+            // a base object has no name field, so the following save would fatal without a hint
+            log_err('no backend class mapped for the frontend class ' . $ui_obj::class);
             return new db_object_seq_id();
         }
     }

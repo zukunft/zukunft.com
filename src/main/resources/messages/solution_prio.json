@@ -5072,7 +5072,8 @@
       "type": "system_title",
       "code_id": "solution_prio_title",
       "ui_msg_code_id": "solution_prio_title",
-      "description": "page title: the global problems ranked by their potential loss"
+      "description": "page title: the global problems ranked by their potential loss",
+      "protection": "admin_protection"
     },
     {
       "name": "table problem ranking by potential loss",

@@ -1173,10 +1173,7 @@ class test_api extends test_base
     private function class_to_url(string $class): string
     {
         $lib = new library();
-        if ($class == ref::class) {
-            $class = url_var::REF_API;
-        }
-        $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
+        $url_class = $lib->class_to_api_route($class);
         return THIS_URL . url_var::API_PATH . $url_class;
     }
 

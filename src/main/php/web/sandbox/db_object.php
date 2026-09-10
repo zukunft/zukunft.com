@@ -42,9 +42,11 @@ include_once html_paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
@@ -66,6 +68,7 @@ include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -75,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -415,7 +419,7 @@ class db_object extends TextIdObject
         $result = false;
 
         $api = new rest_call();
-        $json_array = $api->api_call_id($this::class, $id, $data);
+        $json_array = $api->api_call_id($this->api_class(), $id, $data);
         if ($json_array) {
             $api_msg = new api_message();
             $body = $api_msg->validate($json_array);
@@ -481,6 +485,18 @@ class db_object extends TextIdObject
         return [];
     }
 
+    /**
+     * the class the api and the user texts know this object by: a renderer subclass (e.g. the
+     * component_exe that the frontend builds for the component pages) calls the api of its base
+     * class and is named like it, so it overrides this with the base class
+     *
+     * @return string the class name used for the api route and the translated object name
+     */
+    function api_class(): string
+    {
+        return $this::class;
+    }
+
 
     /*
      * interface
@@ -536,6 +552,30 @@ class db_object extends TextIdObject
             $this::VIEW_ADD_ID,
             $this::MSG_ADD,
             $url_arr, '', $base_url);
+    }
+
+    /**
+     * a small inline edit icon that links to the edit view of this object, e.g. behind the page
+     * title or behind a reference name; the page-identifying url params of the calling page are
+     * added with the url_var::BACK ('9') prefix so the edit mask can return to the calling page
+     * e.g. on cancel or if the pod blocks the change of an ip user (see /http/view.php).
+     * not named edit_link, because formula::edit_link returns the linked name and view::edit_link
+     * has no back params, so a same-named parent function would change or break the children
+     *
+     * @param array $url_array the url params of the calling page used to create the back params
+     * @return string the html code of the edit icon with the link to the edit view
+     */
+    function edit_icon_link(array $url_array = []): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $url = $html->url_with_back(
+            $html->url_back($this::VIEW_EDIT_ID, $this->id()),
+            $url_array
+        );
+        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
+        return $html->ref($url, $icon, $mtr->txt($this::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
     }
 
     /**

@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            System Test View Component - Change view component - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="67">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=31&amp;id=34&amp;9id=993&amp;9m=34">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=30&amp;9id=993&amp;9m=34">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=34&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=34&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=34&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=34&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=34&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=34&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=34&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    system test zukunft.com system test
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=64&amp;9id=993&amp;9m=34&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9id=993&amp;9m=34">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Change component
+            </h4>
+            <form action="http://localhost/http/view.php" id="component_edit">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input class="form-control" type="hidden" name="m" id="mask" value="34">
+                <input class="form-control" type="hidden" name="id" id="id" value="993">
+                <input type="hidden" name="9m" value="115">
+                <input type="hidden" name="9id" value="993">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="name">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="k" id="name" value="System Test View Component">
+                    </div>
+                    <input type="hidden" name="8k" value="System Test View Component">
+                    <div class="form-group col-md-4">
+                        <label for="ct_form_select_component_type">
+                            Component type
+                        </label>
+                        <select class="form-control" name="ct" form="component_edit" id="ct_form_select_component_type" >
+                            <option value="15"  >
+                                CSV export
+                            </option>
+                            <option value="16"  >
+                                JSON Export
+                            </option>
+                            <option value="14"  >
+                                XML export
+                            </option>
+                            <option value="179"  >
+                                admin form field language symbol
+                            </option>
+                            <option value="169"  >
+                                admin form field user email
+                            </option>
+                            <option value="168"  >
+                                admin form field username
+                            </option>
+                            <option value="170"  >
+                                admin form field user password
+                            </option>
+                            <option value="209"  >
+                                admin form field user uses sandbox
+                            </option>
+                            <option value="10"  >
+                                all relations
+                            </option>
+                            <option value="216"  >
+                                all user overwrites
+                            </option>
+                            <option value="28"  >
+                                button cancel
+                            </option>
+                            <option value="204"  >
+                                button confirm
+                            </option>
+                            <option value="30"  >
+                                button delete
+                            </option>
+                            <option value="187"  >
+                                button request new
+                            </option>
+                            <option value="29"  >
+                                button save
+                            </option>
+                            <option value="210"  >
+                                change log table pure
+                            </option>
+                            <option value="240"  >
+                                code id field
+                            </option>
+                            <option value="230"  >
+                                component views
+                            </option>
+                            <option value="155"  >
+                                context for table import
+                            </option>
+                            <option value="156"  >
+                                drop area for data import
+                            </option>
+                            <option value="134"  >
+                                export csv
+                            </option>
+                            <option value="132"  >
+                                export json
+                            </option>
+                            <option value="131"  >
+                                export ods
+                            </option>
+                            <option value="133"  >
+                                export xml
+                            </option>
+                            <option value="62"  >
+                                expression
+                            </option>
+                            <option value="202"  >
+                                expression latex link
+                            </option>
+                            <option value="234"  >
+                                expression with links
+                            </option>
+                            <option value="180"  >
+                                field language symbol
+                            </option>
+                            <option value="4"  >
+                                fixed word
+                            </option>
+                            <option value="205"  >
+                                formatter row center
+                            </option>
+                            <option value="31"  >
+                                form end
+                            </option>
+                            <option value="22"  >
+                                form field description
+                            </option>
+                            <option value="167"  >
+                                form field external key of reference
+                            </option>
+                            <option value="149"  >
+                                form field formula name
+                            </option>
+                            <option value="21"  >
+                                form field name
+                            </option>
+                            <option value="54"  >
+                                form field name
+                            </option>
+                            <option value="25"  >
+                                form field phrase type
+                            </option>
+                            <option value="55"  >
+                                form field plural
+                            </option>
+                            <option value="136"  >
+                                form field plural reverse
+                            </option>
+                            <option value="27"  >
+                                form field protection type
+                            </option>
+                            <option value="135"  >
+                                form field reverse
+                            </option>
+                            <option value="26"  >
+                                form field share type
+                            </option>
+                            <option value="123"  >
+                                form field value type
+                            </option>
+                            <option value="150"  >
+                                form field weight
+                            </option>
+                            <option value="121"  >
+                                form select multi ref
+                            </option>
+                            <option value="119"  >
+                                form select multi source
+                            </option>
+                            <option value="23"  >
+                                form select phrase
+                            </option>
+                            <option value="120"  >
+                                form select ref
+                            </option>
+                            <option value="118"  >
+                                form select source
+                            </option>
+                            <option value="24"  >
+                                form select verb
+                            </option>
+                            <option value="98"  >
+                                formula list
+                            </option>
+                            <option value="6"  >
+                                formula results
+                            </option>
+                            <option value="12"  >
+                                formulas
+                            </option>
+                            <option value="148"  >
+                                formulas by verb
+                            </option>
+                            <option value="206"  >
+                                formulas of parents
+                            </option>
+                            <option value="141"  >
+                                group name
+                            </option>
+                            <option value="140"  >
+                                group or phrase list
+                            </option>
+                            <option value="60"  >
+                                language name
+                            </option>
+                            <option value="235"  >
+                                latex with links in a form
+                            </option>
+                            <option value="5"  >
+                                linked word
+                            </option>
+                            <option value="222"  >
+                                link title
+                            </option>
+                            <option value="38"  >
+                                main value
+                            </option>
+                            <option value="207"  >
+                                most relevant values
+                            </option>
+                            <option value="142"  >
+                                numeric value
+                            </option>
+                            <option value="96"  >
+                                parents of this word
+                            </option>
+                            <option value="194"  >
+                                phrase aliases
+                            </option>
+                            <option value="189"  >
+                                phrases with details on 1/3 screen
+                            </option>
+                            <option value="188"  >
+                                phrases with details related to
+                            </option>
+                            <option value="195"  >
+                                phrase symbols
+                            </option>
+                            <option value="213"  >
+                                phrase title
+                            </option>
+                            <option value="160"  >
+                                popup changes
+                            </option>
+                            <option value="161"  >
+                                popup impact
+                            </option>
+                            <option value="159"  >
+                                popup object
+                            </option>
+                            <option value="158"  >
+                                popup title
+                            </option>
+                            <option value="46"  >
+                                ranking list
+                            </option>
+                            <option value="45"  >
+                                ranking parameters
+                            </option>
+                            <option value="59"  >
+                                reference name
+                            </option>
+                            <option value="197"  >
+                                related phrases without subtitles
+                            </option>
+                            <option value="196"  >
+                                related phrases without symbols
+                            </option>
+                            <option value="47"  >
+                                related triples
+                            </option>
+                            <option value="97"  >
+                                result list
+                            </option>
+                            <option value="248"  >
+                                results of value
+                            </option>
+                            <option value="61"  >
+                                results related to
+                            </option>
+                            <option value="154"  >
+                                results that changes
+                            </option>
+                            <option value="34"  >
+                                row end
+                            </option>
+                            <option value="33"  >
+                                row right
+                            </option>
+                            <option value="32"  >
+                                row start
+                            </option>
+                            <option value="157"  >
+                                selection name
+                            </option>
+                            <option value="186"  >
+                                selection page
+                            </option>
+                            <option value="243"  >
+                                show all values needed
+                            </option>
+                            <option value="228"  >
+                                show column phrase
+                            </option>
+                            <option value="237"  >
+                                show condition formula
+                            </option>
+                            <option value="147"  >
+                                show description
+                            </option>
+                            <option value="164"  >
+                                show external key
+                            </option>
+                            <option value="226"  >
+                                show formula
+                            </option>
+                            <option value="241"  >
+                                show impact
+                            </option>
+                            <option value="239"  >
+                                show last update
+                            </option>
+                            <option value="250"  >
+                                show linked component
+                            </option>
+                            <option value="231"  >
+                                show link type
+                            </option>
+                            <option value="20"  selected >
+                                show name
+                            </option>
+                            <option value="208"  >
+                                show name center
+                            </option>
+                            <option value="233"  >
+                                show name in formulas
+                            </option>
+                            <option value="232"  >
+                                show order number
+                            </option>
+                            <option value="224"  >
+                                show owner
+                            </option>
+                            <option value="191"  >
+                                show phrase type
+                            </option>
+                            <option value="190"  >
+                                show plural
+                            </option>
+                            <option value="220"  >
+                                show plural reverse
+                            </option>
+                            <option value="242"  >
+                                show reference phrase
+                            </option>
+                            <option value="165"  >
+                                show reference source
+                            </option>
+                            <option value="163"  >
+                                show reference type
+                            </option>
+                            <option value="166"  >
+                                show reference url
+                            </option>
+                            <option value="245"  >
+                                show result formula
+                            </option>
+                            <option value="244"  >
+                                show result value
+                            </option>
+                            <option value="219"  >
+                                show reverse
+                            </option>
+                            <option value="227"  >
+                                show row phrase
+                            </option>
+                            <option value="238"  >
+                                show source
+                            </option>
+                            <option value="223"  >
+                                show style
+                            </option>
+                            <option value="229"  >
+                                show sub column phrase
+                            </option>
+                            <option value="236"  >
+                                show weight
+                            </option>
+                            <option value="218"  >
+                                source doi link
+                            </option>
+                            <option value="58"  >
+                                source name
+                            </option>
+                            <option value="221"  >
+                                source url link
+                            </option>
+                            <option value="35"  >
+                                spreadsheet
+                            </option>
+                            <option value="64"  >
+                                system about
+                            </option>
+                            <option value="105"  >
+                                system activate
+                            </option>
+                            <option value="185"  >
+                                system admin delayed jobs
+                            </option>
+                            <option value="182"  >
+                                system admin failed logins
+                            </option>
+                            <option value="184"  >
+                                system admin pending error fixes
+                            </option>
+                            <option value="181"  >
+                                system admin response times
+                            </option>
+                            <option value="183"  >
+                                system admin unassigned errors
+                            </option>
+                            <option value="65"  >
+                                system body error log
+                            </option>
+                            <option value="66"  >
+                                system body error update
+                            </option>
+                            <option value="68"  >
+                                system body process list
+                            </option>
+                            <option value="67"  >
+                                system body process progress
+                            </option>
+                            <option value="95"  >
+                                system button export
+                            </option>
+                            <option value="94"  >
+                                system button import
+                            </option>
+                            <option value="44"  >
+                                system change log
+                            </option>
+                            <option value="176"  >
+                                system field child view
+                            </option>
+                            <option value="175"  >
+                                system field parent view
+                            </option>
+                            <option value="177"  >
+                                system field relation type
+                            </option>
+                            <option value="178"  >
+                                system field view modification start position
+                            </option>
+                            <option value="126"  >
+                                system form component link position
+                            </option>
+                            <option value="19"  >
+                                system form confirm status
+                            </option>
+                            <option value="217"  >
+                                system form field doi
+                            </option>
+                            <option value="53"  >
+                                system form field formula text
+                            </option>
+                            <option value="69"  >
+                                system form field group
+                            </option>
+                            <option value="70"  >
+                                system form field group or phrase list
+                            </option>
+                            <option value="211"  >
+                                system form field latex
+                            </option>
+                            <option value="73"  >
+                                system form field selection description
+                            </option>
+                            <option value="72"  >
+                                system form field selection name
+                            </option>
+                            <option value="74"  >
+                                system form field selection text
+                            </option>
+                            <option value="85"  >
+                                system form field source group
+                            </option>
+                            <option value="117"  >
+                                system form field source group or phrase list
+                            </option>
+                            <option value="71"  >
+                                system form field url
+                            </option>
+                            <option value="139"  >
+                                system form field value
+                            </option>
+                            <option value="18"  >
+                                system form hidden back stack
+                            </option>
+                            <option value="42"  >
+                                system form link list
+                            </option>
+                            <option value="93"  >
+                                system form link table
+                            </option>
+                            <option value="89"  >
+                                system form preview
+                            </option>
+                            <option value="41"  >
+                                system form ref list
+                            </option>
+                            <option value="172"  >
+                                system form select child view
+                            </option>
+                            <option value="87"  >
+                                system form select component
+                            </option>
+                            <option value="99"  >
+                                system form select component link type
+                            </option>
+                            <option value="153"  >
+                                system form select component position type
+                            </option>
+                            <option value="124"  >
+                                system form select component style
+                            </option>
+                            <option value="52"  >
+                                system form select component type
+                            </option>
+                            <option value="92"  >
+                                system form select export format
+                            </option>
+                            <option value="91"  >
+                                system form select file
+                            </option>
+                            <option value="77"  >
+                                system form select formula
+                            </option>
+                            <option value="127"  >
+                                system form select formula link priority
+                            </option>
+                            <option value="100"  >
+                                system form select formula link type
+                            </option>
+                            <option value="49"  >
+                                system form select formula type
+                            </option>
+                            <option value="88"  >
+                                system form select multi components
+                            </option>
+                            <option value="78"  >
+                                system form select multi formulas
+                            </option>
+                            <option value="75"  >
+                                system form select multi phrases
+                            </option>
+                            <option value="84"  >
+                                system form select multi results
+                            </option>
+                            <option value="80"  >
+                                system form select multi terms
+                            </option>
+                            <option value="82"  >
+                                system form select multi values
+                            </option>
+                            <option value="76"  >
+                                system form select multi verbs
+                            </option>
+                            <option value="86"  >
+                                system form select multi views
+                            </option>
+                            <option value="171"  >
+                                system form select parent view
+                            </option>
+                            <option value="48"  >
+                                system form select reference type
+                            </option>
+                            <option value="83"  >
+                                system form select result
+                            </option>
+                            <option value="39"  >
+                                system form select source type
+                            </option>
+                            <option value="79"  >
+                                system form select term
+                            </option>
+                            <option value="81"  >
+                                system form select value
+                            </option>
+                            <option value="40"  >
+                                system form select view
+                            </option>
+                            <option value="90"  >
+                                system form select view default
+                            </option>
+                            <option value="101"  >
+                                system form select view link type
+                            </option>
+                            <option value="174"  >
+                                system form select view relation start position
+                            </option>
+                            <option value="173"  >
+                                system form select view relation type
+                            </option>
+                            <option value="51"  >
+                                system form select view style
+                            </option>
+                            <option value="50"  >
+                                system form select view type
+                            </option>
+                            <option value="17"  >
+                                system form title
+                            </option>
+                            <option value="112"  >
+                                system formula test
+                            </option>
+                            <option value="125"  >
+                                system form view link priority
+                            </option>
+                            <option value="104"  >
+                                system login
+                            </option>
+                            <option value="107"  >
+                                system logout
+                            </option>
+                            <option value="143"  >
+                                system preview after change
+                            </option>
+                            <option value="116"  >
+                                system process
+                            </option>
+                            <option value="106"  >
+                                system reset
+                            </option>
+                            <option value="111"  >
+                                system result explain
+                            </option>
+                            <option value="113"  >
+                                system sandbox
+                            </option>
+                            <option value="108"  >
+                                system search
+                            </option>
+                            <option value="109"  >
+                                system search full
+                            </option>
+                            <option value="102"  >
+                                system setup
+                            </option>
+                            <option value="128"  >
+                                system show field usage
+                            </option>
+                            <option value="103"  >
+                                system signup
+                            </option>
+                            <option value="145"  >
+                                system sub title
+                            </option>
+                            <option value="146"  >
+                                system sub title var
+                            </option>
+                            <option value="63"  >
+                                system title
+                            </option>
+                            <option value="215"  >
+                                system title with object name
+                            </option>
+                            <option value="114"  >
+                                system undo
+                            </option>
+                            <option value="43"  >
+                                system usage
+                            </option>
+                            <option value="115"  >
+                                system user settings
+                            </option>
+                            <option value="110"  >
+                                system value detail
+                            </option>
+                            <option value="144"  >
+                                system view before change
+                            </option>
+                            <option value="214"  >
+                                table with related columns
+                            </option>
+                            <option value="36"  >
+                                term name
+                            </option>
+                            <option value="249"  >
+                                terms of view
+                            </option>
+                            <option value="3"  >
+                                text
+                            </option>
+                            <option value="201"  >
+                                title of formula with edit link
+                            </option>
+                            <option value="192"  >
+                                title of named with edit link
+                            </option>
+                            <option value="200"  >
+                                title of triple with edit link
+                            </option>
+                            <option value="203"  >
+                                title of value with edit link
+                            </option>
+                            <option value="57"  >
+                                triple name
+                            </option>
+                            <option value="246"  >
+                                ui message fields
+                            </option>
+                            <option value="129"  >
+                                used in as text
+                            </option>
+                            <option value="130"  >
+                                used in as text with link
+                            </option>
+                            <option value="193"  >
+                                user system errors
+                            </option>
+                            <option value="198"  >
+                                value chart
+                            </option>
+                            <option value="152"  >
+                                values by source
+                            </option>
+                            <option value="151"  >
+                                values by triple
+                            </option>
+                            <option value="212"  >
+                                values in columns
+                            </option>
+                            <option value="11"  >
+                                values related to
+                            </option>
+                            <option value="247"  >
+                                values similar
+                            </option>
+                            <option value="37"  >
+                                verb name
+                            </option>
+                            <option value="137"  >
+                                verb usage
+                            </option>
+                            <option value="225"  >
+                                view components
+                            </option>
+                            <option value="162"  >
+                                view differences
+                            </option>
+                            <option value="122"  >
+                                views
+                            </option>
+                            <option value="2"  >
+                                view selector
+                            </option>
+                            <option value="199"  >
+                                view tab box
+                            </option>
+                            <option value="9"  >
+                                word list down
+                            </option>
+                            <option value="7"  >
+                                word list up
+                            </option>
+                            <option value="8"  >
+                                word name
+                            </option>
+                            <option value="56"  >
+                                word results
+                            </option>
+                            <option value="1"  >
+                                word selector
+                            </option>
+                            <option value="138"  >
+                                words or triples liked to formula
+                            </option>
+                            <option value="13"  >
+                                word value list
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="description">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="o" id="description" value="System Test View Component description">
+                    </div>
+                    <input type="hidden" name="8o" value="System Test View Component description">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="c1_form_select_phrase_row">
+                            Row phrase
+                        </label>
+                        <input type="text" list="c1_form_select_phrase_row_list" class="form-control" name="c1" form="component_edit" id="c1_form_select_phrase_row" >
+                        <datalist id="c1_form_select_phrase_row_list">
+                            <option value="2023 (year)" data-value="-558">
+                            </option>
+                            <option value="2023 is follower of 2022" data-value="-568">
+                            </option>
+                            <option value="2024 (year)" data-value="-557">
+                            </option>
+                            <option value="2024 is follower of 2023" data-value="-567">
+                            </option>
+                            <option value="EUR (ISO 4217 code)" data-value="-344">
+                            </option>
+                            <option value="EUR (currency)" data-value="-546">
+                            </option>
+                            <option value="EUR is symbol for Euro" data-value="-318">
+                            </option>
+                            <option value="EUR per person year" data-value="-162">
+                            </option>
+                            <option value="GDP decline" data-value="-118">
+                            </option>
+                            <option value="GDP is symbol for gross domestic product" data-value="-816">
+                            </option>
+                            <option value="GDP per capita" data-value="-701">
+                            </option>
+                            <option value="OLS is symbol for ordinary least squares" data-value="-164">
+                            </option>
+                            <option value="absolute poverty" data-value="-932">
+                            </option>
+                            <option value="avoid wrong decisions (solution)" data-value="-169">
+                            </option>
+                            <option value="billion (scaling)" data-value="-548">
+                            </option>
+                            <option value="canton GDP" data-value="-700">
+                            </option>
+                            <option value="column confidence" data-value="-185">
+                            </option>
+                            <option value="column consumption mix" data-value="-985">
+                            </option>
+                            <option value="column cost" data-value="-172">
+                            </option>
+                            <option value="column cost is explaining column for column problem (high prio)" data-value="-198">
+                            </option>
+                            <option value="column displacement mix" data-value="-986">
+                            </option>
+                            <option value="column displacement mix is next main column after column consumption mix" data-value="-987">
+                            </option>
+                            <option value="column effort" data-value="-180">
+                            </option>
+                            <option value="column effort is explaining column for column solution (high prio)" data-value="-202">
+                            </option>
+                            <option value="column expected return" data-value="-179">
+                            </option>
+                            <option value="column expected return is explaining column for column solution (high prio)" data-value="-204">
+                            </option>
+                            <option value="column gain" data-value="-173">
+                            </option>
+                            <option value="column gain is explaining column for column solution (high prio)" data-value="-201">
+                            </option>
+                            <option value="column initial effort" data-value="-188">
+                            </option>
+                            <option value="column loss" data-value="-174">
+                            </option>
+                            <option value="column loss is explaining column for column problem (high prio)" data-value="-197">
+                            </option>
+                            <option value="column loss reduction" data-value="-187">
+                            </option>
+                            <option value="column percent" data-value="-181">
+                            </option>
+                            <option value="column percent is explaining column for column problem (high prio)" data-value="-200">
+                            </option>
+                            <option value="column potential gain" data-value="-184">
+                            </option>
+                            <option value="column potential gain is explaining column for column solution (high prio)" data-value="-203">
+                            </option>
+                            <option value="column potential loss" data-value="-183">
+                            </option>
+                            <option value="column potential loss is explaining column for column problem (high prio)" data-value="-199">
+                            </option>
+                            <option value="column priority" data-value="-175">
+                            </option>
+                            <option value="column probability" data-value="-177">
+                            </option>
+                            <option value="column probability is explaining column for column priority" data-value="-193">
+                            </option>
+                            <option value="column probability range" data-value="-190">
+                            </option>
+                            <option value="column problem (high prio)" data-value="-170">
+                            </option>
+                            <option value="column problem (high prio) is next main column after column priority" data-value="-191">
+                            </option>
+                            <option value="column ranking" data-value="-176">
+                            </option>
+                            <option value="column ranking is explaining column for column priority" data-value="-195">
+                            </option>
+                            <option value="column reward ratio" data-value="-189">
+                            </option>
+                            <option value="column solution (high prio)" data-value="-171">
+                            </option>
+                            <option value="column solution (high prio) is next main column after column problem (high prio)" data-value="-192">
+                            </option>
+                            <option value="column source" data-value="-182">
+                            </option>
+                            <option value="column source is explaining column for column priority" data-value="-196">
+                            </option>
+                            <option value="column standard deviation" data-value="-178">
+                            </option>
+                            <option value="column standard deviation is explaining column for column priority" data-value="-194">
+                            </option>
+                            <option value="education can be global problem" data-value="-120">
+                            </option>
+                            <option value="extreme poverty" data-value="-934">
+                            </option>
+                            <option value="global problem" data-value="-102">
+                            </option>
+                            <option value="global warming (global problem)" data-value="-151">
+                            </option>
+                            <option value="global warming is alias of climate change" data-value="-899">
+                            </option>
+                            <option value="government spending" data-value="-886">
+                            </option>
+                            <option value="health can be a global problem" data-value="-117">
+                            </option>
+                            <option value="htp is symbol for happy time points" data-value="-163">
+                            </option>
+                            <option value="in EUR" data-value="-328">
+                            </option>
+                            <option value="main column (system)" data-value="-166">
+                            </option>
+                            <option value="mayor column (system)" data-value="-165">
+                            </option>
+                            <option value="minor column (system)" data-value="-167">
+                            </option>
+                            <option value="multidimensional poverty" data-value="-936">
+                            </option>
+                            <option value="nominal GDP" data-value="-888">
+                            </option>
+                            <option value="percent decimal" data-value="-681">
+                            </option>
+                            <option value="populism (global problem)" data-value="-116">
+                            </option>
+                            <option value="populism can cause GDP decline" data-value="-153">
+                            </option>
+                            <option value="potential gain" data-value="-124">
+                            </option>
+                            <option value="potential loss" data-value="-123">
+                            </option>
+                            <option value="poverty (global problem)" data-value="-119">
+                            </option>
+                            <option value="real GDP" data-value="-889">
+                            </option>
+                            <option value="reduce climate gas emissions (solution)" data-value="-186">
+                            </option>
+                            <option value="relative poverty" data-value="-933">
+                            </option>
+                            <option value="research (solution)" data-value="-135">
+                            </option>
+                            <option value="research expenditure share" data-value="-854">
+                            </option>
+                            <option value="spending (solution)" data-value="-137">
+                            </option>
+                            <option value="subjective poverty" data-value="-935">
+                            </option>
+                            <option value="taxes (solution)" data-value="-136">
+                            </option>
+                        </datalist>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="c2_form_select_phrase_col">
+                            Column phrase
+                        </label>
+                        <input type="text" list="c2_form_select_phrase_col_list" class="form-control" name="c2" form="component_edit" id="c2_form_select_phrase_col" >
+                        <datalist id="c2_form_select_phrase_col_list">
+                            <option value="2023 (year)" data-value="-558">
+                            </option>
+                            <option value="2023 is follower of 2022" data-value="-568">
+                            </option>
+                            <option value="2024 (year)" data-value="-557">
+                            </option>
+                            <option value="2024 is follower of 2023" data-value="-567">
+                            </option>
+                            <option value="EUR (ISO 4217 code)" data-value="-344">
+                            </option>
+                            <option value="EUR (currency)" data-value="-546">
+                            </option>
+                            <option value="EUR is symbol for Euro" data-value="-318">
+                            </option>
+                            <option value="EUR per person year" data-value="-162">
+                            </option>
+                            <option value="GDP decline" data-value="-118">
+                            </option>
+                            <option value="GDP is symbol for gross domestic product" data-value="-816">
+                            </option>
+                            <option value="GDP per capita" data-value="-701">
+                            </option>
+                            <option value="OLS is symbol for ordinary least squares" data-value="-164">
+                            </option>
+                            <option value="absolute poverty" data-value="-932">
+                            </option>
+                            <option value="avoid wrong decisions (solution)" data-value="-169">
+                            </option>
+                            <option value="billion (scaling)" data-value="-548">
+                            </option>
+                            <option value="canton GDP" data-value="-700">
+                            </option>
+                            <option value="column confidence" data-value="-185">
+                            </option>
+                            <option value="column consumption mix" data-value="-985">
+                            </option>
+                            <option value="column cost" data-value="-172">
+                            </option>
+                            <option value="column cost is explaining column for column problem (high prio)" data-value="-198">
+                            </option>
+                            <option value="column displacement mix" data-value="-986">
+                            </option>
+                            <option value="column displacement mix is next main column after column consumption mix" data-value="-987">
+                            </option>
+                            <option value="column effort" data-value="-180">
+                            </option>
+                            <option value="column effort is explaining column for column solution (high prio)" data-value="-202">
+                            </option>
+                            <option value="column expected return" data-value="-179">
+                            </option>
+                            <option value="column expected return is explaining column for column solution (high prio)" data-value="-204">
+                            </option>
+                            <option value="column gain" data-value="-173">
+                            </option>
+                            <option value="column gain is explaining column for column solution (high prio)" data-value="-201">
+                            </option>
+                            <option value="column initial effort" data-value="-188">
+                            </option>
+                            <option value="column loss" data-value="-174">
+                            </option>
+                            <option value="column loss is explaining column for column problem (high prio)" data-value="-197">
+                            </option>
+                            <option value="column loss reduction" data-value="-187">
+                            </option>
+                            <option value="column percent" data-value="-181">
+                            </option>
+                            <option value="column percent is explaining column for column problem (high prio)" data-value="-200">
+                            </option>
+                            <option value="column potential gain" data-value="-184">
+                            </option>
+                            <option value="column potential gain is explaining column for column solution (high prio)" data-value="-203">
+                            </option>
+                            <option value="column potential loss" data-value="-183">
+                            </option>
+                            <option value="column potential loss is explaining column for column problem (high prio)" data-value="-199">
+                            </option>
+                            <option value="column priority" data-value="-175">
+                            </option>
+                            <option value="column probability" data-value="-177">
+                            </option>
+                            <option value="column probability is explaining column for column priority" data-value="-193">
+                            </option>
+                            <option value="column probability range" data-value="-190">
+                            </option>
+                            <option value="column problem (high prio)" data-value="-170">
+                            </option>
+                            <option value="column problem (high prio) is next main column after column priority" data-value="-191">
+                            </option>
+                            <option value="column ranking" data-value="-176">
+                            </option>
+                            <option value="column ranking is explaining column for column priority" data-value="-195">
+                            </option>
+                            <option value="column reward ratio" data-value="-189">
+                            </option>
+                            <option value="column solution (high prio)" data-value="-171">
+                            </option>
+                            <option value="column solution (high prio) is next main column after column problem (high prio)" data-value="-192">
+                            </option>
+                            <option value="column source" data-value="-182">
+                            </option>
+                            <option value="column source is explaining column for column priority" data-value="-196">
+                            </option>
+                            <option value="column standard deviation" data-value="-178">
+                            </option>
+                            <option value="column standard deviation is explaining column for column priority" data-value="-194">
+                            </option>
+                            <option value="education can be global problem" data-value="-120">
+                            </option>
+                            <option value="extreme poverty" data-value="-934">
+                            </option>
+                            <option value="global problem" data-value="-102">
+                            </option>
+                            <option value="global warming (global problem)" data-value="-151">
+                            </option>
+                            <option value="global warming is alias of climate change" data-value="-899">
+                            </option>
+                            <option value="government spending" data-value="-886">
+                            </option>
+                            <option value="health can be a global problem" data-value="-117">
+                            </option>
+                            <option value="htp is symbol for happy time points" data-value="-163">
+                            </option>
+                            <option value="in EUR" data-value="-328">
+                            </option>
+                            <option value="main column (system)" data-value="-166">
+                            </option>
+                            <option value="mayor column (system)" data-value="-165">
+                            </option>
+                            <option value="minor column (system)" data-value="-167">
+                            </option>
+                            <option value="multidimensional poverty" data-value="-936">
+                            </option>
+                            <option value="nominal GDP" data-value="-888">
+                            </option>
+                            <option value="percent decimal" data-value="-681">
+                            </option>
+                            <option value="populism (global problem)" data-value="-116">
+                            </option>
+                            <option value="populism can cause GDP decline" data-value="-153">
+                            </option>
+                            <option value="potential gain" data-value="-124">
+                            </option>
+                            <option value="potential loss" data-value="-123">
+                            </option>
+                            <option value="poverty (global problem)" data-value="-119">
+                            </option>
+                            <option value="real GDP" data-value="-889">
+                            </option>
+                            <option value="reduce climate gas emissions (solution)" data-value="-186">
+                            </option>
+                            <option value="relative poverty" data-value="-933">
+                            </option>
+                            <option value="research (solution)" data-value="-135">
+                            </option>
+                            <option value="research expenditure share" data-value="-854">
+                            </option>
+                            <option value="spending (solution)" data-value="-137">
+                            </option>
+                            <option value="subjective poverty" data-value="-935">
+                            </option>
+                            <option value="taxes (solution)" data-value="-136">
+                            </option>
+                        </datalist>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="c3_form_select_phrase_col_sub">
+                            Sub column phrase
+                        </label>
+                        <input type="text" list="c3_form_select_phrase_col_sub_list" class="form-control" name="c3" form="component_edit" id="c3_form_select_phrase_col_sub" >
+                        <datalist id="c3_form_select_phrase_col_sub_list">
+                            <option value="2023 (year)" data-value="-558">
+                            </option>
+                            <option value="2023 is follower of 2022" data-value="-568">
+                            </option>
+                            <option value="2024 (year)" data-value="-557">
+                            </option>
+                            <option value="2024 is follower of 2023" data-value="-567">
+                            </option>
+                            <option value="EUR (ISO 4217 code)" data-value="-344">
+                            </option>
+                            <option value="EUR (currency)" data-value="-546">
+                            </option>
+                            <option value="EUR is symbol for Euro" data-value="-318">
+                            </option>
+                            <option value="EUR per person year" data-value="-162">
+                            </option>
+                            <option value="GDP decline" data-value="-118">
+                            </option>
+                            <option value="GDP is symbol for gross domestic product" data-value="-816">
+                            </option>
+                            <option value="GDP per capita" data-value="-701">
+                            </option>
+                            <option value="OLS is symbol for ordinary least squares" data-value="-164">
+                            </option>
+                            <option value="absolute poverty" data-value="-932">
+                            </option>
+                            <option value="avoid wrong decisions (solution)" data-value="-169">
+                            </option>
+                            <option value="billion (scaling)" data-value="-548">
+                            </option>
+                            <option value="canton GDP" data-value="-700">
+                            </option>
+                            <option value="column confidence" data-value="-185">
+                            </option>
+                            <option value="column consumption mix" data-value="-985">
+                            </option>
+                            <option value="column cost" data-value="-172">
+                            </option>
+                            <option value="column cost is explaining column for column problem (high prio)" data-value="-198">
+                            </option>
+                            <option value="column displacement mix" data-value="-986">
+                            </option>
+                            <option value="column displacement mix is next main column after column consumption mix" data-value="-987">
+                            </option>
+                            <option value="column effort" data-value="-180">
+                            </option>
+                            <option value="column effort is explaining column for column solution (high prio)" data-value="-202">
+                            </option>
+                            <option value="column expected return" data-value="-179">
+                            </option>
+                            <option value="column expected return is explaining column for column solution (high prio)" data-value="-204">
+                            </option>
+                            <option value="column gain" data-value="-173">
+                            </option>
+                            <option value="column gain is explaining column for column solution (high prio)" data-value="-201">
+                            </option>
+                            <option value="column initial effort" data-value="-188">
+                            </option>
+                            <option value="column loss" data-value="-174">
+                            </option>
+                            <option value="column loss is explaining column for column problem (high prio)" data-value="-197">
+                            </option>
+                            <option value="column loss reduction" data-value="-187">
+                            </option>
+                            <option value="column percent" data-value="-181">
+                            </option>
+                            <option value="column percent is explaining column for column problem (high prio)" data-value="-200">
+                            </option>
+                            <option value="column potential gain" data-value="-184">
+                            </option>
+                            <option value="column potential gain is explaining column for column solution (high prio)" data-value="-203">
+                            </option>
+                            <option value="column potential loss" data-value="-183">
+                            </option>
+                            <option value="column potential loss is explaining column for column problem (high prio)" data-value="-199">
+                            </option>
+                            <option value="column priority" data-value="-175">
+                            </option>
+                            <option value="column probability" data-value="-177">
+                            </option>
+                            <option value="column probability is explaining column for column priority" data-value="-193">
+                            </option>
+                            <option value="column probability range" data-value="-190">
+                            </option>
+                            <option value="column problem (high prio)" data-value="-170">
+                            </option>
+                            <option value="column problem (high prio) is next main column after column priority" data-value="-191">
+                            </option>
+                            <option value="column ranking" data-value="-176">
+                            </option>
+                            <option value="column ranking is explaining column for column priority" data-value="-195">
+                            </option>
+                            <option value="column reward ratio" data-value="-189">
+                            </option>
+                            <option value="column solution (high prio)" data-value="-171">
+                            </option>
+                            <option value="column solution (high prio) is next main column after column problem (high prio)" data-value="-192">
+                            </option>
+                            <option value="column source" data-value="-182">
+                            </option>
+                            <option value="column source is explaining column for column priority" data-value="-196">
+                            </option>
+                            <option value="column standard deviation" data-value="-178">
+                            </option>
+                            <option value="column standard deviation is explaining column for column priority" data-value="-194">
+                            </option>
+                            <option value="education can be global problem" data-value="-120">
+                            </option>
+                            <option value="extreme poverty" data-value="-934">
+                            </option>
+                            <option value="global problem" data-value="-102">
+                            </option>
+                            <option value="global warming (global problem)" data-value="-151">
+                            </option>
+                            <option value="global warming is alias of climate change" data-value="-899">
+                            </option>
+                            <option value="government spending" data-value="-886">
+                            </option>
+                            <option value="health can be a global problem" data-value="-117">
+                            </option>
+                            <option value="htp is symbol for happy time points" data-value="-163">
+                            </option>
+                            <option value="in EUR" data-value="-328">
+                            </option>
+                            <option value="main column (system)" data-value="-166">
+                            </option>
+                            <option value="mayor column (system)" data-value="-165">
+                            </option>
+                            <option value="minor column (system)" data-value="-167">
+                            </option>
+                            <option value="multidimensional poverty" data-value="-936">
+                            </option>
+                            <option value="nominal GDP" data-value="-888">
+                            </option>
+                            <option value="percent decimal" data-value="-681">
+                            </option>
+                            <option value="populism (global problem)" data-value="-116">
+                            </option>
+                            <option value="populism can cause GDP decline" data-value="-153">
+                            </option>
+                            <option value="potential gain" data-value="-124">
+                            </option>
+                            <option value="potential loss" data-value="-123">
+                            </option>
+                            <option value="poverty (global problem)" data-value="-119">
+                            </option>
+                            <option value="real GDP" data-value="-889">
+                            </option>
+                            <option value="reduce climate gas emissions (solution)" data-value="-186">
+                            </option>
+                            <option value="relative poverty" data-value="-933">
+                            </option>
+                            <option value="research (solution)" data-value="-135">
+                            </option>
+                            <option value="research expenditure share" data-value="-854">
+                            </option>
+                            <option value="spending (solution)" data-value="-137">
+                            </option>
+                            <option value="subjective poverty" data-value="-935">
+                            </option>
+                            <option value="taxes (solution)" data-value="-136">
+                            </option>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="f_form_select_formula">
+                            formula
+                        </label>
+                        <select class="form-control" name="f" form="component_edit" id="f_form_select_formula" >
+                            <option value="0" selected>
+                                please select ...
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="cs_form_select_view_style">
+                            View style
+                        </label>
+                        <select class="form-control" name="cs" form="component_edit" id="cs_form_select_view_style" >
+                            <option value="1"  selected >
+                                1/3 width
+                            </option>
+                            <option value="2"  >
+                                2/3 width
+                            </option>
+                            <option value="3"  >
+                                half width
+                            </option>
+                            <option value="4"  >
+                                full width
+                            </option>
+                            <option value="5"  >
+                                left aligned
+                            </option>
+                            <option value="6"  >
+                                fields in one line
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="s_form_select_share_type">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="component_edit" id="s_form_select_share_type" >
+                            <option value="1"  selected >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8s" value="1">
+                    <div class="form-group col-md-4">
+                        <label for="sp_form_select_protection_type">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="component_edit" id="sp_form_select_protection_type" >
+                            <option value="1"  selected >
+                                no protection
+                            </option>
+                            <option value="2"  >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8sp" value="1">
+                </div>
+                <div class="row col-md-12">
+                    preview placeholder
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="http://localhost/http/view.php?m=115&amp;id=993" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Not yet used
+                    </h5>
+                </div>
+            </div>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

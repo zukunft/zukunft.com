@@ -1,27 +1,29 @@
 
 # pending - list of planned llm prompts with prio 1
 
-## views
-
-in add view such as src/test/resources/web/html/workflow/add_view_wf22/wf22_edit.html do not show the changes tab
-
-in the add confirm pages such as src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save.html do not show the from page because it is always empty or not set
-
-add unit tests for to_url_array. code_test_coverage.md: to_url_array is now shared by 11 classes with 16 calls, so it stays on the under-covered list — the new method is only exercised indirectly through the workflow, no direct unit test.
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_view workflow tests
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_view workflow tests
-
-
-
-## components
-
-...
-
 ## workflows
 
-add the missing workflows for the main objects e.g. ref, view, component. Compared to the word workflows the workflows only need one back test.
+add the missing workflows link workflows such as
+
+- link a formula to a phrase
+- unlink a formula from a phrase
+- link a component to a view
+- unlink a component from a view
+- link a view to a term
+- unlink a view from a term
+- add a child view to a view
+- remove a child view from a view
+
+add a fa-plus icon at the end of the phrases linked to a formula in the formula default view and add and edit view that, based on url_to_action, call a confirm page that showns something like 'link phrase xxx to formula xxx' with a cancel and confirm button
+
+add the missing workflows quick workflows such as
+
+- add a word or select a phrase
+- change a value
+- change a result
+- select a term and add it to a formula
+
+add group add, change and del workflows
 
 ## views
 
@@ -38,6 +40,7 @@ in the logout page add an OK button that calls the back page from the url withou
 ## maybe to fix:
 
 1. Limit before sort — load_values_similar() reads with value_list::read_limit(), but the impact sort happens in the renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
+2. sort views and components so the the most must are on top
 
 ## cleanup
 

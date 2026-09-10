@@ -74,6 +74,16 @@ class ref_read_tests
         $result = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 
+        $t->subheader($ts . 'load by external key');
+
+        // the external key is the name of a reference, so the generic cleanup by name finds it
+        $test_name = 'the pi reference is found by its external key';
+        $ref = new ref($t->usr1);
+        $t->assert($test_name, $ref->load_by_name(refs::PI_KEY, $msg), refs::PI_ID);
+        $test_name = 'an unknown external key finds no reference';
+        $ref = new ref($t->usr1);
+        $t->assert($test_name, $ref->load_by_name(refs::SYSTEM_TEST_ADD, $msg), 0);
+
         $t->subheader($ts . 'apis');
 
         $ref = new ref($t->usr1);

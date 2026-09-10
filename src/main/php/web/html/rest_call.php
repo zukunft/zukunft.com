@@ -88,8 +88,7 @@ class rest_call
     function class_to_api_name(string $class): string
     {
         $lib = new library();
-        $class = $lib->class_to_name($class);
-        return $lib->camelize_ex_1($class);
+        return $lib->class_to_api_route($class);
     }
 
     /**

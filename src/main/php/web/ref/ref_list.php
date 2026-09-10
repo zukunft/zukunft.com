@@ -33,17 +33,24 @@ namespace Zukunft\ZukunftCom\main\php\web\ref;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ref_list extends ListBase
 {
@@ -106,6 +113,29 @@ class ref_list extends ListBase
     {
         $this->sort_by_impact_and_type();
         return parent::list($msg, $context_phr_lst, $url_arr, $style, $limit, $page);
+    }
+
+    /**
+     * a small plus icon shown at the end of the reference list of a phrase that opens the ref add
+     * form with the phrase preselected, so the user can add a reference to e.g. the shown word
+     *
+     * @param phrase $phr the phrase the new reference should be linked to
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html code of the add icon, empty if the phrase is not yet saved
+     */
+    function add_link(phrase $phr, array $url_arr = []): string
+    {
+        global $mtr;
+
+        $result = '';
+        // a phrase without a db id cannot be linked, so there is nothing to add a reference to
+        if ($phr->id() != 0) {
+            $html = new html_base();
+            $url = $html->url_back(ref::VIEW_ADD_ID, 0, $url_arr, url_var::PHRASE . '=' . $phr->id());
+            $result = $html->ref($url, $html->icon(icons::ADD),
+                $mtr->txt(ref::MSG_ADD), styles::HEADING_ICON_INLINE, true);
+        }
+        return $result;
     }
 
     /**

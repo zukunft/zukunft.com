@@ -49,6 +49,9 @@ class test_const
     const int DUMMY_USAGE_FORMULA = 7;
     const int DUMMY_USAGE_VIEW = 1;
     const int DUMMY_USAGE_COMPONENT = 2;
+    // a type name that no type list has, to test that an unknown type of an import is reported
+    // with its name and does not end up as a not-found marker in the type field
+    const string TYPE_NOT_IN_LIST = 'System Test type that does not exist';
     // the order number of the filled formula link
     const int FORMULA_LINK_ORDER_NBR = 2;
     // the description of the filled formula link

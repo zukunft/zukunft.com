@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
@@ -44,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -86,6 +88,7 @@ class ref_tests
         $t->assert_sql_by_id($sc, $ref);
         $t->assert_sql_by_link($sc, $ref);
         $this->assert_sql_link_ids($t, $sc, $ref);
+        $this->assert_sql_ex_key($t, $sc, $ref);
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $ref = new ref($t->usr1);
@@ -162,6 +165,16 @@ class ref_tests
         $test_name = 'the readable filter keeps only the public reference for another user';
         $t->assert($test_name, count($ref_lst->lst()), 1);
 
+        $t->subheader($ts . 'save');
+        // the type is part of the prime index, so a reference without a type is refused before any
+        // database access with a message instead of failing in the duplicate check
+        $test_name = 'a reference without a type is not saved';
+        $msg = new user_message();
+        $ref_no_type = $t_ref->reference();
+        $ref_no_type->set_predicate_id(null);
+        $t->assert_false($test_name, $ref_no_type->save($msg));
+        $t->assert_false($test_name, $msg->is_ok());
+
         $t->subheader($ts . 'api');
         $ref = $t_ref->reference1();
         $t->assert_api_json($ref);
@@ -195,7 +208,9 @@ class ref_tests
             '<a href="' . refs::PI_URL . '">');
         $test_name = 'the ref page links the source of the reference';
         $t->assert_text_contains($test_name, $form->show_ref_source($ref_ui), sources::SIB);
-        // a reference that has never been updated or ranked shows no lonely labels
+        // the last update and the impact are written by the system, so a reference that has
+        // never been updated or ranked shows no lonely labels; unlike a user-settable field
+        // there is nothing the user could fill in behind them
         $ref_plain = new ref_ui($t_ref->reference()->api_json([api_types::TEST_MODE]));
         $test_name = 'a never updated ref shows no last update line';
         $t->assert($test_name, $form->show_last_update($ref_plain), '');
@@ -232,6 +247,29 @@ class ref_tests
         // check the MySQL query syntax
         $sc->reset(sql_db::MYSQL);
         $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
+        $t->assert_qp($qp, $sc->db_type);
+    }
+
+    /**
+     * check the sql to load a reference by its external key for both database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc the sql creator that is reset for each dialect
+     * @param ref $ref the reference whose query is checked
+     */
+    private function assert_sql_ex_key(
+        test_cleanup $t,
+        sql_creator  $sc,
+        ref          $ref): void
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $ref->load_sql_by_ex_key($sc, refs::PI_KEY);
+        $t->assert_qp($qp, $sc->db_type);
+
+        // check the MySQL query syntax
+        $sc->reset(sql_db::MYSQL);
+        $qp = $ref->load_sql_by_ex_key($sc, refs::PI_KEY);
         $t->assert_qp($qp, $sc->db_type);
     }
 

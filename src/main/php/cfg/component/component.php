@@ -190,6 +190,11 @@ class component extends sandbox_code_id
     // the word link type used to build the word tree started with the $start_word_id
     public ?int $link_type_id = null;
 
+    // the component that this component links to and the type that says how the two are linked
+    // e.g. a title component that names the table shown by the linked component
+    public ?int $linked_component_id = null;
+    public ?int $component_link_type_id = null;
+
     // for a table to defined second columns layer or the second axis in case of a chart
     // e.g. for a "company cash flow statement" the "col word" could be "year"
     //      "col2 word" could be "Quarter" to show the Quarters between the year upon request
@@ -251,6 +256,8 @@ class component extends sandbox_code_id
         $this->type_id = null;
         $this->style = null;
         $this->link_type_id = null;
+        $this->linked_component_id = null;
+        $this->component_link_type_id = null;
         $this->frm = null;
         $this->word_id_col2 = null;
         $this->row_phrase = null;
@@ -334,6 +341,12 @@ class component extends sandbox_code_id
             if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
                 $this->set_formula_by_id($db_row[formula_fields::FLD_ID], $msg);
             }
+            if (array_key_exists(component_fields::FLD_LINK_COMP, $db_row)) {
+                $this->linked_component_id = $db_row[component_fields::FLD_LINK_COMP];
+            }
+            if (array_key_exists(component_fields::FLD_LINK_COMP_TYPE, $db_row)) {
+                $this->component_link_type_id = $db_row[component_fields::FLD_LINK_COMP_TYPE];
+            }
             if (array_key_exists(component_fields::FLD_COL_PHRASE, $db_row)) {
                 $this->reload_col_phrase($msg, $db_row[component_fields::FLD_COL_PHRASE]);
             }
@@ -394,6 +407,12 @@ class component extends sandbox_code_id
         if (array_key_exists(json_fields::LINK_TYPE, $api_json)) {
             $this->set_link_type_by_id($api_json[json_fields::LINK_TYPE]);
         }
+        if (array_key_exists(json_fields::LINKED_COMPONENT, $api_json)) {
+            $this->linked_component_id = $api_json[json_fields::LINKED_COMPONENT];
+        }
+        if (array_key_exists(json_fields::COMPONENT_LINK_TYPE, $api_json)) {
+            $this->component_link_type_id = $api_json[json_fields::COMPONENT_LINK_TYPE];
+        }
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
             $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID], $msg);
             $this->set_formula($frm);
@@ -445,7 +464,10 @@ class component extends sandbox_code_id
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $type_name = $in_ex_json[json_fields::TYPE_NAME];
             if ($type_name != '') {
-                $this->set_type_id($this->type_id_by_code_id($type_name), $msg);
+                // set_type names the unknown type once on $msg and leaves the type unset, whereas
+                // the raw id lookup stores its not-found marker (-1) as the type, which every
+                // later reader reports again as an unknown type id (see view::import_mapper)
+                $this->set_type($type_name, $msg);
             }
         }
         if (key_exists(json_fields::ROW, $in_ex_json)) {
@@ -538,6 +560,12 @@ class component extends sandbox_code_id
             }
             if ($this->frm != null) {
                 $vars[json_fields::FORMULA_ID] = $this->get_formula_id();
+            }
+            if ($this->linked_component_id != null) {
+                $vars[json_fields::LINKED_COMPONENT] = $this->linked_component_id;
+            }
+            if ($this->component_link_type_id != null) {
+                $vars[json_fields::COMPONENT_LINK_TYPE] = $this->component_link_type_id;
             }
             if ($this->row_phrase?->id() != null) {
                 $vars[json_fields::PHRASE_ROW] = $this->row_phrase->id();
@@ -1393,6 +1421,12 @@ class component extends sandbox_code_id
         if ($std_obj->link_type_id !== $this->link_type_id) {
             $result->link_type_id = $this->link_type_id;
         }
+        if ($std_obj->linked_component_id !== $this->linked_component_id) {
+            $result->linked_component_id = $this->linked_component_id;
+        }
+        if ($std_obj->component_link_type_id !== $this->component_link_type_id) {
+            $result->component_link_type_id = $this->component_link_type_id;
+        }
         return $result;
     }
 
@@ -1448,6 +1482,12 @@ class component extends sandbox_code_id
         if ($this->link_type_id === null and $obj->link_type_id != null) {
             $this->link_type_id = $obj->link_type_id;
         }
+        if ($this->linked_component_id === null and $obj->linked_component_id != null) {
+            $this->linked_component_id = $obj->linked_component_id;
+        }
+        if ($this->component_link_type_id === null and $obj->component_link_type_id != null) {
+            $this->component_link_type_id = $obj->component_link_type_id;
+        }
         return $msg;
     }
 
@@ -1484,6 +1524,8 @@ class component extends sandbox_code_id
         $this->diff_field_msg($msg, component_fields::FLD_COL_PHRASE, $this->get_col_phrase_id(), $obj->get_col_phrase_id());
         $this->diff_field_msg($msg, component_fields::FLD_COL2_PHRASE, $this->get_col_sub_phrase_id(), $obj->get_col_sub_phrase_id());
         $this->diff_field_msg($msg, component_fields::FLD_LINK_TYPE, $this->link_type_id, $obj->link_type_id);
+        $this->diff_field_msg($msg, component_fields::FLD_LINK_COMP, $this->linked_component_id, $obj->linked_component_id);
+        $this->diff_field_msg($msg, component_fields::FLD_LINK_COMP_TYPE, $this->component_link_type_id, $obj->component_link_type_id);
         return $msg;
     }
 
@@ -1696,8 +1738,8 @@ class component extends sandbox_code_id
                 component_fields::FLD_COL_PHRASE,
                 component_fields::FLD_COL2_PHRASE,
                 formula_fields::FLD_ID,
-                //component_fields::FLD_LINK_COMP,
-                //component_fields::FLD_LINK_COMP_TYPE,
+                component_fields::FLD_LINK_COMP,
+                component_fields::FLD_LINK_COMP_TYPE,
                 component_fields::FLD_LINK_TYPE,
             ],
             parent::db_fields_all_sandbox()
@@ -1906,7 +1948,36 @@ class component extends sandbox_code_id
                 $old_val
             );
         }
-        // TODO add FLD_LINK_COMP and FLD_LINK_COMP_TYPE
+        if ($obj->linked_component_id !== $this->linked_component_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_LINK_COMP,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_LINK_COMP),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                component_fields::FLD_LINK_COMP,
+                $this->linked_component_id,
+                component_db::FLD_LINK_COMP_SQL_TYP,
+                $obj->linked_component_id
+            );
+        }
+        if ($obj->component_link_type_id !== $this->component_link_type_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_LINK_COMP_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_LINK_COMP_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                component_fields::FLD_LINK_COMP_TYPE,
+                $this->component_link_type_id,
+                component_db::FLD_LINK_COMP_TYPE_SQL_TYP,
+                $obj->component_link_type_id
+            );
+        }
         if ($obj->link_type_id !== $this->link_type_id) {
             if ($do_log) {
                 $lst->add_field(

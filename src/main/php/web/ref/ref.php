@@ -187,6 +187,14 @@ class ref extends sandbox
             } else {
                 $this->set_predicate_id();
             }
+            // the reference type field is posted as url_var::REF_TYPE ('lt'), not the generic
+            // url_var::TYPE read above, so capture it here to persist the type of the add form
+            // (like the phrase type of a word)
+            if (array_key_exists(url_var::REF_TYPE, $url_array)) {
+                if ($url_array[url_var::REF_TYPE] != null) {
+                    $this->set_predicate_id($url_array[url_var::REF_TYPE]);
+                }
+            }
             if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
                 $this->description = $url_array[url_var::DESCRIPTION];
             } else {
@@ -309,20 +317,13 @@ class ref extends sandbox
 
     /**
      * @return phrase the phrase this external reference is linked to, or an empty phrase if it is
-     *                not yet set e.g. for a new reference of an add form (like db_object::phrase)
+     *                not yet set e.g. for a new reference of an add form or a reference only known
+     *                by its id like a back link in a test render (like db_object::phrase); a stored
+     *                reference without a phrase is reported by api_mapper, not here
      */
     function phrase(): phrase
     {
-        $phr = $this->phr;
-        if ($phr == null) {
-            // only a new reference of an add form has no phrase yet; a stored reference must be
-            // linked to a phrase, so a missing phrase is a data error (like triple::get_verb)
-            if ($this->id() > 0) {
-                log_err('phrase missing for reference ' . $this->dsp_id(), 'ref->phrase');
-            }
-            $phr = new phrase();
-        }
-        return $phr;
+        return $this->phr ?? new phrase();
     }
 
     private function set_phrase_by_id(int $id): void
@@ -449,6 +450,22 @@ class ref extends sandbox
     }
 
     /**
+     * @return array parent url array extended with the fields of this reference that url_mapper reads
+     *               back (see db_fld_to_url), e.g. to open the edit form of the reference
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::PHRASE] = $this->phr?->id();
+        $url_array[url_var::EXTERNAL_KEY] = $this->external_key();
+        $url_array[url_var::TYPE] = $this->predicate_id();
+        $url_array[url_var::SOURCE] = $this->source?->id();
+        $url_array[url_var::URL] = $this->url();
+        $url_array[url_var::DESCRIPTION] = $this->get_description();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
@@ -501,7 +518,8 @@ class ref extends sandbox
                 $this->type_name(),
                 $this->get_description()
             );
-            return $name . ' ' . $this->refresh_job_link($html);
+            // the edit icon follows the refresh icon so the user can correct e.g. the external key
+            return $name . ' ' . $this->refresh_job_link($html) . ' ' . $this->edit_icon_link();
         } else {
             return 'ERROR: url is null';
         }

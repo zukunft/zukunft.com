@@ -624,6 +624,12 @@
       "description": "the terms that use the shown view with a link to each term",
       "type": "terms_of_view",
       "code_id": "view_terms"
+    },
+    {
+      "name": "system show field linked component",
+      "description": "the name of the component that the shown component links to with the type of that link and a link to the linked component",
+      "type": "system_show_field_linked_component",
+      "code_id": "show_field_linked_component"
     }
   ],
   "views": [
@@ -1378,43 +1384,43 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "system sub title description",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "system show field owner"
+          "name": "system show field description",
+          "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "system show field style"
+          "name": "system show field style",
+          "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "system show field formula"
+          "name": "system show field formula",
+          "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "system show field row phrase"
+          "name": "system show field linked component",
+          "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "system show field column phrase"
+          "name": "system sub title views",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "8",
-          "name": "system show field sub column phrase"
+          "name": "component views",
+          "position_type": "combine"
         },
         {
           "position": "9",
-          "name": "system sub title views"
-        },
-        {
-          "position": "10",
-          "name": "component views"
-        },
-        {
-          "position": "11",
-          "name": "component tab box"
+          "name": "component tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },

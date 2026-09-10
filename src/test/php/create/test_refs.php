@@ -45,8 +45,10 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'ref_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -59,8 +61,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
@@ -255,6 +259,92 @@ class test_refs extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->ref_list_math(), [api_types::INCL_PHRASES]);
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the url of an empty reference as the add reference form shows it, used by the add_ref
+     * workflow test to open the form (mirrors test_sources::source_new_url)
+     *
+     * @return array the url parameters of a reference that is not yet created
+     */
+    static function ref_new_url(user_message_ui $msg): array
+    {
+        $ref_ui = new ref_ui();
+        return $ref_ui->to_url_array($msg);
+    }
+
+    /**
+     * the test reference of the workflow tests: linked to the pi symbol word, because it has no
+     * reference yet in the base data, so the add cannot collide with an existing row
+     *
+     * @return ref the reference the add_ref workflow creates and the change_ref workflow changes
+     */
+    function reference_workflow(): ref
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->reference_add($t_wrd->word_pi_symbol()->phrase());
+    }
+
+    /**
+     * the url of the added test reference, used by the change_ref workflow test to open the edit
+     * form (mirrors test_sources::source_add_url)
+     *
+     * @return array the reference url parameters of the added test reference
+     */
+    function ref_add_url(user_message_ui $msg): array
+    {
+        $ref_ui = new ref_ui($this->reference_workflow()->api_json());
+        return $ref_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url parameters posted by the 'Add a new ref' form on save, used by the add_ref workflow
+     * test to show the new reference in the confirm add view (docs/llm/testing.md); the type is
+     * posted with the url var of the form's type selector; the share and protection ids are the
+     * defaults of a newly added reference; the object id and the back target are added by the
+     * workflow step, not here (mirrors test_sources::add_url_array)
+     *
+     * @return array the add form url parameters of the new reference
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::PHRASE => $this->reference_workflow()->phrase()->id(),
+            url_var::EXTERNAL_KEY => refs::SYSTEM_TEST_ADD,
+            url_var::REF_TYPE => ref_types::WIKIDATA_ID,
+            url_var::URL => refs::SYSTEM_TEST_ADD_URL,
+            url_var::DESCRIPTION => refs::SYSTEM_TEST_ADD_COM,
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
+    }
+
+    /**
+     * the filled reference url posted by the edit form in the second change_ref round, mirroring
+     * test_sources::fill_url_array: the first round only changed the url, so the fill round also
+     * changes the description; the '8'-prefixed opening values are the state the reference has
+     * after the first round, so the confirm view shows only the description as changed
+     *
+     * @param int $id the database id of the reference the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $msg = new user_message_ui();
+        $url_arr = $this->ref_add_url($msg);
+        // the workflow step adds the current db id of the test reference, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::URL] = refs::TEST_URL_CHANGED;
+        $url_arr[url_var::DESCRIPTION] = refs::TEST_DESCRIPTION_CHANGED;
+        $url_arr[url_var::PRE . url_var::EXTERNAL_KEY] = $url_arr[url_var::EXTERNAL_KEY];
+        $url_arr[url_var::PRE . url_var::URL] = $url_arr[url_var::URL];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
     }
 
 }

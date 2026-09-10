@@ -1,0 +1,18 @@
+GET
+http://localhost/http/view.php?k=System+Test+View+Component&o=System+Test+View+Component+description&ct=3&cs=1&s=1&sp=1&id=0&9m=115&m=54&z=2&submit=
+/http/view.php?k=System+Test+View+Component&o=System+Test+View+Component+description&ct=3&cs=1&s=1&sp=1&id=0&9m=115&m=54&z=2&submit=
+/http/view.php?name=System+Test+View+Component&description=System+Test+View+Component+description&component_type=3&style=1&share=1&protection=1&id=0&9mask_id=component_default&mask_id=confirm_add&step=confirmed&
+{
+    "name": "System Test View Component",
+    "description": "System Test View Component description",
+    "component_type": "3",
+    "style": "1",
+    "share": "1",
+    "protection": "1",
+    "id": "0",
+    "mask_id": "confirm_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "component_default"
+    }
+}

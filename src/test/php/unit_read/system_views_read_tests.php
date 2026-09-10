@@ -35,6 +35,8 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -52,6 +54,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -128,6 +132,10 @@ class system_views_read_tests
         $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1, $cfg);
         // TODO add:
         // REF
+        // the wikidata reference of the word "Pi" is the only seeded reference with an own url and
+        // one of the three with a source, so it is the example that fills every field of the
+        // reference page except the last update
+        $t->assert_view(views::REF, $t->usr1, new ref($t->usr1), refs::PI_ID, $cfg);
         $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
         // VALUE
         // the pi number of units.json is the example for the related-phrase links and the grey value
@@ -163,6 +171,11 @@ class system_views_read_tests
         $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
         $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);
         // COMPONENT
+        // the solution priority title is the example of a component with a description and a type
+        // that is used by a view, so the views list of the page has an entry; the style, the
+        // formula and the linked component of this component are not set, so the page shows the
+        // three labels without a value
+        $t->assert_view(views::COMPONENT, $t->usr1, new component($t->usr1), components::SOLUTION_PRIO_TITLE_ID, $cfg);
         $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
         $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
         $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);

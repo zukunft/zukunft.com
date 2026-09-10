@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -261,6 +261,10 @@ class files
     CONST string SQL_FORMAT_TEST_UPDATE_MYSQL = 'word_update_0022004000002_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_MYSQL = 'word_by_id_mysql' . self::SQL;
+    // a select that joins a second object, so that its user table alias (ul2) is longer than the
+    // standard table alias (l2) and each of the two is padded with the width of its own column
+    CONST string SQL_FORMAT_TEST_SELECT_JOINED = 'component_link_by_view_id' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SELECT_JOINED_MYSQL = 'component_link_by_view_id_mysql' . self::SQL;
     // a select that is a union of selects, because a prime value is selected by its phrase ids
     // and therefore one sub select per value is needed (see sandbox_multi::load_sql_by_ids_union)
     CONST string SQL_FORMAT_TEST_UNION = 'value_prime_p3_by_user_list_by_ids_2' . self::SQL;

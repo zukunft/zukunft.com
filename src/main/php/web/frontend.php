@@ -2039,11 +2039,13 @@ class frontend
             and $dbo->id() != 0
             and ($back_url[url_var::MASK] ?? views::START_ID) != views::START_ID) {
             $back_url[url_var::ID] = $dbo->id();
-        } elseif (!$do_it and $crud != url_var::CRUD_DELETE) {
-            // a simulated write ($do_it false, e.g. a workflow snapshot test) has created no
-            // database row, so there is no id to show the object by; the posted field values are
-            // kept in the url instead, so that the following page shows the object as it would
-            // have been created rather than the empty object of the id-less view
+        }
+        if (!$do_it and $crud != url_var::CRUD_DELETE) {
+            // a simulated write ($do_it false, e.g. a workflow snapshot test) has created or changed
+            // no database row, so the following page cannot show the object by its id (an add has
+            // none and a test render never loads by id); the posted field values are kept in the
+            // url instead, so that the page shows the object as it would have been written rather
+            // than an empty object
             $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;

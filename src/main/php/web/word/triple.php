@@ -507,12 +507,19 @@ class triple extends sandbox_code_id
     {
         $url_array = parent::to_url_array($msg);
         $url_array[url_var::PHRASE_FROM] = $this->get_from()?->id();
-        $url_array[url_var::VERB] = $this->get_verb()?->id();
+        // the verb is read from the field, not via get_verb(), because a triple of an add form has
+        // no verb yet, which is not the data error that get_verb() reports; an unset verb is simply
+        // left out of the url like the unset from and to phrase
+        $url_array[url_var::VERB] = $this->verb?->id();
         $url_array[url_var::PHRASE_TO] = $this->get_to()?->id();
         $url_array[url_var::WEIGHT] = $this->weight;
         $url_array[url_var::PLURAL] = $this->plural;
-        $url_array[url_var::USAGE] = $this->usage;
-        $url_array[url_var::IMPACT] = $this->impact;
+        // the impact is never null, so an unset impact is left out by its value like in the word
+        // url array, because a zero impact is the default that the edit form never needs to post;
+        // the usage is left to the parent, which drops it the same way
+        if ($this->impact > 0) {
+            $url_array[url_var::IMPACT] = $this->impact;
+        }
         return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
     }
 

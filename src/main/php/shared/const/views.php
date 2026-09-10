@@ -395,6 +395,8 @@ class views
     const string TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
     const string TEST_ADD_COM = 'System Test View Description';
     const string TEST_ADD = 'System Test View Code Id';
+    // the description that the change_view workflow writes in its second round
+    const string TEST_DESCRIPTION_CHANGED = 'System Test View Description Changed';
     const string TEST_RENAMED_NAME = 'System Test View Renamed';
     const string TEST_COMPLETE_NAME = 'System Test View Complete';
     const string TEST_EXCLUDED_NAME = 'System Test View Excluded';

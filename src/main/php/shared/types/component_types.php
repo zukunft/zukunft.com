@@ -586,6 +586,9 @@ class component_types
     // formula, where both sides of the triple are combined
     const string SHOW_NAME_IN_FORMULAS = "system_show_field_name_in_formulas";
     const int SHOW_NAME_IN_FORMULAS_ID = 233;
+    // the component that a component links to shown with the type of that link
+    const string SHOW_LINKED_COMPONENT = "system_show_field_linked_component";
+    const int SHOW_LINKED_COMPONENT_ID = 250;
     const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
     const int SHOW_PHRASE_ROW_ID = 227;
     const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
@@ -1079,6 +1082,7 @@ class component_types
         [self::SHOW_PHRASE_ROW, self::SHOW_PHRASE_ROW_ID],
         [self::SHOW_PHRASE_COL, self::SHOW_PHRASE_COL_ID],
         [self::SHOW_PHRASE_COL_SUB, self::SHOW_PHRASE_COL_SUB_ID],
+        [self::SHOW_LINKED_COMPONENT, self::SHOW_LINKED_COMPONENT_ID],
         [self::COMPONENT_VIEWS, self::COMPONENT_VIEWS_ID],
         [self::VIEW_TERMS, self::VIEW_TERMS_ID],
         [self::SHOW_LINK_TYPE, self::SHOW_LINK_TYPE_ID],

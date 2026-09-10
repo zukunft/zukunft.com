@@ -219,6 +219,67 @@ class workflows
     // the id of the current add_view workflow; increase it to add the next snapshot set
     const int WF_ADD_VIEW_NBR = 22;
 
+    // the change_view workflow name used for the snapshot folder and the test subheader:
+    // the style of the added view is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_VIEW = 'change_view';
+    // the id of the current change_view workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_VIEW_NBR = 23;
+
+    // the del_view workflow name used for the snapshot folder and the test subheader:
+    // the added view is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_source)
+    const string WF_DEL_VIEW = 'del_view';
+    // the id of the current del_view workflow; increase it to add the next snapshot set
+    const int WF_DEL_VIEW_NBR = 24;
+
+    // the add_component workflow name used for the snapshot folder and the test subheader:
+    // a new component is entered in the add form and written after the user has confirmed the add;
+    // like add_source it only tests the back excursion, because the word workflows already
+    // cover the cancel excursion of an add
+    const string WF_ADD_COMPONENT = 'add_component';
+    // the id of the current add_component workflow; increase it to add the next snapshot set
+    const int WF_ADD_COMPONENT_NBR = 25;
+
+    // the change_component workflow name used for the snapshot folder and the test subheader:
+    // the style of the added component is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_COMPONENT = 'change_component';
+    // the id of the current change_component workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_COMPONENT_NBR = 26;
+
+    // the del_component workflow name used for the snapshot folder and the test subheader:
+    // the added component is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_view)
+    const string WF_DEL_COMPONENT = 'del_component';
+    // the id of the current del_component workflow; increase it to add the next snapshot set
+    const int WF_DEL_COMPONENT_NBR = 27;
+
+    // the add_ref workflow name used for the snapshot folder and the test subheader:
+    // a new reference is entered in the add form and written after the user has confirmed the add;
+    // like add_source it only tests the back excursion, because the word workflows already
+    // cover the cancel excursion of an add
+    const string WF_ADD_REF = 'add_ref';
+    // the id of the current add_ref workflow; increase it to add the next snapshot set
+    const int WF_ADD_REF_NBR = 28;
+
+    // the change_ref workflow name used for the snapshot folder and the test subheader:
+    // the url of the added reference is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_REF = 'change_ref';
+    // the id of the current change_ref workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_REF_NBR = 29;
+
+    // the del_ref workflow name used for the snapshot folder and the test subheader:
+    // the added reference is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_source)
+    const string WF_DEL_REF = 'del_ref';
+    // the id of the current del_ref workflow; increase it to add the next snapshot set
+    const int WF_DEL_REF_NBR = 30;
+
     /**
      * the user process step that a user reaction action triggers
      *

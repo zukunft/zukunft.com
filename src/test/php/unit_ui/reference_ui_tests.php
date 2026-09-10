@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -81,6 +82,15 @@ class reference_ui_tests
         $test_name = 'the protection type of a reference is sent to the frontend';
         $t->assert_true($test_name, $ref_filled->protection_id() > 0);
 
+        // the url of a reference carries the fields the edit form shows, e.g. for the change workflow
+        $test_name = 'the url of a filled reference carries the phrase and the external key';
+        $url_arr = $ref_filled->to_url_array($msg);
+        $t->assert($test_name, $url_arr[url_var::EXTERNAL_KEY], $ref_filled->external_key());
+        $t->assert($test_name, $url_arr[url_var::PHRASE], $ref_filled->phrase()->id());
+        $test_name = 'the url of an empty reference carries no external key';
+        $ref_empty = new ref();
+        $t->assert_false($test_name, array_key_exists(url_var::EXTERNAL_KEY, $ref_empty->to_url_array($msg)));
+
         $sfm = new system_form();
         $ttl_html = $sfm->title_named($ref_filled, $msg);
         $test_name = 'the reference title names the reference';
@@ -94,6 +104,10 @@ class reference_ui_tests
         // the linked phrase, or an empty phrase e.g. for a new reference of an add form
         $test_name = 'the phrase of a new reference is empty but never null';
         $ref_new = new ref();
+        $t->assert($test_name, $ref_new->phrase()->id(), 0);
+        // a back link carries only the id, so a test render has a reference with an id but no phrase
+        $test_name = 'the phrase of a reference known only by its id is empty';
+        $ref_new->set_id(refs::PI_ID);
         $t->assert($test_name, $ref_new->phrase()->id(), 0);
         $test_name = 'the phrase of a linked reference is the linked phrase';
         $t->assert_true($test_name, $ref->phrase()->id() != 0);

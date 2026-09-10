@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component;
@@ -121,6 +122,15 @@ class component_ui_tests
         $test_page .= 'del button: ' . $cmp->btn_del($url_arr, $base_url) . '<br>';
         $t->html_page_test($test_page, 'component', 'component', $msg, $base_url, $lan);
 
+        $t->subheader($ts . 'api class');
+
+        // the frontend builds the component_exe renderer for the component pages, which must call
+        // the component api route and be named "component" to the user, not by its class name
+        $test_name = 'a component renderer subclass is known to the api as a component';
+        $t->assert($test_name, new component_exe()->api_class(), component::class);
+        $test_name = 'an object without a renderer subclass keeps its own class';
+        $t->assert($test_name, new user_ui()->api_class(), user_ui::class);
+
         $t->subheader($ts . 'title');
 
         // the component default page shows the component name as the page title and the type, the
@@ -155,15 +165,17 @@ class component_ui_tests
         global $ui_sys;
         global $mtr;
 
-        // the component default page shows the style, the owner, the calculation formula and the
-        // three layout phrases (see base_views.json component_default); the names are resolved
-        // from the request caches, because the page url only carries the ids; the style and the
-        // three layout phrases stand below each other, so each carries the label of its form field
+        // the component default page shows the style, the calculation formula and the linked
+        // component below each other (see base_views.json component_default); the names are
+        // resolved from the request caches, because the page url only carries the ids, and each
+        // field carries its label, which stays when the field has no value, because the label is
+        // what tells the user that the component has this field and that it is not set
         $test_name = 'the style of a component is shown with its user-readable name and its label';
         $t->assert($test_name, $sfm->show_style($cmp_filled),
             $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_4_NAME));
-        $test_name = 'a component without a style shows an empty text';
-        $t->assert($test_name, $sfm->show_style($cmp_plain), '');
+        $test_name = 'a component without a style shows only the style label';
+        $t->assert($test_name, $sfm->show_style($cmp_plain),
+            $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, ''));
 
         $test_name = 'the owner of a component is shown';
         $cmp_owned = new component();
@@ -176,8 +188,40 @@ class component_ui_tests
         $cmp_frm = new component();
         $cmp_frm->url_mapper([url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID], $msg);
         $t->assert_text_contains($test_name, $sfm->show_formula($cmp_frm), formula_names::SCALE_TO_SEC);
-        $test_name = 'a component without a formula shows an empty text';
-        $t->assert($test_name, $sfm->show_formula($cmp_plain), '');
+        $test_name = 'the calculation formula of a component is shown with its label';
+        $t->assert_text_order($test_name, $sfm->show_formula($cmp_frm),
+            $mtr->txt(msg_id::FORM_SELECT_FORMULA), formula_names::SCALE_TO_SEC);
+        $test_name = 'a component without a formula shows only the formula label';
+        $t->assert($test_name, $sfm->show_formula($cmp_plain),
+            $t->labeled(msg_id::FORM_SELECT_FORMULA, ''));
+
+        // the linked component and the type of that link belong together, so one page field shows
+        // the name of the linked component with the link type name in brackets behind it
+        $test_name = 'the linked component of a component is shown with its label and a link';
+        $cmp_lnk_cmp = new component();
+        $cmp_lnk_cmp->url_mapper([
+            url_var::LINKED_COMPONENT => (string)components::SOLUTION_PRIO_TITLE_ID,
+            url_var::COMPONENT_LINK_TYPE => (string)component_link_types::ALWAYS_ID], $msg);
+        $t->assert_text_order($test_name, $sfm->show_linked_component($cmp_lnk_cmp),
+            $mtr->txt(msg_id::SHOW_FIELD_LINKED_COMPONENT), components::SOLUTION_PRIO_TITLE_NAME);
+        $test_name = 'the linked component of a component names the type of the link';
+        $t->assert_text_contains($test_name, $sfm->show_linked_component($cmp_lnk_cmp),
+            $ui_sys->typ_lst_cache->cmp_lnk_typ->name(component_link_types::ALWAYS_ID));
+        $test_name = 'a component without a linked component shows only the label';
+        $t->assert($test_name, $sfm->show_linked_component($cmp_plain),
+            $t->labeled(msg_id::SHOW_FIELD_LINKED_COMPONENT, ''));
+
+        // the components are cached as part of the system views, so the name of a component
+        // known by id only is taken from the view that uses it
+        $test_name = 'a component of the request cache is found by its id';
+        $t->assert($test_name,
+            $ui_sys->typ_lst_cache->get_component_by_id(components::SOLUTION_PRIO_TITLE_ID)?->name(),
+            components::SOLUTION_PRIO_TITLE_NAME);
+        $test_name = 'a component that no view uses is not in the request cache';
+        $t->assert_null($test_name,
+            $ui_sys->typ_lst_cache->get_component_by_id(components::COL_FIRST_ID));
+        $test_name = 'a component without a linked component asks the cache for nothing';
+        $t->assert_null($test_name, $ui_sys->typ_lst_cache->get_component_by_id(null));
 
         $test_name = 'the row phrase of a component is shown with its label and a link';
         $t->assert_text_order($test_name, $sfm->show_row_phrase($cmp_filled, $ui_sys->phr_lst),
@@ -188,8 +232,9 @@ class component_ui_tests
         $test_name = 'the sub column phrase of a component is shown with its label and a link';
         $t->assert_text_order($test_name, $sfm->show_col_sub_phrase($cmp_filled, $ui_sys->phr_lst),
             $mtr->txt(msg_id::FORM_SELECT_PHRASE_COL_SUB), word_names::CITY);
-        $test_name = 'a component without a row phrase shows an empty text';
-        $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst), '');
+        $test_name = 'a component without a row phrase shows only the row phrase label';
+        $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst),
+            $t->labeled(msg_id::FORM_SELECT_PHRASE_ROW, ''));
 
         $t->subheader($ts . 'select');
 
@@ -358,12 +403,14 @@ class component_ui_tests
         $t->assert($test_name, $sfm->show_style($lnk),
             $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, view_styles::COL_SM_8_NAME));
 
-        // a fresh link has no position type and no style of its own, so the fields stay empty
-        // instead of showing a wrong default
+        // a fresh link has no position type and no style of its own, so the fields show their
+        // label without a value instead of showing a wrong default
         $test_name = 'a fresh component link shows no link type';
-        $t->assert($test_name, $sfm->show_link_type($lnk_new), '');
+        $t->assert($test_name, $sfm->show_link_type($lnk_new),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, ''));
         $test_name = 'a fresh component link shows no style';
-        $t->assert($test_name, $sfm->show_style($lnk_new), '');
+        $t->assert($test_name, $sfm->show_style($lnk_new),
+            $t->labeled(msg_id::FORM_SELECT_VIEW_STYLE, ''));
 
 
         $t->subheader($ts . 'link tab box');

@@ -30,6 +30,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -218,6 +219,36 @@ class triple_tests
         $t->assert_text_contains($test_name, $form->form_field_weight($t_trp->triple_impact_ui()), 'value="0.5"');
         $test_name = 'the edit form of a triple without a weight starts with an empty weight field';
         $t->assert_false($test_name, str_contains($form->form_field_weight($t_trp->swiss_franc_ui()), 'value='));
+
+        // the url array is the inverse of url_mapper, so it carries the linked phrases, the verb and
+        // the triple fields that the edit form posts; a field that is not set is left out, so that a
+        // union with a posted url never masks a posted value with an empty one
+        $test_name = 'the url array of a triple contains the linked phrases and the verb';
+        $trp_url = test_triples::triple_add_ui()->to_url_array($msg_ui);
+        $t->assert($test_name, $trp_url[url_var::PHRASE_FROM], word_names::TEST_ADD_ID);
+        $t->assert($test_name . ' and the verb', $trp_url[url_var::VERB], verbs::PART_ID);
+        $t->assert($test_name . ' and the to phrase', $trp_url[url_var::PHRASE_TO], word_names::TEST_ADD_TO_ID);
+
+        // the expected weight is the same fractional one as in the edit form test above, which
+        // test_triples::triple_impact sets to match the db row of units.json
+        $test_name = 'the url array of a triple contains the weight, plural and impact';
+        $trp_ui = $t_trp->triple_impact_ui();
+        $trp_ui->plural = triple_names::MATH_CONST_PLURAL;
+        $trp_url = $trp_ui->to_url_array($msg_ui);
+        $t->assert($test_name, $trp_url[url_var::WEIGHT], 0.5);
+        $t->assert($test_name . ' and the plural', $trp_url[url_var::PLURAL], triple_names::MATH_CONST_PLURAL);
+        $t->assert($test_name . ' and the impact', $trp_url[url_var::IMPACT], impacts::MAX);
+
+        // the usage and the impact are never null, so both are dropped by their value like in the
+        // word url array, which leaves the id as the only field of a triple that is always sent
+        $test_name = 'the url array of a new triple contains only the id';
+        $trp_url = new triple_ui()->to_url_array($msg_ui);
+        $t->assert($test_name, $trp_url[url_var::ID], 0);
+        $t->assert_contains_not($test_name . ' and no unset field', array_keys($trp_url), [
+            url_var::PHRASE_FROM, url_var::VERB, url_var::PHRASE_TO, url_var::WEIGHT,
+            url_var::PLURAL, url_var::USAGE, url_var::IMPACT,
+            url_var::NAME, url_var::DESCRIPTION, url_var::TYPE,
+            url_var::SHARE, url_var::PROTECTION, url_var::OWNER]);
 
         $t->subheader($ts . 'url mapping of phrases posted by name');
         // the datalist edit fields submit the shown phrase name instead of the id, so the url
