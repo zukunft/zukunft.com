@@ -133,6 +133,24 @@ class view extends view_exe
     }
 
     /**
+     * set the vars of this view bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $msg, $dto);
+        // the view form posts the type as url_var::VIEW_TYPE (see to_url_array), which the parent
+        // does not read, so without this branch an added or changed view loses its type
+        if (array_key_exists(url_var::VIEW_TYPE, $url_array)) {
+            $this->set_type_id($url_array[url_var::VIEW_TYPE]);
+        }
+        return $msg;
+    }
+
+    /**
      * @return array parent url array with the type and the style url vars of the view form,
      *         without empty values, so that a form submission can be built from a view object
      *         (e.g. by the add_view workflow test) and the undo link of the 'my' tab finds the

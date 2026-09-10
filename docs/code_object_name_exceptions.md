@@ -25,7 +25,7 @@ MapObject: $map_ui
 button: $b, $undo_btn
 change: $chg, $log_named, $log_new
 change_log: $log
-component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
+component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_ui, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
 element: $elm_ui
 figure: $fig_ui
 formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_page, $frm_plain, $frm_renamed, $frm_tab, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp, $url_arr

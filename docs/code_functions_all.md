@@ -6064,6 +6064,10 @@
 
 ```
 \-- component
+    \-- api_class - section for function api_class not yet defined that it should be construct and map in /component/com
+            ponent.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be construct and map in /compone
+            nt/component.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be construct and map in /compo
             nent/component.php
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /component/c
@@ -7385,6 +7389,7 @@
     \-- id - section for function id not yet defined that it should be set and get in /sandbox/db_object.php
     \-- api_par_from_url - section for function api_par_from_url not yet defined that it should be load in /sandbox/db_o
             bject.php
+    \-- api_class - section for function api_class not yet defined that it should be load in /sandbox/db_object.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /sandbox/db_object.php
     \-- api_json - section for function api_json not yet defined that it should be interface in /sandbox/db_object.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /sandbox/db_object.php
@@ -7516,6 +7521,7 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_typed.php
     \-- type_id - section for function type_id not yet defined that it should be set and get in /sandbox/sandbox_typed.p
             hp
+    \-- order error - order of section construct and map has difference at to_url_array should be before api_mapper
 \-- sandbox_value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_value.php
@@ -7809,9 +7815,10 @@
     \-- view - section for function view not yet defined that it should be interface in /view/term_view.php
     \-- term_linked - section for function term_linked not yet defined that it should be interface in /view/term_view.ph
             p
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
+    \-- order error - order of section construct and map has difference at to_url_array should be before url_mapper
 \-- view
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /view/view.php
+    \-- url_mapper - section for function url_mapper not yet defined that it should be api in /view/view.php
     \-- to_url_array - section for function to_url_array not yet defined that it should be api in /view/view.php
     \-- sandbox_fld_order - section for function sandbox_fld_order not yet defined that it should be api in /view/view.p
             hp
@@ -7985,7 +7992,7 @@
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php
     \-- math - section for function math not yet defined that it should be fixed in /word/word.php
-    \-- order error - order of section construct and map has difference at db_fld_to_url should be before to_url_array
+    \-- order error - order of section construct and map has difference at to_url_array should be before input_valid
 \-- word_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /word/word_list.php
     \-- tbl - section for function tbl not yet defined that it should be table in /word/word_list.php
@@ -8013,20 +8020,22 @@
 
 ```
 \-- construct and map
+    \-- api_class
+        \-- component - @return string the component class for every renderer subclass (component_exe, system_form,
+    \-- to_url_array
+        \-- component - @return array parent url array with the type and the style url vars of the component form,
     \-- db_fld_to_url
         \-- component - @return array all sandbox component db field names mapped to their url var key so that the
     \-- url_mapper
         \-- component - set the vars of this component bases on the url array
         \-- formula_link - set the vars of this word frontend object bases on the url array
         \-- sandbox_link - set the vars of this sandbox link object bases on the url array
-        \-- sandbox_typed - set the vars of this object bases on the url array
     \-- input_valid
         \-- component - besides the base checks the ui message links are code links like the code id, so a change
     \-- api_mapper
         \-- figure_list - set the vars of this figure list based on the given json
         \-- formula_link - set the vars this formula link bases on the api json array
         \-- sandbox_link - set the vars this sandbox link bases on the api json array
-        \-- sandbox_typed - set the vars of this object bases on the api json array
     \-- __construct
         \-- frontend - define the settings for this word object
         \-- data_object - init the data object vars and set the lists based on the given api json
@@ -8034,8 +8043,6 @@
         \-- verb_list - create an empty list, which needs no message; a caller with an api json message
     \-- reset
         \-- data_object - init the data object vars and set the lists based on the given api json
-    \-- to_url_array
-        \-- sandbox_typed - @return array parent url array extended with the type id
 \-- api
     \-- api_mapper
         \-- component - TODO all set_from_json_array functions should only use json_fields not api::FLD
@@ -8050,7 +8057,6 @@
         \-- formula_link - create an api json array for the backend based on this frontend object
         \-- sandbox - @return array the json message array to send the updated data to the backend
         \-- sandbox_link - create an api json array for the backend based on this frontend object
-        \-- sandbox_typed - @return array the json message array to send the updated data to the backend
         \-- sys_log_list - @return array the json message array to send the updated data to the backend
     \-- load_by_id_with_related
         \-- component - load the component by id AND ask the backend to include the owner, the change log and the
@@ -8448,10 +8454,8 @@
         \-- combine_named - @return string|null the plural of the word, triple, formula or verb
     \-- set_type_id
         \-- combine_named - TODO review and use only frontend objects
-        \-- sandbox_typed - @return array the json message array to send the updated data to the backend
     \-- type_id
         \-- combine_named - @return int|null the type id of the word, triple, formula or verb
-        \-- sandbox_typed - @return array the json message array to send the updated data to the backend
     \-- url_mapper
         \-- sandbox - set the vars of this object bases on the url array
     \-- to_url_array

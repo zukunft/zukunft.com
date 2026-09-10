@@ -2028,7 +2028,8 @@ class test_mappers
         $url_array = [];
         $url_array[] = [url_var::NAME, $msk->name()];
         $url_array[] = [url_var::DESCRIPTION, $msk->get_description()];
-        $url_array[] = [url_var::TYPE, $msk->type_id($msg)];
+        // the view form posts its type as VIEW_TYPE, so the round trip tests that key, not the generic one
+        $url_array[] = [url_var::VIEW_TYPE, $msk->type_id($msg)];
         $url_array[] = [url_var::STYLE, $msk->get_style_id()];
         // the user who has created a standard test object is its owner, so the url carries
         // the creating user as the owner like the api message of a page request does
@@ -2071,7 +2072,8 @@ class test_mappers
         $url_array = [];
         $url_array[] = [url_var::NAME, $cmp->name()];
         $url_array[] = [url_var::DESCRIPTION, $cmp->get_description()];
-        $url_array[] = [url_var::TYPE, $cmp->type_id($msg)];
+        // the component form posts its type as COMPONENT_TYPE, so the round trip tests that key
+        $url_array[] = [url_var::COMPONENT_TYPE, $cmp->type_id($msg)];
         $url_array[] = [url_var::STYLE, $cmp->get_style_id()];
         $url_array[] = [url_var::PHRASE_ROW, $cmp->row_phrase->id()];
         $url_array[] = [url_var::PHRASE_COL, $cmp->col_phrase->id()];

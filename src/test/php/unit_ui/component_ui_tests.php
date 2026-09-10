@@ -122,6 +122,15 @@ class component_ui_tests
         $test_page .= 'del button: ' . $cmp->btn_del($url_arr, $base_url) . '<br>';
         $t->html_page_test($test_page, 'component', 'component', $msg, $base_url, $lan);
 
+        $t->subheader($ts . 'api class');
+
+        // the frontend builds the component_exe renderer for the component pages, which must call
+        // the component api route and be named "component" to the user, not by its class name
+        $test_name = 'a component renderer subclass is known to the api as a component';
+        $t->assert($test_name, new component_exe()->api_class(), component::class);
+        $test_name = 'an object without a renderer subclass keeps its own class';
+        $t->assert($test_name, new user_ui()->api_class(), user_ui::class);
+
         $t->subheader($ts . 'title');
 
         // the component default page shows the component name as the page title and the type, the

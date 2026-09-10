@@ -234,6 +234,14 @@ class workflows
     // the id of the current del_view workflow; increase it to add the next snapshot set
     const int WF_DEL_VIEW_NBR = 24;
 
+    // the add_component workflow name used for the snapshot folder and the test subheader:
+    // a new component is entered in the add form and written after the user has confirmed the add;
+    // like add_source it only tests the back excursion, because the word workflows already
+    // cover the cancel excursion of an add
+    const string WF_ADD_COMPONENT = 'add_component';
+    // the id of the current add_component workflow; increase it to add the next snapshot set
+    const int WF_ADD_COMPONENT_NBR = 25;
+
     /**
      * the user process step that a user reaction action triggers
      *

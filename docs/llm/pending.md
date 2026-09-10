@@ -3,8 +3,6 @@
 
 ## components
 
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/add_source_wf19 workflow create the add_component workflow tests
-
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_component workflow tests
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_component workflow tests
@@ -33,6 +31,8 @@ add the missing workflows link workflows such as
 - unlink a view from a term
 - add a child view to a view
 - remove a child view from a view
+
+add a fa-plus icon at the end of the phrases linked to a formula in the formula default view and add and edit view that, based on url_to_action, call a confirm page that showns something like 'link phrase xxx to formula xxx' with a cancel and confirm button
 
 add the missing workflows quick workflows such as
 

@@ -163,6 +163,33 @@ class component extends sandbox_code_id
      */
 
     /**
+     * @return string the component class for every renderer subclass (component_exe, system_form,
+     *                system_page), because the api has one component route and the user sees a
+     *                "component", never the internal renderer name
+     */
+    function api_class(): string
+    {
+        return self::class;
+    }
+
+    /**
+     * @return array parent url array with the type and the style url vars of the component form,
+     *         without empty values, so that a form submission can be built from a component object
+     *         (e.g. by the add_component workflow test) and the undo link of the 'my' tab finds the
+     *         current type and style (see ui_preview::overwrite_confirm_link); the component form
+     *         posts the type as url_var::COMPONENT_TYPE, so the generic type key of the parent is
+     *         replaced, just like in view::to_url_array
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        unset($url_array[url_var::TYPE]);
+        $url_array[url_var::COMPONENT_TYPE] = $this->type_id($msg);
+        $url_array[url_var::STYLE] = $this->get_style_id();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
      * @return array all sandbox component db field names mapped to their url var key so that the
      *              undo link of the 'my' tab can change any overwritten field (see
      *              ui_preview::overwrite_confirm_link); the keys match component_fields::ALL_NAMES
@@ -203,6 +230,11 @@ class component extends sandbox_code_id
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         parent::url_mapper($url_array, $msg, $dto);
+        // the component form posts the type as url_var::COMPONENT_TYPE (see to_url_array), which
+        // the parent does not read, so without this branch an added component loses its type
+        if (array_key_exists(url_var::COMPONENT_TYPE, $url_array)) {
+            $this->set_type_id($url_array[url_var::COMPONENT_TYPE]);
+        }
         if (array_key_exists(url_var::STYLE, $url_array)) {
             $this->style_id = $url_array[url_var::STYLE];
         }

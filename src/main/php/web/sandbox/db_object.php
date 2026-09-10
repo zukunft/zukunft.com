@@ -415,7 +415,7 @@ class db_object extends TextIdObject
         $result = false;
 
         $api = new rest_call();
-        $json_array = $api->api_call_id($this::class, $id, $data);
+        $json_array = $api->api_call_id($this->api_class(), $id, $data);
         if ($json_array) {
             $api_msg = new api_message();
             $body = $api_msg->validate($json_array);
@@ -479,6 +479,18 @@ class db_object extends TextIdObject
     function api_par_from_url(array $url_array): array
     {
         return [];
+    }
+
+    /**
+     * the class the api and the user texts know this object by: a renderer subclass (e.g. the
+     * component_exe that the frontend builds for the component pages) calls the api of its base
+     * class and is named like it, so it overrides this with the base class
+     *
+     * @return string the class name used for the api route and the translated object name
+     */
+    function api_class(): string
+    {
+        return $this::class;
     }
 
 

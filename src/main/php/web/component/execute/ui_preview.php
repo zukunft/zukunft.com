@@ -160,7 +160,7 @@ class ui_preview extends ui_base
         if ($ui_msg_code_id != null) {
             $title = $mtr->txt($ui_msg_code_id);
             if ($dbo != null) {
-                $title .= ' ' . library::class_to_name_translated($dbo::class);
+                $title .= ' ' . $this->object_name($dbo);
             }
             // the confirm view object is not loaded from the db, so the name comes from the posted url
             $name = $url_array[url_var::NAME] ?? '';
@@ -189,9 +189,22 @@ class ui_preview extends ui_base
     {
         $result = '';
         if ($sbx != null) {
-            $result = library::class_to_name_translated($sbx::class);
+            $result = $this->object_name($sbx);
         }
         return $result;
+    }
+
+    /**
+     * the translated object name shown to the user for a page object; a db object may be a
+     * renderer subclass (e.g. component_exe), so it is named by its api class (see db_object::api_class)
+     *
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the object shown on the page
+     * @return string the translated object name e.g. 'component' for a component_exe
+     */
+    private function object_name(db_object|type_object|combine_named|sandbox_list $dbo): string
+    {
+        $class = $dbo instanceof db_object ? $dbo->api_class() : $dbo::class;
+        return library::class_to_name_translated($class);
     }
 
     /**

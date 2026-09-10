@@ -212,6 +212,18 @@ class horizontal_ui_tests
             $t->assert_true($test_name, $diff->is_ok());
         }
 
+        $t->subheader($ts . 'map');
+        // the frontend builds the component_exe renderer for the component masks (see
+        // frontend::view_id_to_dbo_ui), so a confirmed add converts that subclass, which must
+        // reach the backend component and not the base object whose save has no name field
+        $map = new MapObject();
+        $test_name = 'a component_exe converts to the backend component';
+        $db_obj = $map->dbObject(new component_exe(), $t->usr1);
+        $t->assert($test_name, $db_obj::class, component::class);
+        $test_name = 'an unrelated frontend object is not caught by the component branch';
+        $db_obj = $map->dbObject($t_map->class_to_ui_object(user::class), $t->usr1);
+        $t->assert($test_name, $db_obj::class, user::class);
+
         $t->subheader($ts . 'component types');
         $html = new html_base();
         $test_page = $html->text_h1('Component display test');
