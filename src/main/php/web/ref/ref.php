@@ -501,7 +501,8 @@ class ref extends sandbox
                 $this->type_name(),
                 $this->get_description()
             );
-            return $name . ' ' . $this->refresh_job_link($html);
+            // the edit icon follows the refresh icon so the user can correct e.g. the external key
+            return $name . ' ' . $this->refresh_job_link($html) . ' ' . $this->edit_icon_link();
         } else {
             return 'ERROR: url is null';
         }

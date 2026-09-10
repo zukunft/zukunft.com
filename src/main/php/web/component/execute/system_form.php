@@ -495,15 +495,8 @@ class system_form extends component
      */
     private function edit_link(db_object $dbo, array $url_array = []): string
     {
-        global $mtr;
-
-        $html = new html_base();
-        $url = $html->url_with_back(
-            $html->url_back($dbo::VIEW_EDIT_ID, $dbo->id()),
-            $url_array
-        );
-        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
+        // the icon is built by the object, because the reference name link shows the same icon
+        return $dbo->edit_icon_link($url_array);
     }
 
     /**
