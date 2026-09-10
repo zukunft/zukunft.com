@@ -684,6 +684,9 @@ class ui_list extends ui_base
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
             $result = $ref_lst->list($msg, $phr_lst);
+            // the plus icon at the end of the list is the only way to add a reference to the
+            // phrase, so it is also shown if the phrase has no reference yet
+            $result .= $ref_lst->add_link($phr);
         }
         // wrap the reference list in a block div so each reference name and its refresh icon
         // stay on one line; without it the bare inline elements land directly in the

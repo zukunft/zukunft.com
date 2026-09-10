@@ -7282,6 +7282,7 @@
 \-- ref_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/ref_list.php
     \-- list - section for function list not yet defined that it should be display in /ref/ref_list.php
+    \-- add_link - section for function add_link not yet defined that it should be display in /ref/ref_list.php
     \-- sort_by_impact_and_type - section for function sort_by_impact_and_type not yet defined that it should be display
              in /ref/ref_list.php
 \-- source
@@ -8280,6 +8281,8 @@
     \-- list
         \-- ref_list - show the references below each other, sorted first so the html order is deterministic
         \-- verb_list - set the vars of a term object based on the given json
+    \-- add_link
+        \-- ref_list - a small plus icon shown at the end of the reference list of a phrase that opens the ref add
     \-- sort_by_impact_and_type
         \-- ref_list - sort the references by impact (highest first) and then by reference type name, with the
     \-- display_linked

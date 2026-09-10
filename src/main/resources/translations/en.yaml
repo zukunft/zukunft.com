@@ -324,6 +324,7 @@ messages:
   component_link: "add component"
   component_unlink: "remove component"
   source_edit: "change source"
+  ref_add: "add new ref"
   ref_edit: "change ref"
   result_edit: "change result"
   view_link_edit: "change view link"

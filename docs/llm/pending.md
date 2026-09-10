@@ -3,8 +3,6 @@
 
 ## refs
 
-see /docs/llm/coding.md and where the reference is shown e.g. in http://localhost/http/view.php?m=90&id=381 add at the end of the list a plus icon to add a reference to the e.g. word
-
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/add_source_wf19 workflow create the add_ref workflow tests
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_ref workflow tests

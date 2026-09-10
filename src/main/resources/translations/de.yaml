@@ -716,6 +716,7 @@ messages:
   component_link: "Komponente hinzufügen"
   component_unlink: "Komponente entfernen"
   source_edit: "Quelle ändern"
+  ref_add: "neue Referenz hinzufügen"
   ref_edit: "Referenz ändern"
   result_edit: "Ergebnis ändern"
   view_link_edit: "Ansichtsverknüpfung ändern"
