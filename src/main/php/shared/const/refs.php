@@ -59,6 +59,8 @@ class refs
     // to test adding a new reference type
     const string SYSTEM_TEST_ADD = 'System Test Reference External Key';
     const string SYSTEM_TEST_ADD_COM = 'System Test Reference Type';
+    const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
+    const int SYSTEM_TEST_ADD_ID = 992; // fixed snapshot id of the add workflow reference (like word_names::TEST_ADD_ID)
     const string SYSTEM_TEST_RENAMED = 'System Test Reference External Key Changed';
 
     // must be the same as in /resource/api/source/source_put.json

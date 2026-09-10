@@ -3,8 +3,6 @@
 
 ## refs
 
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/add_source_wf19 workflow create the add_ref workflow tests
-
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_ref workflow tests
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_ref workflow tests

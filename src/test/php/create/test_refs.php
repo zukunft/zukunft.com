@@ -45,8 +45,10 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'ref_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -59,8 +61,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
@@ -255,6 +259,47 @@ class test_refs extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->ref_list_math(), [api_types::INCL_PHRASES]);
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the url of an empty reference as the add reference form shows it, used by the add_ref
+     * workflow test to open the form (mirrors test_sources::source_new_url)
+     *
+     * @return array the url parameters of a reference that is not yet created
+     */
+    static function ref_new_url(user_message_ui $msg): array
+    {
+        $ref_ui = new ref_ui();
+        return $ref_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url parameters posted by the 'Add a new ref' form on save, used by the add_ref workflow
+     * test to show the new reference in the confirm add view (docs/llm/testing.md); the phrase is
+     * the pi symbol word, because it has no reference yet in the base data; the type is posted
+     * with the url var of the form's type selector; the share and protection ids are the defaults
+     * of a newly added reference; the object id and the back target are added by the workflow
+     * step, not here (mirrors test_sources::add_url_array)
+     *
+     * @return array the add form url parameters of the new reference
+     */
+    function add_url_array(): array
+    {
+        $t_wrd = new test_words($this->env);
+        return [
+            url_var::PHRASE => $t_wrd->word_pi_symbol()->phrase()->id(),
+            url_var::EXTERNAL_KEY => refs::SYSTEM_TEST_ADD,
+            url_var::REF_TYPE => ref_types::WIKIDATA_ID,
+            url_var::URL => refs::SYSTEM_TEST_ADD_URL,
+            url_var::DESCRIPTION => refs::SYSTEM_TEST_ADD_COM,
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
     }
 
 }

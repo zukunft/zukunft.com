@@ -162,6 +162,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
@@ -4405,6 +4406,23 @@ class library
                 break;
         }
         return $msg_id;
+    }
+
+    /**
+     * the api route folder of an object class as used in the api url, e.g. 'formulaLink' for a
+     * formula_link; the reference folder is named by the full word unlike the class, so this
+     * exception is mapped here once for the frontend calls and the api tests
+     *
+     * @param string $class including the namespace of the frontend or the backend class
+     * @return string the api route folder name
+     */
+    function class_to_api_route(string $class): string
+    {
+        $name = self::class_to_name($class);
+        if ($name == self::class_to_name(ref::class)) {
+            $name = url_var::REF_API;
+        }
+        return $this->camelize_ex_1($name);
     }
 
     /**

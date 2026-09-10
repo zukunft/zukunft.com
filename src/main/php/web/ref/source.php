@@ -144,6 +144,14 @@ class source extends sandbox_code_id
             if (($url_array[url_var::VIEW] ?? null) != null) {
                 $this->view_id = $url_array[url_var::VIEW];
             }
+            // the source type field is posted as url_var::SOURCE_TYPE ('st'), not the generic
+            // url_var::TYPE the parent reads, so capture it here to persist the type of the add form
+            // (like the phrase type of a word)
+            if (array_key_exists(url_var::SOURCE_TYPE, $url_array)) {
+                if ($url_array[url_var::SOURCE_TYPE] != null) {
+                    $this->set_type_id($url_array[url_var::SOURCE_TYPE]);
+                }
+            }
         }
         return $msg;
     }

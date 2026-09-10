@@ -33,18 +33,25 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::REF . 'ref.php';
 include_once test_paths::CONST . 'files.php';
 include_once paths::SHARED_CONST . 'users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -392,6 +399,12 @@ class lib_tests
         // test camelize_ex_1
         $result = $lib->camelize_ex_1("function_name");
         $t->assert("camelize_ex_1", $result, "functionName");
+
+        // test class_to_api_route: the reference api folder is named by the full word
+        $test_name = 'api route of the frontend reference class';
+        $t->assert($test_name, $lib->class_to_api_route(ref_ui::class), url_var::REF_API);
+        $test_name = 'api route of any other class is the camelized class name';
+        $t->assert($test_name, $lib->class_to_api_route(formula_link::class), 'formulaLink');
 
 
         $t->subheader($ts . 'arrays and lists');

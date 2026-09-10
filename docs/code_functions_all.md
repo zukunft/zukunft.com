@@ -253,6 +253,7 @@
     \-- type - section for function type not yet defined that it should be preloaded in /ref/ref.php
     \-- load_sql - section for function load_sql is expected to be load sql in /ref/ref.php
     \-- load_sql_by_link_ids - section for function load_sql_by_link_ids is expected to be load sql in /ref/ref.php
+    \-- load_sql_by_ex_key - section for function load_sql_by_ex_key is expected to be load sql in /ref/ref.php
     \-- all_sandbox_fields - section for function all_sandbox_fields is expected to be sql fields in /ref/ref.php
     \-- reload_objects - section for function reload_objects is expected to be related in /ref/ref.php
     \-- from_field - section for function from_field is expected to be sql fields in /ref/ref.php
@@ -263,7 +264,8 @@
     \-- needs_to - section for function needs_to not yet defined that it should be info in /ref/ref.php
     \-- delta - section for function delta is expected to be del in /ref/ref.php
     \-- add - section for function add not yet defined that it should be save in /ref/ref.php
-    \-- order error - order of section info has difference at delta should be before needs_db_update
+    \-- order error - order of section load has difference at load_standard_by_type_link should be before load_by_ex_key
+            ,order of section info has difference at delta should be before needs_db_update
 \-- source
     \-- load_views_related - section for function load_views_related is expected to be load in /ref/source.php
     \-- load_values_related - section for function load_values_related is expected to be load in /ref/source.php

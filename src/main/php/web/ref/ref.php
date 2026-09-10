@@ -187,6 +187,14 @@ class ref extends sandbox
             } else {
                 $this->set_predicate_id();
             }
+            // the reference type field is posted as url_var::REF_TYPE ('lt'), not the generic
+            // url_var::TYPE read above, so capture it here to persist the type of the add form
+            // (like the phrase type of a word)
+            if (array_key_exists(url_var::REF_TYPE, $url_array)) {
+                if ($url_array[url_var::REF_TYPE] != null) {
+                    $this->set_predicate_id($url_array[url_var::REF_TYPE]);
+                }
+            }
             if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
                 $this->description = $url_array[url_var::DESCRIPTION];
             } else {
