@@ -242,6 +242,21 @@ class workflows
     // the id of the current add_component workflow; increase it to add the next snapshot set
     const int WF_ADD_COMPONENT_NBR = 25;
 
+    // the change_component workflow name used for the snapshot folder and the test subheader:
+    // the style of the added component is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_COMPONENT = 'change_component';
+    // the id of the current change_component workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_COMPONENT_NBR = 26;
+
+    // the del_component workflow name used for the snapshot folder and the test subheader:
+    // the added component is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_view)
+    const string WF_DEL_COMPONENT = 'del_component';
+    // the id of the current del_component workflow; increase it to add the next snapshot set
+    const int WF_DEL_COMPONENT_NBR = 27;
+
     /**
      * the user process step that a user reaction action triggers
      *

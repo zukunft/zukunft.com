@@ -60,9 +60,12 @@ class component_write_url_tests extends component_url_tests
         // remove any test component left over from a previous run
         $this->cleanup_test_components($t);
 
-        // run the same workflow as component_url_tests but with do_it true
-        // so the confirmed step is persisted and check if the database is actually updated
+        // run the same workflows as component_url_tests but with do_it true
+        // so each confirmed step is persisted and check if the database is actually updated
+        // the add must run first because the change and delete workflows load the component it created
         $this->add_component_workflow(workflows::WF_ADD_COMPONENT_NBR, true);
+        $this->change_component_workflow(workflows::WF_CHANGE_COMPONENT_NBR, true);
+        $this->del_component_workflow(workflows::WF_DEL_COMPONENT_NBR, true);
 
         $t->subheader($this->ts . 'cleanup');
 

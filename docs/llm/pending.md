@@ -1,12 +1,6 @@
 
 # pending - list of planned llm prompts with prio 1
 
-## components
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_component workflow tests
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_component workflow tests
-
 ## refs
 
 where the reference is shown e.g. in http://localhost/http/view.php?m=90&id=381 add an edit icon next to the refresh icon that links to the ref edit view for the reference e.g. wikidata
