@@ -59,9 +59,12 @@ class ref_write_url_tests extends ref_url_tests
         $t_ref = new test_refs($t);
         $t_ref->cleanup($this->ts);
 
-        // run the same workflow as ref_url_tests but with do_it true
-        // so the confirmed step is persisted and check if the database is actually updated
+        // run the same workflows as ref_url_tests but with do_it true
+        // so each confirmed step is persisted and check if the database is actually updated
+        // the add must run first because the change and delete workflows load the reference it created
         $this->add_ref_workflow(workflows::WF_ADD_REF_NBR, true);
+        $this->change_ref_workflow(workflows::WF_CHANGE_REF_NBR, true);
+        $this->del_ref_workflow(workflows::WF_DEL_REF_NBR, true);
 
         // cleanup - fallback delete in case the workflow did not persist as expected
         $t_ref->cleanup($this->ts);

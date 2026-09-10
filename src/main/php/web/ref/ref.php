@@ -317,20 +317,13 @@ class ref extends sandbox
 
     /**
      * @return phrase the phrase this external reference is linked to, or an empty phrase if it is
-     *                not yet set e.g. for a new reference of an add form (like db_object::phrase)
+     *                not yet set e.g. for a new reference of an add form or a reference only known
+     *                by its id like a back link in a test render (like db_object::phrase); a stored
+     *                reference without a phrase is reported by api_mapper, not here
      */
     function phrase(): phrase
     {
-        $phr = $this->phr;
-        if ($phr == null) {
-            // only a new reference of an add form has no phrase yet; a stored reference must be
-            // linked to a phrase, so a missing phrase is a data error (like triple::get_verb)
-            if ($this->id() > 0) {
-                log_err('phrase missing for reference ' . $this->dsp_id(), 'ref->phrase');
-            }
-            $phr = new phrase();
-        }
-        return $phr;
+        return $this->phr ?? new phrase();
     }
 
     private function set_phrase_by_id(int $id): void
@@ -454,6 +447,22 @@ class ref extends sandbox
     function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
         return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
+     * @return array parent url array extended with the fields of this reference that url_mapper reads
+     *               back (see db_fld_to_url), e.g. to open the edit form of the reference
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::PHRASE] = $this->phr?->id();
+        $url_array[url_var::EXTERNAL_KEY] = $this->external_key();
+        $url_array[url_var::TYPE] = $this->predicate_id();
+        $url_array[url_var::SOURCE] = $this->source?->id();
+        $url_array[url_var::URL] = $this->url();
+        $url_array[url_var::DESCRIPTION] = $this->get_description();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
     }
 
     /**

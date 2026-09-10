@@ -265,6 +265,21 @@ class workflows
     // the id of the current add_ref workflow; increase it to add the next snapshot set
     const int WF_ADD_REF_NBR = 28;
 
+    // the change_ref workflow name used for the snapshot folder and the test subheader:
+    // the url of the added reference is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_REF = 'change_ref';
+    // the id of the current change_ref workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_REF_NBR = 29;
+
+    // the del_ref workflow name used for the snapshot folder and the test subheader:
+    // the added reference is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_source)
+    const string WF_DEL_REF = 'del_ref';
+    // the id of the current del_ref workflow; increase it to add the next snapshot set
+    const int WF_DEL_REF_NBR = 30;
+
     /**
      * the user process step that a user reaction action triggers
      *

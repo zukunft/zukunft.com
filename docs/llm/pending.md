@@ -1,12 +1,6 @@
 
 # pending - list of planned llm prompts with prio 1
 
-## refs
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_ref workflow tests
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_ref workflow tests
-
 ## workflows
 
 add the missing workflows link workflows such as

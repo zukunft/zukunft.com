@@ -7272,6 +7272,7 @@
     \-- url - section for function url not yet defined that it should be set and get in /ref/ref.php
     \-- predicate_id - section for function predicate_id not yet defined that it should be set and get in /ref/ref.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /ref/ref.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be api in /ref/ref.php
     \-- api_array - section for function api_array not yet defined that it should be api in /ref/ref.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /ref/ref.php
     \-- name_link - section for function name_link not yet defined that it should be base in /ref/ref.php
