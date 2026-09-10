@@ -87,6 +87,7 @@ class view_url_tests extends url_test_base
         // for the write tests the same workflows are used with do_it = true
         $this->add_view_workflow(workflows::WF_ADD_VIEW_NBR);
         $this->change_view_workflow(workflows::WF_CHANGE_VIEW_NBR);
+        $this->del_view_workflow(workflows::WF_DEL_VIEW_NBR);
     }
 
     /**
@@ -245,6 +246,84 @@ class view_url_tests extends url_test_base
     }
 
     /**
+     * run the del_view workflow and snapshot the html after every user action, mirroring
+     * del_source_workflow: the back excursion leaves the delete form and the cancel excursion
+     * discards the deletion in the confirm view, both without writing, and only the final
+     * confirmed step removes the view. snapshots go into
+     * src/test/resources/web/html/workflow/del_view_wf<nbr>/ (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 24 for wf24
+     * @param bool $do_it false to only render the steps, true to also delete the view
+     */
+    protected function del_view_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        $msg = new user_message();
+        // the del_view workflow runs on the 'System Test View' (added by the add_view workflow of a
+        // write run); resolve its current database id by name and set the fixed snapshot id
+        $this->wf_start($wf_nbr, workflows::WF_DEL_VIEW, $this->t->usr1, views::TEST_ADD_ID, $do_it);
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $msk = new view($this->t->usr1);
+        $this->wf_id = $msk->load_by_name(views::TEST_ADD_NAME, $msg);
+        // in a read-only run the add workflow has not written the view, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = views::TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = views::TEST_ADD_ID;
+
+        // initial url with the added view; the url carries the current db id of the view so the
+        // confirmed delete targets the real row (the snapshot files normalize the id back to the
+        // fixed test id)
+        $t_msk = new test_views($this->t);
+        $url_arr = $t_msk->view_add_url($this->msg);
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
+
+        // show: display the test view in its default view page
+        $this->assert_step(workflows::SHOW, $url_arr, views::VIEW_DEFAULT_ID);
+
+        // edit: open the delete confirmation form
+        $this->assert_step(workflows::EDIT, $url_arr, views::VIEW_DEL_ID);
+
+        // back: leave the delete form without deleting; the back step follows the '9' back target of
+        // the url, so it returns to the start view the user came from (no write)
+        $this->assert_step(workflows::BACK, $url_arr, views::START_ID);
+
+        // edit: re-open the delete form
+        $this->assert_step(workflows::EDIT, $url_arr, views::VIEW_DEL_ID);
+
+        // save: press delete on the form which shows the confirm delete view
+        $this->assert_step(workflows::SAVE, $url_arr, views::VIEW_DEL_ID);
+
+        // cancel: discard the deletion in the confirm view and return to the view page (no write)
+        $this->assert_step(workflows::CANCEL, $url_arr, views::VIEW_DEFAULT_ID);
+
+        // edit: re-open the delete form
+        $this->assert_step(workflows::EDIT, $url_arr, views::VIEW_DEL_ID);
+
+        // save: press delete again which shows the confirm delete view
+        $this->assert_step(workflows::SAVE, $url_arr, views::VIEW_DEL_ID);
+
+        // confirmed: confirm the deletion so the view is actually removed from the database (with
+        // $do_it true); the confirm mask does not encode the object type, so carry the '9'-prefixed
+        // back target = the view page + id (as the real confirm form does), otherwise dbo_for_url
+        // falls back to the default word object and the delete would target a word
+        $url_arr[url_var::BACK . url_var::MASK] = views::VIEW_DEFAULT_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_DEL_ID);
+
+        // a write run must actually delete the view; a non-owner delete is a soft delete, so check
+        // the view is flagged as excluded in the user sandbox rather than physically removed
+        if ($do_it) {
+            $this->assert_view_removed('del_view workflow has removed the view');
+        }
+    }
+
+    /**
      * check that the workflow test view exists in the database with the expected style, used by the
      * add write workflow to verify the confirmed step was actually persisted (mirrors
      * source_url_tests::assert_source_in_db)
@@ -280,6 +359,22 @@ class view_url_tests extends url_test_base
         $msk->load_by_name($name, $msg);
         $this->t->assert($test_name, $msk->name(), $name);
         $this->t->assert($test_name, $msk->description, $description);
+    }
+
+    /**
+     * check that the workflow test view has been removed from the database, used by the del write
+     * workflow to verify the confirmed step was actually persisted (mirrors
+     * source_url_tests::assert_source_removed); a non-owner delete only excludes the view in the
+     * user sandbox, so both states count as removed
+     *
+     * @param string $test_name the description of the assertion
+     */
+    private function assert_view_removed(string $test_name): void
+    {
+        $msg = new user_message();
+        $msk = new view($this->t->usr1);
+        $msk->load_by_name(views::TEST_ADD_NAME, $msg);
+        $this->t->assert_true($test_name, ($msk->id() == 0 or $msk->is_excluded()));
     }
 
 }

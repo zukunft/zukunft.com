@@ -227,6 +227,13 @@ class workflows
     // the id of the current change_view workflow; increase it to add the next snapshot set
     const int WF_CHANGE_VIEW_NBR = 23;
 
+    // the del_view workflow name used for the snapshot folder and the test subheader:
+    // the added view is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_source)
+    const string WF_DEL_VIEW = 'del_view';
+    // the id of the current del_view workflow; increase it to add the next snapshot set
+    const int WF_DEL_VIEW_NBR = 24;
+
     /**
      * the user process step that a user reaction action triggers
      *

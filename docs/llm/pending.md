@@ -58,6 +58,7 @@ in the logout page add an OK button that calls the back page from the url withou
 ## maybe to fix:
 
 1. Limit before sort — load_values_similar() reads with value_list::read_limit(), but the impact sort happens in the renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
+2. sort views and components so the the most must are on top
 
 ## cleanup
 
