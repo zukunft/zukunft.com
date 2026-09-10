@@ -219,6 +219,14 @@ class workflows
     // the id of the current add_view workflow; increase it to add the next snapshot set
     const int WF_ADD_VIEW_NBR = 22;
 
+    // the change_view workflow name used for the snapshot folder and the test subheader:
+    // the style of the added view is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_VIEW = 'change_view';
+    // the id of the current change_view workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_VIEW_NBR = 23;
+
     /**
      * the user process step that a user reaction action triggers
      *

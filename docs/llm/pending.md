@@ -1,12 +1,6 @@
 
 # pending - list of planned llm prompts with prio 1
 
-## views
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/change_source_wf20 workflow create the change_view workflow tests
-
-see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/del_source_wf21 workflow create the del_view workflow tests
-
 ## components
 
 see /docs/llm/coding.md and similar to the src/test/resources/web/html/workflow/add_source_wf19 workflow create the add_component workflow tests

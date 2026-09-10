@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user.php';
@@ -43,6 +44,7 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::CREATE . 'test_views.php';
 include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
@@ -53,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -83,6 +86,7 @@ class view_url_tests extends url_test_base
         // the snapshot unit test only renders the steps
         // for the write tests the same workflows are used with do_it = true
         $this->add_view_workflow(workflows::WF_ADD_VIEW_NBR);
+        $this->change_view_workflow(workflows::WF_CHANGE_VIEW_NBR);
     }
 
     /**
@@ -144,6 +148,103 @@ class view_url_tests extends url_test_base
     }
 
     /**
+     * run the change_view edit workflow and snapshot the html after every user action, mirroring
+     * change_source_workflow: the back excursion aborts the change without writing, then the style is
+     * changed and the confirm writes it; a second round then also changes the description and confirms
+     * again. the word workflows already cover the cancel excursion of a change, so this workflow keeps
+     * only the back step (see docs/llm/pending.md). snapshots go into
+     * src/test/resources/web/html/workflow/change_view_wf<nbr>/ (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 23 for wf23
+     * @param bool $do_it false to only render the steps, true to also write the confirmed change
+     */
+    protected function change_view_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        $msg = new user_message();
+        // the change_view workflow runs on the 'System Test View' (added by the add_view workflow of
+        // a write run), never on real data; resolve its current database id by name and set the fixed
+        // snapshot id of the test view
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_VIEW, $this->t->usr1, views::TEST_ADD_ID, $do_it);
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $msk = new view($this->t->usr1);
+        $this->wf_id = $msk->load_by_name(views::TEST_ADD_NAME, $msg);
+        // in a read-only run the add workflow has not written the view, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = views::TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = views::TEST_ADD_ID;
+
+        // initial url with the added view; the url carries the current db id of the view so the
+        // rendered buttons and the confirmed write target the real row (the snapshot files normalize
+        // the id back to the fixed test id)
+        $t_msk = new test_views($this->t);
+        $url_arr = $t_msk->view_add_url($this->msg);
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::VIEW_DEFAULT_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+
+        // show: display the test view in its default view page
+        $this->assert_step(workflows::SHOW, $url_arr, views::VIEW_DEFAULT_ID);
+
+        // edit: open the view edit view
+        $html = $this->assert_step(workflows::EDIT, $url_arr, views::VIEW_EDIT_ID);
+
+        // the next back step presses this edit view's cancel button, so it must point to the view page
+        $this->assert_button_url($html, views::VIEW_DEFAULT_ID, $this->step_path);
+
+        // back: leave the edit view without a change and return to the view page (no write)
+        $this->assert_step(workflows::BACK, $url_arr, views::VIEW_DEFAULT_ID);
+
+        // edit: re-open the edit view to make the change
+        $this->assert_step(workflows::EDIT, $url_arr, views::VIEW_EDIT_ID);
+
+        // user is selecting the new view style
+        $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;
+
+        // save: press save on the edit form which shows the confirm change view
+        $this->assert_step(workflows::SAVE, $url_arr, views::VIEW_EDIT_ID);
+
+        // confirmed: confirm the pending change so it is actually written to the database (with do_it
+        // true); the confirm form posts the confirm update mask, because url_to_action only routes a
+        // confirmed change of an edit mask to the database write (see views::EDIT_MASKS_IDS)
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // a write run must actually persist the change, so check the new style in the database;
+        // usr1 owns the view added by the add_view workflow (see url_test_base::init),
+        // so the change is written to the usr1 standard row and is read back as usr1
+        if ($do_it) {
+            $this->assert_view_in_db('change_view workflow has changed the view',
+                views::TEST_ADD_NAME, $this->t->usr1, view_styles::COL_SM_8_ID);
+        }
+
+        // the second round also changes the description; the fill url carries the refreshed '8'
+        // opening values (the changed style is now the saved state), so its keys win the union and
+        // the confirm shows only the new description
+        $fill = $t_msk->fill_url_array($this->wf_id);
+        $url_arr = $fill + $url_arr;
+
+        // edit: re-open the edit view to fill the remaining fields
+        $this->assert_step(workflows::EDIT, $url_arr, views::VIEW_EDIT_ID);
+
+        // fill: press save on the edit form with every field filled which shows the confirm change view
+        $this->assert_step(workflows::FILL, $url_arr, views::VIEW_EDIT_ID);
+
+        // confirmed: confirm the filled change so it is also written to the database (with do_it true)
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // a write run must persist the filled fields, so check the new description in the database
+        if ($do_it) {
+            $this->assert_view_filled_in_db('change_view workflow has filled the view',
+                views::TEST_ADD_NAME, $this->t->usr1, views::TEST_DESCRIPTION_CHANGED);
+        }
+    }
+
+    /**
      * check that the workflow test view exists in the database with the expected style, used by the
      * add write workflow to verify the confirmed step was actually persisted (mirrors
      * source_url_tests::assert_source_in_db)
@@ -160,6 +261,25 @@ class view_url_tests extends url_test_base
         $msk->load_by_name($name, $msg);
         $this->t->assert($test_name, $msk->name(), $name);
         $this->t->assert($test_name, $msk->get_style_id() ?? 0, $style_id);
+    }
+
+    /**
+     * check that the second change_view round actually changed the description of the test view,
+     * used by the change write workflow to verify the filled confirm step was persisted (mirrors
+     * source_url_tests::assert_source_filled_in_db)
+     *
+     * @param string $test_name the description of the assertion
+     * @param string $name the name of the test view in the database
+     * @param user $usr the user whose database version (base or user sandbox) is checked
+     * @param string $description the expected description of the test view in the database
+     */
+    private function assert_view_filled_in_db(string $test_name, string $name, user $usr, string $description): void
+    {
+        $msg = new user_message();
+        $msk = new view($usr);
+        $msk->load_by_name($name, $msg);
+        $this->t->assert($test_name, $msk->name(), $name);
+        $this->t->assert($test_name, $msk->description, $description);
     }
 
 }

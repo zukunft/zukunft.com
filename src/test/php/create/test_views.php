@@ -605,6 +605,18 @@ class test_views extends test_objects
     }
 
     /**
+     * the url of the added test view, used by the change_view workflow test to open the edit form
+     * (mirrors test_sources::source_add_url)
+     *
+     * @return array the view url parameters of the added test view
+     */
+    function view_add_url(user_message_ui $msg): array
+    {
+        $msk_ui = new view_ui($this->view_add()->api_json());
+        return $msk_ui->to_url_array($msg);
+    }
+
+    /**
      * the url parameters posted by the 'Add new view' form on save, used by the add_view workflow
      * test to show the new view in the confirm add view (docs/llm/testing.md); the type is the
      * standard view type and the share and protection ids are the defaults of a newly added view,
@@ -623,6 +635,29 @@ class test_views extends test_objects
             url_var::SHARE => share_types::PUBLIC_ID,
             url_var::PROTECTION => protection_types::NO_PROTECT_ID
         ];
+    }
+
+    /**
+     * the filled view url posted by the edit form in the second change_view round, mirroring
+     * test_sources::fill_url_array: the first round only changed the style, so the fill round also
+     * changes the description; the '8'-prefixed opening values are the state the view has after the
+     * first round, so the confirm view shows only the description as changed
+     *
+     * @param int $id the database id of the view the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $msg = new user_message_ui();
+        $url_arr = $this->view_add_url($msg);
+        // the workflow step adds the current db id of the test view, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;
+        $url_arr[url_var::DESCRIPTION] = views::TEST_DESCRIPTION_CHANGED;
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::STYLE] = $url_arr[url_var::STYLE];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
     }
 
 }

@@ -1373,3 +1373,19 @@ fixed by dropping the 'side', because its show components carry no style at all 
 meant to share a row; ref_del instead wants the two column layout, so the fix is to let a show
 component wrap its own style div like a form field does, which changes every page that gives a
 show component a style and needs its own change
+
+### view change workflow
+
+The write snapshot shows the round-1 confirm preview and the round-1 write disagreeing:
+
+- preview: View style | not set | 2/3 width
+- change log: changed view style to "2/3 width" from "1/3 width" and deleted description "System Test View Description"
+
+The _url.txt fixture confirms the cause: the round-1 save url is …&cs=2&8k=…&8id=994 — it carries 8k/8id but no 8cs (opening style) and no o (description) at all. So the preview diffs against an empty baseline, and the save treats the absent description as "set to null" —  
+which contradicts the rule that a save writes only fields differing from the '8' baseline. Round 2 carries 8cs=2 and behaves correctly.
+
+This is not introduced here: the committed change_source_wf20 write baseline shows the identical pattern (it deletes both the description and the doi on the url-only change). The new test faithfully mirrors the reference, so it is a second witness rather than a regression —
+but it is the kind of thing the reference workflow was presumably meant to surface.
+
+Two smaller consistency notes, both matching the change_source sibling so I would not change them: change_view_workflow runs ~90 lines (over the ~50-line guideline, as change_source_workflow does), and the file header still says "each step of the add_view workflow" now that
+there are two.        

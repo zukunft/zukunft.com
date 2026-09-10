@@ -60,9 +60,11 @@ class view_write_url_tests extends view_url_tests
         // remove any test view left over from a previous run
         $this->cleanup_test_views($t);
 
-        // run the same workflow as view_url_tests but with do_it true
-        // so the confirmed step is persisted and check if the database is actually updated
+        // run the same workflows as view_url_tests but with do_it true
+        // so each confirmed step is persisted and check if the database is actually updated
+        // the add must run first because the change workflow loads the view it created
         $this->add_view_workflow(workflows::WF_ADD_VIEW_NBR, true);
+        $this->change_view_workflow(workflows::WF_CHANGE_VIEW_NBR, true);
 
         $t->subheader($this->ts . 'cleanup');
 
