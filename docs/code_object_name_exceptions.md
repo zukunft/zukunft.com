@@ -32,6 +32,7 @@ formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, 
 group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_used, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_newer, $job_older, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
+library: $result
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_empty, $ref_filled, $ref_new, $ref_obj, $ref_plain, $ref_ui, $std_rec, $type

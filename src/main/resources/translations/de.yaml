@@ -477,6 +477,7 @@ messages:
   form_title_source_del: "Quelle löschen"
   form_title_ref_add: "Neue Referenz hinzufügen"
   form_title_ref_edit: "Referenz ändern"
+  form_title_ref_edit_phrase: "Referenz für z$VarPhraseName$z ändern"
   form_title_ref_del: "Referenz löschen"
   form_title_value_add: "Neuen Wert hinzufügen"
   form_title_value_edit: "Wert ändern"

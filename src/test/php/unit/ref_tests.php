@@ -38,6 +38,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -46,6 +48,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -216,6 +220,19 @@ class ref_tests
         $t->assert($test_name, $form->show_last_update($ref_plain), '');
         $test_name = 'a not yet ranked ref shows no impact line';
         $t->assert($test_name, $form->show_impact($ref_plain), '');
+        // the phrase of a reference cannot be changed, so the ref edit form has no phrase field
+        // and names the word or triple in the form title instead
+        global $mtr;
+        $ttl_html = $form->form_tile(views::REF_EDIT, msg_id::FORM_TITLE_REF_EDIT, $ref_ui);
+        $test_name = 'the ref edit form title names the change of a reference';
+        $t->assert_text_contains($test_name, $ttl_html, $mtr->txt(msg_id::FORM_TITLE_REF_EDIT));
+        $test_name = 'the ref edit form title links the phrase of the reference';
+        $t->assert_text_contains($test_name, $ttl_html, $ref_ui->phrase()->name_link());
+        // a reference whose phrase is known by its id only (e.g. a test render from the url
+        // values) has no phrase name, so the title shows no link without a name
+        $test_name = 'the ref edit form title of a phrase without name has no phrase link';
+        $t->assert_text_not_contains($test_name,
+            $form->form_tile(views::REF_EDIT, msg_id::FORM_TITLE_REF_EDIT, $ref_plain), '<a ');
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_ref->reference(), $t->usr_system);
