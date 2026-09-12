@@ -51,11 +51,18 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -63,13 +70,20 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
+use DateTimeInterface;
 
 class value extends value_base
 {
@@ -99,6 +113,21 @@ class value extends value_base
 
     // database related variables
     private ?float $number = null;
+
+    // the views that can show a value; populated lazily by load_views_related() and only emitted
+    // via api_json_array() under the INCL_RELATED flag, so the views tab of the default value
+    // view can offer the views to switch to
+    public ?view_list $views_related = null;
+
+    // the values of the same category as this value e.g. the other math constants of pi;
+    // populated lazily by load_values_similar() and emitted like views_related, so the related
+    // values column of the default value view can list them
+    public ?value_list $values_similar = null;
+
+    // the results that use this value e.g. the increase calculated from it; populated lazily by
+    // load_results_related() and emitted like views_related, so the results column of the
+    // default value view can list them
+    public ?result_list $results_related = null;
 
 
     /*
@@ -187,21 +216,145 @@ class value extends value_base
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
         // add the numeric string itself
         $vars[json_fields::NUMBER] = $this->get_value();
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // the views, changes and overwrites tabs of the value default page
+        if ($typ_lst->incl_related()) {
+            // the value default page also shows the source and the time of the last update;
+            // both only for a page request, so that the plain api message stays small and
+            // the volatile timestamp does not make the api test fixtures unstable;
+            // the source is nested with its name, so the frontend can link it without an
+            // extra load (see triple::api_json_array for the same pattern with the condition)
+            if ($this->get_source_id() > 0) {
+                if ($this->get_source()?->name() == '' and !$typ_lst->test_mode()) {
+                    $this->load_source($msg);
+                }
+                if ($this->get_source()?->name() != '') {
+                    $vars[json_fields::SOURCE] = $this->get_source()->api_json_array([], $msg, $usr);
+                }
+            }
+            if ($this->last_update() != null) {
+                $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
+            }
+            if ($this->views_related == null and !$typ_lst->test_mode()) {
+                $this->load_views_related($msg);
+            }
+            $vars = array_merge($vars,
+                new sandbox_related()->views_array($this->views_related, $msg, $usr));
+            // a value that is not yet written has no phrases to compare, so it has no similar
+            // values and no results, whereas the views above are the same for every value
+            if ($this->values_similar == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_values_similar($msg);
+            }
+            // drop the values the requester may not read, so the list cannot disclose another
+            // user's private value (idor), the same gate that source::api_json_array uses;
+            // dropped before the empty check, else a list of only unreadable values is emitted
+            // as an empty json list, which tells the frontend that the value has been asked
+            $this->values_similar?->filter_readable_by($usr);
+            if ($this->values_similar != null and !$this->values_similar->is_empty()) {
+                // INCL_PHRASES so each value carries its group phrases, which the frontend
+                // needs for the value name
+                $vars[json_fields::VALUES] = $this->values_similar->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            }
+            if ($this->results_related == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_results_related($msg);
+            }
+            // a result can be based on a value the requester may not read, so the same
+            // idor gate as for the similar values above
+            $this->results_related?->filter_readable_by($usr);
+            if ($this->results_related != null and !$this->results_related->is_empty()) {
+                $vars[json_fields::RESULTS] = $this->results_related->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            }
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
+        }
 
         return $vars;
     }
 
     // TODO test set_by_api_json
+
+    /**
+     * load the views that can show this value into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; unlike a word a value has no
+     * view of its own, so the related views are all views of the value view type, which is
+     * what the views tab offers the user to switch to
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_related(user_message $msg): void
+    {
+        global $sys;
+
+        $msk_lst = new view_list($this->get_user());
+        $msk_lst->load_by_type($sys->typ_lst->msk_typ->id(view_types::VALUE), $msg);
+        $this->views_related = $msk_lst;
+    }
+
+    /**
+     * load the values of the same category into the in-memory values_similar list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'similar values'
+     * component of the value default page shows: for pi these are the other mathematical
+     * constants, because the phrase "Pi (math)" that names the pi value is a mathematical
+     * constant and so is the phrase "𝑒 (math)" that names the 𝑒 value
+     *
+     * the category is the 'is a' parent of the phrases of this value (see phrase_list::categories,
+     * which also covers a value named by an 'is a' triple like pi), so the siblings are the
+     * members of that category (see phrase_list::category_members, which returns the 'is a'
+     * triples that carry the values and keeps the category itself, so a value assigned to the
+     * category is related too)
+     *
+     * the values are selected with 'or', because a value of one category is already related;
+     * this value itself is removed, because a page never lists what it shows
+     *
+     * @param user_message $msg to collect any problem while loading the values
+     * @return void
+     */
+    function load_values_similar(user_message $msg): void
+    {
+        $cat_lst = $this->phr_lst()->categories($msg);
+        $val_lst = new value_list($this->get_user());
+        // without a category nothing is related, and loading by the own phrases would list every
+        // value that happens to share a phrase instead of the values of the same kind
+        if (!$cat_lst->is_empty()) {
+            $val_lst->load_by_phr_lst($cat_lst->category_members($msg), $msg, true, value_list::read_limit());
+            $val_lst->remove($this);
+            $val_lst->load_names_related($msg);
+        }
+        $this->values_similar = $val_lst;
+    }
+
+    /**
+     * load the results that use this value into the in-memory results_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'results of value'
+     * component of the value default page shows e.g. the increase calculated from this value
+     *
+     * @param user_message $msg to collect any problem while loading the results
+     * @return void
+     */
+    function load_results_related(user_message $msg): void
+    {
+        $res_lst = new result_list($this->get_user());
+        $res_lst->load_by_val($this, $msg);
+        $this->results_related = $res_lst;
+    }
 
     /*
      * im- and export
@@ -211,13 +364,14 @@ class value extends value_base
      * create an array with the export json fields
      * differs from the api array by NOT using the internal id
      * instead of the names for a complete independent recreation
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         // add the numeric value itself
         $vars[json_fields::NUMBER] = $this->get_value();
@@ -266,11 +420,11 @@ class value extends value_base
      */
     function fill(value|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->number === null and $obj->number != null) {
             $this->number = $obj->number;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

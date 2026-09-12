@@ -32,28 +32,35 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -68,6 +75,9 @@ class term_view extends sandbox_link
     const string VIEW_ADD = views::VIEW_LINK_ADD;
     const string VIEW_EDIT = views::VIEW_LINK_EDIT;
     const string VIEW_DEL = views::VIEW_LINK_DEL;
+    const int VIEW_ADD_ID = views::VIEW_LINK_ADD_ID;
+    const int VIEW_EDIT_ID = views::VIEW_LINK_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_LINK_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::VIEW_LINK_ADD;
@@ -80,6 +90,10 @@ class term_view extends sandbox_link
      */
 
     public ?string $description = null;
+    // to set the priority of the views linked to one term
+    public ?int $order_nbr = null;
+    // the style that overwrites the view style if the view is shown for this term
+    private ?int $style_id = null;
 
 
     /*
@@ -90,25 +104,68 @@ class term_view extends sandbox_link
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked objects, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 $this->set_view_id($url_array[url_var::VIEW]);
+                $this->set_view($this->view_named_from_cache($this->view(), $dto));
             }
             if (array_key_exists(url_var::TERM, $url_array)) {
                 $this->set_term_id($url_array[url_var::TERM]);
+                $this->set_term($this->term_named($this->term_linked(), $dto));
             }
             if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
                 $this->description = $url_array[url_var::DESCRIPTION];
             }
+            if (array_key_exists(url_var::VIEW_TERM_LINK_PRIO, $url_array)) {
+                $this->order_nbr = $url_array[url_var::VIEW_TERM_LINK_PRIO];
+            }
+            if (array_key_exists(url_var::STYLE, $url_array)) {
+                $this->style_id = $url_array[url_var::STYLE];
+            }
         }
-        return $usr_msg;
+        return $msg;
+    }
+
+    /**
+     * @return array parent url array extended with the description and the order number,
+     *         without empty strings, so that the apply link of the 'others' tab knows
+     *         the value that the user has set until now (see ui_preview)
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::DESCRIPTION] = $this->description;
+        $url_array[url_var::VIEW_TERM_LINK_PRIO] = $this->order_nbr;
+        $url_array[url_var::STYLE] = $this->style_id;
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
+     * the url vars that url_mapper reads back for the user-editable fields of a term view link;
+     * the link type is the predicate, which the parent reads from url_var::TYPE
+     *
+     * @return array db field name => url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            view_fields::FLD_LINK_TYPE => url_var::TYPE,
+            fields::FLD_ORDER_NBR => url_var::VIEW_TERM_LINK_PRIO,
+            fields::FLD_STYLE => url_var::STYLE,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
     /**
@@ -125,14 +182,31 @@ class term_view extends sandbox_link
         $json_array = $api_msg->validate($json_array);
 
         parent::api_mapper($json_array, $msg);
-        if (array_key_exists(json_fields::VIEW_ID, $json_array)) {
+        // a page request carries the linked objects with their names, so that the link title
+        // can show a link to each; the id only version is the fallback for the other requests
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $msk = new view();
+            $msk->api_mapper($json_array[json_fields::VIEW], $msg);
+            $this->set_view($msk);
+        } elseif (array_key_exists(json_fields::VIEW_ID, $json_array)) {
             $this->set_view_id($json_array[json_fields::VIEW_ID]);
         }
-        if (array_key_exists(json_fields::TERM_ID, $json_array)) {
+        if (array_key_exists(json_fields::TERM, $json_array)) {
+            $trm = new term();
+            $trm->api_mapper($json_array[json_fields::TERM], $msg);
+            $this->set_term($trm);
+        } elseif (array_key_exists(json_fields::TERM_ID, $json_array)) {
             $this->set_term_id($json_array[json_fields::TERM_ID]);
         }
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
             $this->description = $json_array[json_fields::DESCRIPTION];
+        }
+        // priority is the api name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $json_array)) {
+            $this->order_nbr = $json_array[json_fields::PRIORITY];
+        }
+        if (array_key_exists(json_fields::STYLE, $json_array)) {
+            $this->style_id = $json_array[json_fields::STYLE];
         }
         return $msg->is_ok();
     }
@@ -145,15 +219,18 @@ class term_view extends sandbox_link
     /**
      * create an api json array for the backend based on this frontend object
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::VIEW_ID] = $this->view()?->id();
         $vars[json_fields::TERM_ID] = $this->term_linked()?->id();
         $vars[json_fields::DESCRIPTION] = $this->description;
+        // priority is the api name of the order_nbr db field
+        $vars[json_fields::PRIORITY] = $this->order_nbr;
+        $vars[json_fields::STYLE] = $this->style_id;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -181,6 +258,37 @@ class term_view extends sandbox_link
         $this->set_term($trm);
     }
 
+    /**
+     * the linked term with its name taken from the request cache; a page url carries only the
+     * term id, so without the cache the link title would show a link without a text
+     * the frontend cache has no term list, so the name of a word, triple or formula term is
+     * taken from the matching cached list; a verb term keeps its id, because the frontend
+     * cache has no verb list
+     *
+     * @param term|null $trm the term with only the id set as created from the page url
+     * @param data_object|null $dto the request cache with the preloaded words, triples and formulas
+     * @return term|null the term with the name of the cached object or the given id only term
+     */
+    private function term_named(?term $trm, ?data_object $dto): ?term
+    {
+        $result = $trm;
+        if ($trm != null and $dto != null) {
+            $named = null;
+            if ($trm->is_word()) {
+                $named = $dto->wrd_lst->get($trm->obj_id());
+            } elseif ($trm->is_triple()) {
+                $named = $dto->trp_lst->get($trm->obj_id());
+            } elseif ($trm->is_formula()) {
+                $named = $dto->formula_list()->get($trm->obj_id());
+            }
+            if ($named != null) {
+                $result = new term();
+                $result->set_term_obj($named);
+            }
+        }
+        return $result;
+    }
+
     function set_term(?term $trm): void
     {
         $this->tob = $trm;
@@ -189,6 +297,28 @@ class term_view extends sandbox_link
     function set_type_id(?int $type_id = null): void
     {
         $this->predicate_id = $type_id;
+    }
+
+    /**
+     * @return int|null the style of this link, which overwrites the style of the linked view
+     */
+    function get_style_id(): ?int
+    {
+        return $this->style_id;
+    }
+
+    /**
+     * @return type_object|null the view link type object from the preloaded cache, which says how
+     *         the term is linked to the view, or null if the link uses the default type
+     */
+    function link_type(): ?type_object
+    {
+        global $ui_sys;
+        $result = null;
+        if ($this->predicate_id != null) {
+            $result = $ui_sys->typ_lst_cache->msk_lnk_typ->get($this->predicate_id);
+        }
+        return $result;
     }
 
 
@@ -222,12 +352,12 @@ class term_view extends sandbox_link
     /**
      * create the html code to select the view style
      * overrides db_object::style_selector; reuses the shared msk_sty cache
-     * term_view itself has no style_id, so the default style is preselected
+     * the style of this link is preselected if set, else the default style
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the preloaded view styles
      * @return string the html code to select the view style
      */
-    public function style_selector(string $form, ?type_lists $typ_lst): string
+    public function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -235,7 +365,10 @@ class term_view extends sandbox_link
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_id = $typ_lst->msk_sty->default_id();
+        $used_id = $this->style_id;
+        if ($used_id == null) {
+            $used_id = $typ_lst->msk_sty->default_id();
+        }
         return $typ_lst->msk_sty->selector($form, $used_id);
     }
 
@@ -245,37 +378,39 @@ class term_view extends sandbox_link
      */
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name
+     * @return string|null the generated link name or an empty string e.g. for a new link of an add form
      */
     function name(): string|null
     {
         $result = '';
-
+        // a new term view link of an add form has no linked objects or names yet,
+        // which is a normal state and not an error
         if ($this->view() != null and $this->term_linked() != null) {
             if ($this->view()->name() <> null and $this->term_linked()->name() <> null) {
-                $result .= '"' . $this->term_linked()->name() . '" extends "'; // e.g. company details
-                $result .= $this->view()->name() . '"';     // e.g. cash flow statement
+                $result .= '"' . $this->term_linked()->name() . '" extends "'; // e.g. "company" extends
+                $result .= $this->view()->name() . '"';     // e.g. "company details"
             }
-        } else {
-            $result .= 'view link objects not set';
         }
         return $result;
     }
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the linked names or an empty string e.g. for a new link of an add form
      */
-    function name_linked(string $back = ''): string
+    function name_linked(array $url_arr = []): string
     {
         $result = '';
-
-        //$this->load_objects();
+        // a new term view link of an add form has no linked objects yet,
+        // which is a normal state and not an error
         if ($this->view() != null and $this->term_linked() != null) {
-            $result = $this->view()->name_link(NULL, $back) . ' to ' . $this->term_linked()->name_link(NULL, $back);
-        } else {
-            $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
+            global $mtr;
+            $result = $this->view()->name_link($url_arr) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->term_linked()->name_link($url_arr);
         }
-
         return $result;
     }
 
@@ -283,6 +418,18 @@ class term_view extends sandbox_link
     /*
      * interface
      */
+
+    /**
+     * @return string the description of this term view link or an empty string if not set
+     */
+    function get_description(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
 
     function view(): ?view
     {

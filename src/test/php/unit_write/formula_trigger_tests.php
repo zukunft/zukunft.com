@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -50,11 +51,11 @@ class formula_trigger_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'db write formula trigger ';
@@ -62,65 +63,65 @@ class formula_trigger_tests
 
         // prepare the calculation trigger test
         $phr_names_ch_19 = [words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019];
-        $phr_ch_19 = new phrase_list($usr);
-        $phr_ch_19->load_by_names($phr_names_ch_19);
+        $phr_ch_19 = new phrase_list($t->usr1);
+        $phr_ch_19->load_by_names($phr_names_ch_19, $msg);
         $phr_names_ch_20 = [words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020];
-        $phr_ch_20 = new phrase_list($usr);
-        $phr_ch_20->load_by_names($phr_names_ch_20);
-        $phr_lst1 = new phrase_list($usr);
-        $phr_lst1->add_name(words::CH);
-        $phr_lst1->add_name(word_names::INHABITANTS);
-        $phr_lst1->add_name(word_names::MIO);
+        $phr_ch_20 = new phrase_list($t->usr1);
+        $phr_ch_20->load_by_names($phr_names_ch_20, $msg);
+        $phr_lst1 = new phrase_list($t->usr1);
+        $phr_lst1->add_name(words::CH, $msg);
+        $phr_lst1->add_name(word_names::INHABITANTS, $msg);
+        $phr_lst1->add_name(word_names::MIO, $msg);
         $phr_lst2 = clone $phr_lst1;
-        $phr_lst1->add_name(word_names::YEAR_2019);
-        $phr_lst2->add_name(word_names::YEAR_2020);
+        $phr_lst1->add_name(word_names::YEAR_2019, $msg);
+        $phr_lst2->add_name(word_names::YEAR_2020, $msg);
         $frm = $t_db->load_formula(formula_names::INCREASE);
 
         $test_name = 'add a number ' . values::CH_INHABITANTS_2019_IN_MIO . ' for 2019';
-        $val_add1 = new value($usr);
+        $val_add1 = new value($t->usr1);
         $val_add1->set_grp($phr_lst1->get_grp_id());
         $val_add1->set_number(values::CH_INHABITANTS_2019_IN_MIO);
-        $t->assert_true($test_name, $val_add1->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $val_add1->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'add second number ' . values::CH_INHABITANTS_2020_IN_MIO . ' for 2020';
-        $val_add2 = new value($usr);
+        $val_add2 = new value($t->usr1);
         $val_add2->set_grp($phr_lst2->get_grp_id());
         $val_add2->set_number(values::CH_INHABITANTS_2020_IN_MIO);
-        $t->assert_true($test_name, $val_add2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $val_add2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the first number have been saved correctly
-        $added_val = new value($usr);
-        $added_val->load_by_grp($phr_lst1->get_grp_id());
+        $added_val = new value($t->usr1);
+        $added_val->load_by_grp($phr_lst1->get_grp_id(), $msg);
         $result = $added_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
         $t->assert('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
-        $added_val2 = new value($usr);
-        $added_val2->load_by_grp($phr_lst2->get_grp_id());
+        $added_val2 = new value($t->usr1);
+        $added_val2->load_by_grp($phr_lst2->get_grp_id(), $msg);
         $result = $added_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if requesting the best number for the first number returns a useful value
-        $best_val = new value($usr);
-        $best_val->load_best($phr_ch_19);
+        $best_val = new value($t->usr1);
+        $best_val->load_best($phr_ch_19, $msg);
         $result = $best_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
         $t->assert('value->check best value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if requesting the best number for the second number returns a useful value
-        $best_val2 = new value($usr);
-        $best_val2->load_best($phr_ch_20);
+        $best_val2 = new value($t->usr1);
+        $best_val2->load_best($phr_ch_20, $msg);
         $result = $best_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert('value->check best value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // calculate the increase and check the result
-        $res_lst = $frm->calc($phr_lst2);
+        $res_lst = $frm->calc($phr_lst2, $msg);
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
                 $res = $res_lst[0];
                 $res_ui = new result($res->api_json([api_types::INCL_PHRASES]));
-                $result = trim($res_ui->val_formatted());
+                $result = trim($res_ui->val_formatted($msg_ui));
             } else {
                 $result = '';
             }
@@ -137,8 +138,8 @@ class formula_trigger_tests
         //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // remove the test values
-        $val_add1->del($usr_msg);
-        $val_add2->del($usr_msg);
+        $val_add1->del($msg);
+        $val_add2->del($msg);
 
         // change the second number and test if the result has been updated
         // a second user changes the value back to the original value and check if for the second number the result is updated

@@ -43,7 +43,11 @@ class json_fields
 
     // message header
     const string POD = 'pod';
+    // the version of the json format, not of the data, so it is matched against def::PRG_VERSION
     const string VERSION = 'version';
+    // the version of the data in the file, raised by the author whenever the data changes,
+    // so that a pod can tell whether it already has the newest data of another pod
+    const string DATA_VERSION = 'data_version';
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';
@@ -61,6 +65,8 @@ class json_fields
 
     // a short description of concrete object used e.g. for the tooltip in the frontend
     const string DESCRIPTION = 'description';
+    // an additional info of a value or result e.g. how a calc validation number has been derived
+    const string NOTE = 'note';
 
     // the json field name for code id to select a single object
     // to link predefined functionality to a row e.g. to select a system view
@@ -104,6 +110,19 @@ class json_fields
 
     // the external link of a source or a reference
     const string URL = 'url';
+
+    // the digital object identifier of a source used to create the url to doi.org
+    const string DOI = 'doi';
+
+    // who has written, who has published and when has published a source
+    // TODO Prio 2 save these fields in the database instead of dropping them after the import:
+    //      the author and the publisher are phrases and the date is a time phrase, so the
+    //      value of the field can be a text value (values_text) resp. a time value linked to
+    //      the source by a system triple e.g. "<source> has author <author>", which also allows
+    //      to select the sources of an author without adding a field to the source table
+    const string AUTHOR = 'author';
+    const string PUBLISHER = 'publisher';
+    const string PUBLISH_DATE = 'date';
 
     // the pre-rendered html page of a cached view-only request
     const string HTML_PAGE = 'html_page';
@@ -168,6 +187,9 @@ class json_fields
     const string SOURCE_ID = 'source_id';
     const string SOURCE = 'source'; // the source object as a sub array
     const string USER_ID = 'user_id';
+    // the name of the user who owns the object (created it and defines the standard values);
+    // only included for a page request (incl_related), so the default page can show the owner
+    const string OWNER = 'owner';
     //const string GROUP_ID = 'group_id';
     const string FORMULA_ID = 'formula_id';
     const string FORMULA = 'formula'; // the formula object as a sub array
@@ -182,6 +204,10 @@ class json_fields
     const string TO_PHRASE = 'to_phrase';
     const string VERB = 'verb_id';
     const string WEIGHT = 'weight';
+    // the id of a formula with a boolean result; the triple is only used if the result is true
+    const string CONDITION_ID = 'condition_id';
+    // the condition formula object, added for a page request so that the frontend can link it
+    const string CONDITION = 'condition';
 
     // the parent object with detail fields used e.g. for the parent view of view relations
     const string PARENT = 'parent';
@@ -208,7 +234,7 @@ class json_fields
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const string LATEX = 'latex'; // the formula in latex format
-    const string LATEX_TERMS = 'latex_terms'; // the terms shown in the latex format, used to link each \text{} token
+    const string LATEX_TERMS = 'latex_terms'; // the terms used in the formula, to link each \text{} token of the latex and each name of the expression
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const string FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const string FORMULA_NAME = 'formula'; // the name of the formula for im- and export
@@ -216,7 +242,7 @@ class json_fields
 
     // batch job fields
     const string TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
-    const string PRIORITY = 'priority'; // of the batch job
+    const string PRIORITY = 'priority'; // of the batch job and the api name of the order_nbr db field of the links
     const string TIME_START = 'start_time'; // e.g. the timestamp of a log entry
     const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
@@ -245,6 +271,9 @@ class json_fields
     const string PHRASE_COL = 'word_col';
     const string PHRASE_COL_SUB = 'word_col_sub';
     const string LINK_TYPE = 'link_type';
+    // the component that a component links to and the type of that link
+    const string LINKED_COMPONENT = 'linked_component';
+    const string COMPONENT_LINK_TYPE = 'component_link_type';
 
     // the position rules for a component relative to the previous component
     const string POS_TYPE = 'position_type';
@@ -285,6 +314,9 @@ class json_fields
     const string TABLE_ID = 'table_id';
     const string FIELD_ID = 'field_id';
     const string ROW_ID = 'row_id';
+    // the name of the changed object (the row_id resolved to e.g. the word name), so that a change
+    // log that lists the changes of more than one object can name the changed object
+    const string ROW_NAME = 'row_name';
     const string CHANGE_TIME = 'change_time';
     const string OLD_VALUE = 'old_value';
     const string OLD_ID = 'old_id';
@@ -292,6 +324,19 @@ class json_fields
     const string NEW_ID = 'new_id';
     const string STD_VALUE = 'std_value';
     const string STD_ID = 'std_id';
+    // the value that each other user has set for the changed field, keyed by the user name, so that
+    // a change log that lists the changes of one user can show them beside the change
+    const string OTHER_VALUES = 'other_values';
+
+    // the fields that the requesting user has overwritten in the user sandbox (overlay) table
+    // e.g. user_words, each with the db field name, the user value and the standard value,
+    // used by the 'my' tab of the object page
+    const string USER_OVERWRITES = 'user_overwrites';
+    const string FIELD = 'field';
+    const string USR_VALUE = 'usr_value';
+    // the shared overwrites of other users with the name of the overwriting user (USER_NAME),
+    // used by the 'others' tab of the object page
+    const string OTHER_OVERWRITES = 'other_overwrites';
 
     // to review
     const string ACTION = 'action';
@@ -348,6 +393,8 @@ class json_fields
     const string VIEW = 'view'; // the view as a sub array
     // list of views
     const string VIEWS = 'views';
+    // list of terms e.g. the terms that use a view
+    const string TERMS = 'terms';
 
     // name of the component that is part of a view
     const string COMPONENT_ID = 'component_id';

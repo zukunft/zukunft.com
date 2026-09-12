@@ -32,25 +32,41 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::LOG . 'change_log_list.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_ui_tests
@@ -59,6 +75,10 @@ class formula_ui_tests
     {
         $html = new html_base();
         $t_frm = new test_formulas($t);
+        $msg = new user_message();
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::FORMULA_ID, url_var::ID => formula_names::INCREASE_ID];
 
         // start the test section (ts)
         $ts = 'unit ui html formula ';
@@ -69,15 +89,15 @@ class formula_ui_tests
         $test_page .= 'with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'with link: ' . $frm->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'add button: ' . $frm->btn_add() . '<br>';
-        $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
-        $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
-        $test_page .= $t->dsp_title_named_edit($frm);
+        $test_page .= 'add button: ' . $frm->btn_add($url_arr, $base_url) . '<br>';
+        $test_page .= 'edit button: ' . $frm->btn_edit($url_arr, $base_url) . '<br>';
+        $test_page .= 'del button: ' . $frm->btn_del($url_arr, $base_url) . '<br>';
+        $test_page .= $t->dsp_title_named_edit($frm, $msg);
 
         // the formula page title shows the formula name with its assigned phrases as subtitle,
         // e.g. "increase" with the assigned "year" phrase
         $frm_increase = $t_frm->formula_increase_ui();
-        $test_page .= $t->dsp_title_formula($frm_increase);
+        $test_page .= $t->dsp_title_formula($frm_increase, $msg);
 
         // the expression in latex format with a tooltip and a link for each term, e.g. the
         // "definition of joule" formula joule = ( kg * metre * metre ) / ( second * second )
@@ -98,11 +118,10 @@ class formula_ui_tests
 
         // the changes of the increase formula as a table, e.g. the name and expression added
         $t_log = new test_log($t);
-        $back = new back_trace();
         $api_typ_lst = new api_type_list([api_types::TEST_MODE]);
         $log_lst = new change_log_list($t_log->log_list_formula_increase()->api_json($api_typ_lst));
         $test_page .= $html->text_h2('changes of the formula increase');
-        $test_page .= $log_lst->tbl($back);
+        $test_page .= $log_lst->tbl();
 
         // the results of the increase formula as a table of the result phrases and the value
         $t_res = new test_results($t);
@@ -116,7 +135,7 @@ class formula_ui_tests
         // the assigned-phrases component shows only the phrases the formula is assigned to (the
         // "year" carried by the increase formula), never the full phrase list; test_mode true so
         // the assigned list carried by the formula is used without an api reload
-        $assigned = $list->phrases_of_formula($frm_increase, null, true);
+        $assigned = $list->phrases_of_formula($frm_increase, $msg, null, true);
         // building the assigned phrases list reads and writes to the database, so a db timeout is used
         $test_name = 'assigned phrases of the increase formula show the assigned "year"';
         $t->assert_text_contains($test_name, $assigned, words::YEAR_CAP, $t::TIMEOUT_LIMIT_DB);
@@ -129,14 +148,254 @@ class formula_ui_tests
         // e.g. the inhabitants of the regions that the increase is calculated for
         $t_val = new test_values($t);
         $test_page .= $html->text_h2('values of the phrases used for the formula increase');
-        $test_page .= $t_val->value_list_zh_ui()->table();
+        $test_page .= $t_val->value_list_zh_ui()->table($msg);
 
-        $t->html_page_test($test_page, 'formula', 'formula', $t);
+        $t->html_page_test($test_page, 'formula', 'formula', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'view tab box');
+
+        // the formula default view shows the same tab box as the word default view (see
+        // base_views.json formula_default): a views tab with the views that can show the formula,
+        // a changes tab with its change log and a my tab with the user overwrites of the session
+        // user; the backend fills the three lists under the INCL_RELATED flag, so this block first
+        // checks the api round trip and then the rendering of the tabs
+        global $ui_sys;
+        global $mtr;
+        $t_msk = new test_views($t);
+        $t_usr = new test_users();
+        $frm_related = $t_frm->formula_increase();
+        $frm_related->views_related = $t_msk->view_list_word();
+        $frm_related->changes_related = $t_log->log_list_formula_increase();
+        // test mode so the backend emits the two given lists without loading them from the database
+        $frm_json = json_decode($frm_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the views of a formula are sent to the frontend';
+        $t->assert_true($test_name, ($frm_json[json_fields::VIEWS] ?? []) != []);
+        $test_name = 'the changes of a formula are sent to the frontend';
+        $t->assert_true($test_name, ($frm_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' and 'others' rows are added here like on the word and the triple page
+        $frm_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_DESCRIPTION,
+                json_fields::USR_VALUE => 'my formula description',
+                json_fields::STD_VALUE => 'the standard formula description',
+            ],
+        ];
+        $frm_tab = new formula(json_encode($frm_json));
+
+        $test_name = 'the views of a formula reach the frontend formula object';
+        $t->assert_true($test_name, $frm_tab->view_lst != null and !$frm_tab->view_lst->is_empty());
+        $test_name = 'the changes of a formula reach the frontend formula object';
+        $t->assert_true($test_name, $frm_tab->chg_log != null and !$frm_tab->chg_log->is_empty());
+
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        $log_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"';
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+        // the user comes from the factory, because the my tab is only shown to a user with an id
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($frm_tab, $msg, true);
+
+        $test_name = 'the formula page shows the views tab';
+        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... with the name of a view that can show the formula';
+        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the switch button must open the edit view of the shown object, so on a formula page the
+        // formula edit view and never the word edit view (see view::switch_link)
+        $test_name = '... and a switch button that opens the formula edit view';
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::MASK . '=' . views::FORMULA_EDIT_ID
+            . '&amp;' . url_var::ID . '=' . formula_names::INCREASE_ID);
+
+        $test_name = 'the formula page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = '... with the change that added the formula';
+        $t->assert_text_contains($test_name, $tab_html, formula_names::INCREASE);
+
+        $test_name = 'the user with formula overwrites sees the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = '... with the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, 'my formula description');
+        $t->assert_text_contains($test_name, $tab_html, 'the standard formula description');
+
+        // a formula loaded without the related data has neither a views nor a my tab
+        $frm_plain = new formula($t_frm->formula_increase()->api_json());
+        $plain_html = $list->view_tab_box($frm_plain, $msg, true);
+        $test_name = 'a formula without views shows no views tab';
+        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
+        $test_name = 'a formula without overwrites shows no my tab';
+        $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
+
+        $test_name = 'without a logged in user the formula page shows no my tab';
+        unset($ui_sys->usr);
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($frm_tab, $msg, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
+
+        $t->subheader($ts . 'link title');
+
+        // the formula link default page shows the generated link name as the page title with the
+        // linked formula and phrase as links in the subtitle (see base_views.json
+        // formula_link_default); a page request (INCL_RELATED) carries the names of the linked
+        // objects, so that the subtitle links have a text and not only a target
+        $lnk = new formula_link_ui($t_frm->formula_link_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $sfm = new system_form();
+        $ttl_html = $sfm->title_link($lnk, $msg);
+        $test_name = 'the formula link title names the linked formula';
+        $t->assert_text_contains($test_name, $ttl_html, formula_names::SCALE_TO_SEC);
+        $test_name = '... and the linked phrase in the subtitle';
+        $t->assert_text_contains($test_name, $ttl_html, word_names::MINUTE);
+        $test_name = 'the formula link title links to the formula link edit view';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::FORMULA_LINK_EDIT_ID);
+        $test_name = 'the formula link title has a subtitle for the share and protection';
+        $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+
+        // the page url carries only the ids of the linked objects, so the names of the subtitle
+        // links come from the request cache
+        $test_name = 'the formula link title of a page url names the linked objects';
+        $lnk_url = new formula_link_ui();
+        $lnk_url->url_mapper([
+            url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID,
+            url_var::PHRASE => (string)word_names::MINUTE_ID
+        ], $msg, $ui_sys);
+        $url_html = $sfm->title_link($lnk_url, $msg);
+        $t->assert_text_contains($test_name, $url_html, formula_names::SCALE_TO_SEC);
+        $t->assert_text_contains($test_name . ' and the phrase', $url_html, word_names::MINUTE);
+
+        // a fresh formula link of an add form has no share and protection and no linked objects
+        // with names, so no empty subtitle brackets are shown
+        $test_name = 'a fresh formula link shows no subtitle';
+        $lnk_new = new formula_link_ui();
+        $t->assert_text_not_contains($test_name, $sfm->title_link($lnk_new, $msg), styles::SUBTITLE);
+        // ... and an empty name, never a 'objects not set' placeholder as the page title
+        $test_name = 'a fresh formula link has an empty name';
+        $t->assert($test_name, $lnk_new->name(), '');
+
+        $t->subheader($ts . 'link fields');
+
+        // the fields of the formula link default page (see base_views.json)
+        $test_name = 'the link type of a formula link is shown with its user-readable name and its label';
+        $t->assert($test_name, $sfm->show_link_type($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, formula_link_types::TIME_PERIOD_NAME));
+        $test_name = 'a formula link without a type shows only the link type label';
+        $t->assert($test_name, $sfm->show_link_type($lnk_new),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, ''));
+
+        $test_name = 'the order number of a formula link is shown with its label';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)test_const::FORMULA_LINK_ORDER_NBR));
+        $test_name = 'a formula link without an order number shows only the order number label';
+        $t->assert($test_name, $sfm->show_order_nbr($lnk_new),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, ''));
+
+        $test_name = 'the description of a formula link is shown';
+        $t->assert($test_name, $sfm->show_description($lnk), test_const::FORMULA_LINK_COM);
+        $test_name = 'a formula link without a description shows an empty text';
+        $t->assert($test_name, $sfm->show_description($lnk_new), '');
+
+        // the same fields for a page requested by url instead of by api
+        $test_name = 'the link type and the order number of a page url are shown';
+        $lnk_fld_url = new formula_link_ui();
+        $lnk_fld_url->url_mapper([
+            url_var::TYPE => (string)formula_link_types::TIME_PERIOD_ID,
+            url_var::FORMULA_LINK_PRIO => (string)test_const::FORMULA_LINK_ORDER_NBR,
+            url_var::DESCRIPTION => test_const::FORMULA_LINK_COM,
+            url_var::OWNER => users::SYSTEM_TEST_NAME
+        ], $msg, $ui_sys);
+        $t->assert($test_name, $sfm->show_link_type($lnk_fld_url),
+            $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, formula_link_types::TIME_PERIOD_NAME));
+        $t->assert($test_name . ' and the order number', $sfm->show_order_nbr($lnk_fld_url),
+            $t->labeled(msg_id::SHOW_FIELD_ORDER_NBR, (string)test_const::FORMULA_LINK_ORDER_NBR));
+        $t->assert($test_name . ' and the description', $sfm->show_description($lnk_fld_url),
+            test_const::FORMULA_LINK_COM);
+
+        $test_name = 'the owner of a formula link is shown';
+        $t->assert($test_name, $sfm->show_owner($lnk_fld_url), users::SYSTEM_TEST_NAME);
+        $test_name = 'a formula link without a known owner shows an empty text';
+        $t->assert($test_name, $sfm->show_owner($lnk_new), '');
+
+        // the undo link of the my tab needs the value before the change from the page url
+        $test_name = 'the page url of a formula link carries the order number';
+        $t->assert($test_name, $lnk->to_url_array($msg)[url_var::FORMULA_LINK_PRIO] ?? '',
+            test_const::FORMULA_LINK_ORDER_NBR);
+        $test_name = 'the page url of a formula link without an order number has no order number';
+        $t->assert($test_name, $lnk_new->to_url_array($msg)[url_var::FORMULA_LINK_PRIO] ?? '', '');
+        $test_name = 'the page url of a formula link carries the description';
+        $t->assert($test_name, $lnk->to_url_array($msg)[url_var::DESCRIPTION] ?? '',
+            test_const::FORMULA_LINK_COM);
+        $test_name = 'the page url of a formula link without a description has no description';
+        $t->assert($test_name, $lnk_new->to_url_array($msg)[url_var::DESCRIPTION] ?? '', '');
+
+        $test_name = 'the order number db field is mapped to its url var';
+        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_ORDER_NBR] ?? '',
+            url_var::FORMULA_LINK_PRIO);
+        $test_name = 'the description db field is mapped to its url var';
+        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_DESCRIPTION] ?? '',
+            url_var::DESCRIPTION);
+        $test_name = 'a db field that a formula link does not have has no url var';
+        $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_STYLE] ?? '', '');
+
+        $t->subheader($ts . 'link tabs');
+
+        // the tab box of the link default page; a link has no related views, so no views tab
+        $lnk_related = $t_frm->formula_link_filled_included();
+        $lnk_related->changes_related = $t_log->log_list_formula_link();
+        // test mode so the backend emits the given change list without a database load
+        $lnk_json = json_decode($lnk_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]), true);
+
+        $test_name = 'the changes of a formula link are sent to the frontend';
+        $t->assert_true($test_name, ($lnk_json[json_fields::CHANGES] ?? []) != []);
+
+        // the test mode reads no overlay rows, so the 'my' row is added here
+        $lnk_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => fields::FLD_ORDER_NBR,
+                json_fields::USR_VALUE => (string)test_const::FORMULA_LINK_ORDER_NBR,
+                json_fields::STD_VALUE => '',
+            ],
+        ];
+        $lnk_tab = new formula_link_ui(json_encode($lnk_json));
+
+        $test_name = 'the changes of a formula link reach the frontend link object';
+        $t->assert_true($test_name, $lnk_tab->chg_log != null and !$lnk_tab->chg_log->is_empty());
+
+        // the my tab is only shown to a user with an id
+        $usr_lnk_keep = $ui_sys->usr ?? null;
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $tab_html = $list->view_tab_box($lnk_tab, $msg, true);
+
+        $test_name = 'the formula link page shows the changes tab';
+        $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
+        $test_name = 'the formula link page shows the my tab';
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+        $test_name = 'a formula link has no related views, so no views tab is shown';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        $test_name = 'a formula link without overwrites shows no my tab';
+        $lnk_plain = new formula_link_ui($t_frm->formula_link_filled_included()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED]));
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($lnk_plain, $msg, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_lnk_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_lnk_keep;
+        }
 
         // TODO review
 
         /*
-        global $usr;
         $ts = 'unit ui html formula user ';
         $t->header($ts);
 

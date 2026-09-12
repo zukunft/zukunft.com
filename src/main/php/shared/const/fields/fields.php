@@ -64,6 +64,8 @@ class fields
     // link
     const string FLD_URL_COM = 'the concrete url for the entry';
     const string FLD_URL = 'url';              // field name for an external url (source and ref)
+    const string FLD_DOI_COM = 'the digital object identifier of the entry used to create the url to doi.org';
+    const string FLD_DOI = 'doi';              // field name for the digital object identifier (source)
 
     // value
     const string FLD_VALUE_COM = 'the configuration value';
@@ -78,6 +80,12 @@ class fields
     const string FLD_USAGE = 'usage';          // field name for the usage counter (phrase, term, source, ...)
     const string FLD_IMPACT_COM = 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
     const string FLD_IMPACT = 'impact';        // field name for the impact value (phrase, term, word)
+    // the change log rows of these cached internal fields are only shown to admin or system users
+    const array LOG_ADMIN_ONLY = [self::FLD_USAGE, self::FLD_IMPACT];
+
+    // links
+    const string FLD_ORDER_NBR_COM = 'to set the priority of the links of one object e.g. the formulas of a phrase';
+    const string FLD_ORDER_NBR = 'order_nbr'; // field name for the order number (link objects)
 
     // all sandbox
     const string FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';

@@ -1,0 +1,19 @@
+GET
+http://localhost/http/view.php?id=994&k=System+Test+View&8id=994&8k=System+Test+View&9m=114&9id=994&cs=2&m=31&z=1&submit=
+/http/view.php?id=994&k=System+Test+View&8id=994&8k=System+Test+View&9m=114&9id=994&cs=2&m=31&z=1&submit=
+/http/view.php?id=994&name=System+Test+View&8id=994&8name=System+Test+View&9mask_id=view_default&9id=994&style=2&mask_id=view_edit&step=confirm&
+{
+    "id": "994",
+    "name": "System Test View",
+    "style": "2",
+    "mask_id": "view_edit",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "994",
+        "name": "System Test View"
+    },
+    "url_part_back": {
+        "mask_id": "view_default",
+        "id": "994"
+    }
+}

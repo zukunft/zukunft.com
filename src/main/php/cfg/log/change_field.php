@@ -122,15 +122,15 @@ class change_field extends type_object
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
      */
-    function row_mapper_typ_obj(array $db_row, string $class): bool
+    function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        $result = parent::row_mapper_typ_obj($db_row, $class);
+        $result = parent::row_mapper_typ_obj($db_row, $msg, $class);
         if ($result) {
             if (array_key_exists(change_field::FLD_TABLE, $db_row)) {
                 $this->tbl_id = ($db_row[change_field::FLD_TABLE]);
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -154,14 +154,14 @@ class change_field extends type_object
      * @param int $tbl_id the database id of the table to which the field name belongs
      * @return int the id of the type object found and zero if nothing is found
      */
-    function load_by_name_and_table_id(string $name, int $tbl_id): int
+    function load_by_name_and_table_id(string $name, int $tbl_id, user_message $msg): int
     {
         global $db_con;
 
         log_debug($name);
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_name_and_table_id($sc, $name, $tbl_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**

@@ -6,9 +6,9 @@
         <title>
             test value html components - zukunft.com
         </title>
-        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -136,14 +136,14 @@
                 value display test
             </h4>
             with name and tooltip:
-            <span title="ratio of the circumference of a circle to its diameter" data-toggle="tooltip">
-                Pi (math)
+            <span title="Symbol for the ratio of the circumference of a circle to its diameter" data-toggle="tooltip">
+                π
             </span>
             3.14
             <br>
             with name and link:
-            <a href="/http/view.php?m=92&amp;id=2" title="ratio of the circumference of a circle to its diameter">
-                Pi (math)
+            <a href="/http/view.php?m=90&amp;id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">
+                π
             </a>
             <span class="grey">
                 3.14
@@ -152,23 +152,44 @@
             with tooltip: 3.14
             <br>
             with detail link:
-            <a href="/http/view.php?m=value&amp;id=32770">
+            <a href="/http/view.php?m=value&amp;id=5">
                 3.14
             </a>
             <br>
             with edit link:
-            <a href="/http/view.php?m=96&amp;id=32770">
+            <a href="/http/view.php?m=96&amp;id=5">
                 3.14
             </a>
             <br>
+            with linked names and separate measure:
+            <div class="value-row">
+                <span class="value-name text-nowrap"><a href="/http/view.php?m=90&amp;id=135">2019</a>, <a href="/http/view.php?m=90&amp;id=213">Zurich</a>, <a href="/http/view.php?m=90&amp;id=186">canton</a>, <a href="/http/view.php?m=90&amp;id=197">inhabitants</a></span>
+                <span class="value-num text-nowrap"><a href="/http/view.php?m=96&amp;id=....05+....0S+....0u+....13+....1J+......+......+......+......+......+......+......+......+......+......+......+&amp;9m=90&amp;9id=213">1.55</a></span>
+                <span class="value-unit text-nowrap"><a href="/http/view.php?m=90&amp;id=158">mio</a></span>
+            </div>
+            <br>
+            with linked names and separate measure (ex canton):
+            <div class="value-row">
+                <span class="value-name text-nowrap"><a href="/http/view.php?m=90&amp;id=135">2019</a>, <a href="/http/view.php?m=90&amp;id=213">Zurich</a>, <a href="/http/view.php?m=90&amp;id=197">inhabitants</a></span>
+                <span class="value-num text-nowrap"><a href="/http/view.php?m=96&amp;id=....05+....0S+....0u+....13+....1J+......+......+......+......+......+......+......+......+......+......+......+&amp;9m=90&amp;9id=213">1.55</a></span>
+                <span class="value-unit text-nowrap"><a href="/http/view.php?m=90&amp;id=158">mio</a></span>
+            </div>
+            <br>
+            with the tooltips from the cache:
+            <div class="value-row">
+                <span class="value-name text-nowrap"><a href="/http/view.php?m=90&amp;id=135">2019</a>, <a href="/http/view.php?m=90&amp;id=213">Zurich</a>, <a href="/http/view.php?m=90&amp;id=186">canton</a>, <a href="/http/view.php?m=90&amp;id=197">inhabitants</a></span>
+                <span class="value-num text-nowrap"><a href="/http/view.php?m=96&amp;id=....05+....0u+....13+....1J+....2D+......+......+......+......+......+......+......+......+......+......+......+&amp;9m=90&amp;9id=213">1.55</a></span>
+                <span class="value-unit text-nowrap"><a href="/http/view.php?m=90&amp;id=271" title="10⁶">mio</a></span>
+            </div>
+            <br>
             with measure type:
-            <a href="/http/view.php?m=92&amp;id=50" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">
+            <a href="/http/view.php?m=92&amp;id=29" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">
                 speed of light
             </a>
-            <a href="/http/view.php?m=value&amp;id=140954388627547" title="1983 (year of definition)">
+            <a href="/http/view.php?m=value&amp;id=140864194576462" title="1983 (year of definition)">
                 299'792'458
             </a>
-            <a href="/http/view.php?m=92&amp;id=67" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">
+            <a href="/http/view.php?m=92&amp;id=71" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">
                 m/s
             </a>
             <br>
@@ -176,19 +197,19 @@
                 buttons
             </h4>
             add button:
-            <a href="/http/view.php?m=value_add&amp;id=32770" title="add new value">
+            <a href="http://localhost/http/view.php?m=18&amp;id=5&amp;9m=90&amp;9id=213" title="add new value">
                 <i class="far fa-plus-square">
                 </i>
             </a>
             <br>
             edit button:
-            <a href="/http/view.php?m=value_edit&amp;id=32770" title="change value">
+            <a href="http://localhost/http/view.php?m=19&amp;id=5&amp;9m=90&amp;9id=213" title="change value">
                 <i class="far fa-edit">
                 </i>
             </a>
             <br>
             del button:
-            <a href="/http/view.php?m=value_del&amp;id=32770" title="delete value">
+            <a href="http://localhost/http/view.php?m=20&amp;id=5&amp;9m=90&amp;9id=213" title="delete value">
                 <i class="far fa-times-circle">
                 </i>
             </a>
@@ -199,14 +220,14 @@
             <div class="row col-md-12">
                 <div class="heading-line">
                     <h4 class="heading-inline">
-                        <a href="/http/view.php?m=92&amp;id=2" title="ratio of the circumference of a circle to its diameter">
-                            Pi (math)
+                        <a href="/http/view.php?m=90&amp;id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">
+                            π
                         </a>
                         <span class="grey">
                             3.14
                         </span>
                     </h4>
-                    <a href="/http/view.php?m=19&amp;id=32770" title="change value" class="heading-icon-inline">
+                    <a href="/http/view.php?m=19&amp;id=5" title="change value" class="heading-icon-inline">
                         <i class="fas fa-edit">
                         </i>
                     </a>

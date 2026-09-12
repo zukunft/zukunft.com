@@ -50,7 +50,6 @@
     element_group.php
     formula_list.php
     formula_link_list.php
-    parameter_type.php
     figure.php
     figure_list.php
     selector.php
@@ -135,6 +134,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // main test settings
@@ -163,6 +163,7 @@ use Zukunft\ZukunftCom\test\php\unit_workflow\all_workflow_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;
 use Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 
@@ -181,16 +182,22 @@ class all_tests extends all_unit_write_tests
         // init
         $sys->errors = 0;
         $t_db = new test_db_load($this);
-        $usr_msg = new user_message();
+        $msg = new user_message(); // for testing
         $map = new MapObject();
-        $usr_msg_ui = $map->convertMsgToUi($usr_msg);
+        $usr_msg_ui = $map->convertMsgToUi($msg);
 
         // start the test section (ts)
         $ts = 'Start of all zukunft.com tests ';
         $this->header($ts);
         $this->set_users();
+        $msg->usr = $this->usr1;
+        // login so that the api calls of the test scripts are permitted
+        // also on a pod that blocks the changes of a user without login
+        $this->api_login();
         $ui = new frontend('all tests');
-        $ui->load_dummy_cache_from_test_resources($this->usr1);
+        $usr_ui = new user($this->usr1->api_json());
+        $msg_ui = new user_message_ui($usr_ui);
+        $ui->load_dummy_cache_from_test_resources($msg_ui);
 
         // if requested only run some selected tests
         if (QUICK_TEST_ONLY) {
@@ -216,14 +223,16 @@ class all_tests extends all_unit_write_tests
             // database reset is switched off here for better detection of leftovers
             // it can be started via reset_db
             if ($this->db_reset_allowed() and $sys->errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
-                $this->run_db_recreate($usr_msg);
+                $this->run_db_recreate($msg);
             }
 
             // html page creation based on the url
             if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST) {
                 // test the html ui on localhost without api
                 $ui = new frontend('unit ui tests');
-                $ui->load_dummy_cache_from_test_resources($this->usr1);
+                $usr_ui = new user($this->usr1->api_json());
+                $msg_ui = new user_message_ui($usr_ui);
+                $ui->load_dummy_cache_from_test_resources($msg_ui);
                 new all_ui_tests()->run($this, $ui);
             }
 
@@ -250,8 +259,11 @@ class all_tests extends all_unit_write_tests
 
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
-            $t_db->type_list_check($this, $this->usr1);
+            $t_db->type_list_check($this, $msg);
         }
+
+        // end the admin session used for the api calls of the test scripts
+        $this->api_logout();
 
         // display the test results
         if ($this->format == text_log_format::HTML) {

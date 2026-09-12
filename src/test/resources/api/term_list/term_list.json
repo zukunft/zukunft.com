@@ -23,6 +23,7 @@
     "from_id": 2,
     "verb_id": 3,
     "to_id": 1,
+    "weight": 0.5,
     "impact": 9999999999,
     "class": "triple"
   },
@@ -32,7 +33,6 @@
     "description": "to convert times in minutes to seconds and the other way round",
     "type_id": 1,
     "user_text": "\"second (time)\" = \"minute\" * 60",
-    "ref_text": "{t20}={w103}*60",
     "latex": "\\text{s} = 60 \\cdot \\text{min}",
     "class": "formula"
   }

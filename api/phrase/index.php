@@ -39,46 +39,49 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("phrase", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("phrase", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $phr_id = $_GET[url_var::ID] ?? 0;
     $phr_name = $_GET[url_var::NAME] ?? '';
 
-    // load the session user parameters
-    $msg = '';
-    $usr = new user;
-    $msg .= $usr->get();
-
     $ctrl = new controller();
-    $result = ''; // reset the json message string
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         $phr = new phrase($usr);
         if ($phr_id > 0) {
-            $phr->load_by_id($phr_id);
-            $result = $phr->api_json([api_types::HEADER], $usr);
+            $phr->load_by_id($phr_id, $msg);
+            $result = $phr->api_json([api_types::HEADER], $msg, $usr);
         } elseif ($phr_name != '') {
-            $phr->load_by_name($phr_name);
-            $result = $phr->api_json([api_types::HEADER], $usr);
+            $phr->load_by_name($phr_name, $msg);
+            $result = $phr->api_json([api_types::HEADER], $msg, $usr);
         } else {
-            $msg = 'phrase id or name is missing';
+            $msg->add_message_text('phrase id or name is missing');
         }
 
         // do not disclose another user's private phrase loaded by id/name (idor); neutral message
         if ($result != '' and !$phr->is_readable_by($usr)) {
             $result = '';
-            $msg = 'phrase id or name is missing';
+            $msg->add_message_text('phrase id or name is missing');
         }
 
         // add, update or delete the phrase
@@ -88,5 +91,5 @@ if ($db_con->is_open()) {
         $ctrl->not_permitted($msg);
     }
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

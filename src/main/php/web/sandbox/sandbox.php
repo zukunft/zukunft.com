@@ -32,7 +32,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -40,27 +39,33 @@ include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\component\component_list;
 
 class sandbox extends db_object
 {
@@ -76,6 +81,21 @@ class sandbox extends db_object
 
     // to reactivate an excluded sandbox object also excluded objects are send to the frontend
     public ?bool $excluded = null;
+
+    // the fields that the requesting user has overwritten in the user sandbox (overlay) table
+    // e.g. user_words, each with the db field name, the user value and the standard value;
+    // rendered by the 'my' tab of the object page (see ui_preview::user_overwrites_table)
+    public array $user_overwrites = [];
+
+    // the shared overwrites of other users, each additionally with the name of the overwriting
+    // user; rendered by the 'others' tab of the object page (ui_preview::other_overwrites_table)
+    public array $other_overwrites = [];
+
+    // the recent changes from the api message, rendered by the 'changes' tab
+    public ?change_log_list $chg_log = null;
+
+    // the views that can show this object from the api message, rendered by the 'views' tab
+    public ?view_list $view_lst = null;
 
     // the user that has created the standard object
     protected ?user $owner = null;
@@ -121,6 +141,33 @@ class sandbox extends db_object
         } else {
             $this->excluded = null;
         }
+        if (array_key_exists(json_fields::OWNER, $json_array)) {
+            $this->set_owner_name($json_array[json_fields::OWNER]);
+        } else {
+            $this->owner = null;
+        }
+        if (array_key_exists(json_fields::USER_OVERWRITES, $json_array)) {
+            $this->user_overwrites = $json_array[json_fields::USER_OVERWRITES];
+        } else {
+            $this->user_overwrites = [];
+        }
+        if (array_key_exists(json_fields::OTHER_OVERWRITES, $json_array)) {
+            $this->other_overwrites = $json_array[json_fields::OTHER_OVERWRITES];
+        } else {
+            $this->other_overwrites = [];
+        }
+        if (is_array($json_array[json_fields::CHANGES] ?? null)) {
+            $this->chg_log = new change_log_list();
+            $this->chg_log->api_mapper($json_array[json_fields::CHANGES]);
+        } else {
+            $this->chg_log = null;
+        }
+        if (is_array($json_array[json_fields::VIEWS] ?? null)) {
+            $this->view_lst = new view_list();
+            $this->view_lst->api_mapper($json_array[json_fields::VIEWS]);
+        } else {
+            $this->view_lst = null;
+        }
         return $msg->is_ok();
     }
 
@@ -128,13 +175,13 @@ class sandbox extends db_object
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         if (array_key_exists(url_var::SHARE, $url_array)) {
             $this->share_id = $url_array[url_var::SHARE];
         } else {
@@ -150,18 +197,49 @@ class sandbox extends db_object
         } else {
             $this->excluded = null;
         }
-        return $usr_msg;
+        if (array_key_exists(url_var::OWNER, $url_array)) {
+            $this->set_owner_name($url_array[url_var::OWNER]);
+        } else {
+            $this->owner = null;
+        }
+        return $msg;
     }
 
     /**
      * @return array parent url array extended with the share and protection of this sandbox object
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_array = parent::to_url_array();
+        $url_array = parent::to_url_array($msg);
         $url_array[url_var::SHARE] = $this->share_id;
         $url_array[url_var::PROTECTION] = $this->protection_id;
+        if ($this->owner_name() != '') {
+            $url_array[url_var::OWNER] = $this->owner_name();
+        }
         return $url_array;
+    }
+
+    /**
+     * set the owner by the user name e.g. as sent by the api message or the page url
+     * @param string|null $name the name of the user who owns the object
+     * @return void
+     */
+    function set_owner_name(?string $name): void
+    {
+        if ($name == null or $name == '') {
+            $this->owner = null;
+        } else {
+            $this->owner = new user();
+            $this->owner->name = $name;
+        }
+    }
+
+    /**
+     * @return string the name of the user who owns the object or an empty string if not known
+     */
+    function owner_name(): string
+    {
+        return $this->owner?->name() ?? '';
     }
 
     function view_id(): ?int
@@ -176,11 +254,11 @@ class sandbox extends db_object
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         if ($this->share_id != null) {
             $vars[json_fields::SHARE] = $this->share_id;
@@ -227,16 +305,17 @@ class sandbox extends db_object
      * add the user to the load of the user sandbox object e.g. word by id via api
      * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
+     * @param user_message|Message $msg
      * @param array $data additional data that should be included in the get request
      * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool
      */
-    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    function load_by_id(int|string $id, user_message|Message $msg, array $data = [], int $usr_id = 0): bool
     {
         if ($usr_id > 0) {
             $data[url_var::USER] = $usr_id;
         }
-        return parent::load_by_id($id, $data, $usr_id);
+        return parent::load_by_id($id, $msg, $data, $usr_id);
     }
 
 
@@ -252,17 +331,18 @@ class sandbox extends db_object
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->ex_system();
+        $msk_lst = $msk_lst->ex_system($msg);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

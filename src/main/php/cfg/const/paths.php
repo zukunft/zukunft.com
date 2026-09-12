@@ -108,8 +108,6 @@ class paths
     // path of the pure html frontend objects
     const string WEB = self::PHP_LIB . 'web' . DIRECTORY_SEPARATOR;
     const string WEB_SECTION = 'Ui';
-    // only used for initial loading
-    const string WEB_CONST = self::WEB . 'const' . DIRECTORY_SEPARATOR;
 
     // resource paths
     const string RES = self::MAIN . 'resources' . DIRECTORY_SEPARATOR;

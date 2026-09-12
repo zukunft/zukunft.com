@@ -129,16 +129,17 @@ class ip_range extends db_object_seq_id
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, ip_range_db::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, ip_range_db::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             $this->from = $db_row[ip_range_db::FLD_FROM];
             $this->to = $db_row[ip_range_db::FLD_TO];
             $this->reason = $db_row[ip_range_db::FLD_REASON];
             $this->active = $db_row[ip_range_db::FLD_ACTIVE];
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -228,13 +229,13 @@ class ip_range extends db_object_seq_id
      * @param int $id the id of an ip range
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, user_message $msg): int
     {
         global $db_con;
 
         $this->reset();
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -243,13 +244,13 @@ class ip_range extends db_object_seq_id
      * @param string $ip_to the end ip address that should be used for the query
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_ip_addresses(string $ip_from, string $ip_to): int
+    function load_by_ip_addresses(string $ip_from, string $ip_to, user_message $msg): int
     {
         global $db_con;
 
         $this->reset();
         $qp = $this->load_sql_by_ip_addresses($db_con->sql_creator(), $ip_from, $ip_to);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
 
@@ -347,11 +348,12 @@ class ip_range extends db_object_seq_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
 
@@ -449,7 +451,7 @@ class ip_range extends db_object_seq_id
         $db_chk = clone $this;
         $db_chk->reset();
         $db_chk->set_user($this->get_user());
-        $db_chk->load_by_ip_addresses($this->from, $this->to);
+        $db_chk->load_by_ip_addresses($this->from, $this->to, $msg);
         if ($db_chk->id() > 0) {
             log_debug('->get_similar an ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
@@ -512,9 +514,9 @@ class ip_range extends db_object_seq_id
             $db_rec = clone $this;
             $db_rec->reset();
             $db_rec->set_user($this->get_user());
-            $db_rec->load_by_id($this->id());
+            $db_rec->load_by_id($this->id(), $msg);
             if ($db_rec->id() > 0) {
-                if ($this->needs_db_update($db_rec)) {
+                if ($this->needs_db_update($db_rec, $msg)) {
                     // ... create the prepared sql function ...
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
@@ -548,7 +550,7 @@ class ip_range extends db_object_seq_id
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -557,7 +559,7 @@ class ip_range extends db_object_seq_id
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -566,10 +568,10 @@ class ip_range extends db_object_seq_id
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
 
         // create the sql to insert the row
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $fvt_insert_list = new sql_par_field_list();
             $fvt_insert_list->add($fvt_insert);
             $sc_insert = clone $sc;
@@ -625,11 +627,12 @@ class ip_range extends db_object_seq_id
      * is expected to be similar to the diff_msg function
      *
      * @param ip_range|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(ip_range|IdObject $db_obj): bool
+    function needs_db_update(ip_range|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         // TODO Prio 3 review
         if ($db_obj->id() == $this->id()) {
             $result = false;

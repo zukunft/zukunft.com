@@ -41,5 +41,8 @@ class view_relation_types
     const string ADD_NAME = "add components";
     const string ADD_COM = "add the components of the child view to the parent view at the start position";
     const string REMOVE = "del_components";
+    const int REMOVE_ID = 2;
+    const string REMOVE_NAME = "remove components";
+    const string REMOVE_COM = "delete the components of the child view from the parent and if the start position is set starting at this position";
 
 }

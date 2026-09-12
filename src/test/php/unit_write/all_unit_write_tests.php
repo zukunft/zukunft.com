@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -80,12 +81,12 @@ class all_unit_write_tests extends all_unit_read_tests
 
     function run_db_write_tests(all_tests $t): void
     {
-        global $usr;
         global $db_con;
         global $sys;
 
         // init
         $t_db = new test_db_load($this);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write start ';
@@ -93,8 +94,13 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
-        $usr->load_by_profile_code(user_profiles::TEST);
+        $usr = new user();
+        $usr->load_by_profile_code(user_profiles::TEST, $msg);
         if ($usr->id <= 0) {
+
+            // the first load intentionally fails on a fresh database
+            // (the test user does not exist yet), so reset the message before the retry
+            $msg->reset();
 
             // but only from localhost
             $ip_addr = '';
@@ -102,10 +108,10 @@ class all_unit_write_tests extends all_unit_read_tests
                 $ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
             }
             if ($ip_addr == users::SYSTEM_ADMIN_IP) {
-                $db_con->import_system_users();
+                $db_con->import_system_users($msg);
             }
 
-            $usr->load_by_profile_code(user_profiles::TEST);
+            $usr->load_by_profile_code(user_profiles::TEST, $msg);
         }
 
         if ($usr->id > 0) {
@@ -134,7 +140,6 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 // create the test dataset to check the basic write functions
                 $t->set_users();
-                $t_db->create_test_db_entries($t);
                 // creating the complete test dataset is a known one-time heavy operation, so reset the
                 // section timer to avoid charging its duration to the first write test as a false timeout
                 $t->reset_section_timer();
@@ -147,6 +152,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 //new horizontal_write_tests()->run($t);
 
                 // run object specific db write tests
+                $t_db->create_test_db_entries($t);
                 new word_write_tests()->run($t);
                 new word_list_write_tests()->run($t);
                 // TODO Prio 1 activate
@@ -212,8 +218,10 @@ class all_unit_write_tests extends all_unit_read_tests
             }
 
             // testing cleanup to remove any remaining test records
-            $usr_msg = new user_message($usr);
-            $t->cleanup($usr_msg);
+            $msg->usr = $usr;
+            $t->cleanup($msg);
+            // final check that no test row is left in any table incl. the change log
+            $t->check_cleanup($msg, library::class_to_name(sandbox::class));
 
             // start the integration tests by loading the base and sample data
             // TODO Prio 1 activate
@@ -232,7 +240,6 @@ class all_unit_write_tests extends all_unit_read_tests
     function run_db_recreate(user_message $msg): void
     {
         global $db_con;
-        global $usr;
 
         // start the test section (ts)
         $ts = 'db write database recreation ';
@@ -240,42 +247,15 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // create the testing users (needed for the reset db only run)
         $this->set_users();
-        $usr = $this->usr1;
-
-        // check if at least some database tables still exists
-        $lib = new library();
-        $ip_tbl_name = $lib->class_to_name(ip_range::class);
-        if ($db_con->has_table($ip_tbl_name, $msg)) {
-            $usr->get();
-        } else {
-            // TODO Prio 2 avoid setting the system user profile directly
-            $usr->id = users::SYSTEM_ID;
-            $usr->profile_id = user_profiles::SYSTEM_ID;
-        }
-
-        // remember the user
-        $test_usr = clone $usr;
-
-        // use the system user for the database updates
-        if ($db_con->has_table($ip_tbl_name, $msg)) {
-            $usr->load_by_id(users::SYSTEM_ID);
-        } else {
-            // TODO Prio 2 avoid setting the system user profile directly
-            $usr->id = users::SYSTEM_ID;
-            $usr->profile_id = user_profiles::SYSTEM_ID;
-        }
 
         // drop all old database tables (the least dependent tables first)
         foreach (def::DB_TABLE_LIST as $table_name) {
-            $db_con->drop_table($table_name);
+            $db_con->drop_table($table_name, $msg);
         }
         // recreate the database as the virtual system user,
         // because this is a system call
         $setup_msg = new user_message(user::system());
         $db_con->setup_db($setup_msg);
-
-        // restore the test user
-        $usr = clone $test_usr;
 
         // the complete database recreation above is a known one-time heavy operation, so reset the
         // section timer to avoid charging its duration to the next test section as a false timeout

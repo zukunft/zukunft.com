@@ -45,7 +45,6 @@ class view_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $sc = new sql_creator();
@@ -59,21 +58,39 @@ class view_list_tests
         $t->subheader($ts . 'database query creation');
 
         // load the system views
-        $sys_msk_lst = new view_sys_list($usr);
+        $sys_msk_lst = new view_sys_list($t->usr1);
         $this->assert_sql_sys_views($t, $sc, $sys_msk_lst);
 
         // load of non system view
-        $msk_lst = new view_list($usr);
-        $t->assert_sql_names($sc, $msk_lst, new view($usr));
-        $t->assert_sql_names($sc, $msk_lst, new view($usr), views::START_NAME);
+        $msk_lst = new view_list($t->usr1);
+        $t->assert_sql_names($sc, $msk_lst, new view($t->usr1));
+        $t->assert_sql_names($sc, $msk_lst, new view($t->usr1), views::START_NAME);
 
-        $msk_lst = new view_list($usr);
+        $msk_lst = new view_list($t->usr1);
         $this->assert_sql_by_component_id($t, $sc, $msk_lst);
+
+        // load the views of one type e.g. the views that can show a value
+        $msk_lst = new view_list($t->usr1);
+        $this->assert_sql_by_type($t, $sc, $msk_lst);
+
+        // without a type the query has no name, so that the caller does not send it to the database
+        $test_name = 'the view list query of a missing view type is not prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert($test_name, $msk_lst->load_sql_by_type($sc, 0)->name, '');
+
+        // load the views by id e.g. to name the views that a user has changed
+        $msk_lst = new view_list($t->usr1);
+        $this->assert_sql_by_ids($t, $sc, $msk_lst);
+
+        // without an id the query has no name, so that the caller does not send it to the database
+        $test_name = 'the view list query of an empty id list is not prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert($test_name, $msk_lst->load_sql_by_ids($sc, [])->name, '');
 
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/view/view_list.json';
-        $t->assert_json_file(new view_list($usr), $json_file);
+        $t->assert_json_file(new view_list($t->usr1), $json_file);
 
     }
 
@@ -118,6 +135,50 @@ class view_list_tests
         // check the MySQL query syntax
         $sc->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_component_id($sc, 1);
+        $t->assert_qp($qp, $sc->db_type);
+    }
+
+    /**
+     * test the SQL statement creation to load the views of one view type in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc the test database connection
+     * @param view_list $lst the view list object for the sql creation
+     * @return void
+     */
+    private function assert_sql_by_type(test_cleanup $t, sql_creator $sc, view_list $lst): void
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $lst->load_sql_by_type($sc, 1);
+        $t->assert_qp($qp, $sc->db_type);
+
+        // check the MySQL query syntax
+        $sc->reset(sql_db::MYSQL);
+        $qp = $lst->load_sql_by_type($sc, 1);
+        $t->assert_qp($qp, $sc->db_type);
+    }
+
+    /**
+     * test the SQL statement creation to load the views by their ids in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc the test database connection
+     * @param view_list $lst the view list object for the sql creation
+     * @return void
+     */
+    private function assert_sql_by_ids(test_cleanup $t, sql_creator $sc, view_list $lst): void
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $lst->load_sql_by_ids($sc, [1, 2]);
+        $t->assert_qp($qp, $sc->db_type);
+
+        // check the MySQL query syntax
+        $sc->reset(sql_db::MYSQL);
+        $qp = $lst->load_sql_by_ids($sc, [1, 2]);
         $t->assert_qp($qp, $sc->db_type);
     }
 

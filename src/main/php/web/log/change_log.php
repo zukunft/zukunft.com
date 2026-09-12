@@ -33,12 +33,11 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\log;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -60,7 +59,10 @@ class change_log extends sandbox
     public ?int $action_id = null;   // database id for the change type (add, change or del)
     public ?int $table_id = null;    // database id of the table used to get the name from the preloaded hash
     public ?int $field_id = null;    // database id of the table used to get the name from the preloaded hash
-    public ?int $row_id = null;      // prime database key of the row that has been changed
+    // the database key of the row that has been changed; a text for a value, because the id of a
+    // value is its group id, which is a text for a group of more than four phrases (like the
+    // backend change_log::$row_id, so that a big value id survives the api mapping)
+    public int|string|null $row_id = null;
     public DateTime $change_time;    // the time of the change
 
 
@@ -113,6 +115,37 @@ class change_log extends sandbox
             $this->row_id = null;
         }
         return $msg->is_ok();
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * @return string the change field code id (the change table id followed by the field name)
+     *                from the preloaded type cache or '' if the field is unknown
+     */
+    function field_code_id(): string
+    {
+        global $ui_sys;
+        $result = '';
+        if ($this->field_id != null) {
+            $field = $ui_sys?->typ_lst_cache?->cng_fld?->get($this->field_id);
+            if ($field != null) {
+                $result = $field->code_id ?? '';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the pure field name of the change e.g. 'impact',
+     *                i.e. the change field code id without the leading change table id
+     */
+    function field_name(): string
+    {
+        return ltrim($this->field_code_id(), '0123456789');
     }
 
 }

@@ -44,10 +44,9 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -56,19 +55,19 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
-//include_once paths::SHARED_CONST . 'rest_ctrl.php';
-//include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_HELPER . 'CombineObject.php';
-include_once paths::SHARED_HELPER . 'IdObject.php';
-include_once paths::SHARED_HELPER . 'TextIdObject.php';
-include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_types.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
+//include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'CombineObject.php';
+include_once html_paths::SHARED_HELPER . 'IdObject.php';
+include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_HELPER . 'ListOfIdObjects.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_TYPES . 'view_types.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -126,7 +125,7 @@ class ListBase extends ListOfIdObjects
     {
         $msg = 'set_from_json_array not overwritten by child object ' . $this::class;
         log_err($msg);
-        return new user_message(new user(), $msg);
+        return new user_message(new user(), $msg); // the message IS the return value of this stub
     }
 
     /**
@@ -138,18 +137,18 @@ class ListBase extends ListOfIdObjects
      */
     function api_mapper_list(array $json_array, db_object|IdObject|TextIdObject|CombineObject $dbo): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($json_array as $value) {
             if (is_array($value)) {
                 $new = clone $dbo;
-                $new->api_mapper($value, $usr_msg);
+                $new->api_mapper($value, $msg);
                 $this->add_obj($new, true);
             } else {
                 // e.g. an api error message should not stop the rendering of the other components
                 log_warning('unexpected api message part "' . $value . '" for a ' . $dbo::class . ' list');
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -194,7 +193,7 @@ class ListBase extends ListOfIdObjects
      * @param int $id of the object to filter the list
      * @return bool true if the load has been successful
      */
-    function load_by_id(string $class, string $url_var, int $id): bool
+    function load_by_id(string $class, string $url_var, int $id, user_message $msg): bool
     {
         $result = false;
 
@@ -211,10 +210,10 @@ class ListBase extends ListOfIdObjects
     /**
      * refresh the list by id from the backend via api
      *
-     * @param user_message $usr_msg the list class name that should be loaded e.g. formula_link_list
+     * @param user_message $msg the list class name that should be loaded e.g. formula_link_list
      * @return bool true if the reload has been successful
      */
-    function reload(user_message $usr_msg): bool
+    function reload(user_message $msg): bool
     {
         $id_lst = $this->id_lst();
         /*
@@ -226,7 +225,7 @@ class ListBase extends ListOfIdObjects
             $result = true;
         }
         */
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -241,14 +240,14 @@ class ListBase extends ListOfIdObjects
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return string with the api json string that should be sent to the backend
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name();
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_array($typ_lst);
+        $vars = $this->api_array($typ_lst, $msg);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
@@ -256,14 +255,14 @@ class ListBase extends ListOfIdObjects
      * create the json array for updating the database via backend
      *
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $result = array();
         foreach ($this->lst() as $obj) {
             if ($obj != null) {
-                $result[] = $obj->api_array($typ_lst);
+                $result[] = $obj->api_array($typ_lst, $msg);
             }
         }
         return $result;
@@ -299,23 +298,26 @@ class ListBase extends ListOfIdObjects
      * modify
      */
 
-    function merge(ListBase $lst): void
+    function merge(ListBase $lst, user_message $msg): void
     {
         foreach ($lst->lst() as $phr) {
-            $this->add($phr);
+            $this->add($phr, $msg);
         }
     }
 
     /**
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
+     * @param user_message $msg to report which entry is double
      * @returns bool true the object has been added
      */
-    function add(IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
         if ($to_add != null) {
-            $this->add_obj($to_add);
+            $add_msg = new user_message(); // add_obj returns is_ok(), so the double check must judge only this add
+            $this->add_obj($to_add, false, $add_msg);
+            $msg->merge($add_msg);
             $result = true;
         }
         return $result;
@@ -343,18 +345,19 @@ class ListBase extends ListOfIdObjects
      * create the html code to show the entries below each other in a vertical list
      *
      * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
-     * @param string $back list of the last view to suggest the best follow-up view
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
      * @return string the html code to show a useful numbers of list objects
      */
     function list(
-        phrase_list $context_phr_lst = new phrase_list(),
-        string      $back = '',
-        string      $style = '',
-        ?int        $limit = null,
-        ?int        $page = null
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $url_arr = [],
+        string       $style = '',
+        ?int         $limit = null,
+        ?int         $page = null
     ): string
     {
         $result = '';

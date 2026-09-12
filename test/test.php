@@ -43,6 +43,8 @@ include_once 'test_const.php';
 
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\test_app;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -60,13 +62,14 @@ global $db_con;
 
 // open database and display header
 $app = new test_app();
-$db_con = $app->start("unit and integration testing", '', false, true);
+$msg = new user_message();
+$db_con = $app->start("unit and integration testing", $msg);
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
-    $result = $start_usr->get();
+    $result = $start_usr->get($msg);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($start_usr->id > 0) {

@@ -35,13 +35,13 @@ PREPARE word_insert_log_1111005000001_user_call FROM
 SELECT word_insert_log_1111005000001_user
         (3,
          1,
-         10,
+         88,
          'mathematics',
          1,
-         11,
+         17,
          'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
-         12,
+         15,
          'standard',
          1,
-         87,
+         93,
          3);

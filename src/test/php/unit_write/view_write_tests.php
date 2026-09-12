@@ -49,7 +49,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -68,7 +70,8 @@ class view_write_tests
 
         // init
         $t_msk = new test_views($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
+        $msg_ui = new user_message_ui();
         $t->name = 'db write view ';
 
         // start the test section (ts)
@@ -80,17 +83,17 @@ class view_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t_msk->view_add_by_func(), true);
 
         $t->subheader($ts . 'for ' . views::TEST_ADD_NAME);
-        $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME);
+        $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME, $msg);
 
 
-        $db_con->import_system_views($t->usr1);
+        $db_con->import_system_views($t->usr1, $msg_ui);
 
         $this->create_test_views($t);
 
 
         $test_name = 'load view with the name ' . views::TEST_COMPLETE_NAME;
         $msk_db = new view($t->usr1);
-        $result = $msk_db->load_by_name(views::TEST_COMPLETE_NAME);
+        $result = $msk_db->load_by_name(views::TEST_COMPLETE_NAME, $msg);
         $msk = new view_ui($msk_db->api_json());
         $target = 0;
         if ($result > 0) {
@@ -100,7 +103,7 @@ class view_write_tests
 
         // test the complete view for one word
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(words::CH);
+        $wrd->load_by_name(words::CH, $msg);
         //$result = $msk->display($wrd, $back);
         // check if the view contains the word name
         $target = words::CH;
@@ -123,25 +126,29 @@ class view_write_tests
         $msk = new view($t->usr1);
         $msk->set_name(views::TEST_ADD_NAME);
         $msk->description = 'Just added for testing';
-        $t->assert_true($test_name, $msk->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if the view name has been saved for '. views::TEST_ADD_NAME;
         $msk = new view($t->usr1);
-        $msk->load_by_name(views::TEST_ADD_NAME, view::class);
+        $msk->load_by_name(views::TEST_ADD_NAME, $msg, view::class);
         $result = $msk->description;
         $target = 'Just added for testing';
         $t->assert($test_name, $result, $target);
 
+        // re-adding a view that a previous run left excluded can land in the user sandbox row,
+        // which the change log shows with 'user' after the action
         $test_name = 'check if the view adding has been logged for '. views::TEST_ADD_NAME;
-        $result = $t->log_last_by_field($msk, view_fields::FLD_NAME, $msk->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "System Test View"';
+        $log_ui = $t->log_last_ui_by_field($msk, view_fields::FLD_NAME, $msk->id(), $msg);
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"System Test View"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if adding a view with name '. views::TEST_ADD_NAME . ' again creates a correct error message';
         $msk = new view($t->usr1);
         $msk->set_name(views::TEST_ADD_NAME);
-        $msk->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $msk->save($msg);
+        $result = $msg->get_last_message();
         // TODO Prio 2 review
         $target = 'A view with the name "' . views::TEST_ADD_NAME . '" already exists. Please use another name.'; // is this error message really needed???
         $target = '';
@@ -149,13 +156,13 @@ class view_write_tests
 
         $test_name = 'check if the view can be renamed to '. views::TEST_RENAMED_NAME;
         $msk = new view($t->usr1);
-        $msk->load_by_name(views::TEST_ADD_NAME, view::class);
+        $msk->load_by_name(views::TEST_ADD_NAME, $msg, view::class);
         $msk->set_name(views::TEST_RENAMED_NAME);
-        $t->assert_true($test_name, $msk->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if the view renaming was successful to '. views::TEST_RENAMED_NAME;
         $msk_renamed = new view($t->usr1);
-        $result = $msk_renamed->load_by_name(views::TEST_RENAMED_NAME, view::class);
+        $result = $msk_renamed->load_by_name(views::TEST_RENAMED_NAME, $msg, view::class);
         if ($result) {
             if ($msk_renamed->id() > 0) {
                 $result = $msk_renamed->name();
@@ -165,18 +172,20 @@ class view_write_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view renaming has been logged to '. views::TEST_RENAMED_NAME;
-        $result = $t->log_last_by_field($msk_renamed, view_fields::FLD_NAME, $msk_renamed->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
+        $log_ui = $t->log_last_ui_by_field($msk_renamed, view_fields::FLD_NAME, $msk_renamed->id(), $msg);
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "System Test View Renamed" from "System Test View"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view parameters (e.g. type) can be added to '. views::TEST_RENAMED_NAME;
         $msk_renamed->description = 'Just added for testing the user sandbox';
         $msk_renamed->type_id = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
-        $t->assert_true($test_name, $msk_renamed->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk_renamed->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if the description view parameters have been added to '. views::TEST_RENAMED_NAME;
         $msk_reloaded = new view($t->usr1);
-        $msk_reloaded->load_by_name(views::TEST_RENAMED_NAME, view::class);
+        $msk_reloaded->load_by_name(views::TEST_RENAMED_NAME, $msg, view::class);
         $result = $msk_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->assert($test_name, $result, $target);
@@ -187,25 +196,29 @@ class view_write_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the description view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
-        $result = $t->log_last_by_field($msk_reloaded, fields::FLD_DESCRIPTION, $msk_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . 'zukunft.com system test changed "Just added for testing" to "Just added for testing the user sandbox"';
+        $log_ui = $t->log_last_ui_by_field($msk_reloaded, fields::FLD_DESCRIPTION, $msk_reloaded->id(), $msg);
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . 'zukunft.com system test changed ' . $usr_marker . 'to "Just added for testing the user sandbox" from "Just added for testing"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view_type view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
-        $result = $t->log_last_by_field($msk_reloaded, view_fields::FLD_TYPE, $msk_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "word default"';
+        $log_ui = $t->log_last_ui_by_field($msk_reloaded, view_fields::FLD_TYPE, $msk_reloaded->id(), $msg);
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"word default"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if a user-specific view is created if another user changes the view to ' . views::TEST_RENAMED_NAME;
         $msk_usr2 = new view($t->usr2);
-        $msk_usr2->load_by_name(views::TEST_RENAMED_NAME);
+        $msk_usr2->load_by_name(views::TEST_RENAMED_NAME, $msg);
         $msk_usr2->description = 'Just changed for testing the user sandbox';
         $msk_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::ENTRY);
-        $t->assert_true($test_name, $msk_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if a user-specific view comment have been saved for ' . views::TEST_RENAMED_NAME;
         $msk_usr2_reloaded = new view($t->usr2);
-        $msk_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME);
+        $msk_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME, $msg);
         $result = $msk_usr2_reloaded->description;
         $target = 'Just changed for testing the user sandbox';
         $t->assert($test_name, $result, $target);
@@ -217,7 +230,7 @@ class view_write_tests
 
         $test_name = 'check the view comment for the original user remains unchanged for ' . views::TEST_RENAMED_NAME;
         $msk_reloaded = new view($t->usr1);
-        $msk_reloaded->load_by_name(views::TEST_RENAMED_NAME);
+        $msk_reloaded->load_by_name(views::TEST_RENAMED_NAME, $msg);
         $result = $msk_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->assert($test_name, $result, $target);
@@ -229,14 +242,14 @@ class view_write_tests
 
         $test_name = 'check if undo all specific changes removes the user view for ' . views::TEST_RENAMED_NAME;
         $msk_usr2 = new view($t->usr2);
-        $msk_usr2->load_by_name(views::TEST_RENAMED_NAME);
+        $msk_usr2->load_by_name(views::TEST_RENAMED_NAME, $msg);
         $msk_usr2->description = 'Just added for testing the user sandbox';
         $msk_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
-        $t->assert_true($test_name, $msk_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if a user-specific view comment changes have been saved for ' . views::TEST_RENAMED_NAME;
         $msk_usr2_reloaded = new view($t->usr2);
-        $msk_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME);
+        $msk_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME, $msg);
         $result = $msk_usr2_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->assert($test_name, $result, $target);
@@ -259,38 +272,37 @@ class view_write_tests
 
     }
 
-    function create_test_views(test_cleanup $t): void
+    function create_test_views(test_cleanup|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db create test views ';
         $t->header($ts);
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
-            $t_db->test_view($view_name, $t->usr1, $usr_msg);
+            $t_db->test_view($view_name, $t->usr1, $msg);
         }
 
         // modify the special test cases
-        global $usr;
-        $msk = new view($usr);
-        $msk->load_by_name(views::TEST_EXCLUDED_NAME);
+        $msk = new view($t->usr1);
+        $msk->load_by_name(views::TEST_EXCLUDED_NAME, $msg);
         $msk->excluded = true;
-        $msk->save($usr_msg);
+        $msk->save($msg);
     }
 
     function delete_test_views(test_cleanup $t): void
     {
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db del test views ';
         $t->header($ts);
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
-            $t_db->del_view($view_name, $t->usr1, $usr_msg);
+            $t_db->del_view($view_name, $t->usr1, $msg);
         }
     }
 

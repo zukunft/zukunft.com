@@ -33,16 +33,25 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::REF . 'ref.php';
 include_once test_paths::CONST . 'files.php';
 include_once paths::SHARED_CONST . 'users.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -106,6 +115,10 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT, $t);
         $test_name = 'sql_format insert MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT_MYSQL, $t);
+        $test_name = 'sql_format prepared insert';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT_PREPARED, $t);
+        $test_name = 'sql_format prepared insert MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT_PREPARED_MYSQL, $t);
         $test_name = 'sql_format update';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UPDATE, $t);
         $test_name = 'sql_format update MariaSQL';
@@ -114,6 +127,14 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT, $t);
         $test_name = 'sql_format select MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_MYSQL, $t);
+        $test_name = 'sql_format select of a joined object';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED, $t);
+        $test_name = 'sql_format select of a joined object MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED_MYSQL, $t);
+        $test_name = 'sql_format select union';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UNION, $t);
+        $test_name = 'sql_format select union MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UNION_MYSQL, $t);
         $test_name = 'sql_format select count';
         $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT, $t);
         $test_name = 'sql_format select count MariaSQL';
@@ -126,6 +147,46 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE, $t);
         $test_name = 'sql_format create table MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE_MYSQL, $t);
+        $test_name = 'sql_format create table with user table and comments';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_CREATE_USER, $t);
+
+        // a malformed insert (e.g. the extra comma of the change log generator, see
+        // docs/llm/pending_prio_2.md) has more columns than values, so it cannot be placed on the
+        // column grid; it is kept on one line instead of reading a value that does not exist
+        $body = 'CREATE OR REPLACE FUNCTION t (_a bigint) RETURNS bigint AS $$ BEGIN '
+            . 'INSERT INTO changes (user_id, new_value,, row_id) SELECT _a,_a,_a ; '
+            . 'END $$ LANGUAGE plpgsql; PREPARE t_call (bigint) AS SELECT t ($1); SELECT t (1::bigint);';
+        $test_name = 'sql_format keeps an insert with a missing value on one line';
+        $t->assert_text_contains($test_name, $lib->sql_format($body),
+            'INSERT INTO changes (user_id, new_value,, row_id) SELECT _a,_a,_a;');
+        // the column names of a matching insert are indented by the sigil of their value, so
+        // that each name starts above the name part of the value below it
+        $test_name = 'sql_format aligns the same insert once the columns and values match';
+        $t->assert_text_contains($test_name, $lib->sql_format(str_replace(',,', ',', $body)),
+            'INSERT INTO changes ( user_id, new_value, row_id)');
+
+        // json_compact_format recreates the compact layout of the import files (e.g.
+        // travel_scoring_value_list.json) from the standard php json pretty print
+        $test_name = 'json_compact_format short objects';
+        $this->assert_json_compact_format($test_name,
+            test_paths::IMPORT_FORMAT_TEST . test_files::JSON_FORMAT_TEST_WORDS, $t);
+        $test_name = 'json_compact_format nested value list';
+        $this->assert_json_compact_format($test_name,
+            test_paths::IMPORT_FORMAT_TEST . test_files::JSON_FORMAT_TEST_VALUE_LIST, $t);
+        $test_name = 'json_compact_format long line';
+        $this->assert_json_compact_format($test_name,
+            test_paths::IMPORT_FORMAT_TEST . test_files::JSON_FORMAT_TEST_LONG_LINE, $t);
+
+        // the negative cases: an input that is not a json is returned unchanged like sql_format
+        $test_name = 'json_compact_format keeps a text that is not a json';
+        $t->assert($test_name, $lib->json_compact_format('not a json'), 'not a json');
+        $test_name = 'json_compact_format keeps an empty text';
+        $t->assert($test_name, $lib->json_compact_format(''), '');
+        // an empty object or array has no child to place on its own line
+        $test_name = 'json_compact_format of an empty object';
+        $t->assert($test_name, $lib->json_compact_format('{}'), '{}');
+        $test_name = 'json_compact_format of an empty array';
+        $t->assert($test_name, $lib->json_compact_format('[]'), '[]');
 
         // test trim of an JSON string to the relevant part
         // to make two JSON strings more comparable
@@ -146,6 +207,20 @@ class lib_tests
         $target = $lib->trim_html('<td>5</td>');
         $result = $lib->trim_html($text);
         $t->assert("trim_html space after tag", $result, $target);
+
+        // the html snapshots are stored formatted, so a formatted html must trim to the same text
+        // as the compact html it has been created from, links included
+        $test_name = 'trim_html of a formatted html';
+        $text = '<li><a href="/http/view.php">word</a></li>';
+        $target = $lib->trim_html($text);
+        $result = $lib->trim_html($lib->format_html($text));
+        $t->assert($test_name, $result, $target);
+
+        // only the spaces between the tags are removed, a space within a text is part of the text
+        $test_name = 'trim_html keeps a space within a text';
+        $target = $lib->trim_html('<td>two words</td>');
+        $result = $lib->trim_html('<td>twowords</td>');
+        $t->assert_not($test_name, $result, $target);
 
         // convert an HTML page title to the text the user would see, keeping the
         // font awesome edit icon as a readable '<fas fa-edit>' placeholder
@@ -289,6 +364,28 @@ class lib_tests
         $result = $lib->str_right_of_or_all($text, $maker);
         $t->assert("str_right_of_or_all: right of (or all) \"" . $maker . "\" is \", because the maker is not part of the given string" . $target . "\"", $result, $target);
 
+        // the script name of a log entry is written to the sys_log_functions name field, so it
+        // must stay short also if the trace does not contain the project path e.g. if the pod is
+        // deployed to /var/www/html; a name with the complete trace would not fit into the field
+        // and the failing insert would log again and never end (see log_msg)
+        $trace_dev = '#0 ' . def_shared::PROJECT_PATH
+            . 'src/main/php/shared/helper/Translator.php(184): log_err()';
+        $test_name = 'the script name of a trace within the project path';
+        $t->assert($test_name, library::php_function_from_exception($trace_dev),
+            'src/main/php/shared/helper/Translator');
+
+        $trace_deployed = '#0 /var/www/html/src/main/php/shared/helper/Translator.php(184): log_err()'
+            . "\n" . '#1 /var/www/html/src/main/php/web/log/change_log_named.php(356): field_name()';
+        $test_name = 'the script name of a trace outside the project path';
+        $t->assert($test_name, library::php_function_from_exception($trace_deployed), 'Translator');
+
+        $test_name = 'the script name of a trace outside the project path fits into the db field';
+        $t->assert_true($test_name,
+            strlen(library::php_function_from_exception($trace_deployed)) <= sql_field_type::NAME_MAX_LEN);
+
+        $test_name = 'a trace without any script name does not create a name with the trace';
+        $t->assert($test_name, library::php_function_from_exception(''), library::FUNCTION_UNKNOWN);
+
         // test base_class_name
         $class = 'cfg\language';
         $target = 'language';
@@ -302,6 +399,12 @@ class lib_tests
         // test camelize_ex_1
         $result = $lib->camelize_ex_1("function_name");
         $t->assert("camelize_ex_1", $result, "functionName");
+
+        // test class_to_api_route: the reference api folder is named by the full word
+        $test_name = 'api route of the frontend reference class';
+        $t->assert($test_name, $lib->class_to_api_route(ref_ui::class), url_var::REF_API);
+        $test_name = 'api route of any other class is the camelized class name';
+        $t->assert($test_name, $lib->class_to_api_route(formula_link::class), 'formulaLink');
 
 
         $t->subheader($ts . 'arrays and lists');
@@ -872,7 +975,7 @@ class lib_tests
         $json_text = file_get_contents(test_files::IMPORT_WIKI_DEMOCRACY);
         $json_array = json_decode($json_text, true);
         $result = $lib->count_recursive($json_array, 3);
-        $t->assert("count_recursive - count level 0", $result, 177);
+        $t->assert("count_recursive - count level 0", $result, 179);
 
         // recursive diff
         $result = json_encode($lib->array_recursive_diff(
@@ -955,21 +1058,21 @@ class lib_tests
 
         $t->subheader($ts . 'user message');
 
-        $usr_msg = new user_message();
-        $t->assert("user_message - default ok", $usr_msg->is_ok(), true);
+        $msg = new user_message();
+        $t->assert("user_message - default ok", $msg->is_ok(), true);
 
-        $usr_msg = new user_message();
-        $usr_msg->add_message_text('first message text');
-        $t->assert("construct with message", $usr_msg->get_message(), 'first message text');
-        $t->assert("if a message text is given, the result is by default NOT ok", $usr_msg->is_ok(), false);
+        $msg = new user_message();
+        $msg->add_message_text('first message text');
+        $t->assert("construct with message", $msg->get_message(), 'first message text');
+        $t->assert("if a message text is given, the result is by default NOT ok", $msg->is_ok(), false);
 
-        $usr_msg->add_message_text('second message text');
-        $t->assert("after adding a message the first message stays the same", $usr_msg->get_message(), 'first message text');
-        $t->assert("... and the second message can be shown", $usr_msg->get_message(2), 'second message text');
-        $t->assert("... which is also the last message", $usr_msg->get_last_message(), 'second message text');
+        $msg->add_message_text('second message text');
+        $t->assert("after adding a message the first message stays the same", $msg->get_message(), 'first message text');
+        $t->assert("... and the second message can be shown", $msg->get_message(2), 'second message text');
+        $t->assert("... which is also the last message", $msg->get_last_message(), 'second message text');
         // TODO Prio 1 activate
         //$t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), 'user message position 2 not found');
-        $t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), '');
+        $t->assert("a too high position simply returns an empty message", $msg->get_message(3), '');
 
         $msg_2 = new user_message();
         $msg_2->add_message_text('');
@@ -977,8 +1080,8 @@ class lib_tests
         $msg_2->add_message_text('error text');
         $t->assert("but adding an error text does", $msg_2->is_ok(), false);
 
-        $usr_msg->merge($msg_2);
-        $t->assert("last message of the combined message should be from msg_2", $usr_msg->get_last_message(), 'error text');
+        $msg->merge($msg_2);
+        $t->assert("last message of the combined message should be from msg_2", $msg->get_last_message(), 'error text');
     }
 
     private function assert_sql_format(string $test_name, string $file_name, all_tests $t): void
@@ -988,6 +1091,32 @@ class lib_tests
         $result = $lib->sql_format($lib->trim($target));
         $t->assert($test_name . ' recreates the formatted update log function', $result, $target);
         $t->assert($test_name . ' is idempotent', $lib->sql_format($target), $target);
+    }
+
+    /**
+     * check that the compact json format of the given resource file can be recreated from the
+     * standard php json format, that reformatting does not change it again and that the data
+     * itself is not changed by the formatting
+     *
+     * @param string $test_name the description of the test
+     * @param string $file_name the resource file with the expected compact format
+     * @param all_tests $t the test environment
+     * @return void
+     */
+    private function assert_json_compact_format(string $test_name, string $file_name, all_tests $t): void
+    {
+        $lib = new library();
+        $target = $t->file($file_name);
+        // the standard php pretty print is the input from which the compact format is created
+        $std = json_encode(json_decode($target, true),
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $t->assert($test_name . ' recreates the compact format',
+            $lib->json_compact_format($std), $target);
+        $t->assert($test_name . ' is idempotent',
+            $lib->json_compact_format($target), $target);
+        $t->assert($test_name . ' does not change the data',
+            json_encode(json_decode($lib->json_compact_format($std), true)),
+            json_encode(json_decode($target, true)));
     }
 
 }

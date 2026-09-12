@@ -180,22 +180,23 @@ class element extends db_object_seq_id_user
      * @param array|null $db_row with the data directly from the database
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper_sandbox(?array $db_row): bool
+    function row_mapper_sandbox(?array $db_row, user_message $msg): bool
     {
         $this->id = 0;
-        $result = parent::row_mapper($db_row, element_db::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, element_db::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             if (array_key_exists(element_db::FLD_REF_ID, $db_row)
                 and array_key_exists(element_db::FLD_TYPE, $db_row)) {
                 $id = $db_row[element_db::FLD_REF_ID];
                 $typ_id = $db_row[element_db::FLD_TYPE];
-                $this->set_object_by_id($id, $typ_id);
+                $this->set_object_by_id($id, $typ_id, $msg);
             }
         }
-        if ($result) {
+        if ($this->id() != 0) {
             if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
                 $frm = new formula($this->get_user());
-                $frm->load_by_id($db_row[formula_fields::FLD_ID]);
+                $frm->load_by_id($db_row[formula_fields::FLD_ID], $msg);
                 $this->frm = $frm;
             }
         }
@@ -205,17 +206,17 @@ class element extends db_object_seq_id_user
                 $this->validate_type();
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * map an element api json to this model element object
      * @param array $api_json the api array with the element values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if (!array_key_exists(json_fields::ID, $api_json)) {
             log_warning('Missing id in api_json');
@@ -226,28 +227,28 @@ class element extends db_object_seq_id_user
         } else {
             $this->id = $api_json[json_fields::ID];
             $frm = new formula($this->get_user());
-            if ($frm->api_mapper($api_json[json_fields::FORMULA], $usr_msg)) {
+            if ($frm->api_mapper($api_json[json_fields::FORMULA], $msg)) {
                 $this->frm = $frm;
             }
             if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
-                if ($wrd->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
+                if ($wrd->api_mapper($api_json[json_fields::TERM], $msg)) {
                     $this->obj = $wrd;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
-                if ($trp->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
+                if ($trp->api_mapper($api_json[json_fields::TERM], $msg)) {
                     $this->obj = $trp;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
                 // TODO Prio 1 use verb_id
                 $vrb = new verb();
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     $this->obj = $vrb;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->get_user());
-                if ($frm->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
+                if ($frm->api_mapper($api_json[json_fields::TERM], $msg)) {
                     $this->obj = $frm;
                 }
             } else {
@@ -256,7 +257,7 @@ class element extends db_object_seq_id_user
             $this->typ_id = $api_json[json_fields::TYPE];
             $this->validate_type();
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -267,22 +268,26 @@ class element extends db_object_seq_id_user
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             if ($this->id() != 0) {
                 $vars[json_fields::ID] = $this->id();
             }
             if ($this->frm->id() != 0) {
-                $vars[json_fields::FORMULA] = $this->frm->api_json_array($typ_lst, $usr);
+                $vars[json_fields::FORMULA] = $this->frm->api_json_array($typ_lst, $msg, $usr);
             }
             if ($this->obj != null) {
-                $vars[json_fields::TERM] = $this->obj->api_json_array($typ_lst, $usr);
+                $vars[json_fields::TERM] = $this->obj->api_json_array($typ_lst, $msg, $usr);
                 if ($this->is_word()) {
                     $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
                 } elseif ($this->is_triple()) {
@@ -318,7 +323,7 @@ class element extends db_object_seq_id_user
      */
     function name(): string|null
     {
-        return $this->obj->name();
+        return $this->obj?->name();
     }
 
     /**
@@ -329,7 +334,7 @@ class element extends db_object_seq_id_user
      * @param int $typ_id the id of the element object type
      * @return bool true if a valid object has been set
      */
-    function set_object_by_id(int $id, int $typ_id): bool
+    function set_object_by_id(int $id, int $typ_id, user_message $msg): bool
     {
         global $sys;
 
@@ -347,7 +352,7 @@ class element extends db_object_seq_id_user
             log_err('id of type ' . $this->type() . ' is not expected');
         }
         $this->obj = $obj;
-        return $obj->load_by_id($id);
+        return $obj->load_by_id($id, $msg);
     }
 
     /**
@@ -440,28 +445,28 @@ class element extends db_object_seq_id_user
      * @param int $id the id of the formula element
      * @return int the id of the element found and zero if nothing is found
      */
-    function load_obj_by_id(int $id): int
+    function load_obj_by_id(int $id, user_message $msg): int
     {
         if ($id != 0 and $this->get_user()->is_set()) {
             if ($this->type() == word::class) {
                 $wrd = new word($this->get_user());
-                $wrd->load_by_id($id);
+                $wrd->load_by_id($id, $msg);
                 $this->symbol = chars::WORD_START . $wrd->id() . chars::WORD_END;
                 $this->obj = $wrd;
             } elseif ($this->type() == triple::class) {
                 $trp = new triple($this->get_user());
-                $trp->load_by_id($id);
+                $trp->load_by_id($id, $msg);
                 $this->symbol = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
                 $this->obj = $trp;
             } elseif ($this->type() == verb::class) {
                 $vrb = new verb;
                 $vrb->set_user($this->get_user());
-                $vrb->load_by_id($id);
+                $vrb->load_by_id($id, $msg);
                 $this->symbol = chars::TRIPLE_START . $vrb->id() . chars::TRIPLE_END;
                 $this->obj = $vrb;
             } elseif ($this->type() == formula::class) {
                 $frm = new formula($this->get_user());
-                $frm->load_by_id($id);
+                $frm->load_by_id($id, $msg);
                 $this->symbol = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
                 $this->obj = $frm;
                 /*
@@ -653,13 +658,13 @@ class element extends db_object_seq_id_user
      * all fields are always included in the query to be able to remove by overwriting with a null value
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -673,10 +678,10 @@ class element extends db_object_seq_id_user
         $sc_par_lst_used->add(sql_type::INSERT);
 
         // get the field names, values and parameter types that have been changed
-        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($db_row, $msg, $sc_par_lst_used);
 
         // prepare the sql statement
-        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::INSERT, $sc_par_lst_used);
+        $qp = $this->sql_prepare($sc, $fvt_lst, $msg, sql_type::INSERT, $sc_par_lst_used);
 
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
@@ -689,18 +694,18 @@ class element extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param element|db_object_seq_id $db_row the word with the database values before the update
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator              $sc,
         element|db_object_seq_id $db_row,
-        user_message             $usr_msg,
+        user_message             $msg,
         sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
-        if ($this->can_update($usr_msg)) {
+        if ($this->can_update($msg)) {
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
 
@@ -711,10 +716,10 @@ class element extends db_object_seq_id_user
             // and that needs to be updated in the database
             // the db_* child function call the corresponding parent function
             // including the sql parameters for logging
-            $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
+            $fvt_lst = $this->db_fields_changed($db_row, $msg);
 
             // prepare the sql statement
-            $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst_used);
+            $qp = $this->sql_prepare($sc, $fvt_lst, $msg, sql_type::UPDATE, $sc_par_lst_used);
 
             $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
             $qp->par = $fvt_lst->db_values();
@@ -730,7 +735,7 @@ class element extends db_object_seq_id_user
     function sql_prepare(
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type           $sql_type,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
@@ -746,7 +751,7 @@ class element extends db_object_seq_id_user
 
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the sql and get the sql parameters used
         $qp = new sql_par($this::class, $sc_par_lst_used, $ext);
@@ -760,13 +765,13 @@ class element extends db_object_seq_id_user
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {

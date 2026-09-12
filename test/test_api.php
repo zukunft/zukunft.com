@@ -42,6 +42,7 @@ include_once 'test_const.php';
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\test_app;
 
@@ -65,12 +66,13 @@ global $cac;
 
 // open the session, database and load the environment
 $app = new test_app();
-$db_con = $app->start("api tests", true);
+$msg = new backend_user_message();
+$db_con = $app->start("api tests", $msg, true);
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
-    $result = $start_usr->get();
+    $result = $start_usr->get($msg);
     $cac->set_user($start_usr);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
@@ -85,9 +87,16 @@ if ($db_con->is_open()) {
             $t->set_users();
             $usr_msg = new user_message();
 
+            // login so that the api calls of the test scripts are permitted
+            // also on a pod that blocks the changes of a user without login
+            $t->api_login();
+
             // run the api tests
             $t_api = new all_api_tests();
             $t_api->run_api_tests($t, $t->usr1, $usr_msg);
+
+            // end the admin session used for the api calls of the test scripts
+            $t->api_logout();
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

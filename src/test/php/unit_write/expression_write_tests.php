@@ -49,28 +49,25 @@ class expression_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
         $t_trm = new test_terms($t);
         $t->name = 'expression->';
         $lib = new library();
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write expression ';
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_price = $t_db->test_word(word_names::TEST_PRICE);
-        $wrd_earning = $t_db->test_word(word_names::TEST_EARNING);
-        $wrd_pe = $t_db->test_word(word_names::TEST_PE);
-        $frm_ratio = $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $usr_msg);
-        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
-
-        $back = '';
+        $wrd_price = $t_db->test_word($msg, word_names::TEST_PRICE);
+        $wrd_earning = $t_db->test_word($msg, word_names::TEST_EARNING);
+        $wrd_pe = $t_db->test_word($msg, word_names::TEST_PE);
+        $frm_ratio = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP);
+        $wrd_total = $t_db->test_word($msg, word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
 
         // load formulas for expression testing
         $frm_this = $t_db->load_formula(formula_names::SYSTEM_TEST_THIS);
@@ -83,16 +80,16 @@ class expression_write_tests
 
         // create expressions for testing
         $exp = new expression($frm);
-        $exp->set_user_text($frm->usr_text);
+        $exp->set_user_text($frm->usr_text, $msg);
 
         $exp_pe = new expression($frm);
-        $exp_pe->set_user_text($frm_pe->usr_text);
+        $exp_pe->set_user_text($frm_pe->usr_text, $msg);
 
         $exp_sector = new expression($frm_sector);
-        $exp_sector->set_user_text($frm_sector->usr_text);
+        $exp_sector->set_user_text($frm_sector->usr_text, $msg);
 
         // load the test ids
-        $wrd_percent = $t_db->load_word(words::PCT);
+        $wrd_percent = $t_db->load_word($msg, words::PCT);
         $frm_this = $t_db->load_formula(formula_names::THIS_NAME);
         $frm_prior = $t_db->load_formula(formula_names::PRIOR);
 
@@ -104,21 +101,22 @@ class expression_write_tests
         $result = $exp->r_part_usr();
         $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
         $target = 'true';
-        $result = $lib->dsp_bool($exp->has_ref());
+        $result = $lib->dsp_bool($exp->has_ref($msg));
         $t->assert('has_ref for "' . $frm->usr_text . '"', $result, $target);
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
-        $result = $exp->ref_text();
+        $result = $exp->ref_text_ui($msg);
         $t->assert('get_ref_text for "' . $frm->usr_text . '"', $result, $target);
 
         // test the expression processing of the database reference
         $exp_db = new expression($frm);
-        $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
+        $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}', $msg);
         $target = '"' . words::PERCENT . '"=( is.numeric( "' . formula_names::THIS_NAME . '" ) & is.numeric( "' . formula_names::PRIOR . '" ) ) ( "' . formula_names::THIS_NAME . '" - "' . formula_names::PRIOR . '" ) / "' . formula_names::PRIOR . '"';
-        $result = $exp_db->user_text();
-        $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
+        // TODO Prio 0 rename to user_text
+        $result = $exp_db->user_text_ui();
+        $t->assert('get_usr_text for "' . $exp_db->ref_text_ui($msg) . '"', $result, $target);
 
         // test getting phrases that should be added to the result of a formula
-        $phr_lst_res = $exp->load_result_phrases();
+        $phr_lst_res = $exp->load_result_phrases($msg);
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
@@ -126,11 +124,11 @@ class expression_write_tests
         $t->assert('res_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
 
         // ... and the phrases used in the formula
-        $usr_msg = new user_message($t->usr1);
-        $trm_lst = $exp_pe->term_id_list($usr_msg);
+        $msg = new user_message($t->usr1);
+        $trm_lst = $exp_pe->term_id_list($msg);
         $ids = new trm_ids($trm_lst->ids());
         $trm_lst->reset(true);
-        $trm_lst->load_by_ids($ids);
+        $trm_lst->load_by_ids($ids, $msg);
         $phr_lst_res = $trm_lst->phrase_list();
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
@@ -142,14 +140,14 @@ class expression_write_tests
         $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
         // ... and all elements used in the formula
-        $trm_lst = $frm_sector->load_exp_terms($usr_msg, null, $exp_sector);
-        $elm_lst = $exp_sector->element_list($usr_msg, $trm_lst);
+        $trm_lst = $frm_sector->load_exp_terms($msg, null, $exp_sector);
+        $elm_lst = $exp_sector->element_list($msg, $trm_lst);
         $result = $elm_lst->name();
         $target = '"country","can be used as a differentiator for","canton","System Test Word Total"';
         $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // ... and all element groups used in the formula
-        $elm_grp_lst = $exp_sector->element_grp_lst($trm_lst);
+        $elm_grp_lst = $exp_sector->element_grp_lst($msg, $trm_lst);
         $result = $elm_grp_lst->name();
         $target = '"country,can be used as a differentiator for,canton","System Test Word Total"';
         $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
@@ -163,15 +161,15 @@ class expression_write_tests
         // TODO $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
         // test getting special phrases
-        $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
-        $phr_lst = $exp->terms_following($usr_msg, $trm_lst);
+        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);
+        $phr_lst = $exp->terms_following($msg, $trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"' . formula_names::THIS_NAME . '","' . formula_names::PRIOR . '"';
         // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test getting for special phrases the related formula
-        $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
-        $frm_lst = $exp->element_special_following_frm($usr_msg, $trm_lst);
+        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);
+        $frm_lst = $exp->element_special_following_frm($msg, $trm_lst);
         $result = $frm_lst->name();
         $target = '' . formula_names::THIS_NAME . ',' . formula_names::PRIOR . '';
         // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
@@ -179,13 +177,13 @@ class expression_write_tests
         $t->subheader($ts . 'cleanup');
         // TODO Prio 1 check that the user message is always reset before a function is called
         //             that should be executed independent of the previous results
-        $usr_msg->reset(true);
-        $frm_ratio->del($usr_msg);
-        $wrd_price->del($usr_msg);
-        $wrd_earning->del($usr_msg);
-        $wrd_pe->del($usr_msg);
-        $frm_sector->del($usr_msg);
-        $wrd_total->del($usr_msg);
+        $msg->reset(true);
+        $frm_ratio->del($msg);
+        $wrd_price->del($msg);
+        $wrd_earning->del($msg);
+        $wrd_pe->del($msg);
+        $frm_sector->del($msg);
+        $wrd_total->del($msg);
 
     }
 

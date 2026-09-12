@@ -35,6 +35,9 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::USER . 'user_message.php';
+
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class list_named extends ListBase
 {
@@ -44,25 +47,27 @@ class list_named extends ListBase
      */
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param user_message $msg to collect the error messages
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with a list of the word names with html links
      * ex. names_linked
      */
-    function name_link(string $back = ''): string
+    function name_link(user_message $msg, array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($msg, $url_arr));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param user_message $msg to collect the error messages
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return array with a list of the word names with html links
      */
-    function names_linked(string $back = ''): array
+    function names_linked(user_message $msg, array $url_arr = []): array
     {
         $result = array();
         foreach ($this->lst() as $wrd) {
-            if (!$wrd->is_hidden()) {
-                $result[] = $wrd->name_link($back);
+            if (!$wrd->is_hidden($msg)) {
+                $result[] = $wrd->name_link($url_arr);
             }
         }
         return $result;

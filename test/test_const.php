@@ -54,10 +54,22 @@ const SYSTEM_TEST_RUN = true;
 // set the path const for the initial backend and frontend settings
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+const WEB = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-// test path for the initial load of the test files
+// the tests simulate the frontend too, so create the frontend log object
+// (incl. the html header display) that init_ui.php provides to the ui scripts
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\log_text\text_log;
+
+const WEB_CONST = WEB . 'const' . DIRECTORY_SEPARATOR;
+include_once WEB_CONST . 'paths.php';
+include_once html_paths::LOG_TEXT . 'text_log.php';
+global $log_txt;
+$log_txt = new text_log();
+
+// test path for the initial load of the test files
 const TEST_PATH = paths::SRC . 'test' . DIRECTORY_SEPARATOR;
 // the test code path
 const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;

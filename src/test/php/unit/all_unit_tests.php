@@ -39,14 +39,17 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT . 'base_object_tests.php';
@@ -61,6 +64,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\test\php\create\test_types;
@@ -87,15 +91,13 @@ class all_unit_tests extends test_cleanup
 
         // remember the global var for restore after the unit tests
         global $db_con;
-        global $usr;
         global $sys;
         $global_db_con = $db_con;
-        $global_usr = $usr;
 
         // create the testing users
         $this->subheader($ts . 'prepare');
         $this->set_users();
-        $sys->usr_req = $this->usr1;
+        $db_con->usr_req = $this->usr1;
 
         $t_typ = new test_types($this);
 
@@ -107,9 +109,10 @@ class all_unit_tests extends test_cleanup
 
         // prepare the unit tests
         $tl = new test_lib();
-        $tl->ui_test_cache($this->usr_dev, $this);
+        $cac_msg = new user_message_ui();
+        $tl->ui_test_cache($this->usr_dev, $this, $cac_msg);
         $u_env = new unit_env();
-        $u_env->init_unit_tests();
+        $u_env->init_unit_tests($this->usr1);
 
         // do the general unit tests
         $all = new all_tests();
@@ -184,7 +187,6 @@ class all_unit_tests extends test_cleanup
 
         // restore the global vars
         $db_con = $global_db_con;
-        $usr = $global_usr;
     }
 
     /**
@@ -208,19 +210,26 @@ class all_unit_tests extends test_cleanup
     {
         global $sys;
 
-        // TODO Prio 1 remove global system user for security reasons
-        global $usr;
-        global $usr_sys;
+        // use the profile list of the unit tests (loaded from the csv) already here, so that the
+        // profile ids of the dummy users always match the profile checks of the unit tests
+        // (e.g. user::is_unique) even if the database of the developer has other profile ids
+        $sys->typ_lst->usr_pro = new user_profile_list();
+        $sys->typ_lst->usr_pro->load_dummy();
 
-        // create a dummy admin user for unit testing
+        // system users that might create log entries show to the user
+
+        // create a local admin user that can be used script based admin changes
         $usr_admin = new user;
         $usr_admin->id = users::SYSTEM_ADMIN_ID;
         $usr_admin->name = users::SYSTEM_ADMIN_NAME;
-        $usr_admin->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
+        $usr_admin->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
         $this->usr_admin = $usr_admin;
 
         $msg = new user_message();
         $msg->usr = $this->usr_admin;
+
+
+        // test users that are not expected create log entries show to the user
 
         // create a dummy user for testing
         $usr = new user;
@@ -236,15 +245,25 @@ class all_unit_tests extends test_cleanup
         $usr2->set_profile(user_profiles::EMAIL, $msg);
         $this->usr2 = $usr2;
 
+        // create a test admin user for testing
+        $usr_test_admin = new user;
+        $usr_test_admin->id = users::SYSTEM_TEST_ADMIN_ID;
+        $usr_test_admin->name = users::SYSTEM_TEST_ADMIN_NAME;
+        $usr_test_admin->set_profile(user_profiles::ADMIN, $msg);
+        $this->usr_test_admin = $usr_test_admin;
+
         // create a dummy system user for unit testing
         $usr_sys = new user;
         $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
         $this->usr_system = $usr_sys;
 
-        $t_usr = new test_users($this);
+        $t_usr = new test_users();
         $this->usr_dev = $t_usr->user_dev($msg);
-        $this->usr_normal = $t_usr->user_filled($this);
+        // like the other dummy users with the id set, because a test user is an acting user and
+        // e.g. the frontend and the save path use the requesting user only if it has an id;
+        // this matches the user that set_users loads from the database (see test_base::set_users)
+        $this->usr_normal = $t_usr->user_sys_normal();
 
     }
 

@@ -38,34 +38,43 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'language_list.php';
-//include_once paths::SHARED_CONST . 'def.php';
-//include_once paths::SHARED_CONST . 'files.php';
-//include_once paths::SHARED_CONST . 'rest_ctrl.php';
-//include_once paths::SHARED_CONST . 'views.php';
-//include_once paths::SHARED_CONST . 'words.php';
-//include_once paths::SHARED_ENUM . 'languages.php';
-//include_once paths::SHARED_ENUM . 'messages.php';
-//include_once paths::SHARED_TYPES . 'view_styles.php';
-//include_once paths::SHARED . 'api.php';
-//include_once paths::SHARED . 'url_var.php';
-//include_once paths::SHARED . 'library.php';
+include_once html_paths::CONST . 'icons.php';
+//include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::SHARED_CONST . 'def.php';
+//include_once html_paths::SHARED_CONST . 'files.php';
+//include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once html_paths::SHARED_CONST . 'triples.php';
+//include_once html_paths::SHARED_CONST . 'views.php';
+//include_once html_paths::SHARED_CONST . 'words.php';
+//include_once html_paths::SHARED_ENUM . 'languages.php';
+//include_once html_paths::SHARED_ENUM . 'messages.php';
+//include_once html_paths::SHARED_HELPER . 'Message.php';
+//include_once html_paths::SHARED_TYPES . 'position_types.php';
+//include_once html_paths::SHARED_TYPES . 'view_styles.php';
+//include_once html_paths::SHARED . 'api.php';
+//include_once html_paths::SHARED . 'url_var.php';
+//include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\types\language_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class html_base
 {
@@ -88,10 +97,18 @@ class html_base
     const string INPUT_HIDDEN = 'hidden';
     const string INPUT_PASSWORD = 'password';
     const string INPUT_EMAIL = 'email'; // to validate the email in the frontend
+    // the autocomplete tokens so a password manager still recognises a masked text password input
+    const string AUTOCOMPLETE = 'autocomplete';
+    const string AUTOCOMPLETE_CURRENT_PW = 'current-password';
+    const string AUTOCOMPLETE_NEW_PW = 'new-password';
+    // the id prefix of the css-only "show password" checkbox that reveals a password field
+    const string SHOW_PASSWORD_PREFIX = 'show_';
 
     // bootstrap const string used in zukunft.com
     const string BS_FORM = 'form-control';
     const string BS_BTN = 'btn btn-space col-1';
+    // a borderless button that shows only an icon, e.g. the refresh icon beside a form field label
+    const string BS_BTN_ICON = 'btn btn-link p-0 ms-1 align-baseline';
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
     const string BS_BTN_DEL = 'btn-outline-secondary';
@@ -134,6 +151,9 @@ class html_base
     const string TITLE_HTML = 'title'; // title attribute e.g. for tooltips
     const string TITLE = 'title';      // <title> element in <head>
     const string TYPE = 'type';
+    // separates two short fields that share one line e.g. the about and the privacy link of the
+    // footer or the last update and the source of a value; the blanks are part of the separator
+    const string MIDDLE_DOT = ' &middot; ';
     const string P = 'p';
     const string DIV = 'div';
     const string UL = 'ul';
@@ -149,6 +169,7 @@ class html_base
     const string FOR = 'for';
     const string VALUE = 'value';
     const string ID = 'id';
+    const string ARIA_LABEL = 'aria-label'; // the accessible name of a control that shows only an icon
     const string PLACEHOLDER = 'placeholder';
     const string BR = 'br';
     const string TABLE = 'table';
@@ -175,6 +196,12 @@ class html_base
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
+    // css-only show-password toggle classes (see the .password / .show-password rules in style_html.css)
+    const string CLASS_PASSWORD_FIELD = 'password-field';
+    const string CLASS_PASSWORD = 'password';
+    const string CLASS_SHOW_PASSWORD = 'show-password';
+    const string CLASS_PASSWORD_ICON_SHOW = 'password-icon-show'; // the eye icon shown while the password is masked
+    const string CLASS_PASSWORD_ICON_HIDE = 'password-icon-hide'; // the eye-slash icon shown while it is revealed
     const string CLASS_SUBMIT = 'submit-input';
     const string CLASS_BUTTON = 'btn';
     const string CLASS_NAV = 'navbar site-header fixed-top';
@@ -218,13 +245,14 @@ class html_base
      * the page header for simple html pages like the login page
      * @param string $title the HTML page title
      * @param string $pod_name the name of this deployment shown in the browser tab
+     * @param user_message $msg to collect render errors
      * @return string the HTML head section for simple pages
      */
-    function header_html(string $title, string $pod_name): string
+    function header_html(string $title, string $pod_name, user_message $msg): string
     {
         $txt = $this->charset();
         $txt .= $this->viewport();
-        $txt .= $this->title($title, $pod_name);
+        $txt .= $this->title($title, $pod_name, $msg);
         $txt .= $this->stylesheet();
         return $this->head($txt);
     }
@@ -254,19 +282,22 @@ class html_base
     /**
      * create the html code for the page header
      * @param string $title the HTML page title
+     * @param user_message|Message $msg
      * @param string $style CSS class applied to the body tag e.g. center_form for the login page
      * @param string $lan the language html code id
      * @return string the HTML header and opening body tag
      */
     function header(
-        string $title,
-        string $style = "",
-        string $lan = languages::DEFAULT
+        string               $title,
+        user_message|Message $msg,
+        string               $style = "",
+        string               $lan = languages::DEFAULT,
+        string               $base_url = '',
     ): string
     {
         $result = $this->doctype() . "\n";
         $result .= $this->lang($lan) . "\n";
-        $result .= $this->head($this->head_fill($title)) . "\n";
+        $result .= $this->head($this->head_fill($title, $msg, $base_url)) . "\n";
         if (self::UI_USE_BOOTSTRAP) {
             $result .= '<' . self::BODY . '>';
         } else {
@@ -282,36 +313,37 @@ class html_base
 
     /**
      * @param string $title the title of the html page
+     * @param user_message|Message $msg
      * @return string with the html code for the head section of the html header
      */
-    private function head_fill(string $title): string
+    private function head_fill(string $title, user_message|Message $msg, string $base_url = ''): string
     {
         $txt = $this->charset() . "\n";
         $txt .= $this->make_flood() . "\n";
-        $txt .= $this->title($title, POD_NAME) . "\n";
-        $txt .= $this->head_style() . "\n";
+        $txt .= $this->title($title, POD_NAME, $msg) . "\n";
+        $txt .= $this->head_style($base_url) . "\n";
         return $txt;
     }
 
     /**
      * @return string with the html code for the style of the html head
      */
-    private function head_style(): string
+    private function head_style(string $base_url = ''): string
     {
         if (self::UI_USE_BOOTSTRAP) {
             // TODO Prio 3 check if the other bootstrap css also needs to be included
             // include the bootstrap stylesheets
-            $txt = $this->stylesheet_bs() . "\n";
+            $txt = $this->stylesheet_bs($base_url) . "\n";
             // include the icon font
-            $txt .= $this->stylesheet_font() . "\n";
+            $txt .= $this->stylesheet_font($base_url) . "\n";
             // include the default zukunft.com frontend style
-            $txt .= $this->stylesheet() . "\n";
+            $txt .= $this->stylesheet($base_url) . "\n";
             // TODO Prio 2 check if still needed
             // include the bootstrap JavaScript plugins
             //$result .= $this->stylesheet_bs_js_all() . "\n";
         } else {
             // use a simple stylesheet without Javascript
-            $txt = $this->stylesheet_fallback() . "\n";
+            $txt = $this->stylesheet_fallback($base_url) . "\n";
         }
         return $txt;
     }
@@ -335,7 +367,7 @@ class html_base
 
         $lan_lst = $ui_sys?->typ_lst_cache?->lan ?? new language_list();
         $html = new html_base();
-        $url = $html->url_new($msk_id);
+        $url = $html->url_back($msk_id);
         $lan_txt = $lan_lst->select_list_item($url);
 
         global $mtr;
@@ -364,7 +396,10 @@ class html_base
         $usr_tooltip = $usr_name !== null
             ? ($usr_role !== null ? $usr_role . ' ' : '') . $usr_name
             : '';
-        $usr_icon = '<' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"'
+        // a non-ip user is logged in when the user name is set, which is shown by the dark blue icon
+        $usr_icon_class = icons::USER_CIRCLE
+            . ($usr_name !== null ? ' ' . styles::USER_LOGGED : '');
+        $usr_icon = '<' . self::I . ' ' . self::CLASS_HTML . '="' . $usr_icon_class . '"'
             . ($usr_tooltip !== '' ? ' title="' . htmlspecialchars($usr_tooltip) . '"' : '')
             . '></' . self::I . '>';
         $result .= '<' . self::SUMMARY . '>' . $usr_icon . '</' . self::SUMMARY . '>' . "\n";
@@ -409,7 +444,14 @@ class html_base
             $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, $url_array));
             $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
         } else {
-            $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
+            // a page that itself carries a '9'-prefixed back target (e.g. the logout page, see
+            // frontend::action_logout) forwards that target as the back of the login link, so
+            // that after the login the original page is shown again and not the logout page
+            $login_back = self::url_par_from_back_part($url_array);
+            if ($login_back == []) {
+                $login_back = $url_array;
+            }
+            $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $login_back);
             $result .= $this->list_item($this->ref($url_login, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
             $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
             $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
@@ -461,7 +503,7 @@ class html_base
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
         if (!$no_about) {
-            $url = $this->url(rest_ctrl::URL_ABOUT);
+            $url = $this->url_old(rest_ctrl::URL_ABOUT);
             $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
             $result .= $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
@@ -610,6 +652,37 @@ class html_base
     }
 
     /**
+     * the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
+     * @param string $icon_class the css class string of the icon, always an icons::* const
+     * @return string the html code e.g. '<i class="fas fa-chevron-right"></i>'
+     */
+    function icon(string $icon_class): string
+    {
+        return '<' . self::I . ' ' . self::CLASS_HTML . '="' . $icon_class . '"></' . self::I . '>';
+    }
+
+    /**
+     * the html of a font awesome icon
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::PASSWORD_SHOW
+     * @param string $class_add an additional css class e.g. to toggle the icon visibility via css
+     * @param string $title the hover tooltip and accessible hint of the icon
+     * @return string the icon <i> element
+     */
+    function icon_with_title(string $icon, string $class_add = '', string $title = ''): string
+    {
+        $class = $icon;
+        if ($class_add != '') {
+            $class .= ' ' . $class_add;
+        }
+        $result = '<' . self::I . ' ' . self::CLASS_HTML . '="' . $class . '"';
+        if ($title != '') {
+            $result .= ' ' . self::TITLE . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result .= '></' . self::I . '>';
+        return $result;
+    }
+
+    /**
      * @param string $text the superscript text e.g. the exponent "2"
      * @return string the html code that shows the given text as a superscript e.g. <sup>2</sup>
      */
@@ -628,16 +701,18 @@ class html_base
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @param int|string $id the id of the parameter e.g. 1 for math const
-     * @param string|null $back the back trace calls to return to the original url and for undo
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
-    function url(string       $obj_name,
-                 int|string   $id = 0,
-                 ?string      $back = '',
-                 string|array $par = '',
-                 string       $id_ext = ''): string
+    function url_old(
+        string       $obj_name,
+        int|string   $id = 0,
+        array        $url_arr = [],
+        string|array $par = '',
+        string       $id_ext = ''
+    ): string
     {
         $result = rest_ctrl::PATH_FIXED . $obj_name . rest_ctrl::EXT;
         if ($id <> 0) {
@@ -650,13 +725,11 @@ class html_base
                 $result .= '&' . $id_ext;
             }
         }
-        if ($back != '') {
-            $result .= '&back=' . $back;
-        }
-        return $result;
+        return $this->url_with_back($result, $url_arr);
     }
 
     /**
+     * TODO Prio 1 deprecate and replace if the the url_arr based back var
      * build a zukunft.com internal url based on the html one-page setup
      * o for the main object that should be shown to the user
      * v for view which contains the main object type
@@ -668,45 +741,107 @@ class html_base
      * @param int|string $view the code_id or the database id of the view
      * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
      * @param string $obj_name the object that should be shown e.g. a value
-     * @param string|null $back the back trace calls to return to the original url and for undo
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
-    function url_new(int|string   $view,
-                     int|string   $id = 0,
-                     string       $obj_name = '',
-                     ?string      $back = '',
-                     string|array $par = '',
-                     string       $id_ext = ''
-    ): string
+    /**
+     * remove the trailing slash of a base url, because the script path already starts with one
+     * @param string $base_url the absolut html path for urls or an empty string for a relative url
+     * @return string the base url ready to be followed by the script path
+     */
+    private static function base_url_clean(string $base_url): string
     {
-        $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-        $result .= url_var::MASK . '=' . $view;
-        if (is_string($id)) {
-            $result .= '&id=' . $id;
-        } elseif ($id <> 0) {
-            $result .= '&id=' . $id;
-        }
-        if ($id_ext != '') {
-            $result .= '&' . $id_ext;
-        }
-        if ($back != '') {
-            $result .= '&back=' . $back;
+        $result = $base_url;
+        if (str_ends_with($result, '/')) {
+            $result = substr($result, 0, -1);
         }
         return $result;
+    }
+
+    /**
+     * the url of a view for an object with the calling page as the back part
+     *
+     * @param int|string $view the id or the code id of the view to call
+     * @param int|string $id the id of the object to show, 0 for a view without an object
+     * @param array $url_arr the url parameters of the calling page, which become the
+     *                       '9'-prefixed back part so that the called page can return to it
+     * @param string $id_ext an additional url parameter e.g. to link two objects
+     * @param string $base_url the base url of the pod, empty for a relative url
+     * @return string the url of the view
+     */
+    function url_back(
+        int|string $view,
+        int|string $id = 0,
+        array      $url_arr = [],
+        string     $id_ext = '',
+        string     $base_url = ''
+    ): string
+    {
+        $url = self::base_url_clean($base_url);
+        $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
+        $url .= url_var::MASK . '=' . $view;
+        if (is_string($id)) {
+            $url .= '&id=' . $id;
+        } elseif ($id <> 0) {
+            $url .= '&id=' . $id;
+        }
+        if ($id_ext != '') {
+            $url .= '&' . $id_ext;
+        }
+        return $this->url_with_back($url, $url_arr);
+    }
+
+    /**
+     * build a zukunft.com internal url based on the html one-page set up
+     * the url_var class defines the parameters
+     *
+     * @param int|string $view the code_id or the database id of the view
+     * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
+     * @param array $url_arr the back trace calls to return to the original url and for undo
+     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
+     * @return string the created url
+     */
+    static function url(
+        int|string   $view,
+        int|string   $id = 0,
+        array        $url_arr = [],
+        string       $id_ext = '',
+        string       $base_url = ''
+    ): string
+    {
+        $url = self::base_url_clean($base_url);
+        $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . url_var::PAR;
+        $url .= url_var::MASK . url_var::EQ . $view;
+        if (is_string($id)) {
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
+        } elseif ($id <> 0) {
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
+        }
+        if ($id_ext != '') {
+            $url .= url_var::ADD . $id_ext;
+        }
+        if ($url_arr != []) {
+            $url .= url_var::ADD . html_base::back_url_part($url_arr);
+        }
+        return $url;
     }
 
     /**
      * Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
      * so the target page can redirect back to the calling page after completing its action.
      *
+     * only the params that identify the page are prefixed (see page_url_array), because the
+     * form state of the calling page does not name the page and an already prefixed param
+     * would be prefixed a second time (e.g. '99m' for a back part or '98k' for a pre value)
+     *
      * @param array $url_array the URL parameters of the calling page e.g. /http/view.php?m=3&id=12
      * @return string the additional URL parameters e.g. '9m=3&9id=123'
      */
-    function back_url_part(array $url_array): string
+    static function back_url_part(array $url_array): string
     {
-        return $this->prefixed_url_part($url_array, url_var::BACK);
+        return self::prefixed_url_part(self::page_url_array($url_array), url_var::BACK);
     }
 
     /**
@@ -732,9 +867,43 @@ class html_base
         return $par;
     }
 
+    /**
+     * the same as back_url_part, but as an array e.g. for the hidden fields of a form
+     * so only the page-identifying params are prefixed (see page_url_array)
+     *
+     * @param array $url_arr the url params of the calling page
+     * @return array the page params prefixed with url_var::BACK e.g. ['9m' => 3, '9id' => 123]
+     */
     static function back_url_array(array $url_arr): array
     {
-        return self::prefixed_url_array($url_arr, url_var::BACK);
+        return self::prefixed_url_array(self::page_url_array($url_arr), url_var::BACK);
+    }
+
+    /**
+     * reduce the url params of the calling page to those identifying the page (url_var::PAGE_VARS),
+     * so the back part of an edit link stays short and form state or already '8'/'9'-prefixed
+     * params are never prefixed again (e.g. no '99m' or '98k' compounds)
+     *
+     * an empty page var names nothing, so it does not travel with the link either: the id 0 that
+     * url_mapper::url_to_standard adds to every request would otherwise repeat in every link of a
+     * page without an object; a zero is only kept where zero is a value (url_var::PAGE_VARS_KEEP_ZERO)
+     *
+     * @param array $url_arr the url params of the calling page
+     * @return array only the page-identifying url params with a value e.g. ['m' => 90, 'id' => 1]
+     */
+    static function page_url_array(array $url_arr): array
+    {
+        $page_arr = array_intersect_key($url_arr, array_flip(url_var::PAGE_VARS));
+        return array_filter($page_arr, function ($val, $key) {
+            if ($val === null or $val === '') {
+                return false;
+            }
+            if (in_array($key, url_var::PAGE_VARS_KEEP_ZERO)) {
+                return true;
+            }
+            // a non numeric string is never zero, so a search pattern or an id list is kept
+            return $val != 0;
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     static function pre_url_array(array $url_arr): array
@@ -749,7 +918,7 @@ class html_base
      * @param string $prefix the prefix char e.g. url_var::BACK ('9') or url_var::PRE ('8')
      * @return string the prefixed URL parameter string e.g. '9m=3&9id=123'
      */
-    private function prefixed_url_part(array $url_array, string $prefix): string
+    static private function prefixed_url_part(array $url_array, string $prefix): string
     {
         $par = [];
         foreach ($url_array as $key => $val) {
@@ -770,6 +939,23 @@ class html_base
                 return $url . '?' . $par_ext;
             }
         }
+    }
+
+    /**
+     * the url of the page that the given url parameters describe, e.g. to return to it
+     *
+     * @param array $url_arr the url parameters of the page
+     * @return string the url of the page with the parameters that identify it (url_var::PAGE_VARS)
+     *                or the start page if none of them has a value
+     */
+    function page_url(array $url_arr): string
+    {
+        $page_arr = self::page_url_array($url_arr);
+        // without a page param the main script shows the start page, so no '?' is added
+        if ($page_arr == []) {
+            return api::MAIN_SCRIPT;
+        }
+        return api::MAIN_SCRIPT . url_var::PAR . http_build_query($page_arr);
     }
 
     /**
@@ -866,6 +1052,11 @@ class html_base
     function text_h3(string $title, string $style = ''): string
     {
         return $this->text_h($title, self::H5, self::H3, $style);
+    }
+
+    function text_h4(string $title, string $style = ''): string
+    {
+        return $this->text_h($title, self::H6, self::H3, $style);
     }
 
     private function text_h(string $title, string $bs_tag, string $tag, string $style = ''): string
@@ -981,20 +1172,25 @@ class html_base
      * @param string|null $cell_text the text or link that should be shown or null to return an empty cell
      * @param string $style the bootstrap formatting class
      * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @param string $title the mouseover popup text of the cell, e.g. the full text of a shortened cell
      * @return string the html code of the table cell
      */
-    function td(?string $cell_text = '', string $style = '', int $intent = 0): string
+    function td(?string $cell_text = '', string $style = '', int $intent = 0, string $title = ''): string
     {
         // just for formatting the html code
         while ($intent > 0) {
             $cell_text .= '&nbsp;';
             $intent = $intent - 1;
         }
+        $attributes = '';
         if ($style != '') {
-            return '<' . self::TD . ' ' . self::CLASS_HTML . '="' . $style . '">' . $cell_text . '</' . self::TD . '>';
-        } else {
-            return '<' . self::TD . '>' . $cell_text . '</' . self::TD . '>';
+            $attributes .= ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
+        // the title is user settable (e.g. the full change text of a shortened cell), so escape it
+        if ($title != '') {
+            $attributes .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        return '<' . self::TD . $attributes . '>' . $cell_text . '</' . self::TD . '>';
     }
 
     /**
@@ -1040,6 +1236,7 @@ class html_base
         return match ($tbl_style) {
             self::SIZE_HALF => $this->tbl_start_half() . $tbl_rows . $this->tbl_end(),
             styles::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
+            styles::STYLE_BORDERLESS_GREY => $this->tbl_start_borderless_grey() . $tbl_rows . $this->tbl_end(),
             styles::TABLE_PUR => $this->tbl_start_pur() . $tbl_rows . $this->tbl_end(),
             default => $this->tbl_start() . $tbl_rows . $this->tbl_end(),
         };
@@ -1080,6 +1277,18 @@ class html_base
         return '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table">';
     }
 
+    // a borderless table with the standard zukunft.com grey text (the .grey color) instead of the
+    // bootstrap text-muted grey of tbl_start_hist; used for the change log table pure
+    function tbl_start_borderless_grey(): string
+    {
+        if (self::UI_USE_BOOTSTRAP) {
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table table-borderless ' . styles::STYLE_GREY . '">';
+        } else {
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="' . styles::STYLE_GREY . '">';
+        }
+        return $result;
+    }
+
     /**
      * a table for a list of selectors
      */
@@ -1112,10 +1321,10 @@ class html_base
         string $form_name,
         string $tbl_rows,
         string $submit_name = '',
-        string $back = '',
+        array  $url_arr = [],
         string $del_call = ''): string
     {
-        return $this->form_start($form_name) . $tbl_rows . $this->form_end_with_submit($submit_name, $back, $del_call);
+        return $this->form_start($form_name) . $tbl_rows . $this->form_end_with_submit($submit_name, $url_arr, $del_call);
     }
 
     /**
@@ -1184,47 +1393,22 @@ class html_base
     /**
      * end a html form with save, cancel and optional delete buttons
      * @param string $submit_name label for the save button; empty uses the default translated label
-     * @param string $back the URL or word id to return to after cancelling
+     * @param array $url_arr the url vars of the calling page to return to after cancelling
      * @param string $del_call the URL to call for the delete action; empty omits the delete button
      * @return string the HTML code for the form buttons and closing form tag
      */
-    function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
+    /**
+     * the end of a form with the submit button, the cancel link back to the calling page and
+     * an optional delete link; the same as dsp_form_end, kept for the callers that name it
+     *
+     * @param string $submit_name the text of the submit button, empty for the default "save"
+     * @param array $url_arr the url parameters of the calling page, which the cancel link calls
+     * @param string $del_call the url of the delete view or empty if the object cannot be deleted
+     * @return string the html code of the form end
+     */
+    function form_end_with_submit(string $submit_name, array $url_arr, string $del_call = ''): string
     {
-        global $mtr;
-        $result = '';
-        $btn = new button();
-        if (self::UI_USE_BOOTSTRAP) {
-            if ($submit_name == "") {
-                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
-            } else {
-                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $submit_name . '</' . self::BUTTON . '>';
-            }
-            if ($back <> "") {
-                if (is_numeric($back)) {
-                    $result .= $this->ref(api::MAIN_SCRIPT . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                } else {
-                    $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                }
-            }
-            if ($del_call <> '') {
-                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
-            }
-        } else {
-            if ($submit_name == "") {
-                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT . '">';
-            } else {
-                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT .
-                    '" ' . self::VALUE . '="' . $submit_name . '">';
-            }
-            if ($back <> "") {
-                $result .= $btn->back($back);
-            }
-            if ($del_call <> "") {
-                $result .= $btn->del(msg_id::DEL, $del_call);
-            }
-        }
-        $result .= '</' . self::FORM . '>';
-        return $result;
+        return $this->dsp_form_end($submit_name, $url_arr, $del_call);
     }
 
     function button_submit(string $submit_name): string
@@ -1253,12 +1437,87 @@ class html_base
     }
 
     /**
+     * a password input with a css-only "show password" toggle (no javascript, see docs/llm/frontend.md)
+     * the field is a text input masked by the .password css class (-webkit-text-security); the checkbox
+     * next to it reveals the real password while it is checked via the rules in style_html.css.
+     * the type is text and not password because css cannot unmask a native password field; the
+     * autocomplete token keeps the password manager working on the masked text input
+     *
+     * @param string $name the submitted field / url var name e.g. url_var::USER_PASSWORD
+     * @param string $show_label the already translated label of the show-password checkbox
+     * @param string $autocomplete the autocomplete token e.g. self::AUTOCOMPLETE_NEW_PW for a new password
+     * @param string $value the pre-filled value, only used where an existing password may be overwritten
+     * @return string the html of the masked password field followed by its show-password checkbox
+     */
+    function form_input_password(
+        string $name,
+        string $show_label,
+        string $autocomplete = self::AUTOCOMPLETE_CURRENT_PW,
+        string $value = ''
+    ): string
+    {
+        $field = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_TEXT . '" ' . self::NAME . '="' . $name . '"';
+        if ($value != '') {
+            $field .= ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
+        }
+        $field .= ' ' . self::AUTOCOMPLETE . '="' . $autocomplete . '"';
+        $field .= ' ' . self::CLASS_HTML . '="' . self::CLASS_INPUT . ' ' . self::CLASS_PASSWORD . '">';
+        return $this->password_show_toggle($field, $name, $show_label);
+    }
+
+    /**
+     * the bootstrap-styled variant of form_input_password for the admin form that may overwrite a
+     * user password; reuses the bootstrap input() rendering as a masked text field and adds the same
+     * css-only show-password checkbox (see form_input_password and style_html.css)
+     *
+     * @param string $url_id the submitted field / url var name e.g. url_var::USER_PASSWORD
+     * @param msg_id $msg_id the message id of the field label
+     * @param string $show_label the already translated label of the show-password checkbox
+     * @param string|null $value the pre-filled password value the admin may overwrite (null if not set)
+     * @return string the html of the masked password field followed by its show-password checkbox
+     */
+    function input_password(
+        string      $url_id,
+        msg_id      $msg_id,
+        string      $show_label,
+        string|null $value = ''
+    ): string
+    {
+        $field = $this->input($url_id, $msg_id, $value, self::INPUT_TEXT, self::CLASS_PASSWORD);
+        return $this->password_show_toggle($field, $url_id, $show_label);
+    }
+
+    /**
+     * wrap a masked password input with the css-only show-password checkbox that reveals it while checked
+     * @param string $field the html of the masked password input (must carry the .password css class)
+     * @param string $name the field name used to build the unique id of the show-password checkbox
+     * @param string $show_label the already translated label of the show-password checkbox
+     * @return string the password field followed by its show-password checkbox, wrapped for the css toggle
+     */
+    private function password_show_toggle(string $field, string $name, string $show_label): string
+    {
+        $show_id = self::SHOW_PASSWORD_PREFIX . $name;
+        // the checkbox is the css-only state holder (no javascript); it is visually hidden but keyboard
+        // focusable and carries the accessible name because the visible switch is only an icon
+        $check = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_CHECKBOX . '" '
+            . self::CLASS_HTML . '="' . self::CLASS_SHOW_PASSWORD . '" ' . self::ID . '="' . $show_id . '" '
+            . self::ARIA_LABEL . '="' . htmlspecialchars($show_label, ENT_QUOTES) . '">';
+        // the eye icon is shown while the password is masked and the eye-slash icon while it is revealed;
+        // the css in style_html.css toggles which icon is visible based on the checkbox state
+        $eye = $this->icon_with_title(icons::PASSWORD_SHOW, self::CLASS_PASSWORD_ICON_SHOW, $show_label);
+        $eye .= $this->icon_with_title(icons::PASSWORD_HIDE, self::CLASS_PASSWORD_ICON_HIDE, $show_label);
+        $toggle = $check . $this->label($eye, $show_id);
+        return $this->span($field . $toggle, self::CLASS_PASSWORD_FIELD);
+    }
+
+    /**
+     * @param user_message|Message $msg to colle
      * @return string the HTML code of the about page
      */
-    function about_page(): string
+    function about_page(user_message|Message $msg): string
     {
         global $mtr;
-        $result = $this->header($mtr->txt(msg_id::SYSTEM_TITLE_ABOUT), "center_form");
+        $result = $this->header($mtr->txt(msg_id::SYSTEM_TITLE_ABOUT), $msg, "center_form");
 
         $result .= $this->about_body();
 
@@ -1336,7 +1595,7 @@ class html_base
         array  $item_lst,
         string $class,
         string $script_parameter,
-        string $back = ''): string
+        array  $url_arr = []): string
     {
         global $mtr;
         $btn = new button();
@@ -1348,17 +1607,17 @@ class html_base
             // list of all possible view entries
             $row_nbr = $row_nbr + 1;
             $edit_script = $this->edit_url($class);
-            $url = $this->url($edit_script, $key, $back);
+            $url = $this->url_old($edit_script, $key, $url_arr);
             $result .= $this->ref($url, $item);
             if ($row_nbr > 1) {
-                $url = $this->url($edit_script, $key, $back, '&move_up=' . $key);
+                $url = $this->url_old($edit_script, $key, $url_arr, '&move_up=' . $key);
                 $result .= $this->ref($url, $mtr->txt(msg_id::UP));
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
             if ($row_nbr < $num_rows) {
-                $url = $this->url($edit_script, $key, $back, '&move_down=' . $key);
+                $url = $this->url_old($edit_script, $key, $url_arr, '&move_down=' . $key);
                 $result .= $this->ref($url, $mtr->txt(msg_id::DOWN));
             }
             $result .= ' ';
@@ -1375,10 +1634,10 @@ class html_base
      *
      * @param array $item_lst a list of objects that have at least an id and a name
      * @param string $class the object class name e.g. a view
-     * @param string $back the target for the back / ctrl-z function
+     * @param array $url_arr the url vars of the calling page for the back / ctrl-z function
      * @return string the html code to display the list
      */
-    function list(array $item_lst, string $class, string $back = ''): string
+    function list(array $item_lst, string $class, array $url_arr = []): string
     {
         $result = "";
 
@@ -1387,14 +1646,14 @@ class html_base
 
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url_new($class_name . rest_ctrl::UPDATE, $item->id(), '', $back);
+                $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), $url_arr);
                 $result .= $this->ref($url, $this->esc($item->name()));
                 $result .= '<' . self::BR . '>';
             }
         }
-        $url_add = $this->url_new($class_name . rest_ctrl::CREATE, 0, '', $back);
+        $url_add = $this->url_back($class_name . rest_ctrl::CREATE, 0, $url_arr);
         $msg_id = $lib->class_to_add_msg_id($class);
-        $result .= (new button($url_add, $back))->add($msg_id);
+        $result .= (new button($url_add, $url_arr))->add($msg_id);
         $result .= '<' . self::BR . '>';
 
         return $result;
@@ -1465,21 +1724,23 @@ class html_base
     }
 
 // after simple add views e.g. for a value automatically go back to the calling page
-    function dsp_go_back($back, $usr): string
+    /**
+     * redirect to the calling page after an action, so that a reload never repeats the action
+     *
+     * @param array $url_arr the url parameters of the calling page
+     * @param object|null $usr unused, kept for the callers that name the parameters by position;
+     *                         untyped on purpose, so html_base needs no include of the user class
+     * @return string always empty, because the redirect header replaces the page
+     */
+    function dsp_go_back(array $url_arr, ?object $usr = null): string
     {
-        log_debug('dsp_go_back(' . $back . ')');
-
         $result = '';
 
-        if ($back == '') {
+        if ($url_arr == []) {
             log_err("Internal error: go back page missing.", "dsp_header->dsp_go_back");
-            header("Location: view.php?words=1"); // go back to the fallback page
+            header("Location: " . api::MAIN_SCRIPT); // go back to the fallback page
         } else {
-            if (is_numeric($back)) {
-                header("Location: view.php?words=" . $back); // go back to the calling page and try to avoid double change script calls
-            } else {
-                header("Location: " . $back); // go back to the calling page and try to avoid double change script calls
-            }
+            header("Location: " . $this->page_url($url_arr));
         }
 
         return $result;
@@ -1586,7 +1847,7 @@ class html_base
         if ($tabs != []) {
             $sections = '';
             foreach ($tabs as $label => $content) {
-                $tab_id = str_replace(' ', '_', strtolower($label));
+                $tab_id = $this->tab_id($label);
                 // one section per tab: the label link sets the '#<tab_id>' fragment and the css :target
                 // rule on the section then shows this content and highlights this label (style_html.css)
                 $label_link = $this->ref('#' . $tab_id, $label, '', self::CLASS_TAB_LABEL);
@@ -1596,6 +1857,20 @@ class html_base
             $result = $this->div($sections, self::CLASS_TABS);
         }
         return $result;
+    }
+
+    /**
+     * the html id of a tab of a tab box, which is also the url fragment that selects the tab
+     * (the css :target rule of style_html.css); public, so that a link from another page can open
+     * a page with one tab selected e.g. the all user overwrites column links to the 'others' tab
+     * of the changed object
+     *
+     * @param string $label the translated tab label as tab_box gets it
+     * @return string the html id of the tab
+     */
+    function tab_id(string $label): string
+    {
+        return str_replace(' ', '_', strtolower($label));
     }
 
 // -----------------------
@@ -1662,7 +1937,17 @@ class html_base
     }
 
 // end a html form
-    function dsp_form_end($submit_name, $back, $del_call = ''): string
+    /**
+     * the end of a form with the submit button, the cancel link back to the calling page and
+     * an optional delete link
+     *
+     * @param string $submit_name the text of the submit button, empty for the default "save"
+     * @param array $url_arr the url parameters of the calling page, which the cancel link calls;
+     *                       an empty array shows no cancel link, because no page is known
+     * @param string $del_call the url of the delete view or empty if the object cannot be deleted
+     * @return string the html code of the form end
+     */
+    function dsp_form_end(string $submit_name, array $url_arr, string $del_call = ''): string
     {
         global $mtr;
         $btn = new button();
@@ -1673,12 +1958,8 @@ class html_base
             } else {
                 $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $submit_name . '</' . self::BUTTON . '>';
             }
-            if ($back <> "") {
-                if (is_numeric($back)) {
-                    $result .= $this->ref(api::MAIN_SCRIPT . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                } else {
-                    $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
-                }
+            if ($url_arr != []) {
+                $result .= $this->ref($this->page_url($url_arr), $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
             }
             if ($del_call <> '') {
                 $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
@@ -1690,8 +1971,8 @@ class html_base
                 $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT .
                     '" ' . self::VALUE . '="' . $submit_name . '">';
             }
-            if ($back <> "") {
-                $result .= $btn->back($back);
+            if ($url_arr != []) {
+                $result .= $btn->back($url_arr);
             }
             if ($del_call <> "") {
                 $result .= $btn->del(msg_id::DEL, $del_call);
@@ -1709,7 +1990,7 @@ class html_base
     function div_center(string $txt): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="container text-center">' . $txt . '</' . self::DIV . '>';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . ' ' . styles::TEXT_CENTER . '">' . $txt . '</' . self::DIV . '>';
         } else {
             return '<' . self::DIV . ' ' . self::CLASS_HTML . '="center_form">' . $txt . '</' . self::DIV . '>';
         }
@@ -1718,7 +1999,7 @@ class html_base
     function dsp_form_center(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="container text-center">';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . ' ' . styles::TEXT_CENTER . '">';
         } else {
             return '<' . self::DIV . ' ' . self::CLASS_HTML . '="center_form">';
         }
@@ -1863,6 +2144,30 @@ class html_base
     }
 
     /**
+     * a small submit button beside a form field label that asks the backend to recalculate one
+     * part of the form; it is a submit button and not a link, because only a submit sends the
+     * values that the user has entered but not yet saved
+     *
+     * @param string $refresh which part should be recalculated e.g. url_var::REFRESH_LATEX
+     * @return string the html code of the refresh button, '' if the field offers no refresh
+     */
+    function button_refresh(string $refresh): string
+    {
+        global $mtr;
+        $result = '';
+        if ($refresh != '') {
+            $result = '<' . self::BUTTON
+                . ' ' . self::CLASS_HTML . '="' . self::BS_BTN_ICON . '"'
+                . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '"'
+                . ' ' . self::NAME . '="' . url_var::REFRESH . '"'
+                . ' ' . self::VALUE . '="' . $refresh . '">'
+                . $this->icon_with_title(icons::REFRESH, '', $mtr->txt(msg_id::FORM_BUTTON_REFRESH))
+                . '</' . self::BUTTON . '>';
+        }
+        return $result;
+    }
+
+    /**
      * translate and create the html code for a label
      * TODO use if if possible
      * @param msg_id $msg_id message id that should be translated to the text to be shown as a label
@@ -1873,6 +2178,17 @@ class html_base
     {
         global $mtr;
         return $this->label($mtr->txt($msg_id), $for);
+    }
+
+    /**
+     * @param string $url_id the url id of the input field e.g. url_var::LATEX
+     * @param msg_id $msg_id the msg_id of the title of the input field e.g. LaTeX
+     * @return string the html id of the input field, e.g. to point the label of a neighbour column to it
+     */
+    function form_field_id(string $url_id, msg_id $msg_id): string
+    {
+        global $mtr;
+        return $this->field_id($url_id, $mtr->txt($msg_id));
     }
 
     /**
@@ -1923,12 +2239,11 @@ class html_base
         string      $class_add = '',
         string      $placeholder = ''): string
     {
-        global $mtr;
         $name = '';
         if ($url_id != '') {
             $name = ' name="' . $url_id . '"';
         }
-        $id = $this->field_id($url_id, $mtr->txt($msg_id));
+        $id = $this->form_field_id($url_id, $msg_id);
         if ($value != '') {
             // escape the value so a name/description with " < > & cannot break out of the
             // attribute; the browser decodes it back so the resubmitted value is unchanged
@@ -1969,6 +2284,47 @@ class html_base
     function div_col_min_width(string $text, int $min_width): string
     {
         return '<div class="col" style="min-width: ' . $min_width . 'px">' . $text . '</div>';
+    }
+
+    /**
+     * combine the given columns to one row that shows them side by side on wide screens
+     * and wraps them onto fewer rows (down to a single stacked column) as the screen gets
+     * narrower than the configured side widths;
+     * used for the fixed columns of a 'side or below' view group (view_exe::dsp_entries)
+     * and for the data driven columns of the phrase values view (value_list::columns_by_phrase)
+     *
+     * @param array $col_lst the html code of the columns; empty columns are skipped
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return string the html code of the row with the wrapping columns
+     */
+    function div_row_wrapping_cols(array $col_lst, user_message $msg): string
+    {
+        global $ui_sys;
+
+        if ($ui_sys?->cfg !== null) {
+            $min_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MIN, words::LAYOUT, words::FRONTEND, words::USER],
+                $msg, def::FALLBACK_MIN_SIDE_WIDTH);
+            $wide_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MAX, words::LAYOUT, words::FRONTEND, words::USER],
+                $msg, def::FALLBACK_WIDE_SIDE_WIDTH);
+        } else {
+            $min_width = def::FALLBACK_MIN_SIDE_WIDTH;
+            $wide_width = def::FALLBACK_WIDE_SIDE_WIDTH;
+        }
+        // size each column so that up to MAX_SIDE_COLUMNS fit at the configured wide width
+        // and the flex row wraps to fewer columns as the screen gets narrower;
+        // never narrower than half the min side width so two columns still fit above it
+        $col_width = max(
+            (int)round($wide_width / position_types::MAX_SIDE_COLUMNS),
+            (int)round($min_width / 2));
+        $cols = '';
+        foreach ($col_lst as $col) {
+            if ($col != '') {
+                $cols .= $this->div_col_min_width($col, $col_width);
+            }
+        }
+        return $this->div_row($cols);
     }
 
     function add_style(string $text, ?int $style_id = null): string
@@ -2028,19 +2384,24 @@ class html_base
      * create the HTML code for an input field including the label
      * @param string $url_id the id of the input field e.g. n
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
-     * @param string|int|null $value the suggested value which is in most cases the value already saved in the db
+     * @param string|int|float|null $value the suggested value which is in most cases the value already saved in the db;
+     *                               float is part of the union because a coercion of a float to string|int
+     *                               truncates e.g. a triple weight of 0.5 to 0 (int is tried before string)
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
+     * @param string $refresh which part of the form a refresh icon beside the label should recalculate
+     *                        e.g. url_var::REFRESH_LATEX, '' for a field without a refresh icon
      * @return string the HTML code for the field with the label
      */
     function form_field(
-        string          $url_id,
-        msg_id          $msg_id,
-        string|int|null $value = '',
-        string          $type = html_base::INPUT_TEXT,
-        string          $input_class = '',
-        string          $style = view_styles::COL_SM_12
+        string                $url_id,
+        msg_id                $msg_id,
+        string|int|float|null $value = '',
+        string                $type = html_base::INPUT_TEXT,
+        string                $input_class = '',
+        string                $style = view_styles::COL_SM_12,
+        string                $refresh = ''
     ): string
     {
         // TODO Prio 2 move mtr to label
@@ -2049,6 +2410,7 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             // the label for must equal the input id (field_id) so the pair stays linked
             $text = $this->label($name, $this->field_id($url_id, $name));
+            $text .= $this->button_refresh($refresh);
             $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
             return $this->div_form($text, $style);
         } else {
@@ -2321,11 +2683,12 @@ class html_base
      * @param string $right the second text snippet
      * @return string the two snippets joined by the entry separator
      */
-    function concat_entry_text(string $left, string $right): string
+    function concat_entry_text(string $left, string $right, user_message $msg): string
     {
         global $ui_sys;
         $separator = $ui_sys?->cfg?->get_by(
-            [words::ENTRY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+            [words::ENTRY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER],
+            $msg
         ) ?? def::FALLBACK_ENTRY_SEPARATOR;
         return $this->concat_text($left, $right, $separator);
     }
@@ -2337,11 +2700,12 @@ class html_base
      * @param string $right the second text snippet
      * @return string the two snippets joined by the category separator
      */
-    function concat_category_text(string $left, string $right): string
+    function concat_category_text(string $left, string $right, user_message $msg): string
     {
         global $ui_sys;
         $separator = $ui_sys?->cfg?->get_by(
-            [words::CATEGORY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+            [words::CATEGORY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER],
+            $msg
         ) ?? def::FALLBACK_CATEGORY_SEPARATOR;
         return $this->concat_text($left, $right, $separator);
     }
@@ -2352,13 +2716,15 @@ class html_base
      *
      * @param string $left the first text snippet
      * @param string $right the second text snippet
+     * @param user_message|Message $msg to collect the data retriavel errors
      * @return string the two snippets joined by the title separator
      */
-    function concat_title_text(string $left, string $right): string
+    function concat_title_text(string $left, string $right, user_message|Message $msg): string
     {
         global $ui_sys;
         $separator = $ui_sys?->cfg?->get_by(
-            [words::TITLE, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+            [words::TITLE, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER],
+            $msg
         ) ?? def::FALLBACK_TITLE_SEPARATOR;
         return $this->concat_text($left, $right, $separator);
     }
@@ -2482,11 +2848,16 @@ class html_base
     /**
      * html unsorted list
      * @param string $txt the html code of the list entries
+     * @param string $style the css class of the list e.g. styles::VALUE_ITEMS
      * @return string the html code of a unsorted list
      */
-    function list_unsorted(string $txt): string
+    function list_unsorted(string $txt, string $style = ''): string
     {
-        return '<' . self::UL . '>' . $txt . '</' . self::UL . '>';
+        $attr = '';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        return '<' . self::UL . $attr . '>' . $txt . '</' . self::UL . '>';
     }
 
     /**
@@ -2539,15 +2910,17 @@ class html_base
     /**
      * wrap the title tag around html title text
      * @param string $txt the title text
+     * @param string $pod_name the name of the pod
+     * @param user_message|Message $msg to collect render errors
      * @return string the warped title text
      */
-    private function title(string $txt, string $pod_name): string
+    private function title(string $txt, string $pod_name, user_message|Message $msg): string
     {
         // append the pod name with the configured title separator e.g. "US dollar - Word (default) - zukunft.com"
         if ($txt == $pod_name) {
             $title = $pod_name;
         } else {
-            $title = $this->concat_title_text($txt, $pod_name);
+            $title = $this->concat_title_text($txt, $pod_name, $msg);
         }
         // escape the title text: it is fed the raw object and view name, so an object renamed to
         // "</title><script>..." would otherwise break out of the head title and inject script (xss)
@@ -2557,25 +2930,25 @@ class html_base
     /**
      * @return string use a simple stylesheet without JavaScript
      */
-    private function stylesheet(): string
+    private function stylesheet(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_HTML);
+        return $this->link_style(files::STYLE_HTML, $base_url);
     }
 
     /**
      * @return string use a simple stylesheet without JavaScript and without bootstrap (maybe not needed any more)
      */
-    private function stylesheet_fallback(): string
+    private function stylesheet_fallback(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_FALLBACK);
+        return $this->link_style(files::STYLE_FALLBACK, $base_url);
     }
 
     /**
      * @return string the bootstrap stylesheet
      */
-    private function stylesheet_bs(): string
+    private function stylesheet_bs(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_BS);
+        return $this->link_style(files::STYLE_BS, $base_url);
     }
 
     /**
@@ -2583,25 +2956,33 @@ class html_base
      */
     private function stylesheet_bs_js_all(): string
     {
-        return $this->link_style(paths::EXT_LIB_BS_JS);
+        return $this->link_style(html_paths::EXT_LIB_BS_JS);
     }
 
     /**
      * @return string the font stylesheet
      */
-    private function stylesheet_font(): string
+    private function stylesheet_font(string $base_url = ''): string
     {
-        return $this->link_style(files::STYLE_FONT);
+        return $this->link_style(files::STYLE_FONT, $base_url);
     }
 
     /**
      * @param string $stylesheet path to the stylesheet file
+     * @param string $base_url e.g. the pod url to turn the root relative path into an
+     *                         absolute url, so that the stylesheet is also found by a page
+     *                         that is not served by the pod (e.g. a html test snapshot)
      * @return string the HTML link element for the stylesheet
      */
-    private function link_style(string $stylesheet): string
+    private function link_style(string $stylesheet, string $base_url = ''): string
     {
+        $url = $stylesheet;
+        if ($base_url != '') {
+            // without the trailing slash of the base url, because the path starts with one
+            $url = rtrim($base_url, '/') . $stylesheet;
+        }
         return '<' . self::LINK . ' ' . self::REL . '="' . self::STYLESHEET . '" '
-            . self::HREF . '="' . $stylesheet . '">';
+            . self::HREF . '="' . $url . '">';
     }
 
 }

@@ -1,0 +1,23 @@
+PREPARE component_link_list_by_ids (bigint, bigint[]) AS
+    SELECT s.component_link_id,
+           u.component_link_id AS user_component_link_id,
+           s.user_id,
+           s.view_id,
+           s.component_id,
+           CASE WHEN (u.order_nbr               IS     NULL) THEN s.order_nbr        ELSE u.order_nbr        END AS order_nbr,
+           CASE WHEN (u.position_type_id        IS     NULL) THEN s.position_type_id ELSE u.position_type_id END AS position_type_id,
+           CASE WHEN (u.view_style_id           IS     NULL) THEN s.view_style_id    ELSE u.view_style_id    END AS view_style_id,
+           CASE WHEN (u.excluded                IS     NULL) THEN s.excluded         ELSE u.excluded         END AS excluded,
+           CASE WHEN (u.share_type_id           IS     NULL) THEN s.share_type_id    ELSE u.share_type_id    END AS share_type_id,
+           CASE WHEN (u.protect_id              IS     NULL) THEN s.protect_id       ELSE u.protect_id       END AS protect_id,
+           CASE WHEN (ul.view_name       <> ''  IS NOT TRUE) THEN l.view_name        ELSE ul.view_name       END AS view_name1,
+           CASE WHEN (ul.description     <> ''  IS NOT TRUE) THEN l.description      ELSE ul.description     END AS description1,
+           CASE WHEN (ul2.component_name <> ''  IS NOT TRUE) THEN l2.component_name  ELSE ul2.component_name END AS component_name2,
+           CASE WHEN (ul2.description    <> ''  IS NOT TRUE) THEN l2.description     ELSE ul2.description    END AS description2
+      FROM component_links s
+ LEFT JOIN user_component_links u ON s.component_link_id =  u.component_link_id AND  u.user_id = $1
+ LEFT JOIN views l                ON s.view_id           =  l.view_id
+ LEFT JOIN user_views ul          ON l.view_id           = ul.view_id           AND ul.user_id = $1
+ LEFT JOIN components l2          ON s.component_id      = l2.component_id
+ LEFT JOIN user_components ul2    ON l2.component_id     = ul2.component_id     AND ul2.user_id = $1
+     WHERE s.component_link_id = ANY ($2);

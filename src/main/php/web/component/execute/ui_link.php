@@ -32,12 +32,11 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;

@@ -35,11 +35,14 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -51,14 +54,20 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -76,8 +85,10 @@ class system_views_read_tests
     {
         // init
         $t_frm = new test_formulas($t);
+        $t_log = new test_log($t);
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db read system view by object ';
@@ -87,7 +98,7 @@ class system_views_read_tests
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
         global $sys;
         $ui = new frontend('system_views_read_tests');
-        $ui->load_cache();
+        $ui->load_cache($msg);
         $cfg = new data_object_ui();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         //$cfg = new data_object_ui();
@@ -121,10 +132,26 @@ class system_views_read_tests
         $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1, $cfg);
         // TODO add:
         // REF
+        // the wikidata reference of the word "Pi" is the only seeded reference with an own url and
+        // one of the three with a source, so it is the example that fills every field of the
+        // reference page except the last update
+        $t->assert_view(views::REF, $t->usr1, new ref($t->usr1), refs::PI_ID, $cfg);
         $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
         // VALUE
-        // PI (3.14) is the example for the related-phrase links and the grey value of the "Value title" component
-        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_ID, $cfg);
+        // the pi number of units.json is the example for the related-phrase links and the grey value
+        // of the "Value title" component and, because it names the "mathematical constant" source,
+        // for the "system show field value source" component of the value default view; the pi value
+        // keyed by the "π (unit symbol)" triple (values::PI_ID) exists only as a unit test fixture and
+        // not in the seeded database, so it would snapshot an empty page
+        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_MATH_ID, $cfg);
+        // the e number is the other mathematical constant, so its page is the example for the related
+        // values column in the reverse direction (e lists pi like pi lists e) and pins the group id of
+        // the value keyed by the "𝑒 (math)" triple (values::E_ID)
+        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::E_ID, $cfg);
+        // the target price earning ratio of companies.json is shared personally and protected for
+        // users, so it is the example for the share and protection subtitle of the "Value title"
+        // component, which shows nothing for a value with the default types like the pi values
+        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::TARGET_PE_RATIO_ID, $cfg);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
@@ -137,14 +164,34 @@ class system_views_read_tests
         // FORMULA TEST
         // RESULT
         // VIEW
+        // the word default view is the example for the view default page, because it is the view
+        // that every word page opens with, so it is the view a user is most likely to look at
+        $t->assert_view(views::VIEW, $t->usr1, new view($t->usr1), views::WORD_ID, $cfg);
         $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
         $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
         $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);
         // COMPONENT
+        // the solution priority title is the example of a component with a description and a type
+        // that is used by a view, so the views list of the page has an entry; the style, the
+        // formula and the linked component of this component are not set, so the page shows the
+        // three labels without a value
+        $t->assert_view(views::COMPONENT, $t->usr1, new component($t->usr1), components::SOLUTION_PRIO_TITLE_ID, $cfg);
         $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
         $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
         $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);
         // USER
+        // the user page lists the sandbox overwrites of the shown user in a fixed column, so the
+        // change log of the test context decides what the column shows; the overwrites of the
+        // test user are taken from a fixture, because the changes in the database grow with every
+        // test run, which would make the snapshot change without a code change
+        $cfg_chg = clone $cfg;
+        $cfg_chg->chg_log = $t_log->log_list_user_overwrites_ui();
+        // the shown user has done the overwrites of the test context, so the column lists them
+        // and names the changed word, triple and formula of each overwrite
+        $t->assert_view(views::USER, $t->usr1, new user(), users::SYSTEM_TEST_ID, $cfg_chg);
+        // the same test context for a user who has not done any of these overwrites, so the column
+        // shows the no-changes message, which also checks that it filters by the shown user
+        $t->assert_view(views::USER, $t->usr1, new user(), users::SYSTEM_TEST_NORMAL_ID, $cfg_chg);
         // LANGUAGE
         // SYS LOG
         // CHANGE LOG
@@ -155,6 +202,17 @@ class system_views_read_tests
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
 
+        // USED CASES
+
+        // the calculator shows the values of a phrase with the defined columns: the use case
+        // "PV in Switzerland" is the sample with the avoided emission per reference mix; a use
+        // case is user data, so the view and the triple are selected by their names and never
+        // by a code id or a database id (docs/llm/json_structure.md "Use case files")
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+
+        // remove test files not used any more e.g. the snapshot of an object id that has changed
+        $t->delete_unused_files(test_paths::VIEWS);
+
 
         // start the test section (ts)
         $ts = 'unit web frontend ';
@@ -162,7 +220,7 @@ class system_views_read_tests
 
         $html = new html_base();
         $target = htmlspecialchars(trim('<title>Header test - zukunft.com</title>'));
-        $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
+        $result = htmlspecialchars(trim($html->header('Header test', $msg, 'center_form')));
         $t->dsp_contains(", dsp_header", $target, $result);
 
         // check if the about page contains at least some basic keywords
@@ -180,16 +238,18 @@ class system_views_read_tests
             api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
-        // the error update view is a get action mask, so a request without the anti-csrf
-        // session token is rejected before any action (see frontend::request_token_valid)
+        // the error update view is a get action mask; a request without the anti-csrf session token
+        // no longer runs the action (see frontend::request_token_valid + http/view.php, the action is
+        // gated on the token), so an ip user without a login is shown the 'log in to change' message
+        // instead of resolving the error - the change is never applied
+        global $mtr;
         $is_connected = $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::ERROR_UPDATE_ID
             . url_var::ADD_ID . 1,
-            'suspect request for mask ' . views::ERROR_UPDATE_ID,
+            $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=error_update without a token contains at least', $is_connected);
         // an add view changes data, so a user without login is blocked before the view is created
         // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
-        global $mtr;
         $is_connected = $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_ID,
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),

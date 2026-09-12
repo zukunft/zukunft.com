@@ -26,7 +26,7 @@ SELECT ref_update_log_00000002000_user
 SELECT ref_update_log_00000002000_user (
                3::bigint,
                2::smallint,
-               65::smallint,
+               167::smallint,
                'Q901028'::text,
                null::text,
                12::bigint);

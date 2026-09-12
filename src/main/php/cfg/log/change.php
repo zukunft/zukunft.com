@@ -65,6 +65,7 @@ include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
 //include_once paths::MODEL_VIEW . 'view.php';
@@ -92,6 +93,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -181,13 +183,14 @@ class change extends change_log
      * @param user|null $usr the user who wants to see the changes e.g. to check the permission
      * @return bool true if a change log entry is found
      */
-    function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = '', ?user $usr = null): bool
     {
         global $debug;
         global $sys;
 
-        $result = parent::row_mapper($db_row, self::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
@@ -232,7 +235,7 @@ class change extends change_log
             }
             log_debug('Change ' . $this->id() . ' loaded');
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -242,19 +245,20 @@ class change extends change_log
 
     /**
      * load the last change of given user
+     * @param user $usr the user to select the chanes
+     * @param user_message $msg with the requesting user and to collect e.g. mapping errors
      * @return bool true is a change is found
      */
-    function load_by_user(?user $usr = null): bool
+    function load_by_user(user $usr, user_message $msg): bool
     {
 
         global $db_con;
 
         $result = false;
         $qp = $this->load_sql_by_user($db_con->sql_creator(), $usr);
-        $db_row = $db_con->get1($qp);
-        if ($db_row != null) {
-            $this->row_mapper($db_row);
-            $result = true;
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $result = $this->row_mapper($db_row, $msg);
         }
 
         return $result;
@@ -314,7 +318,7 @@ class change extends change_log
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_by_user_sql(sql_db $db_con): sql_par
+    function load_by_user_sql(sql_db $db_con, user_message $msg): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user';
@@ -410,13 +414,17 @@ class change extends change_log
      * create an array for the api json message
      *
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         $vars[json_fields::OLD_VALUE] = $this->old_value;
         $vars[json_fields::OLD_ID] = $this->old_id;
         $vars[json_fields::NEW_VALUE] = $this->new_value;

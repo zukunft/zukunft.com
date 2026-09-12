@@ -36,6 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -48,12 +52,13 @@ class graph_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $t_vrb = new test_verbs($t);
-        $usr_msg = new user_message($t->usr1);
-        $back = 0;
+        $msg = new user_message($t->usr1);  // a test is an entry point, so it creates the message the list add reports into
+        $msg_ui = new user_message_ui();
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'db write graph ';
@@ -74,16 +79,16 @@ class graph_tests
         // request building
         // step 1: define the phrase list e.g. in this case only the test word for city
 
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(word_names::CITY));
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->load_by_names(array(word_names::CITY), $msg);
 
         // step 2: get all values related to the phrases
-        $val_lst = new value_list($usr);
-        $val_lst->load_by_phr_lst($phr_lst);
-        $wrd_lst_all = $val_lst->phr_lst()->wrd_lst_all();
+        $val_lst = new value_list($t->usr1);
+        $val_lst->load_by_phr_lst($phr_lst, $msg);
+        $wrd_lst_all = $val_lst->phr_lst($msg)->wrd_lst_all($msg);
 
         // step 3: get all phrases used for the value descriptions
-        $phr_lst_used = new phrase_list($usr);
+        $phr_lst_used = new phrase_list($t->usr1);
         foreach ($wrd_lst_all->lst() as $wrd) {
             if (!array_key_exists($wrd->id(), $phr_lst_used->id_lst())) {
                 $phr_lst_used->add($wrd->phrase());
@@ -92,7 +97,7 @@ class graph_tests
         // step 4: get the word links for the used phrases
         //         these are the word links that are needed for a complete export
         // TODO Prio 1 activate
-        $lnk_lst = new triple_list($usr);
+        $lnk_lst = new triple_list($t->usr1);
         //$lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
         //$result = $lnk_lst->name();
         // check if at least the basic relations are in the database
@@ -106,10 +111,10 @@ class graph_tests
         */
 
         // similar to above, but just for the zurich
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(word_names::ZH, word_names::INHABITANTS, word_names::MIO));
-        $lnk_lst = new triple_list($usr);
-        $lnk_lst->load_by_phr_lst($phr_lst, null, foaf_direction::UP);
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::INHABITANTS, word_names::MIO), $msg);
+        $lnk_lst = new triple_list($t->usr1);
+        $lnk_lst->load_by_phr_lst($phr_lst, $msg, null, foaf_direction::UP, $msg);
         //$lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
         $result = $lnk_lst->name();
         // TODO to be reviewed
@@ -119,19 +124,19 @@ class graph_tests
 
         $test_name = 'load the types of Zurich from the database: Zurich is a ';
         // load the word Zurich from the database
-        $ZH = new word($usr);
-        $ZH->load_by_name(word_names::ZH);
+        $ZH = new word($t->usr1);
+        $ZH->load_by_name(word_names::ZH, $msg);
         // load all types of Zurich e.g. Zurich Insurance
-        $zh_lst = new phrase_list($usr);
-        $zh_lst->load_by_phr($ZH->phrase(), $t_vrb->verb_is(), foaf_direction::UP);
+        $zh_lst = new phrase_list($t->usr1);
+        $zh_lst->load_by_phr($ZH->phrase(), $msg, $t_vrb->verb_is(), foaf_direction::UP);
         // load the type names of the Zurich types e.g. company
         $trp_lst = $zh_lst->triples();
         $zh_types = $trp_lst->phrase_parts();
         // create the HTML code to display the type names
         $api_json = json_decode($zh_types->api_json(), true);
         $trp_lst_ui = new triple_list_ui();
-        $trp_lst_ui->api_mapper($api_json, $usr_msg);
-        $result = $trp_lst_ui->tbl($back);
+        $trp_lst_ui->api_mapper($api_json, $msg);
+        $result = $trp_lst_ui->tbl($msg_ui);
         $t->assert_text_contains($test_name . word_names::CITY, $result, word_names::COMPANY);
         $t->assert_text_contains($test_name . word_names::CANTON, $result, word_names::COMPANY);
         $t->assert_text_contains($test_name . word_names::COMPANY, $result, word_names::COMPANY);

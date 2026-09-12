@@ -42,26 +42,28 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("resultList", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("resultList", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     // TODO use a json with the ids
     // TODO add load by phrase list, formula and source
     $ids = $_GET[url_var::ID_LST] ?? '';
-
-    $msg = '';
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -69,12 +71,12 @@ if ($db_con->is_open()) {
         if ($ids != '') {
             $ids = explode(",", $ids);
             $lst = new result_list($usr);
-            $lst->load_by_ids($ids);
+            $lst->load_by_ids($ids, $msg);
             // drop the results the requesting user may not read (idor); see sandbox_multi::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
-            $msg = 'formula id is missing';
+            $msg->add_message_text('formula id is missing');
         }
     }
 
@@ -82,5 +84,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

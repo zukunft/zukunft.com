@@ -44,9 +44,27 @@ class icons
 
     // Font Awesome solid (fas) — the full css class string ready to drop into class="..."
     const string EDIT = 'fas fa-edit';
+    // shown in the views tab of an object page to set the view as the default view of the object
+    const string VIEW_SWITCH = 'fas fa-shuffle';
+    // shown behind a selector to add a new object of the selected type e.g. a source of a value
+    const string ADD = 'fas fa-plus';
     const string GLOBE = 'fas fa-globe';
     const string USER_CIRCLE = 'fas fa-user-circle';
     // shown e.g. behind a reference to link to a (potential) job that refreshes the referenced data
     const string REFRESH = 'fas fa-arrows-rotate';
+    // shown in the 'my' tab to undo a user overwrite, i.e. to set the field back to the standard value
+    const string UNDO = 'fas fa-rotate-left';
+    // shown in the 'others' tab to apply the overwrite of another user to the own user values
+    const string APPLY = 'fas fa-rotate-right';
+    // shown in the all user overwrites column of the user page to open the 'others' tab of the
+    // changed object, which lists what the other users have set for the same object
+    const string OTHERS = 'fas fa-users';
+    // the show / hide password toggle icons (see form_input_password and style_html.css)
+    const string PASSWORD_SHOW = 'fas fa-eye';       // shown while the password is masked, click to reveal it
+    const string PASSWORD_HIDE = 'fas fa-eye-slash'; // shown while the password is revealed, click to mask it
+    // paging of a row-limited list e.g. the change log table pure: forward to the next / back to the
+    // previous page of rows
+    const string PAGE_FORWARD = 'fas fa-chevron-right';
+    const string PAGE_BACK = 'fas fa-chevron-left';
 
 }

@@ -63,6 +63,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_table_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -128,8 +129,12 @@ class formula_link extends sandbox_link
     // the database and JSON object field names used only for formula links
     const string FLD_ID = 'formula_link_id';
     const string FLD_TYPE = 'formula_link_type_id';
-    const string FLD_ORDER = 'order_nbr';
+    const string FLD_ORDER = fields::FLD_ORDER_NBR;
     const sql_par_type FLD_ORDER_SQL_TYP = sql_par_type::INT;
+    // the names of the linked objects as the list query joins them; the suffix is the position
+    // of the join, so both must match the join order of formula_link_list::load_sql
+    const string FLD_PHRASE_NAME_JOINED = phrase::FLD_NAME . '1';
+    const string FLD_FORMULA_NAME_JOINED = formula_fields::FLD_NAME . '2';
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
@@ -138,6 +143,7 @@ class formula_link extends sandbox_link
         user_db::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
+        fields::FLD_DESCRIPTION,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
         fields::FLD_PROTECT
@@ -146,6 +152,10 @@ class formula_link extends sandbox_link
     const array FLD_NAMES_LINK = array(
         formula_fields::FLD_ID,
         phrase::FLD_ID
+    );
+    // all text database field names that the user can change
+    const array FLD_NAMES_USR = array(
+        fields::FLD_DESCRIPTION
     );
     // all numeric database field names that the user can change
     const array FLD_NAMES_NUM_USR = array(
@@ -159,6 +169,7 @@ class formula_link extends sandbox_link
     const array ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
+        fields::FLD_DESCRIPTION,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
         fields::FLD_PROTECT
@@ -167,6 +178,7 @@ class formula_link extends sandbox_link
     const array FLD_LST_USER_CAN_CHANGE = array(
         [formula_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
@@ -186,6 +198,8 @@ class formula_link extends sandbox_link
 
     // database fields additional to the user sandbox_link fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
+    // why the formula applies to the phrase e.g. which time period the increase is for
+    public ?string $description = null;
 
 
     /*
@@ -219,6 +233,7 @@ class formula_link extends sandbox_link
         $this->reset_objects($usr);
 
         $this->order_nbr = null;
+        $this->description = null;
         $this->predicate_id = null;
     }
 
@@ -241,13 +256,14 @@ class formula_link extends sandbox_link
      * @return bool true if the formula link is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = self::FLD_ID
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
             if (key_exists(formula_fields::FLD_ID, $db_row)) {
@@ -258,45 +274,59 @@ class formula_link extends sandbox_link
                 $this->phrase()->set_obj_from_id($db_row[phrase::FLD_ID]);
                 $this->predicate_id = $db_row[formula_link_type::FLD_ID];
                 $this->order_nbr = $db_row[formula_link::FLD_ORDER];
+                if (key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                    $this->description = $db_row[fields::FLD_DESCRIPTION];
+                }
+                // the list query joins the names of both linked objects, so that the link can
+                // name them e.g. in the change log; a load by id has no join and no names
+                if (array_key_exists(self::FLD_FORMULA_NAME_JOINED, $db_row)) {
+                    $msg->merge($this->formula()->set_name($db_row[self::FLD_FORMULA_NAME_JOINED]));
+                }
+                if (array_key_exists(self::FLD_PHRASE_NAME_JOINED, $db_row)) {
+                    $this->phrase()->set_name($db_row[self::FLD_PHRASE_NAME_JOINED]);
+                }
             } else {
                 log_warning('formula id missing for ' . $this->dsp_id());
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * map a formula link api json to this model formula link object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(
         array        $api_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
-            $this->set_formula_from_id($api_json[json_fields::FORMULA_ID], $usr_msg, $dto);
+            $this->set_formula_from_id($api_json[json_fields::FORMULA_ID], $msg, $dto);
         }
         if (array_key_exists(json_fields::FORMULA, $api_json)) {
-            $this->set_formula_from_api_json($api_json[json_fields::FORMULA], $usr_msg);
+            $this->set_formula_from_api_json($api_json[json_fields::FORMULA], $msg);
         }
         if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
-            $this->set_phrase_from_id($api_json[json_fields::PHRASE_ID], $usr_msg, $dto);
+            $this->set_phrase_from_id($api_json[json_fields::PHRASE_ID], $msg, $dto);
         }
         if (array_key_exists(json_fields::PHRASE, $api_json)) {
-            $this->set_phrase_from_api_json($api_json[json_fields::PHRASE], $usr_msg);
+            $this->set_phrase_from_api_json($api_json[json_fields::PHRASE], $msg);
         }
         if (array_key_exists(json_fields::PRIORITY, $api_json)) {
             $this->order_nbr = $api_json[json_fields::PRIORITY];
         }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->description = $api_json[json_fields::DESCRIPTION];
+        }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -328,7 +358,7 @@ class formula_link extends sandbox_link
                 }
             }
             if (is_string($frm_json)) {
-                $frm = $dto?->get_formula_by_name($frm_json);
+                $frm = $dto?->get_formula_by_name($frm_json, $msg);
                 if ($frm == null) {
                     $msg->add(msg_id::FORMULA_MISSING_IMPORT, [
                         msg_id::VAR_FORMULA => $frm_json,
@@ -363,7 +393,7 @@ class formula_link extends sandbox_link
                 }
             }
             if (is_string($phr_json)) {
-                $phr = $dto?->get_phrase_by_name($phr_json);
+                $phr = $dto?->get_phrase_by_name($phr_json, $msg);
                 if ($phr == null) {
                     $msg->add(msg_id::PHRASE_MISSING_IMPORT, [
                         msg_id::VAR_PHRASE => $phr_json,
@@ -397,6 +427,9 @@ class formula_link extends sandbox_link
         if (array_key_exists(json_fields::PRIORITY, $in_ex_json)) {
             $this->order_nbr = $in_ex_json[json_fields::PRIORITY];
         }
+        if (array_key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
+        }
 
         return $msg->is_ok();
     }
@@ -409,27 +442,55 @@ class formula_link extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         if ($this->formula_id() != 0) {
             if ($typ_lst->include_phrases()) {
-                $vars[json_fields::FORMULA] = $this->formula()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::FORMULA] = $this->formula()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::FORMULA_ID] = $this->formula_id();
             }
         }
         if ($this->phrase_id() != 0) {
             if ($typ_lst->include_phrases()) {
-                $vars[json_fields::PHRASE] = $this->phrase()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::PHRASE] = $this->phrase()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::PHRASE_ID] = $this->phrase_id();
             }
+        }
+
+        // priority is the api name of the order_nbr db field
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+
+        // a page request needs the names of the linked objects for the link title subtitle
+        if ($typ_lst->incl_related()) {
+            $vars = $this->api_json_array_linked(
+                $vars, json_fields::FORMULA, json_fields::PHRASE, $msg, $usr);
+            // the owner, changes and overwrites of the formula link default page
+            if (!$typ_lst->test_mode()) {
+                $owner_name = $this->owner_api_name($msg);
+                if ($owner_name != null) {
+                    $vars[json_fields::OWNER] = $owner_name;
+                }
+            }
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
         return $vars;
@@ -704,6 +765,7 @@ class formula_link extends sandbox_link
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES_LINK);
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
@@ -732,10 +794,10 @@ class formula_link extends sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link(formula|formula_map $frm, phrase $phr, string $class = self::class): int
+    function load_by_link(formula|formula_map $frm, phrase $phr, user_message $msg, string $class = self::class): int
     {
         global $sys;
-        $id = parent::load_by_link_id($frm->id(), $sys->typ_lst->frm_lnk_typ->default_id(), $phr->id(), $class);
+        $id = parent::load_by_link_id( $frm->id(), $msg, $sys->typ_lst->frm_lnk_typ->default_id(), $phr->id(), $class );
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
             $this->set_formula($frm);
@@ -774,7 +836,7 @@ class formula_link extends sandbox_link
     {
         if ($this->formula_id() > 0) {
             $frm = new formula($this->get_user());
-            $frm->load_by_id($this->formula_id());
+            $frm->load_by_id($this->formula_id(), $msg);
             if ($frm->id() > 0) {
                 $this->set_formula($frm);
             } else {
@@ -786,7 +848,7 @@ class formula_link extends sandbox_link
         if ($msg->is_ok()) {
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->get_user());
-                $phr->load_by_id($this->phrase_id());
+                $phr->load_by_id($this->phrase_id(), $msg);
                 if ($phr->id() != 0) {
                     $this->set_phrase($phr);
                 } else {
@@ -830,18 +892,19 @@ class formula_link extends sandbox_link
     /**
      * create an array with the export json fields of this component
      * which does not include the internal database id
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->formula()?->name() != null) {
-            $vars[json_fields::FORMULA] = $this->formula()->export_json($exp_typ, $do_load);
+            $vars[json_fields::FORMULA] = $this->formula()->export_json($msg, $exp_typ, $do_load);
         }
         if ($this->phrase()?->name() != null) {
-            $vars[json_fields::PHRASE] = $this->phrase()->export_json($exp_typ, $do_load);
+            $vars[json_fields::PHRASE] = $this->phrase()->export_json($msg, $exp_typ, $do_load);
         }
 
         // do not include the default link type in the export
@@ -851,6 +914,9 @@ class formula_link extends sandbox_link
         }
         if ($this->order_nbr != null) {
             $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
         }
 
         return $vars;
@@ -884,6 +950,9 @@ class formula_link extends sandbox_link
         if ($std_obj->order_nbr !== $this->order_nbr) {
             $result->order_nbr = $this->order_nbr;
         }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
         return $result;
     }
 
@@ -901,11 +970,14 @@ class formula_link extends sandbox_link
      */
     function fill(formula_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->order_nbr === null and $obj->order_nbr != null) {
             $this->order_nbr = $obj->order_nbr;
         }
-        return $usr_msg;
+        if ($this->description === null and $obj->description != null) {
+            $this->description = $obj->description;
+        }
+        return $msg;
     }
 
 
@@ -914,20 +986,22 @@ class formula_link extends sandbox_link
      */
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no one has used this formula
      */
-    function not_used(): bool
+    function not_used(user_message $msg): bool
     {
         log_debug('formula_link->not_used (' . $this->id() . ')');
 
         // to review: maybe replace by a database foreign key check
-        return $this->not_changed();
+        return $this->not_changed($msg);
     }
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no other user has modified the formula link
      */
-    function not_changed(): bool
+    function not_changed(user_message $msg): bool
     {
         log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
@@ -936,8 +1010,8 @@ class formula_link extends sandbox_link
         $result = true;
         $qp = $this->not_changed_sql($db_con->sql_creator());
         $db_con->usr_id = $this->get_user()->id;
-        $db_row = $db_con->get1($qp);
-        if ($db_row != null) {
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
@@ -959,16 +1033,17 @@ class formula_link extends sandbox_link
     /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
+     * @param user_message $msg to collect the message e.g. if the field cannot be changed
      * @return change the change log object with the presets for formula links
      */
-    function log_upd_field(): change
+    function log_upd_field(user_message $msg): change
     {
         $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        if ($this->can_change()) {
-            $log->set_class(formula_link::class);
+        $log->set_action(change_actions::UPDATE, $msg);
+        if ($this->can_change($msg)) {
+            $log->set_class(formula_link::class, $msg);
         } else {
-            $log->set_table(change_tables::FORMULA_LINK_USR);
+            $log->set_table(change_tables::FORMULA_LINK_USR, $msg);
         }
 
         return $log;
@@ -999,6 +1074,7 @@ class formula_link extends sandbox_link
             parent::db_all_fields_link($sc_par_lst),
             [
                 self::FLD_ORDER,
+                fields::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1023,7 +1099,7 @@ class formula_link extends sandbox_link
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
@@ -1063,6 +1139,21 @@ class formula_link extends sandbox_link
                 $this->pos(),
                 self::FLD_ORDER_SQL_TYP,
                 $obj->pos()
+            );
+        }
+        if ($obj->description !== $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                fields::FLD_DESCRIPTION,
+                $this->description,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
+                $obj->description
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
@@ -1105,7 +1196,8 @@ class formula_link extends sandbox_link
             $result = $this->formula()->name();
         }
         if ($this->phrase_id() != 0) {
-            $result = ' to ' . $this->phrase()->name();
+            // append, because the name of a link is the name of both linked objects
+            $result .= ' to ' . $this->phrase()->name();
         }
 
         return $result;

@@ -55,8 +55,8 @@ SELECT triple_insert_log_110004000000101_user (
                null,
                null,
                null,
-               21,
+               103,
                1,
                1,
-               97,
+               105,
                3);

@@ -37,80 +37,100 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-include_once paths::DB . 'sql_db.php';
+include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
-include_once html_paths::CONST . 'def.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'language.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
-include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'term_view.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_CONST . 'components.php';
-include_once paths::SHARED_CONST . 'def.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'components.php';
+include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\component_link;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\view\term_view;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\web\const\def as def_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -150,17 +170,32 @@ class system_form extends component
      * - related limit=high:  "Zurich" /n "is a city, canton, Company <edit-icon>"
      * - related symbol:      "CHF" /n "is symbol for <Swiss Franc> <edit-icon>"
      *
+     * - with a class word: 'view "Word" <edit-icon>'
+     *
      * @param db_object $dbo the object whose name is shown as the page title
      * @param int $max to limit the number of related phrases shown before a "..." link
+     * @param msg_id|null $ui_msg_code_id the translated class word shown in front of the name,
+     *                                    null for a page where the class is obvious from the name
      * @return string the html code for the page title with the related-phrases and edit links
      */
     function title_named(
-        db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = [],
+        ?msg_id      $ui_msg_code_id = null
     ): string
     {
-        // for a named object the page title is simply its name shown big
-        return $this->subtitle($dbo, $this->esc($dbo->name()), $max);
+        global $mtr;
+
+        // for a named object the page title is simply its name shown big; a page whose name alone
+        // does not say what is shown (a view and a component can have the name of a word) puts the
+        // translated class word in front of it and quotes the name, like the verb page title
+        $title = $this->esc($dbo->name());
+        if ($ui_msg_code_id != null) {
+            $title = $mtr->txt($ui_msg_code_id) . ' "' . $title . '"';
+        }
+        return $this->subtitle($dbo, $title, $msg, $max, '', $url_array);
     }
 
     /**
@@ -174,7 +209,9 @@ class system_form extends component
      */
     function title_triple(
         triple|db_object $dbo,
-        int              $max = def::LIMIT_RELATED_PER_VERB
+        user_message     $msg,
+        int              $max = def::LIMIT_RELATED_PER_VERB,
+        array            $url_array = []
     ): string
     {
         // the from/verb/to links move to the subtitle; the title shows the plain triple name
@@ -189,7 +226,58 @@ class system_form extends component
                     . $dbo->get_to()->name_link();
             }
         }
-        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, $from_verb_to);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, $from_verb_to, $url_array);
+    }
+
+    /**
+     * the page title for a link object (formula link, term view, component link or view relation):
+     * show the generated link name big as the title and the two linked objects with a link to each
+     * in the subtitle, with the same edit link and share and protection subtitle as the named title
+     * (like the triple title, where the from, verb and to move to the subtitle)
+     *
+     * @param sandbox_link|db_object $dbo the link whose name is the title and whose linked objects are the subtitle
+     * @param int $max to limit the number of related entries shown before a "..." link
+     * @return string the html code for the link page title
+     */
+    function title_link(
+        sandbox_link|db_object $dbo,
+        user_message           $msg,
+        int                    $max = def::LIMIT_RELATED_PER_VERB,
+        array                  $url_array = []
+    ): string
+    {
+        // the links to the two linked objects move to the subtitle like the triple from/verb/to
+        $from_to = '';
+        if ($dbo instanceof sandbox_link) {
+            $from_to = $dbo->name_linked();
+        }
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, $from_to, $url_array);
+    }
+
+    /**
+     * the page title for a phrase: a triple gets the triple title (name plus the from, verb and to
+     * links in the subheader), a word or any other named object gets the named title (name plus the
+     * related phrases in the subheader), so that one view can show a word and a triple with the same
+     * title component instead of one title component per phrase type
+     *
+     * @param db_object $dbo the phrase whose name is shown as the page title
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the phrase page title with its subheader
+     */
+    function title_phrase(
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = []
+    ): string
+    {
+        // the class decides, not the phrase id, because the frontend objects of a view are
+        // typed (a word view carries a word), while the phrase id is only known after a load
+        if ($dbo::class == triple::class) {
+            return $this->title_triple($dbo, $msg, $max, $url_array);
+        } else {
+            return $this->title_named($dbo, $msg, $max, $url_array);
+        }
     }
 
     /**
@@ -202,11 +290,13 @@ class system_form extends component
      * @return string the html code for the formula page title
      */
     function title_formula(
-        db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = []
     ): string
     {
-        return $this->title_named($dbo, $max);
+        return $this->title_named($dbo, $msg, $max, $url_array);
     }
 
     /**
@@ -220,16 +310,18 @@ class system_form extends component
      * @return string the html code for the value page title
      */
     function title_value(
-        db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = []
     ): string
     {
         // the heading shows the related phrases as links with tooltip plus the value
         $heading_content = $this->esc($dbo->name());
         if ($dbo::class == value::class) {
-            $heading_content = $dbo->name_link();
+            $heading_content = $dbo->name_link($msg);
         }
-        return $this->subtitle($dbo, $heading_content, $max);
+        return $this->subtitle($dbo, $heading_content, $msg, $max, '', $url_array);
     }
 
     /**
@@ -244,36 +336,38 @@ class system_form extends component
      * @return string the html code for the page title
      */
     private function subtitle(
-        db_object $dbo,
-        string    $heading_content,
-        int       $max = def::LIMIT_RELATED_PER_VERB,
-        string    $lead_subtitle = ''
+        db_object    $dbo,
+        string       $heading_content,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        string       $lead_subtitle = '',
+        array        $url_array = []
     ): string
     {
         $html = new html_base();
 
-        $lnk = $this->edit_link($dbo);
+        $lnk = $this->edit_link($dbo, $url_array);
 
         // category subtitle is created based on verbs listed in verbs::CATEGORY_VERBS
         $cat = $this->category_subtitle($dbo, $max);
 
         // type subtitle with a link to the type page if the object has a non-default type
-        $typ = $this->type_subtitle($dbo);
-        $cat_typ = $html->concat_category_text($cat, $typ);
+        $typ = $this->type_subtitle($dbo, $msg);
+        $cat_typ = $html->concat_category_text($cat, $typ, $msg);
 
         if ($dbo instanceof sandbox) {
             // share and protection subtitle if not default
             $shr = $this->share_subtitle($dbo);
             $ptc = $this->protection_subtitle($dbo);
-            $shr_ptc = $html->concat_entry_text($shr, $ptc);
+            $shr_ptc = $html->concat_entry_text($shr, $ptc, $msg);
         } else {
             $shr_ptc = '';
         }
 
         // join all subtitle parts with the category separator " / "; a triple prepends its
         // from/verb/to links so the whole subtitle stays on one parenthesized line
-        $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc);
-        $sub_txt = $html->concat_category_text($lead_subtitle, $sub_txt);
+        $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc, $msg);
+        $sub_txt = $html->concat_category_text($lead_subtitle, $sub_txt, $msg);
 
         $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
             . $heading_content . '</' . html_base::H4 . '>';
@@ -329,17 +423,20 @@ class system_form extends component
      * @param word|db_object $dbo the object whose name is shown as the page title
      * @return string the html link to the type page or '' if the object has the default type
      */
-    private function type_subtitle(word|db_object $dbo): string
+    private function type_subtitle(word|db_object $dbo, user_message $msg): string
     {
         global $ui_sys;
-        if (in_array($dbo::class, def_ui::TYPE_CLASSES)) {
-            // the type name links to the type page that lists the other phrases of this type
-            // and the fixed code rules linked to this phrase type
-            // TODO Prio 3 point this to the dedicated phrase type page once it exists
-            return $this->type_link($ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class), $dbo->type_id());
-        } else {
+        // an object class without a type list e.g. a link has no type and therefore no type
+        // subtitle; asking the type list also covers the page classes that extend the object
+        // class (e.g. component_exe extends component), which an exact class match would miss
+    $typ_lst = $ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class);
+        if ($typ_lst == null) {
             return '';
         }
+        // the type name links to the type page that lists the other phrases of this type
+        // and the fixed code rules linked to this phrase type
+        // TODO Prio 3 point this to the dedicated phrase type page once it exists
+        return $this->type_link($typ_lst, $dbo->type_id($msg));
     }
 
     /**
@@ -388,18 +485,18 @@ class system_form extends component
 
     /**
      * create a html link to change an object e.g. a word, value or formula
+     * the page-identifying url params of the calling page are added with the url_var::BACK ('9')
+     * prefix so the edit mask can return to the calling page e.g. on cancel
+     * or if the pod blocks the change of an ip user (see /http/view.php)
      *
      * @param db_object $dbo any database object that can be changed by the user or an admin
+     * @param array $url_array the url params of the calling page used to create the back params
      * @return string for a link icon to change the object
      */
-    private function edit_link(db_object $dbo): string
+    private function edit_link(db_object $dbo, array $url_array = []): string
     {
-        global $mtr;
-
-        $html = new html_base();
-        $url = $html->url_new($dbo::VIEW_EDIT_ID, $dbo->id());
-        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
+        // the icon is built by the object, because the reference name link shows the same icon
+        return $dbo->edit_icon_link($url_array);
     }
 
     /**
@@ -472,12 +569,21 @@ class system_form extends component
      */
     function admin_form_user_password(user|db_object $dbo): string
     {
+        global $mtr;
         $html = new html_base();
         return $html->input(
             url_var::USER_PASSWORD,
             msg_id::FORM_FIELD_USER_PASSWORD,
             $dbo->password(),
             html_base::INPUT_PASSWORD);
+        /*
+         * optional with show password but without auto fill
+        return $html->input_password(
+            url_var::USER_PASSWORD,
+            msg_id::FORM_FIELD_USER_PASSWORD,
+            $mtr->txt(msg_id::FORM_SHOW_PASSWORD),
+            $dbo->password());
+        */
     }
 
     /**
@@ -589,21 +695,477 @@ class system_form extends component
      */
     function show_plural(word|db_object $dbo): string
     {
-        return $this->esc($dbo->plural ?? '');
+        return $this->show_field_labeled($dbo->plural ?? '', msg_id::FORM_FIELD_PLURAL);
+    }
+
+    /**
+     * @param verb|db_object $dbo the verb
+     * @return string the reverse name of the verb as read-only text (empty if no reverse name is set)
+     */
+    function show_reverse(verb|db_object $dbo): string
+    {
+        return $this->show_field_labeled($dbo->reverse ?? '', msg_id::FORM_FIELD_REVERSE);
+    }
+
+    /**
+     * @param verb|db_object $dbo the verb
+     * @return string the plural of the reverse name of the verb as read-only text
+     *                (empty if no plural reverse name is set)
+     */
+    function show_plural_reverse(verb|db_object $dbo): string
+    {
+        return $this->show_field_labeled($dbo->rev_plural ?? '', msg_id::FORM_FIELD_PLURAL_REVERSE);
+    }
+
+    /**
+     * @param verb|db_object $dbo the verb
+     * @return string the short name that the verb has in a formula as read-only text, where both
+     *                sides of the triple are combined (empty if no formula name is set)
+     */
+    function show_name_in_formulas(verb|db_object $dbo): string
+    {
+        return $this->show_field_labeled($dbo->frm_name ?? '', msg_id::FORM_FIELD_NAME_IN_FORMULAS);
+    }
+
+    /**
+     * a read only field value with the translated label of the field in front of it, e.g.
+     * 'Plural: are', because the verb page shows the plural, the reverse and the plural reverse
+     * below each other and without the label the user cannot tell which value is which
+     *
+     * the label of the matching form field is reused, so that the read only page and the edit
+     * form name the same field the same way (see form_field_plural)
+     *
+     * @param string $value the field value of the object
+     * @param msg_id $ui_msg_code_id the message id of the field label
+     * @return string the escaped value behind its label
+     */
+    private function show_field_labeled(string $value, msg_id $ui_msg_code_id): string
+    {
+        return $this->label_with_html($this->esc($value), $ui_msg_code_id);
+    }
+
+    /**
+     * like show_field_labeled, but for a value that is html already, e.g. the link of a formula,
+     * so the caller is responsible that the given html is safe
+     *
+     * an empty value keeps its label, because the view definition decides which fields a page
+     * shows and the label is what tells the user that the object has this field and that it is
+     * not set yet (see docs/llm/frontend.md); a field that only the system writes is the
+     * exception and shows nothing when it is empty, because there the label would promise an
+     * entry that the user cannot make (see show_last_update and show_impact)
+     *
+     * @param string $html_code the html shown behind the label
+     * @param msg_id $ui_msg_code_id the message id of the field label
+     * @return string the html behind its label
+     */
+    private function label_with_html(string $html_code, msg_id $ui_msg_code_id): string
+    {
+        global $mtr;
+
+        return $mtr->txt($ui_msg_code_id) . def::FALLBACK_LABEL_SEPARATOR . $html_code;
+    }
+
+    /**
+     * @param view|component|component_link|term_view|db_object $dbo the object whose display style is shown
+     * @return string the labeled name of the display style (the label alone if no style is set)
+     */
+    function show_style(view|component|component_link|term_view|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a view, a component and the two links have a display
+        // style (the link style overwrites the style of the linked object) and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof view
+            or $dbo instanceof component
+            or $dbo instanceof component_link
+            or $dbo instanceof term_view) {
+            $result = $this->show_field_labeled(
+                $ui_sys?->typ_lst_cache?->msk_sty?->name($dbo->get_style_id()) ?? '',
+                msg_id::FORM_SELECT_VIEW_STYLE);
+        } else {
+            log_err($dbo::class . ' is not expected to have a display style');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose calculation formula is shown
+     * @return string the linked name of the formula behind its label
+     *                (the label alone if no formula is set or known)
+     */
+    function show_formula(component|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a component links a calculation formula and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof component) {
+            $html_code = '';
+            // resolve the name from the request cache, because the page url and the
+            // api message only carry the formula id
+            if ($dbo->formula_id != null) {
+                $frm = $ui_sys?->frm_lst?->get($dbo->formula_id);
+                // name_link() returns safe html, so it is added behind the label unescaped
+                $html_code = $frm?->name_link() ?? '';
+            }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_FORMULA);
+        } else {
+            log_err($dbo::class . ' is not expected to have a calculation formula');
+        }
+        return $result;
+    }
+
+    /**
+     * the component page names the linked component together with the type of that link, because
+     * the type says how the two components belong together and is meaningless without the name
+     *
+     * @param component|db_object $dbo the component whose linked component is shown
+     * @return string the linked name of the linked component with its link type behind the label
+     *                (the label alone if no component is linked or the linked one is not known)
+     */
+    function show_linked_component(component|db_object $dbo): string
+    {
+        global $ui_sys;
+        $result = '';
+        // guarded by class, because only a component links another component and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof component) {
+            // resolve the name from the request cache, because the page url and the
+            // api message only carry the component id
+            $cmp = $ui_sys?->typ_lst_cache?->get_component_by_id($dbo->linked_component_id);
+            // name_link() returns safe html, so it is added behind the label unescaped
+            $html_code = $cmp?->name_link([], '', views::COMPONENT_DEFAULT_ID) ?? '';
+            $type_name = $ui_sys?->typ_lst_cache?->cmp_lnk_typ?->name($dbo->component_link_type_id);
+            // the link type says how the two components belong together, so it is only useful
+            // behind the name of the linked component
+            if ($html_code != '' and $type_name != '') {
+                $html_code .= ' (' . $this->esc($type_name) . ')';
+            }
+            $result = $this->label_with_html($html_code, msg_id::SHOW_FIELD_LINKED_COMPONENT);
+        } else {
+            log_err($dbo::class . ' is not expected to link another component');
+        }
+        return $result;
+    }
+
+    /**
+     * @param triple|db_object $dbo the triple whose weight is shown
+     * @return string the weight behind its label as read only text (empty if no weight is set)
+     */
+    function show_weight(triple|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a triple has a weight and a mis-assigned seed
+        // component must not stop the page with a fatal
+        if ($dbo instanceof triple) {
+            $result = $this->show_field_labeled((string)($dbo->weight ?? ''), msg_id::FORM_FIELD_WEIGHT);
+        } else {
+            log_err($dbo::class . ' is not expected to have a weight');
+        }
+        return $result;
+    }
+
+    /**
+     * @param triple|db_object $dbo the triple whose condition formula is shown
+     * @return string the linked name of the condition formula behind its label
+     *                (empty if no condition is set or the formula is not known)
+     */
+    function show_condition_formula(triple|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a triple has a condition formula and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof triple) {
+            // the api sends the formula itself for a page request, so the name needs no cache;
+            // name_link() returns safe html, so it is added behind the label unescaped
+            $result = $this->label_with_html(
+                $dbo->condition?->name_link() ?? '', msg_id::FORM_FIELD_CONDITION_FORMULA);
+        } else {
+            log_err($dbo::class . ' is not expected to have a condition formula');
+        }
+        return $result;
+    }
+
+    /**
+     * @param value|db_object $dbo the value whose source is shown
+     * @param source_list|null $src_lst the frontend cache used to name a source known by id only
+     * @return string the linked name of the source behind its label
+     *                (empty if the value has no source or the source is not known)
+     */
+    function show_source(value|db_object $dbo, ?source_list $src_lst = null): string
+    {
+        $result = '';
+        // guarded by class, because only a value links a source and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof value) {
+            $src = $dbo->src;
+            // the api sends the source itself for a page request, but a value built from a url
+            // carries only the source id (see value::set_source_id), so the name of such a source
+            // is taken from the frontend cache - without it the page would show no source at all
+            if ($src?->name() == '' and $src?->id() != 0) {
+                $src = $src_lst?->get($src->id());
+            }
+            // name_link() returns safe html, so it is added behind the label unescaped
+            $html_code = '';
+            if ($src?->name() != '') {
+                $html_code = $src->name_link();
+            }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_SOURCE);
+        } else {
+            log_err($dbo::class . ' is not expected to have a source');
+        }
+        return $result;
+    }
+
+    /**
+     * @param source|db_object $dbo the source whose url is shown
+     * @return string the url of the source as a link behind its label (empty if the source has no url)
+     */
+    function show_source_url(source|db_object $dbo): string
+    {
+        // the link is created by ui_base, so the url escaping lives in one place
+        return $this->label_with_html(new ui_base()->source_url_link($dbo), msg_id::FORM_FIELD_URL);
+    }
+
+    /**
+     * @param source|db_object $dbo the source whose doi is shown
+     * @return string the doi of the source as a link to doi.org behind its label
+     *                (empty if the source has no doi)
+     */
+    function show_source_doi(source|db_object $dbo): string
+    {
+        // the link is created by ui_base, so the doi escaping lives in one place
+        return $this->label_with_html(new ui_base()->source_doi_link($dbo), msg_id::FORM_FIELD_DOI);
+    }
+
+    /**
+     * unlike a user-settable field the last update time is written by the system, so an unset
+     * time shows nothing at all instead of the lonely label: the label of an empty field tells
+     * the user that the object has a field that they can still fill, which does not apply here
+     *
+     * @param sandbox_value|ref|formula|db_object $dbo the value, result, reference or formula
+     *                                                 whose last update time is shown
+     * @return string the time of the last update behind its label in the user's time format
+     *                (empty if the object has never been updated e.g. a not yet saved value)
+     */
+    function show_last_update(sandbox_value|ref|formula|db_object $dbo): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        // guarded by class, because only a value, a result, a reference and a formula track the
+        // time of the last update and a mis-assigned seed component must not stop the page
+        if ($dbo instanceof sandbox_value or $dbo instanceof formula) {
+            $upd = $dbo->last_update;
+        } elseif ($dbo instanceof ref) {
+            // the reference keeps the api time text, so it is parsed here for the display format
+            $upd = null;
+            if ($dbo->last_update != null) {
+                $lib = new library();
+                $upd = $lib->get_datetime($dbo->last_update, $dbo->dsp_id(), 'show last update');
+            }
+        } else {
+            $upd = null;
+            log_err($dbo::class . ' is not expected to have a last update time');
+        }
+        if ($upd != null) {
+            $result = $this->show_field_labeled(
+                date_format($upd, $ui_sys->cfg->date_time_format()),
+                msg_id::SYSTEM_DB_FIELD_LAST_UPDATE);
+        }
+        return $result;
+    }
+
+    /**
+     * @param result|db_object $dbo the result whose value and phrase group is shown
+     * @return string the result phrases with links followed by the calculated number,
+     *                e.g. 'increase, percent = 0.79%' (empty if no number is calculated yet)
+     */
+    function show_result_value(result|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a result combines a calculated number with a phrase
+        // group and a mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof result) {
+            $msg = new user_message();
+            if ($dbo->val_formatted($msg) != '') {
+                // display_linked() returns safe html links, so it is combined unescaped
+                $result = $dbo->display_linked() . ' = ' . $this->esc($dbo->val_formatted($msg));
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a calculated number');
+        }
+        return $result;
+    }
+
+    /**
+     * @param result|db_object $dbo the result whose creating formula is shown
+     * @return string the linked name of the formula that calculated the result behind its
+     *                label (empty if the formula is not known)
+     */
+    function show_result_formula(result|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a result is created by exactly one formula and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof result) {
+            // the api sends the formula with the name for a page request; name_link() returns
+            // safe html, so it is added behind the label unescaped
+            $html_code = '';
+            if ($dbo->frm?->name() != '') {
+                $html_code = $dbo->frm->name_link();
+            }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_FORMULA);
+        } else {
+            log_err($dbo::class . ' is not expected to be created by a formula');
+        }
+        return $result;
+    }
+
+    /**
+     * @param formula|db_object $dbo the formula whose all-values-needed flag is shown
+     * @return string the translated flag label, because the label alone says all for a boolean
+     *                (empty if the formula calculates also with missing values, the default)
+     */
+    function show_all_values_needed(formula|db_object $dbo): string
+    {
+        global $mtr;
+
+        $result = '';
+        // guarded by class, because only a formula has the all-values-needed flag and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof formula) {
+            if ($dbo->need_all()) {
+                $result = $mtr->txt(msg_id::FORM_FIELD_FORMULA_ALL_VARS);
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have the all values needed flag');
+        }
+        return $result;
+    }
+
+    /**
+     * like the last update time the impact is written by the system, so a not yet ranked
+     * reference shows nothing at all instead of the lonely label (see show_last_update)
+     *
+     * @param ref|db_object $dbo the reference whose impact is shown
+     * @return string the impact number behind its label as read only text, because the impact
+     *                is calculated by the system and can never be changed by the user
+     *                (empty if the impact has not yet been calculated)
+     */
+    function show_impact(ref|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because a mis-assigned seed component must not stop the page
+        if ($dbo instanceof ref) {
+            // strict, because zero is a calculated impact and not a missing one
+            if ($dbo->impact !== null) {
+                $result = $this->show_field_labeled(
+                    (string)$dbo->impact, msg_id::SYSTEM_DB_FIELD_IMPACT);
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to show the impact');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose row phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the labeled link of the row phrase (empty if not set or not known)
+     */
+    function show_row_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->row_phrase, $phr_lst, msg_id::FORM_SELECT_PHRASE_ROW);
+        } else {
+            log_err($dbo::class . ' is not expected to have a row phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose column phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the labeled link of the column phrase (empty if not set or not known)
+     */
+    function show_col_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->col_phrase, $phr_lst, msg_id::FORM_SELECT_PHRASE_COL);
+        } else {
+            log_err($dbo::class . ' is not expected to have a column phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * @param component|db_object $dbo the component whose sub column phrase is shown
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @return string the labeled link of the sub column phrase (empty if not set or not known)
+     */
+    function show_col_sub_phrase(component|db_object $dbo, phrase_list $phr_lst): string
+    {
+        $result = '';
+        if ($dbo instanceof component) {
+            $result = $this->component_phrase($dbo->col_sub_phrase, $phr_lst, msg_id::FORM_SELECT_PHRASE_COL_SUB);
+        } else {
+            log_err($dbo::class . ' is not expected to have a sub column phrase');
+        }
+        return $result;
+    }
+
+    /**
+     * the labeled link of one layout phrase (row, column or sub column) of a component; the
+     * shared part of show_row_phrase, show_col_phrase and show_col_sub_phrase
+     * @param int|null $phr_id the id of the layout phrase or null if the field is not set
+     * @param phrase_list $phr_lst the request cache with the preloaded phrases
+     * @param msg_id $ui_msg_code_id the message id of the field label
+     * @return string the labeled phrase link (empty if the phrase is not set or not known)
+     */
+    private function component_phrase(?int $phr_id, phrase_list $phr_lst, msg_id $ui_msg_code_id): string
+    {
+        $html_code = '';
+        if ($phr_id != null) {
+            // resolve the name from the request cache, because the page url and the api
+            // message only carry the phrase id
+            $phr = $phr_lst->get($phr_id);
+            $html_code = $phr?->name_link() ?? '';
+        }
+        return $this->label_with_html($html_code, $ui_msg_code_id);
+    }
+
+    /**
+     * @param sandbox|db_object $dbo the object whose owner is shown
+     * @return string the name of the user who owns the object (empty if the owner is not known)
+     */
+    function show_owner(sandbox|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a sandbox object has an owner and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof sandbox) {
+            $result = $this->esc($dbo->owner_name());
+        } else {
+            log_err($dbo::class . ' is not expected to have an owner');
+        }
+        return $result;
     }
 
     /**
      * @param word|db_object $dbo the word
      * @return string the user-readable name of the word's phrase type (empty if no type is set)
      */
-    function show_phrase_type(word|db_object $dbo): string
+    function show_phrase_type(word|db_object $dbo, user_message $msg): string
     {
-        global $ui_sys;
-
         $result = '';
-        $type_id = $dbo->type_id();
-        if ($type_id !== null) {
-            $result = $this->esc($ui_sys->typ_lst_cache->phr_typ->name($type_id));
+        $type_id = $dbo->type_id($msg);
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($type_id !== null and $phr_typ != null) {
+            $result = $this->esc($phr_typ->name($type_id));
         }
         return $result;
     }
@@ -614,40 +1176,75 @@ class system_form extends component
      */
     function show_ref_type(ref|db_object $dbo): string
     {
-        return $this->esc($dbo->type_name());
+        return $this->show_field_labeled($dbo->type_name(), msg_id::FORM_SELECT_REF_TYPE);
     }
 
     /**
      * @param ref|db_object $dbo the object
-     * @return string the html code to show the object reference type to the user
+     * @return string the external key of the reference behind its label (empty if not yet set)
      */
     function show_ref_key(ref|db_object $dbo): string
     {
         // a new reference of an add form has no external key yet
-        return $this->esc($dbo->external_key() ?? '');
+        return $this->show_field_labeled($dbo->external_key() ?? '', msg_id::FORM_FIELD_EXTERNAL_KEY);
     }
 
     /**
      * @param ref|db_object $dbo the object
-     * @return string the html code to show the object reference type to the user
+     * @return string the linked name of the source of the reference behind its label
+     *                (empty if no source is set or only the source id is known)
      */
     function show_ref_source(ref|db_object $dbo): string
     {
-        $src_txt = $dbo->source_name();
-        if ($src_txt == null) {
-            $src_txt = '';
+        // the api sends the source with the name for a page request; name_link() returns
+        // safe html, so it is added behind the label unescaped
+        $html_code = '';
+        if ($dbo->source()?->name() != '') {
+            $html_code = $dbo->source()->name_link();
         }
-        return $this->esc($src_txt);
+        return $this->label_with_html($html_code, msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
      * @param ref|db_object $dbo the object
-     * @return string the html code to show the object reference type to the user
+     * @return string the url of the reference as a link to the external page behind its label
+     *                (empty if no url is set e.g. for a new reference of an add form)
      */
     function show_ref_url(ref|db_object $dbo): string
     {
-        // a new reference of an add form has no url yet
-        return $this->esc($dbo->url() ?? '');
+        $html_code = '';
+        $url = $dbo->url();
+        if ($url != null and $url != '') {
+            $html = new html_base();
+            // the url is user-settable, but html_base::ref escapes the shown name
+            // and drops the link if the scheme is not one of the allowed ones
+            $html_code = $html->ref($url, $url);
+        }
+        return $this->label_with_html($html_code, msg_id::FORM_FIELD_URL);
+    }
+
+    /**
+     * @param ref|db_object $dbo the reference whose linked phrase is shown
+     * @return string the linked name of the word or triple this reference belongs to behind
+     *                its label (empty if the phrase is not set or only its id is known)
+     */
+    function show_ref_phrase(ref|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class, because only a reference links a single phrase and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof ref) {
+            // the api sends the phrase with the name for a page request; name_link() returns
+            // safe html, so it is added behind the label unescaped
+            $html_code = '';
+            if ($dbo->phrase()->name() != '') {
+                $html_code = $dbo->phrase()->name_link();
+            }
+            $result = $this->label_with_html($html_code, msg_id::FORM_SELECT_PHRASE);
+        } else {
+            log_err($dbo::class . ' is not expected to link a single phrase');
+        }
+        return $result;
     }
 
     /**
@@ -679,21 +1276,79 @@ class system_form extends component
     }
 
     /**
-     * @param view_relation|db_object $dbo the object
-     * @return string|null the html code to show the object name to the user
+     * the link type, the order number and the start position stand below each other on the link
+     * pages, so each carries a label; the label is not taken from a form field, because one show
+     * component serves the formula link, the term view, the component link and the view relation,
+     * which all name their type field differently (see show_field_labeled)
+     *
+     * @param sandbox_link|db_object $dbo the link whose link type is shown
+     * @return string the labeled name of the link type (empty if no type is set)
      */
-    function show_relation_type(view_relation|db_object $dbo): string|null
+    function show_link_type(sandbox_link|db_object $dbo): string
     {
-        return $this->esc($dbo->relation_type()?->name());
+        $result = '';
+        // guarded by class so that a mis-assigned seed component cannot fatal
+        if ($dbo instanceof sandbox_link) {
+            $result = $this->show_field_labeled(
+                $dbo->link_type()?->name() ?? '', msg_id::SHOW_FIELD_LINK_TYPE);
+        } else {
+            log_err($dbo::class . ' is not expected to have a link type');
+        }
+        return $result;
     }
 
     /**
-     * @param view_relation|db_object $dbo the object
-     * @return string|null the html code to show the object name to the user
+     * @param view_relation|db_object $dbo the view relation whose start position is shown
+     * @return string the labeled start position (empty if no start position is set)
      */
-    function show_start_pos(view_relation|db_object $dbo): string|null
+    function show_start_pos(view_relation|db_object $dbo): string
     {
-        return $dbo->start_pos;
+        return $this->show_field_labeled($this->start_pos($dbo), msg_id::SHOW_FIELD_START_POS);
+    }
+
+    /**
+     * the plain start position, used as the current value of the view relation form field
+     * @param view_relation|db_object $dbo the view relation whose start position is read
+     * @return string the start position of the relation (empty if no start position is set)
+     */
+    private function start_pos(view_relation|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class so that a mis-assigned seed component cannot fatal
+        if ($dbo instanceof view_relation) {
+            $result = (string)($dbo->start_pos ?? '');
+        } else {
+            log_err($dbo::class . ' is not expected to have a start position');
+        }
+        return $result;
+    }
+
+    /**
+     * @param formula_link|component_link|term_view|db_object $dbo the link whose order number is shown
+     * @return string the labeled order number (empty if no order number is set)
+     */
+    function show_order_nbr(formula_link|component_link|term_view|db_object $dbo): string
+    {
+        return $this->show_field_labeled($this->order_nbr($dbo), msg_id::SHOW_FIELD_ORDER_NBR);
+    }
+
+    /**
+     * the plain order number, used as the current value of the link form field
+     * @param formula_link|component_link|term_view|db_object $dbo the link whose order number is read
+     * @return string the order number of the link (empty if no order number is set)
+     */
+    private function order_nbr(formula_link|component_link|term_view|db_object $dbo): string
+    {
+        $result = '';
+        // guarded by class so that a mis-assigned seed component cannot fatal
+        if ($dbo instanceof formula_link
+            or $dbo instanceof component_link
+            or $dbo instanceof term_view) {
+            $result = (string)($dbo->order_nbr ?? '');
+        } else {
+            log_err($dbo::class . ' is not expected to have an order number');
+        }
+        return $result;
     }
 
     /**
@@ -746,6 +1401,8 @@ class system_form extends component
      * @param string $style_text the column style of the field
      * @param db_object|type_object|null $dbo the object, used to keep the original db snapshot as the
      *                       '8' pre value on a re-render (e.g. after a save error) instead of the change
+     * @param string $refresh which part of the form a refresh icon beside the label should recalculate
+     *                        e.g. url_var::REFRESH_LATEX, '' for a field without a refresh icon
      * @return string the html code of the editable field plus the hidden pre value
      */
     private function form_field_tracked(
@@ -753,14 +1410,15 @@ class system_form extends component
         msg_id                     $label,
         ?string                    $value,
         string                     $style_text,
-        db_object|type_object|null $dbo = null
+        db_object|type_object|null $dbo = null,
+        string                     $refresh = ''
     ): string
     {
         $html = new html_base();
         $value = $value ?? '';
         // on a re-render keep the original db snapshot from the url, else the unchanged value is the snap
         $pre = ($dbo instanceof db_object) ? ($dbo->pre_value($url_id) ?? $value) : $value;
-        return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text)
+        return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text, $refresh)
             . $html->form_hidden(url_var::PRE . $url_id, $pre);
     }
 
@@ -777,6 +1435,109 @@ class system_form extends component
     {
         return $this->form_field_tracked(
             url_var::DESCRIPTION, msg_id::FORM_FIELD_DESCRIPTION, $dbo->get_description(), view_styles::COL_SM_12, $dbo);
+    }
+
+    /**
+     * edit field for the code id that links a database row to program code, e.g. of a source;
+     * the code id is only shown to an admin or a developer (see user::can_see_code_id), and
+     * only a user whose profile may also change it gets the input field, an admin sees the
+     * code id as read only text
+     *
+     * @param sandbox_code_id|db_object $dbo the object with the code id used until now
+     * @return string the html code of the code id field, '' if the user may not see it
+     */
+    function form_field_code_id(sandbox_code_id|db_object $dbo): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        // guarded by class, because only a code id object has a code id and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof sandbox_code_id) {
+            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+                if ($ui_sys->usr->can_set_code_id()) {
+                    $result = $this->form_field_tracked(
+                        url_var::CODE_ID,
+                        msg_id::SYSTEM_DB_FIELD_CODE_ID,
+                        $dbo->code_id,
+                        view_styles::COL_SM_4,
+                        $dbo);
+                } else {
+                    // an admin may see but not change the code id
+                    $result = $this->show_field_labeled($dbo->code_id ?? '', msg_id::SYSTEM_DB_FIELD_CODE_ID);
+                }
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have a code id');
+        }
+        return $result;
+    }
+
+    /**
+     * edit fields for the user interface message links of a component: the ui message code id
+     * with its vars, its exception message and the exception value; like the code id the fields
+     * are only shown to an admin or a developer (see user::can_see_code_id), and only a user
+     * whose profile may also change them gets the input fields, an admin sees them as read
+     * only text
+     *
+     * @param component|db_object $dbo the component with the ui message links used until now
+     * @return string the html code of the ui message fields, '' if the user may not see them
+     */
+    function form_field_ui_msg(component|db_object $dbo): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        // guarded by class, because only a component has ui message links and a mis-assigned
+        // seed component must not stop the page with a fatal
+        if ($dbo instanceof component) {
+            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+                $val_exp = $dbo->ui_msg_value_exception;
+                if ($ui_sys->usr->can_set_code_id()) {
+                    $result = $this->form_field_tracked(
+                            url_var::UI_MSG_CODE_ID,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID,
+                            $dbo->ui_msg_code_id?->value,
+                            view_styles::COL_SM_4,
+                            $dbo)
+                        . $this->form_field_tracked(
+                            url_var::UI_MSG_CODE_ID_VARS,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_VARS,
+                            $dbo->ui_msg_code_id_vars?->value,
+                            view_styles::COL_SM_4,
+                            $dbo)
+                        . $this->form_field_tracked(
+                            url_var::UI_MSG_CODE_ID_EXCEPTION,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_EXCEPTION,
+                            $dbo->ui_msg_code_id_exception?->value,
+                            view_styles::COL_SM_4,
+                            $dbo)
+                        . $this->form_field_tracked(
+                            url_var::UI_MSG_VALUE_EXCEPTION,
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_VALUE_EXCEPTION,
+                            $val_exp === null ? null : strval($val_exp),
+                            view_styles::COL_SM_4,
+                            $dbo);
+                } else {
+                    // an admin may see but not change the ui message links
+                    $result = $this->show_field_labeled(
+                            $dbo->ui_msg_code_id?->value ?? '',
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID)
+                        . $this->show_field_labeled(
+                            $dbo->ui_msg_code_id_vars?->value ?? '',
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_VARS)
+                        . $this->show_field_labeled(
+                            $dbo->ui_msg_code_id_exception?->value ?? '',
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_CODE_ID_EXCEPTION)
+                        . $this->show_field_labeled(
+                            $val_exp === null ? '' : strval($val_exp),
+                            msg_id::SYSTEM_DB_FIELD_UI_MSG_VALUE_EXCEPTION);
+                }
+            }
+        } else {
+            log_err($dbo::class . ' is not expected to have ui message links');
+        }
+        return $result;
     }
 
     /**
@@ -899,10 +1660,10 @@ class system_form extends component
      * @param db_object $dbo the object
      * @return string the html code to request a numeric value from the user
      */
-    function form_num_value(db_object $dbo, string $style_text): string
+    function form_num_value(db_object $dbo, string $style_text, user_message $msg): string
     {
         $html = new html_base();
-        $val_txt = $dbo->value();
+        $val_txt = $dbo->value($msg);
         if ($val_txt == null) {
             $val_txt = '';
         }
@@ -932,6 +1693,29 @@ class system_form extends component
             url_var::URL,
             msg_id::FORM_FIELD_URL,
             $url,
+            html_base::INPUT_TEXT,
+            '',
+            $style_text
+        );
+    }
+
+    /**
+     * @return string the html code to request a doi from the user
+     */
+    function form_field_doi(db_object $dbo, string $style_text = ''): string
+    {
+        $html = new html_base();
+        $doi = $dbo->doi();
+        if ($doi == null) {
+            $doi = '';
+        }
+        if ($style_text == '') {
+            $style_text = view_styles::COL_SM_12;
+        }
+        return $html->form_field(
+            url_var::DOI,
+            msg_id::FORM_FIELD_DOI,
+            $doi,
             html_base::INPUT_TEXT,
             '',
             $style_text
@@ -1003,55 +1787,65 @@ class system_form extends component
     }
 
     /**
+     * shows the current order number, so that saving the form does not drop it
+     * @param formula_link|db_object $dbo the formula link that is added or changed
      * @return string the html code to request the formula link priority
      */
-    function form_field_formula_link_priority(db_object $dbo): string
+    function form_field_formula_link_priority(formula_link|db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
             url_var::FORMULA_LINK_PRIO,
-            msg_id::FORM_FIELD_GROUP,
-            'priority missing'
+            msg_id::FORM_FIELD_FORMULA_LINK_PRIO,
+            $this->order_nbr($dbo),
+            html_base::INPUT_INT
         );
     }
 
     /**
+     * shows the current order number, so that saving the form does not drop it
+     * @param term_view|db_object $dbo the view link that is added or changed
      * @return string the html code to request the view link priority
      */
-    function form_field_view_link_priority(db_object $dbo): string
+    function form_field_view_link_priority(term_view|db_object $dbo): string
     {
         // TODO Prio 2 add priority to view relation
         $html = new html_base();
         return $html->form_field(
             url_var::VIEW_TERM_LINK_PRIO,
             msg_id::FORM_FIELD_VIEW_TERM_LINK_PRIO,
-            'prio missing'
+            $this->order_nbr($dbo),
+            html_base::INPUT_INT
         );
     }
 
     /**
+     * shows the current order number, so that saving the form does not drop it
+     * @param component_link|db_object $dbo the component link that is added or changed
      * @return string the html code to request the component position
      */
-    function form_field_component_link_order_number(db_object $dbo): string
-    {
-        $html = new html_base();
-        return $html->form_field(
-            url_var::COMPONENT_LINK,
-            msg_id::FORM_FIELD_COMPONENT_LINK,
-            'order number missing'
-        );
-    }
-
-    /**
-     * @return string the html code to request the view modification start position
-     */
-    function form_view_relation_pos(db_object $dbo): string
+    function form_field_component_link_order_number(component_link|db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
             url_var::POSITION,
-            msg_id::FORM_FIELD_COMPONENT_LINK,
-            'position missing missing',
+            msg_id::FORM_SELECT_COMPONENT_LINK_ORDER_NUMBER,
+            $this->order_nbr($dbo),
+            html_base::INPUT_INT
+        );
+    }
+
+    /**
+     * @param view_relation|db_object $dbo the view relation that is added or changed
+     * @return string the html code to request the view modification start position
+     */
+    function form_view_relation_pos(view_relation|db_object $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::POSITION,
+            msg_id::FORM_FIELD_VIEW_RELATION_START_POS,
+            $this->start_pos($dbo),
             html_base::INPUT_INT,
             '',
             view_styles::COL_SM_1
@@ -1512,9 +2306,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**
@@ -1524,9 +2318,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_parent_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_parent_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst,
+        return $dbo->view_selector($form_name, $msk_lst, $msg,
             url_var::VIEW_PARENT, msg_id::FORM_SELECT_PARENT_VIEW);
     }
 
@@ -1537,9 +2331,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_child_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_child_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst,
+        return $dbo->view_selector($form_name, $msk_lst, $msg,
             url_var::VIEW_CHILD, msg_id::FORM_SELECT_CHILD_VIEW);
     }
 
@@ -1555,9 +2349,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_view_default(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_view_default(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**
@@ -1567,9 +2361,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_views(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_views(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**
@@ -1619,9 +2413,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function form_phrase_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_phrase_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->phrase_type_selector($form_name, $typ_lst);
+        return $dbo->phrase_type_selector($form_name, $msg, $typ_lst);
     }
 
     /**
@@ -1631,9 +2425,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    function form_source_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_source_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->source_type_selector($form_name, $typ_lst);
+        return $dbo->source_type_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1666,9 +2460,9 @@ class system_form extends component
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the formula type
      */
-    function form_formula_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_formula_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->formula_type_selector($form_name, $typ_lst);
+        return $dbo->formula_type_selector($form_name, $msg, $typ_lst);
     }
 
     /**
@@ -1678,9 +2472,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    function form_view_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->view_type_selector($form_name, $typ_lst);
+        return $dbo->view_type_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1692,9 +2486,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    function form_view_style(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_style(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->style_selector($form_name, $typ_lst);
+        return $dbo->style_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1704,9 +2498,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    function form_component_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->component_type_selector($form_name, $typ_lst);
+        return $dbo->component_type_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1716,9 +2510,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component style
      */
-    function form_component_style(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_style(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->component_style_selector($form_name, $typ_lst);
+        return $dbo->component_style_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1813,9 +2607,9 @@ class system_form extends component
      * @param view_list|null $msk_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the protection type
      */
-    function form_table_linked_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_table_linked_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**
@@ -1831,12 +2625,36 @@ class system_form extends component
         // the quotes exactly once - passing a pre-escaped value would double-encode the quotes.
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show the
         // formula text before the change (see url_var::PRE)
+        // 2/3 of the width, because the expression with the term links is shown in the last third
+        // the refresh icon takes the changes of the latex field over into the expression
         return $this->form_field_tracked(
             url_var::USER_EXPRESSION,
             msg_id::FORM_FIELD_FORMULA_EXPRESSION,
             $dbo->get_usr_text(),
-            view_styles::COL_SM_12,
-            $dbo);
+            view_styles::COL_SM_8,
+            $dbo,
+            url_var::REFRESH_EXPRESSION);
+    }
+
+    /**
+     * create the html code for the form element to enter the formula in the latex format
+     * @param db_object $dbo the frontend formula object with the latex text used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code of the latex input field
+     */
+    function form_formula_latex(db_object $dbo, string $form_name): string
+    {
+        // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show
+        // the latex text before the change (see url_var::PRE)
+        // 2/3 of the width, because the formatted latex with the term links is shown in the last third
+        // the refresh icon creates the latex again based on the expression
+        return $this->form_field_tracked(
+            url_var::LATEX,
+            msg_id::FORM_FIELD_FORMULA_LATEX,
+            $dbo->get_latex(),
+            view_styles::COL_SM_8,
+            $dbo,
+            url_var::REFRESH_LATEX);
     }
 
     /**
@@ -1962,7 +2780,7 @@ class system_form extends component
     }
 
     /**
-     * @return string combine the next elements to one row
+     * @return string combine the next components to one row
      */
     function row_start(): string
     {
@@ -1971,7 +2789,7 @@ class system_form extends component
     }
 
     /**
-     * @return string combine the next elements to one row and align to the right
+     * @return string combine the next components to one row and align to the right
      */
     function row_right(): string
     {

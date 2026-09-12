@@ -1,5 +1,6 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.2",
   "time": "2020-07-23 18:07:26",
   "user": "timon",
   "selection": [
@@ -72,7 +73,7 @@
       "protection": "admin_protection"
     },
     {
-      "name": "\uD835\uDC52",
+      "name": "𝑒",
       "description": "Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
       "type": "constant",
       "protection": "admin_protection"
@@ -241,44 +242,8 @@
           "name": "Q167",
           "source": "wikidata",
           "type": "wikidata",
-          "url": "https:\/\/www.wikidata.org\/wiki\/Special:EntityData\/Q167.json",
+          "url": "https://www.wikidata.org/wiki/Special:EntityData/Q167.json",
           "description": "pi - ratio of the circumference of a circle to its diameter"
-        }
-      ]
-    },
-    {
-      "name": "Euler's number",
-      "description": "The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
-      "type": "constant",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "E_(mathematical_constant)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q82435",
-          "source": "wikidata",
-          "type": "wikidata",
-          "description": "limit of (1 + 1/n)^n as n approaches infinity; transcendental number approximately equal 2.718281828"
-        }
-      ]
-    },
-    {
-      "name": "Euler's constant",
-      "description": "Euler's constant (sometimes called the Euler–Mascheroni constant) is a mathematical constant, usually denoted by the lowercase Greek letter gamma (γ), defined as the limiting difference between the harmonic series and the natural logarithm, denoted here by log",
-      "type": "constant",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Euler's_constant",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q273023",
-          "source": "wikidata",
-          "type": "wikidata",
-          "description": "limiting difference between the harmonic series and the natural logarithm; equal to ca 0.577"
         }
       ]
     },
@@ -344,7 +309,8 @@
     },
     {
       "name": "second",
-      "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)"
+      "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
+      "plural": "seconds"
     },
     {
       "name": "s",
@@ -371,7 +337,7 @@
     },
     {
       "name": "metre",
-      "description": "The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of \u20601/299792458\u2060 of a second, where the second is defined by a hyperfine transition frequency of caesium.",
+      "description": "The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1170,22 +1136,6 @@
       ]
     },
     {
-      "name": "jerk (physics)",
-      "description": "Jerk (also known as Jolt) is the rate of change of an object's acceleration over time.",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Jerk (physics)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q497332",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "angle",
       "description": "In Euclidean geometry, an angle or plane angle is the figure formed by two rays, called the sides of the angle, sharing a common endpoint, called the vertex of the angle.",
       "type": "measure",
@@ -1717,21 +1667,6 @@
       ]
     },
     {
-      "name": "Caesium-133",
-      "description": "Caesium-133 is the only stable isotope of caesium. The SI base unit of time, the second, is defined by the unperturbed ground-state hyperfine transition frequency of this atom, set at 9192631770 Hz.",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Isotopes_of_caesium#Caesium-133",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q24638",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "definition",
       "description": "A definition is a semantic statement that attaches meaning to a term, such as a word or phrase. Definitions can be classified into intensional definitions, which convey the sense of a term, and extensional definitions, which list the objects a term describes.",
       "protection": "admin_protection",
@@ -1760,16 +1695,12 @@
     },
     {
       "name": "2019",
+      "description": "Calendar year 2019, reference year for the emission baseline.",
       "type": "time"
     },
     {
       "name": "2020",
       "type": "time"
-    },
-    {
-      "name": "per 100 km",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
     },
     {
       "name": "number",
@@ -1794,6 +1725,29 @@
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "Euler",
+      "description": "Leonhard Euler was a Swiss mathematician, physicist, astronomer, geographer, logician and engineer.",
+      "refs": [
+        {
+          "name": "Leonhard Euler",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7197",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "jerk"
+    },
+    {
+      "name": "100"
+    },
+    {
+      "name": "133"
     }
   ],
   "triples": [
@@ -1815,6 +1769,7 @@
           "type": "wikidata"
         }
       ],
+      "weight": 0.5,
       "impact": 9999999999
     },
     {
@@ -1826,7 +1781,68 @@
       "type": "hidden_triple"
     },
     {
-      "name": "\uD835\uDC52 (math)",
+      "name": "Euler's number",
+      "description": "The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
+      "from": "Euler",
+      "verb": "name of",
+      "to": "number",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "E_(mathematical_constant)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82435",
+          "source": "wikidata",
+          "type": "wikidata",
+          "description": "limit of (1 + 1/n)^n as n approaches infinity; transcendental number approximately equal 2.718281828"
+        }
+      ]
+    },
+    {
+      "name": "Euler's constant",
+      "description": "Euler's constant (sometimes called the Euler–Mascheroni constant) is a mathematical constant, usually denoted by the lowercase Greek letter gamma (γ), defined as the limiting difference between the harmonic series and the natural logarithm, denoted here by log",
+      "from": "Euler",
+      "verb": "name of",
+      "to": "constant",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Euler's_constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q273023",
+          "source": "wikidata",
+          "type": "wikidata",
+          "description": "limiting difference between the harmonic series and the natural logarithm; equal to ca 0.577"
+        }
+      ]
+    },
+    {
+      "name": "jerk (physics)",
+      "description": "Jerk (also known as Jolt) is the rate of change of an object's acceleration over time.",
+      "from": "jerk",
+      "verb": "can be part of",
+      "to": "physics",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Jerk (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q497332",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "𝑒 (math)",
       "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
       "from": "Euler's number",
       "verb": "is a",
@@ -1841,9 +1857,9 @@
       "type": "hidden_triple"
     },
     {
-      "name": "\uD835\uDC52 (unit symbol)",
+      "name": "𝑒 (unit symbol)",
       "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
-      "from": "\uD835\uDC52",
+      "from": "𝑒",
       "verb": "is symbol for",
       "to": "Euler's number",
       "type": "hidden_triple"
@@ -1993,7 +2009,6 @@
       "from": "second",
       "verb": "must be one of",
       "to": "time unit",
-      "plural": "seconds",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -2491,8 +2506,7 @@
     {
       "name": "m/s",
       "description": "The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",
-      "from": "m/s",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "metre per second",
       "type": "measure",
       "protection": "admin_protection"
@@ -2541,6 +2555,17 @@
     },
     {
       "name": "flow rate",
+      "description": "the volume of fluid that passes per unit time",
+      "refs": [
+        {
+          "name": "Volumetric flow rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1134348",
+          "type": "wikidata"
+        }
+      ],
       "from": "rate",
       "verb": "of",
       "to": "flow",
@@ -2628,6 +2653,24 @@
       "protection": "admin_protection"
     },
     {
+      "name": "Caesium-133",
+      "description": "Caesium-133 is the only stable isotope of caesium. The SI base unit of time, the second, is defined by the unperturbed ground-state hyperfine transition frequency of this atom, set at 9192631770 Hz.",
+      "from": "Caesium",
+      "verb": "kind of",
+      "to": "133",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Isotopes_of_caesium#Caesium-133",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q24638",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
       "name": "hyperfine transition frequency of Cs",
       "description": "The caesium standard is a primary frequency standard in which the photon absorption by transitions between the two hyperfine ground states of caesium-133 atoms is used to control the output frequency; it is the basis for defining the second in the SI.",
       "from": "hyperfine transition frequency",
@@ -2702,6 +2745,19 @@
       "verb": "is a",
       "to": "year of definition",
       "type": "information"
+    },
+    {
+      "name": "100 km",
+      "from": "100",
+      "verb": "times",
+      "to": "km"
+    },
+    {
+      "name": "per 100 km",
+      "verb": "per",
+      "to": "100 km",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
     }
   ],
   "formulas": [
@@ -2795,7 +2851,7 @@
   "sources": [
     {
       "name": "by definition",
-      "description": "A definition is a statement of the meaning of a term (a word, phrase, or other set of symbols).[1][2] Definitions can be classified into two large categories: intensional definitions (which try to give the sense of a term), and extensional definitions (which try to list the objects that a term describes)."
+      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
     },
     {
       "name": "mathematical constant",
@@ -2838,11 +2894,12 @@
       ],
       "number": "3.14159265358979323846264338327950288419716939937510",
       "share": "public",
+      "protection": "admin_protection",
       "source": "mathematical constant"
     },
     {
       "words": [
-        "\uD835\uDC52"
+        "𝑒 (math)"
       ],
       "number": "2.71828182845904523536028747135266249775724709369995957496696762772407663035354759457138217852516642742746",
       "share": "public",
@@ -2854,6 +2911,7 @@
       ],
       "number": "0.5772156649015328606065120900824024310421",
       "share": "public",
+      "protection": "admin_protection",
       "source": "mathematical constant"
     },
     {

@@ -120,37 +120,43 @@ class sandbox_typed extends sandbox_named
      * @return bool true if this object is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = '',
-        string $name_fld = '',
-        string $type_fld = ''): bool
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = '',
+        string       $name_fld = '',
+        string       $type_fld = ''): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
-        if ($result) {
+        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        // map the fields whenever the row has been mapped (id set), not based on the parent return,
+        // because an error left on $msg by an earlier operation must not lead to a half mapped object
+        if ($this->id() != 0) {
             // TODO easy use set_type_by_id function
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
             }
         }
-        return $result;
+        // TODO Prio 0 if no row has been mapped and this should prevent a further execution this should be included in the $msg var, so that the return value could always be $msg->is_ok()
+        return $msg->is_ok();
     }
 
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
-     * @param user_message $usr_msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
+            // set_type_id falls back to the object user when the message has no user (the frontend
+            // write bridge MapObject::convertToDb maps with a user-less message)
+            $this->set_type_id($api_json[json_fields::TYPE], $msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -171,9 +177,9 @@ class sandbox_typed extends sandbox_named
         parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::TYPE_CODE_ID, $in_ex_json)) {
-            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $msg->usr);
+            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $msg);
         } elseif (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg->usr);
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg);
         }
 
         return $msg->is_ok();
@@ -187,15 +193,16 @@ class sandbox_typed extends sandbox_named
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
 
         return $vars;
     }
@@ -209,14 +216,17 @@ class sandbox_typed extends sandbox_named
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the type has been set, false if the requesting user is not permitted
      */
-    function set_type_id(?int $type_id, user $usr_req = new user()): user_message
+    function set_type_id(?int $type_id, user_message $msg): bool
     {
-        $msg = new user_message();
+        $result = false;
+        // fall back to the object user if the message carries no requesting user (e.g. an internal call)
+        $usr_req = $msg->usr ?? $this->get_user();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
@@ -226,49 +236,6 @@ class sandbox_typed extends sandbox_named
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
-    }
-
-    /**
-     * check if the requesting user is allowed to change the type and if not
-     * surface a warning so that an actual type change is not silently dropped
-     *
-     * during api mapping set_type_id() denies the change for users without the
-     * permission but its warning is discarded; this is meant to be called from
-     * the save change detection (db_fields_changed) once an actual type change
-     * has been detected so that the denial becomes visible to the user instead
-     * of the change just vanishing (see fix #247)
-     *
-     * @param user_message $msg with the requesting user; enriched with the warning if not allowed
-     * @return bool true if the requesting user may change the type
-     */
-    function type_change_allowed(user_message $msg): bool
-    {
-        $result = false;
-        $usr_req = $msg->usr;
-        if ($usr_req !== null) {
-            if ($usr_req->can_set_type_id()) {
-                $result = true;
-            }
-        }
-        if (!$result) {
-            $lib = new library();
-            if ($usr_req !== null) {
-                $msg->add_warning_with_vars(msg_id::NOT_ALLOWED_TO, [
-                    msg_id::VAR_USER_NAME => $usr_req->name(),
-                    msg_id::VAR_USER_PROFILE => $usr_req->profile_name(),
-                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
-                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
-                ]);
-            } else {
-                $msg->add_warning_with_vars(msg_id::NOT_ALLOWED_TO, [
-                    msg_id::VAR_USER_NAME => 'missing user',
-                    msg_id::VAR_USER_PROFILE => '',
-                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
-                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
-                ]);
-            }
-        }
         return $result;
     }
 
@@ -277,17 +244,16 @@ class sandbox_typed extends sandbox_named
      * must be overwritten by the child objects
      *
      * @param string $code_id_or_name the code id or the name of the type that should be added to this object
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with the missing-overwrite warning
+     * @return bool always false because this stub must be overwritten by the child objects
      */
-    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user_message $msg): bool
     {
-        $msg = new user_message();
         $msg->add(msg_id::MISSING_OVERWRITE, [
             msg_id::VAR_NAME => 'set_type in sandbox_typed',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $msg;
+        return false;
     }
 
     /**
@@ -296,30 +262,31 @@ class sandbox_typed extends sandbox_named
      * @param string|null $code_id the code id that should be added to this view
      * @param type_list $typ_lst the parent object specific preloaded list of types
      * @param msg_id $msg_id the id of the message used to report a missing type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the type has been set, false if the code id is unknown or not permitted
      */
     function set_type_by_code_id(
-        ?string   $code_id,
-        type_list $typ_lst,
-        msg_id    $msg_id,
-        user      $usr_req = new user()
-    ): user_message
+        ?string      $code_id,
+        type_list    $typ_lst,
+        msg_id       $msg_id,
+        user_message $msg
+    ): bool
     {
-        $msg = new user_message();
+        $result = true;
         if ($code_id == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_code_id($code_id)) {
-                $this->set_type_id($typ_lst->id($code_id), $usr_req);
+                $result = $this->set_type_id($typ_lst->id($code_id), $msg);
             } else {
-                $msg->add($msg_id, [
+                $msg->add_warning_with_vars($msg_id, [
                     msg_id::VAR_NAME => $code_id
                 ]);
                 $this->type_id = null;
+                $result = false;
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -330,36 +297,37 @@ class sandbox_typed extends sandbox_named
      * @param string|null $name the code id that should be added to this view
      * @param type_list $typ_lst the parent object specific preloaded list of types
      * @param msg_id $msg_id the id of the message used to report a missing type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the type has been set, false if the name is unknown or not permitted
      */
     function set_type_by_name(
-        ?string   $name,
-        type_list $typ_lst,
-        msg_id    $msg_id,
-        user      $usr_req = new user()
-    ): user_message
+        ?string      $name,
+        type_list    $typ_lst,
+        msg_id       $msg_id,
+        user_message $msg
+    ): bool
     {
-        $msg = new user_message();
+        $result = true;
         if ($name == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_name($name)) {
-                $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
+                $result = $this->set_type_id($typ_lst->id_by_name($name), $msg);
             } else {
-                $msg->add($msg_id, [
+                $msg->add_warning_with_vars($msg_id, [
                     msg_id::VAR_NAME => $name
                 ]);
                 $this->type_id = null;
+                $result = false;
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
      * @return int|null the database id of the type
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->type_id;
     }
@@ -386,12 +354,7 @@ class sandbox_typed extends sandbox_named
      */
     function type_name(): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'type_name',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $usr_msg->get_last_message();
+        return log_missing_overwrite('type_name', $this::class);
     }
 
 
@@ -402,11 +365,11 @@ class sandbox_typed extends sandbox_named
     /**
      * @param object $api_obj frontend API objects that should be filled with unique object name
      */
-    function fill_api_obj(object $api_obj): void
+    function fill_api_obj(object $api_obj, user_message $msg): void
     {
-        parent::fill_api_obj($api_obj);
+        parent::fill_api_obj($api_obj, $msg);
 
-        $api_obj->set_type_id($this->type_id());
+        $api_obj->set_type_id($this->type_id($msg));
     }
 
 
@@ -416,13 +379,14 @@ class sandbox_typed extends sandbox_named
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         // TODO use the code id additional to the name where ever possible
         if ($this->type_code_id() <> '') {
@@ -469,7 +433,7 @@ class sandbox_typed extends sandbox_named
     {
         $msg = parent::diff_msg($obj, $ex_def);
         if (!$ex_def) {
-            if ($this->type_id() != $obj->type_id()) {
+            if ($this->type_id($msg) != $obj->type_id($msg)) {
                 $lib = new library();
                 $msg->add(msg_id::DIFF_TYPE, [
                     msg_id::VAR_TYPE => $obj->type_name(),
@@ -486,11 +450,12 @@ class sandbox_typed extends sandbox_named
      * check if the typed object in the database needs to be updated
      *
      * @param sandbox_typed|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has info that should be saved in the database
      */
-    function needs_db_update(sandbox_typed|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(sandbox_typed|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->type_id != null) {
             if ($this->type_id != $db_obj->type_id) {
                 $result = true;
@@ -515,11 +480,12 @@ class sandbox_typed extends sandbox_named
      */
     function fill(sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
-        if ($this->type_id() === null and $obj->type_id() != null) {
-            $this->set_type_id($obj->type_id(), $usr_req);
+        $msg = parent::fill($obj, $usr_req);
+        if ($this->type_id($msg) === null and $obj->type_id($msg) != null) {
+            // a local buffer for the permission check; the fill copies a type already stored
+            $this->set_type_id($obj->type_id($msg), new user_message($usr_req)); // not reported, see above
         }
-        return $usr_msg;
+        return $msg;
     }
 
 }

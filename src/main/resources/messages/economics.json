@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-04 12:00:00",
   "user": "timon",
   "selection": [
@@ -96,7 +97,7 @@
     },
     {
       "name": "price",
-      "description": "quantity of payment or compensation given by one party to another in return for goods or services; the proposed value for such a quantity as proposed by the seller",
+      "description": "amount of money required to buy something",
       "refs": [
         {
           "name": "Price",
@@ -124,7 +125,6 @@
     },
     {
       "name": "elasticity",
-      "description": "responsiveness of one economic variable to a change in another (e.g. supply or demand as a function of changed price, cross-price, income, wealth, advertising, etc.), ranging from inelastic to elastic",
       "refs": [
         {
           "name": "Elasticity (economics)",
@@ -138,7 +138,6 @@
     },
     {
       "name": "utility",
-      "description": "concept in economics & game theory: a relative measure of happiness or satisfaction",
       "refs": [
         {
           "name": "Utility",
@@ -208,7 +207,6 @@
     },
     {
       "name": "profit",
-      "description": "concept in economics",
       "refs": [
         {
           "name": "Profit (economics)",
@@ -278,7 +276,6 @@
     },
     {
       "name": "consumption",
-      "description": "purchase and use of goods and services",
       "refs": [
         {
           "name": "Consumption (economics)",
@@ -306,7 +303,6 @@
     },
     {
       "name": "investment",
-      "description": "commitment of resources to achieve later benefits",
       "refs": [
         {
           "name": "Investment",
@@ -348,7 +344,6 @@
     },
     {
       "name": "unemployment",
-      "description": "state of being without work and actively seeking work",
       "refs": [
         {
           "name": "Unemployment",
@@ -418,7 +413,7 @@
     },
     {
       "name": "tax",
-      "description": "mandatory financial charge or other type of levy imposed on a taxpayer (an individual or legal entity) by a governmental organization to collectively fund government spending, public expenditures, or to regulate and reduce negative externalities",
+      "description": "compulsory financial charge to public authority",
       "refs": [
         {
           "name": "Tax",
@@ -488,7 +483,6 @@
     },
     {
       "name": "debt",
-      "description": "deferred payment, or series of payments, that is owed in the future",
       "refs": [
         {
           "name": "Debt",
@@ -530,7 +524,7 @@
     },
     {
       "name": "population",
-      "description": "the number of people living in a given country or region",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Human population",
@@ -565,7 +559,14 @@
       "description": "a book used as a standard work for the study of a subject"
     },
     {
-      "name": "social"
+      "name": "social",
+      "description": "relating to interaction with other people, as opposed to interaction with machines or non-human sources",
+      "refs": [
+        {
+          "name": "Social",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "behavioral"
@@ -649,7 +650,8 @@
       "name": "variable"
     },
     {
-      "name": "total"
+      "name": "total",
+      "description": "the whole amount or count, e.g. the total number of possible outcomes"
     },
     {
       "name": "average"
@@ -766,7 +768,8 @@
       "name": "purchasing"
     },
     {
-      "name": "power"
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "parity"
@@ -781,7 +784,18 @@
       "name": "current"
     },
     {
-      "name": "account"
+      "name": "account",
+      "description": "central data structure in the practice of accounting",
+      "refs": [
+        {
+          "name": "Account (bookkeeping)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q508295",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "propensity"
@@ -856,7 +870,12 @@
       "name": "even"
     },
     {
-      "name": "point"
+      "name": "point",
+      "description": "a single unit on a scale"
+    },
+    {
+      "name": "inhabitant",
+      "description": "person who lives permanently in a place"
     }
   ],
   "triples": [
@@ -1150,10 +1169,14 @@
     },
     {
       "name": "gross domestic product",
-      "description": "market value of goods and services produced within a country. see Wikipedia: Gross domestic product (Q12638)",
       "from": "domestic product",
       "verb": "kind of",
       "to": "gross"
+    },
+    {
+      "from": "GDP",
+      "verb": "is symbol for",
+      "to": "gross domestic product"
     },
     {
       "name": "national product",
@@ -1184,7 +1207,6 @@
     },
     {
       "name": "government spending",
-      "description": "government consumption, investment, and transfer payments. see Wikipedia: Government spending (Q1929688)",
       "from": "spending",
       "verb": "of",
       "to": "government"
@@ -1292,7 +1314,6 @@
     },
     {
       "name": "interest rate",
-      "description": "percentage of a sum of money charged for its use. see Wikipedia: Interest rate (Q179179)",
       "from": "rate",
       "verb": "of",
       "to": "interest"
@@ -1313,7 +1334,6 @@
     },
     {
       "name": "exchange rate",
-      "description": "rate at which one currency will be exchanged for another. see Wikipedia: Exchange rate (Q66100)",
       "from": "rate",
       "verb": "of",
       "to": "exchange"
@@ -1326,7 +1346,6 @@
     },
     {
       "name": "purchasing power parity",
-      "description": "economic theory that states that the exchange rate between two countries is equal to the ratio of the currencies' respective purchasing power. see Wikipedia: Purchasing power parity (Q82135)",
       "from": "parity",
       "verb": "of",
       "to": "purchasing power"
@@ -1392,7 +1411,6 @@
     },
     {
       "name": "Gini coefficient",
-      "description": "measure of inequality in income or wealth distribution. see Wikipedia: Gini coefficient (Q162455)",
       "from": "coefficient",
       "verb": "of",
       "to": "Gini"
@@ -1464,10 +1482,10 @@
       "to": "asset"
     },
     {
-      "description": "average income of an economy. see Wikipedia: Per capita income (Q45918)",
+      "name": "GDP per capita",
       "from": "GDP",
       "verb": "per",
-      "to": "capita"
+      "to": "inhabitant"
     },
     {
       "description": "methods of estimating the doubling time of an investment. see Wikipedia: Rule of 72 (Q264016)",
@@ -2292,8 +2310,7 @@
   ],
   "sources": [
     {
-      "name": "by definition",
-      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+      "name": "by definition"
     },
     {
       "name": "economics textbook example",

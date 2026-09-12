@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -62,12 +63,14 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
@@ -76,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -96,13 +100,14 @@ class base_ui_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         $lib = new library();
         $html = new html_base();
         $t_wrd = new test_words($t);
         $t_phr = new test_phrases($t);
         $t_src = new test_sources($t);
         $t_frm = new test_formulas($t);
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'unit ui html base ';
@@ -150,6 +155,16 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
+        // the logout link and the my tab), so it is never served from the shared page cache;
+        // the login state comes from the session, because the cache fast path runs before
+        // the type cache needed for a profile based check is loaded
+        $test_name = 'a logged in user never gets the shared cached page';
+        $_SESSION[url_var::SESSION_LOGGED] = true;
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $t->assert_true($test_name, $ui->cached_page_or_null($url_array, new user_message_ui()) === null);
+        unset($_SESSION[url_var::SESSION_LOGGED]);
+
         // the debug level only controls out-of-band debug output, not the cached html, so it is
         // ignored and ?m=2&debug=6 takes the same cached path as ?m=2 (same cache key)
         $test_name = 'the debug level is ignored for the cache key';
@@ -172,12 +187,42 @@ class base_ui_tests
         // so view.php?mask_id=word&id=2&nocache=1 bypasses the cache just like the short url
         $test_name = 'nocache is mapped to the short nc';
         $url_map = new url_mapper();
-        $url_msg = new user_message();
+        $url_msg = new user_message_ui();
         $url_array = [url_var::MASK_HUMAN => views::WORD, url_var::ID => 2,
             url_var::NO_CACHE_HUMAN => url_var::NO_CACHE_ON];
         $url_std = $url_map->url_to_standard($url_array, $url_msg);
         $t->assert($test_name, $url_std[url_var::NO_CACHE] ?? '', url_var::NO_CACHE_ON);
         $t->assert($test_name . ' and bypasses the cache', $ui->url_cache_key($url_std), '');
+
+        // the login and signup form pages are served from the page cache even though they are process
+        // masks, because the plain form is static (the per-session token is restored per request)
+        $test_name = 'the login form is cached';
+        $url_array = [url_var::MASK => views::LOGIN_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::LOGIN_ID . '&id=0');
+
+        $test_name = 'the signup form is cached';
+        $url_array = [url_var::MASK => views::SIGNUP_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SIGNUP_ID . '&id=0');
+
+        // the login submit is a post action, so only the form GET is cached, never the submission
+        $test_name = 'the login submit is not cached';
+        $url_array = [url_var::MASK => views::LOGIN_ID, url_var::POST_SUBMIT => 'Login'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // another process step mask that is not a login or signup form stays excluded from the cache
+        $test_name = 'a non-login process step view is still not cached';
+        $url_array = [url_var::MASK => views::EXPORT_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // the start page is cached; the bare landing page (no view) and an explicit start request
+        // share the same start view cache key, because a request without a view shows the start view
+        $test_name = 'the explicit start view is cached';
+        $url_array = [url_var::MASK => views::START_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0');
+
+        $test_name = 'the bare landing page is cached under the start view key';
+        $url_array = [];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0');
 
         $t->subheader($ts . 'tab box');
 
@@ -192,9 +237,47 @@ class base_ui_tests
         $test_name = 'tab_box contains no javascript';
         $t->assert_text_not_contains($test_name, $two_tabs, '<script');
 
+        $t->subheader($ts . 'navbar');
+
+        // the person icon in the top right corner is shown in dark blue (styles::USER_LOGGED)
+        // if a non-ip user is logged in, i.e. if the navbar gets a user name
+        $test_name = 'the person icon shows the logged in state in dark blue';
+        $navbar_logged = $html->navbar(0, [], 'test user');
+        $t->assert_text_contains($test_name, $navbar_logged, icons::USER_CIRCLE . ' ' . styles::USER_LOGGED);
+
+        $test_name = 'without a logged in user the person icon keeps the default color';
+        $navbar_anon = $html->navbar(0, []);
+        $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
+
+        // the login link forwards a '9'-prefixed back target of the current page (the logout
+        // page carries the original page as back target, see frontend::action_logout), so after
+        // the login the original page is shown again and not the logout page
+        $test_name = 'the login link forwards the back target of the logout page';
+        $logout_page_url = [
+            url_var::MASK => (string)views::LOGOUT_ID,
+            url_var::BACK . url_var::MASK => (string)views::WORD_ID,
+            url_var::BACK . url_var::ID => '347',
+        ];
+        $navbar_logout_page = $html->navbar(views::LOGOUT_ID, $logout_page_url);
+        $t->assert_text_contains($test_name, $navbar_logout_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
+        $t->assert_text_contains($test_name, $navbar_logout_page, url_var::BACK . url_var::ID . '=347');
+
+        $test_name = '... and never the logout page as its own back target';
+        $t->assert_text_not_contains($test_name, $navbar_logout_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::LOGOUT_ID);
+
+        $test_name = 'on a normal page the login link uses the page as the back target';
+        $navbar_normal_page = $html->navbar(views::WORD_ID, [
+            url_var::MASK => (string)views::WORD_ID,
+            url_var::ID => '347',
+        ]);
+        $t->assert_text_contains($test_name, $navbar_normal_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
+
         $t->subheader($ts . 'login');
 
-        $created_html = $html->about_page();
+        $created_html = $html->about_page($msg_ui);
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
         $t->assert('about', $lib->trim_html($created_html), $lib->trim_html($expected_html));
 
@@ -217,7 +300,7 @@ class base_ui_tests
         $sel->selected = 3;
         $body = $html->form_start($sel->form);
         $body .= $sel->display_old();
-        $body .= $html->form_end_with_submit($sel->name, '');
+        $body .= $html->form_end_with_submit($sel->name, []);
         $t->html_test($body, '', 'selector', $t);
         */
 
@@ -225,8 +308,8 @@ class base_ui_tests
         //$t->assert_sql_name_unique($log_ui->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $url = $html->url_new(views::WORD_ADD_ID);
-        $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
+        $url = $html->url_back(views::WORD_ADD_ID);
+        $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $msg_ui);
 
         $t->subheader($ts . 'form field name and id');
 
@@ -291,7 +374,7 @@ class base_ui_tests
         $val_city->set_grp($grp_city);
         $val_city->set_number(values::CITY_ZH_INHABITANTS_2019);
         $val_city_ui = new value_ui($val_city->api_json([api_types::INCL_PHRASES]));
-        $val_city_html = $val_city_ui->name_link();
+        $val_city_html = $val_city_ui->name_link($msg_ui);
         $t->assert_text_contains('', $val_city_html, word_names::CITY);
 
         // create the value for the inhabitants of the city of zurich
@@ -299,7 +382,7 @@ class base_ui_tests
         $val_canton->set_grp($grp_canton);
         $val_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
         $val_canton_ui = new value_ui($val_canton->api_json([api_types::INCL_PHRASES]));
-        $val_canton_html = $val_canton_ui->name_link();
+        $val_canton_html = $val_canton_ui->name_link($msg_ui);
         $t->assert_text_contains('', $val_canton_html, word_names::CANTON);
 
         // create the value for the inhabitants of Switzerland
@@ -307,7 +390,7 @@ class base_ui_tests
         $val_ch->set_grp($grp_ch);
         $val_ch->set_number(values::CH_INHABITANTS_2019_IN_MIO);
         $val_ch_ui = new value_ui($val_ch->api_json([api_types::INCL_PHRASES]));
-        $val_ch_html = $val_ch_ui->name_link();
+        $val_ch_html = $val_ch_ui->name_link($msg_ui);
         $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO, 2));
 
         // create the formula result for the inhabitants of the city of zurich
@@ -316,7 +399,7 @@ class base_ui_tests
         $ch_val_scaled = values::CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(values::CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
         $res_city_ui = new value_ui($res_city->api_json([api_types::INCL_PHRASES]));
-        $res_city_html = $res_city_ui->name_link();
+        $res_city_html = $res_city_ui->name_link($msg_ui);
         $t->assert_text_contains('', $res_city_html, word_names::CITY);
 
         // create the formula result for the inhabitants of the canton of zurich
@@ -324,7 +407,7 @@ class base_ui_tests
         $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
         $res_canton_ui = new value_ui($res_canton->api_json([api_types::INCL_PHRASES]));
-        $res_canton_html = $res_canton_ui->value_edit('');
+        $res_canton_html = $res_canton_ui->value_edit($msg_ui);
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
@@ -332,20 +415,20 @@ class base_ui_tests
         $res_lst = new result_list_ui();
         $res_lst->add_result(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
         $res_lst->add_result(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
-        $t->html_page_test($res_lst->table(), '', 'table_result', $t);
+        $t->html_page_test($res_lst->table(), '', 'table_result', $msg_ui);
 
         // create the same table as above, but within a context
         $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json([api_types::INCL_PHRASES]));
-        $t->html_page_test($res_lst->table($phr_lst_context_ui), '', 'table_result_context', $t);
+        $t->html_page_test($res_lst->table($phr_lst_context_ui), '', 'table_result_context', $msg_ui);
 
 
         $t->subheader($ts . 'unit html view component tests');
 
         $cmp = new component($t->usr1);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
-        $cmp->set_type(comp_type_shared::TEXT, $t->usr1);
+        $cmp->set_type(comp_type_shared::TEXT, new user_message($t->usr1));
         $cmp_ui = new component_ui($cmp->api_json());
-        $t->html_page_test($cmp_ui->html(), '', 'component_text', $t);
+        $t->html_page_test($cmp_ui->html($msg_ui), '', 'component_text', $msg_ui);
 
 
         $t->subheader($ts . 'list');
@@ -359,8 +442,8 @@ class base_ui_tests
         $lst->add_verb(new verb(2, verbs::PART_NAME));
         // TODO use set_from_json to set the display object
         $vrb_lst_ui = new verb_list_ui();
-        $vrb_lst_ui->set_from_json_array($lst->api_json_array());
-        $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $t);
+        $vrb_lst_ui->set_from_json_array($lst->api_json_array([], $msg), $msg_ui);
+        $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $msg_ui);
 
         $test_name = 'sort a named list by the name';
         $lst = $t_phr->phrase_list_zh_mio();
@@ -378,7 +461,6 @@ class base_ui_tests
 
         // TODO review
 
-        global $usr;
         global $sys;
         $html = new html_base();
 
@@ -389,9 +471,9 @@ class base_ui_tests
         // test the usage of a view to create the HTML code
         /*
         $wrd = $t->load_word(words::TN_READ);
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $msk->load_by_name(views::TN_READ_RATIO);
-        //$result = $msk->display($wrd, $back);
+        //$result = $msk->display($wrd, $url_arr);
         $target = true;
         //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
         */
@@ -401,76 +483,80 @@ class base_ui_tests
 
         // test if a simple text component can be created
         $cmp = new component($t->usr1);
-        $usr_msg = new user_message();
+        $msg = new user_message_ui();
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
         $cmp_ui = new component_ui($cmp->api_json());
-        $result = $cmp_ui->html();
+        $result = $cmp_ui->html($msg);
         $target = views::NESN_2016_FS_NAME;
         $t->assert('component_dsp->text', $result, $target);
 
 
         $t->subheader($ts . 'button tests');
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+
         $test_name = 'a sandbox object e.g. word add button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=word_add&amp;back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word"><i class="far fa-plus-square"></i></a>';
         $wrd = new word();
-        $t->assert($test_name, $wrd->btn_add('1'), $target);
+        $t->assert($test_name, $wrd->btn_add(), $target);
 
         $test_name = 'a sandbox object e.g. source change button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&amp;id=1&amp;back=1" title="source_edit"><i class="far fa-edit"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::SOURCE_EDIT_ID . '&amp;id=1" title="change source"><i class="far fa-edit"></i></a>';
         $src = new source();
-        $src->set_from_json($t_src->source_reserved()->api_json(), $usr_msg);
-        $t->assert($test_name, $src->btn_edit('1'), $target);
+        $src->set_from_json($t_src->source_reserved()->api_json(), $msg);
+        $t->assert($test_name, $src->btn_edit(), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&amp;id=1&amp;back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_DEL_ID . '&amp;id=1" title="delete this formula"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
-        $frm->set_from_json($t_frm->formula()->api_json(), $usr_msg);
-        $t->assert($test_name, $frm->btn_del('1'), $target);
+        $frm->set_from_json($t_frm->formula()->api_json(), $msg);
+        $t->assert($test_name, $frm->btn_del(), $target);
 
 
-        $url = $html->url_new(views::WORD_ADD_ID);
-        $back = '1';
+        $url = $html->url_back(views::WORD_ADD_ID);
+        // this block tests the icon and the title of each button, so no calling page is named;
+        // that the buttons carry the page vars of the url array is tested in the back url section
+        $url_arr = [];
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word">';
-        $result = (new button($url, $back))->add(msg_id::WORD_ADD);
+        $result = (new button($url, $url_arr))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
         // TODO move e.g. because the edit word button is tested already in the unit tests of the object
 
-        $url = $html->url_new(views::WORD_DEL_ID);
+        $url = $html->url_back(views::WORD_DEL_ID);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_DEL_ID . '" title="delete word"><i class="far fa-times-circle"></i></a>';
-        $result = (new button($url, $back))->del(msg_id::WORD_DEL);
+        $result = (new button($url, $url_arr))->del(msg_id::WORD_DEL);
         $t->dsp_contains(", btn_del", $target, $result);
 
-        $url = $html->url_new(views::WORD_NAME);
+        $url = $html->url_back(views::WORD_NAME);
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
         $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
-        $result = (new button($url, $back))->undo(msg_id::UNDO);
+        $result = (new button($url, $url_arr))->undo(msg_id::UNDO);
         //$t->assert(", btn_undo", $result, $target);
 
-        $url = $html->url_new(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_find.svg" alt=""></a>';
-        $result = (new button($url, $back))->find(msg_id::FIND);
+        $result = (new button($url, $url_arr))->find(msg_id::FIND);
         //$t->assert(", btn_find", $result, $target);
 
-        $url = $html->url_new(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
-        $result = (new button($url, $back))->un_filter(msg_id::REMOVE_FILTER);
+        $result = (new button($url, $url_arr))->un_filter(msg_id::REMOVE_FILTER);
         //$t->assert(", btn_unfilter", $result, $target);
 
-        $url = $html->url_new(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
         $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=-1">no</a>';
-        $result = (new button($url, $back))->yes_no();
+        $result = (new button($url, $url_arr))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 
-        $url = $html->url_new(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_ID);
         $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
-        $result = (new button($url, $back))->back();
+        $result = (new button($url, $url_arr))->back();
         //$t->assert(", btn_back", $result, $target);
 
         $t->subheader($ts . 'xss escaping');
@@ -505,6 +591,52 @@ class base_ui_tests
         $result = $html->back_url_part($url_array);
         $t->assert($test_name, $result, '');
 
+        // only the params that name the page are prefixed, because the form state does not
+        // name the page and an already prefixed param would get a second prefix
+        $test_name = 'the back part keeps the page vars and drops the form state';
+        $url_part = parse_url('?m=3&id=123&dls=20&dlp=1&z=0&a=r&k=USD&o=the%20dollar');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=3&9id=123&9dls=20&9dlp=1');
+
+        $test_name = '... and never prefixes a prefixed param a second time';
+        // TODO Prio 2 why? actually this would allow a two and more back steps
+        $url_part = parse_url('?m=3&id=123&9m=1&9id=0&8k=USD');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert_text_not_contains($test_name, $result, '99');
+        $test_name = '... neither the back part nor the pre values of the calling page';
+        $t->assert($test_name, $result, '9m=3&9id=123');
+
+        // a page var without a value names nothing, so it is left out of the back part
+        $test_name = 'an empty page var is dropped from the back part';
+        $url_part = parse_url('?m=1&id=0&dlp=0&pattern=');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=1');
+
+        $test_name = '... but the list size zero is kept, because it shows every row';
+        $url_part = parse_url('?m=1&id=0&dls=0');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=1&9dls=0');
+
+        $test_name = '... and a url array without any page value leads to the start page';
+        $t->assert($test_name, $html->page_url([url_var::ID => '0', url_var::STEP => '0']),
+            api::MAIN_SCRIPT);
+
+        $test_name = '... and a search pattern that is no number is kept';
+        $url_part = parse_url('?m=1&id=0&pattern=zh');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=1&9pattern=zh');
+
+        $test_name = 'the hidden back fields of a form name the page only';
+        $url_part = parse_url('?m=3&id=123&z=0&8k=USD');
+        parse_str($url_part["query"], $url_array);
+        $t->assert($test_name, html_base::back_url_array($url_array),
+            ['9m' => '3', '9id' => '123']);
+
         $test_name = 'login url with back part while editing word 123';
         $url_part = parse_url('?m=3&id=123');
         parse_str($url_part["query"], $url_array);
@@ -528,56 +660,91 @@ class base_ui_tests
         $result = $html->url_with_back(api::MAIN_SCRIPT . '?m=3&id=123', $url_array);
         $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=3&id=123&9m=1');
 
+        // the link builders take the url parameters of the calling page and add them as the
+        // '9'-prefixed back part, so that the called page can return to the calling page
+        $page_arr = [url_var::MASK => '3', url_var::ID => '123'];
+        $test_name = 'a view url carries the calling page as the back part';
+        $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, $page_arr), '9m=3&9id=123');
+        $test_name = '... and an unknown calling page adds no back part';
+        $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, []), '9');
+        $test_name = 'an old style script url carries the calling page as the back part';
+        $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
+        $test_name = 'the page url of a url array names the page by its page vars only';
+        $t->assert($test_name, $html->page_url($page_arr + [url_var::STEP => '0']),
+            api::MAIN_SCRIPT . '?m=3&id=123');
+        $test_name = 'the form end links the cancel button to the calling page';
+        $t->assert_text_contains($test_name, $html->dsp_form_end('', $page_arr), 'm=3&amp;id=123');
+        $test_name = '... and shows no cancel button if no calling page is known';
+        $t->assert_text_not_contains($test_name, $html->dsp_form_end('', []), 'btn-outline-secondary');
+        $test_name = 'the back button leads to the calling page';
+        $t->assert_text_contains($test_name, (new button())->back($page_arr), 'm=3&amp;id=123');
+        $test_name = '... and to the start page if no calling page is known';
+        $t->assert_text_contains($test_name, (new button())->back([]), api::MAIN_SCRIPT . '"');
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message_ui();
         $url_test = new test_mappers($t);
 
         $t->subheader($ts . 'url mapper');
         $url_map = new url_mapper();
         $test_name = 'add default value of view';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?id=1';
-        $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
         $test_name = 'add default value of step';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=3&id=1&debug=-1';
-        $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
         $step = $url_array[url_var::STEP];
         $t->assert($test_name, $step, 0);
         $test_name = 'add default value of view for human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=&verb_id=3';
-        $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
         // the human url uses the view code id (the name) for the mask, not the numeric view id, for
         // every view that is in the loaded cache (url_mapper::map_std_mask_to)
         $test_name = 'convert the standard url to human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
-        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $usr_msg));
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
         $t->assert($test_name, $view, views::WORD_ADD);
+        // the list size and the list page of a "... more" click are url state like every other
+        // frontend state, so both have a human-readable name that maps to the short name and back
+        $test_name = 'the human-readable list size and page map to the short url vars';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=' . views::START_CODE
+            . '&' . url_var::DISPLAY_LIST_SIZE_HUMAN . '=20&' . url_var::DISPLAY_LIST_PAGE_HUMAN . '=1';
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_SIZE] ?? '', '20');
+        $t->assert($test_name . ' (page)', $url_array[url_var::DISPLAY_LIST_PAGE] ?? '', '1');
+        $test_name = '... and the short url vars map back to the human-readable names';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&'
+            . url_var::DISPLAY_LIST_SIZE . '=20&' . url_var::DISPLAY_LIST_PAGE . '=1';
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
+        $url_array = $lib->url_array($url_human);
+        $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_SIZE_HUMAN] ?? '', '20');
+        $t->assert($test_name . ' (page)', $url_array[url_var::DISPLAY_LIST_PAGE_HUMAN] ?? '', '1');
 
         // TODO Prio 1 review
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is
         // accepted directly now, not only the [key, value] row format produced by url_array_with
         $test_name = 'convert a flat standard url to human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
-        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $usr_msg));
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
         $t->assert($test_name, $view, views::WORD_ADD);
         // an '8'-prefixed pre value (and '9'-prefixed back target) is mapped to its human key with the
         // prefix kept (e.g. 8name), so it is not reported as missing
         $test_name = 'human url conversion maps an 8-prefixed pre value';
-        $ok_msg = new user_message();
+        $ok_msg = new user_message_ui();
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&' . url_var::PRE . url_var::NAME . '=x';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $ok_msg));
         $t->assert_false($test_name, $ok_msg->has_msg_id(msg_id::URL_MAP_MISSING));
         $t->assert_text_contains($test_name, $url_human, url_var::PRE . url_var::NAME_HUMAN);
         // negative: a url key without any human mapping is still reported as missing
         $test_name = 'human url conversion reports a url key without a human mapping';
-        $err_msg = new user_message();
+        $err_msg = new user_message_ui();
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&zzz=x';
         $url_map->standard_url_to_human($lib->url_array($url), $err_msg);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
@@ -603,13 +770,13 @@ class base_ui_tests
             url_var::NAME => 'x',
             url_var::PRE . url_var::NAME => 'old',
             url_var::BACK . url_var::MASK => views::WORD_ID
-        ], $usr_msg);
+        ], $msg);
         $t->assert_text_contains($test_name, $json, json_fields::URL_ORIGINAL_DATA);
         $t->assert_text_contains($test_name, $json, json_fields::URL_PART_BACK);
         $t->assert_text_contains($test_name, $json, views::WORD_EDIT);
         // negative: a top-level url key without a human mapping is reported as missing
         $test_name = 'human_url_to_json reports a url key without a human mapping';
-        $err_msg = new user_message();
+        $err_msg = new user_message_ui();
         $url_map->human_url_to_json([url_var::MASK => views::WORD_EDIT_ID, 'zzz' => '1'], $err_msg);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 
@@ -620,9 +787,34 @@ class base_ui_tests
         // negative: a navigation action does not advance the process step
         $test_name = 'action_step maps a navigation action to the base step';
         $t->assert($test_name, url_var::action_step(url_var::ACTION_SHOW), url_var::STEP_BASE);
+
+        // without_secrets masks the unhashed password of a login post so it is never logged (http/view.php);
+        // a non-secret field like the username is kept unchanged so the log stays useful
+        $dummy_pw = 'dummy unhashed password for the redaction unit test';
+        $post = [url_var::USERNAME_HUMAN => users::TEST_USER_NAME, url_var::USER_PASSWORD_HUMAN => $dummy_pw];
+        $redacted = url_var::without_secrets($post);
+        $test_name = 'without_secrets masks the unhashed password';
+        $t->assert($test_name, $redacted[url_var::USER_PASSWORD_HUMAN], url_var::SECRET_MASK);
+        $test_name = 'without_secrets keeps a non-secret field unchanged';
+        $t->assert($test_name, $redacted[url_var::USERNAME_HUMAN], users::TEST_USER_NAME);
+
+        // session_recovery_url: when the session token is not valid any more a logged-in (non-ip)
+        // user is sent to the login page with the requested page kept as the '9'-prefixed back
+        // target; a valid token or an anonymous / ip user needs no recovery (null)
+        $req_url = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $recovery = frontend::session_recovery_url(false, true, $req_url);
+        $test_name = 'an expired token of a logged-in user shows the login page';
+        $t->assert($test_name, $recovery[url_var::MASK], views::LOGIN_ID);
+        $test_name = 'the login page keeps the requested page as the back target';
+        $t->assert($test_name, $recovery[url_var::BACK . url_var::MASK], views::WORD_ID);
+        $test_name = 'a valid token needs no session recovery';
+        $t->assert_true($test_name, frontend::session_recovery_url(true, true, $req_url) === null);
+        $test_name = 'an anonymous or ip user with an expired token just gets the page again';
+        $t->assert_true($test_name, frontend::session_recovery_url(false, false, $req_url) === null);
+
         $test_name = 'convert the standard url to pod interchangeable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
-        $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $usr_msg));
+        $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_pod);
         // TODO Prio 2 activate
         //$view = $url_array[url_var::MASK_POD];
@@ -637,8 +829,8 @@ class base_ui_tests
         //$t->assert($test_name, $view, views::START_CODE);
         $test_name = 'error message if mapping is missing';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=&mapping_missing=3';
-        $url_map->url_to_standard($lib->url_array($url), $usr_msg);
-        $err_msg = $usr_msg->var_message_text();
+        $url_map->url_to_standard($lib->url_array($url), $msg);
+        $err_msg = $msg->var_message_text();
         $t->assert($test_name, $err_msg, 'url mapper for "debug" is missing, url mapper for "id" is missing, url mapper for "mapping_missing" is missing');
 
     }

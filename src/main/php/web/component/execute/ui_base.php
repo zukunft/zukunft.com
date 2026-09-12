@@ -36,15 +36,25 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class ui_base
 {
@@ -97,9 +107,9 @@ class ui_base
      * TODO move to a component exe part class
      * @return string a dummy text
      */
-    function num_value(?db_object $dbo = null): string
+    function num_value(user_message $msg, ?db_object $dbo = null): string
     {
-        return $dbo->value();
+        return $dbo->value($msg);
     }
 
     /**
@@ -119,6 +129,43 @@ class ui_base
     function source_name(db_object|type_object|null $dbo = null): string
     {
         return $this->dbo_name($dbo);
+    }
+
+    /**
+     * @param source|db_object|null $dbo the source whose doi should be shown
+     * @return string the doi as a link to doi.org or an empty text if the source has no doi
+     */
+    function source_doi_link(source|db_object|null $dbo = null): string
+    {
+        $result = '';
+        if ($dbo instanceof source) {
+            $doi_url = $dbo->doi_url();
+            if ($doi_url != null) {
+                $html = new html_base();
+                // the doi is user-settable, but html_base::ref escapes the shown name
+                $result = $html->ref($doi_url, $dbo->doi());
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param source|db_object|null $dbo the source whose url should be shown
+     * @return string the url as a link to the source or an empty text if the source has no url
+     */
+    function source_url_link(source|db_object|null $dbo = null): string
+    {
+        $result = '';
+        if ($dbo instanceof source) {
+            $url = $dbo->url();
+            if ($url != null and $url != '') {
+                $html = new html_base();
+                // the url is user-settable, but html_base::ref escapes the shown name
+                // and drops the link if the scheme is not one of the allowed ones
+                $result = $html->ref($url, $url);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -200,11 +247,76 @@ class ui_base
         return $result;
     }
 
+    /**
+     * @param db_object|null $dbo the formula whose latex should be displayed
+     * @return string the latex of the given formula with a link per term, or an empty string if it has no latex
+     */
     function expression_latex_link(?db_object $dbo = null): string
     {
         $result = '';
         if ($dbo != null and method_exists($dbo, 'expression_latex_link')) {
             $result = $dbo->expression_latex_link();
+        }
+        return $result;
+    }
+
+    /**
+     * @param db_object|null $dbo the formula whose latex should be displayed
+     * @return string the html code of the column beside the latex field of the formula form
+     */
+    function expression_latex_link_form(?db_object $dbo = null): string
+    {
+        return $this->form_side_column(
+            $this->expression_latex_link($dbo),
+            msg_id::FORM_FIELD_FORMULA_LATEX_VALIDATED,
+            url_var::LATEX,
+            msg_id::FORM_FIELD_FORMULA_LATEX);
+    }
+
+    /**
+     * @param db_object|null $dbo the formula whose expression should be displayed
+     * @return string the html code of the column beside the expression field of the formula form
+     */
+    function expression_link(?db_object $dbo = null): string
+    {
+        $result = '';
+        if ($dbo != null and method_exists($dbo, 'expression_link')) {
+            $result = $dbo->expression_link();
+        }
+        return $this->form_side_column(
+            $result,
+            msg_id::FORM_FIELD_FORMULA_EXPRESSION_VALIDATED,
+            url_var::USER_EXPRESSION,
+            msg_id::FORM_FIELD_FORMULA_EXPRESSION);
+    }
+
+    /**
+     * the label points to the field that it validates, so that a click on it opens the field
+     * and the user sees which entry the shown terms are selected by; the refresh icon beside the
+     * label asks the backend to resolve the terms of the entered text again
+     *
+     * @param string $html_code the html code that should be shown beside a form field
+     * @param msg_id $ui_msg_code_id the message id of the label of the column
+     * @param string $fld_url_id the url id of the field that the column belongs to e.g. url_var::LATEX
+     * @param msg_id $fld_msg_code_id the message id of the label of the field that the column belongs to
+     * @return string the html code in the column that fills the third which the 2/3 wide field leaves free
+     */
+    private function form_side_column(
+        string $html_code,
+        msg_id $ui_msg_code_id,
+        string $fld_url_id,
+        msg_id $fld_msg_code_id
+    ): string
+    {
+        $result = '';
+        // a field without a value shows no column at all, so its label would stand alone
+        if ($html_code != '') {
+            $html = new html_base();
+            $label = $html->label_lan($ui_msg_code_id, $html->form_field_id($fld_url_id, $fld_msg_code_id));
+            // the refresh icon resolves the terms of the entered text again, so that the user sees
+            // which term a name selects without saving the formula first
+            $label .= $html->button_refresh(url_var::REFRESH_TERMS);
+            $result = $html->div($label . $html_code, view_styles::COL_SM_4);
         }
         return $result;
     }

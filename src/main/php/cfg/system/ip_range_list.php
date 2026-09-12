@@ -67,16 +67,16 @@ class ip_range_list extends list_db_write
      *
      * @param ip_range $range the ip range that should be added to the list
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * * @param user_message $usr_msg to report which entry is double
+     * * @param user_message $msg to report which entry is double
      * @return bool true if the object has been added
      */
     function add(
         ip_range     $range,
-        bool         $allow_duplicates = false,
-        user_message $usr_msg = new user_message()
+        user_message $msg,
+        bool         $allow_duplicates = false
     ): bool
     {
-        return parent::add_obj($range, $allow_duplicates, $usr_msg);
+        return parent::add_obj($range, $allow_duplicates, $msg);
     }
 
     /*
@@ -109,18 +109,18 @@ class ip_range_list extends list_db_write
      *
      * @return true if at least one ip range has been loaded
      */
-    function load(): bool
+    function load(user_message $msg): bool
     {
         global $db_con;
         $result = false;
 
         $qp = $this->load_sql_obj_vars($db_con);
-        $ip_lst = $db_con->get($qp, 'ip range list');
+        $ip_lst = $db_con->get($qp, $msg, 'ip range list');
         foreach ($ip_lst as $db_row) {
             $ip = new ip_range();
-            $ip->row_mapper($db_row);
+            $ip->row_mapper($db_row, $msg);
             if ($ip->id() > 0) {
-                $this->add($ip);
+                $this->add($ip, $msg);
                 $result = true;
             }
         }
@@ -163,11 +163,11 @@ class ip_range_list extends list_db_write
     /**
      * store all ip ranges from this list in the database using grouped calls of predefined sql functions
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the estimate of the total save time
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, import $imp): bool
+    function save(user_message $msg, import $imp): bool
     {
         global $cfg;
 
@@ -175,17 +175,17 @@ class ip_range_list extends list_db_write
         $upd_per_sec = $cfg->get_by([words::IP_RANGES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         if ($this->is_empty()) {
-            $usr_msg->add_info_id(msg_id::IP_LIST_EMPTY);
+            $msg->add_info_id(msg_id::IP_LIST_EMPTY);
         } else {
 
             // TODO replace this slow temp solution with the proper block saving like indicated in the comment below
             foreach ($this->lst() as $ip) {
                 // for each item of a list an empty user_message statement should be used
                 // so that an issue in one item does not prevent other item from being saved
-                $ip_usr_msg = $usr_msg->clone_reset();
+                $ip_usr_msg = $msg->clone_reset();
                 $ip->save($ip_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->merge($ip_usr_msg);
+                $msg->merge($ip_usr_msg);
             }
 
             /*
@@ -206,7 +206,7 @@ class ip_range_list extends list_db_write
             */
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

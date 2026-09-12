@@ -43,8 +43,14 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -54,13 +60,11 @@ class formula_link_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
-        $lib = new library();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
+        $msg = new user_message(); // a test is an entry point, so it creates the message the mappers report into
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 
@@ -82,7 +86,7 @@ class formula_link_tests
         $t->subheader($ts . 'sql user sandbox statement');
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-        $flk = new formula_link($usr);
+        $flk = new formula_link($t->usr1);
         $t->assert_sql_by_id($sc, $flk);
         $t->assert_sql_by_link($sc, $flk);
 
@@ -90,16 +94,17 @@ class formula_link_tests
         $t->subheader($ts . 'sql load default statement');
 
         // sql to load the standard formula link by id
-        $lnk = new formula_link($usr);
+        $lnk = new formula_link($t->usr1);
         $lnk->id = 1;
         $t->assert_sql_standard($sc, $lnk);
         $t->assert_sql_not_changed($sc, $lnk);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $lnk);
+        $t->assert_sql_changing_users_by_ids($sc, $lnk);
 
         // sql to load the user formula link by id
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_sql_user_changes($db_con->sql_creator())->sql;
-        $expected_sql = $t->file(test_paths::DB_FORMULA . 'formula_link_by_usr_cfg.sql');
-        $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $t->assert_sql_user_changes($sc, $lnk);
 
         $t->subheader($ts . 'formula link sql write');
         $lnk = $t_frm->formula_link();
@@ -115,6 +120,12 @@ class formula_link_tests
         $lnk_reordered->order_nbr = 1;
         $t->assert_sql_update($sc, $lnk_reordered, $lnk);
         $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the description says why the formula applies to the phrase
+        $lnk_described = clone $lnk;
+        $lnk_described->description = test_const::FORMULA_LINK_COM;
+        $t->assert_sql_update($sc, $lnk_described, $lnk);
+        $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
+        $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
@@ -122,13 +133,51 @@ class formula_link_tests
         $lnk = $t_frm->formula_link();
         $t->assert_reset($lnk);
 
+        $t->subheader($ts . 'row mapper');
+
+        // the list query joins the names of the linked formula and phrase, so that the link can
+        // name both e.g. for the change log (see formula_link_list::load_sql)
+        $test_name = 'a row with the joined names names both linked objects';
+        $db_row = [
+            formula_link::FLD_ID => 1,
+            'user_' . formula_link::FLD_ID => null,
+            user_db::FLD_ID => $t->usr1->id(),
+            formula_fields::FLD_ID => formula_names::SCALE_TO_SEC_ID,
+            phrase::FLD_ID => word_names::MINUTE_ID,
+            formula_link_type::FLD_ID => null,
+            formula_link::FLD_ORDER => test_const::FORMULA_LINK_ORDER_NBR,
+            fields::FLD_DESCRIPTION => test_const::FORMULA_LINK_COM,
+            fields::FLD_EXCLUDED => null,
+            fields::FLD_SHARE => null,
+            fields::FLD_PROTECT => null,
+            formula_link::FLD_FORMULA_NAME_JOINED => formula_names::SCALE_TO_SEC,
+            formula_link::FLD_PHRASE_NAME_JOINED => word_names::MINUTE,
+        ];
+        $lnk_row = new formula_link($t->usr1);
+        $lnk_row->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $lnk_row->name(),
+            formula_names::SCALE_TO_SEC . ' to ' . word_names::MINUTE);
+        $test_name = 'the description of a row is mapped';
+        $t->assert($test_name, $lnk_row->description, test_const::FORMULA_LINK_COM);
+
+        // a load by id has no join, so the names stay empty instead of showing a wrong name
+        $test_name = 'a row without the joined names leaves the formula name empty';
+        unset($db_row[formula_link::FLD_FORMULA_NAME_JOINED]);
+        unset($db_row[formula_link::FLD_PHRASE_NAME_JOINED]);
+        unset($db_row[fields::FLD_DESCRIPTION]);
+        $lnk_id_only = new formula_link($t->usr1);
+        $lnk_id_only->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $lnk_id_only->formula()->name() ?? '', '');
+        $test_name = 'a row without a description leaves the description empty';
+        $t->assert($test_name, $lnk_id_only->description ?? '', '');
+
         /*
         $t->subheader($ts . 'im- and export');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
-        $lnk = new formula($usr);
+        $lnk = new formula($t->usr1);
         $lnk->import_obj($json_in, $usr_msg, $dto);
-        $json_ex = json_decode(json_encode($lnk->export_json($exp_typ, false)), true);
+        $json_ex = json_decode(json_encode($lnk->export_json($msg, $exp_typ, false)), true);
         $result = json_is_similar($json_in, $json_ex);
         $target = true;
         $t->assert('formula_link->import check name', $result, $target);
@@ -143,8 +192,18 @@ class formula_link_tests
         $t->subheader($ts . 'sql statement');
 
         // sql to load the formula link list by formula id
-        $frm_lnk_lst = new formula_link_list($usr);
+        $frm_lnk_lst = new formula_link_list($t->usr1);
         $this->assert_sql_by_frm_id($t, $db_con, $frm_lnk_lst);
+
+        // sql to load the formula link list by the formula link ids
+        $this->assert_sql_by_ids($t, $db_con, $frm_lnk_lst);
+
+        $t->subheader($ts . 'sql statement without ids');
+
+        // without an id the query has no name, so that the caller does not send it to the database
+        $test_name = 'the formula link list query of an empty id list is not prepared';
+        $qp = $frm_lnk_lst->load_sql_by_ids($db_con->sql_creator(), []);
+        $t->assert($test_name, $qp->name, '');
 
     }
 
@@ -167,6 +226,29 @@ class formula_link_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lnk->load_sql_by_frm_id($db_con->sql_creator(), 7);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get the formula links by their ids
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param formula_link_list $frm_lnk
+     */
+    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, formula_link_list $frm_lnk): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lnk->load_sql_by_ids($db_con->sql_creator(), [1, 2]);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $frm_lnk->load_sql_by_ids($db_con->sql_creator(), [1, 2]);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

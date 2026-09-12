@@ -39,6 +39,8 @@ class styles
     const string STYLE_GREY = 'grey';
     // light blue between the grey old value and the link blue to highlight a changed value
     const string STYLE_CHANGED = 'changed';
+    // dark blue navbar person icon to show that a non-ip user is logged in
+    const string USER_LOGGED = 'user-logged';
     // centered change preview table whose width follows the config 'side width' screen breakpoints
     const string CHANGE_PREVIEW = 'change-preview';
     // bootstrap css class to center the elements of a row e.g. the change preview of a confirm view
@@ -49,8 +51,17 @@ class styles
     const string STYLE_USER = 'user_specific';
     const string STYLE_RIGHT = 'right_ref';
     const string STYLE_BORDERLESS = 'borderless';
+    // a borderless table with the standard zukunft.com grey text (the .grey color), used for
+    // the change log table pure (see html_base::tbl and tbl_start_borderless_grey)
+    const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
+    // a table column of the main tier is hidden on a small screen and one of the minor tier is
+    // shown on a wide screen only (see triples::SYSTEM_COLUMN_TIERS)
+    const string COL_MAIN = 'd-none d-md-table-cell';
+    const string COL_MINOR = 'd-none d-xl-table-cell';
+    // bootstrap css class to center a line e.g. the phrase above a value table
+    const string TEXT_CENTER = 'text-center';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken
     const string TEXT_NOWRAP = 'text-nowrap';
 
@@ -74,6 +85,20 @@ class styles
     const string FRAC = 'frac';
     const string FRAC_NUM = 'num';
     const string FRAC_DEN = 'den';
+
+    // css classes for the grouped value list (value_list::list_most_relevant): the outer container,
+    // a value group with its title and item list, and per value the phrase name and the number
+    const string VALUE_LIST = 'value-list';
+    const string VALUE_GROUP = 'value-group';
+    const string VALUE_GROUP_TITLE = 'value-group-title';
+    const string VALUE_ITEMS = 'value-items';
+    const string VALUE_NAME = 'value-name';
+    const string VALUE_NUM = 'value-num';
+
+    // css classes for a value shown as one row (value::links_and_measure): the row container
+    // and the measure/scaling part that follows the number like on a price tag
+    const string VALUE_ROW = 'value-row';
+    const string VALUE_UNIT = 'value-unit';
 
 
 }

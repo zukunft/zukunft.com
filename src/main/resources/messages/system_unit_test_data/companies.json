@@ -1,5 +1,6 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "pod": "zukunft.com",
   "time": "2020-03-08 19:05:57",
   "user": "timon",
@@ -118,10 +119,12 @@
       "name": "sales"
     },
     {
-      "name": "sector"
+      "name": "sector",
+      "description": "a distinct part of a whole"
     },
     {
-      "name": "employee"
+      "name": "employee",
+      "description": "person working for an organisation in return for payment"
     },
     {
       "name": "Energy"
@@ -142,7 +145,18 @@
       "name": "expenses"
     },
     {
-      "name": "expense"
+      "name": "expense",
+      "description": "use or service to be provided to achieve a certain benefit",
+      "refs": [
+        {
+          "name": "Expense",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13516686",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "General"
@@ -193,7 +207,18 @@
       "name": "loss"
     },
     {
-      "name": "equity"
+      "name": "equity",
+      "description": "difference between the value of the assets/interest and the cost of the liabilities of something owned",
+      "refs": [
+        {
+          "name": "Equity (finance)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q827451",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "method"
@@ -211,13 +236,15 @@
       "name": "income"
     },
     {
-      "name": "tax"
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
     },
     {
       "name": "Share"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
       "name": "Number"
@@ -227,9 +254,6 @@
     },
     {
       "name": "Target"
-    },
-    {
-      "name": "Price"
     },
     {
       "name": "Earning"
@@ -268,7 +292,8 @@
       "name": "Operating"
     },
     {
-      "name": "profit"
+      "name": "profit",
+      "description": "financial gain, revenue minus costs"
     },
     {
       "name": "percent"
@@ -298,10 +323,12 @@
     },
     {
       "name": "2026",
+      "description": "the year 2026",
       "type": "time"
     },
     {
       "name": "2025",
+      "description": "the year 2025",
       "type": "time"
     },
     {
@@ -310,6 +337,7 @@
     },
     {
       "name": "2023",
+      "description": "the year 2023",
       "type": "time"
     },
     {
@@ -351,11 +379,15 @@
     {
       "name": "2013",
       "type": "time"
+    },
+    {
+      "name": "main"
     }
   ],
   "triples": [
     {
       "name": "balance sheet",
+      "description": "accounting financial summary. see Wikipedia: Balance sheet (Q46834)",
       "from": "sheet",
       "verb": "of",
       "to": "balance"
@@ -397,6 +429,7 @@
     },
     {
       "name": "Zurich Insurance",
+      "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
       "from": "Zurich",
       "verb": "is a",
       "to": "company"
@@ -679,9 +712,9 @@
     },
     {
       "name": "cash flow statement",
-      "from": "cash flow",
-      "verb": "can use",
-      "to": "statement"
+      "from": "statement",
+      "verb": "of",
+      "to": "cash flow"
     },
     {
       "name": "income taxes is part of cash flow statement",
@@ -763,6 +796,7 @@
     },
     {
       "name": "operating expense",
+      "description": "ongoing cost for running a product, business, or system. see Wikipedia: Operating expense (Q831940)",
       "from": "expense",
       "verb": "kind of",
       "to": "operating"
@@ -951,7 +985,7 @@
       "name": "Price Earning",
       "from": "Earning",
       "verb": "and",
-      "to": "Price"
+      "to": "price"
     },
     {
       "name": "Price Earning Ratio",
@@ -1018,6 +1052,19 @@
       "from": "Operating profit",
       "verb": "kind of",
       "to": "reported"
+    },
+    {
+      "name": "main ratio",
+      "from": "Ratio",
+      "verb": "kind of",
+      "to": "main"
+    },
+    {
+      "name": "company main ratio",
+      "from": "main ratio",
+      "verb": "of",
+      "to": "company",
+      "description": "the ratios that are shown for every company e.g. in the column of the company list"
     }
   ],
   "formulas": [
@@ -1135,6 +1182,15 @@
         "2016"
       ],
       "number": "6512"
+    },
+    {
+      "words": [
+        "Target Price Earning Ratio"
+      ],
+      "number": "15",
+      "share": "personal",
+      "protection": "user_protection",
+      "source": "my estimates"
     }
   ],
   "components": [
@@ -1173,7 +1229,7 @@
   "views": [
     {
       "name": "company sheet",
-      "comment": "The income statement, balance sheet or cash flow sheet of a big company",
+      "description": "The income statement, balance sheet or cash flow sheet of a big company",
       "type": "detail_view",
       "components": [
         {
@@ -1191,31 +1247,7 @@
       ]
     },
     {
-      "name": "complete",
-      "comment": "Show a word, all related words to edit the word tree and the linked formulas with some results",
-      "type": "word_default",
-      "components": [
-        {
-          "position": "1",
-          "name": "Word"
-        },
-        {
-          "position": "2",
-          "name": "formula list"
-        },
-        {
-          "position": "3",
-          "name": "Export JSON"
-        },
-        {
-          "position": "4",
-          "name": "Export XML"
-        }
-      ]
-    },
-    {
       "name": "company list with main ratios",
-      "comment": "List the most interesting companies with the main ratios",
       "type": "detail_view",
       "components": [
         {

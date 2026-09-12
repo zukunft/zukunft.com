@@ -106,14 +106,14 @@ class job_runner
      * @param DateTime $now the reference time used to decide if a job is due (defaults to the current time)
      * @return int the shell exit code, EXIT_OK if every executed job succeeded, else EXIT_ERROR
      */
-    function run(int $budget_sec = self::RUN_BUDGET_SEC, DateTime $now = new DateTime()): int
+    function run(user_message $msg, int $budget_sec = self::RUN_BUDGET_SEC, DateTime $now = new DateTime()): int
     {
         $result = self::EXIT_OK;
         $run_until = microtime(true) + $budget_sec;
 
         // read the pending jobs from the existing job structure
         $jobs = new job_list($this->usr);
-        $jobs->load_by_status(job_statuum::STATUS_NEW);
+        $jobs->load_by_status(job_statuum::STATUS_NEW, $msg);
 
         // select the due jobs in execution order
         $due_lst = $this->due_jobs($jobs, $now);
@@ -254,21 +254,21 @@ class job_runner
     private function run_sweep(job_exe $handler): bool
     {
         $result = true;
-        $usr_msg = new user_message($this->usr);
+        $msg = new user_message($this->usr); // one message per sweep, because a sweep is its own request
         $type = $handler->type_code_id();
 
         try {
-            $count = $handler->execute($usr_msg);
+            $count = $handler->execute($msg);
             $this->out('sweep ' . $type . ' processed ' . $count . ' item(s)');
         } catch (Throwable $e) {
             $result = false;
             log_err('sweep ' . $type . ' failed: ' . $e->getMessage(), 'job_runner->run_sweep');
             $this->err('sweep ' . $type . ' failed: ' . $e->getMessage());
         }
-        if (!$usr_msg->is_ok()) {
+        if (!$msg->is_ok()) {
             $result = false;
-            log_err('sweep ' . $type . ' reported: ' . $usr_msg->all_message_text(), 'job_runner->run_sweep');
-            $this->err('sweep ' . $type . ' reported: ' . $usr_msg->all_message_text());
+            log_err('sweep ' . $type . ' reported: ' . $msg->all_message_text(), 'job_runner->run_sweep');
+            $this->err('sweep ' . $type . ' reported: ' . $msg->all_message_text());
         }
 
         return $result;
@@ -318,12 +318,12 @@ class job_runner
     private function set_status(job $job, string $status_code_id): void
     {
         global $sys;
-        $usr_msg = new user_message($this->usr);
+        $msg = new user_message($this->usr); // only to log why the status save has failed
         $job->status_id = $sys->typ_lst->job_sta->id($status_code_id);
-        $saved = $job->save($usr_msg);
+        $saved = $job->save($msg);
         if (!$saved) {
             log_err('cannot save status ' . $status_code_id . ' for ' . $job->dsp_id()
-                . ': ' . $usr_msg->all_message_text(), 'job_runner->set_status');
+                . ': ' . $msg->all_message_text(), 'job_runner->set_status');
             $this->err('cannot save status ' . $status_code_id . ' for ' . $job->dsp_id());
         }
     }

@@ -38,14 +38,13 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\system;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -72,20 +71,20 @@ class language extends type_object
     /**
      * set the vars of this language frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         if (array_key_exists(url_var::LANGUAGE_SYMBOL, $url_array)) {
             $this->wiki_code = $url_array[url_var::LANGUAGE_SYMBOL];
         }
         if (array_key_exists(url_var::USAGE, $url_array)) {
             $this->usage = $url_array[url_var::USAGE];
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -130,13 +129,18 @@ class language extends type_object
 
     /**
      * display the language name with a link to the main page for the language
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::LANGUAGE_ID): string
+    function name_link(
+        array  $url_arr = [],
+        string $style = '',
+        int $msk_id = views::LANGUAGE_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
 }

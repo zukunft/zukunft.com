@@ -27,4 +27,4 @@ SELECT component_delete_log
         3::smallint,
         51::smallint,
         'system form field name'::text,
-        4::bigint);
+        130::bigint);

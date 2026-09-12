@@ -22,6 +22,6 @@ $$ LANGUAGE plpgsql;
 SELECT source_delete_log_excluded_user
        (3::bigint,
         3::smallint,
-        57::smallint,
+        170::smallint,
         'The International System of Units'::text,
         1::bigint);

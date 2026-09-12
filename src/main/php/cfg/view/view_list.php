@@ -88,12 +88,13 @@ class view_list extends sandbox_list_named
      * TODO check that a similar function is used for all lists
      *
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula link has been added
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new view($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new view($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -224,9 +225,9 @@ class view_list extends sandbox_list_named
      * @param int $offset jump over these number of pages
      * @return bool true if at least one view found
      */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    function load_names(string $pattern, user_message $msg, int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new view($this->get_user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new view($this->get_user()), $pattern, $msg, $limit, $offset);
     }
 
     /**
@@ -255,17 +256,59 @@ class view_list extends sandbox_list_named
     }
 
     /**
+     * set the SQL query parameters to load a list of views by the view type
+     * @param sql_creator $sc with the target db_type set
+     * @param int $type_id the id of the view type e.g. of the views that can show a value
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_type(sql_creator $sc, int $type_id): sql_par
+    {
+        $qp = $this->load_sql($sc, 'type');
+        if ($type_id > 0) {
+            $sc->set_name($qp->name);
+            $sc->add_where(view_fields::FLD_TYPE, $type_id, sql_par_type::INT);
+            $sc->set_order(view_fields::FLD_NAME);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of views by the view ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of view ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        if (count($ids) > 0) {
+            $sc->add_where(view_fields::FLD_ID, $ids);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load the views that have a component linked from the database selected by id
      * @param int $id the id of the component
      * @return bool true if at least one component has been loaded
      */
-    function load_by_component_id(int $id): bool
+    function load_by_component_id(int $id, user_message $msg): bool
     {
         global $db_con;
 
         log_debug($id);
         $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $id);
-        return parent::load($qp);
+        return parent::load($qp, $msg);
     }
 
     /**
@@ -273,12 +316,38 @@ class view_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the views by the name
      * @return bool true if at least one view has been loaded
      */
-    function load_by_pattern(string $pattern = ''): bool
+    function load_by_pattern(string $pattern, user_message $msg): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_pattern($db_con->sql_creator(), $pattern);
-        return parent::load($qp);
+        return parent::load($qp, $msg);
+    }
+
+    /**
+     * load the views of one view type e.g. the views that can show a value
+     * @param int $type_id the id of the view type
+     * @return bool true if at least one view has been loaded
+     */
+    function load_by_type(int $type_id, user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_type($db_con->sql_creator(), $type_id);
+        return parent::load($qp, $msg);
+    }
+
+    /**
+     * load a list of views by the given view ids e.g. to name the changed views of a user
+     * @param array $ids an array of view ids which should be loaded
+     * @return bool true if at least one view has been loaded
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return parent::load($qp, $msg);
     }
 
 
@@ -290,24 +359,24 @@ class view_list extends sandbox_list_named
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         foreach ($json_obj as $dsp_json) {
             $msk = new view($this->get_user());
-            if ($msk->import_obj($dsp_json, $usr_msg, $dto)) {
+            if ($msk->import_obj($dsp_json, $msg, $dto)) {
                 $this->add($msk);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -315,25 +384,25 @@ class view_list extends sandbox_list_named
      * TODO create one SQL and commit statement for faster execution
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?import $imp = null): bool
+    function save(user_message $msg, ?import $imp = null): bool
     {
-        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->get_user()), $usr_msg);
+        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->get_user()), $msg);
         // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
             if ($msk->has_components()) {
                 // for each item of a list an empty user_message statement should be used
                 // so that an issue in one item does not prevent other item from being saved
-                $cmp_lnk_usr_msg = $usr_msg->clone_reset();
+                $cmp_lnk_usr_msg = $msg->clone_reset();
                 // actual save the component link to the database
                 $msk->save_component_links($cmp_lnk_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->merge($cmp_lnk_usr_msg);
+                $msg->merge($cmp_lnk_usr_msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

@@ -1,0 +1,637 @@
+{
+  "$schema": "https://zukunft.com/json/value?v=0.0.4",
+  "description": "How far would the Swiss livestock population have to shrink to work without substantial feed imports? Feed balance, current herd sizes and two published scenarios (domestic-feed-only and optimal-land-use).",
+  "version": "0.0.3",
+  "data-version": "0.0.1",
+  "words": [
+    {
+      "name": "switzerland",
+      "description": "the Swiss Confederation as a country"
+    },
+    {
+      "name": "animal feed",
+      "description": "all feedstuff fed to farm animals"
+    },
+    {
+      "name": "roughage",
+      "description": "bulky low-energy feed such as grass, hay and silage, digestible only by ruminants"
+    },
+    {
+      "name": "concentrate feed",
+      "description": "energy- and protein-dense feed, mainly cereals and oilseed meal"
+    },
+    {
+      "name": "protein",
+      "description": "crude protein content of a feedstuff"
+    },
+    {
+      "name": "dry matter",
+      "description": "mass of a feedstuff after removal of water"
+    },
+    {
+      "name": "domestic share",
+      "description": "share produced inside the country"
+    },
+    {
+      "name": "import",
+      "description": "goods brought into the country from abroad"
+    },
+    {
+      "name": "mass",
+      "description": "quantity measured in tonnes"
+    },
+    {
+      "name": "share",
+      "description": "quantity measured in percent"
+    },
+    {
+      "name": "head count",
+      "description": "number of individual animals"
+    },
+    {
+      "name": "livestock unit",
+      "description": "Swiss Grossvieheinheit GVE, a feed-demand-weighted animal equivalent"
+    },
+    {
+      "name": "cattle",
+      "description": "all bovine animals including calves and young stock"
+    },
+    {
+      "name": "cow",
+      "description": "adult female bovine, dairy cows plus suckler cows"
+    },
+    {
+      "name": "dairy cow",
+      "description": "cow kept for milk production"
+    },
+    {
+      "name": "suckler cow",
+      "description": "cow kept to raise calves for beef"
+    },
+    {
+      "name": "pig",
+      "description": "domestic swine, breeding and fattening animals"
+    },
+    {
+      "name": "poultry",
+      "description": "chickens kept for meat and eggs"
+    },
+    {
+      "name": "sheep and goat",
+      "description": "small ruminants"
+    },
+    {
+      "name": "farm animal",
+      "description": "all livestock species together"
+    },
+    {
+      "name": "whey",
+      "description": "liquid by-product of cheese making, usable as pig feed"
+    },
+    {
+      "name": "food industry by-product",
+      "description": "residues of human food processing usable as feed"
+    },
+    {
+      "name": "milk",
+      "description": "cow milk and dairy products"
+    },
+    {
+      "name": "meat",
+      "description": "meat of all farm animal species"
+    },
+    {
+      "name": "per capita",
+      "description": "per inhabitant and year"
+    },
+    {
+      "name": "remaining share",
+      "description": "share of the present stock that could still be kept in a scenario"
+    },
+    {
+      "name": "reduction",
+      "description": "relative decrease compared to the present state"
+    },
+    {
+      "name": "domestic feed only scenario",
+      "description": "scenario in which no feed is imported but Swiss arable land may still grow feed crops"
+    },
+    {
+      "name": "optimal land use scenario",
+      "description": "scenario in which arable land is used for human food and animals live on grassland and by-products only"
+    },
+    {
+      "name": "present state",
+      "description": "the situation as currently recorded in official statistics"
+    },
+    {
+      "name": "grassland",
+      "description": "permanent and temporary grass area"
+    },
+    {
+      "name": "milk yield",
+      "description": "quantity of milk produced per year"
+    },
+    {
+      "name": "2023",
+      "description": "calendar year 2023"
+    },
+    {
+      "name": "2025",
+      "description": "calendar year 2025"
+    }
+  ],
+  "triples": [
+    {
+      "name": "roughage of switzerland",
+      "from": "roughage",
+      "verb": "is part of",
+      "to": "animal feed"
+    },
+    {
+      "name": "concentrate feed of animal feed",
+      "from": "concentrate feed",
+      "verb": "is part of",
+      "to": "animal feed"
+    },
+    {
+      "name": "cow of cattle",
+      "from": "cow",
+      "verb": "is part of",
+      "to": "cattle"
+    },
+    {
+      "name": "dairy cow of cow",
+      "from": "dairy cow",
+      "verb": "is part of",
+      "to": "cow"
+    },
+    {
+      "name": "suckler cow of cow",
+      "from": "suckler cow",
+      "verb": "is part of",
+      "to": "cow"
+    },
+    {
+      "name": "cattle of farm animal",
+      "from": "cattle",
+      "verb": "is part of",
+      "to": "farm animal"
+    },
+    {
+      "name": "pig of farm animal",
+      "from": "pig",
+      "verb": "is part of",
+      "to": "farm animal"
+    },
+    {
+      "name": "poultry of farm animal",
+      "from": "poultry",
+      "verb": "is part of",
+      "to": "farm animal"
+    },
+    {
+      "name": "sheep and goat of farm animal",
+      "from": "sheep and goat",
+      "verb": "is part of",
+      "to": "farm animal"
+    },
+    {
+      "name": "whey of food industry by-product",
+      "from": "whey",
+      "verb": "is part of",
+      "to": "food industry by-product"
+    },
+    {
+      "name": "livestock unit of farm animal",
+      "from": "livestock unit",
+      "verb": "is a",
+      "to": "head count"
+    }
+  ],
+  "sources": [
+    {
+      "name": "agristat feed balance 2023",
+      "description": "Swiss Farmers Union / Agristat feed balance for 2023, summarised on the SBV topic page",
+      "url": "https://www.sbv-usp.ch/de/schlagworte/futtermittel"
+    },
+    {
+      "name": "blv fact sheet fair food",
+      "description": "Federal Food Safety and Veterinary Office fact sheet with feed self-sufficiency figures",
+      "url": "https://www.blv.admin.ch/dam/blv/de/dokumente/lebensmittel-und-ernaehrung/ernaehrung/fair-food-initiative-faktenblatt-zahlen.pdf.download.pdf/Faktenblatt_Fair-Food-Initiative_Zahlen_DE.pdf"
+    },
+    {
+      "name": "bfs farm structure survey 2025",
+      "description": "Swiss Federal Statistical Office farm structure survey, published 12 May 2026",
+      "url": "https://www.admin.ch/de/newnsb/6m_yy2w_Wc17KvKg7BCtK"
+    },
+    {
+      "name": "probst 2023 optimal land use",
+      "description": "Probst et al., How many farm animals does Switzerland need for optimal land use, Agrarforschung Schweiz 14: 236-242, 2023",
+      "url": "https://www.agrarforschungschweiz.ch/wp-content/uploads/2023/12/236-242_Probst_Nutztiere_Landnutzung_DE-1.pdf"
+    },
+    {
+      "name": "greenpeace feed report 2023",
+      "description": "Greenpeace Switzerland, Der Futtermittel-Schwindel, with a scenario calculation without feed imports",
+      "url": "https://www.greenpeace.ch/de/story/63645/zu-viel-die-schweizer-landwirtschaft-lebt-ueber-ihre-verhaeltnisse/"
+    },
+    {
+      "name": "dialogue 2026-09-01",
+      "description": "estimates derived in the Claude dialogue of 1 September 2026 from the sources listed above"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "switzerland",
+        "animal feed",
+        "dry matter",
+        "mass",
+        "2023"
+      ],
+      "number": 7744000,
+      "unit": "tonne",
+      "tag": "measured value",
+      "source": "agristat feed balance 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "animal feed",
+        "domestic share",
+        "share",
+        "2023"
+      ],
+      "number": 82.4,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "agristat feed balance 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "concentrate feed",
+        "dry matter",
+        "mass",
+        "2023"
+      ],
+      "number": 1823000,
+      "unit": "tonne",
+      "tag": "measured value",
+      "source": "agristat feed balance 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "roughage",
+        "dry matter",
+        "mass",
+        "2023"
+      ],
+      "number": 5921000,
+      "unit": "tonne",
+      "tag": "measured value",
+      "source": "agristat feed balance 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "roughage",
+        "domestic share",
+        "share"
+      ],
+      "number": 98,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "blv fact sheet fair food"
+    },
+    {
+      "words": [
+        "switzerland",
+        "concentrate feed",
+        "domestic share",
+        "share"
+      ],
+      "number": 39,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "blv fact sheet fair food"
+    },
+    {
+      "words": [
+        "switzerland",
+        "animal feed",
+        "import",
+        "mass"
+      ],
+      "number": 1400000,
+      "unit": "tonne",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "concentrate feed",
+        "protein",
+        "import",
+        "share"
+      ],
+      "number": 70,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "cattle",
+        "head count",
+        "present state",
+        "2025"
+      ],
+      "number": 1528177,
+      "unit": "animal",
+      "tag": "measured value",
+      "source": "bfs farm structure survey 2025"
+    },
+    {
+      "words": [
+        "switzerland",
+        "cow",
+        "head count",
+        "present state",
+        "2025"
+      ],
+      "number": 672000,
+      "unit": "animal",
+      "tag": "measured value",
+      "source": "bfs farm structure survey 2025"
+    },
+    {
+      "words": [
+        "switzerland",
+        "dairy cow",
+        "head count",
+        "present state",
+        "2025"
+      ],
+      "number": 524400,
+      "unit": "animal",
+      "tag": "measured value",
+      "source": "bfs farm structure survey 2025"
+    },
+    {
+      "words": [
+        "switzerland",
+        "pig",
+        "head count",
+        "present state",
+        "2025"
+      ],
+      "number": 1257700,
+      "unit": "animal",
+      "tag": "measured value",
+      "source": "bfs farm structure survey 2025"
+    },
+    {
+      "words": [
+        "switzerland",
+        "cattle",
+        "remaining share",
+        "domestic feed only scenario"
+      ],
+      "number": 85,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "sheep and goat",
+        "remaining share",
+        "domestic feed only scenario"
+      ],
+      "number": 94,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "pig",
+        "remaining share",
+        "domestic feed only scenario"
+      ],
+      "number": 39,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "poultry",
+        "remaining share",
+        "domestic feed only scenario"
+      ],
+      "number": 17,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "milk",
+        "per capita",
+        "domestic feed only scenario"
+      ],
+      "number": 349,
+      "unit": "kilogram",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "meat",
+        "per capita",
+        "domestic feed only scenario"
+      ],
+      "number": 21,
+      "unit": "kilogram",
+      "tag": "measured value",
+      "source": "greenpeace feed report 2023"
+    },
+    {
+      "words": [
+        "switzerland",
+        "pig",
+        "livestock unit",
+        "optimal land use scenario"
+      ],
+      "number": 61411,
+      "unit": "livestock unit",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "pig",
+        "remaining share",
+        "optimal land use scenario"
+      ],
+      "number": 35,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "dairy cow",
+        "head count",
+        "optimal land use scenario"
+      ],
+      "number": 545485,
+      "unit": "animal",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "cow",
+        "remaining share",
+        "optimal land use scenario"
+      ],
+      "number": 80,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "poultry",
+        "remaining share",
+        "optimal land use scenario"
+      ],
+      "number": 0,
+      "unit": "percent",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "grassland",
+        "animal feed",
+        "dry matter",
+        "mass",
+        "optimal land use scenario"
+      ],
+      "number": 5908374,
+      "unit": "tonne",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "food industry by-product",
+        "dry matter",
+        "mass"
+      ],
+      "number": 321541,
+      "unit": "tonne",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "dairy cow",
+        "concentrate feed",
+        "dry matter",
+        "mass",
+        "optimal land use scenario"
+      ],
+      "number": 300,
+      "unit": "kilogram",
+      "tag": "measured value",
+      "source": "probst 2023 optimal land use"
+    },
+    {
+      "words": [
+        "switzerland",
+        "farm animal",
+        "livestock unit",
+        "present state"
+      ],
+      "number": 1380000,
+      "unit": "livestock unit",
+      "tag": "assumed value",
+      "confidence": 0.5,
+      "source": "dialogue 2026-09-01"
+    },
+    {
+      "words": [
+        "switzerland",
+        "pig",
+        "livestock unit",
+        "present state"
+      ],
+      "number": 175460,
+      "unit": "livestock unit",
+      "tag": "assumed value",
+      "confidence": 0.8,
+      "source": "dialogue 2026-09-01"
+    },
+    {
+      "words": [
+        "switzerland",
+        "farm animal",
+        "livestock unit",
+        "reduction",
+        "domestic feed only scenario"
+      ],
+      "number": 25,
+      "unit": "percent",
+      "tag": "assumed value",
+      "confidence": 0.55,
+      "source": "dialogue 2026-09-01"
+    },
+    {
+      "words": [
+        "switzerland",
+        "farm animal",
+        "head count",
+        "reduction",
+        "domestic feed only scenario"
+      ],
+      "number": 70,
+      "unit": "percent",
+      "tag": "assumed value",
+      "confidence": 0.5,
+      "source": "dialogue 2026-09-01"
+    },
+    {
+      "words": [
+        "switzerland",
+        "milk yield",
+        "reduction",
+        "domestic feed only scenario"
+      ],
+      "number": 15,
+      "unit": "percent",
+      "tag": "assumed value",
+      "confidence": 0.6,
+      "source": "dialogue 2026-09-01"
+    }
+  ]
+}

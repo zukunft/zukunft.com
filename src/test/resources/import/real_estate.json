@@ -1,23 +1,12 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2020-04-05 17:11:00",
   "user": "timon",
   "selection": [
     "Real Estate"
   ],
   "words": [
-    {
-      "name": "Real Estate"
-    },
-    {
-      "name": "square metre",
-      "refs": [
-        {
-          "name": "Square_metre",
-          "type": "wikipedia"
-        }
-      ]
-    },
     {
       "name": "district",
       "refs": [
@@ -26,16 +15,42 @@
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "estate"
+    },
+    {
+      "name": "metre"
+    },
+    {
+      "name": "real"
+    },
+    {
+      "name": "square"
     }
   ],
   "triples": [
+    {
+      "name": "Real Estate",
+      "from": "estate",
+      "verb": "kind of",
+      "to": "real"
+    },
+    {
+      "name": "square metre",
+      "from": "metre",
+      "verb": "kind of",
+      "to": "square",
+      "refs": [
+        {
+          "name": "Square_metre",
+          "type": "wikipedia"
+        }
+      ]
+    }
   ],
-  "formulas": [
-  ],
-  "sources": [
-  ],
-  "values": [
-  ],
-  "views": [
-  ]
+  "formulas": [],
+  "sources": [],
+  "values": [],
+  "views": []
 }

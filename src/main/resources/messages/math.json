@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-05-21 09:08:00",
   "user": "timon",
   "selection": [
@@ -121,7 +122,6 @@
     },
     {
       "name": "area",
-      "description": "Area is the quantity that expresses the extent of a two-dimensional region in the plane.",
       "refs": [
         {
           "name": "Area",
@@ -149,7 +149,6 @@
     },
     {
       "name": "volume",
-      "description": "Volume is a measure of three-dimensional space.",
       "refs": [
         {
           "name": "Volume",
@@ -233,7 +232,6 @@
     },
     {
       "name": "square",
-      "description": "A square is a regular quadrilateral with four equal sides and four right angles.",
       "refs": [
         {
           "name": "Square",
@@ -303,7 +301,6 @@
     },
     {
       "name": "cube",
-      "description": "A cube is a three-dimensional solid object bounded by six square faces.",
       "refs": [
         {
           "name": "Cube",
@@ -407,7 +404,6 @@
     },
     {
       "name": "angle",
-      "description": "In Euclidean geometry, an angle is the figure formed by two rays sharing a common endpoint, called the vertex of the angle.",
       "refs": [
         {
           "name": "Angle",
@@ -489,6 +485,7 @@
     },
     {
       "name": "degree",
+      "description": "unit of angle equal to 1/360 of a full rotation",
       "refs": [
         {
           "name": "Degree (angle)",
@@ -502,7 +499,6 @@
     },
     {
       "name": "radian",
-      "description": "The radian is a unit of plane angle defined such that one full turn equals 2π radians.",
       "refs": [
         {
           "name": "Radian",
@@ -529,7 +525,8 @@
       ]
     },
     {
-      "name": "intercept"
+      "name": "intercept",
+      "description": "value of the regression line at the origin of the independent variable"
     },
     {
       "name": "distance",
@@ -547,6 +544,7 @@
     },
     {
       "name": "point",
+      "description": "a single unit on a scale",
       "refs": [
         {
           "name": "Point (geometry)",
@@ -560,7 +558,6 @@
     },
     {
       "name": "line",
-      "description": "In geometry, a straight line is an infinite length, breadthless, idealised geometric object.",
       "refs": [
         {
           "name": "Line (geometry)",
@@ -631,13 +628,16 @@
       ]
     },
     {
-      "name": "x"
+      "name": "x",
+      "description": "x stereotactic coordinate"
     },
     {
-      "name": "y"
+      "name": "y",
+      "description": "y stereotactic coordinate"
     },
     {
-      "name": "z"
+      "name": "z",
+      "description": "z stereotactic coordinate"
     },
     {
       "name": "a"
@@ -646,7 +646,18 @@
       "name": "b"
     },
     {
-      "name": "c"
+      "name": "c",
+      "description": "c is the speed of light in vacuum, a universal physical constant exactly equal to 299792458 m/s.",
+      "refs": [
+        {
+          "name": "Speed of light",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2111",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "d"
@@ -664,7 +675,18 @@
       "name": "r"
     },
     {
-      "name": "h"
+      "name": "h",
+      "description": "h is the Planck constant, a fundamental physical constant that relates the energy carried by a photon to its frequency.",
+      "refs": [
+        {
+          "name": "Planck constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q122894",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "s"
@@ -860,7 +882,8 @@
       ]
     },
     {
-      "name": "difference"
+      "name": "difference",
+      "description": "arithmetic difference between two values"
     },
     {
       "name": "derivative",
@@ -922,7 +945,8 @@
       "name": "rule"
     },
     {
-      "name": "power"
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "chain"
@@ -1091,7 +1115,7 @@
     },
     {
       "name": "sector",
-      "description": "the portion of a disk enclosed by two radii and the arc between them",
+      "description": "a distinct part of a whole",
       "refs": [
         {
           "name": "Circular sector",
@@ -1751,10 +1775,9 @@
     },
     {
       "name": "standard deviation",
-      "description": "In statistics, the standard deviation is a measure of the amount of variation or dispersion of a set of values.",
-      "from": "standard",
-      "verb": "kind of",
-      "to": "deviation",
+      "from": "deviation",
+      "verb": "can be",
+      "to": "standard",
       "refs": [
         {
           "name": "Standard deviation",
@@ -1860,10 +1883,9 @@
     },
     {
       "name": "percent change",
-      "description": "Percentage change is a way of expressing a change in a variable; it represents the relative change between the old value and the new one.",
-      "from": "percent",
-      "verb": "of",
-      "to": "change",
+      "from": "change",
+      "verb": "in",
+      "to": "percent",
       "refs": [
         {
           "name": "Relative change",
@@ -2513,6 +2535,13 @@
     {
       "from": "golden ratio",
       "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "sector (geometry)",
+      "description": "the portion of a disk enclosed by two radii and the arc between them",
+      "from": "sector",
+      "verb": "must be one of",
       "to": "geometry"
     }
   ],

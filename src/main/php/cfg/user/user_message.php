@@ -5,6 +5,8 @@
     model/user/user_message.php - a complex object that functions can return
     ---------------------------
 
+    $msg is the suggested var name
+
     class function are should return on of
     1. boolean if a failure does not need any user action
     2. string if the user just needs to be informed about the result
@@ -122,20 +124,29 @@ class user_message extends Message
         }
     }
 
-    function reset(bool $keep_usr = false): void
+    /**
+     * clear the accumulated messages so the object can be reused for the next change request
+     *
+     * the requesting user is kept by default because it lives on the message for the whole
+     * change request (docs/llm/state-and-messages.md); pass $keep_usr = false only to build a
+     * fresh message for a different user, never to drop the user mid request
+     *
+     * @param bool $keep_usr true to keep the requesting user (the normal case), false to reset it
+     *                       to an empty user with the profile of a not logged-in visitor
+     * @return void
+     */
+    function reset(bool $keep_usr = true): void
     {
         if (!$keep_usr) {
             $this->usr = new user();
         }
+        parent::reset();
         $this->info_text = [];
         $this->msg_text = [];
-        $this->msg_status = msg_id::OK;
         $this->start_time = null;
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
         $this->added_depending = false;
-        $this->msg_id_lst = [];
-        $this->msg_var_lst = [];
         $this->typ_lst = [];
     }
 
@@ -145,9 +156,9 @@ class user_message extends Message
      */
     function clone_reset(): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $this->usr;
-        return $usr_msg;
+        $msg = new user_message();
+        $msg->usr = $this->usr;
+        return $msg;
     }
 
 
@@ -249,7 +260,7 @@ class user_message extends Message
      * TODO Prio 2 add the solution with the prepared job id
      * @return array with the messages
      */
-    function api_array(): array
+    function api_array(user_message $msg): array
     {
         $vars = array();
         $msg_lst = [];
@@ -264,7 +275,7 @@ class user_message extends Message
         $vars[json_fields::USER_MESSAGES_WITH_VARS] = $var_lst;
         $vars[json_fields::USER_MESSAGES_STATUS] = $this->msg_status;
         if ($this->usr != null) {
-            $vars[json_fields::USER] = $this->usr->api_json_array(new api_type_list([]));
+            $vars[json_fields::USER] = $this->usr->api_json_array([], $msg);
         }
         return $vars;
     }
@@ -272,9 +283,9 @@ class user_message extends Message
     /**
      * @return string the json message to the backend as a string
      */
-    function api_json(): string
+    function api_json(user_message $msg): string
     {
-        return json_encode($this->api_array());
+        return json_encode($this->api_array($msg));
     }
 
     /**
@@ -300,9 +311,9 @@ class user_message extends Message
         }
         if (array_key_exists(json_fields::USER, $api_json)) {
             $usr = new user();
-            $usr_msg = new user_message();
-            $usr->api_mapper($api_json[json_fields::USER], $usr_msg);
-            if ($usr_msg->is_ok()) {
+            $msg = new user_message();
+            $usr->api_mapper($api_json[json_fields::USER], $msg);
+            if ($msg->is_ok()) {
                 $this->usr = $usr;
             }
         }
@@ -532,7 +543,7 @@ class user_message extends Message
             $part .= $key . ': ' . implode(", ", $sub_lst) . '; ';
         }
         if ($msg != '' and $part <> '') {
-            $msg .= $msg . '; ' . $part;
+            $msg = $msg . '; ' . $part;
         } else {
             $msg .= $part;
         }
@@ -544,7 +555,7 @@ class user_message extends Message
             $part .= $mtr->txt($msg_id);
         }
         if ($msg != '' and $part <> '') {
-            $msg .= $msg . '; ' . $part;
+            $msg = $msg . '; ' . $part;
         } else {
             $msg .= $part;
         }
@@ -553,7 +564,7 @@ class user_message extends Message
         $part = $this->var_message_text();
 
         if ($msg != '' and $part <> '') {
-            $msg .= $msg . '; ' . $part;
+            $msg = $msg . '; ' . $part;
         } else {
             $msg .= $part;
         }
@@ -587,19 +598,6 @@ class user_message extends Message
     function get_last_message(): string
     {
         return $this->get_message(count($this->msg_text));
-    }
-
-    /**
-     * TODO should pick the last either from msg_var_lst or msg_id_lst
-     * @return string with the latest added message translated to the user language
-     */
-    function get_last_message_translated(): string
-    {
-        if ($this->has_msg()) {
-            return $this->get_message_translated(count($this->msg_var_lst));
-        } else {
-            return '';
-        }
     }
 
     /**
@@ -650,12 +648,13 @@ class user_message extends Message
     /**
      * @return array with all the text messages
      */
-    protected function get_all_messages(): array
+    function get_all_messages(): array
     {
         return $this->msg_text;
     }
 
     /**
+     * TODO Prio 2 make it protected
      * @return array with all the translatable messages
      */
     protected function get_all_id_messages(): array
@@ -664,6 +663,7 @@ class user_message extends Message
     }
 
     /**
+     * TODO Prio 2 make it protected
      * @return array with all the text messages
      */
     protected function get_all_type_messages(): array
@@ -673,10 +673,11 @@ class user_message extends Message
 
     /**
      * combine the status of two user messages and assume the worst
-     * @param user_message $msg_to_add the user messages that should be combined with this user message
+     * TODO Prio 2 make it private
+     * @param user_message|Message $msg_to_add the user messages that should be combined with this user message
      * @return void
      */
-    private function combine_status(user_message $msg_to_add): void
+    function combine_status(user_message|Message $msg_to_add): void
     {
         if (!$msg_to_add->is_ok()) {
             $this->msg_status = msg_id::NOK;

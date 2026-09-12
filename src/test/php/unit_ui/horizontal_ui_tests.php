@@ -41,6 +41,8 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -65,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
@@ -75,6 +78,10 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -88,10 +95,13 @@ class horizontal_ui_tests
         $map = new MapObject();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
-        $usr_msg = new user_message($t->usr1);
-        $msg_ui = $map->convertMsgToUi($usr_msg);
+        $msg = new user_message($t->usr1);
+        $msg_ui = $map->convertMsgToUi($msg);
         $url_test = new test_mappers($t);
         $url_map = new url_mapper();
+
+        $base_url = THIS_URL;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'unit ui horizontal ';
@@ -103,12 +113,12 @@ class horizontal_ui_tests
             $test_name = 'add ' . $lib->class_to_name($class) . ' html code';
             if ($class != result::class) {
                 // it should not be possible to add result via an ui button
-                $t->assert_text_contains($test_name, $ui_obj->btn_add(), button::IMG_ADD_FA);
+                $t->assert_text_contains($test_name, $ui_obj->btn_add($url_arr, $base_url), button::IMG_ADD_FA);
             }
             $test_name = 'edit ' . $lib->class_to_name($class) . ' html code';
-            $t->assert_text_contains($test_name, $ui_obj->btn_edit(), button::IMG_EDIT_FA);
+            $t->assert_text_contains($test_name, $ui_obj->btn_edit($url_arr, $base_url), button::IMG_EDIT_FA);
             $test_name = 'del ' . $lib->class_to_name($class) . ' html code';
-            $t->assert_text_contains($test_name, $ui_obj->btn_del(), button::IMG_DEL_FA);
+            $t->assert_text_contains($test_name, $ui_obj->btn_del($url_arr, $base_url), button::IMG_DEL_FA);
         }
 
         $t->subheader($ts . 'url');
@@ -121,10 +131,10 @@ class horizontal_ui_tests
             $ui_obj = $t_map->class_to_ui_object($class);
             $filled_obj = $t_map->class_to_filled_object($class);
             $ui_obj->url_mapper($url_array, $usr_msg_ui);
-            $api_msg = $ui_obj->api_array();
+            $api_msg = $ui_obj->api_array([], $msg_ui);
             $refilled_obj = clone $filled_obj;
             $refilled_obj->reset(true);
-            $refilled_obj->api_mapper($api_msg, $usr_msg);
+            $refilled_obj->api_mapper($api_msg, $msg);
             // fill the id that is not set by the add url
             $refilled_obj->id = $filled_obj->id();
             // fill the exclude field that is set by the crud action
@@ -135,7 +145,7 @@ class horizontal_ui_tests
             }
             // fill the code id field that should not be set via url
             if (in_array($filled_obj::class, def::CODE_ID_CLASSES)) {
-                $refilled_obj->set_code_id($filled_obj->get_code_id(), $t->usr_system);
+                $refilled_obj->set_code_id($filled_obj->get_code_id(), new user_message($t->usr_system));
             }
             // fill the unidirectional fields for test
             // TODO Prio 1 remove exception
@@ -149,6 +159,14 @@ class horizontal_ui_tests
                 and $filled_obj::class != component_link::class
                 and $filled_obj::class != term_view::class) {
                 $refilled_obj->usage = $filled_obj->usage;
+            }
+            // the impact is a system calculated value that the frontend api json never carries
+            // (see e.g. the word api_array), so it is backfilled like the usage;
+            // only a null is filled so the diff still catches a wrongly mapped real value
+            if (property_exists($refilled_obj, 'impact') and property_exists($filled_obj, 'impact')) {
+                if ($refilled_obj->impact === null) {
+                    $refilled_obj->impact = $filled_obj->impact;
+                }
             }
             // TODO Prio 1 remove exception
             if ($filled_obj::class == triple::class) {
@@ -168,6 +186,16 @@ class horizontal_ui_tests
                 $refilled_obj->last_login = $filled_obj->last_login;
                 $refilled_obj->last_logoff = $filled_obj->last_logoff;
                 $refilled_obj->right_level = $filled_obj->right_level;
+                // the type and the status are set by the verification and admin processes, not by
+                // a form, and api_mapper keeps a missing field null instead of fabricating the
+                // default (see docs/llm/constants.md), so the refilled user cannot know them;
+                // only a null is filled so the diff still catches a wrongly mapped real value
+                if ($refilled_obj->type_id === null) {
+                    $refilled_obj->type_id = $filled_obj->type_id;
+                }
+                if ($refilled_obj->status_id === null) {
+                    $refilled_obj->status_id = $filled_obj->status_id;
+                }
                 // the sandbox usage checkbox is only part of the admin user edit mask
                 $refilled_obj->uses_sandbox = $filled_obj->uses_sandbox;
                 $refilled_obj->created = $filled_obj->created;
@@ -184,28 +212,56 @@ class horizontal_ui_tests
             $t->assert_true($test_name, $diff->is_ok());
         }
 
+        $t->subheader($ts . 'map');
+        // the frontend builds the component_exe renderer for the component masks (see
+        // frontend::view_id_to_dbo_ui), so a confirmed add converts that subclass, which must
+        // reach the backend component and not the base object whose save has no name field
+        $map = new MapObject();
+        $test_name = 'a component_exe converts to the backend component';
+        $db_obj = $map->dbObject(new component_exe(), $t->usr1);
+        $t->assert($test_name, $db_obj::class, component::class);
+        $test_name = 'an unrelated frontend object is not caught by the component branch';
+        $db_obj = $map->dbObject($t_map->class_to_ui_object(user::class), $t->usr1);
+        $t->assert($test_name, $db_obj::class, user::class);
+
         $t->subheader($ts . 'component types');
         $html = new html_base();
         $test_page = $html->text_h1('Component display test');
         // this catalog page stacks one form part per component type; count the parts up so
         // each part's field names/ids stay unique (production passes no counter -> name="k")
         $test_form_unique_id = 1;
+        // the spreadsheet component shows the global problems as a table, which the frontend
+        // fills from the api; the catalog has no api, so that one type gets its cache from the
+        // factories, and only that type, so the parts of the other types stay unchanged
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $dto_start = new data_object();
+        $dto_start->online = false;
+        $dto_start->typ_lst_cache = $ui->dto->typ_lst_cache;
+        $dto_start->msk_lst = $ui->dto->msk_lst;
+        $dto_start->cfg = $ui->dto->cfg;
+        $dto_start->add_phrases($t_phr->list_global_problems_ui(), $msg_ui);
+        $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
         foreach ($ui->dto->typ_lst_cache->cmp_typ->lst() as $typ) {
             $test_page .= '<br><br>' . $html->dsp_text_h2($typ->name . ' (' . $typ->code_id . ')') . '<br><br><br>';
             $obj = $t_map->component_type_to_object($typ);
             if ($obj !== null) {
                 $ui_obj = $t_map->class_to_ui_object($obj::class);
-                $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $msg_ui);
+                $ui_obj->api_mapper($obj->api_json_array([], $msg), $msg_ui);
                 $cmp = new component_exe();
-                $cmp->set_type_id($typ->id());
+                $cmp->set_type_id($typ->id(), new user_message($t->usr1));
                 $cmp->code_id = $typ->code_id;
                 // a valid, unique form name per part (no spaces) so the field 'form=' and the
                 // form id stay valid and unique on this multi-part catalog page
                 $form_name = 'component_type_test_' . $test_form_unique_id;
                 // render in test mode so that no component triggers a backend call
                 // TODO Prio 2 review and move the calls to the backend 'outside'
-                $part = $cmp->dsp_entries($ui_obj, $form_name, views::WORD_EDIT_ID, $ui->dto,
-                    null, '', '', true, [], $test_form_unique_id);
+                $cmp_dto = $ui->dto;
+                if ($typ->code_id == component_types::CALC_SHEET) {
+                    $cmp_dto = $dto_start;
+                }
+                $part = $cmp->dsp_entries($ui_obj, $msg_ui, $form_name, views::WORD_EDIT_ID, $cmp_dto,
+                    null, '', true, [], $test_form_unique_id);
                 // wrap a field part that references its form by id so the reference resolves
                 if (str_contains($part, ' form="') and !str_contains($part, '<form')) {
                     $part = $html->form_start($form_name) . $part . $html->form_end();
@@ -220,7 +276,7 @@ class horizontal_ui_tests
                 $test_page .= 'no object mapped for type ' .  $typ->name;
             }
         }
-        $t->html_page_test($test_page, 'all component types', 'all_component_types', $t);
+        $t->html_page_test($test_page, 'all component types', 'all_component_types', $msg_ui);
     }
 
     /**

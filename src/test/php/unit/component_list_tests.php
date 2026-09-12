@@ -47,8 +47,6 @@ class component_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
@@ -64,11 +62,11 @@ class component_list_tests
         $t->subheader($ts . 'database query creation');
 
         // load only the names
-        $phr_lst = new component_list($usr);
-        $t->assert_sql_names($sc, $phr_lst, new component($usr));
-        $t->assert_sql_names($sc, $phr_lst, new component($usr), components::WORD_NAME);
+        $phr_lst = new component_list($t->usr1);
+        $t->assert_sql_names($sc, $phr_lst, new component($t->usr1));
+        $t->assert_sql_names($sc, $phr_lst, new component($t->usr1), components::WORD_NAME);
 
-        $cmp_lst = new component_list($usr);
+        $cmp_lst = new component_list($t->usr1);
         $this->assert_sql_by_view_id($t, $db_con, $cmp_lst);
 
         // TODO Prio 2 move to ui tests

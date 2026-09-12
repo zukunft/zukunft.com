@@ -43,36 +43,38 @@ use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("figureList");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("figureList", $msg);
 
 if ($db_con->is_open()) {
 
-    // get the parameters
-    $frm_ids = $_GET[url_var::ID_LST] ?? '';
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
+    // get the parameters
+    $frm_ids = $_GET[url_var::ID_LST] ?? '';
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($frm_ids != '') {
             $lst = new figure_list($usr);
-            $lst->load_by_ids(new fig_ids($frm_ids));
+            $lst->load_by_ids(new fig_ids($frm_ids), $msg);
             // drop the figures the requesting user may not read (idor); see figure::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
-            $msg = 'formula id is missing';
+            $msg->add_message_text('formula id is missing');
         }
     }
 
@@ -80,5 +82,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

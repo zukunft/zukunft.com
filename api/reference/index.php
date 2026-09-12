@@ -33,55 +33,64 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'ref.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("ref", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("ref", $msg);
 
 if ($db_con->is_open()) {
 
-    // get the parameters
-    $ref_id = $_GET[url_var::ID] ?? 0;
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
+    // get the parameters
+    $ref_id = $_GET[url_var::ID] ?? 0;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         // the session user may differ from the data user e.g. an admin wants to see the data
         // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
 
         if ($ref_id > 0) {
             $ref = new ref($load_usr);
-            $ref->load_by_id($ref_id);
-            $result = $ref->api_json();
+            $ref->load_by_id($ref_id, $msg);
+            // INCL_RELATED is opt-in via the ?incl_related=1 url param, so that the default
+            // reference fetch stays small; the ref default page adds the flag to get the
+            // names of the linked phrase and of the source for the field links
+            $result = $ref->api_json(api_type_list::from_url_array($_GET), $msg);
         } else {
-            $msg = 'Cannot load ref because id is missing';
+            $msg->add_message_text('Cannot load ref because id is missing');
         }
     }
 
     // do not disclose another user's private reference loaded by id (idor); neutral message
     if ($result != '' and !$ref->is_readable_by($usr)) {
         $result = '';
-        $msg = 'Cannot load ref because id is missing';
+        $msg->add_message_text('Cannot load ref because id is missing');
     }
 
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

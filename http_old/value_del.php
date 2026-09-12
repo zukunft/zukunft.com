@@ -30,10 +30,8 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
+include_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR . 'const.php';
+include_once WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
@@ -103,7 +101,7 @@ if ($usr->id() > 0) {
             $result .= $msk_ui->dsp_navbar($dto, $back);
 
             $val->load_phrases();
-            $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
+            $url = $html->url_old(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
             $result .= (new button($url, $back))->yes_no(
                 msg_id::VALUE_DEL->value, $val->number() . $mtr->txt(msg_id::FOR) . $val->phr_lst()->dsp_name() . '?');
         }

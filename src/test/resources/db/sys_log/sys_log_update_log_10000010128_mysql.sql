@@ -44,8 +44,8 @@ PREPARE sys_log_update_log_10000010128_call FROM
     'SELECT sys_log_update_log_10000010128 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT sys_log_update_log_10000010128
-    (1,
-     1,
+    (3,
+     2,
      null,
      null,
      2023-01-04 09:12:34,

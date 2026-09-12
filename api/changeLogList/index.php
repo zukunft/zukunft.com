@@ -40,55 +40,78 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("log");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("change log entries", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $class = $_GET[url_var::LOG_CLASS] ?? '';
     $id = $_GET[url_var::ID] ?? 0;
     $fld = $_GET[url_var::LOG_FIELD] ?? '';
+    // the user whose changes should be listed e.g. for the user page
+    $chg_usr_id = $_GET[url_var::USER] ?? 0;
+    // the number of log entries the frontend wants to show, so that the backend does not read and
+    // send the complete change log of a user just to fill a list of a few rows
+    $log_size = (int)($_GET[url_var::LOG_SIZE] ?? 0);
 
     // TODO deprecate
     $wrd_id = $_GET[url_var::WORD] ?? 0;
     $wrd_fld = $_GET[url_var::LOG_FIELD] ?? '';
 
-    $msg = '';
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
-
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        if ($class != '') {
+        if ($chg_usr_id != 0) {
+            // the overwrites done by one user e.g. for the all user overwrites
+            // column of the user page; the change log is public like on the
+            // object pages, so no extra permission check is needed here
+            $chg_usr = new user();
+            $chg_usr->load_by_id((int)$chg_usr_id, $msg);
+            $lst = new change_log_list();
+            if ($log_size > 0) {
+                $lst->limit = $log_size;
+            }
+            $lst->load_by_user($chg_usr, $msg);
+            // this change log spans the objects of the user, so unlike the change log of one object
+            // it must name the changed object and show the value of the shared standard object;
+            // the names are the ones the requesting user may see
+            $lst->load_changed_objects($usr, $msg);
+            $result = $lst->api_json([], $msg);
+        } elseif ($class != '') {
             $lib = new library();
             $class = $lib->api_name_to_class($class);
             $lst = new change_log_list();
             if (is_numeric($id)) {
                 $id = (int)$id;
             }
-            $lst->load_by_obj_fld($class, $id, $usr, $fld);
-            $result = $lst->api_json();
+            $lst->load_by_obj_fld($class, $msg, $id, $usr, $fld);
+            $result = $lst->api_json([], $msg);
         } else {
             // TODO deprecate
             if ($wrd_id != 0) {
                 $wrd = new word($usr);
-                $wrd->load_by_id($wrd_id);
+                $wrd->load_by_id($wrd_id, $msg);
                 $lst = new change_log_list();
                 $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
-                $result = $lst->api_json();
+                $result = $lst->api_json([], $msg);
             } else {
-                $msg = 'word id missing';
+                $msg->add_message_text('word id missing');
             }
         }
     }
@@ -96,5 +119,5 @@ if ($db_con->is_open()) {
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

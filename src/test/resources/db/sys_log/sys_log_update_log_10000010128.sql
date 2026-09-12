@@ -48,8 +48,8 @@ SELECT sys_log_update_log_10000010128
     ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);
 
 SELECT sys_log_update_log_10000010128
-    (1::bigint,
-     1::smallint,
+    (3::bigint,
+     2::smallint,
      null::smallint,
      null::timestamp,
      2023-01-04 09:12:34::timestamp,

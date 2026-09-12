@@ -44,6 +44,33 @@ as the always-on "a 3+ step call chain belongs behind a function on the owning
 class" rule in `docs/llm/dry.md`; it costs a method but each call site reads at a
 glance.)
 
+### `and` / `or` with brackets, never `&&` / `||`
+
+A condition uses the word operators `and` and `or`, which read like the sentence
+the condition is. Never rely on operator precedence: wherever it decides the
+result, brackets say what binds to what. A plain `if ($a and $b)` needs none, an
+assignment and a mix of the two operators always do.
+
+`and` and `or` bind looser than `=`, so an assignment without brackets keeps only
+the first operand and silently drops the rest:
+
+```php
+$prime = $this->is_prime() or $this->is_main();   // wrong: $prime is is_prime()
+```
+
+Brackets fix it and stay in the reading style of the rest of the code:
+
+```php
+$prime = ($this->is_prime() or $this->is_main());
+```
+
+`||` would also work here, but it is the exception in this code base, so a reader
+stops at it and wonders what is special about this line. Use it only where a
+value expression really needs the tighter binding, and then still bracket it.
+
+The same holds for a condition that mixes both operators: `if ($a and ($b or $c))`
+says what it means, `if ($a and $b or $c)` needs the reader to look up the rules.
+
 ## One exit per function and loop — no `break` or `continue`
 
 Every function has exactly one `return`, at the end. Assign the result to a
@@ -82,14 +109,14 @@ foreach ($frm_lst as $frm) {
     if ($frm->id() != 0) {
         continue;
     }
-    $msg->add(...);
+    $msg_ui->add(...);
     // ... more work ...
 }
 
 // Right — the work lives inside the positive condition
 foreach ($frm_lst as $frm) {
     if ($frm->id() == 0) {
-        $msg->add(...);
+        $msg_ui->add(...);
         // ... more work ...
     }
 }
@@ -165,6 +192,162 @@ if (property_exists($dbo, 'phrases_related') && $dbo->phrases_related !== null) 
 return $result;
 ```
 
+## 100% correct — never a shortcut, tell the user it takes longer instead
+
+The target of this code is to be **100% correct**. Not "correct for the data
+seen so far", not "correct enough to pass the test at hand" — correct for every
+input the type allows. A shortcut that is right in the common case is a defect
+that has not fired yet, and shipping it is worse than shipping nothing, because
+the wrong result now carries the authority of a finished job.
+
+So a comparison uses the **complete** value. Never compare a prefix, a cut, a
+hash, a rounded number or a normalised copy of what should be compared, and
+never use a shortened text as a map key: the moment two values differ only
+behind the cut, the code reports them as equal and the difference is lost. The
+same holds for a check that "usually" finds every case, a loop that stops after
+the first N entries and a sample that stands in for a set.
+
+Shortening the **display** is a different thing and it is allowed: a report line
+that stays readable is worth a cut, as long as the cut happens on the way to the
+screen and never on the way into a comparison.
+
+The counter-example that named this rule: the json findings report cut every
+description after 120 characters, and the cross-file description check used that
+cut text as the key of its comparison map. Two descriptions that share their
+first 120 characters were silently declared identical, so the check reported
+"no finding" for a conflict that stops an import. The fix is not a longer cut:
+`json_validation::cut()` is called by the display of a finding only, while
+`description_by_name()` keys its map by the full description — cut once, at the
+end, and never before the compare.
+
+Cost is never the reason to cut a check. If the complete job needs more time,
+more memory or more passes over the data, **do the complete job and tell the
+user that it takes longer**. "This scan reads all 183 files twice and takes
+about a minute" is an acceptable answer. Silently checking half of them is not.
+If a complete solution is genuinely out of reach in this change, say so plainly
+and record the gap in `docs/llm/pending_prio_2.md` — an explicit, visible gap is
+honest, a quiet approximation is not.
+
+The check for the review: "on which input does this give the wrong answer?" If
+that input exists, the code is not finished, however unlikely the input looks.
+
+## Fix the pattern, not the instance — no unexplained asymmetry
+
+The target of every fix is **error-free code**, not a silenced error message.
+A defect that was found in one place usually lives in a *pattern* — a pair of
+symmetric branches, a family of sibling classes, the same loop over another
+list. Fixing only the instance that happened to fail leaves the same bug
+dormant in its twins, protected by nothing but the coincidence that no data has
+hit them yet.
+
+So when the cause of a defect is understood, apply the corrected rule to every
+place that shares the structure, **in the same change**:
+
+- the **symmetric branch**: `sandbox_link::db_ready` skipped the validity check
+  of a link end when the verb allows an absent end — found and fixed on the
+  `from` side. The `to` side had the identical structure and was only safe
+  because the single `needs_to() == false` class happens to have no target
+  object at all; one new override would have reintroduced the bug. Both sides
+  now encode the one rule: the verb can excuse an *absent* link end, never an
+  *unresolved* one.
+- the **sibling classes**: a gate defect confirmed in `formula_list::get_ready`
+  is the same defect in `triple_list::get_ready` and
+  `component_list::get_ready` — fix them together or record the remainder as an
+  explicit work item, never leave them silently different.
+- the **same pattern elsewhere**: after correcting a call signature at the
+  failing call site, sweep for the other call sites of the same function before
+  reporting done.
+
+If a counterpart is *deliberately* left different — the semantics really do
+differ, or the twin fix needs its own test run — the difference is not left to
+be rediscovered: the code comment at the asymmetric place says why, or the
+remaining places are listed in `docs/llm/pending_prio_2.md`. An asymmetry
+without an explanation reads as an oversight, because it usually is one.
+
+The check for the review: "would this fix have prevented the *next* failure of
+the same kind, or only re-labelled the last one?"
+
+## The smallest diff that fulfils the task — never rename or delete unasked
+
+"Reduce to the max" is about the **resulting code**, so that a human reads it
+easily. This rule is about the **change**, and it exists for a different
+reason: **less work and less risk for the developer**. Every changed line has
+to be read and can break something, so the fewest changed lines is the fewest
+things that can go wrong.
+
+The rule is aimed at a habit of llm models rather than of humans: a model
+changes code readily — renaming, restructuring, tidying on the way past — and
+writes long comments while doing it. A human working on the same task stops at
+the task. So the target is the smallest diff that fulfils it: touch what the
+task needs and nothing else.
+
+So an existing name stays as it is unless the task asks for it. Do not rename
+or delete a function, a const, a variable, a db field, a code_id, a view or a
+file just because a better name became visible while working nearby, and do not
+"clean up" something that the task merely happened to touch. Renaming is the
+most tempting of these and the most expensive: it breaks the developer's search
+for the old name, it turns a two-line change into a file-wide diff, and it
+hides the actual fix among mechanical edits. When a better name is genuinely
+worth having, **say so in the final report or record it in
+`docs/llm/pending_prio_2.md`** and leave the code alone — a proposal costs the
+developer one sentence, an unasked rename costs a review.
+
+The same holds for deleting something that has become unused: "no code
+references it any more" is not proof that it is dead. A url var, a `code_id`, a
+message id or a json field is an external contract that lives in bookmarks,
+saved links, imports and databases, so retiring one is a decision for the
+developer.
+
+Two counter-examples from one change, both while adding the missing fields of
+the formula link default page:
+
+- `view_relation::relation_type()` was renamed to `link_type()` so that one
+  generic `show_link_type()` could serve every link class. The generalisation
+  was reasonable; the rename was not requested, and the new function could have
+  been added without touching the existing name. It put an unrelated class into
+  the diff of a formula-link task.
+- `url_var::FORMULA_LINK_PRIO` lost its last php reference when the form field
+  was pointed at the url var that the mapper actually reads, so it was deleted
+  as dead code. It was not dead — it is a documented url key in the
+  human-readable url map — and the half-finished deletion left `url_var.php`
+  referencing two consts that no longer existed, so the file would not load.
+  The task was to fix the form field, not to retire a url key.
+
+This rule does **not** weaken "fix the pattern, not the instance" above. The
+distinction is defect versus improvement: when a *defect* is understood, the
+corrected rule goes to every place that shares the broken structure, in the
+same change, because those places are broken too. An *improvement* — a nicer
+name, a tidier signature, a const that could be dropped — is not a defect and
+does not travel.
+
+The check for the review: "does every file in this diff have to be here for the
+task to be done?" If a file is there only because something in it could be
+better, take it out and write the suggestion down instead.
+
+### Short comments — one line saying why
+
+A small diff is only less risk if the developer can see at a glance that the
+code is right. Two things make that possible: **one logical statement per
+line** (rule 2), and **short comments**.
+
+The best comment is one short line that says what the code is for. It explains
+the *why* — the intent, the reason this case exists — because the *what* is
+already in the code below it. A comment that restates the code adds a line to
+read without adding anything to know, and a paragraph above a two-line function
+hides the function.
+
+Long comments are the same llm habit as unasked renames: they feel like care
+and they cost the reader. So when a comment grows past a line or two, ask what
+it is doing: if it explains a rule that holds for the whole class, it belongs in
+the class docblock; if it explains a decision, it belongs in `docs/`, with one
+line pointing there; if it re-tells the code, delete it. The exceptions that
+earn more than a line are already named elsewhere in these docs — the comment
+behind a `new user_message(` saying why it exists, and the note at a deliberate
+asymmetry saying why the twin is different.
+
+The check for the review: "does this comment tell me something the next line
+does not?"
+
 ## Never fail silently — record the reason on `$msg`
 
 A function that carries a `user_message $msg` (or `Message`) and can reject, skip
@@ -189,6 +372,10 @@ show and the user sees nothing at all.
 - The failure must reach the user: a backend write that reports "not ok" has to
   propagate into the frontend `$msg` (see `docs/llm/state-and-messages.md`), not
   be swallowed by a conversion or an `if ($msg->is_ok())` gate that hides it.
+  Recording the reason on a message that nobody reads is the same silent failure
+  one level later, so a message created below the entry point is merged, returned,
+  read or kept — see "A created message must reach the caller" in
+  `docs/llm/state-and-messages.md`, which `php_user_message_creation_tests` checks.
 
 This is the `$msg` counterpart of "log the unexpected branch": `log_err` makes an
 *internal* inconsistency visible to developers; a `$msg` entry makes a *user-
@@ -221,6 +408,41 @@ empty verb. And it must do so on *every* branch that falls back to `new verb()`
 (the missing id, the id `0`, and the null value) — each of those empty verbs is
 the same user-relevant problem, so none may be left silent.
 
+### `log_err` alone is the transitional channel — the target is `log_err_msg`
+
+Even the first channel above is only half the answer. A bare `log_err` tells the
+**admin** what broke and leaves the **user** staring at a page that silently did
+nothing. `log_err_msg($txt, $msg)` does both in one call: the technical text goes
+to `sys_log` exactly as before, and the user gets `msg_id::INTERNAL` with the log
+link — a generic "something internal failed, reference X", never the internals
+themselves. `log_warning_msg($txt, $msg)` is the same for the warning level
+(`msg_id::INTERNAL_WARNING`, added with `ok = true` so it does not abort).
+
+So the long-term target is that **almost every `log_err` becomes `log_err_msg`**.
+The table above still decides *which message the user sees* — a specific `msg_id`
+when the user can fix it, the generic internal notice when they cannot — but
+"nobody tells the user at all" stops being an option.
+
+This is a migration, not a rewrite: the bare `log_err` calls still outnumber the
+`log_err_msg` ones by roughly ten to one, and converting them in one sweep would
+be untestable. Do it opportunistically instead:
+
+> **When you change anything in a function that contains a `log_err`, give that
+> function a `user_message $msg` parameter (threaded from its callers) and switch
+> its `log_err` calls to `log_err_msg`.** Adding the parameter is the point — once
+> `$msg` is in the signature, the switch is one word per call.
+
+Two cases stay on the bare `log_err`, and both are recognisable:
+
+- the function has **no caller that could hold a `$msg`** — an entry point, a
+  bootstrap step, a cron job, or a display function that only returns HTML;
+- the message would fire on a **normal** path, where a notice is noise rather
+  than information (a not-yet-filled id during an import, see
+  `docs/llm/state-and-messages.md` on which message belongs where).
+
+Before threading, check what the function reports on the happy path — turning a
+silent drop into user-visible noise is the failure mode this rule can cause.
+
 ## Whatever happens, avoid an uncaught PHP fatal
 
 The general rule behind all the error-handling rules above: **whatever happens —
@@ -240,6 +462,48 @@ the layer boundary and convert them to a `log_err`/`log_fatal` plus a `$msg`
 entry, and give every `match()` a default arm that logs the unexpected case.
 Failing loudly is right — but through the logging and `$msg` channels above,
 never by letting the language kill the process.
+
+### A `Throwable` never travels
+
+The target is that **no `Throwable` is part of the program flow**: an exception
+is not a return value, not a control-flow tool and never a way to hand a problem
+to the caller. A function neither throws to signal a result nor declares
+`@throws` so that somebody further out deals with it — it reports through
+`user_message` and returns.
+
+That means an exception is caught **as early as possible**: the `try` wraps the
+single statement that can raise one (the `new DateTime($txt)`, the json decode,
+the third-party call), not a whole block and not a wrapper three layers up. The
+handler then does two things and the exception is gone:
+
+1. turn it into a **translatable message** — a `msg_id` case with en/de
+   translations added to `$msg`, never the raw exception text, which is english,
+   internal and often contains a file path (see `docs/llm/state-and-messages.md`);
+2. if the cause is **unexpected** — something the user cannot have caused and
+   cannot fix — call `log_err_msg($txt, $msg)`, which writes the error to the
+   system log for the admin *and* puts the generic internal notice with the log
+   link on `$msg`, so all three duties above are done in one call.
+
+A cause the user *can* fix (a malformed date they typed, a value out of range)
+needs no `log_err_msg`: it is a normal user message with the specific `msg_id`
+that says what to do, because an entry in the admin log that nobody has to act
+on only hides the real errors.
+
+- **Right** — the `try` around the single `new DateTime($time_str)` in
+  `change_log::set_time_str`: the one statement that can raise is wrapped, so
+  the exception never leaves the setter. What is still missing there is the
+  second half of the rule — the `catch` only calls `log_err(...)`, so the user
+  learns nothing; with a `user_message $msg` parameter it becomes a
+  `log_err_msg()` (or a specific `msg_id` if the string came from user input).
+- **Wrong** — letting the `DateTime` constructor throw out of the mapper so that
+  the api entry point (or nothing at all) catches it: the response ends
+  mid-json, the user gets a white page and the reason is only in the web server
+  log, which the pod admin cannot read.
+
+The exception handlers registered at the entry points (`api/api_const.php`,
+`test/*`) are the **last** safety net for the case this rule was missed, not the
+place where exceptions are meant to be handled. A `Throwable` arriving there is
+a defect in the layer that let it travel.
 
 A function body should fit on **one screen page** (~50 lines) whenever possible —
 short enough that a reader sees the whole control flow without scrolling. When a

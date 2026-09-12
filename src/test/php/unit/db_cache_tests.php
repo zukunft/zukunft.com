@@ -61,8 +61,6 @@ class db_cache_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $sc = new sql_creator();
         $t_db_cache = new test_db_caches($t);
@@ -73,7 +71,7 @@ class db_cache_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $cac = new db_cache($usr);
+        $cac = new db_cache($t->usr1);
         $t->assert_sql_table_create($cac);
         $t->assert_sql_index_create($cac);
         $t->assert_sql_foreign_key_create($cac);
@@ -89,7 +87,7 @@ class db_cache_tests
         $t->subheader($ts . 'sql read');
 
         // sql to load one batch db_cache
-        $cac = new db_cache($usr);
+        $cac = new db_cache($t->usr1);
         $t->assert_sql_by_id($sc, $cac);
 
         // sql to load one cached html page by id
@@ -97,7 +95,7 @@ class db_cache_tests
         $t->assert_sql_by_id($sc, $cac_page);
 
         // sql to load the cache of one type e.g. the system types that are the same for all users
-        $cac = new db_cache($usr);
+        $cac = new db_cache($t->usr1);
         $sc->reset(sql_db::POSTGRES);
         $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID);
         $t->assert_qp($qp, $sc->db_type);
@@ -107,10 +105,10 @@ class db_cache_tests
 
         // sql to load the cache of one type and user e.g. the config values that each user can overwrite
         $sc->reset(sql_db::POSTGRES);
-        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $usr->id());
+        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $t->usr1->id());
         $t->assert_qp($qp, $sc->db_type);
         $sc->reset(sql_db::MYSQL);
-        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $usr->id());
+        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $t->usr1->id());
         $t->assert_qp($qp, $sc->db_type);
 
         // sql to load a list of open batch db_caches
@@ -153,7 +151,7 @@ class db_cache_tests
         $cac->data = '{"body":{"lists":[4]}}';
         $cac_db = $t_db_cache->db_cache_up_to_date();
         $cac_db->data = ['body' => ['lists' => [1]]];
-        $msg = new user_message($usr);
+        $msg = new user_message($t->usr1);
         $fvt_lst = $cac->db_fields_changed($cac_db, $msg);
         $test_name = 'the new api message replaces the cached json array';
         $t->assert($test_name, $fvt_lst->get(db_cache_db::FLD_DATA, $msg)?->value, $cac->data);
@@ -161,7 +159,7 @@ class db_cache_tests
         $t->assert($test_name, $fvt_lst->get(db_cache_db::FLD_DATA, $msg)?->old, json_encode($cac_db->data));
 
         $cac_db->data = json_decode($cac->data, true);
-        $msg = new user_message($usr);
+        $msg = new user_message($t->usr1);
         $fvt_lst = $cac->db_fields_changed($cac_db, $msg);
         $test_name = 'an unchanged api message is not written again';
         $t->assert_null($test_name, $fvt_lst->get(db_cache_db::FLD_DATA, $msg, true)?->name);

@@ -35,19 +35,18 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\helper;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::MODEL_HELPER . 'system_object.php';
+include_once html_paths::MODEL_HELPER . 'system_object.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_HELPER . 'Config.php';
-include_once paths::SHARED_TYPES . 'system_time_type.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
+include_once html_paths::SHARED_TYPES . 'system_time_type.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -68,6 +67,7 @@ class config extends value_list
      */
 
     const int LIMIT_NAME_LIST = shared_config::LIMIT_NAME_LIST;
+    const int LIMIT_LINK_LIST = shared_config::LIMIT_LINK_LIST;
     const int LIMIT_SEARCH_LIST = shared_config::LIMIT_SEARCH_LIST;
 
 
@@ -107,12 +107,12 @@ class config extends value_list
     /**
      * request the user-specific frontend configuration from the backend
      * @param system_object $sys the backend system control object for the execution time tracking
+     * @param user_message $msg to collect the load errors for the user
      * @param string $part the config part to load e.g. the frontend config
      * @return user_message if it fails the reason why
      */
-    function load(system_object $sys, string $part = api::CONFIG_FRONTEND): user_message
+    function load(system_object $sys, user_message $msg, string $part = api::CONFIG_FRONTEND): user_message
     {
-        $msg = new user_message();
         $sys->times->switch(system_time_type::LOAD_CONFIG);
 
         $data = [];
@@ -137,13 +137,14 @@ class config extends value_list
      * get a frontend config value selected by the phrase names
      *
      * @param array $names with the phrase names to select the config value
+     * @param user_message $msg to collect the retrival messages
      * @param int|float|string|null $default the value used if the config value is missing or zero e.g. to avoid a zero list limit
      * @return int|float|string|null with the user-specific config value or the given default
      */
-    function get_by(array $names, int|float|string|null $default = null): int|float|string|null
+    function get_by(array $names, user_message $msg, int|float|string|null $default = null): int|float|string|null
     {
         $val = $this->get_by_names($names);
-        $num = $val?->value();
+        $num = $val?->value($msg);
         if ($num == null) {
             $num = $default;
         }

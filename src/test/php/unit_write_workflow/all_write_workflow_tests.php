@@ -44,6 +44,10 @@ include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'source_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'view_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'component_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'ref_write_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -60,7 +64,7 @@ class all_write_workflow_tests
      * @param user $usr the user for whom the workflow should be tested
      * @return bool true if all tests are fine
      */
-    function run(test_cleanup|test_base $t, user $usr, user_message $usr_msg): bool
+    function run(test_cleanup|test_base $t, user $usr, user_message $msg): bool
     {
 
         // start the test section (ts)
@@ -73,6 +77,10 @@ class all_write_workflow_tests
             new word_write_url_tests()->run($t);
             new triple_write_url_tests()->run($t);
             new formula_write_url_tests()->run($t);
+            new source_write_url_tests()->run($t);
+            new view_write_url_tests()->run($t);
+            new component_write_url_tests()->run($t);
+            new ref_write_url_tests()->run($t);
 
             /*
              * TODO Prio 1 easy workflow
@@ -84,7 +92,7 @@ class all_write_workflow_tests
              */
 
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

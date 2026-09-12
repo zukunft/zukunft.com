@@ -59,7 +59,7 @@ SELECT language_insert_log_1111111
 
 SELECT language_insert_log_1111111
     ('German'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      296::smallint,
      297::smallint,

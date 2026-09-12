@@ -34,13 +34,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -60,7 +59,7 @@ class display_list extends html_base
      * create the html code for a list that can be sorted using the fixed field "order_nbr"
      * @param string $class the class of the objects in the lis
      */
-    function display(string $class, int $id, string $back = ''): string
+    function display(string $class, int $id, array $url_arr = []): string
     {
         global $mtr;
         $result = '';
@@ -94,7 +93,8 @@ class display_list extends html_base
                 $result .= '</td><td>';
             }
             $result .= ' ';
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('Delete component', $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
+            // the delete button of the entry leads to its del view and returns to the calling page
+            $result .= $entry->btn_del($url_arr);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td></tr>';
             }

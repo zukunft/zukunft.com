@@ -34,19 +34,19 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
 //include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
@@ -55,17 +55,20 @@ include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::RESULT . 'result_list.php';
 //include_once html_paths::VALUE . 'value_list.php';
 //include_once html_paths::VIEW . 'view_list.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_HELPER . 'TextIdObject.php';
-include_once paths::SHARED_HELPER . 'MapObject.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_HELPER . 'MapObject.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -75,19 +78,23 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
 
@@ -104,7 +111,9 @@ class db_object extends TextIdObject
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_ADD_ID = views::WORD_ADD_ID;
     const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
+    const int VIEW_DEL_ID = views::WORD_DEL_ID;
 
     // the fallback crud message id that are expected to be overwritten by the child objects
     const msg_id MSG_ADD = msg_id::WORD_ADD;
@@ -130,16 +139,16 @@ class db_object extends TextIdObject
      */
 
     /**
-     * TODO Prio 1 add user_message parameter
+     * TODO Prio 1 remove $api_json because the user_message parameter cannot be returned
      * the html display object are always filled base on the api message
      * @param string|null $api_json the api message to set all object vars
      */
     function __construct(?string $api_json = null)
     {
-        $usr_msg = new user_message();
+        $msg = new user_message(); // not reported: a buffer of this constructor, see the TODO above to take the caller's
         parent::__construct();
         if ($api_json != null) {
-            $this->set_from_json($api_json, $usr_msg);
+            $this->set_from_json($api_json, $msg);
         }
     }
 
@@ -148,13 +157,12 @@ class db_object extends TextIdObject
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = new user_message();
         // keep the '8'-prefixed opening db values so the edit view, when re-rendered after a save
         // error, re-emits the original db snapshot instead of the just changed value (see url_var::PRE)
         foreach ($url_array as $key => $val) {
@@ -168,10 +176,10 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $usr_msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -191,14 +199,14 @@ class db_object extends TextIdObject
      * gets an orange warning on the edit view (e.g. for an empty name) instead of confirming an
      * invalid change; the base object has no required input, so it reports the input as valid
      *
-     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param user_message $msg to enrich with a warning per invalid field
      * @param string $action the crud action of the change (e.g. url_var::CRUD_DELETE) used to
      *                       skip checks that do not apply, e.g. an empty name when deleting
      * @param array $url_array the pending change url (new values and their '8'-prefixed old values)
      *                         so a check can tell whether a permission-gated field actually changed
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
         return true;
     }
@@ -217,11 +225,11 @@ class db_object extends TextIdObject
     /**
      * the inverse of url_mapper: the url parameters that represent this object's database values,
      * e.g. to build the url array of an edit form submission in a test without hard-coding the keys;
-     * each child extends the array with its own fields via parent::to_url_array()
+     * each child extends the array with its own fields via parent::to_url_array($msg)
      *
      * @return array the url var keyed array of this object's values
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
         return [url_var::ID => $this->id()];
     }
@@ -249,6 +257,96 @@ class db_object extends TextIdObject
         return [];
     }
 
+    /**
+     * the url of the confirm page of the edit view of this object that changes one field: the field
+     * is set to the given new value and the given old value is the '8'-prefixed opening value, so
+     * that the confirm page shows exactly this one pending change; the other entries of the given
+     * url are kept, so the confirm submit never resets another field
+     *
+     * shared by the undo and apply icons of the 'my' and 'others' tabs (ui_preview) and the undo
+     * icon of the all user overwrites column of the user page (change_log_named)
+     *
+     * @param string $fld the db field name of the field to change
+     * @param string $new_val the value that confirming the change saves for the session user
+     * @param string $old_val the '8'-prefixed opening value shown as the current value
+     * @param array $url_array the parsed url of the current page that is carried into the link
+     * @return string the url of the confirm page or an empty string if this object has no edit view
+     *                or no url var for the given field
+     */
+    function field_change_confirm_url(
+        string $fld,
+        string $new_val,
+        string $old_val,
+        array  $url_array = []
+    ): string
+    {
+        $result = '';
+        $fld_var = $this->db_fld_to_url()[$fld] ?? '';
+        // not every class has an edit view, so guard the const to avoid a fatal
+        if ($fld_var != '' and $this->has_db_id() and defined($this::class . '::VIEW_EDIT_ID')) {
+            // keep all entries of the current url except the entry (and the '8'-prefixed opening
+            // value) of the field to change, which is replaced by the given values below
+            $url_pars = $url_array;
+            unset($url_pars[$fld_var]);
+            unset($url_pars[url_var::PRE . $fld_var]);
+            $url_pars = array_merge($url_pars, [
+                url_var::MASK => $this::VIEW_EDIT_ID,
+                url_var::ID => $this->id(),
+                $fld_var => $new_val,
+                url_var::PRE . $fld_var => $old_val,
+                url_var::STEP => url_var::STEP_CONFIRM,
+            ]);
+            $result = api::MAIN_SCRIPT . '?' . http_build_query($url_pars);
+        }
+        return $result;
+    }
+
+    /**
+     * the url of the default page of this object e.g. to link the name of the changed object in
+     * the all user overwrites column of the user page to the object itself
+     *
+     * the default view is derived from the edit view, because a frontend class names its crud
+     * views but not its default view (see views::change_to_show_id)
+     *
+     * @return string the url of the default page or an empty string if this object has no own view
+     */
+    function default_page_url(): string
+    {
+        $result = '';
+        // not every class has an edit view, so guard the const to avoid a fatal
+        if ($this->has_db_id() and defined($this::class . '::VIEW_EDIT_ID')) {
+            $msk_id = new views()->change_to_show_id($this::VIEW_EDIT_ID);
+            // a class without an own default view would send the user to the start page
+            if ($msk_id != views::START_ID) {
+                $result = api::MAIN_SCRIPT . '?' . http_build_query([
+                        url_var::MASK => $msk_id,
+                        url_var::ID => $this->id(),
+                    ]);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if this object has a database id; the id of a value is its group id, which is a text for
+     * a group of more than four phrases, so a text id is checked for an empty text and never
+     * compared with a number
+     *
+     * private, because value::is_id_set answers another question (whether the phrase group of the
+     * value has an id) and the two must never be mixed up
+     *
+     * @return bool true if the database id of this object is set
+     */
+    private function has_db_id(): bool
+    {
+        $id = $this->id();
+        if (is_string($id)) {
+            return $id != '';
+        } else {
+            return $id > 0;
+        }
+    }
+
 
     /*
      * set and get
@@ -257,12 +355,12 @@ class db_object extends TextIdObject
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($json_api_msg, true), $usr_msg);
+        return $this->api_mapper(json_decode($json_api_msg, true), $msg);
     }
 
     /**
@@ -311,26 +409,40 @@ class db_object extends TextIdObject
      * load the user sandbox object e.g. word by id via api
      * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
+     * @param user_message $msg to collect the load warnings for the user
      * @param array $data additional data that should be included in the get request
      * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool
      */
-    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    function load_by_id(int|string $id, user_message $msg, array $data = [], int $usr_id = 0): bool
     {
         $result = false;
-        $usr_msg = new user_message();
 
         $api = new rest_call();
-        $json_array = $api->api_call_id($this::class, $id, $data);
+        $json_array = $api->api_call_id($this->api_class(), $id, $data);
         if ($json_array) {
-            $excluded = false;
-            if (array_key_exists(json_fields::EXCLUDED, $json_array)) {
-                $excluded = $json_array[json_fields::EXCLUDED];
-            }
-            if (!$excluded) {
-                $this->api_mapper($json_array, $usr_msg);
-                if ($this->name() != '') {
-                    $result = true;
+            $api_msg = new api_message();
+            $body = $api_msg->validate($json_array);
+            // a backend error json (e.g. the idor-neutral not-found message) or an empty object
+            // means the id does not or no longer points to a database row (e.g. a stale link to a
+            // deleted object), so tell the user instead of mapping the error json, which would
+            // leak the internal mandatory-field messages to the page
+            if (array_key_exists(json_fields::MSG, $body)
+                or ($body[json_fields::ID] ?? 0) == 0) {
+                $msg->add_warning_with_vars(msg_id::OBJECT_NOT_FOUND, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                    msg_id::VAR_ID => $id,
+                ]);
+            } else {
+                $excluded = false;
+                if (array_key_exists(json_fields::EXCLUDED, $body)) {
+                    $excluded = $body[json_fields::EXCLUDED];
+                }
+                if (!$excluded) {
+                    $this->api_mapper($json_array, $msg);
+                    if ($this->name() != '') {
+                        $result = true;
+                    }
                 }
             }
         }
@@ -353,9 +465,36 @@ class db_object extends TextIdObject
      * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [], $usr_id);
+        return $this->load_by_id($id, $msg, [], $usr_id);
+    }
+
+    /**
+     * the additional api parameters that the backend needs to answer this page request, e.g. the
+     * not yet saved form values that the formula form asks the backend to recalculate
+     *
+     * the base object needs none, so a page request is answered by the plain load by id and every
+     * frontend dbo type can be used polymorphically by frontend::url_to_html
+     *
+     * @param array $url_array the url parameters of the page request
+     * @return array the api parameters to add to the load call
+     */
+    function api_par_from_url(array $url_array): array
+    {
+        return [];
+    }
+
+    /**
+     * the class the api and the user texts know this object by: a renderer subclass (e.g. the
+     * component_exe that the frontend builds for the component pages) calls the api of its base
+     * class and is named like it, so it overrides this with the base class
+     *
+     * @return string the class name used for the api route and the translated object name
+     */
+    function api_class(): string
+    {
+        return $this::class;
     }
 
 
@@ -365,9 +504,9 @@ class db_object extends TextIdObject
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         $vars[json_fields::ID] = $this->id();
@@ -377,9 +516,9 @@ class db_object extends TextIdObject
     /**
      * @return string the json message to the backend as a string
      */
-    function api_json(): string
+    function api_json(user_message $msg): string
     {
-        return json_encode($this->api_array());
+        return json_encode($this->api_array([], $msg));
     }
 
 
@@ -402,40 +541,70 @@ class db_object extends TextIdObject
      */
 
     /**
+     * the html code to create a sandbox object e.g. a new word, value or formula
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
      * @return string the html code for a bottom
-     * to create a new sandbox object e.g. word for the current user
      */
-    function btn_add(string $back = ''): string
+    function btn_add(array $url_arr = [], string $base_url = ''): string
     {
         return $this->btn_add_sbx(
-            $this::VIEW_ADD,
+            $this::VIEW_ADD_ID,
             $this::MSG_ADD,
-            $back);
+            $url_arr, '', $base_url);
     }
 
     /**
-     * @return string the html code for a bottom
-     * to change a sandbox object e.g. the word name or the type
+     * a small inline edit icon that links to the edit view of this object, e.g. behind the page
+     * title or behind a reference name; the page-identifying url params of the calling page are
+     * added with the url_var::BACK ('9') prefix so the edit mask can return to the calling page
+     * e.g. on cancel or if the pod blocks the change of an ip user (see /http/view.php).
+     * not named edit_link, because formula::edit_link returns the linked name and view::edit_link
+     * has no back params, so a same-named parent function would change or break the children
+     *
+     * @param array $url_array the url params of the calling page used to create the back params
+     * @return string the html code of the edit icon with the link to the edit view
      */
-    function btn_edit(string $back = ''): string
+    function edit_icon_link(array $url_array = []): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $url = $html->url_with_back(
+            $html->url_back($this::VIEW_EDIT_ID, $this->id()),
+            $url_array
+        );
+        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
+        return $html->ref($url, $icon, $mtr->txt($this::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
+    }
+
+    /**
+     * the html code to change a sandbox object e.g. the word name or the type
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code for a bottom
+     */
+    function btn_edit(array $url_arr = [], string $base_url = ''): string
     {
         return $this->btn_edit_sbx(
-            $this::VIEW_EDIT,
+            $this::VIEW_EDIT_ID,
             $this::MSG_EDIT,
-            $back);
+            $url_arr, '', $base_url);
     }
 
     /**
-     * @return string the html code for a bottom
-     * to exclude the sandbox object e.g. word for the current user
+     * the html code to exclude the sandbox object e.g. word for the current user
      * or if no one uses the sandbox object delete the complete sandbox object e.g. word
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
+     * @return string the html code for a bottom
      */
-    function btn_del(string $back = ''): string
+    function btn_del(array $url_arr = [], string $base_url = ''): string
     {
         return $this->btn_del_sbx(
-            $this::VIEW_DEL,
+            $this::VIEW_DEL_ID,
             $this::MSG_DEL,
-            $back);
+            $url_arr, '', $base_url);
     }
 
     /**
@@ -443,13 +612,19 @@ class db_object extends TextIdObject
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
      * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_add_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function btn_add_sbx(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        array      $url_arr = [],
+        string     $explain = '',
+        string     $base_url = ''
+    ): string
     {
-        $btn = $this->btn_sbx($msk_id, $back);
+        $btn = $this->btn_sbx($msk_id, $url_arr, $base_url);
         return $btn->add($msg_code_id, $explain);
     }
 
@@ -458,13 +633,20 @@ class db_object extends TextIdObject
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
      * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
+     * @param string $base_url to set an absolut html path for urls
      * @return string the html code for a bottom
      */
-    function btn_edit_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function btn_edit_sbx(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        array      $url_arr = [],
+        string     $explain = '',
+        string     $base_url = ''
+    ): string
     {
-        $btn = $this->btn_sbx($msk_id, $back);
+        $btn = $this->btn_sbx($msk_id, $url_arr, $base_url);
         return $btn->edit($msg_code_id, $explain);
     }
 
@@ -474,13 +656,19 @@ class db_object extends TextIdObject
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
      * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_del_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function btn_del_sbx(
+        int|string $msk_id,
+        msg_id     $msg_code_id,
+        array      $url_arr = [],
+        string     $explain = '',
+        string     $base_url = ''
+    ): string
     {
-        $btn = $this->btn_sbx($msk_id, $back);
+        $btn = $this->btn_sbx($msk_id, $url_arr, $base_url);
         return $btn->del($msg_code_id, $explain);
     }
 
@@ -488,14 +676,15 @@ class db_object extends TextIdObject
      * create the html code for a button
      *
      * @param int|string $msk_id the code id or database id of the view used to add the object
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param array $url_arr the backtrace for the return page after adding the object and for undo actions
+     * @param string $base_url to set an absolut html path for urls
      * @return button the filled bottom object
      */
-    private function btn_sbx(int|string $msk_id, string $back = ''): button
+    private function btn_sbx(int|string $msk_id, array $url_arr = [], string $base_url = ''): button
     {
         $html = new html_base();
-        $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return new button($url, $back);
+        $url = $html->url($msk_id, $this->id(), $url_arr, '', $base_url);
+        return new button($url, $url_arr);
     }
 
 
@@ -506,12 +695,12 @@ class db_object extends TextIdObject
     /**
      * create the html url to create, change or delete this database object
      * @param int|string $view the database id or the code id of the view that should be shown
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the url
      * @returns string the html code
      */
-    function obj_url(int|string $view, ?string $back = ''): string
+    function obj_url(int|string $view, array $url_arr = []): string
     {
-        return new html_base()->url_new($view, $this->id(), '', $back);
+        return new html_base()->url_back($view, $this->id(), $url_arr);
     }
 
 
@@ -539,6 +728,31 @@ class db_object extends TextIdObject
         $msg = 'ERROR: plural not overwritten by ' . $this::class;
         log_err($msg);
         return $msg;
+    }
+
+    /**
+     * the name in the plural form
+     *
+     * the plural of a name is user data, so it is used whenever the user has set one; only if
+     * the user has set none the plural is guessed, and only for a language that builds the
+     * plural by adding an "s", because in any other language the guess would be wrong more
+     * often than right
+     * TODO use a language specific function that can include the exceptions of the language
+     *
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @return string the plural given by the user, the guessed plural or the name
+     */
+    function plural_name(string $lan = languages::DEFAULT): string
+    {
+        $result = $this->get_plural();
+        if ($result == null or $result == '') {
+            if ($lan == languages::DEFAULT) {
+                $result = $this->name() . languages::DEFAULT_PLURAL_SUFFIX;
+            } else {
+                $result = $this->name();
+            }
+        }
+        return $result;
     }
 
     function reverse(): ?string
@@ -569,7 +783,7 @@ class db_object extends TextIdObject
         return $msg;
     }
 
-    function value(): float|string|DateTime|null
+    function value(user_message $msg): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;
         log_err($msg);
@@ -620,15 +834,15 @@ class db_object extends TextIdObject
      * load
      */
 
-    function view_list(?string $pattern = null): view_list
+    function view_list(user_message $msg, ?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
         // without an explicit pattern use the load_by_pattern default ('%'), the sql like wildcard the
         // backend expects; a literal '*' matches nothing and would return an empty view list
         if ($pattern == null) {
-            $msk_lst->load_by_pattern();
+            $msk_lst->load_by_pattern($msg);
         } else {
-            $msk_lst->load_by_pattern($pattern);
+            $msk_lst->load_by_pattern($msg, $pattern);
         }
         return $msk_lst;
     }
@@ -642,21 +856,33 @@ class db_object extends TextIdObject
      * save the frontend object in the database
      * TODO Prio 2 should be done via api
      *
-     * @param user $usr the frontend user
-     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function add_via_api(user $usr, user_message $usr_msg): user_message
+    function add_via_api(user_message $msg): user_message
     {
+        // a database change without a requesting user on the message is never written
+        // (docs/llm/state-and-messages.md)
+        if ($msg->usr == null) {
+            $result = new user_message(); // the guard reports the missing user as its own return value
+            $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return $result;
+        }
         $map = new MapObject();
-        $usr_msg_db = $map->convertMsgToDb($usr_msg);
-        $db_usr = $map->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
+        // the backend message carries the backend twin of the requesting user,
+        // so the backend object created below is owned by the user of this message
+        $usr_msg_db = $map->convertMsgToDb($msg);
+        $db_obj = $map->convertToDb($this, $usr_msg_db);
         $add_result = $db_obj->save($usr_msg_db);
+        // take over the id assigned by the backend save, so the caller can show the added
+        // object by its id (see frontend::action_crud)
+        if ($usr_msg_db->is_ok()) {
+            $this->id = $db_obj->id();
+        }
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
-        $result = $rest->api_post($this::class, $this->api_array());
+        $result = $rest->api_post($this::class, $this->api_array($typ_lst, $msg));
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
@@ -667,21 +893,34 @@ class db_object extends TextIdObject
     /**
      * update the frontend object via api in the database
      *
-     * @param user $usr the frontend user
-     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function update(user $usr, user_message $usr_msg): user_message
+    function update(user_message $msg): user_message
     {
+        // a database change without a requesting user on the message is never written
+        // (docs/llm/state-and-messages.md)
+        if ($msg->usr == null) {
+            $result = new user_message(); // the guard reports the missing user as its own return value
+            $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return $result;
+        }
         $map = new MapObject();
-        $usr_msg_db = $map->convertMsgToDb($usr_msg);
-        $db_usr = $map->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
+        // the backend message carries the backend twin of the requesting user,
+        // so the backend object changed below is changed by the user of this message
+        $usr_msg_db = $map->convertMsgToDb($msg);
+        $db_obj = $map->convertToDb($this, $usr_msg_db);
         $upd_result = $db_obj->save($usr_msg_db);
+        // take over the id of the saved object, because it can differ from the requested id:
+        // e.g. a rename by a user that cannot change the standard row creates a new database
+        // row, so the following render must show the object by the new id (see frontend::action_crud)
+        if ($usr_msg_db->is_ok()) {
+            $this->id = $db_obj->id();
+        }
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
-        $result = $rest->api_put($this::class, $this->api_array());
+        $result = $rest->api_put($this::class, $this->api_array($typ_lst, $msg));
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
@@ -692,21 +931,28 @@ class db_object extends TextIdObject
     /**
      * exclude this frontend object via api from the database
      *
-     * @param user $usr the frontend user
-     * @param user_message $usr_msg the frontend message object to collect the message to the user
-     * * @return user_message the frontend message object filled up with the backend message for the user
+     * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
+     * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function del(user $usr, user_message $usr_msg): user_message
+    function del(user_message $msg): user_message
     {
+        // a database change without a requesting user on the message is never written
+        // (docs/llm/state-and-messages.md)
+        if ($msg->usr == null) {
+            $result = new user_message(); // the guard reports the missing user as its own return value
+            $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return $result;
+        }
         $map = new MapObject();
-        $usr_msg_db = $map->convertMsgToDb($usr_msg);
-        $db_usr = $map->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
+        // the backend message carries the backend twin of the requesting user,
+        // so the backend object excluded below is excluded for the user of this message
+        $usr_msg_db = $map->convertMsgToDb($msg);
+        $db_obj = $map->convertToDb($this, $usr_msg_db);
         $del_result = $db_obj->del($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
-        $result = $rest->api_del($this::class, $this->api_array());
+        $result = $rest->api_del($this::class, $this->api_array($typ_lst, $msg));
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
@@ -724,12 +970,15 @@ class db_object extends TextIdObject
      */
     function url(): ?string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'url',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $usr_msg->get_last_message();
+        return log_missing_overwrite('url', $this::class);
+    }
+
+    /**
+     * @return string|null the doi field of some child object e.g. the source
+     */
+    function doi(): ?string
+    {
+        return log_missing_overwrite('doi', $this::class);
     }
 
     /**
@@ -742,12 +991,7 @@ class db_object extends TextIdObject
      */
     private function selector_not_defined(string $function_name): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => $function_name,
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $usr_msg->get_last_message_translated();
+        return log_missing_overwrite_warning($function_name, $this::class);
     }
 
     /**
@@ -756,7 +1000,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
+    public function phrase_type_selector(string $form, user_message $msg, ?type_lists $typ_lst): string
     {
         return $this->selector_not_defined('phrase_type_selector');
     }
@@ -767,7 +1011,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    public function source_type_selector(string $form, ?type_lists $typ_lst): string
+    public function source_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('source_type_selector');
     }
@@ -804,7 +1048,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the formula type
      */
-    public function formula_type_selector(string $form, ?type_lists $typ_lst): string
+    public function formula_type_selector(string $form, user_message $msg, ?type_lists $typ_lst): string
     {
         return $this->selector_not_defined('formula_type_selector');
     }
@@ -815,7 +1059,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    public function view_type_selector(string $form, ?type_lists $typ_lst): string
+    public function view_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         $msg = 'view type selector not defined for ' . $this::class . '.';
         // TODO Prio 1 active
@@ -832,7 +1076,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    public function style_selector(string $form, ?type_lists $typ_lst): string
+    public function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('style_selector');
     }
@@ -843,7 +1087,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    public function component_type_selector(string $form, ?type_lists $typ_lst): string
+    public function component_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('component_type_selector');
     }
@@ -854,7 +1098,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    public function component_style_selector(string $form, ?type_lists $typ_lst): string
+    public function component_style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('component_style_selector');
     }
@@ -1012,9 +1256,9 @@ class db_object extends TextIdObject
      * @return string the html code to select a result
      */
     public function result_selector(
-        string      $form,
-        result_list $res_lst = null,
-        string      $name = url_var::RESULT
+        string           $form,
+        result_list|null $res_lst = null,
+        string           $name = url_var::RESULT
     ): string
     {
         return $this->selector_not_defined('result_selector');
@@ -1028,10 +1272,11 @@ class db_object extends TextIdObject
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         return $this->selector_not_defined('view_selector');

@@ -37,11 +37,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_SYSTEM . 'ip_range.php';
 include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'ip_ranges.php';
 include_once test_paths::CREATE . 'test_users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\ip_ranges;
 
 class test_ip_ranges
@@ -79,10 +81,10 @@ class test_ip_ranges
     /**
      * @return ip_range_list a list of ip_range entries with some dummy values
      */
-    function ip_range_list(): ip_range_list
+    function ip_range_list(user_message $msg): ip_range_list
     {
         $ip_range_lst = new ip_range_list();
-        $ip_range_lst->add($this->ip_range());
+        $ip_range_lst->add($this->ip_range(), $msg);
         return $ip_range_lst;
     }
 

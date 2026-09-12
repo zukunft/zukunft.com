@@ -41,7 +41,7 @@ SELECT job_type_insert_log_1111
 
 SELECT job_type_insert_log_1111
     ('update value'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      232::smallint,
      233::smallint,

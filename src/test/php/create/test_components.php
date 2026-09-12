@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_COMPONENT . 'component_list.php';
@@ -53,14 +54,18 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
@@ -76,8 +81,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
 class test_components extends test_objects
 {
@@ -100,12 +108,14 @@ class test_components extends test_objects
      */
 
     /**
+     * the included copy of the filled component is used, because an excluded component
+     * has an empty api message, so that the frontend list would have no usable entry
      * @return component_list with a list of suggested components for a word
      */
     function component_list_word(): component_list
     {
         $lst = new component_list($this->env->usr1);
-        $lst->add($this->component_filled());
+        $lst->add($this->component_filled_included());
         return $lst;
     }
 
@@ -171,7 +181,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::WORD_NAME);
-        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::PHRASE_NAME, new user_message($this->env->usr1));
         $cmp->description = components::WORD_COM;
         return $cmp;
     }
@@ -183,7 +193,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
-        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::PHRASE_NAME, new user_message($this->env->usr1));
         $cmp->description = components::FORM_NAME_COM;
         return $cmp;
     }
@@ -196,11 +206,22 @@ class test_components extends test_objects
         return $cmp;
     }
 
+    /**
+     * @param string $name the name of a component that is not yet in the database
+     * @return component as an import creates it before the components have been saved
+     */
+    function by_name(string $name): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set_name($name);
+        return $cmp;
+    }
+
     function component_matrix(): component
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::MATRIX_ID, components::MATRIX_NAME);
-        $cmp->set_type(component_types::CALC_SHEET, $this->env->usr1);
+        $cmp->set_type(component_types::CALC_SHEET, new user_message($this->env->usr1));
         $cmp->description = components::MATRIX_COM;
         return $cmp;
     }
@@ -215,9 +236,9 @@ class test_components extends test_objects
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::WORD_NAME);
         $cmp->description = components::WORD_COM;
-        $cmp->set_type(component_types::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, new user_message($this->env->usr1));
         $cmp->set_style(view_styles::COL_SM_4);
-        $cmp->set_code_id(components::FORM_TITLE, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_TITLE);
         $cmp->set_usage(test_const::DUMMY_USAGE_COMPONENT);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
         $cmp->ui_msg_code_id_vars = msg_id::DONE;
@@ -236,6 +257,17 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component with all fields set but not excluded, so that the api message carries
+     *         all fields e.g. to test the component default page title
+     */
+    function component_filled_included(): component
+    {
+        $cmp = $this->component_filled();
+        $cmp->include();
+        return $cmp;
+    }
+
+    /**
      * @return component with all fields set to check if the save and load process is complete
      */
     function component_filled_all(): component
@@ -243,6 +275,18 @@ class test_components extends test_objects
         $t_frm = new test_formulas($this->env);
         $cmp = $this->component_filled();
         $cmp->set_formula($t_frm->formula());
+        return $cmp;
+    }
+
+    /**
+     * @return component with all fields set incl. the formula but not excluded, so that the api
+     *         message carries all fields e.g. to test the code id, the ui message links and the
+     *         formula selector of the component add and edit forms
+     */
+    function component_filled_all_included(): component
+    {
+        $cmp = $this->component_filled_all();
+        $cmp->include();
         return $cmp;
     }
 
@@ -265,7 +309,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set_name(components::TEST_ADD_VIA_FUNC_NAME);
-        $cmp->set_type(component_types::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, new user_message($this->env->usr1));
         return $cmp;
     }
 
@@ -273,9 +317,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::FORM_TITLE_NAME);
-        $cmp->set_type(component_types::FORM_TITLE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_TITLE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_TITLE_COM;
-        $cmp->set_code_id(components::FORM_TITLE, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_TITLE);
         return $cmp;
     }
 
@@ -283,9 +327,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::MATRIX_ID, components::FORM_BACK_NAME);
-        $cmp->set_type(component_types::FORM_HIDDEN_BACK, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_HIDDEN_BACK, new user_message($this->env->usr1));
         $cmp->description = components::FORM_BACK_COM;
-        $cmp->set_code_id(components::FORM_BACK, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_BACK);
         return $cmp;
     }
 
@@ -293,9 +337,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(3, components::FORM_CONFIRM_NAME);
-        $cmp->set_type(component_types::FORM_HIDDEN_STEP, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_HIDDEN_STEP, new user_message($this->env->usr1));
         $cmp->description = components::FORM_CONFIRM_COM;
-        $cmp->set_code_id(components::FORM_CONFIRM, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_CONFIRM);
         return $cmp;
     }
 
@@ -303,9 +347,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
-        $cmp->set_type(component_types::FORM_FIELD_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_NAME, new user_message($this->env->usr1));
         $cmp->description = components::FORM_NAME_COM;
-        $cmp->set_code_id(components::FORM_NAME, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_NAME);
         return $cmp;
     }
 
@@ -313,9 +357,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(5, components::FORM_DESCRIPTION_NAME);
-        $cmp->set_type(component_types::FORM_FIELD_DESCRIPTION, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_DESCRIPTION, new user_message($this->env->usr1));
         $cmp->description = components::FORM_DESCRIPTION_COM;
-        $cmp->set_code_id(components::FORM_DESCRIPTION, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_DESCRIPTION);
         return $cmp;
     }
 
@@ -323,9 +367,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_PLURAL_ID, components::FORM_PLURAL_NAME);
-        $cmp->set_type(component_types::FORM_FIELD_PLURAL, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_PLURAL, new user_message($this->env->usr1));
         $cmp->description = components::FORM_PLURAL_COM;
-        $cmp->set_code_id(components::FORM_PLURAL, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_PLURAL);
         return $cmp;
     }
 
@@ -333,9 +377,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(6, components::FORM_PHRASE_TYPE_NAME);
-        $cmp->set_type(component_types::FORM_SELECT_PHRASE_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_SELECT_PHRASE_TYPE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_PHRASE_TYPE_COM;
-        $cmp->set_code_id(components::FORM_PHRASE_TYPE, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_PHRASE_TYPE);
         return $cmp;
     }
 
@@ -343,9 +387,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(7, components::FORM_SHARE_TYPE_NAME);
-        $cmp->set_type(component_types::FORM_SHARE_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_SHARE_TYPE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_SHARE_TYPE_COM;
-        $cmp->set_code_id(components::FORM_SHARE_TYPE, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_SHARE_TYPE);
         return $cmp;
     }
 
@@ -353,9 +397,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(8, components::FORM_PROTECTION_TYPE_NAME);
-        $cmp->set_type(component_types::FORM_PROTECTION_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_PROTECTION_TYPE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_PROTECTION_TYPE_COM;
-        $cmp->set_code_id(components::FORM_PROTECTION_TYPE, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_PROTECTION_TYPE);
         return $cmp;
     }
 
@@ -363,9 +407,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(9, components::FORM_CANCEL_NAME);
-        $cmp->set_type(component_types::FORM_BUTTON_CANCEL, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_BUTTON_CANCEL, new user_message($this->env->usr1));
         $cmp->description = components::FORM_CANCEL_COM;
-        $cmp->set_code_id(components::FORM_CANCEL, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_CANCEL);
         return $cmp;
     }
 
@@ -373,9 +417,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(10, components::FORM_SAVE_NAME);
-        $cmp->set_type(component_types::FORM_BUTTON_SAVE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_BUTTON_SAVE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_SAVE_COM;
-        $cmp->set_code_id(components::FORM_SAVE, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_SAVE);
         return $cmp;
     }
 
@@ -383,9 +427,9 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(11, components::FORM_END_NAME);
-        $cmp->set_type(component_types::FORM_END, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_END, new user_message($this->env->usr1));
         $cmp->description = components::FORM_END_COM;
-        $cmp->set_code_id(components::FORM_END, $this->env->usr_system);
+        $cmp->set_code_id_db(components::FORM_END);
         return $cmp;
     }
 
@@ -414,7 +458,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set($id, $name);
-        $cmp->set_type(component_types::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, new user_message($this->env->usr1));
         return $cmp;
     }
 
@@ -445,6 +489,54 @@ class test_components extends test_objects
             $lst->add_link($lnk);
             $pos++;
         }
+        return $lst;
+    }
+
+    /**
+     * the components of a view with two text fields that share one line
+     * e.g. to test the same line position type
+     *
+     * the first component uses the default position type, so it opens the line that the second
+     * one continues, which is how the value default page shows the last update and the source
+     *
+     * @param view $msk the view to link the components to
+     * @return component_link_list with the two fields of one line
+     */
+    function components_same_line(view $msk): component_link_list
+    {
+        $lst = new component_link_list($this->env->usr1);
+        $fields = [
+            [components::LINE_FIRST_ID, components::LINE_FIRST_NAME, null],
+            [components::LINE_SECOND_ID, components::LINE_SECOND_NAME, position_types::SAME_LINE],
+        ];
+        $pos = 1;
+        foreach ($fields as [$id, $name, $pos_type]) {
+            $lnk = new component_link($this->env->usr1);
+            $lnk->set($pos, $msk, $this->component_text($id, $name), $pos);
+            if ($pos_type != null) {
+                $lnk->set_pos_type($pos_type);
+            }
+            $lst->add_link($lnk);
+            $pos++;
+        }
+        return $lst;
+    }
+
+    /**
+     * the components of a view whose only component continues a line that no component has
+     * started, e.g. to test that the same line separator never stands alone
+     *
+     * @param view $msk the view to link the component to
+     * @return component_link_list with the single leading same line component
+     */
+    function components_same_line_alone(view $msk): component_link_list
+    {
+        $lst = new component_link_list($this->env->usr1);
+        $lnk = new component_link($this->env->usr1);
+        $lnk->set(1, $msk, $this->component_text(
+            components::LINE_SECOND_ID, components::LINE_SECOND_NAME), 1);
+        $lnk->set_pos_type(position_types::SAME_LINE);
+        $lst->add_link($lnk);
         return $lst;
     }
 
@@ -504,6 +596,17 @@ class test_components extends test_objects
         return $lnk;
     }
 
+    /**
+     * @return component_link with all fields set but not excluded, so that the api message
+     *         carries all fields e.g. to test the component link default page title
+     */
+    function component_link_filled_included(): component_link
+    {
+        $lnk = $this->component_link_filled();
+        $lnk->include();
+        return $lnk;
+    }
+
     function component_link_filled_add(): component_link
     {
         $t_msk = new test_views($this->env);
@@ -551,6 +654,80 @@ class test_components extends test_objects
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_form_end(), $pos);
         return $lst;
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the url of an empty component as the add component form shows it, used by the add_component
+     * workflow test to open the form (mirrors test_sources::source_new_url)
+     *
+     * @return array the url parameters of a component that is not yet created
+     */
+    static function component_new_url(user_message_ui $msg): array
+    {
+        $cmp_ui = new component_ui();
+        return $cmp_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url of the added test component, used by the change_component workflow test to open the
+     * edit form (mirrors test_views::view_add_url)
+     *
+     * @return array the component url parameters of the added test component
+     */
+    function component_add_url(user_message_ui $msg): array
+    {
+        $cmp_ui = new component_ui($this->component_add()->api_json());
+        return $cmp_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url parameters posted by the 'Add new view component' form on save, used by the
+     * add_component workflow test to show the new component in the confirm add view
+     * (docs/llm/testing.md); the share and protection ids are the defaults of a newly added
+     * component, which the add form preselects; the row, column and formula selects stay empty
+     * like a text component has them; the object id and the back target are added by the workflow
+     * step, not here (mirrors test_sources::add_url_array)
+     *
+     * @return array the add form url parameters of the new component
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => components::TEST_ADD_NAME,
+            url_var::DESCRIPTION => components::TEST_ADD_COM,
+            url_var::COMPONENT_TYPE => component_types::TEXT_ID,
+            url_var::STYLE => view_styles::COL_SM_4_ID,
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
+    }
+
+    /**
+     * the filled component url posted by the edit form in the second change_component round,
+     * mirroring test_views::fill_url_array: the first round only changed the style, so the fill
+     * round also changes the description; the '8'-prefixed opening values are the state the
+     * component has after the first round, so the confirm view shows only the description as changed
+     *
+     * @param int $id the database id of the component the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $msg = new user_message_ui();
+        $url_arr = $this->component_add_url($msg);
+        // the workflow step adds the current db id of the test component, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;
+        $url_arr[url_var::DESCRIPTION] = components::TEST_DESCRIPTION_CHANGED;
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::STYLE] = $url_arr[url_var::STYLE];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
     }
 
 }

@@ -40,6 +40,8 @@ class test_const
 
     // the timestamp used for unit testing
     const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
+    // one second later, e.g. to test that the change time is the first sort key of the change log
+    const string DUMMY_DATETIME_LATER = '2022-12-26T18:23:46+01:00';
     // usage used for unit testing
     const int DUMMY_USAGE_WORD = 3;
     const int DUMMY_USAGE_VERB = 23;
@@ -47,6 +49,19 @@ class test_const
     const int DUMMY_USAGE_FORMULA = 7;
     const int DUMMY_USAGE_VIEW = 1;
     const int DUMMY_USAGE_COMPONENT = 2;
+    // a type name that no type list has, to test that an unknown type of an import is reported
+    // with its name and does not end up as a not-found marker in the type field
+    const string TYPE_NOT_IN_LIST = 'System Test type that does not exist';
+    // the order number of the filled formula link
+    const int FORMULA_LINK_ORDER_NBR = 2;
+    // the description of the filled formula link
+    const string FORMULA_LINK_COM = 'System Test description for a formula link';
+    // the order number logged as a change of the filled component link
+    const int COMPONENT_LINK_ORDER_NBR = 3;
+    // the order number of the filled view link
+    const int TERM_VIEW_ORDER_NBR = 4;
+    // the start position logged as a change of the filled view relation
+    const int VIEW_RELATION_START_POS = 16;
     // impact used for unit testing
     const float DUMMY_IMPACT = 3.4;
     const float DUMMY_IMPACT_VERB = 123.4;

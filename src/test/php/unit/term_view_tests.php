@@ -39,14 +39,19 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CREATE . 'test_links.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\create\test_links;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_view_tests
@@ -54,11 +59,11 @@ class term_view_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $sc = new sql_creator();
         $t_lnk = new test_links($t);
+        $t_msk = new test_views($t);
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
@@ -67,19 +72,47 @@ class term_view_tests
         $t->header($ts);
 
         $t->subheader($ts . 'term_view sql setup');
-        $trm_lnk_ui = new term_view($usr);
+        $trm_lnk_ui = new term_view($t->usr1);
         $t->assert_sql_table_create($trm_lnk_ui);
         $t->assert_sql_index_create($trm_lnk_ui);
         $t->assert_sql_foreign_key_create($trm_lnk_ui);
 
         $t->subheader($ts . 'term_view sql read');
-        $lnk = new term_view($usr);
+        $lnk = new term_view($t->usr1);
         $t->assert_sql_by_id($sc, $lnk);
         $lnk = $t_lnk->term_view();
         $t->assert_sql_standard($sc, $lnk);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $lnk);
+        // the term views of one view are the terms that use the view, which the used by column
+        // of the view pages lists (see view::load_terms_related); the names of the term and the
+        // view are joined like for the load by ids, so the terms can be linked without a reload
+        $test_name = 'load the terms that use a view';
+        $lnk_lst = new term_view_list($t->usr1);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $lnk_lst->load_sql_by_view($sc, $t_msk->view());
+        $t->assert_qp($qp, $sc->db_type, $test_name);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $lnk_lst->load_sql_by_view($sc, $t_msk->view());
+        $t->assert_qp($qp, $sc->db_type, $test_name);
+        $t->assert_sql_changing_users_by_ids($sc, $lnk);
         // TODO check if all links have the check
         $t->assert_sql_by_link($sc, $lnk);
         $t->assert_sql_user_changes($sc, $lnk);
+
+        $t->subheader($ts . 'term_view list sql read');
+        $lnk_lst = new term_view_list($t->usr1);
+        // the list query joins the names of the linked view and term (see change_log_list)
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($lnk_lst->load_sql_by_ids($sc, [1, 2]), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($lnk_lst->load_sql_by_ids($sc, [1, 2]), sql_db::MYSQL);
+
+        // without an id the query has no name, so that the caller does not send it to the database
+        $test_name = 'the term view list query of an empty id list is not prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert($test_name, $lnk_lst->load_sql_by_ids($sc, [])->name, '');
 
         $t->subheader($ts . 'term_view sql write insert');
         $lnk = $t_lnk->term_view();
@@ -99,6 +132,16 @@ class term_view_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the order number sets the priority of the views linked to one term
+        $lnk_reordered = $lnk->clone_all();
+        $lnk_reordered->order_nbr = 1;
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk);
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the style overwrites the style of the linked view
+        $lnk_styled = $lnk->clone_all();
+        $lnk_styled->set_style_by_id(view_styles::COL_SM_8_ID);
+        $t->assert_sql_update($sc, $lnk_styled, $lnk);
+        $t->assert_sql_update($sc, $lnk_styled, $lnk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'term_view sql delete');
         $t->assert_sql_delete($sc, $lnk);

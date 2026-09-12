@@ -34,7 +34,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::GROUP . 'group.php';
@@ -46,12 +45,13 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_ENUM . 'value_types.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_ENUM . 'value_types.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
@@ -87,6 +88,10 @@ class sandbox_value extends sandbox
             $this->number = $value;
         }
     } // the number calculated by the system
+
+    // the time when this value or result has been updated by the user or a calculation job,
+    // sent by the api for a page request so that the default page can show it
+    public ?DateTime $last_update = null;
     private ?string $text_value = null {
         set {
             $this->text_value = $value;
@@ -120,13 +125,13 @@ class sandbox_value extends sandbox
     /**
      * set the vars of this value frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         // even if the value is added set already the id if possible because if might contain the phrase list
         if ($this->url_is_add_action($url_array)) {
             if (array_key_exists(url_var::ID, $url_array)) {
@@ -134,7 +139,7 @@ class sandbox_value extends sandbox
             }
         }
         // the other normal fields
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
                 $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);
                 if (count($id_lst) > 0) {
@@ -147,7 +152,7 @@ class sandbox_value extends sandbox
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -161,7 +166,7 @@ class sandbox_value extends sandbox
     }
 
     // TODO review (split value objects?)
-    function value(): float|string|DateTime|null
+    function value(user_message $msg): float|string|DateTime|null
     {
         if ($this->number() != null) {
             return $this->number();
@@ -257,6 +262,11 @@ class sandbox_value extends sandbox
         } else {
             $msg->add_error_text('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }
+        if (array_key_exists(json_fields::LAST_UPDATE, $json_array)) {
+            $lib = new library();
+            $this->last_update = $lib->get_datetime(
+                $json_array[json_fields::LAST_UPDATE], $this->dsp_id(), 'value api mapping');
+        }
         return $msg->is_ok();
     }
 
@@ -310,7 +320,7 @@ class sandbox_value extends sandbox
      * similar to the corresponding function in the "result" class
      * @returns string the html text with the formatted value
      */
-    function val_formatted(): string
+    function val_formatted(user_message $msg): string
     {
         global $ui_sys;
         $cfg = $ui_sys->cfg;
@@ -319,7 +329,7 @@ class sandbox_value extends sandbox
         // TODO check that the phrases are set
 
         if (!$this->is_null()) {
-            if ($this->is_percent()) {
+            if ($this->is_percent($msg)) {
                 $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
@@ -340,9 +350,9 @@ class sandbox_value extends sandbox
     /**
      * @return bool true if one of the phrases that classify this value is of type percent
      */
-    function is_percent(): bool
+    function is_percent(user_message $msg): bool
     {
-        if ($this->grp->has_percent()) {
+        if ($this->grp->has_percent($msg)) {
             return true;
         } else {
             return false;

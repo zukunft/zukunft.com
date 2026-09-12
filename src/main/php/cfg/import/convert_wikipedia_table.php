@@ -119,6 +119,12 @@ class convert_wikipedia_table
         // map the table to a json
         $word_list[] = $row_name_in;
         $word_list[] = $col_name_in;
+        // the context phrases are used by every value of the table, so they must be defined in
+        // the same import file, because the import resolves the phrases of a value only from the
+        // file and a value with an unknown phrase gets no group id (see docs/llm/json_structure.md)
+        foreach ($context as $context_name) {
+            $word_list[] = $context_name;
+        }
         foreach ($rows as $row) {
             $word_list[] = $row[$col_of_row_name];
         }
@@ -168,7 +174,7 @@ class convert_wikipedia_table
      * TODO add a word splitter to separate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
      *
      * @param string $wiki_json wth the wikipedia table
-     * @param user $usr the user how has initiated the conversion
+     * @param user_message $msg with the user how has initiated the conversion
      * @param string $timestamp the timestamp of the import
      * @param int $table_nbr position of the table that should be converted
      * @param string $context a json string with a phrase list for the import context
@@ -180,29 +186,26 @@ class convert_wikipedia_table
      * @return string
      */
     function convert_wiki_json(
-        string $wiki_json,
-        user   $usr,
-        string $timestamp,
-        string $context = '',
-        array  $context_array = [],
-        array  $exclude_col_names_in = [],
-        int    $table_nbr = 0,
-        string $row_name_wiki = '',
-        string $row_name_out = '',
-        string $col_name_wiki = '',
-        string $col_name_out = ''
+        string       $wiki_json,
+        user_message $msg,
+        string       $timestamp,
+        string       $context = '',
+        array        $context_array = [],
+        array        $exclude_col_names_in = [],
+        int          $table_nbr = 0,
+        string       $row_name_wiki = '',
+        string       $row_name_out = '',
+        string       $col_name_wiki = '',
+        string       $col_name_out = ''
     ): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr;
-
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
         $rank_names = []; // list of phrase names that indicate a columns that contains a rank with should not be included in the result
         $ignore_names = []; // list of phrase names that indicate a columns should not be included in the result
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($msg->usr);
         if ($context != '') {
-            $phr_lst->import_context(json_decode($context, true), $usr_msg);
+            $phr_lst->import_context(json_decode($context, true), $msg);
             $list_of_symbols = $phr_lst->get_names_by_type(phrase_types::SYMBOL);
             $rank_names = $phr_lst->get_names_by_type(phrase_types::RANK);
             $ignore_names = $phr_lst->get_names_by_type(phrase_types::IGNORE);
@@ -213,7 +216,7 @@ class convert_wikipedia_table
         $wiki_json = json_decode($wiki_json, true);
 
         // prepare the result
-        $json = $this->header($usr, $timestamp);
+        $json = $this->header($msg->usr, $timestamp);
         $word_lst = [];
         $triples = [];
         $values = [];
@@ -683,6 +686,7 @@ class convert_wikipedia_table
         $header = [];
         $header[json_fields::POD] = POD_NAME;
         $header[json_fields::VERSION] = def::PRG_VERSION;
+        $header[json_fields::DATA_VERSION] = def::DATA_VERSION_INIT;
         if ($timestamp == '') {
             $header[json_fields::TIME] = (new DateTime())->format(DateTimeInterface::ATOM);
         } else {

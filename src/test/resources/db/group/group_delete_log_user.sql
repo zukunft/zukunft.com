@@ -17,8 +17,8 @@ $$ BEGIN
 END $$ LANGUAGE plpgsql;
 
 SELECT group_delete_log_user
-    (1::bigint,
+    (3::bigint,
      3::smallint,
-     320::smallint,
-     'Pi'::text,
+     324::smallint,
+     'π'::text,
      '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text);

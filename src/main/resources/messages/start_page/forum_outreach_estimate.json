@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-19 12:00:00",
   "user": "zukunftcom",
   "selection": [
@@ -36,8 +37,7 @@
       ]
     },
     {
-      "name": "post",
-      "description": "a single message submitted to an online forum or comment thread."
+      "name": "post"
     },
     {
       "name": "reader",
@@ -99,7 +99,6 @@
     },
     {
       "name": "hour",
-      "description": "a unit of time equal to 60 minutes.",
       "type": "measure",
       "refs": [
         {
@@ -113,20 +112,17 @@
       ]
     },
     {
-      "name": "count",
-      "description": "the number of items in a set."
+      "name": "count"
     },
     {
-      "name": "rate",
-      "description": "a ratio of one quantity to another, often per unit time or per item."
+      "name": "rate"
     },
     {
       "name": "share",
-      "description": "a part or proportion of a whole."
+      "description": "attributable proportion of a whole, 0..1"
     },
     {
       "name": "probability",
-      "description": "a measure of the likelihood of an event, between 0 and 1.",
       "refs": [
         {
           "name": "Probability",
@@ -140,8 +136,6 @@
     },
     {
       "name": "percent",
-      "description": "a proportion expressed as a fraction of 100.",
-      "type": "measure",
       "refs": [
         {
           "name": "Percentage",
@@ -150,20 +144,14 @@
       ]
     },
     {
-      "name": "work",
-      "description": "activity involving effort done to achieve a purpose or result."
+      "name": "work"
     },
     {
       "name": "project",
       "description": "an individual or collaborative undertaking planned to achieve a particular aim."
     },
     {
-      "name": "measured value",
-      "description": "a value taken from an observation or a cited source."
-    },
-    {
-      "name": "assumed value",
-      "description": "a value set by reasoned assumption for a Fermi estimate, not measured."
+      "name": "assumed"
     }
   ],
   "triples": [
@@ -313,7 +301,7 @@
       "words": [
         "post rate",
         "forum outreach",
-        "assumed value"
+        "assumed"
       ],
       "number": "12",
       "source": "thread engagement observation"
@@ -321,8 +309,7 @@
     {
       "words": [
         "reader per post",
-        "forum outreach",
-        "measured value"
+        "forum outreach"
       ],
       "number": "200",
       "source": "thread engagement observation"
@@ -331,7 +318,7 @@
       "words": [
         "substantive reply rate",
         "forum outreach",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.005",
       "source": "thread engagement observation"
@@ -340,14 +327,14 @@
       "words": [
         "qualified share",
         "philosophy and informatics competence",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.001"
     },
     {
       "words": [
         "collaboration probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2"
     }
@@ -358,8 +345,7 @@
         "reader per post",
         "substantive reply rate",
         "forum outreach",
-        "measured value",
-        "assumed value"
+        "assumed"
       ],
       "formula": "substantive reply per post (formula)",
       "words": [
@@ -378,8 +364,7 @@
         "collaboration probability",
         "forum outreach",
         "philosophy and informatics competence",
-        "measured value",
-        "assumed value"
+        "assumed"
       ],
       "formula": "hour per qualified collaborator (formula)",
       "words": [

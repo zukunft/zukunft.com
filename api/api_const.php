@@ -44,6 +44,11 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+// the last safety net for a Throwable that a layer has let travel, which is a defect on its own
+// (see docs/llm/structure.md): without it the api response just ends and the reason is only in
+// the web server log, which the admin of the pod cannot read
+set_exception_handler('log_php_exception_to_error_log');
+
 // init.php has loaded the environment from .env, so the url debug level can now be
 // honored - but only in the dev environment; any other environment stays silent to
 // avoid leaking sql, table and column names or the call graph (see http/const.php)

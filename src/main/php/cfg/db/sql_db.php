@@ -36,7 +36,6 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_creator.php';
@@ -646,6 +645,7 @@ class sql_db
     private int $reconnect_delay = 0;               // number of seconds of the last reconnect retry delay
 
     public ?int $usr_id = null;                     // the user id of the person who request the database changes
+    public ?user $usr_req = null;                   // the user requesting the current changes on this connection, set once by the entry point; read by set_class as the default query user (moved off the retired $sys->usr_req)
     private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of a user
 
     private ?string $class = '';                    // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
@@ -1119,8 +1119,11 @@ class sql_db
         if (!$this->open()) {
             log_fatal('reopening of the database connection with the zukunft user failed', 'sql_db->setup');
         } else {
-            $sys_msg = new user_message(user::system());
+            $sys_msg = new user_message(user::system()); // the setup runs as the system user, before any request
             $result = $this->setup_db($sys_msg);
+            if (!$sys_msg->is_ok()) {
+                log_err('db setup: ' . $sys_msg->text());
+            }
         }
         $sys->times->switch();
 
@@ -1188,7 +1191,7 @@ class sql_db
             // because no log yet exists here echo instead of log_echo() is used
             $log_txt->echo_text_log('Run db setup sql script');
             $sys->times->switch(system_time_type::DB_SETUP);
-            $sql_msg = $this->exe_script($sql);
+            $sql_msg = $this->exe_script($sql, $msg);
             $sys->times->switch();
             if (!$sql_msg->is_ok()) {
                 // retry once but try to delete upfront all remaining tables and objects
@@ -1196,7 +1199,7 @@ class sql_db
                 $log_txt->echo_text_log('Retry ...');
                 $this->reset_db_core($msg);
                 $sys->times->switch(system_time_type::DB_SETUP);
-                $sql_msg = $this->exe_script($sql);
+                $sql_msg = $this->exe_script($sql, $msg);
                 $sys->times->switch();
             }
             if (!$sql_msg->is_ok()) {
@@ -1210,22 +1213,31 @@ class sql_db
 
         // fill the tables with the essential data
         if ($msg->is_ok()) {
+            // if tbe database needs to be created it is a system task independent of the calling user
+            $sys_msg = new user_message(user::system());
+
             // because no user yet exists here echo instead of log_echo() is used
             $log_txt->echo_text_log('Create system users');
             $this->reset_config();
-            $this->import_system_users();
+            $this->import_system_users($sys_msg);
 
-            // use the system user for the database updates
-            $usr = new user;
-            $usr->load_by_id(users::SYSTEM_ID);
-            $msg->usr = $usr;
-            $sys->usr_req = $usr;
+            // use the requesting user of the message for the database updates: the entry point
+            // resp. the calling system function has set it (the virtual system user for a system
+            // call, see the function docblock), so a missing user here is an internal
+            // inconsistency and never overwritten mid-request (docs/llm/state-and-messages.md)
+            $usr = $sys_msg->usr;
+            if ($usr == null) {
+                log_err('requesting user missing on the message for the database setup',
+                    'sql_db->setup_db');
+                $usr = user::system();
+            }
+            $this->usr_req = $usr;
 
             // recreate the code link database rows
             $log_txt->echo_text_log('Create the code links');
-            $this->db_fill_code_links();
+            $this->db_fill_code_links($sys_msg);
             $cac = new data_object($usr);
-            $sys->load_type_lists($db_con);
+            $sys->load_type_lists($db_con, $sys_msg);
 
             // update the sql sequences
             $this->check_sequences();
@@ -1235,28 +1247,32 @@ class sql_db
             $job = new job($usr);
             $job->set_type(job_types::BASE_IMPORT, $usr);
             $job->priority = job_statuum::PRIO_HIGHEST;
-            $job->save($msg);
+            $job->save($sys_msg);
 
             $import = new import_file();
-            $this->import_verbs($usr);
+            $this->import_verbs($usr, $sys_msg);
             $import->import_system_data($usr);
-            $this->create_internal_words($usr);
-            $import->import_config_yaml($usr);
+            $this->create_internal_words($usr, $sys_msg);
+            $import->import_config_yaml($usr, $sys_msg);
             // load the view unit-test sample data once the system config it references is in place
             $import->import_sample_view_data($usr);
             $import->import_pod_config($usr);
+            // the use cases come last, because they build on the phrases of the start page
+            $import->import_use_case_data($usr);
 
             // add the admin users if defined in the env file
-            $this->add_admin_users_from_env($msg, $usr);
+            $this->add_admin_users_from_env($sys_msg, $usr);
 
-            $this->db_check_missing_owner();
+            $this->db_check_missing_owner($sys_msg);
+
+            $msg->merge($sys_msg);
 
             // TODO Prio 0 review
             $msk_lnk = new term_view($usr);
             $wrd = new word($usr);
             $wrd->set(word_names::MATH_ID, word_names::MATH);
             $wrd->description = word_names::MATH_COM;
-            $wrd->set_type(phrase_type_shared::NORMAL, $usr);
+            $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr)); // not reported: only for the permission check
             $msk = new view($usr);
             $msk->set(views::START_ID, views::START_NAME);
             $msk->description = views::START_COM;
@@ -1282,11 +1298,11 @@ class sql_db
 
             // reload the session user parameters
             $usr = new user;
-            $usr->get();
+            $usr->get($msg);
 
             // the consistency check timestamp is always set by the system user
             $cfg = new config();
-            $sys_msg = new user_message(user::system());
+            $sys_msg = new user_message(user::system()); // the system user sets the timestamp, merged below
             $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this, $sys_msg);
             $msg->merge($sys_msg);
         }
@@ -1311,7 +1327,7 @@ class sql_db
      * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return int the number of dropped tables
      */
-    function reset_db_core(user_message $msg = new user_message()): int
+    function reset_db_core(user_message $msg): int
     {
         $dropped_objects = 0;
 
@@ -1335,7 +1351,7 @@ class sql_db
         if ($tbl_lst !== false) {
             foreach ($tbl_lst as $tbl) {
                 $tbl_name = $tbl[0];
-                $this->drop_table($tbl_name);
+                $this->drop_table($tbl_name, $msg);
                 $dropped_objects++;
             }
         }
@@ -1438,15 +1454,15 @@ class sql_db
     /**
      * @return bool true if all user sandbox objects have an owner
      */
-    function db_check_missing_owner(): bool
+    function db_check_missing_owner(user_message $msg): bool
     {
         $result = true;
 
         foreach (sandbox::DB_TYPES as $class) {
             $this->set_class($class);
-            $db_lst = $this->missing_owner();
+            $db_lst = $this->missing_owner($msg);
             if ($db_lst != null) {
-                $result = $this->set_default_owner();
+                $result = $this->set_default_owner($msg);
             }
         }
 
@@ -1457,76 +1473,70 @@ class sql_db
     /**
      * fill the database with all rows that have a code id and code linked
      */
-    function db_fill_code_links(): void
+    function db_fill_code_links(user_message $msg): void
     {
+        global $sys;
+
         // first of all set the database version if not yet done
         // the code links and the database version are always changed by the system user
         $cfg = new config();
-        $sys_msg = new user_message(user::system());
-        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this, $sys_msg);
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this, $msg);
+
+        // make sure the change action, table and field types are loaded, because this
+        // consistency check can run before the type cache preload (see test_app::open_db)
+        // and the logged csv updates below need the change action id for the change log
+        // (an id lookup on an empty list returns -1 which the database rejects)
+        $sys->typ_lst->load_log_if_empty($this, $msg);
 
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name, [sql_type::LOG]);
+            $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
         }
 
         // set the seq number if needed
         // TODO check why this is needed and combine with the other sequence reset
-        $this->seq_reset(change_table::class);
-        $this->seq_reset(change_field::class);
-        $this->seq_reset(change_action::class);
+        $this->seq_reset(change_table::class, $msg);
+        $this->seq_reset(change_field::class, $msg);
+        $this->seq_reset(change_action::class, $msg);
     }
 
     /**
      * fill the database with the rows needed for change logging
      */
-    function db_log_code_links(): void
+    function db_log_code_links(user_message $msg): void
     {
         // first of all set the database version if not yet done
         // the code links and the database version are always changed by the system user
         $cfg = new config();
-        $sys_msg = new user_message(user::system());
-        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this, $sys_msg);
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this, $msg);
 
-        // get the list of CSV and loop
+        // load the CSV resource files with the code links
         foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name);
+            $this->load_db_code_link_file($csv_file_name, $msg);
         }
 
         // set the seq number if needed
-        // TODO check why this is needed and combine with the other sequence reset
-        $this->seq_reset(change_table::class);
-        $this->seq_reset(change_field::class);
-        $this->seq_reset(change_action::class);
+        // TODO Prio 2 check why this is needed and combine with the other sequence reset
+        $this->seq_reset(change_table::class, $msg);
+        $this->seq_reset(change_field::class, $msg);
+        $this->seq_reset(change_action::class, $msg);
     }
 
     function load_db_code_link_file(
-        string $class,
-        array  $sc_par_lst_in = []
+        string       $class,
+        user_message $msg,
+        array        $sc_par_lst_in = []
     ): bool
     {
-        global $debug;
-
         $result = false;
         $lib = new library();
         $typ_lst = new type_list();
-        $msg = new user_message();
         $table_name = $lib->class_to_table($class);
         $typ_obj = $typ_lst->class_to_type_object($class);
         if ($typ_obj::class == type_object::class) {
             log_err('probably mapping for ' . $class . ' is missing in function class_to_type_object');
         }
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
-
-        // create a dummy system user for pre initial load
-        // the system profile must be set explicit because the default profile of a new user is the ip user profile
-        // and an ip user is not permitted to change the database if the pod config does not allow it
-        // TODO Prio 3 review
-        $usr_sys = new user;
-        $usr_sys->id = users::SYSTEM_ID;
-        $usr_sys->name = users::SYSTEM_NAME;
-        $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
-        $msg->usr = $usr_sys;
 
         // load the csv
         $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;
@@ -1543,7 +1553,8 @@ class sql_db
                 if ($continue) {
                     if ($row == 1) {
                         // check if the csv column names match the table names
-                        if (!$this->check_column_names($table_name, $lib->array_trim($data))) {
+                        if (!$this->check_column_names(
+                            $table_name, $lib->array_trim($data), $msg)) {
                             $continue = false;
                             log_err('csv code link column names are not correct for ' . $table_name);
                         } else {
@@ -1562,7 +1573,7 @@ class sql_db
                         $id = $data[0];
                         // check if the row id exists
                         $qp = $this->db_fill_code_link_sql($table_name, $id_col_name, $id);
-                        $db_row = $this->get1($qp);
+                        $db_row = $this->get1($qp, $msg);
                         // check if the db row needs to be added
                         if ($db_row == null) {
                             // add the row
@@ -1572,7 +1583,7 @@ class sql_db
                                 $update_col_values[] = trim($data[$i]);
                                 $add_row[$col_names[$i]] = trim($data[$i]);
                             }
-                            if ($typ_obj->row_mapper_typ_obj($add_row, $class)) {
+                            if ($typ_obj->row_mapper_typ_obj($add_row, $msg, $class)) {
                                 $typ_obj->db_add($msg, $this, $sc_par_lst);
                             } else {
                                 log_err('csv code link row ' . $row . ' of ' . $table_name
@@ -1597,9 +1608,9 @@ class sql_db
                             }
                             // update the values is needed
                             if (count($update_col_names) > 0) {
-                                $typ_obj->row_mapper_typ_obj($upd_row, $class);
+                                $typ_obj->row_mapper_typ_obj($upd_row, $msg, $class);
                                 $db_obj = $typ_obj->clone_reset();
-                                $typ_obj->row_mapper_typ_obj($db_row, $class);
+                                $typ_obj->row_mapper_typ_obj($db_row, $msg, $class);
                                 $typ_obj->db_update_row($db_obj, $msg, $this, $sc_par_lst);
                             }
                         }
@@ -1644,8 +1655,8 @@ class sql_db
      */
     function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
     {
-        global $sys;
-        $usr = $sys?->usr_req;
+        // the requesting user is a connection-level fact set once by the entry point
+        $usr = $this->usr_req;
 
         $lib = new library();
         $this->reset();
@@ -3045,11 +3056,11 @@ class sql_db
     /**
      * execute directly an SQL script without further prepare
      * @param string $sql the sql script that should be executed
+     * @param user_message $msg
      * @return \PgSql\Result|mysqli_result|user_message either the result of the sql script or false if something failed
      */
-    function exe_script(string $sql): \PgSql\Result|mysqli_result|user_message
+    function exe_script(string $sql, user_message $msg): \PgSql\Result|mysqli_result|user_message
     {
-        $usr_msg = new user_message();
         $result = true;
         // execute on the connected database
         if ($this->db_type == sql_db::POSTGRES) {
@@ -3057,22 +3068,22 @@ class sql_db
                 $result = pg_query($this->postgres_link, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $usr_msg->set_url($trace_link);
+                $msg->set_url($trace_link);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             try {
                 $result = mysqli_query($this->mysql, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $usr_msg->set_url($trace_link);
+                $msg->set_url($trace_link);
             }
         } else {
             log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
         if ($result === false) {
-            $usr_msg->add_message_text(pg_last_error($this->postgres_link));
+            $msg->add_message_text(pg_last_error($this->postgres_link));
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -3374,7 +3385,7 @@ class sql_db
      * TODO Prio 0 return false in case of an error
      *
      * @param string $sql the sql statement that should be executed
-     * @param user_message $usr_msg to enrich with the messages that should be shown to the user
+     * @param user_message $msg to enrich with the messages that should be shown to the user
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param bool $fetch_all if true, all database rows are returned at once
@@ -3458,20 +3469,20 @@ class sql_db
      * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
      *
      * @param string $sql the sql statement to get the db row
-     * @param user_message $usr_msg to enrich with the messages that should be shown to the user
+     * @param user_message $msg to enrich with the messages that should be shown to the user
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values used for the precompiled SQL statement
      * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      */
     private function fetch_first(
         string       $sql,
-        user_message $usr_msg,
+        user_message $msg,
         string       $sql_name = '',
         array        $sql_array = array(),
         string       $debug_txt = ''
     ): array|false|null
     {
-        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, false, $debug_txt);
+        return $this->fetch($sql, $msg, $sql_name, $sql_array, false, $debug_txt);
     }
 
     /**
@@ -3479,13 +3490,13 @@ class sql_db
      */
     private function fetch_all(
         string       $sql,
-        user_message $usr_msg,
+        user_message $msg,
         string       $sql_name = '',
         array        $sql_array = array(),
         string       $debug_txt = ''
     ): array|false
     {
-        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, true, $debug_txt);
+        return $this->fetch($sql, $msg, $sql_name, $sql_array, true, $debug_txt);
     }
 
     private
@@ -3503,11 +3514,10 @@ class sql_db
      * TODO Prio 1 deprecate
      * returns all values of an SQL query in an array
      */
-    function get_old(string $sql, string $sql_name = '', array $sql_array = array()): array
+    function get_old(string $sql, user_message $msg, string $sql_name = '', array $sql_array = array()): array
     {
-        $usr_msg = new user_message();
         $this->debug_msg($sql, 'get_old');
-        return $this->fetch_all($sql, $usr_msg, $sql_name, $sql_array);
+        return $this->fetch_all($sql, $msg, $sql_name, $sql_array);
     }
 
     /**
@@ -3517,11 +3527,10 @@ class sql_db
      * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      * @return array|false the database rows or an empty array
      */
-    function get(sql_par $qp, string $debug_txt = ''): array|false
+    function get(sql_par $qp, user_message $msg, string $debug_txt = ''): array|false
     {
-        $usr_msg = new user_message();
         $this->debug_msg($qp->sql, 'get');
-        return $this->fetch_all($qp->sql, $usr_msg, $qp->name, $qp->par, $debug_txt);
+        return $this->fetch_all($qp->sql, $msg, $qp->name, $qp->par, $debug_txt);
     }
 
     /**
@@ -3533,8 +3542,8 @@ class sql_db
      */
     function get_internal(string $sql): array
     {
-        $usr_msg = new user_message();
-        return $this->fetch_all($sql, $usr_msg);
+        $msg = new user_message(); // not reported: an internal db structure read, so a failure only goes to the log
+        return $this->fetch_all($sql, $msg);
     }
 
     /**
@@ -3543,13 +3552,13 @@ class sql_db
      * only for internal use where no parameter can be influenced by a user
      *
      * @param string $sql the sql statement to get the db row
-     * @param user_message $usr_msg to enrich the message object with the messages that should be shown to the user
+     * @param user_message $msg to enrich the message object with the messages that should be shown to the user
      * @param string $debug_txt the text that should be shown in the debug message
      * @return array|null the database row or null
      */
     function get1_internal(
         string       $sql,
-        user_message $usr_msg = new user_message(),
+        user_message $msg,
         string       $debug_txt = ''
     ): ?array
     {
@@ -3565,7 +3574,7 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, $usr_msg, '', array(), $debug_txt);
+        return $this->fetch_first($sql, $msg, '', array(), $debug_txt);
     }
 
     /**
@@ -3578,7 +3587,7 @@ class sql_db
      */
     function get1(
         sql_par      $qp,
-        user_message $msg = new user_message(),
+        user_message $msg,
         string       $debug_txt = ''
     ): array|false|null
     {
@@ -3602,10 +3611,10 @@ class sql_db
      * @param sql_par $qp the query parameters (sql statement, query name and parameters) that is expected to return just one number
      * @return int|null the integer number received from the database
      */
-    function get1_int(sql_par $qp): ?int
+    function get1_int(sql_par $qp, user_message $msg): ?int
     {
         $result = null;
-        $db_array = $this->get1($qp);
+        $db_array = $this->get1($qp, $msg);
         if (count($db_array) > 0) {
             $result = $db_array[0];
         }
@@ -3619,7 +3628,7 @@ class sql_db
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
-        $usr_msg = new user_message();
+        $msg = new user_message(); // not reported: a deprecated read, see the TODO above; a failure only goes to the log
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -3634,7 +3643,7 @@ class sql_db
         $sql_name = 'get_' . $field_name . '_from_' . $this->table . '_where_' . $id1_name . '_and_' . $id2_name;
         $sql_array = array($id1, $id2);
 
-        $sql_row = $this->fetch_first($sql, $usr_msg, $sql_name, $sql_array);
+        $sql_row = $this->fetch_first($sql, $msg, $sql_name, $sql_array);
 
         if ($sql_row != false) {
             if (count($sql_row) > 0) {
@@ -4490,13 +4499,13 @@ class sql_db
      * create the SQL parameters to count the number of rows related to a database table type
      * @return ?int the number of rows or null if something went wrong
      */
-    function count(string $class = '', string $id_fld = ''): ?int
+    function count(string $class, user_message $msg, string $id_fld = ''): ?int
     {
         $sc = $this->sql_creator();
         if ($class != '') {
             $sc->set_class($class);
         }
-        return $this->get1_int($sc->count_qp('', $id_fld));
+        return $this->get1_int($sc->count_qp('', $id_fld), $msg);
     }
 
     /**
@@ -4630,18 +4639,18 @@ class sql_db
     /**
      * @return array all database ids, where the owner is not yet set
      */
-    function missing_owner(): array
+    function missing_owner(user_message $msg): array
     {
         global $debug;
         log_debug("sql_db->missing_owner (" . $this->class . ")");
         $qp = $this->missing_owner_sql();
-        return $this->get($qp);
+        return $this->get($qp, $msg);
     }
 
     /**
      * return all database ids, where the owner is not yet set
      */
-    function set_default_owner(): bool
+    function set_default_owner(user_message $msg): bool
     {
         global $sys;
 
@@ -4650,7 +4659,7 @@ class sql_db
 
         // get the system user id
         $sys_usr = new user();
-        $sys_usr->load_by_name(users::SYSTEM_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_NAME, $msg);
 
         if ($sys_usr->id <= 0) {
             log_err('Cannot load system used in set_default_owner');
@@ -4694,7 +4703,8 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param sql_message $sql_msg to collect the sql results e.g. the database ids
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
      * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
      * @param bool $is_val if true, the row to be added to the database is a value, result or group and is using the group id, so no database id needs to be returned
      * @return true if the database has been updated
@@ -4702,7 +4712,8 @@ class sql_db
     function insert(
         sql_par      $qp,
         string       $description,
-        user_message $usr_msg,
+        user_message $msg,
+        sql_message  $sql_msg = new sql_message(),
         bool         $usr_tbl = false,
         bool         $is_val = false
     ): bool
@@ -4720,7 +4731,7 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
-                    $usr_msg->add_message_text($err_msg);
+                    $msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
                         $db_id = pg_fetch_array($sql_result)[0];
@@ -4736,19 +4747,21 @@ class sql_db
                 if ($db_id == 0 or $db_id == '') {
                     if (!$is_val) {
                         log_err($err_msg);
-                        $usr_msg->add_message_text($err_msg);
+                        $msg->add_message_text($err_msg);
                     }
                 } else {
-                    $usr_msg->set_db_row_id($db_id);
+                    // TODO Prio 1 deprecate
+                    $msg->set_db_row_id($db_id);
+                    $sql_msg->set_db_row_id($db_id);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message_text($trace_link);
+            $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -4760,10 +4773,10 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
      * @return bool true if the database has been updated
      */
-    function update(sql_par $qp, string $description, user_message $usr_msg): bool
+    function update(sql_par $qp, string $description, user_message $msg): bool
     {
         global $sys;
 
@@ -4778,16 +4791,16 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message_text($err_msg);
+                    $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message_text($trace_link);
+            $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -4799,16 +4812,19 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
-     * @return user_message
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
+     * @return bool
      */
-    function delete(sql_par $qp, string $description, user_message $usr_msg): user_message
+    function delete(
+        sql_par $qp,
+        string $description,
+        user_message $msg
+    ): bool
     {
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
         // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
-        $usr_msg = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, '',
@@ -4818,16 +4834,16 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message_text($err_msg);
+                    $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message_text($trace_link);
+            $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
 
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
 
@@ -4993,14 +5009,14 @@ class sql_db
      * @param string $class the class name to which the related table should be reset
      * @return string any warning message to be shown to the admin user
      */
-    function seq_reset(string $class): string
+    function seq_reset(string $class, user_message $msg): string
     {
-        $msg = '';
+        $msg_txt = '';
         $this->set_class($class);
         $sql_max = 'SELECT MAX(' . $this->name_sql_esc($this->id_field) . ') AS max_id FROM ' . $this->name_sql_esc($this->table) . ';';
         // $db_con->set_fields(array('MAX(group_id) AS max_id'));
         // $sql_max = $db_con->select();
-        $max_row = $this->get1_internal($sql_max);
+        $max_row = $this->get1_internal($sql_max, $msg);
         if ($max_row == null) {
             log_warning('Cannot get the max of values', 'sql_db->seq_reset');
         } else {
@@ -5016,11 +5032,11 @@ class sql_db
                     log_err('Unexpected SQL type ' . $class);
                 }
                 $this->exe_try('Resetting sequence for ' . $class, $sql);
-                $msg = 'Next database id for ' . $this->table . ': ' . $next_id;
+                $msg_txt = 'Next database id for ' . $this->table . ': ' . $next_id;
 
             }
         }
-        return $msg;
+        return $msg_txt;
     }
 
     /**
@@ -5058,7 +5074,7 @@ class sql_db
      * @param string $column_name
      * @return bool true if the column name exists in the given table
      */
-    function has_column(string $table_name, string $column_name): bool
+    function has_column(string $table_name, string $column_name, user_message $msg): bool
     {
         $result = false;
         $sql_check = '';
@@ -5072,7 +5088,7 @@ class sql_db
             $result .= $msg;
         }
         if ($sql_check != '') {
-            $sql_result = $this->get1_internal($sql_check);
+            $sql_result = $this->get1_internal($sql_check, $msg);
             if ($sql_result) {
                 $result = true;
             }
@@ -5200,7 +5216,7 @@ class sql_db
      * @param string $key_name
      * @return bool true if the key name exists in the given table
      */
-    function has_key(string $table_name, string $key_name): bool
+    function has_key(string $table_name, string $key_name, user_message $msg): bool
     {
         $result = false;
         $sql_check = '';
@@ -5216,12 +5232,12 @@ class sql_db
                              AND TABLE_NAME = '" . $table_name . "' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } else {
-            $msg = 'Unknown database type "' . $this->db_type . '"';
-            log_err($msg, 'sql_db->has_column');
-            $result .= $msg;
+            $msg_txt = 'Unknown database type "' . $this->db_type . '"';
+            log_err($msg_txt, 'sql_db->has_column');
+            $result .= $msg_txt;
         }
         if ($sql_check != '') {
-            $sql_result = $this->get1_internal($sql_check);
+            $sql_result = $this->get1_internal($sql_check, $msg);
             if ($sql_result) {
                 $result = true;
             }
@@ -5238,11 +5254,14 @@ class sql_db
      * @param string $to_column
      * @return string an empty string if the adding has been successful or is not added and an error message if the adding has failed
      */
-    function add_foreign_key(string $key_name,
-                             string $from_table,
-                             string $from_column,
-                             string $to_table,
-                             string $to_column): string
+    function add_foreign_key(
+        string       $key_name,
+        string       $from_table,
+        string       $from_column,
+        string       $to_table,
+        string       $to_column,
+        user_message $msg
+    ): string
     {
         $result = '';
 
@@ -5251,7 +5270,7 @@ class sql_db
         $to_table = $this->get_table_name_esc($to_table);
 
         // check if the old column name is still valid
-        if (!$this->has_key($from_table, $key_name)) {
+        if (!$this->has_key($from_table, $key_name, $msg)) {
 
             // actually add the column
             $sql = '';
@@ -5277,7 +5296,7 @@ class sql_db
      * @param string $type_name
      * @return string an empty string if the adding has been successful or is not added and an error message if the adding has failed
      */
-    function add_column(string $table_name, string $column_name, string $type_name): string
+    function add_column(string $table_name, string $column_name, string $type_name, user_message $msg): string
     {
         $result = '';
 
@@ -5285,7 +5304,7 @@ class sql_db
         $table_name = $this->get_table_name($table_name);
 
         // check if the old column name is still valid
-        if (!$this->has_column($table_name, $column_name)) {
+        if (!$this->has_column($table_name, $column_name, $msg)) {
 
             // adjust the type name for the use database
             if ($this->db_type == sql_db::MYSQL) {
@@ -5306,25 +5325,24 @@ class sql_db
      * remove a database column but only if needed
      * @param string $table_name
      * @param string $field_name
-     * @return user_message ok or the message that should be shown to the user
+     * @param user_message $msg to collect the messages that should be shown to the user
+     * @return bool ok if fine
      */
-    function del_field(string $table_name, string $field_name): user_message
+    function del_field(string $table_name, string $field_name, user_message $msg): bool
     {
-        $usr_msg = new user_message();
-
         // adjust the parameters to the used database used
         $table_name = $this->get_table_name($table_name);
 
         // check if the old column name is still valid
-        if ($this->has_column($table_name, $field_name)) {
+        if ($this->has_column($table_name, $field_name, $msg)) {
 
             // actually add the column
             $sql = 'ALTER TABLE IF EXISTS ' . $this->name_sql_esc($table_name) .
                 ' DROP COLUMN IF EXISTS ' . $this->name_sql_esc($field_name) . ';';
-            $usr_msg->add_message_text($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
+            $msg->add_message_text($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
         }
 
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
     /**
@@ -5335,7 +5353,7 @@ class sql_db
      * @param string $to_column_name
      * @return string an empty string if the renaming has been successful or is not needed
      */
-    function change_column_name(string $table_name, string $from_column_name, string $to_column_name): string
+    function change_column_name(string $table_name, string $from_column_name, string $to_column_name, user_message $msg): string
     {
         $result = '';
 
@@ -5343,7 +5361,7 @@ class sql_db
         $table_name = $this->get_table_name($table_name);
 
         // check if the old column name is still valid
-        if ($this->has_column($table_name, $from_column_name)) {
+        if ($this->has_column($table_name, $from_column_name, $msg)) {
             $sql = '';
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql = 'ALTER TABLE ' . $this->name_sql_esc($table_name) . ' RENAME ' . $this->name_sql_esc($from_column_name) . ' TO ' . $this->name_sql_esc($to_column_name) . ';';
@@ -5354,7 +5372,7 @@ class sql_db
                                FROM INFORMATION_SCHEMA.COLUMNS 
                               WHERE table_name = '" . $table_name . "' 
                                 AND COLUMN_NAME = '" . $from_column_name . "';";
-                $db_row = $this->get1_internal($pre_sql);
+                $db_row = $this->get1_internal($pre_sql, $msg);
                 $db_format = $db_row['COL_TYPE'];
                 $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $from_column_name . "` `" . $to_column_name . "` " . $db_format . ";";
             } else {
@@ -5378,7 +5396,7 @@ class sql_db
      * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return string an empty string if the renaming has been successful or is not needed
      */
-    function change_table_name(string $table_name, string $to_table_name, user_message $msg = new user_message()): string
+    function change_table_name(string $table_name, string $to_table_name, user_message $msg): string
     {
         $result = '';
 
@@ -5405,7 +5423,7 @@ class sql_db
         return $result;
     }
 
-    function column_allow_null(string $table_name, string $column_name): string
+    function column_allow_null(string $table_name, string $column_name, user_message $msg): string
     {
         $result = '';
 
@@ -5413,7 +5431,7 @@ class sql_db
         $table_name = $this->get_table_name($table_name);
 
         // check if the column name is still valid
-        if ($this->has_column($table_name, $column_name)) {
+        if ($this->has_column($table_name, $column_name, $msg)) {
             $sql = '';
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql = 'ALTER TABLE ' . $this->name_sql_esc($table_name) . ' ALTER COLUMN ' . $this->name_sql_esc($column_name) . ' DROP NOT NULL;';
@@ -5424,7 +5442,7 @@ class sql_db
                                FROM INFORMATION_SCHEMA.COLUMNS 
                               WHERE table_name = '" . $table_name . "' 
                                 AND COLUMN_NAME = '" . $column_name . "';";
-                $db_row = $this->get1_internal($pre_sql);
+                $db_row = $this->get1_internal($pre_sql, $msg);
                 $db_format = $db_row['COL_TYPE'];
                 $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $column_name . "` `" . $column_name . "` " . $db_format . ";";
                 //$sql_a = 'ALTER TABLE `phrase_types` CHANGE `word_symbol` `word_symbol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'e.g. for percent the symbol is %'; '
@@ -5443,7 +5461,7 @@ class sql_db
         return $result;
     }
 
-    function column_force_not_null(string $table_name, string $column_name): string
+    function column_force_not_null(string $table_name, string $column_name, user_message $msg): string
     {
         $result = '';
 
@@ -5451,7 +5469,7 @@ class sql_db
         $table_name = $this->get_table_name($table_name);
 
         // check if the column name is still valid
-        if ($this->has_column($table_name, $column_name)) {
+        if ($this->has_column($table_name, $column_name, $msg)) {
             $sql = '';
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql = 'ALTER TABLE ' . $this->name_sql_esc($table_name) . ' ALTER COLUMN ' . $this->name_sql_esc($column_name) . ' SET NOT NULL;';
@@ -5462,7 +5480,7 @@ class sql_db
                                FROM INFORMATION_SCHEMA.COLUMNS 
                               WHERE table_name = '" . $table_name . "' 
                                 AND COLUMN_NAME = '" . $column_name . "';";
-                $db_row = $this->get1_internal($pre_sql);
+                $db_row = $this->get1_internal($pre_sql, $msg);
                 $db_format = $db_row['COL_TYPE'];
                 $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $column_name . "` `" . $column_name . "` " . $db_format . ";";
             } else {
@@ -5508,17 +5526,22 @@ class sql_db
      * @param string $prefix_name the prefix that should be removed
      * @return bool true if removing of the prefix has been successful
      */
-    function remove_prefix(string $type_name, string $column_name, string $prefix_name): bool
+    function remove_prefix(
+        string $type_name,
+        string $column_name,
+        string $prefix_name
+    ): bool
     {
         $result = false;
 
         $lib = new library();
+        $msg = new user_message(); // not reported: a db upgrade step run by db_check, so a failure only goes to the log
 
         // adjust the parameters to the used database name
         $table_name = $this->get_table_name($type_name);
 
         $qp = $this->remove_prefix_sql($type_name, $column_name);
-        $db_row_lst = $this->get($qp);
+        $db_row_lst = $this->get($qp, $msg);
         foreach ($db_row_lst as $db_row) {
             $db_row_name = $db_row[$column_name];
             $new_name = $lib->str_right_of($db_row_name, $prefix_name);
@@ -5549,7 +5572,7 @@ class sql_db
         return $result;
     }
 
-    function get_column_names(string $table_name): array
+    function get_column_names(string $table_name, user_message $msg): array
     {
         $result = array();
         $qp = new sql_par('get_column_names');
@@ -5562,12 +5585,12 @@ class sql_db
             $qp->name .= $table_name;
         } else {
             $qp->sql = '';
-            $msg = 'Unknown database type "' . $this->db_type . '"';
-            log_err($msg, 'sql_db->has_column');
+            $msg_txt = 'Unknown database type "' . $this->db_type . '"';
+            log_err($msg_txt, 'sql_db->has_column');
         }
         $this->set_name($qp->name);
         if ($qp->sql != '') {
-            $col_rows = $this->get($qp);
+            $col_rows = $this->get($qp, $msg);
             if ($col_rows != null) {
                 foreach ($col_rows as $col_row) {
                     if ($this->db_type == sql_db::POSTGRES) {
@@ -5585,12 +5608,17 @@ class sql_db
      * check if at least all given column names are in the table
      * @param string $table_name the name of the table which is expected to have the give column names
      * @param array $expected_columns of the column names that are expected to exist in the given table
+     * @param user_message $msg to report column errors to the calling user
      * @return bool true if everything is fine
      */
-    function check_column_names(string $table_name, array $expected_columns): bool
+    function check_column_names(
+        string       $table_name,
+        array        $expected_columns,
+        user_message $msg
+    ): bool
     {
         $result = true;
-        $real_columns = $this->get_column_names($table_name);
+        $real_columns = $this->get_column_names($table_name, $msg);
         $missing_columns = array_diff($expected_columns, $real_columns);
         if (count($missing_columns) > 0) {
             // TODO add $this
@@ -5714,7 +5742,7 @@ class sql_db
         }
     }
 
-    function drop_table(string $table_name, user_message $msg = new user_message()): void
+    function drop_table(string $table_name, user_message $msg): void
     {
         global $sys;
 
@@ -5726,7 +5754,7 @@ class sql_db
             try {
                 $this->exe($sql);
             } catch (Exception $e) {
-                //log_info('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+                log_err_msg('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage(), $msg);
             }
         }
         $sys->times->switch();
@@ -5778,13 +5806,13 @@ class sql_db
      * but only if the user profile or type table is empty
      * @return bool true if the profiles have been created
      */
-    function load_user_profiles(): bool
+    function load_user_profiles(user_message $msg): bool
     {
         global $sys;
         $result = true;
         foreach (def::CLASS_WITH_USER_CODE_LINK_CSV as $class_for_csv) {
-            if ($this->count($class_for_csv) <= 0 and $result) {
-                $save_result = $this->load_db_code_link_file($class_for_csv);
+            if ($this->count($class_for_csv, $msg) <= 0 and $result) {
+                $save_result = $this->load_db_code_link_file($class_for_csv, $msg);
                 if (!$save_result) {
                     log_fatal($class_for_csv . ' code link csv file cannot be loaded into the database',
                         'sql_db->load_user_profiles');
@@ -5793,11 +5821,11 @@ class sql_db
             }
         }
         $sys->typ_lst->usr_pro = new user_profile_list();
-        $sys->typ_lst->usr_pro->load($this);
+        $sys->typ_lst->usr_pro->load($this, $msg);
         $sys->typ_lst->usr_typ = new user_type_list();
-        $sys->typ_lst->usr_typ->load($this);
+        $sys->typ_lst->usr_typ->load($this, $msg);
         $sys->typ_lst->usr_sta = new user_status_list();
-        $sys->typ_lst->usr_sta->load($this);
+        $sys->typ_lst->usr_sta->load($this, $msg);
         return $result;
     }
 
@@ -5809,40 +5837,40 @@ class sql_db
     {
         // the database version is always set by the system user
         $cfg = new config();
-        $sys_msg = new user_message(user::system());
+        $sys_msg = new user_message(user::system()); // not reported: the system user sets the db version at install time
         // do not log db version setting because the db might not be ready to log changes
         $cfg->set(config::VERSION_DB, def::PRG_VERSION, $this, $sys_msg, '', [sql_type::NO_LOG]);
     }
 
     /**
      * import the system users
+     * @param user_message $msg with a virual the system user
      * @return bool true if the system users have actually been imported
      */
-    function import_system_users(): bool
+    function import_system_users(user_message $msg): bool
     {
         $result = false;
-        $usr_msg = new user_message();
 
         // allow adding only if there is not yet any system user in the database
         $usr = new user;
-        $usr->load_by_id(users::SYSTEM_ID);
+        $usr->load_by_id(users::SYSTEM_ID, $msg);
 
         if ($usr->id <= 0) {
 
             // check if there is really no user in the database with a system profile
             $check_usr = new user();
-            if (!$check_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
+            if (!$check_usr->has_any_user_this_profile(user_profiles::SYSTEM, $msg)) {
                 // if the system users are missing always reset all users as a double line of defence to prevent system
                 // create the main system user profiles
                 // but only if needed and allowed which is only the case directly after the database structure creation
-                $this->load_user_profiles();
+                $this->load_user_profiles($msg);
 
                 // create the main system user upfront direct from the code
                 // but only if needed and allowed which is only the case directly after the database structure creation
                 $init_usr = new user();
-                if ($init_usr->create_system_user($usr_msg)) {
+                if ($init_usr->create_system_user($msg)) {
                     // reload the system user if adding has been successful
-                    $usr->load_by_id(users::SYSTEM_ID);
+                    $usr->load_by_id(users::SYSTEM_ID, $msg);
                 }
 
                 // translate the system setup messages only to the system base language which is english
@@ -5851,12 +5879,12 @@ class sql_db
 
                 // prepare logging of the import
                 // TODO Prio 1 use sql_insert without log
-                $this->db_log_code_links();
+                $this->db_log_code_links($msg);
 
                 // load the types needed for logging into the system environment $sys
                 global $sys;
                 $sys_typ_lst = new type_lists();
-                $sys_typ_lst->load_log($this);
+                $sys_typ_lst->load_log($this, $msg);
                 $sys->typ_lst = $sys_typ_lst;
 
                 // create the other system users from the json and add e.g. the description fields
@@ -5912,8 +5940,9 @@ class sql_db
     ): void
     {
         if ($name != '' and $pw != '' and $mail != '') {
-            $sys_msg = clone $msg;
-            $sys_msg->usr = $req_usr;
+            // a local buffer for this single user add, so the warning below reports
+            // only the messages of this save and the requesting user stays on the buffer
+            $sys_msg = new user_message($req_usr);
             $usr = new user($name, $mail);
             $usr->set_profile($profile, $sys_msg);
             $usr->set_password($pw, $msg);
@@ -5926,7 +5955,7 @@ class sql_db
         }
     }
 
-    function import_verbs(user $usr): bool
+    function import_verbs(user $usr, user_message $msg): bool
     {
         global $db_con;
         global $sys;
@@ -5942,7 +5971,7 @@ class sql_db
         }
 
         $sys->typ_lst->vrb = new verb_list($usr);
-        $sys->typ_lst->vrb->load($db_con);
+        $sys->typ_lst->vrb->load($db_con, $msg);
 
         return $result;
     }
@@ -5952,82 +5981,79 @@ class sql_db
      * @param user $usr the user how has called this function which mus be and admin of the system itself
      * @return user_message OK if the words have been created successfully of an error message
      */
-    function create_internal_words(user $usr): user_message
+    function create_internal_words(user $usr, user_message $msg): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr;
-
         global $sys;
 
         if ($usr->is_admin() or $usr->is_system()) {
             foreach (config_numbers::ADMIN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
-                $wrd->set_code_id($name, $usr);
+                $wrd->set_code_id($name, $msg);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
-                $wrd->save($usr_msg);
+                $wrd->save($msg);
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
-                $wrd->set_code_id($name, $usr);
+                $wrd->set_code_id($name, $msg);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
-                $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
-                $wrd->save($usr_msg);
+                $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN, $msg);
+                $wrd->save($msg);
             }
             foreach (config_numbers::INTERNAL_COMMENTS as $com_wrd_lst) {
                 $wrd = new word($usr);
                 $com = $com_wrd_lst[0];
                 $name = $com_wrd_lst[1];
-                if (!$wrd->load_by_name($name)) {
+                if (!$wrd->load_by_name($name, $msg)) {
                     $wrd->set_name($name);
                 }
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->description = $com;
-                $wrd->set_code_id($name, $usr);
-                $wrd->save($usr_msg);
+                $wrd->set_code_id($name, $msg);
+                $wrd->save($msg);
             }
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $sys->typ_lst->vrb->get_verb(verbs::AND);
+                $vrb = $sys->verb(verbs::AND);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
-                $from->load_by_name($from_name);
+                $from->load_by_name($from_name, $msg);
                 $to = new phrase($usr);
-                $to->load_by_name($to_name);
+                $to->load_by_name($to_name, $msg);
                 $trp->set_from($from);
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
                 $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
-                $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
+                $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN, $msg);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
-                $trp->save($usr_msg);
+                $trp->save($msg);
             }
             foreach (config_numbers::ADMIN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $sys->typ_lst->vrb->get_verb(verbs::CAN_USE);
+                $vrb = $sys->verb(verbs::CAN_USE);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
-                $from->load_by_name($from_name);
+                $from->load_by_name($from_name, $msg);
                 $to = new phrase($usr);
-                $to->load_by_name($to_name);
+                $to->load_by_name($to_name, $msg);
                 $trp->set_from($from);
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
                 $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 //$trp->set_code_id($from_name . ' ' . $to_name);
-                $trp->save($usr_msg);
+                $trp->save($msg);
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
-    function import_system_views(user $usr): bool
+    function import_system_views(user $usr, user_message $msg): bool
     {
         global $db_con;
         global $sys;
@@ -6043,17 +6069,17 @@ class sql_db
         }
 
         $sys->msk_cac = new view_sys_list($usr);
-        $sys->msk_cac->load($db_con);
+        $sys->msk_cac->load($db_con, $msg);
 
         return $result;
     }
 
-    function csv_from_class(string $class): array
+    function csv_from_class(string $class, user_message $msg): array
     {
         $lib = new library();
         $sc = new sql_creator();
         $qp = $sc->sql_all($class);
-        $db_lst = $this->get($qp);
+        $db_lst = $this->get($qp, $msg);
         return $lib->csv_form_db_lst($db_lst, $class);
     }
 

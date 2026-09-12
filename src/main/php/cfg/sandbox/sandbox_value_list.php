@@ -123,10 +123,10 @@ class sandbox_value_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         foreach ($api_json as $json_val) {
             if (array_key_exists(json_fields::NUMBER, $json_val)) {
@@ -139,16 +139,16 @@ class sandbox_value_list extends sandbox_list
                 $val = new value_geo($this->get_user());
             } else {
                 $val = new value($this->get_user());
-                $usr_msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
+                $msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
                     msg_id::VAR_JSON_TEXT => $json_val
                 ]);
             }
-            if ($val->api_mapper($json_val, $usr_msg)) {
+            if ($val->api_mapper($json_val, $msg)) {
                 $this->add($val);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -219,7 +219,7 @@ class sandbox_value_list extends sandbox_list
      */
     function load_by_phr_lst_multi(
         phrase_list $phr_lst,
-        string      $class = value::class,
+        user_message $msg, string      $class = value::class,
         bool        $or = false,
         int         $limit = sql_db::ROW_LIMIT,
         int         $page = 0
@@ -234,7 +234,7 @@ class sandbox_value_list extends sandbox_list
         }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr_lst_multi($sc, $phr_lst, $class, false, $or, $limit, $page);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -410,7 +410,12 @@ class sandbox_value_list extends sandbox_list
                 $sc->add_where_no_par('', group_fields::FLD_ID, $spt, $grp_pos);
             }
         }
-        $qp->sql = $sc->sql(0, true, false);
+        // this is one select of a union, and the source group id is a bigint in the prime and the
+        // main tables but a text in the group keyed tables, so the numeric ones are cast to text -
+        // else postgres refuses the union with "UNION types text and bigint do not match"
+        // (see def::MIXED_ID_FIELDS and sql_creator::dummy_value for the tables without the field)
+        $num_id = ($this->is_prime($sc_par_lst) or $this->is_main($sc_par_lst));
+        $qp->sql = $sc->sql(0, true, false, true, $num_id);
         $qp->par = $sc->get_par();
 
         return $qp;
@@ -603,7 +608,7 @@ class sandbox_value_list extends sandbox_list
         msg_id             $msg_additional = msg_id::VALUE_ADDITIONAL,
     ): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($this->lst() as $val) {
             $val_to_chk = $val_lst->get($val->id());
             if ($val_to_chk == null) {

@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2024-07-28 16:31:00",
   "user": "zukunft.com system batch job",
   "selection": [
@@ -280,6 +281,12 @@
       "code_id": "change_log_word"
     },
     {
+      "name": "change log table pure",
+      "description": "show the change log of this word or triple as a borderless table with the columns when, who and what",
+      "type": "invisible_change_log_table",
+      "code_id": "invisible_change_log_table_word"
+    },
+    {
       "name": "system sub title views",
       "description": "show the language specific sub title for the related views",
       "type": "system_sub_title",
@@ -294,9 +301,335 @@
     },
     {
       "name": "view tab box",
-      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of the shown object",
       "type": "view_tab_box",
       "code_id": "view_tab_box_word"
+    },
+    {
+      "name": "values in columns",
+      "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
+      "type": "values_in_columns",
+      "code_id": "values_in_columns_phrase"
+    },
+    {
+      "name": "phrase title",
+      "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
+      "type": "phrase_title",
+      "code_id": "phrase_title_phrase"
+    },
+    {
+      "name": "table with related columns",
+      "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+      "type": "table_with_related_columns",
+      "code_id": "table_with_related_columns_phrase"
+    },
+    {
+      "name": "system title verb",
+      "description": "show the language specific word verb and the name of the shown verb as the page title",
+      "type": "system_title_with_object_name",
+      "code_id": "system_title_verb",
+      "ui_msg_code_id": "system_title_verb"
+    },
+    {
+      "name": "source doi link",
+      "description": "show the doi of a source behind its label as a link to doi.org",
+      "type": "source_doi_link",
+      "code_id": "source_doi_link"
+    },
+    {
+      "name": "system show field reverse",
+      "description": "the reverse name of a verb as read only",
+      "type": "system_show_field_reverse",
+      "code_id": "show_field_reverse"
+    },
+    {
+      "name": "system show field plural reverse",
+      "description": "the plural of the reverse name of a verb as read only",
+      "type": "system_show_field_plural_reverse",
+      "code_id": "show_field_plural_reverse"
+    },
+    {
+      "name": "verb triples",
+      "description": "the triples that use this verb with a link to each triple",
+      "type": "triples_by_verb",
+      "code_id": "verb_triples"
+    },
+    {
+      "name": "Source title",
+      "description": "show the source name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_source"
+    },
+    {
+      "name": "Reference title",
+      "description": "show the reference name as the page title and the predicate, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_ref"
+    },
+    {
+      "name": "system sub title triples",
+      "description": "show the language specific sub title for a triple list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_triples",
+      "ui_msg_code_id": "system_sub_title_triples"
+    },
+    {
+      "name": "source url link",
+      "description": "show the url of a source behind its label as a link to the source",
+      "type": "source_url_link",
+      "code_id": "source_url_link"
+    },
+    {
+      "name": "source values",
+      "description": "the values that name this source grouped by their phrases like the default word view",
+      "type": "values_by_source",
+      "code_id": "source_values"
+    },
+    {
+      "name": "View title",
+      "description": "show the translated word view and the view name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_view",
+      "ui_msg_code_id": "system_title_view"
+    },
+    {
+      "name": "Component title",
+      "description": "show the translated word component and the component name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_component",
+      "ui_msg_code_id": "system_title_component"
+    },
+    {
+      "name": "Link title",
+      "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+      "type": "title_of_link_with_edit_link",
+      "code_id": "title_of_link_with_edit_link"
+    },
+    {
+      "name": "system show field style",
+      "description": "the name of the display style of a view or component as read only",
+      "type": "system_show_field_style",
+      "code_id": "show_field_style"
+    },
+    {
+      "name": "system show field owner",
+      "description": "the name of the user who owns the object as read only",
+      "type": "system_show_field_owner",
+      "code_id": "show_field_owner"
+    },
+    {
+      "name": "system sub title components",
+      "description": "show the language specific sub title for a component list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_components",
+      "ui_msg_code_id": "system_sub_title_components"
+    },
+    {
+      "name": "view components",
+      "description": "the components of the shown view sorted by their position with a link to each component",
+      "type": "components_of_view",
+      "code_id": "view_components"
+    },
+    {
+      "name": "system show field formula",
+      "description": "the name of the calculation formula of a component with a link to the formula",
+      "type": "system_show_field_formula",
+      "code_id": "show_field_formula"
+    },
+    {
+      "name": "system show field row phrase",
+      "description": "the name of the row phrase of a component with a link to the phrase",
+      "type": "system_show_field_phrase_row",
+      "code_id": "show_field_phrase_row"
+    },
+    {
+      "name": "system show field column phrase",
+      "description": "the name of the column phrase of a component with a link to the phrase",
+      "type": "system_show_field_phrase_col",
+      "code_id": "show_field_phrase_col"
+    },
+    {
+      "name": "system show field sub column phrase",
+      "description": "the name of the sub column phrase of a component with a link to the phrase",
+      "type": "system_show_field_phrase_col_sub",
+      "code_id": "show_field_phrase_col_sub"
+    },
+    {
+      "name": "component views",
+      "description": "the views that use the shown component with a link to each view",
+      "type": "views_of_component",
+      "code_id": "component_views"
+    },
+    {
+      "name": "system show field link type",
+      "description": "the name of the link type of a link as read only",
+      "type": "system_show_field_link_type",
+      "code_id": "show_field_link_type"
+    },
+    {
+      "name": "system show field order number",
+      "description": "the order number of a link as read only",
+      "type": "system_show_field_order_nbr",
+      "code_id": "show_field_order_nbr"
+    },
+    {
+      "name": "link tab box",
+      "description": "tab box with the change log and the user overwrites of this link",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_link"
+    },
+    {
+      "name": "value tab box",
+      "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_value"
+    },
+    {
+      "name": "component tab box",
+      "description": "tab box with the change log and the user overwrites of this component",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_component"
+    },
+    {
+      "name": "view page tab box",
+      "description": "tab box with the change log and the user overwrites of this view; named view page tab box, because view tab box is the name of the tab box of the word, triple and formula page",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_view"
+    },
+    {
+      "name": "source tab box",
+      "description": "tab box with the views that can show this source, the change log and the user overwrites of this source",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_source"
+    },
+    {
+      "name": "system show field start position",
+      "description": "the position in the parent view where the child view of a view relation starts as read only",
+      "type": "system_show_view_start_pos",
+      "code_id": "show_field_start_pos"
+    },
+    {
+      "name": "system show field name in formulas",
+      "description": "the verb name used in formulas as read only",
+      "type": "system_show_field_name_in_formulas",
+      "code_id": "show_field_name_in_formulas"
+    },
+    {
+      "name": "system show field weight",
+      "description": "the weight of a triple compared to others as read only",
+      "type": "system_show_field_weight",
+      "code_id": "show_field_weight"
+    },
+    {
+      "name": "system show field condition formula",
+      "description": "the formula that decides if a triple is used, with a link to the formula",
+      "type": "system_show_field_condition_formula",
+      "code_id": "show_field_condition_formula"
+    },
+    {
+      "name": "system show field value source",
+      "description": "the source of a value with a link to the source; named value source, because system show field source is the source name shown on the reference pages",
+      "type": "system_show_field_source",
+      "code_id": "show_field_value_source"
+    },
+    {
+      "name": "system show field last update",
+      "description": "the time when an object e.g. a value, a reference or a formula has been updated by the user or a calculation job",
+      "type": "system_show_field_last_update",
+      "code_id": "show_field_last_update"
+    },
+    {
+      "name": "system show field all values needed",
+      "description": "show if a formula only calculates when all used values exist",
+      "type": "system_show_field_formula_all_vars",
+      "code_id": "show_field_all_values_needed"
+    },
+    {
+      "name": "system show result value",
+      "description": "the calculated number of a result behind its phrase group with links",
+      "type": "system_show_result_value",
+      "code_id": "show_result_value"
+    },
+    {
+      "name": "system show result formula",
+      "description": "the formula that calculated a result, with a link to the formula",
+      "type": "system_show_result_formula",
+      "code_id": "show_result_formula"
+    },
+    {
+      "name": "system show field reference phrase",
+      "description": "the word or triple a reference belongs to, with a link to the phrase",
+      "type": "system_show_field_ref_phrase",
+      "code_id": "show_field_ref_phrase"
+    },
+    {
+      "name": "system show field reference type",
+      "description": "the reference type as read only",
+      "type": "system_show_field_ref_type",
+      "code_id": "show_field_ref_type"
+    },
+    {
+      "name": "system show field external key",
+      "description": "the external key of a reference as read only",
+      "type": "system_show_field_ref_key",
+      "code_id": "show_field_ref_key"
+    },
+    {
+      "name": "system show field source",
+      "description": "the source name of a reference as read only",
+      "type": "system_show_field_ref_source",
+      "code_id": "show_field_ref_source"
+    },
+    {
+      "name": "system show field url",
+      "description": "the url of a reference as read only",
+      "type": "system_show_field_ref_url",
+      "code_id": "show_field_ref_url"
+    },
+    {
+      "name": "system sub title results",
+      "description": "show the language specific sub title for a result list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_results",
+      "ui_msg_code_id": "system_sub_title_results"
+    },
+    {
+      "name": "similar values",
+      "description": "the values that share a phrase with this value sorted by impact e.g. the other mathematical constants of pi",
+      "type": "values_similar",
+      "code_id": "values_similar"
+    },
+    {
+      "name": "results of value",
+      "description": "the results that use this value e.g. the increase calculated from it",
+      "type": "results_by_value",
+      "code_id": "results_by_value"
+    },
+    {
+      "name": "system sub title related values",
+      "description": "show the language specific sub title for the values related to the shown value",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_related_values",
+      "ui_msg_code_id": "system_sub_title_related_values"
+    },
+    {
+      "name": "system sub title terms",
+      "description": "show the language specific sub title for the terms that use the shown view",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_terms",
+      "ui_msg_code_id": "system_sub_title_terms"
+    },
+    {
+      "name": "view terms",
+      "description": "the terms that use the shown view with a link to each term",
+      "type": "terms_of_view",
+      "code_id": "view_terms"
+    },
+    {
+      "name": "system show field linked component",
+      "description": "the name of the component that the shown component links to with the type of that link and a link to the linked component",
+      "type": "system_show_field_linked_component",
+      "code_id": "show_field_linked_component"
     }
   ],
   "views": [
@@ -400,11 +733,35 @@
       "components": [
         {
           "position": "1",
-          "name": "Verb"
+          "name": "system title verb"
         },
         {
           "position": "2",
-          "name": "related triples"
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field reverse"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural"
+        },
+        {
+          "position": "5",
+          "name": "system show field plural reverse"
+        },
+        {
+          "position": "6",
+          "name": "system show field name in formulas"
+        },
+        {
+          "position": "7",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "8",
+          "name": "verb triples"
         }
       ]
     },
@@ -430,51 +787,61 @@
         },
         {
           "position": "4",
-          "name": "phrase aliases",
+          "name": "system show field weight",
           "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "phrase symbols",
+          "name": "system show field condition formula",
           "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "related phrases without subtitles",
+          "name": "phrase aliases",
           "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "system sub title references",
+          "name": "phrase symbols",
           "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "ref list word",
+          "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
           "position": "9",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
+          "name": "system sub title references",
+          "position_type": "combine"
         },
         {
           "position": "10",
-          "name": "values by triple",
+          "name": "ref list word",
           "position_type": "combine"
         },
         {
           "position": "11",
-          "name": "system sub title formulas",
-          "position_type": "side_or_below"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "12",
-          "name": "formula list",
+          "name": "values by triple",
           "position_type": "combine"
         },
         {
           "position": "13",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "14",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -488,11 +855,47 @@
       "components": [
         {
           "position": "1",
-          "name": "source name"
+          "name": "Source title"
         },
         {
           "position": "2",
-          "name": "related values"
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "source url link",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "source doi link",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title usage number",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "system sub title values",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "source values",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "source tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -504,11 +907,62 @@
       "components": [
         {
           "position": "1",
-          "name": "reference name"
+          "name": "Reference title"
         },
         {
           "position": "2",
-          "name": "related values"
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field reference phrase",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field reference type",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field external key",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field url",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field source",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "11",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -540,7 +994,37 @@
         },
         {
           "position": "2",
-          "name": "main value"
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show field value source",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title related values"
+        },
+        {
+          "position": "5",
+          "name": "similar values",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title results",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "results of value",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -561,31 +1045,46 @@
         },
         {
           "position": "3",
+          "name": "Expression",
+          "style": "text-left"
+        },
+        {
+          "position": "4",
           "name": "system sub title description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "5",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
-        },
-        {
           "position": "6",
-          "name": "related values",
+          "name": "system show field all values needed",
           "position_type": "combine"
         },
         {
           "position": "7",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "9",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
           "name": "related results",
           "position_type": "side_or_below"
         },
         {
-          "position": "8",
+          "position": "11",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -603,6 +1102,20 @@
       "components": [
         {
           "position": "1",
+          "name": "system show result value"
+        },
+        {
+          "position": "2",
+          "name": "system show result formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "3",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
           "name": "related results"
         }
       ]
@@ -768,6 +1281,296 @@
       ],
       "assigned": [
         "currency"
+      ]
+    },
+    {
+      "name": "Values of a phrase",
+      "description": "all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",
+      "code_id": "phrase_values",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title values"
+        },
+        {
+          "position": "3",
+          "name": "values in columns",
+          "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "Table",
+      "description": "the values related to a word or triple as a table with one column per phrase used most often within the values",
+      "code_id": "table",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase title"
+        },
+        {
+          "position": "2",
+          "name": "table with related columns",
+          "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "View",
+      "description": "the default view for views",
+      "code_id": "view_default",
+      "type": "view",
+      "components": [
+        {
+          "position": "1",
+          "name": "View title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field owner",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field style",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title terms",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "6",
+          "name": "view terms",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system sub title components",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "8",
+          "name": "view components",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "view page tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Component",
+      "description": "the default view for components",
+      "code_id": "component_default",
+      "type": "component",
+      "components": [
+        {
+          "position": "1",
+          "name": "Component title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field style",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field linked component",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system sub title views",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "8",
+          "name": "component views",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "component tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Formula link",
+      "description": "the default view for formula links",
+      "code_id": "formula_link_default",
+      "type": "formula_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field description"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
+        }
+      ]
+    },
+    {
+      "name": "Term view",
+      "description": "the default view for term views",
+      "code_id": "term_view_default",
+      "type": "term_view",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system show field description"
+        },
+        {
+          "position": "6",
+          "name": "system show field owner"
+        },
+        {
+          "position": "7",
+          "name": "link tab box"
+        }
+      ]
+    },
+    {
+      "name": "Component link",
+      "description": "the default view for component links",
+      "code_id": "component_link_default",
+      "type": "component_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
+        }
+      ]
+    },
+    {
+      "name": "View relation",
+      "description": "the default view for view relations",
+      "code_id": "view_relation_default",
+      "type": "view_relation",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field start position"
+        },
+        {
+          "position": "4",
+          "name": "system show field description"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
+        }
+      ]
+    },
+    {
+      "name": "Calculator",
+      "description": "the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",
+      "code_id": "calculator",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase title"
+        },
+        {
+          "position": "2",
+          "name": "table with related columns",
+          "position_type": "combine"
+        }
       ]
     }
   ]

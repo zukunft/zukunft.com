@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-18 12:00:00",
   "user": "timon",
   "selection": [
@@ -26,22 +27,8 @@
       "type": "measure"
     },
     {
-      "name": "GDP per capita",
-      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
-      "refs": [
-        {
-          "name": "GDP_per_capita",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q17312912",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "population",
-      "description": "the number of humans or other organisms living in a given region or area.",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Population",
@@ -165,7 +152,6 @@
     },
     {
       "name": "growth",
-      "description": "the increase in the inflation-adjusted value of the goods and services produced by an economy over time.",
       "refs": [
         {
           "name": "Economic_growth",
@@ -189,7 +175,6 @@
     },
     {
       "name": "person",
-      "description": "an individual human being; here the unit for counting people.",
       "refs": [
         {
           "name": "Person",
@@ -208,8 +193,6 @@
     },
     {
       "name": "percent",
-      "description": "a number or ratio expressed as a fraction of 100.",
-      "type": "measure",
       "refs": [
         {
           "name": "Percentage",
@@ -220,6 +203,10 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "inhabitant",
+      "description": "person who lives permanently in a place"
     },
     {
       "name": "2022",
@@ -299,6 +286,23 @@
       ]
     },
     {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant",
+      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
+      "refs": [
+        {
+          "name": "GDP_per_capita",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17312912",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
       "name": "GDP growth",
       "from": "growth",
       "verb": "of",
@@ -340,7 +344,7 @@
     },
     {
       "name": "UN World Population Prospects 2024",
-      "description": "United Nations, mid-2023 population estimates: United States ~334.9 mn, Germany ~84.5 mn, Switzerland ~8.85 mn.",
+      "description": "United Nations, World Population Prospects 2024: world population about 8.09 billion mid-2023 and 8.16 billion mid-2024; global total fertility rate about 2.25 children per woman in 2023.",
       "url": "https://population.un.org/wpp/"
     }
   ],

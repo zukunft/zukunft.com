@@ -26,7 +26,7 @@ $$ LANGUAGE plpgsql;
 SELECT component_link_delete_log_user
        (3::bigint,
         3::smallint,
-        16::smallint,
+        17::smallint,
         'Start view'::text,
         'always'::text,
         'Word'::text,

@@ -37,11 +37,23 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_tests
@@ -49,12 +61,11 @@ class source_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init for source
         $sc = new sql_creator();
         $t_src = new test_sources($t);
+        $msg = new user_message();
         $t->name = 'source->';
         $t->resource_path = 'db/ref/';
 
@@ -63,7 +74,7 @@ class source_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $src = new source($usr);
+        $src = new source($t->usr1);
         $t->assert_sql_table_create($src);
         $t->assert_sql_index_create($src);
         $t->assert_sql_foreign_key_create($src);
@@ -74,15 +85,19 @@ class source_tests
         $t->assert_sql_by_code_id($sc, $src);
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $src = new source($usr);
+        $src = new source($t->usr1);
         $src->id = 4;
         $t->assert_sql_standard($sc, $src);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $src);
+        $t->assert_sql_changing_users_by_ids($sc, $src);
         $src->id = 5;
         $t->assert_sql_not_changed($sc, $src);
         $t->assert_sql_user_changes($sc, $src);
 
         $t->subheader($ts . 'sql read standard by name');
-        $src = new source($usr);
+        $src = new source($t->usr1);
         $src->set_name(sources::WIKIDATA);
         $t->assert_sql_standard_by_name($sc, $src);
 
@@ -111,6 +126,12 @@ class source_tests
         $src_only_excluded->exclude();
         $t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::EXCLUDE]);
         $t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
+        // the default view is the mask shown when the user opens the source
+        $src_viewed = clone $src;
+        $src_viewed->set_view_id(views::SOURCE_ID);
+        $t->assert_sql_update($sc, $src_viewed, $src);
+        $t->assert_sql_update($sc, $src_viewed, $src, [sql_type::USER]);
+        $t->assert_sql_update($sc, $src_viewed, $src, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql delete');
         $t->assert_sql_delete($sc, $src);
@@ -121,6 +142,35 @@ class source_tests
         $t->assert_sql_delete($sc, $src, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader($ts . 'row mapper');
+
+        $test_name = 'the default view of a row is mapped';
+        // TODO Prio 1 use test_sources function and row mapper function
+        $db_row = [
+            source_fields::FLD_ID => sources::BFS_ID,
+            sql_db::TBL_USER_PREFIX . source_fields::FLD_ID => null,
+            user_db::FLD_ID => $t->usr1->id(),
+            source_fields::FLD_NAME => sources::BFS,
+            fields::FLD_DESCRIPTION => sources::BFS_COM,
+            source_fields::FLD_TYPE => null,
+            fields::FLD_VIEW => views::SOURCE_ID,
+            fields::FLD_URL => sources::BFS_ULR,
+            fields::FLD_DOI => null,
+            fields::FLD_CODE_ID => null,
+            fields::FLD_USAGE => null,
+            fields::FLD_EXCLUDED => null,
+            fields::FLD_SHARE => null,
+            fields::FLD_PROTECT => null,
+        ];
+        $src = new source($t->usr1);
+        $src->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $src->get_view_id(), views::SOURCE_ID);
+        $test_name = 'a row without a default view leaves the view empty';
+        $db_row[fields::FLD_VIEW] = null;
+        $src = new source($t->usr1);
+        $src->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $src->get_view_id(), 0);
+
         $t->subheader($ts . 'base object handling');
         $src = $t_src->source_filled();
         $t->assert_reset($src);
@@ -130,17 +180,74 @@ class source_tests
         $t->assert_api_json($src);
         $db_con = new sql_db();
         $src->set_code_id_db(sources::SIB_CODE);
-        $t->assert_api_msg($db_con, $src);
+        $t->assert_api_msg($db_con, $src, $msg);
 
         $t->subheader($ts . 'frontend');
         $src = $t_src->source_reserved();
         $t->assert_api_to_ui($src, new source_ui());
 
+        $test_name = 'the doi of a source creates the url to doi.org';
+        $src_ui = new source_ui($t_src->source_filled_included()->api_json());
+        $t->assert($test_name, $src_ui->doi_url(), def::LINK_DOI . sources::TEST_DOI);
+
+        $test_name = 'a source without doi has no doi url';
+        $src_ui = new source_ui($t_src->source_reserved()->api_json());
+        $t->assert_null($test_name, $src_ui->doi_url());
+
+        $ui = new ui_base();
+        $test_name = 'the doi of a source is shown as a link to doi.org';
+        $src_ui = new source_ui($t_src->source_filled_included()->api_json());
+        $t->assert($test_name, $ui->source_doi_link($src_ui),
+            '<a href="' . def::LINK_DOI . sources::TEST_DOI . '">' . sources::TEST_DOI . '</a>');
+
+        $test_name = 'a source without doi shows no doi link';
+        $src_ui = new source_ui($t_src->source_reserved()->api_json());
+        $t->assert($test_name, $ui->source_doi_link($src_ui), '');
+
+        // for sources the code id is a user changeable field, but a code id is only shown to
+        // an admin or a developer and only a developer gets the input field, because only a
+        // profile that passes the backend can_set_code_id may change it
+        global $ui_sys;
+        $form = new system_form();
+        $t_usr = new test_users($t);
+        // source_admin carries the code id, because a source without one renders an empty field
+        $src_ui = new source_ui($t_src->source_admin()->api_json());
+        // remember the session user so the changed global can be restored after the checks
+        $usr_keep = $ui_sys->usr ?? null;
+        $test_name = 'a developer sees the code id input field of a source';
+        $ui_sys->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_text_contains($test_name, $form->form_field_code_id($src_ui), url_var::CODE_ID);
+        $test_name = 'an admin sees the code id of a source as read only text';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $admin_html = $form->form_field_code_id($src_ui);
+        $t->assert_text_contains($test_name, $admin_html, sources::SIB_CODE);
+        $test_name = 'an admin gets no code id input field';
+        $t->assert_false($test_name, str_contains($admin_html, 'name="' . url_var::CODE_ID . '"'));
+        $test_name = 'a normal user does not see the code id of a source';
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $t->assert($test_name, $form->form_field_code_id($src_ui), '');
+        $test_name = 'a test profile user does not see the code id, so the view snapshots stay clean';
+        $ui_sys->usr = new user_ui($t->usr1->api_json());
+        $t->assert($test_name, $form->form_field_code_id($src_ui), '');
+        $ui_sys->usr = $usr_keep;
+        // the confirm check mirrors the backend permission, so an orange warning is
+        // shown on the edit view instead of a refused save
+        $test_name = 'a code id change of a normal user is refused at the confirm check';
+        $chk_msg = new user_message_ui();
+        $chk_msg->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $t->assert_false($test_name, $src_ui->input_valid($chk_msg, url_var::CRUD_UPDATE,
+            [url_var::CODE_ID => 'changed', url_var::PRE . url_var::CODE_ID => sources::SIB_CODE]));
+        $test_name = 'a code id change of a developer passes the confirm check';
+        $chk_msg = new user_message_ui();
+        $chk_msg->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_true($test_name, $src_ui->input_valid($chk_msg, url_var::CRUD_UPDATE,
+            [url_var::CODE_ID => 'changed', url_var::PRE . url_var::CODE_ID => sources::SIB_CODE]));
+
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t_src->source(), $usr_sys);
-        $t->assert_ex_and_import($t_src->source_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_src->source(), $t->usr_system);
+        $t->assert_ex_and_import($t_src->source_filled(), $t->usr_system);
         $json_file = 'unit/ref/bipm.json';
-        $t->assert_json_file(new source($usr), $json_file);
+        $t->assert_json_file(new source($t->usr1), $json_file);
 
 
         // start the test section (ts)

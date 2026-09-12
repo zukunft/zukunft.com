@@ -17,20 +17,13 @@ if (getenv('ZUKUNFT_ALLOW_SETUP') !== '1') {
 
 $start_time = microtime(true);
 
-// standard start for all php code that can be called
-// keep the requested url debug level untrusted until the environment is known,
-// then honor it only in dev so sql and the call graph never leak elsewhere
-global $debug;
-$debug_requested = $_GET['debug'] ?? 0;
-$debug = 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
-if (getenv(ENVIRONMENT) == ENV_DEV) {
-    $debug = $debug_requested;
-}
+// standard start for all http frontend scripts; also loads the test path const
+// that the frontend include chain still needs (see the TODO in const.php)
+include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
+
+include_once WEB . 'frontend.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -50,11 +43,16 @@ The steps should be
 
 $app = new frontend();
 global $sys;
-$db_con = $app->start("setup");
+$msg = new user_message(); // frontend entry point
+$db_con = $app->start("setup", $msg);
 
 // load the session user parameters
 $usr = new user;
-$result = $usr->get();
+$usr->get($msg);
+// store the requesting user on the single message of this request as early as possible,
+// so every function below reads the requesting user from $msg->usr
+// (docs/llm/state-and-messages.md)
+$msg->usr = $usr;
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
@@ -66,7 +64,6 @@ if ($usr->id() > 0) {
         // with the check the tables will be created and the system data will be loaded
         // the check is requested by the admin user, so the changes are done in his name
         // TODO compare with test_recreate.php
-        $msg = new user_message($usr);
         if (!$db_chk->db_check($db_con, $msg)) {
             echo $msg->all_message_text();
         }

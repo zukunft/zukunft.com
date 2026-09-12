@@ -39,12 +39,11 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -53,37 +52,43 @@ include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_HELPER . 'Config.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_types.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_TYPES . 'view_types.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view extends view_exe
 {
@@ -96,7 +101,9 @@ class view extends view_exe
     const string VIEW_ADD = views::VIEW_ADD;
     const string VIEW_EDIT = views::VIEW_EDIT;
     const string VIEW_DEL = views::VIEW_DEL;
+    const int VIEW_ADD_ID = views::VIEW_ADD_ID;
     const int VIEW_EDIT_ID = views::VIEW_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VIEW_ADD;
@@ -104,13 +111,98 @@ class view extends view_exe
     const msg_id MSG_DEL = msg_id::VIEW_DEL;
 
 
+    /*
+     * api
+     */
+
+    /**
+     * load the view by id AND ask the backend to include the owner, the change log and the user
+     * overwrites, which the tabs of the view page show
+     *
+     * the api handler sets api_types::INCL_RELATED and view::api_json_array() emits the changes
+     * and overwrites that the frontend api_mapper picks up into chg_log, user_overwrites and
+     * other_overwrites
+     *
+     * @param int|string $id the view id to load
+     * @param int $usr_id the id of the session user to load the view for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
+     * set the vars of this view bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $msg, $dto);
+        // the view form posts the type as url_var::VIEW_TYPE (see to_url_array), which the parent
+        // does not read, so without this branch an added or changed view loses its type
+        if (array_key_exists(url_var::VIEW_TYPE, $url_array)) {
+            $this->set_type_id($url_array[url_var::VIEW_TYPE]);
+        }
+        return $msg;
+    }
+
+    /**
+     * @return array parent url array with the type and the style url vars of the view form,
+     *         without empty values, so that a form submission can be built from a view object
+     *         (e.g. by the add_view workflow test) and the undo link of the 'my' tab finds the
+     *         current type and style (see ui_preview::overwrite_confirm_link); the view form
+     *         posts the type as url_var::VIEW_TYPE, so the generic type key of the parent is
+     *         replaced (unlike term_view, whose type is the predicate of url_var::TYPE)
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        unset($url_array[url_var::TYPE]);
+        $url_array[url_var::VIEW_TYPE] = $this->type_id($msg);
+        $url_array[url_var::STYLE] = $this->get_style_id();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
+     * @return array the ordered db field names of a view used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return view_fields::ALL_NAMES;
+    }
+
+    /**
+     * @return array all sandbox view db field names mapped to their url var key so that the undo
+     *              link of the 'my' tab can change any overwritten field (see
+     *              ui_preview::overwrite_confirm_link); the keys match view_fields::ALL_NAMES
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            view_fields::FLD_NAME => url_var::NAME,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            view_fields::FLD_TYPE => url_var::VIEW_TYPE,
+            fields::FLD_STYLE => url_var::STYLE,
+            fields::FLD_USAGE => url_var::USAGE,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
+    }
+
+
     /**
      * show the navigation bar, which allow the user to search, to log in or change the settings
      * without javascript this is the top right corner
      * with    javascript this is a bar on the top
-     * @p
+     * @param data_object|null $cfg the context used to create the view
+     * @param array $url_arr the url vars of the page that shows the navbar for the back links
      */
-    function dsp_navbar(?data_object $cfg = null, string $back = ''): string
+    function dsp_navbar(?data_object $cfg = null, array $url_arr = []): string
     {
         $result = '';
 
@@ -119,9 +211,9 @@ class view extends view_exe
             $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_ui->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
-                $result = $this->dsp_navbar_bs(TRUE, $cfg->usr, $back);
+                $result = $this->dsp_navbar_bs(TRUE, $cfg->usr, $url_arr);
             } else {
-                $result = $this->dsp_navbar_html($back);
+                $result = $this->dsp_navbar_html($url_arr);
             }
         }
 
@@ -132,8 +224,9 @@ class view extends view_exe
      * TODO Prio 1 use const and html functions where ever possible
      * same as dsp_navbar_html, but using bootstrap
      * JavaScript functions using bootstrap
+     * @param array $url_arr the url vars of the page that shows the navbar for the back links
      */
-    private function dsp_navbar_bs(bool $show_view, user $usr, string $back): string
+    private function dsp_navbar_bs(bool $show_view, user $usr, array $url_arr): string
     {
         $lib = new library();
         $html = new html_base();
@@ -142,7 +235,7 @@ class view extends view_exe
         $result .= '  <form action="' . api::MAIN_SCRIPT . '" class="form-inline my-2 my-lg-0">';
         // submit the search to the find view as a hidden field so the GET call is e.g. /http/view.php?m=67&pattern=ABB
         $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_FIND_ID);
-        $result .= $html->label('', url_var::PATTERN );
+        $result .= $html->label('', url_var::PATTERN);
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
@@ -156,10 +249,10 @@ class view extends view_exe
         $result .= '      </li>';
         if ($show_view) {
             $result .= '      <li class="active">';
-            $result .= $this->dsp_view_name($back);
+            $result .= $this->dsp_view_name($url_arr);
             $class = $lib->class_to_name(view::class);
-            //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), $back, '', word::class . '=' . $back);
-            $url_edit = $html->url($class . rest_ctrl::UPDATE, $this->id(), '', '');
+            //$url_edit = $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr);
+            $url_edit = $html->url_old($class . rest_ctrl::UPDATE, $this->id());
             // TODO fix for frontend based version
             //echo 'button init';
             $result .= $this->btn_edit();
@@ -167,11 +260,11 @@ class view extends view_exe
             //$btn = new button_dsp($url_edit, '');
             // TODO fix for frontend based version
             //$result .= $btn->edit(messages::VIEW_EDIT);
-            //$url_add = $html->url($class . api_dsp::CREATE, 0, $back, '', word::class . '=' . $back);
-            $url_add = $html->url($class . rest_ctrl::CREATE, 0, '', '');
+            //$url_add = $html->url_back(views::VIEW_ADD_ID, 0, $url_arr);
+            $url_add = $html->url_old($class . rest_ctrl::CREATE);
             // TODO fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
-            $result .= $this->btn_add();
+            $result .= $this->btn_add($url_arr);
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -182,15 +275,15 @@ class view extends view_exe
         $result .= '  </button>';
         $result .= '  <div class="collapse navbar-collapse" id="navbarSupportedContent">';
         $result .= '    <ul class="navbar-nav mr-auto">';
-        // $result .= '      <li><a href="' . api::FIND_SCRIPT . url_var::ADD . 'word=' . $back . '"><span class="glyphicon glyphicon-search"></span></a></li>';
+        // $result .= '      <li><a href="' . $html->url_with_back(api::FIND_SCRIPT, $url_arr) . '"><span class="glyphicon glyphicon-search"></span></a></li>';
         $result .= '      <li class="nav-item dropdown">';
         $result .= '        <a class="nav-link dropdown-toggle" ';
-        $result .= '          href="/http/view_select.php?id='.$this->id.'&word='.$back.'&back='.$back.'"';
+        $result .= '          href="' . $html->url_with_back('/http/view_select.php?id=' . $this->id, $url_arr) . '"';
         $result .= '          id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
         $result .= '          '.$this->name.'';
         $result .= '        </a>';
         $result .= '        <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
-        $result .= '          <a class="dropdown-item" href="/http/view_edit.php?id='.$this->id.'&word='.$back.'&back='.$back.'">Edit</a>';
+        $result .= '          <a class="dropdown-item" href="' . $html->url_back(views::VIEW_EDIT_ID, $this->id, $url_arr) . '">Edit</a>';
         $result .= '          <a class="dropdown-item" href="#">New</a>';
         $result .= '        </div>';
         $result .= '      </li>';
@@ -209,8 +302,9 @@ class view extends view_exe
 
     /**
      * same as dsp_navbar, but without the view change used for the view editors
+     * @param array $url_arr the url vars of the page that shows the navbar for the back links
      */
-    function dsp_navbar_no_view(string $back = ''): string
+    function dsp_navbar_no_view(array $url_arr = []): string
     {
         $result = '';
 
@@ -220,9 +314,9 @@ class view extends view_exe
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
                 $usr = new user();
-                $result .= $this->dsp_navbar_bs(FALSE, $usr, $back);
+                $result .= $this->dsp_navbar_bs(FALSE, $usr, $url_arr);
             } else {
-                $result .= $this->dsp_navbar_html_no_view($back);
+                $result .= $this->dsp_navbar_html_no_view($url_arr);
             }
         }
         return $result;
@@ -235,7 +329,7 @@ class view extends view_exe
     {
         if (html_base::UI_USE_BOOTSTRAP) {
             $usr = new user();
-            $result = $this->dsp_navbar_bs(FALSE, $usr, 0);
+            $result = $this->dsp_navbar_bs(FALSE, $usr, []);
         } else {
             $result = $this->html_navbar_start();
             $result .= $this->html_navbar_end();
@@ -260,10 +354,10 @@ class view extends view_exe
 
     /**
      * show the standard top right corner, where the user can log in or change the settings
-     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @param array $url_arr the url vars of the page that shows the navbar for the back links
      * @returns string the HTML code to display the navigation bar on top of the page
      */
-    private function dsp_navbar_html(string $back = ''): string
+    private function dsp_navbar_html(array $url_arr = []): string
     {
         global $ui_sys;
         $html = new html_base();
@@ -272,19 +366,19 @@ class view extends view_exe
         $result .= '<td class="' . styles::STYLE_RIGHT . '">';
         if ($this->is_system() and !$ui_sys->usr->is_admin()) {
             $url = api::FIND_SCRIPT;
-            $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
+            $result .= new button($url, $url_arr)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
             $url = api::FIND_SCRIPT;
-            $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
-            $result .= $this->dsp_view_name($back);
-            $url = $html->url_new(views::VIEW_EDIT_ID, $this->id());
-            $result .= new button($url, $back)->edit(msg_id::VIEW_EDIT, $this->name) . ' ';
-            $url = $html->url_new(views::VIEW_ADD_ID);
-            $result .= new button($url, $back)->add(msg_id::VIEW_ADD);
+            $result .= new button($url, $url_arr)->find(msg_id::SEARCH_MAIN) . ' - ';
+            $result .= $this->dsp_view_name($url_arr);
+            $url = $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr);
+            $result .= new button($url, $url_arr)->edit(msg_id::VIEW_EDIT, $this->name) . ' ';
+            $url = $html->url_back(views::VIEW_ADD_ID, 0, $url_arr);
+            $result .= new button($url, $url_arr)->add(msg_id::VIEW_ADD);
         }
         $result .= ' - ';
-        $result .= $this->dsp_user($usr);
+        $result .= $this->dsp_user($ui_sys->usr);
         $result .= ' ';
         $result .= $this->dsp_logout();
         $result .= '</td>';
@@ -329,7 +423,7 @@ class view extends view_exe
      * TODO fill
      * @return string
      */
-    private function dsp_view_name($back): string
+    private function dsp_view_name(array $url_arr = []): string
     {
         return '';
     }
@@ -359,8 +453,9 @@ class view extends view_exe
 
     /**
      * same as dsp_navbar, but without the view change used for the view editors
+     * @param array $url_arr the url vars of the page that shows the navbar for the back links
      */
-    function dsp_navbar_html_no_view(string $back = ''): string
+    function dsp_navbar_html_no_view(array $url_arr = []): string
     {
         global $ui_sys;
         $usr = $ui_sys->usr;
@@ -381,8 +476,9 @@ class view extends view_exe
 
     /**
      * HTML code to edit all word fields
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function dsp_edit($add_cmp, $wrd, $back): string
+    function dsp_edit(int $add_cmp, word $wrd, array $url_arr, user_message $msg): string
     {
         global $ui_sys;
 
@@ -390,7 +486,7 @@ class view extends view_exe
         $html = new html_base();
 
         // use the default settings if needed
-        if ($this->type_id() <= 0) {
+        if ($this->type_id($msg) <= 0) {
             $this->set_type_id($ui_sys->typ_lst_cache->msk_typ->id(view_types::DEFAULT));
         }
 
@@ -415,7 +511,10 @@ class view extends view_exe
         $result .= $html->dsp_form_start($script);
         $result .= $html->dsp_form_id($this->id());
         $result .= $html->dsp_form_hidden("word", $wrd->id);
-        $result .= $html->dsp_form_hidden("back", $back);
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->dsp_form_hidden($key, $val);
+        }
         $result .= $html->dsp_form_hidden("confirm", '1');
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
@@ -430,24 +529,24 @@ class view extends view_exe
             $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
-            $result .= $html->dsp_form_end('', $back,
-                $html->url_new(views::VIEW_DEL_ID, $this->id(), '', $back));
+            $result .= $html->dsp_form_end('', $url_arr,
+                $html->url_back(views::VIEW_DEL_ID, $this->id(), $url_arr));
         }
 
         // in edit mode show the assigned words and the hist on the right
         if ($this->id() > 0) {
             $result .= '</div>';
 
-            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
+            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $url_arr, $msg);
 
             // collect the history
-            $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $msg, $url_arr);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, shared_config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, shared_config::ROW_LIMIT, '', $url_arr, $msg);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -487,8 +586,9 @@ class view extends view_exe
 
     /**
      * lists of all view components which are used by this view
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    private function linked_components($add_cmp, $wrd, string $script, $back): string
+    private function linked_components(int $add_cmp, word $wrd, string $script, array $url_arr, user_message $msg): string
     {
         $html = new html_base();
         global $ui_sys;
@@ -499,14 +599,16 @@ class view extends view_exe
             $result .= $html->dsp_tbl_start_hist();
         }
 
-        // show the view elements and allow the user to change them
+        // show the view components and allow the user to change them
         if (!$this->load_components()) {
             $this->log_err('Loading of view components for ' . $this->dsp_id() . ' failed');
         } else {
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
-            $result .= $dsp_list->display(view::class, $back);
+            $back_part = html_base::back_url_part($url_arr);
+            $dsp_list->script_parameter = $this->id() . '&word=' . $wrd->id()
+                . ($back_part == '' ? '' : '&' . $back_part);
+            $result .= $dsp_list->display(view::class, $this->id(), $url_arr);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
             }
@@ -514,23 +616,23 @@ class view extends view_exe
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url_new(views::VIEW_ADD_ID, $this->id(), '', $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1');
-                $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
+                $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), $url_arr, word::class . '=' . $wrd->id() . '&add_entry=-1');
+                $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
                 $result .= $html->dsp_form_end('',
-                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
-                $result .= 'Name of the new display element: ';
+                $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id(), $ui_sys->component_list());
+                $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
-                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
+                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {
-                $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
+                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), $url_arr, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $result .= (new button($url, $url_arr))->add(msg_id::COMPONENT_ADD);
             }
         }
         if (html_base::UI_USE_BOOTSTRAP) {
@@ -546,22 +648,25 @@ class view extends view_exe
 
     /**
      * display the history of a view
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
     function dsp_hist(
-        int         $page,
-        int         $size,
-        string      $call,
-        ?back_trace $back = null
+        int          $page,
+        int          $size,
+        string       $call,
+        user_message $msg,
+        array        $url_arr = []
     ): string
     {
         $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(view::class, $this->id(), $size, $page, '', $back);
+        return $log_ui->dsp_hist(view::class, $this->id(), $size, $page, $msg, '', $url_arr);
     }
 
     /**
      * display the link history of a view
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
-    function dsp_hist_links($page, $size, $call, $back): string
+    function dsp_hist_links($page, $size, $call, array $url_arr, user_message $msg): string
     {
         global $ui_sys;
         $usr = $ui_sys->usr;
@@ -573,8 +678,8 @@ class view extends view_exe
         $log_ui->page = $page;
         $log_ui->size = $size;
         $log_ui->call = $call;
-        $log_ui->back = $back;
-        $result .= $log_ui->dsp_hist_links();
+        $log_ui->url_arr = $url_arr;
+        $result .= $log_ui->dsp_hist_links($msg);
 
         return $result;
     }
@@ -587,16 +692,16 @@ class view extends view_exe
     /**
      * create a selection page where the user can select a view
      * that should be used for a term
-     *
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function selector_page($wrd_id, $back): string
+    function selector_page($wrd_id, array $url_arr = []): string
     {
         $result = '';
         $html = new html_base();
 
         $msk_lst = new view_list();
 
-        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' . url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($msk_lst as $msk) {
@@ -607,10 +712,10 @@ class view extends view_exe
             } else {
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = $html->url_new(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = $html->url_new(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
+            $call_edit = $html->url_back(views::VIEW_EDIT_ID, $view_id, $url_arr, 'word=' . $wrd_id);
+            $result .= $msk->btn_edit() . ' ';
+            $call_del = $html->url_back(views::VIEW_DEL_ID, $view_id, $url_arr, 'word=' . $wrd_id);
+            $result .= $msk->btn_del() . ' ';
             $result .= '<br>';
         }
 
@@ -627,53 +732,87 @@ class view extends view_exe
      */
 
     /**
-     * the 'view' button that opens the given word rendered with this view
+     * the view name as a link that opens the given object rendered with this view, used by the
+     * views tab of an object page (see ui_list::view_previews)
      * TODO Prio 3 add the back trace url so the user can return after opening the view
      *
-     * @param int $wrd_id the id of the word to open in this view
-     * @return string the html link of the open button
+     * @param int|string $dbo_id the id of the object to open in this view, a string for a value
+     * @param string $dbo_name the name of the object for the tooltip e.g. "Pi (math)"
+     * @return string the html link with the view name and the tooltip
      */
-    function open_link(int $wrd_id): string
+    function open_link(int|string $dbo_id, string $dbo_name = ''): string
     {
-        global $mtr;
         $html = new html_base();
         $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $this->id()
-            . url_var::ADD . url_var::ID . url_var::EQ . $wrd_id;
-        return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_OPEN));
+            . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id;
+        // a view without a name cannot be linked by it, and ref() would fatal on the null
+        return $html->ref($url, $this->name() ?? '', $this->tip(msg_id::BUTTON_VIEW_SHOW_TIP, $dbo_name));
     }
 
     /**
-     * the 'switch' button that opens the word edit view where this view can be set
-     * as the default view of the given word
-     * TODO Prio 2 preselect this view as the default view of the word and add the back trace url,
-     *      so the switch is again a one-click action as it was in the retired http_old/word_edit.php
-     *      (see docs/llm/pending_next_launch.md)
+     * the switch icon that opens the edit view of the shown object with this view preselected as
+     * the default view of that object, so the switch is a one-click action: the edit form reads
+     * the preselected view from url_var::VIEW (see word::url_mapper); the edit view id comes from
+     * the caller, because a triple and a formula are changed with another view than a word
+     * TODO Prio 3 add the back trace url so the user can return after the switch
      *
-     * @param int $wrd_id the id of the word whose default view should be set to this view
-     * @return string the html link of the switch button
+     * @param int|string $dbo_id the id of the object whose default view should be set to this view
+     * @param int $edit_msk_id the id of the edit view of the object e.g. word::VIEW_EDIT_ID
+     * @param string $dbo_name the name of the object for the tooltip e.g. "Pi (math)"
+     * @return string the html link with the switch icon and the tooltip
      */
-    function switch_link(int $wrd_id): string
+    function switch_link(int|string $dbo_id, int $edit_msk_id, string $dbo_name = ''): string
+    {
+        $html = new html_base();
+        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $edit_msk_id
+            . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id
+            . url_var::ADD . url_var::VIEW . url_var::EQ . $this->id();
+        return $html->ref($url, $html->icon(icons::VIEW_SWITCH),
+            $this->tip(msg_id::BUTTON_VIEW_SWITCH_TIP, $dbo_name), '', true);
+    }
+
+    /**
+     * the edit icon that opens the edit form of this view itself, used beside the switch icon
+     * in the views tab of an object page
+     *
+     * @return string the html link with the edit icon and the tooltip
+     */
+    function edit_link(): string
+    {
+        $html = new html_base();
+        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::VIEW_EDIT_ID
+            . url_var::ADD . url_var::ID . url_var::EQ . $this->id();
+        return $html->ref($url, $html->icon(icons::EDIT),
+            $this->tip(msg_id::BUTTON_VIEW_EDIT_TIP), '', true);
+    }
+
+    /**
+     * the tooltip of a views tab link with the object and the view name filled in; ref() escapes
+     * the tooltip, so the user given names are handed over raw
+     *
+     * @param msg_id $msg_id the tooltip message with the name placeholders
+     * @param string $dbo_name the name of the shown object, empty if the message has no object
+     * @return string the tooltip text in the user language
+     */
+    private function tip(msg_id $msg_id, string $dbo_name = ''): string
     {
         global $mtr;
-        $html = new html_base();
-        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_EDIT_ID
-            . url_var::ADD . url_var::ID . url_var::EQ . $wrd_id;
-        return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_SWITCH));
+        $lib = new library();
+        $result = $lib->msg_var_replace($mtr->txt($msg_id), msg_id::VAR_NAME, $dbo_name);
+        return $lib->msg_var_replace($result, msg_id::VAR_VIEW_NAME, $this->name());
     }
 
     /**
      * return the html code to display a view name with the link
      */
-    function name_linked($wrd, $back): string
+    function name_linked($wrd, array $url_arr = []): string
     {
-
         $html = new html_base();
-        $url = api::MAIN_SCRIPT . '?' . url_var::ID .'=' . $this->id();
+        $url = api::MAIN_SCRIPT . '?' . url_var::ID . '=' . $this->id();
         if (isset($wrd)) {
             $url .= '&word=' . $wrd->id();
         }
-        $url .= '&back=' . $back;
-        return $html->ref($url, $this->name);
+        return $html->ref($html->url_with_back($url, $url_arr), $this->name);
     }
 
 }

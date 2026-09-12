@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi_user;
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
@@ -105,11 +107,15 @@ class MapObject
             return new result($usr);
         } elseif ($ui_obj::class == view_ui::class) {
             return new view($usr);
-        } elseif ($ui_obj::class == component_ui::class) {
+        } elseif ($ui_obj instanceof component_ui) {
+            // instanceof, because the frontend builds the component_exe renderer for the component
+            // masks (see frontend::view_id_to_dbo_ui) and a confirmed add converts that subclass
             return new component($usr);
         } elseif ($ui_obj::class == view_relation_ui::class) {
             return new view_relation($usr);
         } else {
+            // a base object has no name field, so the following save would fatal without a hint
+            log_err('no backend class mapped for the frontend class ' . $ui_obj::class);
             return new db_object_seq_id();
         }
     }
@@ -154,26 +160,39 @@ class MapObject
     /**
      * convert a frontend object to a backend object via api json
      * @param db_object_ui $ui_obj the filled frontend object
-     * @param user|null $usr the frontend user used to define the owner of the backend object
+     * @param user_message $msg the backend message that carries the requesting user who owns the created backend object
      * @return db_object_seq_id|db_object_multi_user|user the backend object filled with the value from the frontend object
      */
-    function convertToDb(db_object_ui $ui_obj, user_message $usr_msg, ?user $usr = null): db_object_seq_id|db_object_multi_user|user
+    function convertToDb(db_object_ui $ui_obj, user_message $msg): db_object_seq_id|db_object_multi_user|user
     {
+        // the requesting user of the message becomes the owner of the backend object; without
+        // a user only a user object itself can be converted, so report the missing user and
+        // return an empty base object instead of a fatal in the backend object constructor
+        $usr = $msg->usr;
+        if ($usr == null and $ui_obj::class != user_ui::class) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $ui_obj::class]);
+            return new db_object_seq_id();
+        }
         $db_obj = $this->dbObject($ui_obj, $usr);
-        $db_obj->api_mapper($ui_obj->api_array(), $usr_msg);
+        $msg_ui = new user_message_ui();
+        $db_obj->api_mapper($ui_obj->api_array([], $msg_ui), $msg);
         return $db_obj;
     }
 
     /**
      * convert a frontend object to a backend object via api json
      * @param db_object_seq_id|db_object_multi_user|user $obj the backend object filled with the value from the frontend object
-     * @param user_message_ui $usr_msg the frontend user used to define the owner of the backend object
+     * @param user_message_ui $msg the frontend user used to define the owner of the backend object
      * @return db_object_ui|user_ui the filled frontend object
      */
-    function convertToUi(db_object_seq_id|db_object_multi_user|user $obj, user_message_ui $usr_msg): db_object_ui|user_ui
+    function convertToUi(db_object_seq_id|db_object_multi_user|user $obj, user_message_ui $msg): db_object_ui|user_ui
     {
+        // a backend message, because the backend api_json_array cannot take the frontend one;
+        // merged into $msg (both extend Message) so a failed mapping is not lost at the boundary
+        $db_msg = new user_message();
         $ui_obj = $this->uiObject($obj);
-        $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $usr_msg);
+        $ui_obj->api_mapper($obj->api_json_array(new api_type_list([]), $db_msg), $msg);
+        $msg->merge($db_msg);
         return $ui_obj;
     }
 
@@ -184,8 +203,8 @@ class MapObject
      */
     function convertMsgToDb(user_message_ui $ui_msg): user_message
     {
-        $db_msg = new user_message();
-        $db_msg->api_mapper($ui_msg->api_array());
+        $db_msg = new user_message(); // the converted message IS the return value of this function
+        $db_msg->api_mapper($ui_msg->api_array([], $ui_msg));
         return $db_msg;
     }
 
@@ -197,7 +216,7 @@ class MapObject
     function convertMsgToUi(user_message $db_msg): user_message_ui
     {
         $ui_msg = new user_message_ui();
-        $ui_msg->api_mapper($db_msg->api_array());
+        $ui_msg->api_mapper($db_msg->api_array($db_msg), $ui_msg);
         return $ui_msg;
     }
 

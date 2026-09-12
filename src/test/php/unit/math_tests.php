@@ -101,6 +101,17 @@ class math_tests
         $result = $calc->parse($math_text);
         $t->assert($ts . 'calc sum with two negative terms "' . $math_text . '"', round((float)$result, 4), 0.1803);
 
+        // test a signed number after a leading blank as produced by the calc validation
+        // substitution (e.g. " -8 / 52" from "percent" = "treatment effect" / "control group"):
+        // the blank before the sign is not a left operand, so the sign stays with the number
+        // and no "cannot parse" error is logged
+        $math_text = " -8 / 52";
+        $result = $calc->parse($math_text);
+        $t->assert($ts . 'calc leading minus "' . $math_text . '"', round((float)$result, 4), -0.1538);
+        $math_text = " +8 / 2";
+        $result = $calc->parse($math_text);
+        $t->assert($ts . 'calc leading plus "' . $math_text . '"', $result, 4);
+
     }
 
 }

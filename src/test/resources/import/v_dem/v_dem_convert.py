@@ -8,7 +8,8 @@ which is the variable underlying WTW Political Risk Index H1 2025 Figure 3.
 
 Conventions followed (per the established zukunft.com workflow):
   - Disambiguation is carried in the words[] array, never in free-text notes.
-  - Sourced data points are tagged 'measured value'.
+  - A sourced data point carries only its source; every value is assumed to be
+    measured, so no 'measured value' qualifier is written (docs/llm/json_structure.md).
   - Each point keeps the V-Dem measurement-model confidence interval
     (codelow / codehigh) so weak estimates can be surfaced and the series
     is Monte-Carlo ready.
@@ -55,7 +56,6 @@ def build_series(rows, country):
             "osp_codelow": osp_low,
             "osp_codehigh": osp_high,
             "coders": coders,
-            "qualifier": "measured value",
         }
         data_points.append(point)
     result = data_points
@@ -85,8 +85,6 @@ def build_document(rows):
         {"name": "number of coders",
          "description": "Count of country experts contributing to the estimate (v2cacamps_nr)."},
         {"name": "year"},
-        {"name": "measured value",
-         "description": "Provenance qualifier: value taken from a stated source."},
         {"name": "v2cacamps",
          "description": "V-Dem variable id for the political polarization (antagonistic camps) indicator."},
     ]
@@ -124,7 +122,6 @@ def build_document(rows):
             "name": "Affective political polarization, " + country + " (V-Dem v2cacamps)",
             "phrases": ["affective polarization", country, "polarization index value", "v2cacamps"],
             "source": "V-Dem Country-Year Full+Others",
-            "qualifier": "measured value",
             "scale_note_for_user": "Each point carries both the measurement-model estimate (mm, interval scale) with its confidence interval (mm_codelow/mm_codehigh) and the original 0..4 scale value (osp) with its interval. The osp values are the ones comparable to the WTW Figure 3 chart.",
             "data": series,
         }
@@ -133,7 +130,7 @@ def build_document(rows):
     document = {
         "version": "0.0.4",
         "pod": "zukunft.com",
-        "description": "Affective political polarization time series from the V-Dem dataset (variable v2cacamps), the indicator underlying WTW Political Risk Index H1 2025 Figure 3. Built from the provided CSV sample. All data points are sourced and tagged 'measured value', each retaining the V-Dem confidence interval.",
+        "description": "Affective political polarization time series from the V-Dem dataset (variable v2cacamps), the indicator underlying WTW Political Risk Index H1 2025 Figure 3. Built from the provided CSV sample. All data points are sourced, each retaining the V-Dem confidence interval.",
         "words": words,
         "verbs": verbs,
         "triples": triples,

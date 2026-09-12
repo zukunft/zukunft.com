@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?m=93&id=995&z=0
+/http/view.php?m=93&id=995&z=0
+/http/view.php?mask_id=source_default&id=995&step=no&
+{
+    "mask_id": "source_default",
+    "id": "995",
+    "step": "no"
+}

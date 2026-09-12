@@ -32,9 +32,9 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
@@ -43,13 +43,19 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
-include_once paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -57,9 +63,14 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -149,7 +160,7 @@ class ui_preview extends ui_base
         if ($ui_msg_code_id != null) {
             $title = $mtr->txt($ui_msg_code_id);
             if ($dbo != null) {
-                $title .= ' ' . library::class_to_name_translated($dbo::class);
+                $title .= ' ' . $this->object_name($dbo);
             }
             // the confirm view object is not loaded from the db, so the name comes from the posted url
             $name = $url_array[url_var::NAME] ?? '';
@@ -178,16 +189,30 @@ class ui_preview extends ui_base
     {
         $result = '';
         if ($sbx != null) {
-            $result = library::class_to_name_translated($sbx::class);
+            $result = $this->object_name($sbx);
         }
         return $result;
+    }
+
+    /**
+     * the translated object name shown to the user for a page object; a db object may be a
+     * renderer subclass (e.g. component_exe), so it is named by its api class (see db_object::api_class)
+     *
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the object shown on the page
+     * @return string the translated object name e.g. 'component' for a component_exe
+     */
+    private function object_name(db_object|type_object|combine_named|sandbox_list $dbo): string
+    {
+        $class = $dbo instanceof db_object ? $dbo->api_class() : $dbo::class;
+        return library::class_to_name_translated($class);
     }
 
     /**
      * show the pending field changes as a centered three column table so the user can confirm them:
      * the field label in the first column, the old 'from' value (grey, from the '8'-prefixed url) in
      * the second and the new 'to' value (in the 'changed' color) in the third; one row per field whose
-     * new url value differs from its '8'-prefixed old value. the table is centered and its width follows
+     * new url value differs from its '8'-prefixed old value. for an add mask the 'from' column is left
+     * out, because a new object has no old values. the table is centered and its width follows
      * the config 'side width' screen breakpoints (8/12 very wide, 10/12 wide, 12/12 normal/small)
      *
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
@@ -196,6 +221,7 @@ class ui_preview extends ui_base
      * @return string the html code of the centered change table, or an empty string if nothing changed
      */
     function popup_changes(
+        user_message                                          $msg,
         array                                                 $url_array = [],
         db_object|type_object|combine_named|sandbox_list|null $dbo = null
     ): string
@@ -208,6 +234,14 @@ class ui_preview extends ui_base
         // object id and the process step) are emitted there, and the 8-prefixed old values and
         // 9-prefixed back targets are shown only in the diff, so skip those. the origin mask is kept so
         // the confirm submit tells action_crud which object view to return to after the write
+        // a url array is expected to carry only scalar values, so report a non scalar value
+        // as an internal inconsistency and drop it instead of failing with a fatal on a cast
+        foreach ($url_array as $key => $val) {
+            if (!is_scalar($val) and $val !== null) {
+                log_err('unexpected non scalar url value for key "' . $key . '" in popup_changes');
+                unset($url_array[$key]);
+            }
+        }
         $skip = [url_var::MASK, url_var::ID, url_var::STEP];
         $hidden = '';
         foreach ($url_array as $key => $val) {
@@ -217,13 +251,18 @@ class ui_preview extends ui_base
                 $hidden .= $html->form_hidden($key, (string)$val);
             }
         }
-        $rows = $this->change_rows($url_array, $dbo);
+        // an add creates the object, so it has no previous values: the 'from' column would be empty
+        // in every row and is therefore left out, which makes the table a two column field / to list
+        $ex_from = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
+        $rows = $this->change_rows($url_array, $dbo, $msg, $ex_from);
         $result = $hidden;
         if ($rows != '') {
-            $head = $html->thead($html->tr(
-                $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
-                . $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM))
-                . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO))));
+            $head_row = $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD));
+            if (!$ex_from) {
+                $head_row .= $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM));
+            }
+            $head_row .= $html->th($mtr->txt(msg_id::CHANGE_TBL_TO));
+            $head = $html->thead($html->tr($head_row));
             $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
         }
         // the component brings its own centered row (matching its "side" position in the confirm
@@ -243,11 +282,14 @@ class ui_preview extends ui_base
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being changed, used
      *        for the db field order and the field labels; only a db object has an own field order, for
      *        the other objects (e.g. a language) the labels are derived from the url keys
+     * @param bool $ex_from true to leave out the 'from' column, e.g. for an add where there is no old value
      * @return string the html table rows, one per changed field
      */
     private function change_rows(
         array                                                 $url_array,
-        db_object|type_object|combine_named|sandbox_list|null $dbo
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        bool                                                  $ex_from = false
     ): string
     {
         global $mtr;
@@ -259,9 +301,18 @@ class ui_preview extends ui_base
             $url_keys = $dbo->db_fld_to_url();
         }
         if ($order != [] and $url_keys != []) {
+            // hide the changes of the admin-only fields (the cached impact and usage numbers)
+            // from users without admin, developer or system rights, like the change log does
+            // (see change_log_list::filter_admin_fields); the values are still carried forward
+            // as hidden inputs by popup_changes so the confirm submit never resets them
+            global $ui_sys;
+            $usr = $ui_sys->usr ?? null;
+            $sees_admin = $usr == null ? false : $usr->sees_admin_fields();
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
-                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $db_fld);
+                    if ($sees_admin or !in_array($db_fld, fields::LOG_ADMIN_ONLY)) {
+                        $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $msg, $db_fld, $ex_from);
+                    }
                 }
             }
         } else {
@@ -269,7 +320,7 @@ class ui_preview extends ui_base
             // without the object context the url key cannot be mapped to a real db field code id of
             // change_fields.csv and a guessed code id would trigger a missing translation error
             foreach ($this->changed_fields($url_array) as $url_key) {
-                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key));
+                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key), $msg, '', $ex_from);
             }
         }
         return $rows;
@@ -306,21 +357,31 @@ class ui_preview extends ui_base
      * @param string $url_key the url var short key that carries the field value
      * @param string $label the translated field name shown in the first column
      * @param string $db_fld the db field name, used to show the type name instead of the id for a type field
+     * @param bool $ex_from true to leave out the 'from' column, e.g. for an add where there is no old value
      * @return string the html table row, or an empty string if the field did not change
      */
-    private function change_row(array $url_array, string $url_key, string $label, string $db_fld = ''): string
+    private function change_row(
+        array        $url_array,
+        string       $url_key,
+        string       $label,
+        user_message $msg,
+        string       $db_fld = '',
+        bool         $ex_from = false
+    ): string
     {
         $html = new html_base();
         $result = '';
         $new = $url_array[$url_key] ?? '';
         $old = $url_array[url_var::PRE . $url_key] ?? '';
         if ($new != $old) {
-            $from_text = $this->field_value($db_fld, (string)$old);
-            $to_text = $this->field_value($db_fld, (string)$new);
-            $field = $html->td($label);
-            $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
-            $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
-            $result = $html->tr($field . $from . $to);
+            $to_text = $this->field_value($db_fld, (string)$new, $msg, $url_key);
+            $cells = $html->td($label);
+            if (!$ex_from) {
+                $from_text = $this->field_value($db_fld, (string)$old, $msg, $url_key);
+                $cells .= $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
+            }
+            $cells .= $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
+            $result = $html->tr($cells);
         }
         return $result;
     }
@@ -329,15 +390,23 @@ class ui_preview extends ui_base
      * the display text of a single field value: for a type-id field (share, protection, phrase type, ...)
      * the type name from the request cache (or 'not set' when unset), otherwise the raw value unchanged
      *
-     * @param string $db_fld the db field name whose value is shown
+     * @param string $db_fld the db field name whose value is shown, empty for an object without a db field order
      * @param string $value the raw url value of the field (a type id for a type field)
+     * @param string $url_key the url var short key that carries the value, used to find the type list
+     *                        if the db field name is unknown
      * @return string the value to show to the user
      */
-    private function field_value(string $db_fld, string $value): string
+    private function field_value(string $db_fld, string $value, user_message $msg, string $url_key = ''): string
     {
         global $ui_sys, $mtr;
         $result = $value;
         $type_list = $ui_sys?->typ_lst_cache?->field_to_type_list($db_fld);
+        if ($type_list == null) {
+            // an object without a db field order reaches this without a db field name, so fall back
+            // to the url key, which names the type list just as well for the type fields that have
+            // their own url var (see type_lists::url_key_to_type_list)
+            $type_list = $ui_sys?->typ_lst_cache?->url_key_to_type_list($url_key);
+        }
         if ($type_list != null) {
             if ($value == '' or $value == '0') {
                 $result = $mtr->txt(msg_id::NOT_SET);
@@ -346,7 +415,7 @@ class ui_preview extends ui_base
             }
         } elseif ($db_fld == fields::FLD_VIEW) {
             // the view is a sandbox object, not a type, so resolve its id to the view name via the api
-            $result = $this->view_name($value);
+            $result = $this->view_name($value, $msg);
         }
         return $result;
     }
@@ -358,22 +427,219 @@ class ui_preview extends ui_base
      * @param string $value the raw url value of the view field (a view id)
      * @return string the view name to show to the user
      */
-    private function view_name(string $value): string
+    private function view_name(string $value, user_message $msg): string
     {
         global $mtr;
         $result = $mtr->txt(msg_id::NOT_SET);
         if ($value != '' and $value != '0') {
             $msk = new view();
-            $msk->load_by_id((int)$value);
+            $msk->load_by_id((int)$value, $msg);
             $result = $msk->name();
         }
         return $result;
     }
 
     /**
+     * the 'my' tab table of the word, triple or formula page: one row per field that the session user
+     * has overwritten in the user sandbox (overlay) table e.g. user_words, with the translated
+     * field name, the user value ('your'), the value of the standard object ('instead') and an
+     * undo icon that links to the confirm page which sets the field back to the standard value;
+     * an empty string if the user is not logged in or has no overwrites, so the tab is dropped
+     * (tab_box skips tabs without content); the admin-only fields (the cached usage and impact
+     * numbers) are hidden from users without admin or developer rights like in the change log
+     *
+     * @param db_object $dbo the word, triple or formula that should be shown to the user
+     * @param user_message $msg to collect the mapping errors
+     * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function user_overwrites_table(db_object $dbo, user_message $msg, array $url_array = []): string
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0 and $dbo instanceof sandbox) {
+            $rows = '';
+            foreach ($dbo->user_overwrites as $ovr) {
+                $fld = $ovr[json_fields::FIELD] ?? '';
+                if ($this->shows_field($usr, $fld)) {
+                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg);
+                    // e.g. a null and a zero view id both resolve to 'not set', so a row that
+                    // would show the same text on both sides tells the user nothing and is skipped
+                    if ($your != $instead) {
+                        // escape the values (user input rendered raw by the table; stored xss)
+                        $rows .= $html->tr(
+                            $html->td($mtr->text_db_field($fld))
+                            . $html->td($html->esc($your))
+                            . $html->td($html->esc($instead))
+                            . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr, $url_array)));
+                    }
+                }
+            }
+            if ($rows != '') {
+                $head = $html->tr(
+                    $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_YOUR))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD))
+                    . $html->th(''));
+                $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the 'others' tab table of the word, triple or formula page: one row per field and user for the
+     * shared overwrites that users other than the session user have done, with the translated
+     * field name, the name of the overwriting user, the value of that user, the value of the
+     * standard object ('instead') and an apply icon that links to the confirm page which takes
+     * over the other user's value for the session user; an empty string if the session user is
+     * not logged in or no other user has a shared overwrite, so the tab is dropped
+     *
+     * @param db_object $dbo the word, triple or formula that should be shown to the user
+     * @param user_message $msg to collect the mapping errors
+     * @param array $url_array the parsed url of the current page, carried into the apply links
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function other_overwrites_table(db_object $dbo, user_message $msg, array $url_array = []): string
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0 and $dbo instanceof sandbox) {
+            $rows = '';
+            foreach ($dbo->other_overwrites as $ovr) {
+                $fld = $ovr[json_fields::FIELD] ?? '';
+                if ($this->shows_field($usr, $fld)) {
+                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg);
+                    // like in the my tab a row with the same text on both sides is skipped
+                    if ($val != $instead) {
+                        // escape the values and the user name (user input rendered raw; stored xss)
+                        $rows .= $html->tr(
+                            $html->td($mtr->text_db_field($fld))
+                            . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
+                            . $html->td($html->esc($val))
+                            . $html->td($html->esc($instead))
+                            . $html->td($this->apply_overwrite_link($dbo, $fld, $ovr, $msg, $url_array)));
+                    }
+                }
+            }
+            if ($rows != '') {
+                $head = $html->tr(
+                    $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
+                    . $html->th($mtr->txt(msg_id::OTHERS_TBL_USER))
+                    . $html->th($mtr->txt(msg_id::OTHERS_TBL_VALUE))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD))
+                    . $html->th(''));
+                $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user $usr the session user viewing the overwrite table
+     * @param string $fld the db field name of an overwritten field
+     * @return bool true if the field row is shown to the user; the admin-only fields (the cached
+     *              impact and usage numbers) are hidden like in the change log
+     */
+    private function shows_field(user $usr, string $fld): bool
+    {
+        return $usr->sees_admin_fields() or !in_array($fld, fields::LOG_ADMIN_ONLY);
+    }
+
+    /**
+     * the undo icon link of a 'my' tab row: opens the confirm page of the object edit view with
+     * the overwritten field set back to the standard value and the user value as the '8'-prefixed
+     * opening value, so confirming the shown change removes the user overwrite of the field
+     *
+     * @param db_object $dbo the word, triple or formula whose overwrite can be undone
+     * @param string $fld the db field name of the overwritten field
+     * @param array $ovr the overwrite entry with the user and the standard value
+     * @param array $url_array the parsed url of the current page that is carried into the link
+     * @return string the html code of the undo icon link or an empty string if no link can be built
+     */
+    private function undo_overwrite_link(db_object $dbo, string $fld, array $ovr, array $url_array = []): string
+    {
+        return $this->overwrite_confirm_link($dbo, $fld,
+            (string)($ovr[json_fields::STD_VALUE] ?? ''),
+            (string)($ovr[json_fields::USR_VALUE] ?? ''),
+            $url_array, icons::UNDO, msg_id::MY_TBL_UNDO);
+    }
+
+    /**
+     * the apply icon link of an 'others' tab row: opens the confirm page of the object edit view
+     * with the field set to the other user's value and the session user's current value as the
+     * '8'-prefixed opening value, so confirming the shown change takes over the other user's
+     * overwrite for the session user
+     *
+     * @param db_object $dbo the word, triple or formula shown to the user
+     * @param string $fld the db field name of the field that the other user has overwritten
+     * @param array $ovr the overwrite entry with the other user's value
+     * @param user_message $msg to collect the mapping errors
+     * @param array $url_array the parsed url of the current page that is carried into the link
+     * @return string the html code of the apply icon link or an empty string if no link can be built
+     */
+    private function apply_overwrite_link(db_object $dbo, string $fld, array $ovr, user_message $msg, array $url_array = []): string
+    {
+        $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
+        $current = (string)($dbo->to_url_array($msg)[$fld_var] ?? '');
+        return $this->overwrite_confirm_link($dbo, $fld,
+            (string)($ovr[json_fields::USR_VALUE] ?? ''),
+            $current,
+            $url_array, icons::APPLY, msg_id::OTHERS_TBL_APPLY);
+    }
+
+    /**
+     * an icon link to the confirm page of the object edit view that changes one field: the field
+     * is set to the given new value and the given old value is the '8'-prefixed opening value, so
+     * the confirm page shows exactly this one pending change; the other entries of the current
+     * url are kept, so the confirm submit never resets other fields; shared by the undo link of
+     * the 'my' tab and the apply link of the 'others' tab
+     *
+     * @param db_object $dbo the word, triple or formula shown to the user
+     * @param string $fld the db field name of the field to change
+     * @param string $new_val the value that confirming the change saves for the session user
+     * @param string $old_val the '8'-prefixed opening value shown as the current value
+     * @param array $url_array the parsed url of the current page that is carried into the link
+     * @param string $icon_class the css class of the icon shown as the link
+     * @param msg_id $tooltip the message id of the link tooltip
+     * @return string the html code of the icon link or an empty string if no link can be built
+     */
+    private function overwrite_confirm_link(
+        db_object $dbo,
+        string    $fld,
+        string    $new_val,
+        string    $old_val,
+        array     $url_array,
+        string    $icon_class,
+        msg_id    $tooltip
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        // the url building is shared with the undo icon of the all user overwrites column
+        $url = $dbo->field_change_confirm_url($fld, $new_val, $old_val, $url_array);
+        if ($url != '') {
+            $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . $icon_class . '"></' . html_base::I . '>';
+            $result = $html->ref($url, $icon, $mtr->txt($tooltip), '', true);
+        }
+        return $result;
+    }
+
+    /**
      * show the impact of the pending change centered below the change table:
-     * the translated 'impact' word multiplied by a field factor, which for now is the number of
-     * changed fields as a placeholder until the real result impact of the change is calculated
+     * 'impact of this change in' followed by the impact unit ('happy time points' unless another
+     * unit is set) and the impact number; the real impact number cannot be calculated yet, so
+     * 'unknown' is shown with an update link that re-requests the page to retry the calculation
+     * TODO Prio 2 calculate the real impact of the change and use the configured impact unit
      *
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @return string the html code of the centered impact line, or an empty string if nothing changed
@@ -382,10 +648,14 @@ class ui_preview extends ui_base
     {
         global $mtr;
         $html = new html_base();
-        $factor = count($this->changed_fields($url_array));
         $result = '';
-        if ($factor > 0) {
-            $result = $html->div($mtr->txt(msg_id::POPUP_IMPACT) . ' × ' . $factor, styles::CHANGE_IMPACT);
+        if (count($this->changed_fields($url_array)) > 0) {
+            $update_url = api::MAIN_SCRIPT . '?' . http_build_query($url_array);
+            $line = $mtr->txt(msg_id::POPUP_IMPACT)
+                . ' ' . $mtr->txt(msg_id::POPUP_IMPACT_UNIT_FALLBACK)
+                . ': ' . $mtr->txt(msg_id::POPUP_IMPACT_UNKNOWN)
+                . ' ' . $html->ref($update_url, $mtr->txt(msg_id::POPUP_IMPACT_UPDATE));
+            $result = $html->div($line, styles::CHANGE_IMPACT);
         }
         return $result;
     }

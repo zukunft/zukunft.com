@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'refs.php';
@@ -51,6 +52,7 @@ class ref_read_tests
     {
         global $sys;
         global $db_con;
+        $msg = new user_message();
 
         // init
         $lib = new library();
@@ -64,7 +66,7 @@ class ref_read_tests
 
         // load the ref types
         $lst = new ref_type_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
@@ -72,10 +74,20 @@ class ref_read_tests
         $result = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 
+        $t->subheader($ts . 'load by external key');
+
+        // the external key is the name of a reference, so the generic cleanup by name finds it
+        $test_name = 'the pi reference is found by its external key';
+        $ref = new ref($t->usr1);
+        $t->assert($test_name, $ref->load_by_name(refs::PI_KEY, $msg), refs::PI_ID);
+        $test_name = 'an unknown external key finds no reference';
+        $ref = new ref($t->usr1);
+        $t->assert($test_name, $ref->load_by_name(refs::SYSTEM_TEST_ADD, $msg), 0);
+
         $t->subheader($ts . 'apis');
 
         $ref = new ref($t->usr1);
-        $ref->load_by_id(refs::PI_ID);
+        $ref->load_by_id(refs::PI_ID, $msg);
         $t->assert_api($ref);
 
     }

@@ -47,8 +47,6 @@ class group_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $sc = new sql_creator();
         $t_wrd = new test_words($t);
@@ -62,7 +60,7 @@ class group_list_tests
         $t->subheader($ts . 'database query creation');
 
         // load by triple ids
-        $grp_lst = new group_list($usr);
+        $grp_lst = new group_list($t->usr1);
         $test_name = 'load formulas by ids';
         $t->assert_sql_by_ids($test_name, $sc, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($sc, $grp_lst, array(3,2,4));

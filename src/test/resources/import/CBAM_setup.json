@@ -1,99 +1,65 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-07-06 23:50:00",
   "user": "cbam_setup",
   "description": "CBAM base definitions, formulas, and reference data according to EU Regulation 2023/956 and Implementing Regulation 2025/2547",
   "words": [
+    {"name": "2026", "type": "time"},
+    {
+      "name": "aluminium",
+      "description": "Primary aluminium, CBAM basic material",
+      "refs": [{"name": "Aluminium", "type": "wikipedia"}, {"name": "Q663", "type": "wikidata"}]
+    },
+    {"name": "amount"},
+    {"name": "applied"},
+    {"name": "CBAM", "description": "Carbon Border Adjustment Mechanism"},
+    {
+      "name": "cement",
+      "description": "Portland cement clinker, CBAM basic material",
+      "refs": [{"name": "Cement", "type": "wikipedia"}, {"name": "Q739", "type": "wikidata"}]
+    },
+    {"name": "CHF", "description": "Is a symbol for Swiss franc"},
+    {
+      "name": "CO2",
+      "description": "Carbon dioxide, greenhouse gas",
+      "refs": [{"name": "Carbon_dioxide", "type": "wikipedia"}, {"name": "Q2062", "type": "wikidata"}]
+    },
+    {"name": "credit"},
+    {"name": "default"},
+    {"name": "direct"},
+    {"name": "duty"},
+    {"name": "electricity", "description": "Electrical energy, indirect emission source"},
+    {"name": "emission"},
+    {
+      "name": "eq",
+      "description": "Equivalent, used to express global warming potential relative to CO2",
+      "refs": [{"name": "Carbon_dioxide_equivalent", "type": "wikipedia"}]
+    },
+    {"name": "EU ETS", "description": "European Union Emissions Trading System"},
+    {"name": "EUR", "description": "Is a symbol for euro"},
+    {"name": "fraction"},
+    {"name": "indirect"},
+    {"name": "mass", "description": "Mass of a product or material", "type": "measure"},
+    {"name": "material"},
+    {"name": "price"},
+    {"name": "product"},
+    {"name": "specific"},
+    {
+      "name": "steel",
+      "description": "Unalloyed crude steel, CBAM basic material",
+      "refs": [{"name": "Steel", "type": "wikipedia"}, {"name": "Q1142", "type": "wikidata"}]
+    },
+    {"name": "Swiss EHS", "description": "Swiss Emissions Trading Scheme"},
     {
       "name": "t",
       "description": "Metric ton, unit of mass",
       "type": "measure",
-      "refs": [
-        { "name": "Tonne", "type": "wikipedia" },
-        { "name": "Q25317", "type": "wikidata" }
-      ]
+      "refs": [{"name": "Tonne", "type": "wikipedia"}, {"name": "Q25317", "type": "wikidata"}]
     },
-    {
-      "name": "CO2",
-      "description": "Carbon dioxide, greenhouse gas",
-      "type": "substance",
-      "refs": [
-        { "name": "Carbon_dioxide", "type": "wikipedia" },
-        { "name": "Q2062", "type": "wikidata" }
-      ]
-    },
-    {
-      "name": "eq",
-      "description": "Equivalent, used to express global warming potential relative to CO2",
-      "type": "modifier",
-      "refs": [
-        { "name": "Carbon_dioxide_equivalent", "type": "wikipedia" }
-      ]
-    },
-    {
-      "name": "mass",
-      "description": "Mass of a product or material",
-      "type": "measure"
-    },
-    {
-      "name": "direct emissions",
-      "description": "GHG emissions released directly during production",
-      "type": "measure"
-    },
-    {
-      "name": "indirect emissions",
-      "description": "GHG emissions from purchased electricity, heat, or cooling",
-      "type": "measure"
-    },
-    {
-      "name": "mass fraction",
-      "description": "Share of a component's mass relative to the total product mass",
-      "type": "ratio"
-    },
-    {
-      "name": "specific emissions",
-      "description": "GHG emissions per unit of mass of a material or product",
-      "type": "measure"
-    },
-    {
-      "name": "CO2 price",
-      "description": "Market price per tonne of CO2 equivalent",
-      "type": "measure"
-    },
-    {
-      "name": "credit applied",
-      "description": "CO2 price already paid in the country of origin",
-      "type": "measure"
-    },
-    {
-      "name": "steel",
-      "description": "Unalloyed crude steel, CBAM basic material",
-      "refs": [
-        { "name": "Steel", "type": "wikipedia" },
-        { "name": "Q1142", "type": "wikidata" }
-      ]
-    },
-    {
-      "name": "aluminium",
-      "description": "Primary aluminium, CBAM basic material",
-      "refs": [
-        { "name": "Aluminium", "type": "wikipedia" },
-        { "name": "Q663", "type": "wikidata" }
-      ]
-    },
-    {
-      "name": "cement",
-      "description": "Portland cement clinker, CBAM basic material",
-      "refs": [
-        { "name": "Cement", "type": "wikipedia" },
-        { "name": "Q739", "type": "wikidata" }
-      ]
-    },
-    {
-      "name": "electricity",
-      "description": "Electrical energy, indirect emission source",
-      "type": "energy"
-    }
+    {"name": "tCO2e", "description": "Is a symbol for tonnes of CO2 equivalent"},
+    {"name": "tonne"},
+    {"name": "value", "description": "a stored number; reference the provenance qualifier triple, not this bare word"}
   ],
   "triples": [
     {
@@ -111,18 +77,59 @@
       "description": "tCO2e: standard unit for embedded emissions"
     },
     {
-      "name": "embedded emissions of product",
-      "from": "specific emissions",
-      "verb": "of",
-      "to": "product",
-      "description": "Total GHG emissions embodied in a manufactured good"
-    },
-    {
       "name": "component of product",
       "from": "material",
       "verb": "can be part of",
       "to": "product",
       "description": "Raw material or semi-finished good used in final production"
+    },
+    {
+      "name": "direct emissions",
+      "from": "emission",
+      "verb": "kind of",
+      "to": "direct",
+      "description": "GHG emissions released directly during production"
+    },
+    {
+      "name": "indirect emissions",
+      "from": "emission",
+      "verb": "kind of",
+      "to": "indirect",
+      "description": "GHG emissions from purchased electricity, heat, or cooling"
+    },
+    {
+      "name": "specific emissions",
+      "from": "emission",
+      "verb": "kind of",
+      "to": "specific",
+      "description": "GHG emissions per unit of mass of a material or product"
+    },
+    {
+      "name": "mass fraction",
+      "from": "fraction",
+      "verb": "of",
+      "to": "mass",
+      "description": "Share of a component's mass relative to the total product mass"
+    },
+    {"name": "CO2 price", "from": "price", "verb": "of", "to": "CO2", "description": "Market price per tonne of CO2 equivalent"},
+    {
+      "name": "credit applied",
+      "from": "credit",
+      "verb": "kind of",
+      "to": "applied",
+      "description": "CO2 price already paid in the country of origin"
+    },
+    {"name": "CBAM duty", "from": "duty", "verb": "of", "to": "CBAM"},
+    {"name": "default value", "from": "value", "verb": "kind of", "to": "default"},
+    {"from": "CHF", "verb": "per", "to": "tCO2e"},
+    {"from": "EUR", "verb": "per", "to": "tCO2e"},
+    {"from": "tCO2e", "verb": "per", "to": "tonne"},
+    {
+      "name": "embedded emissions of product",
+      "from": "specific emissions",
+      "verb": "of",
+      "to": "product",
+      "description": "Total GHG emissions embodied in a manufactured good"
     },
     {
       "name": "CBAM liability",
@@ -182,34 +189,24 @@
       "name": "KBOB Emission Factors",
       "description": "Swiss Federal Coordination Body for Construction and Infrastructure",
       "url": "https://www.kbob.ch/en/ecological-assessment"
+    },
+    {
+      "name": "EU Emissions Trading System",
+      "description": "the emission allowance market of the European Union",
+      "url": "https://climate.ec.europa.eu/eu-action/eu-emissions-trading-system-eu-ets_en"
+    },
+    {
+      "name": "Federal Office for the Environment FOEN",
+      "description": "Bundesamt fuer Umwelt BAFU, the Swiss authority for the emission trading scheme",
+      "url": "https://www.bafu.admin.ch/bafu/en/home/topics/climate/info-specialists/climate--market-based-instruments/emissions-trading-scheme.html"
     }
   ],
   "values": [
-    {
-      "words": ["steel", "specific emissions", "tCO2e per tonne"],
-      "number": "1.85",
-      "source": "ecoinvent v3.10"
-    },
-    {
-      "words": ["aluminium", "specific emissions", "tCO2e per tonne"],
-      "number": "8.60",
-      "source": "ecoinvent v3.10"
-    },
-    {
-      "words": ["cement", "specific emissions", "tCO2e per tonne"],
-      "number": "0.82",
-      "source": "ecoinvent v3.10"
-    },
-    {
-      "words": ["CO2 price", "EU ETS 2026", "EUR per tCO2e"],
-      "number": "85.00",
-      "source": "EU Emissions Trading System"
-    },
-    {
-      "words": ["CO2 price", "Swiss EHS 2026", "CHF per tCO2e"],
-      "number": "83.50",
-      "source": "Federal Office for the Environment FOEN"
-    }
+    {"words": ["steel", "specific emissions", "tCO2e per tonne"], "number": "1.85", "source": "ecoinvent v3.10"},
+    {"words": ["aluminium", "specific emissions", "tCO2e per tonne"], "number": "8.60", "source": "ecoinvent v3.10"},
+    {"words": ["cement", "specific emissions", "tCO2e per tonne"], "number": "0.82", "source": "ecoinvent v3.10"},
+    {"words": ["CO2 price", "EU ETS", "2026", "EUR per tCO2e"], "number": "85.00", "source": "EU Emissions Trading System"},
+    {"words": ["CO2 price", "Swiss EHS", "2026", "CHF per tCO2e"], "number": "83.50", "source": "Federal Office for the Environment FOEN"}
   ],
   "calc-validation": [
     {
@@ -223,21 +220,18 @@
   "components": [
     {
       "name": "CBAM calculation result",
-      "type": "system_sub_title",
-      "code_id": "cbam_result_display",
-      "ui_msg_code_id": "cbam_result_display"
+      "type": "system_sub_title"
     }
   ],
   "views": [
     {
       "name": "CBAM Product View",
       "description": "Standard view to display embedded emissions and CBAM duty",
-      "code_id": "cbam_product_view",
       "type": "product",
       "components": [
-        { "position": "1", "name": "Word title" },
-        { "position": "2", "name": "system show field description" },
-        { "position": "3", "name": "CBAM calculation result" }
+        {"position": "1", "name": "Word title"},
+        {"position": "2", "name": "system show field description"},
+        {"position": "3", "name": "CBAM calculation result"}
       ]
     }
   ]

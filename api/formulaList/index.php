@@ -40,51 +40,53 @@ use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("formulaList");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("formulaList", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $frm_ids = $_GET[url_var::ID_LST] ?? '';
     $phr_id = $_GET[url_var::PHRASE] ?? 0;
-
-    $msg = '';
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($frm_ids != '') {
             $lst = new formula_list($usr);
-            $lst->load_by_ids(explode(',', $frm_ids));
+            $lst->load_by_ids(explode(',', $frm_ids), $msg);
             // drop the formulas the requester may not read (idor); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } elseif ($phr_id != 0) {
             // the formulas assigned to a phrase e.g. for the default word page
             $phr = new phrase($usr);
             $phr->set_id((int)$phr_id);
             $lst = new formula_list($usr);
-            $lst->load_by_phr($phr);
+            $lst->load_by_phr($phr, $msg);
             // drop the formulas the requester may not read (idor); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
-            $msg = 'list of formula id or the phrase id is missing';
+            $msg->add_message_text('list of formula id or the phrase id is missing');
         }
     }
 
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

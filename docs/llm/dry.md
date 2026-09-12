@@ -60,14 +60,14 @@ When a function appears in two or more sibling classes with partially shared
 logic, extract the shared part into the parent; each child calls
 `parent::functionName()` before (or after) adding its own fields.
 
-`api_array()` illustrates this across the inheritance chain — each level adds
+`api_array($msg)` illustrates this across the inheritance chain — each level adds
 only the fields it owns:
 
 ```php
 // sandbox — adds share/protection/excluded
-function api_array(): array
+function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 {
-    $vars = parent::api_array();  // db_object adds the id
+    $vars = parent::api_array($typ_lst, $msg);  // db_object adds the id
     if ($this->share_id != null) { $vars[json_fields::SHARE] = $this->share_id; }
     if ($this->protection_id != null) { $vars[json_fields::PROTECTION] = $this->protection_id; }
     if ($this->excluded != null) { $vars[json_fields::EXCLUDED] = $this->excluded; }
@@ -75,29 +75,29 @@ function api_array(): array
 }
 
 // sandbox_named — adds name and description
-function api_array(): array
+function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 {
-    $vars = parent::api_array();  // inherits id + share + protection + excluded
+    $vars = parent::api_array($typ_lst, $msg);  // inherits id + share + protection + excluded
     $vars[json_fields::NAME] = $this->name();
     $vars[json_fields::DESCRIPTION] = $this->get_description();
     return $vars;
 }
 
 // sandbox_typed — adds type_id
-function api_array(): array
+function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 {
-    $vars = parent::api_array();
-    $vars[json_fields::TYPE] = $this->type_id();
+    $vars = parent::api_array($typ_lst, $msg);
+    $vars[json_fields::TYPE] = $this->type_id($msg;
     return $vars;
 }
 
 // word — adds plural and parent word
-function api_array(): array
+function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 {
-    $vars = parent::api_array();
+    $vars = parent::api_array($typ_lst, $msg);
     $vars[json_fields::PLURAL] = $this->get_plural();
     if ($this->has_parent()) {
-        $vars[json_fields::PARENT] = $this->parent()->api_array();
+        $vars[json_fields::PARENT] = $this->parent()->api_array($typ_lst, $msg);
     }
     return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
 }

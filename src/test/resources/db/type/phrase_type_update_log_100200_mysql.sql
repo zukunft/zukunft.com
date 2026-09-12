@@ -23,7 +23,7 @@ PREPARE phrase_type_update_log_100200_call
     FROM 'SELECT phrase_type_update_log_100200 (?,?,?,?,?,?,?,?)';
 
 SELECT phrase_type_update_log_100200
-    (1,
+    (3,
      1,
      837,
      'changed description',

@@ -42,11 +42,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_SANDBOX . 'user_service.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::EXPORT . 'xml_serializer.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\user_service;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class xml extends user_service
 {
@@ -58,7 +60,7 @@ class xml extends user_service
      * @param user|null $usr_ui if the requesting user is privileged the view of the user that should be exported
      * @return string the xml with the words, values, formulas, results and views from the $usr_ui point of view
      */
-    function export_by_phrase_list(phrase_list $phr_lst, ?user $usr_ui = null): string
+    function export_by_phrase_list(phrase_list $phr_lst, user_message $msg, ?user $usr_ui = null): string
     {
         log_debug();
         $result = '';
@@ -71,7 +73,7 @@ class xml extends user_service
 
         // get the export object
         $export_instance = new export;
-        $export_obj = $export_instance->get($usr, $phr_lst);
+        $export_obj = $export_instance->get($msg, $usr, $phr_lst);
         log_debug(json_encode($export_obj));
 
         // create the xml

@@ -39,11 +39,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -72,6 +74,17 @@ class test_terms
     {
         $t_wrd = new test_words($this->env);
         return $t_wrd->word()->term();
+    }
+
+    /**
+     * @param string $name the name of a term that is not yet in the database
+     * @return term as an import creates it before the words have been added to the database
+     */
+    function by_name(string $name): term
+    {
+        $trm = new term($this->env->usr1);
+        $trm->set_name($name);
+        return $trm;
     }
 
     function term_triple(): term
@@ -184,6 +197,26 @@ class test_terms
     }
 
     /**
+     * @return term_list the terms used by the formulas of solution_prio.json: the scaling words
+     *         and the phrases of the "global happy time points" sum
+     */
+    function term_list_solution_prio(): term_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new term_list($this->env->usr1);
+        $lst->add($t_wrd->word_one()->term());
+        $lst->add($t_wrd->word_mio()->term());
+        $lst->add($t_wrd->word_billion()->term());
+        $lst->add($t_wrd->word_trillion()->term());
+        $lst->add($t_wrd->word_htp()->term());
+        $lst->add($t_wrd->word_percent()->term());
+        $lst->add($t_wrd->word_global()->term());
+        $lst->add($t_wrd->word_human()->term());
+        $lst->add($t_wrd->word_population()->term());
+        return $lst;
+    }
+
+    /**
      * @return term_list the terms used in the "definition of joule" formula: joule, kg, metre and second
      */
     function term_list_joule(): term_list
@@ -286,9 +319,24 @@ class test_terms
     {
         $t_wrd = new test_words($this->env);
         $t_frm = new test_formulas($this->env);
+        $msg = new user_message($this->env->usr1); // a test builder is an entry point
         $dto = new data_object($this->env->usr1);
-        $dto->add_word($t_wrd->word_one());
-        $dto->add_formula($t_frm->formula_scale_mio());
+        $dto->add_word($t_wrd->word_one(), $msg);
+        $dto->add_formula($t_frm->formula_scale_mio(), $msg);
+        return $dto;
+    }
+
+    /**
+     * @return data_object with the minute and the second word as the import cache of a formula
+     *         that names both of them in its assigned phrases
+     */
+    function dto_minute_and_second(): data_object
+    {
+        $t_wrd = new test_words($this->env);
+        $msg = new user_message($this->env->usr1); // a test builder is an entry point
+        $dto = new data_object($this->env->usr1);
+        $dto->add_word($t_wrd->word_minute(), $msg);
+        $dto->add_word($t_wrd->second(), $msg);
         return $dto;
     }
 
@@ -308,9 +356,10 @@ class test_terms
     {
         $t_wrd = new test_words($this->env);
         $t_frm = new test_formulas($this->env);
+        $msg = new user_message($this->env->usr1); // a test builder is an entry point
         $dto = new data_object($this->env->usr1);
-        $dto->add_word($t_wrd->word_one_unscaled());
-        $dto->add_formula($t_frm->formula_scale_mio());
+        $dto->add_word($t_wrd->word_one_unscaled(), $msg);
+        $dto->add_formula($t_frm->formula_scale_mio(), $msg);
         return $dto;
     }
 
@@ -321,13 +370,12 @@ class test_terms
      */
     function list_huge(test_cleanup $t, int $size): term_list
     {
-        global $usr;
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
         $t_vrb = new test_verbs($t);
         $t_frm = new test_formulas($t);
 
-        $lst = new term_list($usr);
+        $lst = new term_list($t->usr1);
         for ($i = 1; $i <= $size; $i++) {
             // first create at least two words, so that a triple can be created
             if ($i <= 2) {

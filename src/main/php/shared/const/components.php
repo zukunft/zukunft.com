@@ -50,6 +50,12 @@ class components
     const string MATRIX_COM = 'changeable sheet with words, number and formulas';
     const int MATRIX_ID = 2;
 
+    // the "Title solution priority" component of solution_prio.json, the sample object of the
+    // component default page, because it has a description and a type and is used by a view;
+    // the id is the import position, so re-baseline it from unit/component/list.csv after a reset
+    const string SOLUTION_PRIO_TITLE_NAME = 'Title solution priority';
+    const int SOLUTION_PRIO_TITLE_ID = 373;
+
     // text components to test the side or below position types
     // with ids that are far above the component ids used in the database
     const string COL_FIRST_NAME = 'first column';
@@ -61,6 +67,12 @@ class components
     const string COL_FOURTH_NAME = 'fourth column';
     const int COL_FOURTH_ID = 904;
 
+    // text components to test the same line position type
+    const string LINE_FIRST_NAME = 'first field';
+    const int LINE_FIRST_ID = 905;
+    const string LINE_SECOND_NAME = 'second field';
+    const int LINE_SECOND_ID = 906;
+
     // for system views
     const string FORM_TITLE = 'form_title';
     const string FORM_TITLE_NAME = 'form title';
@@ -68,7 +80,7 @@ class components
     const string FORM_NAME = 'form_field_name';
     const string FORM_NAME_NAME = 'system form field name';
     const string FORM_NAME_COM = 'the name field in a form';
-    const int FORM_NAME_ID = 4;
+    const int FORM_NAME_ID = 130;
     const string FORM_DESCRIPTION = 'form_field_description';
     const string FORM_DESCRIPTION_NAME = 'system form field description';
     const string FORM_DESCRIPTION_COM = 'the description field in a form';
@@ -84,7 +96,7 @@ class components
     const string FORM_PLURAL = 'form_field_plural';
     const string FORM_PLURAL_NAME = 'system form field plural';
     const string FORM_PLURAL_COM = 'the plural language form field in a form (to be move to languages forms)';
-    const int FORM_PLURAL_ID = 92;
+    const int FORM_PLURAL_ID = 269;
 
     // triple only fields
     const string FORM_WEIGHT = 'form_field_weight';
@@ -132,13 +144,17 @@ class components
     const string LINK_LIST_WORD = "link_list_word";
     const string USAGE_WORD = "usage_word";
     const string CHANGE_LOG_WORD = "change_log_word";
+    const string INVISIBLE_CHANGE_LOG_TABLE_WORD = "invisible_change_log_table_word";
     const string VIEW_LIST_WORD = "view_list_word";
     const string VIEW_TAB_BOX_WORD = "view_tab_box_word";
 
     // persevered view component names for unit and integration tests
     const string TEST_ADD_NAME = 'System Test View Component';
+    const int TEST_ADD_ID = 993; // fixed snapshot id of the add workflow component (like word_names::TEST_ADD_ID)
     const string TEST_ADD_VIA_FUNC_NAME = 'System Test Component added via sql function';
     const string TEST_ADD_COM = 'System Test View Component description';
+    // the description that the change_component workflow writes in its second round
+    const string TEST_DESCRIPTION_CHANGED = 'System Test View Component description changed';
     const string TEST_RENAMED_NAME = 'System Test View Component Renamed';
     const string TEST_ADD_2_NAME = 'System Test View Component Two';
     const string TEST_TITLE_NAME = 'System Test View Component Title';

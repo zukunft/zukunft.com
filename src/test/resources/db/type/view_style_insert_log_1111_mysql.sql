@@ -37,7 +37,7 @@ PREPARE view_style_insert_log_1111_call
 
 SELECT view_style_insert_log_1111
     ('1/3 width',
-     1,
+     3,
      1,
      785,
      786,

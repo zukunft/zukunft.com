@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2021-09-19 21:17:00",
   "user": "timon",
   "selection": [
@@ -7,14 +8,14 @@
   ],
   "description": "preloaded sample data to demonstrate how countries can be handled in zukunft.com",
   "words": [
-    { "name": "country"},
-    { "name": "Switzerland", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
+    { "name": "country", "description": "a distinct part of the world, such as a state, nation, or other political entity."},
+    { "name": "Switzerland", "description": "a landlocked country at the confluence of Western, Central and Southern Europe.", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
     { "name": "canton"},
     { "name": "city"},
     { "name": "Zurich"},
     { "name": "Bern"},
     { "name": "Geneva"},
-    { "name": "Germany", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
+    { "name": "Germany", "description": "a country in Central Europe, between the Baltic and North seas and the Alps.", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
     { "name": "inhabitants"},
     { "name": "company"},
     { "name": "2013", "type": "time"},
@@ -28,7 +29,7 @@
     { "name": "year", "type": "time"},
     { "name": "countryside"},
     { "name": "suburb"},
-    { "name": "total"},
+    { "name": "total", "description": "the whole amount or count, e.g. the total number of possible outcomes"},
     {
       "name": "one"
     },
@@ -42,8 +43,7 @@
       "name": "million"
     },
     {
-      "name": "ranking",
-      "comment": "relationship between a set of items, often recorded in a list, such that, for any two items, the first is either 'higher than', 'lower than', or 'equal to' the second. The default criteria is here 'good' and 'bad'."
+      "name": "ranking"
     },
     { "name": "k" },
     { "name": "Now" },
@@ -66,7 +66,7 @@
     },
     {"from": "Zurich (canton)", "verb": "is part of", "to": "Switzerland"},
     {"name": "Zurich (city) share of Zurich (canton)", "from": "Zurich (city)", "verb": "is part of", "to": "Zurich (canton)"},
-    {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company"},
+    {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company", "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich"},
     {"from": "ZU", "verb": "is an acronym for", "to": "Zurich"},
     {"from": "2013", "verb": "is a", "to": "year"},
     {"from": "2014", "verb": "is a", "to": "year"},
@@ -210,7 +210,7 @@
   "views": [
     {
       "name": "country ratios",
-      "comment": "List all countries with the main ratios",
+      "description": "List all countries with the main ratios",
       "components": [
         {
           "position": "1",

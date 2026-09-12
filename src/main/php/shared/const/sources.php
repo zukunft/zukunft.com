@@ -61,9 +61,12 @@ class sources
     const string BFS = 'Federal Statistical Office';
     const string BFS_COM = 'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.';
     const string BFS_ULR = 'https://www.bfs.admin.ch/bfs/en/home.html';
-    const int TRUST_ME_BRO_ID = 9;
+    // the digital object identifier used for testing (the doi of the zukunft.com concept paper)
+    const string TEST_DOI = '10.5281/zenodo.19443909';
+    const int TRUST_ME_BRO_ID = 11;
     const string TRUST_ME_BRO = 'my estimates';
     const string SYSTEM_TEST_ADD = 'System Test Source';
+    const int SYSTEM_TEST_ADD_ID = 995; // fixed snapshot id of the add workflow source (like word_names::TEST_ADD_ID)
     const string SYSTEM_TEST_ADD_COM = 'System Test Source Description';
     const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Source added via sql function';

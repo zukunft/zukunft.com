@@ -16,12 +16,12 @@ CREATE OR REPLACE FUNCTION component_update_log_00220040000000000000
 $$
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_name,_component_name_old,_component_name,_component_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_component_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            old_value,     new_value, old_id,                new_id,            row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_type_name_old,_type_name,_component_type_id_old,_component_type_id,_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            old_value,          new_value,                                                row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_name,   _component_name_old,_component_name,                                          _component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            old_value,          new_value,                                                row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,      _description_old,   _description,                                             _component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            old_value,          new_value,      old_id,                new_id,            row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_type_name_old,     _type_name,     _component_type_id_old,_component_type_id,_component_id ;
 
     UPDATE components
        SET component_name    = _component_name,
@@ -35,7 +35,7 @@ $$ LANGUAGE plpgsql;
 PREPARE component_update_log_00220040000000000000_call
         (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, smallint, text, smallint) AS
 SELECT component_update_log_00220040000000000000
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, $13, $14);
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);
 
 SELECT component_update_log_00220040000000000000
        (3::bigint,
@@ -43,7 +43,7 @@ SELECT component_update_log_00220040000000000000
         51::smallint,
         'system form field name'::text,
         'System Test View Component Renamed'::text,
-        4::bigint,
+        130::bigint,
         52::smallint,
         'the name field in a form'::text,
         null::text,

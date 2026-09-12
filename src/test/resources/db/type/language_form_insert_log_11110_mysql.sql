@@ -37,7 +37,7 @@ PREPARE language_form_insert_log_11110_call
 
 SELECT language_form_insert_log_11110
     ('plural',
-     1,
+     3,
      1,
      301,
      302,

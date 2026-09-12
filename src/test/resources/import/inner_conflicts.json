@@ -1,0 +1,859 @@
+{
+  "version": "0.0.1",
+  "description": "Internalized sexual stigma, identity conflict and hostility toward LGBTQ persons: evidence for and against the hypothesis discussed on 2026-08-29. Hypothesis (paraphrased from the German dialogue): conservative or heteronormative socialization, combined with a non-heterosexual orientation that contradicts the internalized norms, produces an inner conflict and psychological distress; the affected person then devalues or harms people who embody the unwanted part of the self, which may bring relief, protect self-esteem or restore group membership. The dialogue reformulated this as a largely unconscious chain (identity conflict -> threat to self-image and group membership -> shame and self-rejection -> stronger identification with the normative group -> demonstrative devaluation of LGBTQ persons -> temporary relief) and derived two testable predictions: the strength of the conflict between orientation and internalized norms should predict demonstrative devaluation, and the decisive predictor is homophobia combined with identity conflict rather than homophobia alone. Sourced findings are tagged 'measured value'; conjectures from the dialogue are tagged 'assumed value' with a confidence number. All DOIs were verified on 2026-08-29. Three sources were added beyond the dialogue (Adams 1996, MacInnis 2013, Weinstein 2012) because they test the popular attraction-based account directly.",
+  "words": [
+    {
+      "name": "sexual orientation",
+      "description": "enduring pattern of sexual or romantic attraction.",
+      "refs": [
+        {
+          "name": "Sexual_orientation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17888",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sexual minority",
+      "description": "a person whose sexual orientation is not heterosexual; lesbian, gay, bisexual (LGB) or other."
+    },
+    {
+      "name": "LGBTQ person",
+      "description": "a lesbian, gay, bisexual, transgender or queer person; the target group of the hostility discussed."
+    },
+    {
+      "name": "heterosexual man",
+      "description": "a man who self-identifies as heterosexual; the participant group of most aggression experiments."
+    },
+    {
+      "name": "gay man",
+      "description": "a man whose sexual orientation is homosexual."
+    },
+    {
+      "name": "lesbian",
+      "description": "a woman whose sexual orientation is homosexual."
+    },
+    {
+      "name": "sexual stigma",
+      "description": "negative societal beliefs and attitudes toward sexual minorities."
+    },
+    {
+      "name": "internalized sexual stigma",
+      "description": "adoption of societal sexual stigma as one's own beliefs about oneself; also called internalized homophobia or internalized homonegativity.",
+      "refs": [
+        {
+          "name": "Internalized_homophobia",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "internal conflict",
+      "description": "distress of a sexual-minority person with their own orientation that interferes with fitting into a stigmatizing society; first factor of the PrISSM (Padilla 2025)."
+    },
+    {
+      "name": "disclosure conflict",
+      "description": "distress of a sexual-minority person based on the expectation of rejection when disclosing; second factor of the PrISSM (Padilla 2025)."
+    },
+    {
+      "name": "identity conflict",
+      "description": "conflict between a person's own sexual orientation and the norms the person has internalized; the core variable of the dialogue's hypothesis."
+    },
+    {
+      "name": "heteronormative socialization",
+      "description": "upbringing in an environment that treats heterosexuality as the only normal or acceptable orientation."
+    },
+    {
+      "name": "conservative values",
+      "description": "value orientation that emphasizes tradition, established norms and authority."
+    },
+    {
+      "name": "religious fundamentalism",
+      "description": "belief that one religious teaching contains the fundamental, inerrant truth; measured with the Religious Fundamentalism Scale."
+    },
+    {
+      "name": "right-wing authoritarianism",
+      "description": "personality dimension of submission to authority, aggression against norm violators and conventionalism (Altemeyer).",
+      "refs": [
+        {
+          "name": "Right-wing_authoritarianism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7334656",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "male role norms",
+      "description": "traditional norms of masculinity, e.g. antifemininity, status and toughness."
+    },
+    {
+      "name": "antifemininity norm",
+      "description": "the male role norm that men must avoid feminine traits and behaviour."
+    },
+    {
+      "name": "gender role enforcement",
+      "description": "punishment of persons who violate prescribed gender roles; interpretation of anti-gay aggression by Parrott 2009."
+    },
+    {
+      "name": "masculine gender role stress",
+      "description": "stress experienced when a man perceives a threat to his masculinity."
+    },
+    {
+      "name": "homophobia",
+      "description": "negative affect, avoidance and aggression toward homosexual persons; also called sexual prejudice.",
+      "refs": [
+        {
+          "name": "Homophobia",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17165",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transphobia",
+      "description": "negative attitudes toward transgender persons."
+    },
+    {
+      "name": "anti-gay aggression",
+      "description": "physical or verbal aggression directed at gay men or other sexual minorities."
+    },
+    {
+      "name": "demonstrative devaluation",
+      "description": "public, visible derogation of LGBTQ persons that signals group membership; the outcome variable proposed by the dialogue."
+    },
+    {
+      "name": "psychological distress",
+      "description": "negative mental states such as low self-esteem, guilt, shame, loneliness or depression."
+    },
+    {
+      "name": "self-esteem",
+      "description": "a person's overall evaluation of their own worth."
+    },
+    {
+      "name": "sex guilt",
+      "description": "guilt feelings connected to one's own sexual behaviour."
+    },
+    {
+      "name": "self-esteem threat",
+      "description": "a situation that lowers self-regard, e.g. negative feedback from a high-status evaluator."
+    },
+    {
+      "name": "outgroup derogation",
+      "description": "devaluation of members of another group; can serve to protect self-esteem after threat."
+    },
+    {
+      "name": "ingroup derogation",
+      "description": "devaluation of members of one's own group."
+    },
+    {
+      "name": "intragroup aggression",
+      "description": "aggression between members of the same group."
+    },
+    {
+      "name": "psychological relief",
+      "description": "temporary reduction of distress; the hypothesized pay-off of derogation in the dialogue."
+    },
+    {
+      "name": "normative group identification",
+      "description": "strengthened identification with the majority or norm-setting group."
+    },
+    {
+      "name": "repressed same-sex attraction",
+      "description": "same-sex attraction that a person does not acknowledge; basis of the popular attraction-based account of homophobia."
+    },
+    {
+      "name": "attraction-based account",
+      "description": "the claim that homophobia stems from the homophobic person's own unacknowledged same-sex attraction."
+    },
+    {
+      "name": "reaction formation",
+      "description": "psychoanalytic defense in which an unacceptable impulse is expressed as its opposite.",
+      "refs": [
+        {
+          "name": "Reaction_formation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1191669",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "implicit sexual orientation",
+      "description": "sexual orientation assessed with a reaction-time task rather than self-report."
+    },
+    {
+      "name": "implicit-explicit discrepancy",
+      "description": "difference between self-reported and implicitly measured sexual orientation."
+    },
+    {
+      "name": "parental autonomy support",
+      "description": "parenting that allows children to explore and endorse their own values and identity."
+    },
+    {
+      "name": "genital arousal",
+      "description": "physiological sexual arousal measured by penile plethysmography."
+    },
+    {
+      "name": "homosexual erotic stimulus",
+      "description": "sexually explicit video showing male homosexual activity, used as experimental stimulus."
+    },
+    {
+      "name": "conscious strategy",
+      "description": "a deliberate plan, as opposed to an unconscious process."
+    },
+    {
+      "name": "unconscious process",
+      "description": "a psychological mechanism that operates without deliberate intention."
+    },
+    {
+      "name": "mediation",
+      "description": "statistical relation in which a third variable transmits the effect of a predictor on an outcome."
+    },
+    {
+      "name": "participant",
+      "description": "one person in a study sample."
+    },
+    {
+      "name": "homophobic group",
+      "description": "participants classified as homophobic by a scale score."
+    },
+    {
+      "name": "nonhomophobic group",
+      "description": "participants classified as not homophobic by a scale score."
+    },
+    {
+      "name": "heterosexual sample",
+      "description": "participants who self-identify as heterosexual."
+    },
+    {
+      "name": "study",
+      "description": "one empirical study within a publication."
+    },
+    {
+      "name": "experiment",
+      "description": "one controlled experiment within a publication."
+    },
+    {
+      "name": "item",
+      "description": "one question of a psychological scale."
+    },
+    {
+      "name": "factor correlation",
+      "description": "correlation between two factors of a scale."
+    },
+    {
+      "name": "death chance threshold",
+      "description": "minimum probability of death from intragroup conflict at which ingroup derogation evolves in the Wu 2016 simulation."
+    },
+    {
+      "name": "percent",
+      "description": "one hundredth, scaled by 100 in formulas.",
+      "type": "measure"
+    },
+    {
+      "name": "confidence",
+      "description": "subjective probability (0 to 1) that a claim tagged as assumed value is true."
+    },
+    {
+      "name": "measured value",
+      "description": "a value taken from a verified source."
+    },
+    {
+      "name": "assumed value",
+      "description": "a conjecture or estimate, not directly measured; carries a confidence number."
+    }
+  ],
+  "triples": [
+    {
+      "name": "gay man is a sexual minority",
+      "from": "gay man",
+      "verb": "is a",
+      "to": "sexual minority"
+    },
+    {
+      "name": "lesbian is a sexual minority",
+      "from": "lesbian",
+      "verb": "is a",
+      "to": "sexual minority"
+    },
+    {
+      "name": "sexual minority is a LGBTQ person",
+      "from": "sexual minority",
+      "verb": "is a",
+      "to": "LGBTQ person"
+    },
+    {
+      "name": "internal conflict is part of internalized sexual stigma",
+      "from": "internal conflict",
+      "verb": "is part of",
+      "to": "internalized sexual stigma"
+    },
+    {
+      "name": "disclosure conflict is part of internalized sexual stigma",
+      "from": "disclosure conflict",
+      "verb": "is part of",
+      "to": "internalized sexual stigma"
+    },
+    {
+      "name": "antifemininity norm is part of male role norms",
+      "from": "antifemininity norm",
+      "verb": "is part of",
+      "to": "male role norms"
+    },
+    {
+      "name": "religious fundamentalism is part of conservative values",
+      "from": "religious fundamentalism",
+      "verb": "is part of",
+      "to": "conservative values"
+    },
+    {
+      "name": "right-wing authoritarianism is part of conservative values",
+      "from": "right-wing authoritarianism",
+      "verb": "is part of",
+      "to": "conservative values"
+    },
+    {
+      "name": "reaction formation is a unconscious process",
+      "from": "reaction formation",
+      "verb": "is a",
+      "to": "unconscious process"
+    },
+    {
+      "name": "attraction-based account uses repressed same-sex attraction",
+      "from": "attraction-based account",
+      "verb": "uses",
+      "to": "repressed same-sex attraction"
+    },
+    {
+      "name": "sexual stigma influences internalized sexual stigma",
+      "from": "sexual stigma",
+      "verb": "influences",
+      "to": "internalized sexual stigma",
+      "description": "perceived level of societal repression against homosexuals predicted internalized homophobia and sex guilt in 86 gay men (Rowen 2002)."
+    },
+    {
+      "name": "internalized sexual stigma influences psychological distress",
+      "from": "internalized sexual stigma",
+      "verb": "influences",
+      "to": "psychological distress",
+      "description": "internalized homophobia correlated with lower self-esteem, lower self-concept of emotional stability and higher sex guilt (Rowen 2002); internalized sexual stigma is linked to low self-esteem, depression, shame and feelings of rejection (Padilla 2025)."
+    },
+    {
+      "name": "internalized sexual stigma influences self-esteem",
+      "from": "internalized sexual stigma",
+      "verb": "influences",
+      "to": "self-esteem"
+    },
+    {
+      "name": "internalized sexual stigma influences sex guilt",
+      "from": "internalized sexual stigma",
+      "verb": "influences",
+      "to": "sex guilt"
+    },
+    {
+      "name": "conservative values influences homophobia",
+      "from": "conservative values",
+      "verb": "influences",
+      "to": "homophobia",
+      "description": "in Warriner 2013 fundamentalism, authoritarianism and sexism correlated with homophobia in lesbians but not in gay men; in gay men fundamentalism and authoritarianism correlated only with transphobia; correlates of internalized homophobia differed from those of homophobia. Gay and lesbian students scored lower than heterosexuals on homophobia, transphobia and fundamentalism."
+    },
+    {
+      "name": "conservative values influences transphobia",
+      "from": "conservative values",
+      "verb": "influences",
+      "to": "transphobia"
+    },
+    {
+      "name": "homophobia influences anti-gay aggression",
+      "from": "homophobia",
+      "verb": "influences",
+      "to": "anti-gay aggression",
+      "description": "self-identified heterosexual men classified as homophobic reported more negative affect, anxiety and anger after a homosexual erotic video and gave more shocks to a supposedly homosexual opponent, but not to a heterosexual opponent (Bernat 2001)."
+    },
+    {
+      "name": "homosexual erotic stimulus influences anti-gay aggression",
+      "from": "homosexual erotic stimulus",
+      "verb": "influences",
+      "to": "anti-gay aggression"
+    },
+    {
+      "name": "male role norms influences anti-gay aggression",
+      "from": "male role norms",
+      "verb": "influences",
+      "to": "anti-gay aggression",
+      "description": "adherence to male role norms, especially antifemininity, was related to anger and aggression toward gay men via sexual prejudice and masculine gender role stress; interpreted as gender role enforcement (Parrott 2009)."
+    },
+    {
+      "name": "homophobia mediation male role norms",
+      "from": "homophobia",
+      "verb": "is used by",
+      "to": "mediation",
+      "description": "sexual prejudice acts as mediator between male role norms and aggression toward gay men (Parrott 2009)."
+    },
+    {
+      "name": "gender role enforcement influences anti-gay aggression",
+      "from": "gender role enforcement",
+      "verb": "influences",
+      "to": "anti-gay aggression"
+    },
+    {
+      "name": "self-esteem threat influences outgroup derogation",
+      "from": "self-esteem threat",
+      "verb": "influences",
+      "to": "outgroup derogation",
+      "description": "White participants expressed more prejudice after negative feedback from a White evaluator; Black participants did so only after feedback from a Black evaluator, i.e. when the criticism could not be discounted as prejudice (Shapiro 2010). Derogation works as an esteem-protective strategy only when the threat is credible."
+    },
+    {
+      "name": "intragroup aggression influences ingroup derogation",
+      "from": "intragroup aggression",
+      "verb": "influences",
+      "to": "ingroup derogation",
+      "description": "computational model plus four behavioural studies: ingroup derogation evolves when intragroup conflict is lethal often enough, and it is stronger when participants feel vulnerable to aggression or see aggression cues (Wu 2016). General mechanism, not specific to sexual minorities."
+    },
+    {
+      "name": "parental autonomy support influences implicit-explicit discrepancy",
+      "from": "parental autonomy support",
+      "verb": "influences",
+      "to": "implicit-explicit discrepancy",
+      "description": "low perceived parental autonomy support was associated with larger discrepancies between self-reported and implicit sexual orientation; the discrepancy was most pronounced when fathers were both low in autonomy support and homophobic (Weinstein 2012, four studies)."
+    },
+    {
+      "name": "implicit-explicit discrepancy influences homophobia",
+      "from": "implicit-explicit discrepancy",
+      "verb": "influences",
+      "to": "homophobia",
+      "description": "the interaction of implicit-explicit discrepancy and low parental autonomy support predicted anti-gay responding indicative of reaction formation (Weinstein 2012). This is the closest published test of the dialogue's chain: norm-enforcing upbringing plus an orientation that contradicts the norm."
+    },
+    {
+      "name": "homophobia influences genital arousal",
+      "from": "homophobia",
+      "verb": "influences",
+      "to": "genital arousal",
+      "description": "only the homophobic group of exclusively heterosexual men showed increased penile response to male homosexual video (Adams 1996); the authors could not distinguish arousal from anxiety, and the result is the origin of the popular attraction-based account."
+    },
+    {
+      "name": "repressed same-sex attraction influences homophobia",
+      "from": "repressed same-sex attraction",
+      "verb": "influences",
+      "to": "homophobia",
+      "description": "the attraction-based account. Tested with an implicit attraction measure in men and women: no evidence found; where relations existed, implicit same-sex attraction went with more positive evaluations of gay men and lesbians (MacInnis 2013). The dialogue rated this popular claim as hardly provable."
+    },
+    {
+      "name": "heteronormative socialization influences identity conflict",
+      "from": "heteronormative socialization",
+      "verb": "influences",
+      "to": "identity conflict",
+      "description": "step 1 of the dialogue's chain: a strongly norm-oriented environment intensifies the conflict for a person whose orientation contradicts the norm; supported indirectly by Rowen 2002 (perceived repression) and Weinstein 2012 (autonomy-thwarting, homophobic fathers)."
+    },
+    {
+      "name": "identity conflict influences self-esteem threat",
+      "from": "identity conflict",
+      "verb": "influences",
+      "to": "self-esteem threat",
+      "description": "step 2: the conflict threatens self-image and group membership."
+    },
+    {
+      "name": "identity conflict influences psychological distress",
+      "from": "identity conflict",
+      "verb": "influences",
+      "to": "psychological distress",
+      "description": "step 3: shame, guilt, fear and self-rejection; well supported at the level of internalized sexual stigma (Rowen 2002, Padilla 2025)."
+    },
+    {
+      "name": "identity conflict influences normative group identification",
+      "from": "identity conflict",
+      "verb": "influences",
+      "to": "normative group identification",
+      "description": "step 4: stronger identification with the normative group as a way to secure belonging."
+    },
+    {
+      "name": "normative group identification influences demonstrative devaluation",
+      "from": "normative group identification",
+      "verb": "influences",
+      "to": "demonstrative devaluation",
+      "description": "step 5: devaluation of those who embody the unwanted trait, done visibly to prove membership; conjecture combining Shapiro 2010 and Wu 2016 with the sexual-minority case."
+    },
+    {
+      "name": "identity conflict influences demonstrative devaluation",
+      "from": "identity conflict",
+      "verb": "influences",
+      "to": "demonstrative devaluation",
+      "description": "prediction 1 of the dialogue: the stronger the conflict between orientation and internalized heteronormative values, the stronger, under certain conditions, the demonstrative devaluation of LGBTQ persons. Not yet tested as a complete path."
+    },
+    {
+      "name": "demonstrative devaluation influences psychological relief",
+      "from": "demonstrative devaluation",
+      "verb": "influences",
+      "to": "psychological relief",
+      "description": "step 6: temporary relief; the original formulation 'harming others makes one's own suffering feel smaller'. No study found that measures this pay-off in sexual-minority persons."
+    },
+    {
+      "name": "demonstrative devaluation is a conscious strategy",
+      "from": "demonstrative devaluation",
+      "verb": "is a",
+      "to": "conscious strategy",
+      "description": "the original phrasing of the hypothesis implied a deliberate calculation; the dialogue judged an unconscious process to be more likely."
+    },
+    {
+      "name": "demonstrative devaluation is a unconscious process",
+      "from": "demonstrative devaluation",
+      "verb": "is a",
+      "to": "unconscious process"
+    },
+    {
+      "name": "homophobia and identity conflict",
+      "from": "homophobia",
+      "verb": "and",
+      "to": "identity conflict",
+      "description": "prediction 2 of the dialogue: the decisive predictor of demonstrative devaluation is the combination of homophobia and identity conflict, not homophobia alone."
+    },
+    {
+      "name": "homophobia and identity conflict influences demonstrative devaluation",
+      "from": "homophobia and identity conflict",
+      "verb": "influences",
+      "to": "demonstrative devaluation"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Rowen 2002",
+      "description": "Rowen, C. J., Malcolm, J. P. (2002). Correlates of internalized homophobia and homosexual identity formation in a sample of gay men. Journal of Homosexuality, 43(2), 77-92. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1300/J082v43n02_05"
+    },
+    {
+      "name": "Padilla 2025",
+      "description": "Padilla, M. A., Schlappi, L. M., Chiang, E. S. (2025). The Perceived Internalized Sexual Stigma Measure (PrISSM): a new sexual stigma measure for lesbian, gay, and bisexual individuals. Behavioral Sciences, 15(9), 1228. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.3390/bs15091228"
+    },
+    {
+      "name": "Warriner 2013",
+      "description": "Warriner, K., Nagoshi, C. T., Nagoshi, J. L. (2013). Correlates of homophobia, transphobia, and internalized homophobia in gay or lesbian and heterosexual samples. Journal of Homosexuality, 60(9), 1297-1314. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1080/00918369.2013.806177"
+    },
+    {
+      "name": "Bernat 2001",
+      "description": "Bernat, J. A., Calhoun, K. S., Adams, H. E., Zeichner, A. (2001). Homophobia and physical aggression toward homosexual and heterosexual individuals. Journal of Abnormal Psychology, 110(1), 179-187. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1037/0021-843X.110.1.179"
+    },
+    {
+      "name": "Parrott 2009",
+      "description": "Parrott, D. J. (2009). Aggression toward gay men as gender role enforcement: effects of male role norms, sexual prejudice, and masculine gender role stress. Journal of Personality, 77(4), 1137-1166. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1111/j.1467-6494.2009.00577.x"
+    },
+    {
+      "name": "Shapiro 2010",
+      "description": "Shapiro, J. R., Mistler, S. A., Neuberg, S. L. (2010). Threatened selves and differential prejudice expression by White and Black perceivers. Journal of Experimental Social Psychology, 46(2), 469-473. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1016/j.jesp.2009.12.013"
+    },
+    {
+      "name": "Wu 2016",
+      "description": "Wu, Q., Liu, W., Li, C., Li, X., Zhou, P. (2016). A price paid for our internal strife: escalated intragroup aggression and the evolution of ingroup derogation. Frontiers in Psychology, 7, 1453. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.3389/fpsyg.2016.01453"
+    },
+    {
+      "name": "Weinstein 2012",
+      "description": "Weinstein, N., Ryan, W. S., DeHaan, C. R., Przybylski, A. K., Legate, N., Ryan, R. M. (2012). Parental autonomy support and discrepancies between implicit and explicit sexual identities: dynamics of self-acceptance and defense. Journal of Personality and Social Psychology, 102(4), 815-832. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1037/a0026854"
+    },
+    {
+      "name": "Adams 1996",
+      "description": "Adams, H. E., Wright, L. W., Lohr, B. A. (1996). Is homophobia associated with homosexual arousal? Journal of Abnormal Psychology, 105(3), 440-445. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1037/0021-843X.105.3.440"
+    },
+    {
+      "name": "MacInnis 2013",
+      "description": "MacInnis, C. C., Hodson, G. (2013). Is homophobia associated with an implicit same-sex attraction? Journal of Sex Research, 50(8), 777-785. DOI verified 2026-08-29.",
+      "url": "https://doi.org/10.1080/00224499.2012.690111"
+    },
+    {
+      "name": "zukunft.com dialogue 2026-08-29",
+      "description": "Hypothesis, reformulation, predictions and confidence numbers from the dialogue of 2026-08-29 (Timon with an AI assistant, reviewed by Claude); not a published source."
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "sexual stigma influences internalized sexual stigma",
+        "gay man",
+        "participant",
+        "measured value"
+      ],
+      "number": "86",
+      "source": "Rowen 2002"
+    },
+    {
+      "words": [
+        "internal conflict",
+        "participant",
+        "measured value"
+      ],
+      "number": "324",
+      "source": "Padilla 2025"
+    },
+    {
+      "words": [
+        "internalized sexual stigma",
+        "item",
+        "measured value"
+      ],
+      "number": "8",
+      "source": "Padilla 2025"
+    },
+    {
+      "words": [
+        "internal conflict",
+        "disclosure conflict",
+        "factor correlation",
+        "measured value"
+      ],
+      "number": "0.70",
+      "source": "Padilla 2025"
+    },
+    {
+      "words": [
+        "conservative values influences homophobia",
+        "heterosexual sample",
+        "participant",
+        "measured value"
+      ],
+      "number": "310",
+      "source": "Warriner 2013"
+    },
+    {
+      "words": [
+        "conservative values influences homophobia",
+        "gay man",
+        "participant",
+        "measured value"
+      ],
+      "number": "30",
+      "source": "Warriner 2013"
+    },
+    {
+      "words": [
+        "conservative values influences homophobia",
+        "lesbian",
+        "participant",
+        "measured value"
+      ],
+      "number": "30",
+      "source": "Warriner 2013"
+    },
+    {
+      "words": [
+        "homophobia influences anti-gay aggression",
+        "homophobic group",
+        "participant",
+        "measured value"
+      ],
+      "number": "26",
+      "source": "Bernat 2001"
+    },
+    {
+      "words": [
+        "homophobia influences anti-gay aggression",
+        "nonhomophobic group",
+        "participant",
+        "measured value"
+      ],
+      "number": "26",
+      "source": "Bernat 2001"
+    },
+    {
+      "words": [
+        "male role norms influences anti-gay aggression",
+        "heterosexual man",
+        "participant",
+        "measured value"
+      ],
+      "number": "150",
+      "source": "Parrott 2009"
+    },
+    {
+      "words": [
+        "self-esteem threat influences outgroup derogation",
+        "experiment",
+        "measured value"
+      ],
+      "number": "2",
+      "source": "Shapiro 2010"
+    },
+    {
+      "words": [
+        "intragroup aggression influences ingroup derogation",
+        "study",
+        "measured value"
+      ],
+      "number": "5",
+      "source": "Wu 2016"
+    },
+    {
+      "words": [
+        "intragroup aggression influences ingroup derogation",
+        "death chance threshold",
+        "percent",
+        "measured value"
+      ],
+      "number": "10",
+      "source": "Wu 2016"
+    },
+    {
+      "words": [
+        "parental autonomy support influences implicit-explicit discrepancy",
+        "study",
+        "measured value"
+      ],
+      "number": "4",
+      "source": "Weinstein 2012"
+    },
+    {
+      "words": [
+        "homophobia influences genital arousal",
+        "homophobic group",
+        "participant",
+        "measured value"
+      ],
+      "number": "35",
+      "source": "Adams 1996"
+    },
+    {
+      "words": [
+        "homophobia influences genital arousal",
+        "nonhomophobic group",
+        "participant",
+        "measured value"
+      ],
+      "number": "29",
+      "source": "Adams 1996"
+    },
+    {
+      "words": [
+        "heteronormative socialization influences identity conflict",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.8",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "identity conflict influences psychological distress",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.85",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "identity conflict influences self-esteem threat",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.75",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "identity conflict influences normative group identification",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.5",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "normative group identification influences demonstrative devaluation",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.5",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "identity conflict influences demonstrative devaluation",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.45",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "demonstrative devaluation influences psychological relief",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.3",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "demonstrative devaluation is a conscious strategy",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.1",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "demonstrative devaluation is a unconscious process",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.7",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "homophobia and identity conflict influences demonstrative devaluation",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.55",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "repressed same-sex attraction influences homophobia",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.15",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "gender role enforcement influences anti-gay aggression",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.7",
+      "source": "zukunft.com dialogue 2026-08-29"
+    },
+    {
+      "words": [
+        "conservative values influences homophobia",
+        "sexual minority",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.4",
+      "source": "zukunft.com dialogue 2026-08-29"
+    }
+  ]
+}

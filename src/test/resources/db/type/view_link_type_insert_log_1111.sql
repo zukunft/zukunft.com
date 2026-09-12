@@ -41,7 +41,7 @@ SELECT view_link_type_insert_log_1111
 
 SELECT view_link_type_insert_log_1111
     ('main word'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      732::smallint,
      733::smallint,

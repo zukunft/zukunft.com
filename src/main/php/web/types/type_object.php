@@ -41,20 +41,19 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-//include_once paths::API_OBJECT . 'api_message.php';
-//include_once paths::SHARED_TYPES . 'phrase_types.php';
-//include_once paths::SHARED_CONST . 'views.php';
-//include_once paths::SHARED . 'json_fields.php';
+//include_once html_paths::API_OBJECT . 'api_message.php';
+//include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+//include_once html_paths::SHARED_CONST . 'views.php';
+//include_once html_paths::SHARED . 'json_fields.php';
 //include_once html_paths::HTML . 'html_base.php';
 //include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
 include_once html_paths::HELPER . 'data_object.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -155,15 +154,43 @@ class type_object
     }
 
     /**
-     * display a word with a link to the main page for the word
-     * @param string|null $back the back trace url for the undo functionality
-     * @param string $style the CSS style that should be used
+     * @return float the system calculated relevance of this type; 0 because unlike a verb
+     *               a plain type has no impact, so a type list falls back to the name order
+     */
+    function impact(): float
+    {
+        return 0.0;
+    }
+
+    /**
+     * display the type name with its description as mouse over tooltip
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
+    function name_tip(): string
     {
         $html = new html_base();
-        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        // escape the user settable name so it cannot inject markup; the
+        // description goes into the title attribute, which span() escapes
+        return $html->span($html->esc($this->name()), '', $this->get_description());
+    }
+
+    /**
+     * display a word with a link to the main page for the word
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
+     * @param string $style the CSS style that should be used
+     * @param int $msk_id the view that shows the object, overwritten by the child class
+     * @param string $base_url to set an absolut html path for urls
+     * @returns string the html code
+     */
+    function name_link(
+        array  $url_arr = [],
+        string $style = '',
+        int $msk_id = views::GROUP_EDIT_ID,
+        string $base_url = ''
+    ): string
+    {
+        $html = new html_base();
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
         return $html->ref($url, $this->name(), $this->description, $style);
     }
 
@@ -196,11 +223,11 @@ class type_object
     /**
      * set the vars of this type frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         if (array_key_exists(url_var::ID, $url_array)) {
             $this->set_id($url_array[url_var::ID]);
@@ -208,8 +235,13 @@ class type_object
         if (array_key_exists(url_var::NAME, $url_array)) {
             $this->set_name($url_array[url_var::NAME]);
         } else {
+            // the name may arrive under NAME_GIVEN ('kg') or the object may be identified by id;
+            // only a submit with none of these is a genuine missing name (kept log-only, mirror sandbox_named)
             $this->set_name('');
-            log_warning('Mandatory field name missing in form url array ' . json_encode($url_array));
+            if (!array_key_exists(url_var::NAME_GIVEN, $url_array)
+                and !array_key_exists(url_var::ID, $url_array)) {
+                log_warning('Mandatory field name missing in form url array ' . json_encode($url_array));
+            }
         }
         if (array_key_exists(url_var::CODE_ID, $url_array)) {
             $this->set_code_id($url_array[url_var::CODE_ID]);
@@ -217,7 +249,7 @@ class type_object
         if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
             $this->set_description($url_array[url_var::DESCRIPTION]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -259,9 +291,9 @@ class type_object
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         $vars[json_fields::ID] = $this->id();
@@ -279,11 +311,11 @@ class type_object
     /**
      * @return phrase_list with the phrases that are fixed linked to this type
      */
-    function type_phrases(): phrase_list
+    function type_phrases(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list();
         if ($this->code_id == phrase_types::MATH_CONST) {
-            $phr_lst->add(new word()->math()->phrase());
+            $phr_lst->add(new word()->math()->phrase(), $msg);
         }
         return $phr_lst;
     }

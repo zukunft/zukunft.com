@@ -32,13 +32,17 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WORD . 'word_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -48,6 +52,11 @@ class word_list_ui_tests
     {
         $html = new html_base();
         $t_wrd = new test_words($t);
+        $msg = new user_message();
+
+        $base_url = THIS_URL;
+        $lan = languages::DEFAULT;
+        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         // start the test section (ts)
         $ts = 'unit ui html word list ';
@@ -59,19 +68,19 @@ class word_list_ui_tests
 
         // test the word list display functions
         $test_page = $html->text_h1('Word list display test');
-        $test_page .= 'names with links:<br>' . $lst->name_link() . '<br><br>';
+        $test_page .= 'names with links:<br>' . $lst->name_link($msg) . '<br><br>';
         $test_page .= 'table cells<br>';
         $test_page .= $lst->tbl();
-        $test_page .= 'all word types: ' . '<br>' . $lst_long->name_link() . '<br><br>';
-        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->name_link() . '<br><br>';
-        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->name_link() . '<br><br>';
+        $test_page .= 'all word types: ' . '<br>' . $lst_long->name_link($msg) . '<br><br>';
+        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst($msg)->name_link($msg) . '<br><br>';
+        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst($msg)->name_link($msg) . '<br><br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $from_rows = $lst_long->selector(views::WORD_LIST, 0, 'nothing_selected') . '<br>';
         $from_rows .= $lst_long->selector(views::WORD_LIST, 3, '2_selected') . '<br>';
         $test_page .= $html->form(views::WORD_LIST, $from_rows);
 
-        $t->html_page_test($test_page, '', 'word_list', $t);
+        $t->html_page_test($test_page, '', 'word_list', $msg, $base_url, $lan);
     }
 
 }

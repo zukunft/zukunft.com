@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_type.php';
@@ -43,6 +44,12 @@ include_once paths::MODEL_LOG . 'changes_norm.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_log_link_list.php';
+// the value change classes of VALUE_CHANGE_CASES, one per value and group id type case
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
@@ -66,8 +73,13 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
@@ -89,10 +101,19 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class change_log_tests
 {
+
+    // the twelve classes of change_value::CHANGE_CLASSES are the value types crossed with the
+    // group id types and their queries differ only in the table name, so the sql is checked with
+    // one class per case instead of one per combination to keep the number of sql files low
+    const array VALUE_CHANGE_CASES = [
+        change_values_prime::class,     // the numeric value type and the prime group id
+        change_values_time_norm::class, // the time value type and the standard group id
+        change_values_text_big::class,  // the text value type and the big group id
+        change_values_geo_prime::class, // the geo value type
+    ];
+
     function run(test_cleanup $t): void
     {
-
-        global $usr;
 
         // init
         $lib = new library();
@@ -102,6 +123,7 @@ class change_log_tests
         $t_grp = new test_groups($t);
         $t_val = new test_values($t);
         $t_wrd = new test_words($t);
+        $msg = new user_message();
         $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
 
@@ -208,16 +230,36 @@ class change_log_tests
         $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
 
         $t->subheader($ts . 'load by user');
-        $log = new change($usr);
+        $log = new change($t->usr1);
         $t->assert_sql_by_user($sc, $log);
-        $log = new change_link($usr);
+        $log = new change_link($t->usr1);
         $t->assert_sql_by_user($sc, $log);
+
+        // a value change is never logged to the changes table of the named objects, so the
+        // overwrites of a user are read with one query per value change table
+        $t->subheader($ts . 'load value changes by user');
+        $log_lst = new change_log_list();
+        foreach (self::VALUE_CHANGE_CASES as $class) {
+            $this->assert_sql_by_user_value($t, $sc, $log_lst, new $class($t->usr1));
+        }
+
+        // the query name is the only part that differs per class, so it is checked for all of
+        // them, which needs no sql file
+        $test_name = 'every value change table has its own query name';
+        $names = [];
+        foreach (change_value::CHANGE_CLASSES as $class) {
+            $sc->reset(sql_db::POSTGRES);
+            $names[] = $log_lst->load_sql_by_user_value($sc, $t->usr1, new $class($t->usr1))->name;
+        }
+        $t->assert($test_name, count(array_unique($names)), count(change_value::CHANGE_CLASSES));
 
         $t->subheader($ts . 'load list');
         $log_lst = new change_log_list();
         // TODO Prio 2 activate
         //$t->assert_sql_by_user($sc, $log_lst);
-        //$this->assert_sql_list_last(word::class, word_fields::FLD_NAME, $log_lst, $db_con, $t);
+        // the last-change query must use its own prepared name (change_by_wrd_last), because the
+        // all-changes query of a word (change_by_wrd) selects with one more parameter
+        $this->assert_sql_list_last(word::class, 1, $log_lst, $db_con, $t);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';
@@ -230,46 +272,60 @@ class change_log_tests
         $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group_17_plus()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value($msg)->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
+        // a type row e.g. a sys log function logs to the changes table like the named objects,
+        // so the test cleanup can remove the change log of a type test row via the same list load
+        $this->assert_sql_list_by_field(sys_log_function::class, '', 1, $log_lst, $db_con, $t);
 
         // sql to load the link change history of an object (used by the default word/formula/view page)
         $t->subheader($ts . 'link change list by object');
         $cl_lst = new change_log_link_list();
         $test_name = 'sql to load the link changes of a word selects the change_links table';
-        $sql_word = $cl_lst->load_sql_by_obj($db_con, word::class, 123, $usr);
+        $sql_word = $cl_lst->load_sql_by_obj($db_con, word::class, 123, $t->usr1);
         $t->assert_text_contains($test_name, $sql_word, 'FROM change_links c');
         $test_name = 'the link changes of a word are selected by the from and to id';
         $t->assert_text_contains($test_name, $sql_word,
             '(c.old_from_id = 123 OR c.old_to_id = 123 OR c.new_from_id = 123 OR c.new_to_id = 123)');
         $test_name = 'the link changes of a component are selected by the to id only';
-        $sql_cmp = $cl_lst->load_sql_by_obj($db_con, component::class, 45, $usr);
+        $sql_cmp = $cl_lst->load_sql_by_obj($db_con, component::class, 45, $t->usr1);
         $t->assert_text_contains($test_name, $sql_cmp, '(c.old_to_id = 45 OR c.new_to_id = 45)');
         $test_name = 'an unknown object class creates no link change sql';
-        $t->assert($test_name, $cl_lst->load_sql_by_obj($db_con, change_table::class, 1, $usr), '');
+        $t->assert($test_name, $cl_lst->load_sql_by_obj($db_con, change_table::class, 1, $t->usr1), '');
 
         // a link change is sent to the frontend with the relevant side as old/new value
         $t->subheader($ts . 'link change api');
         $test_name = 'the new link target is sent as the new value';
         $log_lnk = $t_log->log_link();
         $log_lnk->new_text_to = word_names::MATH;
-        $api = $log_lnk->api_json_array(new api_type_list([]));
+        $api = $log_lnk->api_json_array(new api_type_list([]), $msg);
         $t->assert($test_name, $api[json_fields::NEW_VALUE] ?? '', word_names::MATH);
         $test_name = 'a link change without a display text sends no new value';
-        $log_empty = new change_link($usr);
-        $api = $log_empty->api_json_array(new api_type_list([]));
+        $log_empty = new change_link($t->usr1);
+        $api = $log_empty->api_json_array(new api_type_list([]), $msg);
         $t->assert_true($test_name, ($api[json_fields::NEW_VALUE] ?? null) === null);
+
+        // the change id is sent to the frontend so that same-second changes
+        // can be sorted in the write order (see change_log_list::sort_by_time_and_what)
+        $test_name = 'the change id is part of the api json';
+        $log_add = $t_log->log_word_add();
+        $api = $log_add->api_json_array(new api_type_list([]), $msg);
+        $t->assert($test_name, $api[json_fields::ID] ?? 0, $log_add->id());
+        $test_name = 'a change that is not yet saved sends the change id 0';
+        $log_new = new change($t->usr1);
+        $api = $log_new->api_json_array(new api_type_list([]), $msg);
+        $t->assert($test_name, $api[json_fields::ID] ?? null, 0);
 
         // sql to load a log entry by field and row id
         // TODO check that user-specific changes are included in the list of changes
-        $log = new change($usr);
+        $log = new change($t->usr1);
         $this->assert_sql_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
         // TODO check that user-specific changes are included in the list of changes
         // TODO add tests for all value types
-        $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($usr));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($t->usr1));
 
         // sql to load a field by field name and table id
         $tbl = new change_table();
@@ -281,14 +337,23 @@ class change_log_tests
         $this->assert_sql_field_by_name_and_id($t, $db_con, $fld);
 
         // sql to load a log entry by field and row id
-        $log = new change_link($usr);
+        $log = new change_link($t->usr1);
         $this->assert_sql_link_by_table($t, $db_con, $log);
+
+        // sql to delete the value change log of a value during the test cleanup
+        $this->assert_value_change_log_del_qp($t, $db_con);
+
+        // sql to delete the change log of already deleted test rows during the test cleanup
+        $this->assert_change_log_deleted_qp($t, $db_con);
+
+        // sql to delete the change log of a time series value during the test cleanup
+        $this->assert_value_time_series_change_log_del_qp($t, $db_con);
 
         $t->subheader($ts . 'sql list statement');
 
         // prepare the objects for the tests
         $wrd = $t_wrd->word();
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->set(triple_names::PI_ID, triple_names::PI_NAME);
 
 
@@ -318,6 +383,126 @@ class change_log_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * TODO Prio 2 use sql files instead of fixed text to use the ide syntax check
+     * check the sql statement creation of test_base::value_change_log_del_qp, which the test cleanup
+     * uses to delete the change log of a value from one value change table
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     */
+    private function assert_value_change_log_del_qp(test_cleanup $t, sql_db $db_con): void
+    {
+        // a norm value group has a text group id, so the delete of the change_values_norm change log
+        // declares a text parameter (the change table name is resolved via the sql creator like the
+        // test cleanup does in test_base::delete_value_change_log)
+        $db_con->db_type = sql_db::POSTGRES;
+        $sc = $db_con->sql_creator();
+        $sc->set_class(change_values_norm::class);
+        $tbl_norm = $sc->get_table();
+        $qp = $t->value_change_log_del_qp($sc, change_values_norm::class, $tbl_norm, 'system_test_group_id');
+        $test_name = 'delete value change log of a norm group (postgres)';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE change_values_norm_del_by_grp (text) AS DELETE FROM change_values_norm WHERE group_id = $1;');
+
+        $test_name = 'delete value change log query name';
+        $t->assert($test_name, $qp->name, 'change_values_norm_del_by_grp');
+
+        $test_name = 'delete value change log passes the group id as the parameter';
+        $t->assert($test_name, implode(',', $qp->par), 'system_test_group_id');
+
+        // the same delete for mysql uses the question mark parameter (fresh creator per statement)
+        $db_con->db_type = sql_db::MYSQL;
+        $sc = $db_con->sql_creator();
+        $sc->set_class(change_values_norm::class);
+        $qp = $t->value_change_log_del_qp($sc, change_values_norm::class, $tbl_norm, 'system_test_group_id');
+        $test_name = 'delete value change log of a norm group (mysql)';
+        $t->assert_sql($test_name, $qp->sql,
+            "PREPARE change_values_norm_del_by_grp FROM 'DELETE FROM change_values_norm WHERE group_id = ?';");
+
+        // a prime value group has an integer group id, so the delete declares a bigint parameter and
+        // targets the change_values_prime table
+        $db_con->db_type = sql_db::POSTGRES;
+        $sc = $db_con->sql_creator();
+        $sc->set_class(change_values_prime::class);
+        $tbl_prime = $sc->get_table();
+        $qp = $t->value_change_log_del_qp($sc, change_values_prime::class, $tbl_prime, 1);
+        $test_name = 'delete value change log of a prime group (postgres)';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE change_values_prime_del_by_grp (bigint) AS DELETE FROM change_values_prime WHERE group_id = $1;');
+
+        // the prime delete declares a bigint parameter, not the text parameter of a norm group
+        $test_name = 'the prime value change log delete declares a bigint not a text parameter';
+        $t->assert_text_not_contains($test_name, $qp->sql, '(text)');
+    }
+
+    /**
+     * check the sql statement creation of test_base::change_log_deleted_qp, which the test cleanup
+     * uses to delete the change log of already deleted test rows by the reserved test name part
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     */
+    private function assert_change_log_deleted_qp(test_cleanup $t, sql_db $db_con): void
+    {
+        // an already deleted test row is detected by the reserved test name part in the old or new
+        // value, so the delete of the changes table declares two text like parameters
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $t->change_log_deleted_qp($db_con->sql_creator());
+        $test_name = 'delete change log of deleted test rows (postgres)';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE change_del_by_test_name (text, text) AS DELETE FROM changes WHERE old_value LIKE $1 OR new_value LIKE $2;');
+
+        $test_name = 'delete change log of deleted test rows query name';
+        $t->assert($test_name, $qp->name, 'change_del_by_test_name');
+
+        // both parameters are the reserved test name part followed by a wildcard
+        $like = test_cleanup::TEST_ROW_NAME_PART . '%';
+        $test_name = 'delete change log of deleted test rows passes the test name pattern as both parameters';
+        $t->assert($test_name, implode(',', $qp->par), $like . ',' . $like);
+
+        // the postgres statement uses numbered parameters, not the mysql question mark
+        $test_name = 'the postgres deleted test row delete has no mysql question mark parameter';
+        $t->assert_text_not_contains($test_name, $qp->sql, '?');
+
+        // the same delete for mysql uses the question mark parameters
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $t->change_log_deleted_qp($db_con->sql_creator());
+        $test_name = 'delete change log of deleted test rows (mysql)';
+        $t->assert_sql($test_name, $qp->sql,
+            "PREPARE change_del_by_test_name FROM 'DELETE FROM changes WHERE old_value LIKE ? OR new_value LIKE ?';");
+    }
+
+    /**
+     * check the sql statement creation of test_base::value_time_series_change_log_del_qp, which the
+     * test cleanup uses to delete the change log of a time series value from the changes table
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     */
+    private function assert_value_time_series_change_log_del_qp(test_cleanup $t, sql_db $db_con): void
+    {
+        // a time series value logs to the changes table keyed by its value_time_series_id, so the
+        // delete removes the changes of that row whose field belongs to one of the time series tables;
+        // the sample table ids must be inlined into the subquery (see resources/db/log/changes_del_by_ts_id.sql)
+        $tbl_ids = [1, 2];
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $t->value_time_series_change_log_del_qp($db_con->sql_creator(), 1, $tbl_ids);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        $test_name = 'delete time series change log passes the value time series id as the parameter';
+        $t->assert($test_name, implode(',', $qp->par), '1');
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $t->value_time_series_change_log_del_qp($db_con->sql_creator(), 1, $tbl_ids);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -444,6 +629,36 @@ class change_log_tests
                 $class,
                 $id,
                 $t->usr1);
+            $t->assert_qp($qp, $sc->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get the value overwrites of a user from one value change
+     * table for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param change_log_list $log_lst the change log list object for the sql creation
+     * @param change_value $log_val an empty log object of the value change class to read
+     * @return void
+     */
+    private function assert_sql_by_user_value(
+        test_cleanup    $t,
+        sql_creator     $sc,
+        change_log_list $log_lst,
+        change_value    $log_val
+    ): void
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $log_lst->load_sql_by_user_value($sc, $t->usr1, $log_val);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $log_lst->load_sql_by_user_value($sc, $t->usr1, $log_val);
             $t->assert_qp($qp, $sc->db_type);
         }
     }

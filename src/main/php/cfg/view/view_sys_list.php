@@ -41,6 +41,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
@@ -101,20 +103,21 @@ class view_sys_list extends type_list
     /**
      * force to reload the list of views from the database that have a used code id
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_message $msg to collect the load warnings for the user
      * @param string $class the database name in this case view just for compatibility reasons
      * @return array the list of views used by the system
      */
-    protected function load_list(sql_db $db_con, string $class): array
+    protected function load_list(sql_db $db_con, user_message $msg, string $class): array
     {
         $this->reset();
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_list($sc);
-        $db_lst = $db_con->get($qp, 'system view list');
+        $db_lst = $db_con->get($qp, $msg, 'system view list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $msk = new view($this->usr);
-                $msk->row_mapper_sandbox($db_row);
-                $msk->load_components($db_con);
+                $msk->row_mapper_sandbox($db_row, $msg);
+                $msk->load_components($msg, $db_con);
                 $this->add($msk);
             }
         }
@@ -146,10 +149,10 @@ class view_sys_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if a load was successful
      */
-    function load(sql_db $db_con, string $class = view::class): bool
+    function load(sql_db $db_con, user_message $msg, string $class = view::class): bool
     {
         $result = false;
-        $this->set_lst($this->load_list($db_con, $class));
+        $this->set_lst($this->load_list($db_con, $msg, $class));
         if ($this->count() > 0) {
             $result = true;
         }

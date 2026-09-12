@@ -38,14 +38,18 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_phrases
@@ -83,6 +87,15 @@ class test_phrases
     {
         $t_trp = new test_triples($this->env);
         return $t_trp->triple_pi()->phrase();
+    }
+
+    /**
+     * @return phrase of the "Pi (math)" triple that carries the pi number value in the seeded database
+     */
+    function phrase_pi_math(): phrase
+    {
+        $t_trp = new test_triples($this->env);
+        return $t_trp->triple_pi_name()->phrase();
     }
 
     /**
@@ -132,6 +145,14 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the standard phrase list for frontend unit testing
+     */
+    function phrase_list_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->phrase_list());
+    }
+
+    /**
      * @return phrase_list with the word one to force a value to be scaled to one
      */
     function phrase_list_one(): phrase_list
@@ -172,6 +193,22 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list like phrase_list_prime but with the "Pi (math)" triple
+     *                     that carries the pi number value in the seeded database
+     */
+    function phrase_list_prime_db(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word()->phrase());
+        $lst->add($t_wrd->word_const()->phrase());
+        $lst->add($t_trp->triple()->phrase());
+        $lst->add($t_trp->triple_pi_name()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list with one word and one triple
      */
     function phrase_list_small(): phrase_list
@@ -195,7 +232,7 @@ class test_phrases
         $lst->add($t_wrd->word()->phrase());
         $lst->add($t_wrd->word_const()->phrase());
         $lst->add($t_wrd->word_pi_symbol()->phrase());
-        $lst->add($t_wrd->word_e()->phrase());
+        $lst->add($t_trp->triple_euler_number()->phrase());
         $lst->add($t_wrd->word_2019()->phrase());
         $lst->add($t_wrd->word_one()->phrase());
         $lst->add($t_wrd->word_mio()->phrase());
@@ -208,7 +245,17 @@ class test_phrases
         return $lst;
     }
 
-    function phrase_list_pi(): phrase_list
+    /**
+     * @return phrase_list_ui the long phrase list for frontend unit testing
+     */
+    function phrase_list_long_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->phrase_list_long());
+    }
+
+
+
+    function phrase_list_pi_name(): phrase_list
     {
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
@@ -216,7 +263,7 @@ class test_phrases
         return $lst;
     }
 
-    function phrase_list_pi_symbol(): phrase_list
+    function phrase_list_pi(): phrase_list
     {
         $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);
@@ -270,6 +317,19 @@ class test_phrases
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_trp->triple_pi()->phrase());
         $lst->add($t_trp->triple_e()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the math const triples that carry the number values
+     *                     in the seeded database e.g. pi is keyed by the "Pi (math)" triple
+     */
+    function phrase_list_math_const_db(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->triple_pi_name()->phrase());
+        $lst->add($t_trp->triple_e_name()->phrase());
         return $lst;
     }
 
@@ -650,6 +710,30 @@ class test_phrases
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
+    /**
+     * @return phrase_list the frontend cache for the value of the canton inhabitants shown
+     *         with the scaling symbol "mio": the described words and the triple that links
+     *         the symbol "mio" to the word "million", whose description is the symbol tooltip
+     */
+    function list_canton_mio_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_mio_symbol()->phrase());
+        $lst->add($t_wrd->word_million()->phrase());
+        $lst->add($t_trp->mio_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend cache of the canton inhabitants value
+     */
+    function list_canton_mio_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_canton_mio_cache());
+    }
+
     function phrase_list_zh_mio(): phrase_list
     {
         $t_wrd = new test_words($this->env);
@@ -664,6 +748,22 @@ class test_phrases
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
+    /**
+     * @return phrase_list of the canton inhabitants but with the scaling symbol "mio"
+     *         instead of the word "million"
+     */
+    function phrase_list_canton_mio_symbol(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_canton()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_2019()->phrase());
+        $lst->add($t_wrd->word_mio_symbol()->phrase());
+        return $lst;
+    }
+
     function phrase_list_canton_mio(): phrase_list
     {
         $t_wrd = new test_words($this->env);
@@ -706,7 +806,7 @@ class test_phrases
     }
 
     /**
-     * @return phrase_list as ch_inhabitants_in_mio_2019 but with "mio" missing the scaling type
+     * @return phrase_list as ch_inhabitants_in_mio_2019 but with "million" missing the scaling type
      *                     to test the scaling type check
      */
     function ch_inhabitants_in_mio_2019_unscaled(): phrase_list
@@ -829,9 +929,10 @@ class test_phrases
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
-        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase());
-        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase());
-        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase());
+        $msg = new backend_user_message(); // a test builder is an entry point; the fixed names cannot double
+        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase(), $msg);
+        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase(), $msg);
+        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase(), $msg);
         return $lst;
     }
 
@@ -843,9 +944,10 @@ class test_phrases
     {
         $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);
+        $msg = new backend_user_message(); // a test builder is an entry point; the config keys are unique
         $id = test_words::CONFIG_KEY_ID_OFFSET;
         foreach ($names as $name) {
-            $lst->add_by_name_direct($t_wrd->word_config_key($name, $id)->phrase());
+            $lst->add_by_name_direct($t_wrd->word_config_key($name, $id)->phrase(), $msg);
             $id++;
         }
         return $lst;
@@ -912,8 +1014,9 @@ class test_phrases
      */
     function list_ui(): phrase_list_ui
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the merge reports into
         $lst = $this->list_symbols_ui();
-        $lst->merge($this->list_zh_ui());
+        $lst->merge($this->list_zh_ui(), $msg);
         return $lst;
     }
 
@@ -1009,6 +1112,189 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list the "global problem" context of solution_prio.json: the problem
+     *         phrases with their link to "global problem" and the table column definitions,
+     *         e.g. to test the start page table of the global issues
+     */
+    function list_global_problems(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->global_problem()->phrase());
+        // the problems of solution_prio.json in the order of the start page ranking
+        $lst->add($t_trp->global_warming()->phrase());
+        $lst->add($t_wrd->word_populism()->phrase());
+        $lst->add($t_wrd->word_poverty()->phrase());
+        $lst->add($t_wrd->word_health()->phrase());
+        $lst->add($t_wrd->word_education()->phrase());
+        $lst->add($t_trp->wealth_concentration()->phrase());
+        $lst->add($t_wrd->word_disinformation()->phrase());
+        $lst->add($t_trp->market_power()->phrase());
+        $lst->add($t_trp->biased_information()->phrase());
+        $lst->add($t_trp->black_box_ai()->phrase());
+        $lst->add($t_trp->citizen_participation()->phrase());
+        $lst->add($t_trp->gdp_mismeasurement()->phrase());
+        $lst->add($t_trp->proprietary_software()->phrase());
+        // the triples that link a problem to "global problem", so that the table finds the
+        // values of a problem although "global problem" is in no value group
+        $lst->add($t_trp->global_warming_problem()->phrase());
+        $lst->add($t_trp->populism_problem()->phrase());
+        $lst->add($t_trp->poverty_problem()->phrase());
+        $lst->add($t_trp->potential_health_problem()->phrase());
+        $lst->add($t_trp->potential_education_problem()->phrase());
+        $lst->add($t_trp->column_problem()->phrase());
+        $lst->add($t_trp->column_cost()->phrase());
+        $lst->add($t_trp->column_gain()->phrase());
+        $lst->add($t_trp->column_loss()->phrase());
+        // the main column chain and the explaining columns that put the columns in the order
+        // problem, loss, cost, solution, gain; the cost column is ordered although no value of
+        // this table carries the phrase "cost"
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        $lst->add($t_trp->column_loss_explains_problem()->phrase());
+        $lst->add($t_trp->column_cost_explains_problem()->phrase());
+        $lst->add($t_trp->column_gain_explains_solution()->phrase());
+        // the solution column names the solution of the problem row instead of a value, so it
+        // needs the column definition and the triples that link a solution to "solution"
+        $lst->add($t_trp->column_solution()->phrase());
+        $lst->add($t_trp->reduce_emissions_solution()->phrase());
+        $lst->add($t_trp->avoid_wrong_decisions_solution()->phrase());
+        $lst->add($t_trp->research_solution()->phrase());
+        $lst->add($t_trp->taxes_solution()->phrase());
+        $lst->add($t_trp->spending_solution()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the "global problem" context for frontend unit testing
+     */
+    function list_global_problems_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_problems());
+    }
+
+    /**
+     * @return phrase_list_ui the page phrase of the global issues table, which is the context
+     *         that every row of that table is assumed to be about
+     */
+    function list_global_problem_context_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->global_problem()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the table column definitions of solution_prio.json without any order triple, so that a
+     * test can add exactly the main column and explaining column triples it wants to check
+     *
+     * @return phrase_list with the "problem", "solution", "cost", "gain" and "loss" columns
+     */
+    private function list_column_definitions(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_problem()->phrase());
+        $lst->add($t_trp->column_solution()->phrase());
+        $lst->add($t_trp->column_cost()->phrase());
+        $lst->add($t_trp->column_gain()->phrase());
+        $lst->add($t_trp->column_loss()->phrase());
+        return $lst;
+    }
+
+    /**
+     * the explaining column triples of list_column_definitions, added solution first so that
+     * only the main column chain can decide which main column is shown left
+     *
+     * @param phrase_list $lst the column definitions to add the explaining triples to
+     * @return phrase_list the given list with "gain", "loss" and "cost" linked to their column
+     */
+    private function add_explaining_columns(phrase_list $lst): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst->add($t_trp->column_gain_explains_solution()->phrase());
+        $lst->add($t_trp->column_loss_explains_problem()->phrase());
+        $lst->add($t_trp->column_cost_explains_problem()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the column definitions with the complete order: the "solution"
+     *         column is the next main column after the "problem" column and every column
+     *         explains one of the two, so the order is problem, loss, cost, solution, gain
+     */
+    function list_columns_ordered_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_column_definitions();
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        return $this->ui_list($this->add_explaining_columns($lst));
+    }
+
+    /**
+     * @return phrase_list_ui the column definitions with the explaining columns but without the
+     *         main column chain, so that the main columns keep the order of their triples
+     */
+    function list_columns_unchained_ui(): phrase_list_ui
+    {
+        $lst = $this->list_column_definitions();
+        return $this->ui_list($this->add_explaining_columns($lst));
+    }
+
+    /**
+     * @return phrase_list_ui the ordered column definitions plus the reverse main column link,
+     *         so that the main column chain is circular and cannot be walked
+     */
+    function list_columns_circular_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_column_definitions();
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        $lst->add($t_trp->column_problem_after_solution()->phrase());
+        return $this->ui_list($this->add_explaining_columns($lst));
+    }
+
+    /**
+     * @return phrase_list_ui the column definitions with the main column chain, but with no
+     *         triple that tells which main column the "cost" column explains
+     */
+    function list_columns_partly_explained_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_column_definitions();
+        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        $lst->add($t_trp->column_gain_explains_solution()->phrase());
+        $lst->add($t_trp->column_loss_explains_problem()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the "loss" column definition alone, so that a value with "potential"
+     *         and "loss" lands in the "loss" column
+     */
+    function list_columns_loss_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the "loss" and the "potential loss" column definitions, so that the
+     *         more specific "potential loss" column takes the values with "potential" and "loss"
+     */
+    function list_columns_potential_loss_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_loss()->phrase());
+        $lst->add($t_trp->column_potential_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * a list of currencies and their common parent "currency" linked via the "is a" verb
      * e.g. to test word::similar where the similar words of "Swiss franc" are "Euro" and "US Dollar"
      *
@@ -1020,11 +1306,11 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_wrd->currency()->phrase());
-        $lst->add($t_wrd->swiss_franc()->phrase());
+        $lst->add($t_trp->swiss_franc()->phrase());
         $lst->add($t_trp->swiss_franc_currency()->phrase());
         $lst->add($t_wrd->euro()->phrase());
         $lst->add($t_trp->euro_currency()->phrase());
-        $lst->add($t_wrd->us_dollar()->phrase());
+        $lst->add($t_trp->us_dollar()->phrase());
         $lst->add($t_trp->usd_currency()->phrase());
         return $lst;
     }

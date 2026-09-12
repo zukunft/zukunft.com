@@ -6,9 +6,9 @@
         <title>
             test component - zukunft.com
         </title>
-        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -138,11 +138,10 @@
             add mask
             <br>
             <h4>
-                Create a view element
+                Create a view component
             </h4>
             <form action="/http/view.php" id="component_add">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
-                <input type="hidden" name="back" value="">
                 <input type="hidden" name="confirm" value="1">
                 <div class="form-row">
                     <div class="form-group col-md-12">
@@ -173,7 +172,6 @@
             <form action="/http/view.php" id="component_edit">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                 <input type="hidden" name="id" value="1">
-                <input type="hidden" name="back" value="">
                 <input type="hidden" name="confirm" value="1">
                 <div class="form-row">
                     <div class="form-group col-md-12">
@@ -210,6 +208,56 @@
                     </a>
                 </div>
             </div>
+            <h4>
+                title named with edit link
+            </h4>
+            <div class="row col-md-12">
+                <div class="heading-line">
+                    <h4 class="heading-inline">
+                        Word
+                    </h4>
+                    <a href="/http/view.php?m=34&amp;id=1" title="adjust component" class="heading-icon-inline">
+                        <i class="fas fa-edit">
+                        </i>
+                    </a>
+                </div>
+                <div class="subtitle">
+                    (
+                    <a href="/http/view.php?m=22&amp;id=3" title="simply to display a variable text">
+                        text
+                    </a>
+                    /
+                    <a href="/http/view.php?m=22&amp;id=3" title="only a closed group of users can seen and use the values">
+                        group
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=22&amp;id=2" title="only users with a login and a confirmed email can take over the ownership">
+                        user
+                    </a>
+                    )
+                </div>
+            </div>
+            <h4>
+                buttons
+            </h4>
+            add button:
+            <a href="http://localhost/http/view.php?m=33&amp;id=1&amp;9m=90&amp;9id=213" title="create component">
+                <i class="far fa-plus-square">
+                </i>
+            </a>
+            <br>
+            edit button:
+            <a href="http://localhost/http/view.php?m=34&amp;id=1&amp;9m=90&amp;9id=213" title="adjust component">
+                <i class="far fa-edit">
+                </i>
+            </a>
+            <br>
+            del button:
+            <a href="http://localhost/http/view.php?m=35&amp;id=1&amp;9m=90&amp;9id=213" title="delete component">
+                <i class="far fa-times-circle">
+                </i>
+            </a>
+            <br>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

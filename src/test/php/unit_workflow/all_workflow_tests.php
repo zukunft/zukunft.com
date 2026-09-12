@@ -44,6 +44,10 @@ include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'triple_url_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'formula_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'source_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'view_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'component_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'ref_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'all_write_workflow_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -65,7 +69,7 @@ class all_workflow_tests
      * @param user $usr the user for whom the workflow should be tested
      * @return bool true if all tests are fine
      */
-    static function run(test_base|test_cleanup $t, user $usr, user_message $usr_msg): bool
+    static function run(test_base|test_cleanup $t, user $usr, user_message $msg): bool
     {
 
         // start the test section (ts)
@@ -78,11 +82,15 @@ class all_workflow_tests
             new word_url_tests()->run($t);
             new triple_url_tests()->run($t);
             new formula_url_tests()->run($t);
+            new source_url_tests()->run($t);
+            new view_url_tests()->run($t);
+            new component_url_tests()->run($t);
+            new ref_url_tests()->run($t);
 
             // the same workflows run again as db write tests (do_it true), gated like the other
             // db write tests so a read-only run (WRITE_TEST false) does not touch the database
             if (WRITE_TEST) {
-                new all_write_workflow_tests()->run($t, $usr, $usr_msg);
+                new all_write_workflow_tests()->run($t, $usr, $msg);
             }
 
             /*
@@ -95,7 +103,7 @@ class all_workflow_tests
              */
 
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

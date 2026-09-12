@@ -91,6 +91,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -127,6 +128,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -187,6 +189,11 @@ class component extends sandbox_code_id
 
     // the word link type used to build the word tree started with the $start_word_id
     public ?int $link_type_id = null;
+
+    // the component that this component links to and the type that says how the two are linked
+    // e.g. a title component that names the table shown by the linked component
+    public ?int $linked_component_id = null;
+    public ?int $component_link_type_id = null;
 
     // for a table to defined second columns layer or the second axis in case of a chart
     // e.g. for a "company cash flow statement" the "col word" could be "year"
@@ -249,6 +256,8 @@ class component extends sandbox_code_id
         $this->type_id = null;
         $this->style = null;
         $this->link_type_id = null;
+        $this->linked_component_id = null;
+        $this->component_link_type_id = null;
         $this->frm = null;
         $this->word_id_col2 = null;
         $this->row_phrase = null;
@@ -272,17 +281,18 @@ class component extends sandbox_code_id
      * @return bool true if the view component is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = component_fields::FLD_ID,
-        string $name_fld = component_fields::FLD_NAME,
-        string $type_fld = component_fields::FLD_TYPE
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = component_fields::FLD_ID,
+        string       $name_fld = component_fields::FLD_NAME,
+        string       $type_fld = component_fields::FLD_TYPE
     ): bool
     {
         global $mtr;
 
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(component_fields::FLD_UI_MSG_ID, $db_row)) {
                 $msg_id_txt = $db_row[component_fields::FLD_UI_MSG_ID];
@@ -309,84 +319,107 @@ class component extends sandbox_code_id
                 }
             }
             if (array_key_exists(component_fields::FLD_UI_MSG_VAL_EXCEPTION, $db_row)) {
-                $msg_id_txt = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
-                if ($msg_id_txt == null) {
+                // unlike the message ids above this is a number, so the null check is strict:
+                // zero is a valid exception value e.g. of the usage sub title, which shows the
+                // 'no usage' message if the usage is zero
+                $val_exception = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
+                if ($val_exception === null) {
                     $this->ui_msg_value_exception = null;
                 } else {
-                    $this->ui_msg_value_exception = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
+                    $this->ui_msg_value_exception = $val_exception;
                 }
             }
             if (array_key_exists(fields::FLD_STYLE, $db_row)) {
                 $this->set_style_by_id($db_row[fields::FLD_STYLE]);
             }
             if (array_key_exists(component_fields::FLD_ROW_PHRASE, $db_row)) {
-                $this->reload_row_phrase($db_row[component_fields::FLD_ROW_PHRASE]);
+                $this->reload_row_phrase($msg, $db_row[component_fields::FLD_ROW_PHRASE]);
             }
             if (array_key_exists(component_fields::FLD_LINK_TYPE, $db_row)) {
                 $this->link_type_id = $db_row[component_fields::FLD_LINK_TYPE];
             }
             if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
-                $this->set_formula_by_id($db_row[formula_fields::FLD_ID]);
+                $this->set_formula_by_id($db_row[formula_fields::FLD_ID], $msg);
+            }
+            if (array_key_exists(component_fields::FLD_LINK_COMP, $db_row)) {
+                $this->linked_component_id = $db_row[component_fields::FLD_LINK_COMP];
+            }
+            if (array_key_exists(component_fields::FLD_LINK_COMP_TYPE, $db_row)) {
+                $this->component_link_type_id = $db_row[component_fields::FLD_LINK_COMP_TYPE];
             }
             if (array_key_exists(component_fields::FLD_COL_PHRASE, $db_row)) {
-                $this->reload_col_phrase($db_row[component_fields::FLD_COL_PHRASE]);
+                $this->reload_col_phrase($msg, $db_row[component_fields::FLD_COL_PHRASE]);
             }
             if (array_key_exists(component_fields::FLD_COL2_PHRASE, $db_row)) {
                 $this->word_id_col2 = $db_row[component_fields::FLD_COL2_PHRASE];
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * map a component api json to this model component object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
-        // it is expected that the code id is set via import by an admin not via api
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
-            global $mtr;
-            $this->ui_msg_code_id = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]);
+        // the ui message code ids link a component to a system ui message, so only a system /
+        // developer user may set them via the api - route through the privilege-checked setters
+        // (not a raw assignment) so a normal user's request is refused and reported on $usr_msg; the
+        // null-user guard fails closed if no requesting user is set on the message
+        global $mtr;
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json) and $msg->usr != null) {
+            $this->set_ui_msg_code_id(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]), $msg);
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $api_json)) {
-            global $mtr;
-            $this->ui_msg_code_id_vars = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]);
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $api_json) and $msg->usr != null) {
+            $this->set_ui_msg_code_id_vars(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]), $msg);
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $api_json)) {
-            global $mtr;
-            $this->ui_msg_code_id_exception = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]);
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $api_json) and $msg->usr != null) {
+            $this->set_ui_msg_code_id_exception(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]), $msg);
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json)) {
-            global $mtr;
-            $this->ui_msg_value_exception = $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]);
+        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json) and $msg->usr != null) {
+            // the exception value is a number, not a message id, so it is not translated
+            $this->set_ui_msg_value_exception(
+                $api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION], $msg);
         }
         if (array_key_exists(json_fields::STYLE, $api_json)) {
             $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
         if (array_key_exists(json_fields::PHRASE_ROW, $api_json)) {
-            $this->reload_row_phrase($api_json[json_fields::PHRASE_ROW]);
+            // TODO Prio 1 review and probly add $msg again or at least make sure that the missing phrases are created and added to the cache upfront and that here missing phrases are reported with a error message
+            // set by id without a database load, because the api message carries only the id
+            // and e.g. the save path needs only the id (the name is reloaded when needed)
+            $this->set_row_phrase_by_id($api_json[json_fields::PHRASE_ROW]);
         }
         if (array_key_exists(json_fields::PHRASE_COL, $api_json)) {
-            $this->reload_col_phrase($api_json[json_fields::PHRASE_COL]);
+            $this->set_col_phrase_by_id($api_json[json_fields::PHRASE_COL]);
         }
         if (array_key_exists(json_fields::PHRASE_COL_SUB, $api_json)) {
-            $this->reload_col_sub_phrase($api_json[json_fields::PHRASE_COL_SUB]);
+            $this->set_col_sub_phrase_by_id($api_json[json_fields::PHRASE_COL_SUB]);
         }
         if (array_key_exists(json_fields::LINK_TYPE, $api_json)) {
             $this->set_link_type_by_id($api_json[json_fields::LINK_TYPE]);
         }
+        if (array_key_exists(json_fields::LINKED_COMPONENT, $api_json)) {
+            $this->linked_component_id = $api_json[json_fields::LINKED_COMPONENT];
+        }
+        if (array_key_exists(json_fields::COMPONENT_LINK_TYPE, $api_json)) {
+            $this->component_link_type_id = $api_json[json_fields::COMPONENT_LINK_TYPE];
+        }
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
-            $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID]);
+            $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID], $msg);
             $this->set_formula($frm);
         }
         // TODO map e.g. the $row_phrase
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -431,11 +464,61 @@ class component extends sandbox_code_id
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $type_name = $in_ex_json[json_fields::TYPE_NAME];
             if ($type_name != '') {
-                $this->set_type_id($this->type_id_by_code_id($type_name), $msg->usr);
+                // set_type names the unknown type once on $msg and leaves the type unset, whereas
+                // the raw id lookup stores its not-found marker (-1) as the type, which every
+                // later reader reports again as an unknown type id (see view::import_mapper)
+                $this->set_type($type_name, $msg);
+            }
+        }
+        if (key_exists(json_fields::ROW, $in_ex_json)) {
+            $phr = $this->import_layout_phrase($in_ex_json[json_fields::ROW], $msg, $dto);
+            if ($phr != null) {
+                $this->set_row_phrase($phr);
+            }
+        }
+        if (key_exists(json_fields::COLUMN, $in_ex_json)) {
+            $phr = $this->import_layout_phrase($in_ex_json[json_fields::COLUMN], $msg, $dto);
+            if ($phr != null) {
+                $this->set_col_phrase($phr);
+            }
+        }
+        if (key_exists(json_fields::COLUMN2, $in_ex_json)) {
+            $phr = $this->import_layout_phrase($in_ex_json[json_fields::COLUMN2], $msg, $dto);
+            if ($phr != null) {
+                $this->set_col_sub_phrase($phr);
             }
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * get one layout phrase (row, column or sub column) of an import json by its name from the
+     * import cache; the shared part of the row, column and sub column mapping of import_mapper,
+     * which maps from the $dto only and never reads the database (see docs/llm/coding.md)
+     *
+     * @param string $name the phrase name of the import json e.g. "year"
+     * @param user_message $msg to report a phrase that is neither imported nor ready to be written
+     * @param data_object|null $dto the import cache with the phrases imported until now
+     * @return phrase|null the phrase of the import cache or null if the name cannot be resolved
+     */
+    private function import_layout_phrase(string $name, user_message $msg, ?data_object $dto): ?phrase
+    {
+        $result = null;
+        if ($name != '') {
+            $phr = $dto?->get_phrase_by_name($name, $msg);
+            if ($phr == null) {
+                // create a phrase without saving to and without reading from the database
+                $phr = new phrase($this->get_user());
+                $phr->set_name($name, word::class);
+                if (!$phr->db_ready($msg)) {
+                    $msg->add_type_message($name, msg_id::PHRASE_MISSING->value);
+                    $phr = null;
+                }
+            }
+            $result = $phr;
+        }
+        return $result;
     }
 
 
@@ -446,15 +529,19 @@ class component extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             if ($this->ui_msg_code_id != null) {
                 $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
             }
@@ -464,7 +551,8 @@ class component extends sandbox_code_id
             if ($this->ui_msg_code_id_exception != null) {
                 $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception;
             }
-            if ($this->ui_msg_value_exception != null) {
+            // strict, because zero is a valid exception value
+            if ($this->ui_msg_value_exception !== null) {
                 $vars[json_fields::UI_MSG_CODE_VAL_EXCEPTION] = $this->ui_msg_value_exception;
             }
             if ($this->get_style_id() > 0) {
@@ -472,6 +560,34 @@ class component extends sandbox_code_id
             }
             if ($this->frm != null) {
                 $vars[json_fields::FORMULA_ID] = $this->get_formula_id();
+            }
+            if ($this->linked_component_id != null) {
+                $vars[json_fields::LINKED_COMPONENT] = $this->linked_component_id;
+            }
+            if ($this->component_link_type_id != null) {
+                $vars[json_fields::COMPONENT_LINK_TYPE] = $this->component_link_type_id;
+            }
+            if ($this->row_phrase?->id() != null) {
+                $vars[json_fields::PHRASE_ROW] = $this->row_phrase->id();
+            }
+            if ($this->col_phrase?->id() != null) {
+                $vars[json_fields::PHRASE_COL] = $this->col_phrase->id();
+            }
+            if ($this->col_sub_phrase?->id() != null) {
+                $vars[json_fields::PHRASE_COL_SUB] = $this->col_sub_phrase->id();
+            }
+            // a page request carries the owner, the changes and the overwrites, so that the
+            // component default page can show them (see base_views.json)
+            if ($typ_lst->incl_related()) {
+                // the owner load is skipped in the test mode
+                if (!$typ_lst->test_mode()) {
+                    $owner_name = $this->owner_api_name($msg);
+                    if ($owner_name != null) {
+                        $vars[json_fields::OWNER] = $owner_name;
+                    }
+                }
+                $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+                $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -483,23 +599,22 @@ class component extends sandbox_code_id
 
     /**
      * get a formula either with the id set or with all fields set based on an api json
-     * TODO Prio 1 add user_message as parameter
      * @param int|array $value either the id itself or an array with the id
+     * @param user_message $msg the threaded message so an invalid nested formula surfaces to the user
      * @return formula with at least the id set
      */
-    private function formula_from_api_json(int|array $value): formula
+    private function formula_from_api_json(int|array $value, user_message $msg): formula
     {
-        $usr_msg = new user_message();
         $frm = new formula($this->get_user());
         if (is_array($value)) {
-            $frm->api_mapper($value, $usr_msg);
+            $frm->api_mapper($value, $msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO use formula cache
                 $frm->id = $value;
             }
         } else {
-            log_err('unexpected format of api message');
+            log_err_msg('unexpected format of api message', $msg);
         }
         return $frm;
     }
@@ -511,13 +626,14 @@ class component extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         if ($this->order_nbr >= 0) {
             $vars[json_fields::POSITION] = $this->order_nbr;
@@ -531,7 +647,8 @@ class component extends sandbox_code_id
         if ($this->ui_msg_code_id_exception != null) {
             $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception->value;
         }
-        if ($this->ui_msg_value_exception != null) {
+        // strict, because zero is a valid exception value
+        if ($this->ui_msg_value_exception !== null) {
             $vars[json_fields::UI_MSG_CODE_VAL_EXCEPTION] = $this->ui_msg_value_exception;
         }
         if ($this->style != null) {
@@ -540,7 +657,7 @@ class component extends sandbox_code_id
 
         // add the phrases used
         if ($do_load) {
-            $this->reload_phrases();
+            $this->reload_phrases($msg);
         }
         if ($this->row_phrase != null) {
             if ($this->row_phrase->name() != '') {
@@ -570,18 +687,18 @@ class component extends sandbox_code_id
      * set the predefined view component type by the given code id or name
      *
      * @param string $code_id_or_name the code id or name that should be added to this view component
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the component type has been set, false if unknown or not permitted
      */
-    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user_message $msg): bool
     {
         global $sys;
         if ($sys->typ_lst->cmp_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $msg);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $msg);
         }
     }
 
@@ -643,11 +760,49 @@ class component extends sandbox_code_id
         $this->row_phrase = $phr;
     }
 
-    // TODO Prio 0 use $dto or and load
-    function set_row_phrase_by_id(int $id): void
+    /**
+     * set the phrase that defines the row names by its id e.g. based on an api message, without
+     * loading the phrase from the database (the name is reloaded only when needed e.g. by
+     * reload_phrases for the export)
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null to unset
+     * @return void
+     */
+    function set_row_phrase_by_id(?int $id): void
     {
-        $phr = new phrase();
-        $this->row_phrase = $phr;
+        $this->row_phrase = $this->phrase_by_id($id);
+    }
+
+    /**
+     * set the phrase that defines the column names by its id without a database load
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null to unset
+     * @return void
+     */
+    function set_col_phrase_by_id(?int $id): void
+    {
+        $this->col_phrase = $this->phrase_by_id($id);
+    }
+
+    /**
+     * set the phrase that defines the sub column names by its id without a database load
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null to unset
+     * @return void
+     */
+    function set_col_sub_phrase_by_id(?int $id): void
+    {
+        $this->col_sub_phrase = $this->phrase_by_id($id);
+    }
+
+    /**
+     * @param int|null $id the phrase id (positive for a word, negative for a triple) or null
+     * @return phrase|null an id-only phrase without a database load or null if the id is not set
+     */
+    private function phrase_by_id(?int $id): ?phrase
+    {
+        $result = null;
+        if ($id != null and $id != 0) {
+            $result = new phrase($this->get_user(), $id);
+        }
+        return $result;
     }
 
     function get_row_phrase_id(): int
@@ -698,13 +853,14 @@ class component extends sandbox_code_id
 
     /**
      * define or remove the phrase that is used as the second selection for table columns
+     * TODO Prio 2 suggest the possible sub phrases if the given phrase has no relation to the
+     *      column phrase; that check would need a user_message parameter, today nothing is reported
      * @param phrase|null $phr e.g. if "city" and "canton" is the col_phrase the cities of each canton are used
-     * @return user_message if the sub phrase has no relation to the column phrase a suggestion of the possible sub phrases
+     * @return void
      */
-    function set_col_sub_phrase(?phrase $phr): user_message
+    function set_col_sub_phrase(?phrase $phr): void
     {
         $this->col_sub_phrase = $phr;
-        return new user_message();
     }
 
     function get_col_sub_phrase_id(): int
@@ -730,24 +886,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param msg_id|null $ui_msg_id the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the ui message code id has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_code_id(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_code_id = $ui_msg_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -763,24 +920,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param msg_id|null $ui_msg_id the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the ui message code id has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_code_id_vars = $ui_msg_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID_VARS,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -796,24 +954,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param msg_id|null $ui_msg_id the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the ui message code id has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_code_id_exception = $ui_msg_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID_EXCEPTION,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -829,24 +988,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param float|null $ui_msg_value_exception the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the value has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_value_exception(?float $ui_msg_value_exception, user $usr): user_message
+    function set_ui_msg_value_exception(?float $ui_msg_value_exception, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_value_exception = $ui_msg_value_exception;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_VAL_EXCEPTION,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -862,11 +1022,11 @@ class component extends sandbox_code_id
      * TODO use cache to reduce the db loads
      * TODO use this as a sample for all row_mappers
      * @param int|null $id the id for the formula
-     * @return user_message message for the user if the id is strange
+     * @param user_message $msg to report an id that is neither null nor a valid formula id
+     * @return void
      */
-    function set_formula_by_id(?int $id): user_message
+    function set_formula_by_id(?int $id, user_message $msg): void
     {
-        $msg = new user_message();
         $frm = null;
         if ($id != null) {
             if ($id > 0) {
@@ -882,18 +1042,17 @@ class component extends sandbox_code_id
             }
         }
         $this->frm = $frm;
-        return $msg;
     }
 
     /**
      * set the formula used for the component
-     * @param formula $frm
-     * @return user_message if setting the formula does not make sense with a suggested solution
+     * like the set_formula of formula_link and result this reports nothing
+     * @param formula $frm the formula that the component shows
+     * @return void
      */
-    function set_formula(formula $frm): user_message
+    function set_formula(formula $frm): void
     {
         $this->frm = $frm;
-        return new user_message();
     }
 
     function get_formula(): ?formula
@@ -925,7 +1084,7 @@ class component extends sandbox_code_id
     /**
      * set the type of linked components
      *
-     * @param int|null $type_code_id the id that should be added to this view component
+     * @param int|null $type_id the id that should be added to this view component
      * @return void
      */
     function set_link_type_by_id(?int $type_id): void
@@ -999,13 +1158,14 @@ class component extends sandbox_code_id
      * just set the class name for the user sandbox function
      * load a view component object by name
      * @param string $name the name view component
+     * @param user_message|Message $msg
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, user_message|Message $msg): int
     {
-        $id = parent::load_by_name($name);
+        $id = parent::load_by_name($name, $msg);
         if ($this->id() > 0) {
-            $this->reload_phrases();
+            $this->reload_phrases($msg);
         }
         return $id;
     }
@@ -1014,13 +1174,14 @@ class component extends sandbox_code_id
      * just set the class name for the user sandbox function
      * load a view component object by database id
      * @param int $id the id of the view component
+     * @param user_message|Message $msg
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, user_message|Message $msg): int
     {
-        $id = parent::load_by_id($id);
+        $id = parent::load_by_id($id, $msg);
         if ($this->id() > 0) {
-            $this->reload_phrases();
+            $this->reload_phrases($msg);
         }
         return $id;
     }
@@ -1097,33 +1258,36 @@ class component extends sandbox_code_id
 
     /**
      * load the related word and formula objects
+     * @param user_message $msg to collect and reload errors
      * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
      */
-    function reload_phrases(): bool
+    function reload_phrases(user_message $msg): bool
     {
-        $result = true;
-        $this->reload_row_phrase();
-        $this->reload_col_phrase();
-        $this->reload_wrd_col2();
-        $this->reload_formula();
+        $this->reload_row_phrase($msg);
+        $this->reload_col_phrase($msg);
+        $this->reload_wrd_col2($msg);
+        $this->reload_formula($msg);
         log_debug('done for ' . $this->dsp_id());
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * load the phrase that should be used for the rows of a table
      * or the left Y-axis of a chart
      *
+     * @param user_message $msg to collect and reload errors
      * @param int|null $id the id of suggested the row phrase
      * @return int the id of the loaded phrase or 0 if no phrase has been loaded
      */
-    function reload_row_phrase(?int $id = null): int
+    function reload_row_phrase(user_message $msg, ?int $id = null): int
     {
         $result = 0;
-        $row_phr = $this->reload_phrase($id);
-        if ($row_phr != null) {
-            $this->row_phrase = $row_phr;
-            $result = $id;
+        if ($id != null) {
+            $row_phr = $this->reload_phrase($id, $msg);
+            if ($row_phr != null) {
+                $this->row_phrase = $row_phr;
+                $result = $id;
+            }
         }
         return $result;
     }
@@ -1134,13 +1298,14 @@ class component extends sandbox_code_id
      *  e.g. "year" to display the yearly values
      *       or the left X-axis of a chart
      *
+     * @param user_message $msg to collect any reload errors
      * @param int|null $id the id of suggested the col phrase
      * @return int the id of the loaded phrase or 0 if no phrase has been loaded
      */
-    function reload_col_phrase(?int $id = null): int
+    function reload_col_phrase(user_message $msg, ?int $id = null): int
     {
         $result = 0;
-        $col_phr = $this->reload_phrase($id);
+        $col_phr = $this->reload_phrase($id, $msg);
         if ($col_phr != null) {
             $this->col_phrase = $col_phr;
             $result = $id;
@@ -1148,10 +1313,10 @@ class component extends sandbox_code_id
         return $result;
     }
 
-    function reload_col_sub_phrase(?int $id = null): int
+    function reload_col_sub_phrase(user_message $msg, ?int $id = null): int
     {
         $result = 0;
-        $col_phr = $this->reload_phrase($id);
+        $col_phr = $this->reload_phrase($id, $msg);
         if ($col_phr != null) {
             $this->col_sub_phrase = $col_phr;
             $result = $id;
@@ -1164,15 +1329,16 @@ class component extends sandbox_code_id
      * load a phrase if the id is valid
      *
      * @param int|null $id the id of suggested the phrase
+     * @param user_message $msg to collect load errors that can be reported to the user
      * @return phrase|null the loaded phrase
      */
-    private function reload_phrase(?int $id = null): ?phrase
+    private function reload_phrase(int|null $id, user_message $msg): ?phrase
     {
         $result = null;
         if ($id != null) {
             if ($id != 0) {
                 $phr = new phrase($this->get_user());
-                if ($phr->load_by_id($id) != 0) {
+                if ($phr->load_by_id($id, $msg) != 0) {
                     $result = $phr;
                 }
             }
@@ -1181,12 +1347,12 @@ class component extends sandbox_code_id
     }
 
     //
-    function reload_wrd_col2(): string
+    function reload_wrd_col2(user_message $msg): string
     {
         $result = '';
         if ($this->word_id_col2 > 0) {
             $wrd_col2 = new word($this->get_user());
-            $wrd_col2->load_by_id($this->word_id_col2);
+            $wrd_col2->load_by_id($this->word_id_col2, $msg);
             $this->col_sub_phrase = $wrd_col2->phrase();
             $result = $wrd_col2->name();
         }
@@ -1194,12 +1360,12 @@ class component extends sandbox_code_id
     }
 
     // load the related formula and returns the name of the formula
-    function reload_formula(): string
+    function reload_formula(user_message $msg): string
     {
         $result = '';
         if ($this->get_formula_id() > 0) {
             $frm = new formula($this->get_user());
-            $frm->load_by_id($this->get_formula_id());
+            $frm->load_by_id($this->get_formula_id(), $msg);
             $this->frm = $frm;
             $result = $frm->name();
         }
@@ -1255,6 +1421,12 @@ class component extends sandbox_code_id
         if ($std_obj->link_type_id !== $this->link_type_id) {
             $result->link_type_id = $this->link_type_id;
         }
+        if ($std_obj->linked_component_id !== $this->linked_component_id) {
+            $result->linked_component_id = $this->linked_component_id;
+        }
+        if ($std_obj->component_link_type_id !== $this->component_link_type_id) {
+            $result->component_link_type_id = $this->component_link_type_id;
+        }
         return $result;
     }
 
@@ -1275,19 +1447,22 @@ class component extends sandbox_code_id
      */
     function fill(component|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
+        // a shared buffer for the requesting user's permission checks, merged into $msg once
+        $ui_msg = new user_message($usr_req);
         if ($this->ui_msg_code_id === null and $obj->ui_msg_code_id != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
+            $this->set_ui_msg_code_id($obj->ui_msg_code_id, $ui_msg);
         }
         if ($this->ui_msg_code_id_vars === null and $obj->ui_msg_code_id_vars != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $usr_req));
+            $this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $ui_msg);
         }
         if ($this->ui_msg_code_id_exception === null and $obj->ui_msg_code_id_exception != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
+            $this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $ui_msg);
         }
         if ($this->ui_msg_value_exception === null and $obj->ui_msg_value_exception !== null) {
-            $usr_msg->merge($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
+            $this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $ui_msg);
         }
+        $msg->merge($ui_msg);
         if ($this->row_phrase === null and $obj->row_phrase != null) {
             $this->row_phrase = $obj->row_phrase;
         }
@@ -1307,7 +1482,13 @@ class component extends sandbox_code_id
         if ($this->link_type_id === null and $obj->link_type_id != null) {
             $this->link_type_id = $obj->link_type_id;
         }
-        return $usr_msg;
+        if ($this->linked_component_id === null and $obj->linked_component_id != null) {
+            $this->linked_component_id = $obj->linked_component_id;
+        }
+        if ($this->component_link_type_id === null and $obj->component_link_type_id != null) {
+            $this->component_link_type_id = $obj->component_link_type_id;
+        }
+        return $msg;
     }
 
 
@@ -1343,6 +1524,8 @@ class component extends sandbox_code_id
         $this->diff_field_msg($msg, component_fields::FLD_COL_PHRASE, $this->get_col_phrase_id(), $obj->get_col_phrase_id());
         $this->diff_field_msg($msg, component_fields::FLD_COL2_PHRASE, $this->get_col_sub_phrase_id(), $obj->get_col_sub_phrase_id());
         $this->diff_field_msg($msg, component_fields::FLD_LINK_TYPE, $this->link_type_id, $obj->link_type_id);
+        $this->diff_field_msg($msg, component_fields::FLD_LINK_COMP, $this->linked_component_id, $obj->linked_component_id);
+        $this->diff_field_msg($msg, component_fields::FLD_LINK_COMP_TYPE, $this->component_link_type_id, $obj->component_link_type_id);
         return $msg;
     }
 
@@ -1351,11 +1534,12 @@ class component extends sandbox_code_id
      * is expected to be similar to the diff_msg function
      *
      * @param component|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has info that should be saved in the database
      */
-    function needs_db_update(component|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(component|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->get_formula_id() != null) {
             if ($this->get_formula_id() != $db_obj->get_formula_id()) {
                 $result = true;
@@ -1367,7 +1551,7 @@ class component extends sandbox_code_id
     /**
      * returns the next free order number for a new view component
      */
-    function next_nbr(int $view_id): int
+    function next_nbr(int $view_id, user_message $msg): int
     {
         log_debug('component->next_nbr for view "' . $view_id . '"');
 
@@ -1378,7 +1562,7 @@ class component extends sandbox_code_id
             log_err('Cannot get the next position, because the view_id is not set', 'component->next_nbr');
         } else {
             $vcl = new component_link($this->get_user());
-            $result = $vcl->load_max_pos_by_view($view_id);
+            $result = $vcl->load_max_pos_by_view($view_id, $msg);
 
             // if nothing is found, assume one as the next free number
             if ($result <= 0) {
@@ -1397,33 +1581,43 @@ class component extends sandbox_code_id
      * log
      */
 
-    // set the log entry parameters for a value update
-    function log_link($dsp): bool
+    /**
+     * set the log entry parameters to link a display component ($cmp) to a view ($dsp)
+     * @param view $dsp the view to which this component is linked
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return bool true if the link has been logged
+     */
+    function log_link(view $dsp, user_message $msg): bool
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_class(component_link::class);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_class(component_link::class, $msg);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id();
-        $result = $log->add_link_ref();
+        $result = $log->add_link_ref($msg);
 
         log_debug('logged ' . $log->id());
         return $result;
     }
 
-    // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
-    function log_unlink($dsp): bool
+    /**
+     * set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
+     * @param view $dsp the view from which this component is unlinked
+     * @param user_message $msg to report a change log entry that cannot be written
+     * @return bool true if the unlink has been logged
+     */
+    function log_unlink(view $dsp, user_message $msg): bool
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->get_user()->id);
         $log = new change_link($this->get_user());
-        $log->set_action(change_actions::DELETE);
-        $log->set_class(component_link::class);
+        $log->set_action(change_actions::DELETE, $msg);
+        $log->set_class(component_link::class, $msg);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id();
-        $result = $log->add_link_ref();
+        $result = $log->add_link_ref($msg);
 
         log_debug('logged ' . $log->id());
         return $result;
@@ -1438,10 +1632,10 @@ class component extends sandbox_code_id
      * link this component to a view
      * @param view $msk the view object to which this component should be added
      * @param int $order_nbr the position where the component should be added and all existing component should be move one position further
-     * @param user_message $usr_msg the message for the user why adding of the component has failed and the potential solutions
+     * @param user_message $msg the message for the user why adding of the component has failed and the potential solutions
      * @return bool true if the component has been added
      */
-    function link(view $msk, int $order_nbr, user_message $usr_msg): bool
+    function link(view $msk, int $order_nbr, user_message $msg): bool
     {
         $cmp_lnk = new component_link($this->get_user());
         $cmp_lnk->reset(true);
@@ -1450,7 +1644,7 @@ class component extends sandbox_code_id
         $cmp_lnk->order_nbr = $order_nbr;
         $cmp_lnk->set_predicate(component_link_type::DEFAULT);
         $cmp_lnk->set_pos_type(position_types::DEFAULT);
-        return $cmp_lnk->save($usr_msg);
+        return $cmp_lnk->save($msg);
     }
 
     /**
@@ -1458,15 +1652,15 @@ class component extends sandbox_code_id
      * TODO check if the view component is not linked anywhere else
      *        and if yes, delete the view component after confirmation
      * @param view $msk the view from where this component should be removed
-     * @param user_message $usr_msg explain to the user why the component cannot be removed from the view
+     * @param user_message $msg explain to the user why the component cannot be removed from the view
      * @return bool true if the component has been removed from the view
      */
-    function unlink(view $msk, user_message $usr_msg): bool
+    function unlink(view $msk, user_message $msg): bool
     {
         $cmp_lnk_ui = new component_link($this->get_user());
-        $cmp_lnk_ui->load_by_link($msk, $this);
-        $cmp_lnk_ui->reload_objects($usr_msg);
-        return $cmp_lnk_ui->del($usr_msg);
+        $cmp_lnk_ui->load_by_link($msk, $this, $msg);
+        $cmp_lnk_ui->reload_objects($msg);
+        return $cmp_lnk_ui->del($msg);
     }
 
 
@@ -1498,22 +1692,22 @@ class component extends sandbox_code_id
     /**
      * delete the view component links of linked to this view component
      *
-     * @param user_message $usr_msg the message for the user why deleting the component links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the component links has failed and a suggested solution
      * @return bool true if the component links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->get_user());
-        $lnk_lst->load_by_component($this);
+        $lnk_lst->load_by_component($this, $msg);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $lnk_lst->del($usr_msg);
+            $lnk_lst->del($msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1544,8 +1738,8 @@ class component extends sandbox_code_id
                 component_fields::FLD_COL_PHRASE,
                 component_fields::FLD_COL2_PHRASE,
                 formula_fields::FLD_ID,
-                //component_fields::FLD_LINK_COMP,
-                //component_fields::FLD_LINK_COMP_TYPE,
+                component_fields::FLD_LINK_COMP,
+                component_fields::FLD_LINK_COMP_TYPE,
                 component_fields::FLD_LINK_TYPE,
             ],
             parent::db_fields_all_sandbox()
@@ -1570,10 +1764,10 @@ class component extends sandbox_code_id
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->type_id($msg) !== $this->type_id($msg)) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_TYPE,
@@ -1581,7 +1775,7 @@ class component extends sandbox_code_id
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($this->type_id() < 0) {
+            if ($this->type_id($msg) < 0) {
                 $msg->add(msg_id::COMPONENT_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
@@ -1590,8 +1784,8 @@ class component extends sandbox_code_id
             $lst->add_type_field(
                 component_fields::FLD_TYPE,
                 type_object::FLD_NAME,
-                $this->type_id(),
-                $obj->type_id(),
+                $this->type_id($msg),
+                $obj->type_id($msg),
                 $sys->typ_lst->cmp_typ
             );
         }
@@ -1754,7 +1948,36 @@ class component extends sandbox_code_id
                 $old_val
             );
         }
-        // TODO add FLD_LINK_COMP and FLD_LINK_COMP_TYPE
+        if ($obj->linked_component_id !== $this->linked_component_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_LINK_COMP,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_LINK_COMP),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                component_fields::FLD_LINK_COMP,
+                $this->linked_component_id,
+                component_db::FLD_LINK_COMP_SQL_TYP,
+                $obj->linked_component_id
+            );
+        }
+        if ($obj->component_link_type_id !== $this->component_link_type_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_LINK_COMP_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_LINK_COMP_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                component_fields::FLD_LINK_COMP_TYPE,
+                $this->component_link_type_id,
+                component_db::FLD_LINK_COMP_TYPE_SQL_TYP,
+                $obj->component_link_type_id
+            );
+        }
         if ($obj->link_type_id !== $this->link_type_id) {
             if ($do_log) {
                 $lst->add_field(
@@ -1799,13 +2022,13 @@ class component extends sandbox_code_id
     /**
      * @return array with all view ids that are directly assigned to this view component
      */
-    function assigned_msk_ids(): array
+    function assigned_msk_ids(user_message $msg): array
     {
         $result = array();
 
         if ($this->id() > 0 and $this->get_user() != null) {
             $lst = new component_link_list($this->get_user());
-            $lst->load_by_component($this);
+            $lst->load_by_component($this, $msg);
             $result = $lst->view_ids();
         } else {
             log_err("The user id must be set to list the component links.", "component->assign_ui_ids");

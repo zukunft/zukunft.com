@@ -34,11 +34,11 @@ PREPARE component_insert_log_11110050000000000000_user_call
 SELECT component_insert_log_11110050000000000000_user (
                3::bigint,
                1::smallint,
-               51::smallint,
+               150::smallint,
                'Word'::text,
                1::bigint,
-               52::smallint,
+               54::smallint,
                'simply show the word or triple name'::text,
-               53::smallint,
+               55::smallint,
                'word name'::text,
                8::smallint);

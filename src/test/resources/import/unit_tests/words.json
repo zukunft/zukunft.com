@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2024-03-26 19:58:00",
   "user": "zukunft.com system batch job",
   "selection": [
@@ -8,7 +9,7 @@
   "words": [
     {
       "name": "problem",
-      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
+      "description": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
         {
           "name": "Problem_solving",
@@ -18,7 +19,7 @@
     },
     {
       "name": "global",
-      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
+      "description": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",

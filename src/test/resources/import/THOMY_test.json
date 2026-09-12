@@ -1,5 +1,6 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "pod": "zukunft.com",
   "time": "2020-02-22 14:25:52",
   "user": "77.59.176.91",
@@ -141,7 +142,6 @@
       "name": "ingredient list",
       "description": "list of ingredients with their food ingredient units for the current product",
       "type": "values_related",
-      "code_id": "ingredient_list",
       "row": "ingredients",
       "column": "food ingredient units"
     },
@@ -153,14 +153,13 @@
     {
       "name": "Export JSON",
       "description": "export this word and the related value in the JSON format",
-      "type": "export_json",
-      "code_id": "export_json"
+      "type": "export_json"
     }
   ],
   "views": [
     {
       "name": "Food ingredients",
-      "comment": "List the ingredients of one product",
+      "description": "List the ingredients of one product",
       "type": "detail_view",
       "components": [
         {

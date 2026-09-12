@@ -71,6 +71,8 @@ class import_wikidata
     const string WD_ENTITIES = 'entities';
     const string WD_LABELS = 'labels';
     const string WD_LANG_EN = 'en';
+    // the wikidata code for the default label that is the same in most languages
+    const string WD_LANG_MUL = 'mul';
     const string WD_VALUE = 'value';
     const string WD_ID = 'id';
     const string WD_CLAIMS = 'claims';
@@ -144,24 +146,24 @@ class import_wikidata
      * store the given json for the given wikidata id as a formatted test resource file
      * @param string $wikidata_id the wikidata entity or property id e.g. "Q167" or "P2284"
      * @param string $json the json text to store e.g. as received from get_entity_json or get_property_json
-     * @param string|null $path the target directory; null uses the wikidata test resource folder
+     * @param string|null $path the target directory; null uses the wikidata cache folder
      * @return user_message ok or a warning with the reason if the json is empty or the file write failed
      */
     function store_text(string $wikidata_id, string $json, ?string $path = null): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if ($path === null) {
-            $path = test_paths::IMPORT_WIKIDATA;
+            $path = test_paths::IMPORT_WIKIDATA_CACHE;
         }
         if ($json == '') {
-            $usr_msg->add(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => 'no data received from wikidata for ' . $wikidata_id]);
+            $msg->add(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => 'no data received from wikidata for ' . $wikidata_id]);
         } else {
             $filename = $path . $wikidata_id . self::JSON_EXTENSION;
             if (file_put_contents($filename, $this->pretty_json($json)) === false) {
-                $usr_msg->add(msg_id::FILE_WRITE_FAILED, [msg_id::VAR_FILE_NAME => $filename]);
+                $msg->add(msg_id::FILE_WRITE_FAILED, [msg_id::VAR_FILE_NAME => $filename]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -241,14 +243,14 @@ class import_wikidata
      * @param string $entity_id the wikidata id of the entity used for the cache file name e.g. "Q4917"
      * @param string $entity_json the wikidata json of the entity e.g. the content of Q4917.json
      * @param string $property_json the wikidata json of the property e.g. the content of P2284.json
-     * @param string|null $path the target directory; null uses the wikidata cache test resource folder
-     * @return string the path of the written cache file or an empty string if nothing has been written
+     * @param string|null $path the target directory; null uses the wikidata to import folder
+     * @return string the path of the written import file or an empty string if nothing has been written
      */
     function convert_to_file(string $entity_id, string $entity_json, string $property_json, ?string $path = null): string
     {
         $result = '';
         if ($path === null) {
-            $path = test_paths::IMPORT_WIKIDATA_CACHE;
+            $path = test_paths::IMPORT_WIKIDATA_TO_IMPORT;
         }
         $import = $this->convert($entity_json, $property_json);
         if ($import != []) {
@@ -310,6 +312,7 @@ class import_wikidata
         }
         return [
             json_fields::VERSION => def::PRG_VERSION,
+            json_fields::DATA_VERSION => def::DATA_VERSION_INIT,
             json_fields::WORDS => $words,
             json_fields::TRIPLES => $triples,
             json_fields::VALUES => $values
@@ -336,7 +339,11 @@ class import_wikidata
      */
     private function label(array $entity): string
     {
-        return $entity[self::WD_LABELS][self::WD_LANG_EN][self::WD_VALUE] ?? '';
+        // wikidata stores a label that is the same in most languages only once with the
+        // language code "mul" e.g. "euro" for Q4916 has no extra english label
+        return $entity[self::WD_LABELS][self::WD_LANG_EN][self::WD_VALUE]
+            ?? $entity[self::WD_LABELS][self::WD_LANG_MUL][self::WD_VALUE]
+            ?? '';
     }
 
     /**
@@ -365,7 +372,7 @@ class import_wikidata
             if (array_key_exists($unit_id, $this->unit_labels)) {
                 $result = $this->unit_labels[$unit_id];
             } else {
-                $file = test_paths::IMPORT_WIKIDATA . $unit_id . self::JSON_EXTENSION;
+                $file = test_paths::IMPORT_WIKIDATA_CACHE . $unit_id . self::JSON_EXTENSION;
                 $json = file_exists($file) ? file_get_contents($file) : $this->get_entity_json($unit_id);
                 $decoded = json_decode($json, true);
                 if (is_array($decoded)) {

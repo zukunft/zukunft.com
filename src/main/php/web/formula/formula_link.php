@@ -31,7 +31,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
@@ -39,23 +38,49 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class formula_link extends sandbox_link
 {
+
+    /*
+     * const
+     */
+
+    // crud views
+    const string VIEW_ADD = views::FORMULA_LINK_ADD;
+    const string VIEW_EDIT = views::FORMULA_LINK_EDIT;
+    const string VIEW_DEL = views::FORMULA_LINK_DEL;
+    const int VIEW_ADD_ID = views::FORMULA_LINK_ADD_ID;
+    const int VIEW_EDIT_ID = views::FORMULA_LINK_EDIT_ID;
+    const int VIEW_DEL_ID = views::FORMULA_LINK_DEL_ID;
+
+    // crud message id
+    const msg_id MSG_ADD = msg_id::FORMULA_LINK_ADD;
+    const msg_id MSG_EDIT = msg_id::FORMULA_LINK_EDIT;
+    const msg_id MSG_DEL = msg_id::FORMULA_LINK_DEL;
+
 
     /*
      * object vars
@@ -63,40 +88,44 @@ class formula_link extends sandbox_link
 
     // database fields additional to the user sandbox_link fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
+    // why the formula applies to the phrase e.g. which time period the increase is for
+    public ?string $description = null;
 
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name
+     * @return string|null the generated link name or an empty string e.g. for a new link of an add form
      */
     function name(): string|null
     {
         $result = '';
-
+        // a new formula link of an add form has no linked objects or names yet,
+        // which is a normal state and not an error
         if ($this->formula() != null and $this->phrase() != null) {
             if ($this->formula()->name() <> null and $this->phrase()->name() <> null) {
-                $result .= '"' . $this->phrase()->name() . '" in "'; // e.g. company details
-                $result .= $this->formula()->name() . '"';     // e.g. cash flow statement
+                $result .= '"' . $this->phrase()->name() . '" in "'; // e.g. "minute" in
+                $result .= $this->formula()->name() . '"';     // e.g. "scale minute to sec"
             }
-        } else {
-            $result .= 'formula link objects not set';
         }
         return $result;
     }
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the linked names or an empty string e.g. for a new link of an add form
      */
-    function name_linked(string $back = ''): string
+    function name_linked(array $url_arr = []): string
     {
         $result = '';
-
+        // a new formula link of an add form has no linked objects yet,
+        // which is a normal state and not an error
         if ($this->formula() != null and $this->phrase() != null) {
             global $mtr;
-            $result = $this->formula()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link(NULL, $back);
-        } else {
-            $result .= log_err("The formula name or the phrase name cannot be loaded.", "component_link->name");
+            $result = $this->formula()->name_link($url_arr) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link($url_arr);
         }
-
         return $result;
     }
 
@@ -109,28 +138,34 @@ class formula_link extends sandbox_link
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked objects, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::FORMULA, $url_array)) {
                 $frm = new formula();
                 $frm->set_id($url_array[url_var::FORMULA]);
-                // TODO Prio 2 get from cache (or api)
-                $this->set_formula($frm);
+                $this->set_formula($this->named_from_cache($frm, $dto?->formula_list()));
             }
             if (array_key_exists(url_var::PHRASE, $url_array)) {
                 $phr = new phrase();
                 $phr->set_id($url_array[url_var::PHRASE]);
-                // TODO Prio 2 get from cache (or api)
-                $this->set_phrase($phr);
+                $this->set_phrase($this->named_from_cache($phr, $dto?->phrase_list()));
+            }
+            if (array_key_exists(url_var::FORMULA_LINK_PRIO, $url_array)) {
+                $this->order_nbr = $url_array[url_var::FORMULA_LINK_PRIO];
+            }
+            if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+                $this->description = $url_array[url_var::DESCRIPTION];
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -163,14 +198,13 @@ class formula_link extends sandbox_link
             // TODO Prio 2 get from cache (or api)
             $this->set_phrase($phr);
         }
-        // TODO Prio 1 activate
-        /*
-        if (array_key_exists(json_fields::N, $json_array)) {
-            $this->order_nbr = $json_array[json_fields::REF_TEXT];
-        } else {
-            $this->order_nbr = null;
+        // priority is the api name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $json_array)) {
+            $this->order_nbr = $json_array[json_fields::PRIORITY];
         }
-        */
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->description = $json_array[json_fields::DESCRIPTION];
+        }
         return $msg->is_ok();
     }
 
@@ -182,16 +216,48 @@ class formula_link extends sandbox_link
     /**
      * create an api json array for the backend based on this frontend object
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::FORMULA_ID] = $this->formula()?->id();
         $vars[json_fields::PHRASE_ID] = $this->phrase()?->id();
-        $vars[json_fields::POSITION] = $this->order_nbr;
+        // priority is the api name of the order_nbr db field
+        $vars[json_fields::PRIORITY] = $this->order_nbr;
+        $vars[json_fields::DESCRIPTION] = $this->description;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * @return array parent url array extended with the order number and the description, without empty strings
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::FORMULA_LINK_PRIO] = $this->order_nbr;
+        $url_array[url_var::DESCRIPTION] = $this->description;
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
+     * @return array the db field names mapped to their url var for the change preview and undo links
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            fields::FLD_ORDER_NBR => url_var::FORMULA_LINK_PRIO,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
 
@@ -220,12 +286,24 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * TODO Prio 1 check if the formula description is needed
-     * @return string the display value of the tooltip where null is an empty string
+     * @return type_object|null the formula link type object from the preloaded cache
+     */
+    function link_type(): ?type_object
+    {
+        global $ui_sys;
+        $result = null;
+        if ($this->predicate_id != null) {
+            $result = $ui_sys->typ_lst_cache->frm_lnk_typ->get($this->predicate_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the description of this formula link or an empty string if not set
      */
     function get_description(): string
     {
-        return '';
+        return $this->description ?? '';
     }
 
     function formula_name(): ?string

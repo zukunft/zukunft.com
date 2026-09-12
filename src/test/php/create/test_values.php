@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
@@ -48,10 +49,12 @@ include_once paths::MODEL_VALUE . 'value_time.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -60,6 +63,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -68,10 +72,12 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
@@ -96,7 +102,7 @@ class test_values extends test_objects
      * unit
      */
 
-    function value(): value
+    function value(user_message $msg): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group();
@@ -108,18 +114,75 @@ class test_values extends test_objects
      * frontend value title shows the protection in its subtitle, mirroring the word
      * @return value the test value with admin protection set
      */
-    function value_protected(): value
+    function value_protected(user_message $msg): value
     {
         global $sys;
-        $val = $this->value();
+        $val = $this->value($msg);
         $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $val;
     }
 
-    function value_incomplete(): value
+    /**
+     * @return value_ui the standard test value with the source and the time of the last update
+     *                  as the api sends them for a page request, so that the source link and
+     *                  the last update line of the value default page can be tested
+     */
+    function value_page_ui(user_message $msg): value_ui
+    {
+        $t_src = new test_sources($this->env);
+        $val = $this->value($msg);
+        $val->set_source($t_src->source_reserved());
+        $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
+    /**
+     * @return value_ui the standard test value with the source that test_sources::source_list_ui
+     *                  offers, so that the source selector of the value form can preselect it
+     *                  (the page value uses the reserved source, which is not in that list)
+     */
+    function value_form_ui(user_message $msg): value_ui
+    {
+        $t_src = new test_sources($this->env);
+        $val = $this->value($msg);
+        $val->set_source($t_src->source_filled_included());
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
+    /**
+     * @return value_ui the pi value as the api sends it for a page request, with the other
+     *                  mathematical constants as the similar values and with the results that
+     *                  use it, so that the similar values and the results column of the value
+     *                  default page can be tested; pi is not part of its own similar values,
+     *                  like value::load_values_similar removes it
+     */
+    function value_page_related_ui(user_message $msg): value_ui
+    {
+        $t_res = new test_results($this->env);
+        $val = $this->value_pi();
+        $similar = $this->value_list_math();
+        $similar->remove($val);
+        $val->values_similar = $similar;
+        $val->results_related = $t_res->result_list();
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
+    /**
+     * @return value_ui the standard test value whose source is known by its id only, which is the
+     *                  state of a value built from a url (see value::set_source_id), used to test
+     *                  that the value page names such a source from the frontend cache
+     */
+    function value_source_by_id_ui(user_message $msg): value_ui
+    {
+        $val_ui = new value_ui($this->value($msg)->api_json([api_types::INCL_PHRASES], $msg));
+        $val_ui->set_source_id(sources::BFS_ID);
+        return $val_ui;
+    }
+
+    function value_incomplete(user_message $msg): value
     {
         $t_grp = new test_groups($this->env);
-        $val = $this->value();
+        $val = $this->value($msg);
         $val->set_grp($t_grp->group_incomplete());
         return $val;
     }
@@ -128,6 +191,16 @@ class test_values extends test_objects
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_pi_symbol();
+        return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
+    }
+
+    /**
+     * @return value the pi number value as keyed in the seeded database by the "Pi (math)" triple
+     */
+    function value_pi_math(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $grp = $t_grp->group_pi_math();
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
@@ -319,6 +392,80 @@ class test_values extends test_objects
     }
 
     /**
+     * a value list that groups into many small time groups: two values per year over seven years,
+     * so that no single group reaches the value list limit but the page total does
+     * e.g. to test that the total number of shown values is limited however the values are grouped
+     *
+     * @return value_list with more values in many small groups than the value list limit
+     */
+    function value_list_many_year_groups(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $zh = $t_wrd->word_zh()->phrase();
+        $bern = $t_wrd->word_bern()->phrase();
+        $years = [
+            $t_wrd->word_2019(), $t_wrd->word_2020(), $t_wrd->word_2021(), $t_wrd->word_2022(),
+            $t_wrd->word_2023(), $t_wrd->word_2024(), $t_wrd->word_2025()
+        ];
+
+        $lst = new value_list($this->env->usr1);
+        $number = 400000;
+        foreach ($years as $yr) {
+            $lst->add($this->value_for_phrases([$inhab, $zh, $yr->phrase()], $number));
+            $number++;
+            $lst->add($this->value_for_phrases([$inhab, $bern, $yr->phrase()], $number));
+            $number++;
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend value list with many small year groups
+     */
+    function value_list_many_year_groups_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_many_year_groups(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * a value list where all values share one phrase, so that they form a single group with more
+     * members than the configured value list limit e.g. to test that a group is shortened
+     * each value has its own year, so that the values are grouped by the shared phrase
+     * and not by the time word
+     *
+     * @return value_list with more values in one group than the value list limit
+     */
+    function value_list_large_group(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $zh = $t_wrd->word_zh()->phrase();
+        $years = [
+            $t_wrd->word_2019(), $t_wrd->word_2020(), $t_wrd->word_2021(), $t_wrd->word_2022(),
+            $t_wrd->word_2023(), $t_wrd->word_2024(), $t_wrd->word_2025(), $t_wrd->word_2026()
+        ];
+
+        $lst = new value_list($this->env->usr1);
+        $number = 400000;
+        foreach ($years as $yr) {
+            $lst->add($this->value_for_phrases([$inhab, $zh, $yr->phrase()], $number));
+            $number++;
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend value list with one group above the value list limit
+     */
+    function value_list_large_group_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_large_group(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value with the maximal number of prime phrase
      */
     function value_main(): value
@@ -394,7 +541,7 @@ class test_values extends test_objects
     /**
      * @return value with the inhabitants of the city of zurich
      */
-    function value_zh(): value
+    function people_zh(): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_zh_2019();
@@ -404,11 +551,34 @@ class test_values extends test_objects
     /**
      * @return value with the inhabitants of the canton of zurich
      */
-    function value_canton(): value
+    /**
+     * @return value the inhabitants of the canton Zurich scaled with the symbol word "mio",
+     *               so that the symbol tooltip of the related word "million" can be tested
+     */
+    function people_zh_canton_mio_symbol(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $grp = $t_grp->group_canton_mio_symbol();
+        return new value($this->env->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
+    }
+
+    function people_zh_canton_mio_symbol_ui(): value_ui
+    {
+        $tl = new test_lib();
+        return $tl->ui_value($this->people_zh_canton_mio_symbol());
+    }
+
+    function people_zh_canton_mio(): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_canton();
         return new value($this->env->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
+    }
+
+    function people_zh_canton_mio_ui(): value_ui
+    {
+        $tl = new test_lib();
+        return $tl->ui_value($this->people_zh_canton_mio());
     }
 
     /**
@@ -423,7 +593,7 @@ class test_values extends test_objects
 
     /**
      * @return value with the inhabitants of Switzerland
-     *               but with "mio" missing the scaling type to test the scaling type check
+     *               but with "million" missing the scaling type to test the scaling type check
      */
     function value_ch_unscaled(): value
     {
@@ -435,34 +605,34 @@ class test_values extends test_objects
     /**
      * @return value_list with only a few values for first basic tests
      */
-    function value_list_short(): value_list
+    function value_list_short(user_message $msg): value_list
     {
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value());
-        $lst->add($this->value_zh());
+        $lst->add($this->value($msg));
+        $lst->add($this->people_zh());
         return $lst;
     }
 
     /**
      * @return value_list with the standard test values
      */
-    function value_list(): value_list
+    function value_list(user_message $msg): value_list
     {
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value());
-        $lst->add($this->value_zh());
+        $lst->add($this->value($msg));
+        $lst->add($this->people_zh());
         return $lst;
     }
 
     /**
      * @return value_list with all values for selection and paging tests
      */
-    function value_list_all(): value_list
+    function value_list_all(user_message $msg): value_list
     {
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value());
-        $lst->add($this->value_zh());
-        $lst->add($this->value_canton());
+        $lst->add($this->value($msg));
+        $lst->add($this->people_zh());
+        $lst->add($this->people_zh_canton_mio());
         $lst->add($this->value_ch());
         $lst->add($this->value_pi());
         $lst->add($this->value_e());
@@ -486,23 +656,263 @@ class test_values extends test_objects
     function value_list_zh(): value_list
     {
         $val_lst = new value_list($this->env->usr1);
-        $val_lst->add($this->value_zh());
-        $val_lst->add($this->value_canton());
+        $val_lst->add($this->people_zh());
+        $val_lst->add($this->people_zh_canton_mio());
         $val_lst->add($this->value_ch());
         return $val_lst;
     }
 
     // TODO Prio 1 easy: rename a _dsp functions and object to _ui
-    function value_list_ui(): value_list_ui
+    function value_list_ui(user_message $msg): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list(), [api_types::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list($msg), [api_types::INCL_PHRASES]);
     }
 
     function value_list_zh_ui(): value_list_ui
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_zh(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss and the potential gain of every global problem of solution_prio.json,
+     * so that the start page table of the global issues can be tested with the data that the
+     * import creates: per problem the loss in trillion EUR and the gain of its solution in
+     * billion htp, the eight problems whose numbers are an estimate marked with "assumed"
+     *
+     * @return value_list the cost and gain values of the global problems as defined in
+     *         solution_prio.json, e.g. to test the start page table of the global issues
+     */
+    function value_list_solution_prio(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $gain = $t_wrd->word_gain()->phrase();
+        $trillion = $t_wrd->word_trillion()->phrase();
+        $billion = $t_wrd->word_billion()->phrase();
+        $eur = $t_wrd->word_eur()->phrase();
+        $htp = $t_wrd->word_htp()->phrase();
+        $assumed = $t_wrd->word_assumed()->phrase();
+        // per problem the phrase, the loss, the solution phrase, the gain and whether the two
+        // numbers are estimated, in the order of the start page ranking
+        $prio_lst = [
+            [$t_trp->global_warming()->phrase(), 31.5, $t_trp->reduce_emissions()->phrase(), 35.2, false],
+            [$t_wrd->word_populism()->phrase(), 23.8, $t_trp->avoid_wrong_decisions()->phrase(), 34.1, false],
+            [$t_wrd->word_poverty()->phrase(), 20.4, $t_wrd->word_research()->phrase(), 34.1, false],
+            [$t_wrd->word_health()->phrase(), 13.6, $t_wrd->word_taxes()->phrase(), 8.8, false],
+            [$t_wrd->word_education()->phrase(), 9.4, $t_wrd->word_spending()->phrase(), 14.3, false],
+            [$t_trp->wealth_concentration()->phrase(), 11.2, $t_trp->basic_income()->phrase(), 16, true],
+            [$t_wrd->word_disinformation()->phrase(), 8, $t_trp->platform_regulation()->phrase(), 12, true],
+            [$t_trp->market_power()->phrase(), 7.3, $t_trp->market_share_tax()->phrase(), 6, true],
+            [$t_trp->biased_information()->phrase(), 6.5, $t_trp->delphi_method()->phrase(), 9, true],
+            [$t_trp->black_box_ai()->phrase(), 4.5, $t_trp->public_ai()->phrase(), 7, true],
+            [$t_trp->citizen_participation()->phrase(), 3.2, $t_trp->fluid_democracy()->phrase(), 5.5, true],
+            [$t_trp->gdp_mismeasurement()->phrase(), 2.5, $t_trp->gross_domestic_usage()->phrase(), 4, true],
+            [$t_trp->proprietary_software()->phrase(), 1.8, $t_trp->free_software()->phrase(), 3, true],
+        ];
+        $lst = new value_list($this->env->usr1);
+        foreach ($prio_lst as [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed]) {
+            $loss_phr = [$problem, $potential, $loss, $trillion, $eur];
+            $gain_phr = [$problem, $solution, $potential, $gain, $billion, $htp];
+            if ($is_assumed) {
+                $loss_phr[] = $assumed;
+                $gain_phr[] = $assumed;
+            }
+            $lst->add($this->value_for_phrases($loss_phr, $loss_nbr));
+            $lst->add($this->value_for_phrases($gain_phr, $gain_nbr));
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the solution_prio cost and gain values for frontend unit testing
+     */
+    function value_list_solution_prio_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of global warming with the bounds of its probability range and its
+     * confidence and the potential gain of its solution without bounds, with the numbers of
+     * solution_prio.json, so that the range display of a value table can be tested: the bounds
+     * are tagged "low" and "high", the confidence "confidence" and the loss is an estimate, so
+     * it carries "assumed"
+     *
+     * @return value_list the centre, low and high potential loss, its confidence and the gain
+     */
+    function value_list_range(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase(),
+            $t_wrd->word_assumed()->phrase()];
+        $low_phr = array_merge($loss_phr, [$t_wrd->word_low()->phrase()]);
+        $high_phr = array_merge($loss_phr, [$t_wrd->word_high()->phrase()]);
+        // the confidence is a share, so it names no unit of the loss but the percent format
+        $conf_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
+            $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase(),
+            $t_wrd->word_assumed()->phrase()];
+        $gain_phr = [$problem, $potential, $t_wrd->word_gain()->phrase(),
+            $t_wrd->word_billion()->phrase(), $t_wrd->word_htp()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($loss_phr, 2.2));
+        $lst->add($this->value_for_phrases($low_phr, 0.88));
+        $lst->add($this->value_for_phrases($high_phr, 5.5));
+        $lst->add($this->value_for_phrases($conf_phr, 0.2));
+        $lst->add($this->value_for_phrases($gain_phr, 35.2));
+        return $lst;
+    }
+
+    /**
+     * one value per defined column of a table, so that a table with more defined columns than
+     * fit on the widest screen can be tested: every defined column is shown and the tiers hide
+     * them per screen size instead of a fixed number of columns
+     *
+     * @return value_list one value for each of the "problem", "solution", "cost", "gain" and
+     *         "loss" columns, all about global warming
+     */
+    function value_list_defined_columns(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $col_phr_lst = [
+            $t_wrd->word_problem()->phrase(),
+            $t_wrd->solution()->phrase(),
+            $t_wrd->word_cost()->phrase(),
+            $t_wrd->word_gain()->phrase(),
+            $t_wrd->word_loss()->phrase(),
+        ];
+        $lst = new value_list($this->env->usr1);
+        $number = 1;
+        foreach ($col_phr_lst as $col_phr) {
+            $lst->add($this->value_for_phrases([$problem, $col_phr], $number));
+            $number++;
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui one value per defined column for frontend unit testing
+     */
+    function value_list_defined_columns_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_defined_columns(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui the potential loss with its range for frontend unit testing
+     */
+    function value_list_range_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_range(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of global warming in two units, with the numbers of solution_prio.json:
+     * the absolute loss in trillion EUR and the loss as a share of the global happy time points,
+     * so that a table with one column per unit can be tested
+     *
+     * @return value_list the potential loss in trillion EUR and in percent htp
+     */
+    function value_list_two_units(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $eur_phr = [$problem, $potential, $loss, $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase(), $t_wrd->word_assumed()->phrase()];
+        $htp_phr = [$problem, $potential, $loss, $t_wrd->word_percent()->phrase(),
+            $t_wrd->word_htp()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($eur_phr, 2.2));
+        $lst->add($this->value_for_phrases($htp_phr, -0.37));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the potential loss in two units for frontend unit testing
+     */
+    function value_list_two_units_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_two_units(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the loss of two problems in a unit that is a triple typed "measure" (gram per kWh), so
+     * that the table header is expected to show the triple behind the "in" like a measure word
+     *
+     * @return value_list the loss of global warming and of populism in gram per kWh
+     */
+    function value_list_unit_triple(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $loss = $t_wrd->word_loss()->phrase();
+        $unit = $t_trp->gram_per_kwh()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->global_warming()->phrase(), $loss, $unit], 86));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $loss, $unit], 42));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss in a triple unit for frontend unit testing
+     */
+    function value_list_unit_triple_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_unit_triple(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of the solution of global warming and the confidence of that loss, which
+     * names the problem but not the solution, like the "initial effort" of solution_prio.json
+     *
+     * a confidence value can name less than the value it qualifies, so a match by the equal
+     * subject is not enough: the confidence would keep its own share unit, which opens a second
+     * column of the same phrase that shows no number at all (see split_by_unit)
+     *
+     * @return value_list the potential loss in trillion EUR and its confidence in percent
+     */
+    function value_list_confidence_wider(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $loss_phr = [$problem, $t_trp->reduce_emissions()->phrase(), $potential, $loss,
+            $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase()];
+        // the confidence of the loss is stated for the problem, so it names no solution
+        $conf_phr = [$problem, $potential, $loss,
+            $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($loss_phr, 2.2));
+        $lst->add($this->value_for_phrases($conf_phr, 0.2));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss with a wider confidence for frontend unit testing
+     */
+    function value_list_confidence_wider_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_confidence_wider(), [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -549,10 +959,25 @@ class test_values extends test_objects
         return $tl->list_to_ui($this->value_list_math(), [api_types::INCL_PHRASES]);
     }
 
-    function list_all_ui(): value_list_ui
+    /**
+     * two values that name the reserved test source and one value without a source, so that the
+     * value list of the source default view can be tested for both the included and the excluded case
+     * @return value_list_ui the ui value list with the values of the reserved test source
+     */
+    function list_by_source_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_all(), [api_types::INCL_PHRASES]);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->transition_cs_133());
+        $lst->add($this->light_speed());
+        $lst->add($this->people_zh());
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    function list_all_ui(user_message $msg): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_all($msg), [api_types::INCL_PHRASES]);
     }
 
     /**

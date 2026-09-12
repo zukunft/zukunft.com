@@ -34,13 +34,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\result;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_list_value.php';
 include_once html_paths::HELPER . 'config.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::FORMULA . 'formula.php';
@@ -55,16 +54,15 @@ include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_HELPER . 'CombineObject.php';
-include_once paths::SHARED_HELPER . 'IdObject.php';
-include_once paths::SHARED_HELPER . 'TextIdObject.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_HELPER . 'CombineObject.php';
+include_once html_paths::SHARED_HELPER . 'IdObject.php';
+include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\group\group;
@@ -80,7 +78,6 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_value;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -121,7 +118,7 @@ class result_list extends sandbox_list_value
      * @param group_list $lst the group used for the selection
      * @return bool true if result has been loaded
      */
-    function load_by_formula_and_group_list(formula $frm, group_list $lst): bool
+    function load_by_formula_and_group_list(formula $frm, group_list $lst, user_message $msg): bool
     {
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
@@ -135,7 +132,7 @@ class result_list extends sandbox_list_value
      * @param formula $frm the formula to select the results
      * @return bool true if value or phrases are found
      */
-    function load_by_formula(formula $frm): bool
+    function load_by_formula(formula $frm, user_message $msg): bool
     {
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
@@ -148,7 +145,7 @@ class result_list extends sandbox_list_value
      * @param group $grp a named object used for selection e.g. a formula
      * @return bool true if value or phrases are found
      */
-    function load_by_group(group $grp): bool
+    function load_by_group(group $grp, user_message $msg): bool
     {
         $data = array();
         $data[url_var::GROUP] = $grp->id();
@@ -201,12 +198,13 @@ class result_list extends sandbox_list_value
     }
 
     /**
-     * get a list with the results related directly to the given formula, word, triple or source
+     * get a list with the results related directly to the given formula, word, triple, source
+     * or value
      *
-     * @param word|triple|source|formula|db_object|null $dbo to filter the values
+     * @param word|triple|source|value|formula|db_object|null $dbo to filter the values
      * @return result_list with only the direct linked values
      */
-    function filter(word|triple|source|formula|db_object|null $dbo = null): result_list
+    function filter(word|triple|source|value|formula|db_object|null $dbo = null): result_list
     {
         $res_lst = new result_list();
         if ($dbo::class == formula::class) {
@@ -230,7 +228,56 @@ class result_list extends sandbox_list_value
                 }
             }
         }
+        if ($dbo::class == value::class) {
+            // the results of a value are the results based on all its phrases, because the
+            // backend result_list::load_by_val selects them with 'and' (the default of
+            // load_by_phrase_list), unlike the similar values which share only one phrase
+            $phr_names = $dbo->grp->phr_lst()->names();
+            foreach ($this->lst() as $res) {
+                if (array_diff($phr_names, $res->grp->phr_lst()->names()) == []) {
+                    $res_lst->add_result($res);
+                }
+            }
+        }
         return $res_lst;
+    }
+
+
+    /*
+     * sort
+     */
+
+    /**
+     * sort this result list in place so that the result with the highest number is first and the
+     * order is always deterministic, so the html order never depends on the api/db row order
+     * (see docs/llm/frontend.md); number first, then the group name so results with the same number
+     * keep a stable order that does not depend on the volatile result (group) id (which is packed
+     * from the phrase db ids and shifts between database rebuilds), mirroring value_list::sort_by_impact
+     * @return void
+     */
+    function sort_by_number(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(result $a, result $b) => $b->number() <=> $a->number()
+            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
+        $this->set_lst($lst);
+    }
+
+    /**
+     * the deterministically sorted list rendered by the generic ListBase::list(); overridden so the
+     * result list shown in a view (e.g. via ui_list) does not depend on the api/db row order
+     */
+    function list(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $url_arr = [],
+        string       $style = '',
+        ?int         $limit = null,
+        ?int         $page = null
+    ): string
+    {
+        $this->sort_by_number();
+        return parent::list($msg, $context_phr_lst, $url_arr, $style, $limit, $page);
     }
 
 
@@ -244,6 +291,7 @@ class result_list extends sandbox_list_value
      */
     function display(): string
     {
+        $this->sort_by_number();
         $results = array();
         foreach ($this->lst() as $res) {
             $results[] = $res->display();
@@ -252,22 +300,24 @@ class result_list extends sandbox_list_value
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @return string with a list of the result names with html links
      * ex. names_linked
      */
-    function display_linked(string $back = ''): string
+    function display_linked(array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($url_arr));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $limit the max number of entries to show (kept compatible with the parent signature)
      * @return array with a list of the result names with html links
      */
-    protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    protected function names_linked(array $url_arr = [], int $limit = config::LIMIT_NAME_LIST): array
     {
+        // sort first so the limited subset and its order do not depend on the api/db row order
+        $this->sort_by_number();
         $result = array();
         $i = 0;
         foreach ($this->lst() as $res) {
@@ -280,11 +330,15 @@ class result_list extends sandbox_list_value
     }
 
     /**
+     * @param phrase_list|null $context_phr_lst the phrases the reader assumes and that are left out of the header
      * @return string the html code to show the results as a table to the user
      */
-    function table(?phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(?phrase_list $context_phr_lst = null): string
     {
         $html = new html_base();
+
+        // sort so the highest number is shown first and the row order is always deterministic
+        $this->sort_by_number();
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;
@@ -312,7 +366,7 @@ class result_list extends sandbox_list_value
                 $header_rows = $html->tr($header);
             }
             $row = $html->td($res->display_linked($common_phrases));
-            $row .= $html->td($res->value_linked($back));
+            $row .= $html->td($res->value_linked());
             $rows .= $html->tr($row);
         }
 
@@ -323,7 +377,7 @@ class result_list extends sandbox_list_value
      * create the html code to show the formula results to the user
      * TODO move to result_list_min_display
      */
-    function display_old(string $back = ''): string
+    function display_old(user_message $msg): string
     {
         $lib = new library();
         $html = new html_base();
@@ -346,12 +400,13 @@ class result_list extends sandbox_list_value
                 $phr_lst = clone $res->grp->phr_lst;
                 if (isset($res->time_phr)) {
                     log_debug("add time " . $res->time_phr->name() . ".");
-                    $phr_lst->add($res->time_phr);
+                    $phr_lst->add($res->time_phr, $msg);
                 }
-                $phr_lst_ui = new phrase_list($phr_lst->api_json());
+                $api_msg = new user_message(); // not reported: a legacy display function without a message, see display_old
+                $phr_lst_ui = new phrase_list($phr_lst->api_json([], $api_msg));
                 $result .= '</tr><tr>';
                 $result .= '<td>' . $phr_lst_ui->name_link() . '</td>';
-                $result .= '<td>' . $res->display_linked($back) . '</td>';
+                $result .= '<td>' . $res->display_linked() . '</td>';
                 $result .= '</tr>';
             }
         }
@@ -363,16 +418,16 @@ class result_list extends sandbox_list_value
 
     /**
      * create the pure html (5) code for all formula links related to this value list
-     * @param back_trace|null $back list of past url calls of the session user
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code part with the formula links
      */
-    function frm_links_html(?back_trace $back = null): string
+    function frm_links_html(array $url_arr = []): string
     {
         $result = '';
         $html = new html_base();
         $formula_links = '';
         foreach ($this->lst() as $res) {
-            $formula_links .= ' ' . $html->ref($html->url_new(views::FORMULA_EDIT_ID, $res->frm->id, '', $back->url_encode()), $res->number) . ' ';
+            $formula_links .= ' ' . $html->ref($html->url_back(views::FORMULA_EDIT_ID, $res->frm->id, $url_arr), $res->number) . ' ';
         }
         if ($formula_links <> '') {
             $result .= ' (or ' . $formula_links . ')';

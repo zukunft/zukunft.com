@@ -44,11 +44,11 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -58,16 +58,17 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -95,6 +96,9 @@ class view_base extends sandbox_code_id
     const string VIEW_ADD = views::VIEW_ADD;
     const string VIEW_EDIT = views::VIEW_EDIT;
     const string VIEW_DEL = views::VIEW_DEL;
+    const int VIEW_ADD_ID = views::VIEW_ADD_ID;
+    const int VIEW_EDIT_ID = views::VIEW_EDIT_ID;
+    const int VIEW_DEL_ID = views::VIEW_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VIEW_ADD;
@@ -108,6 +112,10 @@ class view_base extends sandbox_code_id
 
     // code_id is used for system views
     protected component_list $cmp_lst;
+
+    // the terms that use this view, filled only if the view has been loaded for its page
+    // (see load_by_id_with_related), otherwise null
+    public ?term_list $terms_related = null;
 
     // objects that should be displayed (only one is supposed to be not null)
     // the word, triple or formula object that should be shown to the user
@@ -133,17 +141,17 @@ class view_base extends sandbox_code_id
     /**
      * set the vars of this view bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         if (array_key_exists(url_var::STYLE, $url_array)) {
             $this->set_style_id($url_array[url_var::STYLE]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -164,6 +172,15 @@ class view_base extends sandbox_code_id
         $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
             $cmp_lst->api_mapper($json_array[json_fields::COMPONENTS]);
+        }
+        // only a page request asks for the terms that use the view, and the backend leaves out
+        // an empty list, so a missing list means no terms (see value::api_mapper for the pattern)
+        if (is_array($json_array[json_fields::TERMS] ?? null)) {
+            $trm_lst = new term_list();
+            $trm_lst->api_mapper($json_array[json_fields::TERMS]);
+            $this->terms_related = $trm_lst;
+        } else {
+            $this->terms_related = null;
         }
         // set the objects (e.g. word)
         if (array_key_exists(api::API_WORD, $json_array)) {
@@ -199,17 +216,17 @@ class view_base extends sandbox_code_id
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
 
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::STYLE] = $this->get_style_id();
-        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst);
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst, $msg);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -233,13 +250,13 @@ class view_base extends sandbox_code_id
         return $this->style_id;
     }
 
-    function type_code_id(): ?string
+    function type_code_id(user_message $msg): ?string
     {
         global $ui_sys;
         $msk_typ_lst = $ui_sys->typ_lst_cache->msk_typ;
-        $id = $this->type_id();
+        $id = $this->type_id($msg);
         if ($id != null) {
-            return $msk_typ_lst->get($this->type_id())?->get_code_id();
+            return $msk_typ_lst->get($this->type_id($msg))?->get_code_id();
         } else {
             return '';
         }
@@ -255,11 +272,11 @@ class view_base extends sandbox_code_id
      * @param int $id
      * @return bool
      */
-    function load_by_id_with(int $id): bool
+    function load_by_id_with(int $id, user_message $msg): bool
     {
         $data = [];
         $data[url_var::LEVELS] = 1;
-        return parent::load_by_id($id, $data);
+        return parent::load_by_id($id, $msg, $data);
     }
 
 
@@ -269,21 +286,26 @@ class view_base extends sandbox_code_id
 
     /**
      * create the html code to show the component name with the link to change the component parameters
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::VIEW_EDIT_ID): string
+    function name_link(
+        array  $url_arr = [],
+        string $style = '',
+        int $msk_id = views::VIEW_EDIT_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
-    function title(db_object|type_object|combine_named|sandbox_list $dbo): string
+    function title(db_object|type_object|combine_named|sandbox_list $dbo, user_message $msg): string
     {
         // the object name comes first, then the view name, joined by the configured title separator
         $html = new html_base();
-        return $html->concat_title_text($dbo->name(), $this->name());
+        return $html->concat_title_text($dbo->name(), $this->name(), $msg);
     }
 
 
@@ -298,7 +320,7 @@ class view_base extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    public function view_type_selector(string $form, ?type_lists $typ_lst): string
+    public function view_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -306,14 +328,14 @@ class view_base extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_type_id = $this->type_id();
+        $used_type_id = $this->type_id($msg);
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->msk_typ->default_id();
         }
         return $typ_lst->msk_typ->selector($form, $used_type_id);
     }
 
-    public function style_selector(string $form, ?type_lists $typ_lst): string
+    public function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -343,7 +365,7 @@ class view_base extends sandbox_code_id
      * overwrite
      */
 
-    function dsp_navbar(?data_object $cfg = null, string $back = ''): string
+    function dsp_navbar(?data_object $cfg = null, array $url_arr = []): string
     {
         $msg = 'ERROR: dsp_navbar is expected to be overwritten by the child object ' . $this::class;
         log_err($msg);

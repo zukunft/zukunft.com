@@ -37,6 +37,15 @@ class def
 {
 
     /*
+     * general
+     */
+
+    // TODO Prio 1 use this for all named test rows and add a post cleanup check that now change log of a test is remaining
+    // general prefix for named test objects that should never be used for any real object
+    const string TEST_PREFIX = 'zukunft.com System TesT ';
+
+
+    /*
      * fallback
      */
 
@@ -58,6 +67,8 @@ class def
     // fallback separator between the object, view and pod name in the html (browser tab) page title;
     // overridden by config.yaml entry frontend.lists.separator.title
     const string FALLBACK_TITLE_SEPARATOR = ' - ';
+    // between the label and the value of a read only field e.g. 'Plural: are' on the verb page
+    const string FALLBACK_LABEL_SEPARATOR = ': ';
     // fallback for the minimal screen width in pixel to show 'side or below' components side by side;
     // overridden by config.yaml entry frontend.layout.side width.min
     const int FALLBACK_MIN_SIDE_WIDTH = 1000;
@@ -65,8 +76,16 @@ class def
     // (up to position_types::MAX_SIDE_COLUMNS) is shown side by side;
     // overridden by config.yaml entry frontend.layout.side width.max
     const int FALLBACK_WIDE_SIDE_WIDTH = 2800;
+    // fallback for the number of the most relevant values read for one phrase and used by the
+    // phrase values view to pick the column phrases;
+    // overridden by config.yaml entry frontend.lists.limit.values.read
+    const int FALLBACK_PHRASE_VALUES_READ = 1000;
+    // fallback for the number of triples read for one verb and sent to the verb page;
+    // overridden by config.yaml entry frontend.lists.limit.triples.read
+    const int FALLBACK_VERB_TRIPLES_READ = 100;
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
+    const string PROJECT_PATH = '/zukunft.com/'; // the default project path used to filter the exception trace
 
 
     /*
@@ -78,6 +97,7 @@ class def
     const string LINK_AGPL = 'https://www.gnu.org/licenses/agpl.html';
     const string LINK_GITHUB_TREAM = 'https://github.com/zukunft/tream';
     const string LINK_TREAM_DEMO = 'https://tream.biz/p4a/applications/tream/';
+    const string LINK_DOI = 'https://doi.org/'; // the base url to create the link of a doi e.g. of a source
     const string LINK_PAPER_DELPHI = 'https://dx.doi.org/10.2139/ssrn.6497759';
     const string LINK_PAPER_IMPERATIVE = 'https://doi.org/10.5281/zenodo.19443909';
 

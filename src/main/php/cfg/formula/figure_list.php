@@ -80,19 +80,19 @@ class figure_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->get_user());
-            if ($fig->api_mapper($json_phr, $usr_msg)) {
-                $this->add($fig);
+            if ($fig->api_mapper($json_phr, $msg)) {
+                $this->add($fig, $msg);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -106,11 +106,11 @@ class figure_list extends sandbox_list
      * @param fig_ids $ids figure ids that should be loaded
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(fig_ids $ids): bool
+    function load_by_ids(fig_ids $ids, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -119,15 +119,15 @@ class figure_list extends sandbox_list
      * @param bool $load_all force to include also the excluded figures e.g. for admins
      * @return bool true if at least one phrase has been loaded
      */
-    function load(sql_par $qp, bool $load_all = false): bool
+    function load(sql_par $qp, user_message $msg, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;
 
         if ($qp->name == '') {
-            log_err('The query name cannot be created to load a ' . self::class);
+            log_err_msg('The query name cannot be created to load a ' . self::class, $msg);
         } else {
-            $db_rows = $db_con->get($qp, 'figure list');
+            $db_rows = $db_con->get($qp, $msg, 'figure list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     if ($db_row[figure::FLD_ID] > 0) {
@@ -137,7 +137,7 @@ class figure_list extends sandbox_list
                         $res = new result($this->get_user());
                         $fig = new figure($res);
                     }
-                    $fig->row_mapper($db_row, $qp->ext);
+                    $fig->row_mapper($db_row, $msg, $qp->ext);
                     $this->add_obj($fig);
                     $result = true;
                 }
@@ -194,10 +194,10 @@ class figure_list extends sandbox_list
     }
 
     // TODO use cache to improve speed
-    function load_phrases(): void
+    function load_phrases(user_message $msg): void
     {
         foreach ($this->lst() as $fig) {
-            $fig->obj()->grp()->load_phrases();
+            $fig->obj()->grp()->load_phrases($msg);
         }
     }
 
@@ -209,19 +209,20 @@ class figure_list extends sandbox_list
     /**
      * add one figure to the figure list, but only if it is not yet part of the figure list
      * @param figure|null $fig_to_add the figure that should be added to this list (if it does not yet exist)
+     * @param user_message $msg to collect errors during adding
      * @returns bool true the term has been added
      */
-    function add(?figure $fig_to_add): bool
+    function add(?figure $fig_to_add, user_message $msg): bool
     {
-        $usr_msg = new user_message();
+        // a local buffer, because this list add reports only the ok flag as its return value
         // check parameters
         if ($fig_to_add != null) {
             log_debug($fig_to_add->dsp_id());
             if ($fig_to_add->id() <> 0 or $fig_to_add->name() != '') {
-                parent::add_obj($fig_to_add, false, $usr_msg);
+                parent::add_obj($fig_to_add, false, $msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -251,12 +252,12 @@ class figure_list extends sandbox_list
     /*
      * TODO review
      */
-    function get_first_id(): int
+    function get_first_id(user_message $msg): int
     {
         $result = 0;
         if ($this != null) {
             if (count($this->lst()) > 0) {
-                $fig = $this->get_by_key(0);
+                $fig = $this->get_by_key(0, $msg);
                 if ($fig != null) {
                     $result = $fig->id();
                 }

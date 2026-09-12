@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
@@ -41,6 +43,8 @@ class figure_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $html = new html_base();
         $t_fig = new test_figures($t);
 
@@ -48,11 +52,11 @@ class figure_ui_tests
         $ts = 'unit ui html figure ';
         $t->header($ts);
 
-        $fig = new figure($t_fig->figure_value()->api_json());
+        $fig = new figure($t_fig->figure_value($msg)->api_json());
         $test_page = $html->text_h2('Figure display test');
         $test_page .= 'with tooltip: ' . $fig->display() . '<br>';
-        $test_page .= 'with link: ' . $fig->display_linked() . '<br>';
-        $t->html_page_test($test_page, 'figure', 'figure', $t);
+        $test_page .= 'with link: ' . $fig->display_linked($msg_ui) . '<br>';
+        $t->html_page_test($test_page, 'figure', 'figure', $msg_ui);
     }
 
 }

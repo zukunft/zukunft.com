@@ -45,7 +45,6 @@ class db_setup_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $lib = new library();
 
         // start the test section (ts)

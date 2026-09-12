@@ -83,10 +83,27 @@ class component_types
     const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
     const int TITLE_VALUE_EDIT_ID = 203;
     const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
+    const string TITLE_LINK_EDIT = "title_of_link_with_edit_link";
+    const int TITLE_LINK_EDIT_ID = 222;
+    const string TITLE_LINK_EDIT_COM = "show the generated name of a link object as the page title and the two linked objects with links in the subtitle, plus the edit link";
+    // the page title of a phrase: the same title as TITLE_NAMED_EDIT for a word and the same
+    // title as TITLE_TRIPLE_EDIT for a triple, each including its subheader, so that one view
+    // can be used for a word and for a triple without a title component per phrase type
+    const string PHRASE_TITLE = "phrase_title";
+    const int PHRASE_TITLE_ID = 213;
+    const string PHRASE_TITLE_COM = "show the phrase name as the page title with the subheader of a word or of a triple, plus the edit link";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
     const int FORM_FIELD_DESCRIPTION_ID = 22;
+    // the code id that links a database row to program code; the input field is only shown
+    // to a user whose profile passes can_set_code_id e.g. on the source add and edit forms
+    const string FORM_FIELD_CODE_ID = "system_form_field_code_id";
+    const int FORM_FIELD_CODE_ID_ID = 240;
+    // the user interface message links of a component; like the code id the input fields are
+    // only shown to a user whose profile passes can_set_code_id on the component add and edit forms
+    const string FORM_FIELD_UI_MSG = "system_form_field_ui_msg";
+    const int FORM_FIELD_UI_MSG_ID = 246;
 
     // select object fields
     const string FORM_SELECT_PHRASE = "form_select_phrase";
@@ -211,6 +228,9 @@ class component_types
     const int FORM_FIELD_REF_SOURCE_ID = 165;
     const string SYSTEM_SHOW_REF_URL = "system_show_field_ref_url";
     const int FORM_FIELD_REF_URL_ID = 166;
+    // the word or triple this reference belongs to with a link e.g. for the ref default page
+    const string SHOW_REF_PHRASE = "system_show_field_ref_phrase";
+    const int SHOW_REF_PHRASE_ID = 242;
     const string FORM_FIELD_EXTERNAL_KEY = "system_form_field_external_key";
     const int FORM_FIELD_EXTERNAL_KEY_ID = 167;
 
@@ -235,11 +255,19 @@ class component_types
     // formulas only fields
     const string FORM_FIELD_FORMULA_EXPRESSION = "system_form_field_formula_expression";
     const int FORM_FIELD_FORMULA_EXPRESSION_ID = 53;
+    const string FORM_FIELD_FORMULA_LATEX = "system_form_field_formula_latex";
+    const int FORM_FIELD_FORMULA_LATEX_ID = 211;
     const string EXPRESSION = "expression";
     const int EXPRESSION_ID = 62;
     const string EXPRESSION_LATEX_LINK = "expression_latex_link";
     const int EXPRESSION_LATEX_LINK_ID = 202;
     const string EXPRESSION_LATEX_LINK_COM = "display the formula expression in the latex format with a tooltip and a link for each term";
+    // the same latex, but in the column beside the latex field of the formula form
+    const string EXPRESSION_LATEX_LINK_FORM = "expression_latex_link_form";
+    const int EXPRESSION_LATEX_LINK_FORM_ID = 235;
+    // the user expression, not the latex, with the same tooltip and link for each term
+    const string EXPRESSION_LINK = "expression_link";
+    const int EXPRESSION_LINK_ID = 234;
     const string FORM_FIELD_FORMULA_ALL_VAR_NEEDED = "system_form_field_formula_all_vars";
     const int FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID = 54;
     const string FORM_LIST_FORMULAS = "formula_list_changeable";
@@ -256,6 +284,12 @@ class component_types
     // for external links
     const string FORM_FIELD_URL = "system_form_field_url";
     const int FORM_FIELD_URL_ID = 71;
+    const string FORM_FIELD_DOI = "system_form_field_doi";
+    const int FORM_FIELD_DOI_ID = 217;
+    const string SOURCE_DOI_LINK = "source_doi_link";
+    const int SOURCE_DOI_LINK_ID = 218;
+    const string SOURCE_URL_LINK = "source_url_link";
+    const int SOURCE_URL_LINK_ID = 221;
 
     // preview of the changes if confirmed
     const string FORM_PREVIEW = "system_form_preview";
@@ -343,6 +377,8 @@ class component_types
 
     const string SYSTEM_TITLE = "system_title";
     const int SYSTEM_TITLE_ID = 63;
+    const string SYSTEM_TITLE_WITH_OBJECT_NAME = "system_title_with_object_name";
+    const int SYSTEM_TITLE_WITH_OBJECT_NAME_ID = 215;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
     const int SYSTEM_SUB_TITLE_ID = 145;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
@@ -444,6 +480,11 @@ class component_types
     const int LIST_VALUES_BY_TRIPLE_ID = 151;
     const string LIST_VALUES_BY_SOURCE = "values_by_source";
     const int LIST_VALUES_BY_SOURCE_ID = 152;
+    // the similar values and the results of the value default page
+    const string LIST_VALUES_SIMILAR = "values_similar";
+    const int LIST_VALUES_SIMILAR_ID = 247;
+    const string LIST_RESULTS_BY_VALUE = "results_by_value";
+    const int LIST_RESULTS_BY_VALUE_ID = 248;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
     const int LIST_FORMULAS_OF_VERB_ID = 148;
     const string LIST_FORMULAS_OF_PARENTS = "formulas_of_parents";
@@ -504,6 +545,17 @@ class component_types
     // used by several values, then the remaining values by impact
     const string VALUES_MOST_RELEVANT = "values_most_relevant";
     const int VALUES_MOST_RELEVANT_ID = 207;
+    // the most relevant values of a phrase in up to four columns that wrap on narrow screens,
+    // each column headed by one of the phrases used most often within these values
+    const string VALUES_IN_COLUMNS = "values_in_columns";
+    const int VALUES_IN_COLUMNS_ID = 212;
+    const string VALUES_IN_COLUMNS_COM = "show the values related to a phrase in up to four columns headed by the phrases used most often within the values";
+    // the values related to a phrase as a table: one column per phrase used most often within the
+    // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
+    // (e.g. per year), so that the values of one row can be compared column by column
+    const string TABLE_WITH_RELATED_COLUMNS = "table_with_related_columns";
+    const int TABLE_WITH_RELATED_COLUMNS_ID = 214;
+    const string TABLE_WITH_RELATED_COLUMNS_COM = "show the values related to a phrase as a table with one column per phrase used most often within the values";
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 93;
 
@@ -517,6 +569,65 @@ class component_types
     const int SHOW_PLURAL_ID = 190;
     const string SHOW_PHRASE_TYPE = "system_show_field_phrase_type";
     const int SHOW_PHRASE_TYPE_ID = 191;
+    const string SHOW_REVERSE = "system_show_field_reverse";
+    const int SHOW_REVERSE_ID = 219;
+    const string SHOW_PLURAL_REVERSE = "system_show_field_plural_reverse";
+    const int SHOW_PLURAL_REVERSE_ID = 220;
+    const string SHOW_STYLE = "system_show_field_style";
+    const int SHOW_STYLE_ID = 223;
+    const string SHOW_OWNER = "system_show_field_owner";
+    const int SHOW_OWNER_ID = 224;
+    // the components of the shown view sorted by their position e.g. for the view default page
+    const string VIEW_COMPONENTS = "components_of_view";
+    const int VIEW_COMPONENTS_ID = 225;
+    const string SHOW_FORMULA = "system_show_field_formula";
+    const int SHOW_FORMULA_ID = 226;
+    // the read only twin of FORM_FIELD_NAME_IN_FORMULAS: the short name of a verb used in a
+    // formula, where both sides of the triple are combined
+    const string SHOW_NAME_IN_FORMULAS = "system_show_field_name_in_formulas";
+    const int SHOW_NAME_IN_FORMULAS_ID = 233;
+    // the component that a component links to shown with the type of that link
+    const string SHOW_LINKED_COMPONENT = "system_show_field_linked_component";
+    const int SHOW_LINKED_COMPONENT_ID = 250;
+    const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
+    const int SHOW_PHRASE_ROW_ID = 227;
+    const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
+    const int SHOW_PHRASE_COL_ID = 228;
+    const string SHOW_PHRASE_COL_SUB = "system_show_field_phrase_col_sub";
+    const int SHOW_PHRASE_COL_SUB_ID = 229;
+    // the views that use the shown component e.g. for the component default page
+    const string COMPONENT_VIEWS = "views_of_component";
+    const int COMPONENT_VIEWS_ID = 230;
+    // the terms that use the shown view e.g. for the used by column of the view add and edit pages
+    const string VIEW_TERMS = "terms_of_view";
+    const int VIEW_TERMS_ID = 249;
+    // the type and the order number of a link e.g. for the formula link default page
+    const string SHOW_LINK_TYPE = "system_show_field_link_type";
+    const int SHOW_LINK_TYPE_ID = 231;
+    const string SHOW_ORDER_NBR = "system_show_field_order_nbr";
+    const int SHOW_ORDER_NBR_ID = 232;
+    // the weight and the condition formula of a triple e.g. for the triple default page
+    const string SHOW_WEIGHT = "system_show_field_weight";
+    const int SHOW_WEIGHT_ID = 236;
+    const string SHOW_CONDITION_FORMULA = "system_show_field_condition_formula";
+    const int SHOW_CONDITION_FORMULA_ID = 237;
+    // the source and the time of the last update of a value e.g. for the value default page
+    const string SHOW_SOURCE = "system_show_field_source";
+    const int SHOW_SOURCE_ID = 238;
+    const string SHOW_LAST_UPDATE = "system_show_field_last_update";
+    const int SHOW_LAST_UPDATE_ID = 239;
+    // the system calculated impact of a reference e.g. for the ref edit view
+    const string SHOW_IMPACT = "system_show_field_impact";
+    const int SHOW_IMPACT_ID = 241;
+    // the all-values-needed flag of a formula e.g. for the formula default page
+    const string SHOW_ALL_VALUES_NEEDED = "system_show_field_formula_all_vars";
+    const int SHOW_ALL_VALUES_NEEDED_ID = 243;
+    // the calculated number with its phrase group and the creating formula
+    // e.g. for the result default page
+    const string SHOW_RESULT_VALUE = "system_show_result_value";
+    const int SHOW_RESULT_VALUE_ID = 244;
+    const string SHOW_RESULT_FORMULA = "system_show_result_formula";
+    const int SHOW_RESULT_FORMULA_ID = 245;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -545,9 +656,18 @@ class component_types
     const string SYSTEM_CHANGE_LOG = "change_log";
     const int SYSTEM_CHANGE_LOG_ID = 45;
 
+    // a borderless change log table with the three columns when, who and what
+    const string CHANGE_LOG_TABLE_PURE = "invisible_change_log_table";
+    const int CHANGE_LOG_TABLE_PURE_ID = 210;
+    const string CHANGE_LOG_TABLE_PURE_COM = "a change log table without borders with the three columns when, who and what limited to a config char count";
+
     const string USER_SYSTEM_ERRORS = "user_system_errors";
     const int USER_SYSTEM_ERRORS_ID = 193;
     const string USER_SYSTEM_ERRORS_COM = "show the most relevant open system errors linked to the user";
+
+    const string ALL_USER_OVERWRITES = "all_user_overwrites";
+    const int ALL_USER_OVERWRITES_ID = 216;
+    const string ALL_USER_OVERWRITES_COM = "show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites";
 
     // show all word that this words is based on
     const string WORDS_UP = "word_list_up";
@@ -589,11 +709,17 @@ class component_types
         self::FORM_TITLE,
         self::FORM_FIELD_NAME,
         self::FORM_FIELD_DESCRIPTION,
+        self::FORM_FIELD_CODE_ID,
+        self::FORM_FIELD_UI_MSG,
         self::FORM_FIELD_URL,
+        self::FORM_FIELD_DOI,
         self::FORM_FIELD_PLURAL,
         self::FORM_FIELD_FORMULA_EXPRESSION,
+        self::FORM_FIELD_FORMULA_LATEX,
         self::EXPRESSION,
         self::EXPRESSION_LATEX_LINK,
+        self::EXPRESSION_LATEX_LINK_FORM,
+        self::EXPRESSION_LINK,
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
         self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_GROUP,
@@ -734,6 +860,8 @@ class component_types
         self::SYSTEM_SUB_TITLE_VAR,
         self::VALUES_RELATED,
         self::VALUES_MOST_RELEVANT,
+        self::VALUES_IN_COLUMNS,
+        self::TABLE_WITH_RELATED_COLUMNS,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -748,6 +876,8 @@ class component_types
         self::FORM_FIELD_NAME_IN_FORMULAS,
         self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_VALUE,
+        self::FORM_FIELD_URL,
+        self::FORM_FIELD_DOI,
         self::ROW_START,
         self::ROW_RIGHT,
         self::ROW_CENTER,
@@ -763,9 +893,14 @@ class component_types
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
         [self::TITLE_TRIPLE_EDIT, self::TITLE_TRIPLE_EDIT_ID],
+        [self::TITLE_LINK_EDIT, self::TITLE_LINK_EDIT_ID],
+        [self::PHRASE_TITLE, self::PHRASE_TITLE_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
+        [self::FORM_FIELD_CODE_ID, self::FORM_FIELD_CODE_ID_ID],
+        [self::FORM_FIELD_UI_MSG, self::FORM_FIELD_UI_MSG_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
+        [self::FORM_FIELD_DOI, self::FORM_FIELD_DOI_ID],
         [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],
         [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
         [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
@@ -774,11 +909,15 @@ class component_types
         [self::SYSTEM_SHOW_REF_KEY, self::FORM_FIELD_REF_KEY_ID],
         [self::SYSTEM_SHOW_REF_SOURCE, self::FORM_FIELD_REF_SOURCE_ID],
         [self::SYSTEM_SHOW_REF_URL, self::FORM_FIELD_REF_URL_ID],
+        [self::SHOW_REF_PHRASE, self::SHOW_REF_PHRASE_ID],
         [self::FORM_FIELD_EXTERNAL_KEY, self::FORM_FIELD_EXTERNAL_KEY_ID],
         [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
+        [self::FORM_FIELD_FORMULA_LATEX, self::FORM_FIELD_FORMULA_LATEX_ID],
         [self::EXPRESSION, self::EXPRESSION_ID],
         [self::EXPRESSION_LATEX_LINK, self::EXPRESSION_LATEX_LINK_ID],
+        [self::EXPRESSION_LATEX_LINK_FORM, self::EXPRESSION_LATEX_LINK_FORM_ID],
+        [self::EXPRESSION_LINK, self::EXPRESSION_LINK_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],
         [self::FORM_FIELD_GROUP, self::FORM_FIELD_GROUP_ID],
@@ -862,6 +1001,7 @@ class component_types
         [self::ROW_CENTER, self::ROW_CENTER_ID],
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
+        [self::SYSTEM_TITLE_WITH_OBJECT_NAME, self::SYSTEM_TITLE_WITH_OBJECT_NAME_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],
         [self::SYSTEM_SUB_TITLE_VAR, self::SYSTEM_SUB_TITLE_VAR_ID],
         [self::SYSTEM_BODY_ABOUT, self::SYSTEM_BODY_ABOUT_ID],
@@ -909,6 +1049,8 @@ class component_types
         [self::RANKING_PARAMETERS, self::RANKING_PARAMETERS_ID],
         [self::RANKING_LIST, self::RANKING_LIST_ID],
         [self::SOURCE_NAME, self::SOURCE_NAME_ID],
+        [self::SOURCE_DOI_LINK, self::SOURCE_DOI_LINK_ID],
+        [self::SOURCE_URL_LINK, self::SOURCE_URL_LINK_ID],
         [self::REFERENCE_NAME, self::REFERENCE_NAME_ID],
         [self::LANGUAGE_NAME, self::LANGUAGE_NAME_ID],
         [self::RESULTS_RELATED, self::RESULTS_RELATED_ID],
@@ -923,11 +1065,36 @@ class component_types
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
+        [self::VALUES_IN_COLUMNS, self::VALUES_IN_COLUMNS_ID],
+        [self::TABLE_WITH_RELATED_COLUMNS, self::TABLE_WITH_RELATED_COLUMNS_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_PLURAL, self::SHOW_PLURAL_ID],
         [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
+        [self::SHOW_REVERSE, self::SHOW_REVERSE_ID],
+        [self::SHOW_PLURAL_REVERSE, self::SHOW_PLURAL_REVERSE_ID],
+        [self::SHOW_STYLE, self::SHOW_STYLE_ID],
+        [self::SHOW_OWNER, self::SHOW_OWNER_ID],
+        [self::VIEW_COMPONENTS, self::VIEW_COMPONENTS_ID],
+        [self::SHOW_FORMULA, self::SHOW_FORMULA_ID],
+        [self::SHOW_NAME_IN_FORMULAS, self::SHOW_NAME_IN_FORMULAS_ID],
+        [self::SHOW_PHRASE_ROW, self::SHOW_PHRASE_ROW_ID],
+        [self::SHOW_PHRASE_COL, self::SHOW_PHRASE_COL_ID],
+        [self::SHOW_PHRASE_COL_SUB, self::SHOW_PHRASE_COL_SUB_ID],
+        [self::SHOW_LINKED_COMPONENT, self::SHOW_LINKED_COMPONENT_ID],
+        [self::COMPONENT_VIEWS, self::COMPONENT_VIEWS_ID],
+        [self::VIEW_TERMS, self::VIEW_TERMS_ID],
+        [self::SHOW_LINK_TYPE, self::SHOW_LINK_TYPE_ID],
+        [self::SHOW_ORDER_NBR, self::SHOW_ORDER_NBR_ID],
+        [self::SHOW_WEIGHT, self::SHOW_WEIGHT_ID],
+        [self::SHOW_CONDITION_FORMULA, self::SHOW_CONDITION_FORMULA_ID],
+        [self::SHOW_SOURCE, self::SHOW_SOURCE_ID],
+        [self::SHOW_LAST_UPDATE, self::SHOW_LAST_UPDATE_ID],
+        [self::SHOW_IMPACT, self::SHOW_IMPACT_ID],
+        [self::SHOW_ALL_VALUES_NEEDED, self::SHOW_ALL_VALUES_NEEDED_ID],
+        [self::SHOW_RESULT_VALUE, self::SHOW_RESULT_VALUE_ID],
+        [self::SHOW_RESULT_FORMULA, self::SHOW_RESULT_FORMULA_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],
@@ -953,7 +1120,9 @@ class component_types
         [self::CSV_EXPORT, self::CSV_EXPORT_ID],
         [self::ODS_EXPORT, self::ODS_EXPORT_ID],
         [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID],
-        [self::USER_SYSTEM_ERRORS, self::USER_SYSTEM_ERRORS_ID]
+        [self::CHANGE_LOG_TABLE_PURE, self::CHANGE_LOG_TABLE_PURE_ID],
+        [self::USER_SYSTEM_ERRORS, self::USER_SYSTEM_ERRORS_ID],
+        [self::ALL_USER_OVERWRITES, self::ALL_USER_OVERWRITES_ID]
     );
 
 }

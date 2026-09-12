@@ -81,18 +81,25 @@ include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -109,19 +116,26 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class source extends sandbox_code_id
 {
@@ -150,6 +164,19 @@ class source extends sandbox_code_id
     // database fields additional to the user sandbox fields
     // the internet link to the source
     public ?string $url = null;
+    // the digital object identifier of the source e.g. 10.5281/zenodo.19443909 used to create the url to doi.org
+    public ?string $doi = null;
+    // the default view of this source; usually only the id is set, the name is loaded for the export
+    public ?view $view = null;
+
+    // the views that can show this source; populated lazily by load_views_related() and only
+    // emitted via api_json_array() under the INCL_RELATED flag, so the views tab of the default
+    // source view can offer the views to switch to
+    public ?view_list $views_related = null;
+
+    // the values that name this source; filled and emitted like views_related above, so that the
+    // 'source values' component of the source page lists them
+    public ?value_list $values_related = null;
 
 
     /*
@@ -177,6 +204,8 @@ class source extends sandbox_code_id
     {
         parent::reset($keep_user);
         $this->url = null;
+        $this->doi = null;
+        $this->view = null;
     }
 
     /**
@@ -191,37 +220,50 @@ class source extends sandbox_code_id
      * @return bool true if the source is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = source_fields::FLD_ID,
-        string $name_fld = source_fields::FLD_NAME,
-        string $type_fld = source_fields::FLD_TYPE
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = source_fields::FLD_ID,
+        string       $name_fld = source_fields::FLD_NAME,
+        string       $type_fld = source_fields::FLD_TYPE
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             $this->url = $db_row[fields::FLD_URL];
+            $this->doi = $db_row[fields::FLD_DOI];
+            if (($db_row[fields::FLD_VIEW] ?? null) != null) {
+                $this->set_view_id($db_row[fields::FLD_VIEW]);
+            }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * map a source api json to this model source object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::URL, $api_json)) {
             $this->url = $api_json[json_fields::URL];
         }
+        if (array_key_exists(json_fields::DOI, $api_json)) {
+            $this->doi = $api_json[json_fields::DOI];
+        }
+        // TODO Prio 1 review and try to simplify
+        // the api sends the id of the default view, the export the name
+        if (($api_json[json_fields::VIEW] ?? 0) != 0) {
+            $this->set_view_id($api_json[json_fields::VIEW]);
+        }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -243,6 +285,23 @@ class source extends sandbox_code_id
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->url = $in_ex_json[json_fields::URL];
         }
+        if (key_exists(json_fields::DOI, $in_ex_json)) {
+            $this->doi = $in_ex_json[json_fields::DOI];
+        }
+        if (key_exists(json_fields::VIEW, $in_ex_json)) {
+            $msk_name = $in_ex_json[json_fields::VIEW];
+            $msk = $dto?->get_view_by_name($msk_name, $msg);
+            if ($msk == null) {
+                $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [
+                    msg_id::VAR_ID => $this->dsp_id(),
+                    msg_id::VAR_NAME => $msk_name
+                ]);
+            } else {
+                $this->view = $msk;
+            }
+        }
+        // json_fields::AUTHOR, PUBLISHER and PUBLISH_DATE are allowed in the import json, but
+        // the source object has no field for them, see the TODO Prio 2 of json_fields::AUTHOR
 
         return $msg->is_ok();
     }
@@ -255,21 +314,90 @@ class source extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::URL] = $this->url;
+            $vars[json_fields::DOI] = $this->doi;
+            // the id of the default view, so that the edit form can preselect it
+            if ($this->get_view_id() > 0) {
+                $vars[json_fields::VIEW] = $this->get_view_id();
+            }
+            // the views, changes and overwrites tabs of the source default page
+            if ($typ_lst->incl_related()) {
+                if ($this->views_related == null and !$typ_lst->test_mode()) {
+                    $this->load_views_related($msg);
+                }
+                $vars = array_merge($vars,
+                    new sandbox_related()->views_array($this->views_related, $msg, $usr));
+                // a value names the source by its id, so a fresh source (id 0, e.g. the add
+                // form) has none, whereas the views above are the same for every source
+                if ($this->values_related == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                    $this->load_values_related($msg);
+                }
+                // drop the values the requester may not read, so the list cannot disclose
+                // another user's private value of this source (idor), the same gate that
+                // word::api_json_array uses for the values of a word; dropped before the empty
+                // check, else a list of only unreadable values is emitted as an empty json list
+                $this->values_related?->filter_readable_by($usr);
+                if ($this->values_related != null and !$this->values_related->is_empty()) {
+                    // INCL_PHRASES so each value carries its group phrases, which the frontend
+                    // needs for the value name
+                    $vars[json_fields::VALUES] = $this->values_related->api_json_array(
+                        new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+                }
+                $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+                $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
+            }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
         }
         return $vars;
+    }
+
+    /**
+     * load the views that can show this source into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; the related views are all
+     * views of the source view type, which is what the views tab offers the user to switch to,
+     * independent of the default view of this source
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_related(user_message $msg): void
+    {
+        global $sys;
+
+        $msk_lst = new view_list($this->get_user());
+        $msk_lst->load_by_type($sys->typ_lst->msk_typ->id(view_types::SOURCE), $msg);
+        $this->views_related = $msk_lst;
+    }
+
+    /**
+     * load the values that name this source into the in-memory values_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'source values'
+     * component of the source default page shows (see web/component/execute/ui_list::values_by_source)
+     *
+     * @param user_message $msg to collect any problem while loading the values
+     * @return void
+     */
+    function load_values_related(user_message $msg): void
+    {
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_source($this, $msg, value_list::read_limit());
+        $val_lst->load_names_related($msg);
+        $this->values_related = $val_lst;
     }
 
 
@@ -279,16 +407,29 @@ class source extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         if ($this->url <> '') {
             $vars[json_fields::URL] = $this->url;
+        }
+        if ($this->doi <> '') {
+            $vars[json_fields::DOI] = $this->doi;
+        }
+        // the export names the default view, because the id differs between pods
+        if ($this->get_view_id() > 0) {
+            if ($this->view->name() == '' and $do_load) {
+                $this->reload_view($msg);
+            }
+            if ($this->view->name() != '') {
+                $vars[json_fields::VIEW] = $this->view->name();
+            }
         }
 
         return $vars;
@@ -303,19 +444,38 @@ class source extends sandbox_code_id
      * set the predefined source type by the given code id or name
      *
      * @param string $code_id_or_name the code id or name of the source type that should be added to this source
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the source type has been set, false if unknown or not permitted
      */
-    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user_message $msg): bool
     {
         global $sys;
         if ($sys->typ_lst->src_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $msg);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $msg);
         }
+    }
+
+    /**
+     * @param int $id the id of the default view that should be remembered
+     */
+    function set_view_id(int $id): void
+    {
+        if ($this->view == null) {
+            $this->view = new view($this->get_user());
+        }
+        $this->view->id = $id;
+    }
+
+    /**
+     * @return int the id of the default view for this source or zero if no view is preferred
+     */
+    function get_view_id(): int
+    {
+        return $this->view?->id() ?? 0;
     }
 
 
@@ -370,6 +530,19 @@ class source extends sandbox_code_id
     }
 
     /**
+     * load the default view by its id to get the name, which the row mapper does not read
+     * @param user_message $msg to collect the message if the view cannot be loaded
+     * @return void
+     */
+    private function reload_view(user_message $msg): void
+    {
+        $msk = new view($this->get_user());
+        if ($msk->load_by_id($this->get_view_id(), $msg)) {
+            $this->view = $msk;
+        }
+    }
+
+    /**
      * create an SQL statement to retrieve the user changes of the current source
      *
      * @param sql_creator $sc with the target db_type set
@@ -402,6 +575,7 @@ class source extends sandbox_code_id
     {
         $msg = parent::diff_msg($obj, $ex_def);
         $this->diff_field_msg($msg, fields::FLD_URL, $this->url, $obj->url);
+        $this->diff_field_msg($msg, fields::FLD_DOI, $this->doi, $obj->doi);
         return $msg;
     }
 
@@ -410,13 +584,24 @@ class source extends sandbox_code_id
      * e.g. for import if this source has only the name set, the protection should not be updated in the database
      *
      * @param source|CombineObject|IdObject $db_obj the source as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this source has infos that should be saved in the database
      */
-    function needs_db_update(source|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(source|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->url != null) {
             if ($this->url != $db_obj->url) {
+                $result = true;
+            }
+        }
+        if ($this->doi != null) {
+            if ($this->doi != $db_obj->doi) {
+                $result = true;
+            }
+        }
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
                 $result = true;
             }
         }
@@ -440,6 +625,12 @@ class source extends sandbox_code_id
         if ($std_obj->url !== $this->url) {
             $result->url = $this->url;
         }
+        if ($std_obj->doi !== $this->doi) {
+            $result->doi = $this->doi;
+        }
+        if ($std_obj->get_view_id() !== $this->get_view_id()) {
+            $result->view = $this->view;
+        }
         return $result;
     }
 
@@ -457,11 +648,17 @@ class source extends sandbox_code_id
      */
     function fill(source|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->url === null and $obj->url != null) {
             $this->url = $obj->url;
         }
-        return $usr_msg;
+        if ($this->doi === null and $obj->doi != null) {
+            $this->doi = $obj->doi;
+        }
+        if ($this->view === null and $obj->view != null) {
+            $this->view = $obj->view;
+        }
+        return $msg;
     }
 
 
@@ -497,20 +694,22 @@ class source extends sandbox_code_id
      */
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no one has used this source
      */
-    function not_used(): bool
+    function not_used(user_message $msg): bool
     {
         log_debug($this->id());
 
         // to review: maybe replace by a database foreign key check
-        return $this->not_changed();
+        return $this->not_changed($msg);
     }
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no other user has modified the source
      */
-    function not_changed(): bool
+    function not_changed(user_message $msg): bool
     {
         log_debug($this->dsp_id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
@@ -522,7 +721,7 @@ class source extends sandbox_code_id
             log_err('The id must be set to detect if the link has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
-            $db_row = $db_con->get1($qp);
+            $db_row = $db_con->get1($qp, $msg);
             $change_user_id = $db_row[user_db::FLD_ID];
             if ($change_user_id > 0) {
                 $result = false;
@@ -571,13 +770,11 @@ class source extends sandbox_code_id
     /**
      * delete the references to this source
      *
-     * @param user_message $usr_msg the message for the user why deleting the word links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the word links has failed and a suggested solution
      * @return bool true if the word links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
-        $usr_msg = new user_message();
-
         // collect all phrase groups where this word is used
         // TODO Prio 2 activate
         //$grp_lst = new group_list($this->get_user());
@@ -591,10 +788,10 @@ class source extends sandbox_code_id
         // if there are still triples, ask if they really should be deleted
         if (!$ref_lst->is_empty()) {
             // TODO Prio 1 activate
-            $ref_lst->del($usr_msg);
+            $ref_lst->del($msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -616,7 +813,9 @@ class source extends sandbox_code_id
             parent::db_fields_all(),
             [
                 source_fields::FLD_TYPE,
+                fields::FLD_VIEW,
                 fields::FLD_URL,
+                fields::FLD_DOI,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -640,10 +839,10 @@ class source extends sandbox_code_id
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->type_id($msg) !== $this->type_id($msg)) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_fields::FLD_TYPE,
@@ -653,9 +852,24 @@ class source extends sandbox_code_id
             }
             $lst->add_field(
                 source_fields::FLD_TYPE,
-                $this->type_id(),
+                $this->type_id($msg),
                 type_object::FLD_ID_SQL_TYP,
-                $obj->type_id()
+                $obj->type_id($msg)
+            );
+        }
+        if ($obj->get_view_id() !== $this->get_view_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_VIEW,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_VIEW),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                fields::FLD_VIEW,
+                view_fields::FLD_NAME,
+                $this->view,
+                $obj->view
             );
         }
         if ($obj->url !== $this->url) {
@@ -671,6 +885,21 @@ class source extends sandbox_code_id
                 $this->url,
                 source_db::FLD_URL_SQL_TYP,
                 $obj->url
+            );
+        }
+        if ($obj->doi !== $this->doi) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DOI,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DOI),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                fields::FLD_DOI,
+                $this->doi,
+                source_db::FLD_DOI_SQL_TYP,
+                $obj->doi
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));

@@ -45,8 +45,11 @@ include_once paths::MODEL_WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_users.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -58,12 +61,15 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -79,8 +85,10 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -92,8 +100,6 @@ class word_tests
     {
 
         global $sys;
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -101,6 +107,7 @@ class word_tests
         $t_phr = new test_phrases($t);
         $lib = new library();
         $sfm = new system_form();
+        $msg_ui = new user_message_ui();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
 
@@ -115,22 +122,26 @@ class word_tests
         $t->assert_sql_foreign_key_create($wrd);
 
         $t->subheader($ts . 'sql read');
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $t->assert_sql_by_id($sc, $wrd);
         $t->assert_sql_by_name($sc, $wrd);
         $this->assert_sql_formula_name($t, $sc, $wrd);
 
         $t->subheader($ts . 'sql read default and user changes');
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->id = word_names::CONST_ID;
         $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($sc, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
         $t->assert_sql_changing_users($sc, $wrd);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $wrd);
+        $t->assert_sql_changing_users_by_ids($sc, $wrd);
         $this->assert_sql_view($t, $wrd);
 
         $t->subheader($ts . 'sql write insert');
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->set_name(word_names::TEST_ADD);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
         $wrd = $t_wrd->word();
@@ -159,19 +170,19 @@ class word_tests
         $t->assert_sql_update($sc, $wrd_renamed_user_protected, $wrd, [sql_type::LOG]);
 
         $test_name = 'no update statement is created if no field has changed';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $wrd_same = clone $wrd;
-        $qp = $wrd_same->sql_update($sc, $wrd, $usr_msg);
+        $qp = $wrd_same->sql_update($sc, $wrd, $msg);
         $t->assert_true($t->name . $test_name, $qp === null);
         $test_name = '... also for the update statement with logging';
-        $qp = $wrd_same->sql_update($sc, $wrd, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $qp = $wrd_same->sql_update($sc, $wrd, $msg, new sql_type_list([sql_type::LOG]));
         $t->assert_true($t->name . $test_name, $qp === null);
 
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();
         $wrd->description = word_names::MATH_COM;
         $wrd_updated = $t_wrd->word();
-        $wrd_updated->set_user($usr_sys);
+        $wrd_updated->set_user($t->usr_system);
         $wrd_updated->plural = word_names::TEST_RENAMED;
         $wrd_updated->description = word_names::TEST_RENAMED;
         $wrd_updated->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
@@ -184,55 +195,56 @@ class word_tests
 
         $t->subheader($ts . 'protection');
         $test_name = 'a re-import without protection keeps the database protection';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $wrd_db = $t_wrd->word();
         $wrd_imp = $t_wrd->word();
         $wrd_imp->description = word_names::TEST_RENAMED;
         $wrd_imp->set_protection_id(null);
-        $t->assert_false($test_name, in_array(fields::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
+        $t->assert_false($test_name, in_array(fields::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $msg)->names()));
         $test_name = 'an explicit lower protection is part of the update fields';
         $wrd_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $t->assert_true($test_name, in_array(fields::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
+        $t->assert_true($test_name, in_array(fields::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $msg)->names()));
         $test_name = 'a normal user cannot reduce the protection level';
-        $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
+        $msg = new user_message($t->usr_normal);
+        $wrd_imp->check_protection_change($wrd_db, $msg);
         $t->assert($test_name, $wrd_imp->protection_id(), $wrd_db->protection_id());
         $test_name = 'the denied reduction is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), word_names::MATH);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), word_names::MATH);
         $test_name = 'an admin user can reduce the protection level';
-        $usr_msg = new user_message();
+        $msg = new user_message($t->usr_admin);
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $wrd_imp->check_protection_change($wrd_db, $t->usr_admin, $usr_msg);
+        $wrd_imp->check_protection_change($wrd_db, $msg);
         $t->assert($test_name, $wrd_imp->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
         $test_name = 'the admin reduction is not reported';
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $t->assert($test_name, $msg->all_message_text(), '');
         $test_name = 'a normal user cannot raise the protection to no change';
-        $usr_msg = new user_message();
+        $msg = new user_message($t->usr_normal);
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_protection_by_code_id(protection_types::NO_CHANGE);
-        $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
+        $wrd_imp->check_protection_change($wrd_db, $msg);
         $t->assert($test_name, $wrd_imp->protection_id(), $wrd_db->protection_id());
         $test_name = 'the denied raise is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), word_names::MATH);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), word_names::MATH);
         $test_name = 'a normal user keeping the admin protection unchanged is not reported';
-        $usr_msg = new user_message();
+        $msg = new user_message($t->usr_normal);
         $wrd_imp = $t_wrd->word();
-        $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $wrd_imp->check_protection_change($wrd_db, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
         $test_name = 'a normal user cannot set the admin protection on a new object';
-        $usr_msg = new user_message();
+        $msg = new user_message($t->usr_normal);
         $wrd_new = $t_wrd->word();
-        $wrd_new->check_protection_change(null, $t->usr_normal, $usr_msg);
+        $wrd_new->check_protection_change(null, $msg);
         $t->assert($test_name, $wrd_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::USER));
         $test_name = 'the denied protection of the new object is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), word_names::MATH);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), word_names::MATH);
         $test_name = 'an admin user can set the admin protection on a new object';
-        $usr_msg = new user_message();
+        $msg = new user_message($t->usr_admin);
         $wrd_new = $t_wrd->word();
-        $wrd_new->check_protection_change(null, $t->usr_admin, $usr_msg);
+        $wrd_new->check_protection_change(null, $msg);
         $t->assert($test_name, $wrd_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         $test_name = 'the admin protection of the new object is not reported';
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $t->assert($test_name, $msg->all_message_text(), '');
 
         $t->subheader($ts . 'read access (share)');
         // a non-public named object must not be disclosed to another user by id (idor);
@@ -281,6 +293,7 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_json($wrd);
         $wrd = $t_wrd->word_filled();
+        $wrd->set_user($t->usr_dev); // use the dev user to check the mapping including the code id
         $t->assert_api_json($wrd);
         $wrd->include();
         $t->assert_api($wrd, 'word_full');
@@ -294,7 +307,7 @@ class word_tests
         // these tests cover the url_array -> api_type_list translation (api_type_list::from_url_array)
         // since reading $_GET inside a function is forbidden by the unit-testability rule
         $base = [api_types::HEADER];
-        $with = api_type_list::from_url_array([url_var::INCL_RELATED => '1'], $base);
+        $with = api_type_list::from_url_array([url_var::INCL_RELATED => url_var::TRUE], $base);
         $without = api_type_list::from_url_array([], $base);
         $test_name = 'api/word ?incl_related=1 enables api_types::INCL_RELATED';
         $t->assert_true($t->name . $test_name, $with->incl_related());
@@ -313,8 +326,8 @@ class word_tests
         $wrd->phrases_related = $related;
         $with_related = new api_type_list([api_types::INCL_RELATED, api_types::TEST_MODE]);
         $without_related = new api_type_list([api_types::TEST_MODE]);
-        $vars_with = $wrd->api_json_array($with_related);
-        $vars_without = $wrd->api_json_array($without_related);
+        $vars_with = $wrd->api_json_array($with_related, $msg);
+        $vars_without = $wrd->api_json_array($without_related, $msg);
         $test_name = 'word api_json_array includes phrases_related when INCL_RELATED is set';
         $t->assert_true($t->name . $test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars_with));
         $test_name = 'word api_json_array omits phrases_related without INCL_RELATED';
@@ -322,7 +335,7 @@ class word_tests
         // negative: a word with an empty phrases_related list does not emit the key
         $bare_wrd = $t_wrd->word_chf();
         $bare_wrd->phrases_related = new phrase_list($t->usr1);
-        $vars_bare = $bare_wrd->api_json_array($with_related);
+        $vars_bare = $bare_wrd->api_json_array($with_related, $msg);
         $test_name = 'word api_json_array omits phrases_related when the list is empty';
         $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_bare));
 
@@ -353,15 +366,46 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
 
-        $test_name = 'the url array contains the filled plural';
+        // the url array is the inverse of url_mapper: it carries the fields of the word and of its
+        // parent classes that the edit form posts and leaves out the fields that are not set, so
+        // that a union with a posted url never masks a posted value with an empty one
+        $test_name = 'the url array of a word contains the id, name and description';
         $wrd_ui = $t_wrd->word_dsp();
+        $url_arr = $wrd_ui->to_url_array($msg_ui);
+        $t->assert($test_name, $url_arr[url_var::ID], word_names::MATH_ID);
+        $t->assert($test_name . ' and the name', $url_arr[url_var::NAME], word_names::MATH);
+        $t->assert($test_name . ' and the description', $url_arr[url_var::DESCRIPTION], word_names::MATH_COM);
+
+        $test_name = 'the url array of a word contains the type, share, protection and owner';
+        $wrd_ui->set_type_id(phrase_types::MEASURE_ID);
+        $wrd_ui->share_id = share_types::PUBLIC_ID;
+        $wrd_ui->protection_id = protection_types::ADMIN_ID;
+        $wrd_ui->set_owner_name(users::SYSTEM_TEST_NAME);
+        $url_arr = $wrd_ui->to_url_array($msg_ui);
+        $t->assert($test_name, $url_arr[url_var::TYPE], phrase_types::MEASURE_ID);
+        $t->assert($test_name . ' and the share', $url_arr[url_var::SHARE], share_types::PUBLIC_ID);
+        $t->assert($test_name . ' and the protection', $url_arr[url_var::PROTECTION], protection_types::ADMIN_ID);
+        $t->assert($test_name . ' and the owner', $url_arr[url_var::OWNER], users::SYSTEM_TEST_NAME);
+
+        $test_name = 'the url array of a word contains the plural, usage, impact and default view';
         $wrd_ui->plural = word_names::MATH_PLURAL;
-        $url_arr = $wrd_ui->to_url_array();
+        $wrd_ui->usage = test_const::DUMMY_USAGE_WORD;
+        $wrd_ui->impact = test_const::DUMMY_IMPACT;
+        $wrd_ui->view_id = views::WORD_ID;
+        $url_arr = $wrd_ui->to_url_array($msg_ui);
         $t->assert($test_name, $url_arr[url_var::PLURAL], word_names::MATH_PLURAL);
-        $test_name = 'an empty plural is excluded from the url array';
-        $wrd_ui->plural = '';
-        $url_arr = $wrd_ui->to_url_array();
-        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::PLURAL);
+        $t->assert($test_name . ' and the usage', $url_arr[url_var::USAGE], test_const::DUMMY_USAGE_WORD);
+        $t->assert($test_name . ' and the impact', $url_arr[url_var::IMPACT], test_const::DUMMY_IMPACT);
+        $t->assert($test_name . ' and the view', $url_arr[url_var::VIEW], views::WORD_ID);
+
+        // the add form starts with a word where no field is set, so its url array carries only the
+        // id, which is still zero because the word is created by the confirm submit
+        $test_name = 'the url array of a new word contains only the id';
+        $url_arr = new word_ui()->to_url_array($msg_ui);
+        $t->assert($test_name, $url_arr[url_var::ID], 0);
+        $t->assert_contains_not($test_name . ' and no unset field', array_keys($url_arr), [
+            url_var::NAME, url_var::DESCRIPTION, url_var::TYPE, url_var::SHARE, url_var::PROTECTION,
+            url_var::OWNER, url_var::PLURAL, url_var::USAGE, url_var::IMPACT, url_var::VIEW]);
 
 
         $t->subheader($ts . 'subtitle with phrase limit');
@@ -370,7 +414,7 @@ class word_tests
         $form = new system_form();
         $wrd = $t_wrd->zh_ui();
         $wrd->phr_lst = $t_phr->list_ui();
-        $txt = $form->title_named($wrd, 2);
+        $txt = $form->title_named($wrd, $msg_ui, 2);
         $lnk = triple_names::CITY_ZH_ID . '" ' . html_base::TITLE . '="' . triple_names::CITY_ZH_COM . '">' . word_names::CITY . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... and canton with its description as tooltip';
@@ -383,7 +427,7 @@ class word_tests
         $t->assert_text_not_contains($test_name, $txt, word_names::COMPANY);
 
         $test_name = 'company is part if limit is higher';
-        $txt = $form->title_named($wrd, 4);
+        $txt = $form->title_named($wrd, $msg_ui, 4);
         $t->assert_text_contains($test_name, $txt, word_names::COMPANY);
         $test_name = '... and "..." for more is goner';
         $t->assert_text_not_contains($test_name, $txt, '>...</a>');
@@ -391,11 +435,15 @@ class word_tests
         $test_name = 'verb of "CHF is symbol for Swiss Frank"';
         $wrd = $t_wrd->chf_ui();
         $wrd->phr_lst = $t_phr->list_ui();
-        $txt = $form->title_named($wrd);
+        $txt = $form->title_named($wrd, $msg_ui);
         $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
         $test_name = 'link of "CHF is symbol for Swiss Frank" with the description as tooltip';
+        // the tooltip is an html attribute, so the renderer escapes the quotes of the
+        // description (e.g. the apostrophe of "Campione d'Italia") the same way here
         $lnk = '<a href="/http/view.php?m=' . views::TRIPLE_ID
-            . '&amp;id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE . '="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
+            . '&amp;id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE_HTML
+            . '="' . htmlspecialchars(triple_names::SWISS_FRANC_COM, ENT_QUOTES) . '">'
+            . triple_names::SWISS_FRANC . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = 'name of "CHF is symbol for Swiss Frank';
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
@@ -406,7 +454,7 @@ class word_tests
         $test_name = 'reverse priority "Zurich is" subtitle has company when company is relevant';
         $wrd = $t_wrd->zh_ui();
         $wrd->phr_lst = $t_phr->list_zh_impact_ui();
-        $txt = $form->title_named($wrd);
+        $txt = $form->title_named($wrd, $msg_ui);
         $t->assert_text_contains($test_name, $txt, '>' . word_names::COMPANY . '</a>');
         $test_name = '... and still canton';
         $t->assert_text_contains($test_name, $txt, '>' . word_names::CANTON . '</a>');
@@ -418,13 +466,13 @@ class word_tests
         $test_name = 'if there is no subtitle the edit icon is in the same line';
         $wrd = $t_wrd->chf_ui();
         $wrd->phr_lst = $t_phr->list_zh_ui();
-        $txt = $form->title_named($wrd);
+        $txt = $form->title_named($wrd, $msg_ui);
         $t->assert_text_contains($test_name, $txt, 'fas fa-edit');
 
         $test_name = 'category_html for CHF emits the "is symbol for" verb verbatim';
-        $wrd = $t_wrd->swiss_franc_ui();
-        $wrd->phr_lst = $t_phr->list_ui();
-        $txt = $form->title_named($wrd);
+        $trp = $t_trp->swiss_franc_ui();
+        $trp->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_phrase($trp, $msg_ui);
         $t->assert_text_not_contains($test_name, $txt, words::CHF);
 
 
@@ -434,7 +482,11 @@ class word_tests
         $t->assert_true($test_name, $cfg->class_to_type_list(word_ui::class) === $cfg->phr_typ);
         $test_name = 'formula returns the formula type list';
         $t->assert_true($test_name, $cfg->class_to_type_list(formula::class) === $cfg->frm_typ);
-        // a class without a type list returns null and logs an error on purpose;
+        // the page class of an object extends the object class, so it must find the same type
+        // list, e.g. so that the component page can show the component type in its subtitle
+        $test_name = 'the component page class returns the component type list';
+        $t->assert_true($test_name, $cfg->class_to_type_list(component_exe::class) === $cfg->cmp_typ);
+        // a class without a type list returns null, which is the normal case e.g. for a link
         $test_name = 'type_lists->class_to_type_list returns null for a class without a type list';
         $t->assert_true($test_name, $cfg->class_to_type_list('class_without_a_type_list') === null);
 
@@ -443,21 +495,21 @@ class word_tests
 
         $test_name = 'shows the non-default type';
         $measure_word = new word_ui($t_wrd->hz()->api_json());
-        $type_name = $cfg->phr_typ->name($measure_word->type_id());
-        $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word), $type_name);
+        $type_name = $cfg->phr_typ->name($measure_word->type_id($msg_ui));
+        $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word, $msg_ui), $type_name);
         $test_name = '.. but the type name of a measure word is not shown for an unrelated word';
-        $t->assert_text_not_contains($test_name, $t->dsp_title_named_edit($wrd), $type_name);
+        $t->assert_text_not_contains($test_name, $t->dsp_title_named_edit($wrd, $msg_ui), $type_name);
         $test_name = 'shows the object name';
-        $title = $t->dsp_title_named_edit($wrd);
+        $title = $t->dsp_title_named_edit($wrd, $msg_ui);
         $t->assert_text_contains($test_name, $title, $wrd->name());
         $test_name = 'wraps the heading in the heading-line div';
         $t->assert_text_contains($test_name, $title, styles::HEADING_LINE);
         $test_name = 'adds a rename edit link';
         $t->assert_text_contains($test_name, $title, icons::EDIT);
         $test_name = 'wraps a non-default type in a subtitle';
-        $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word), styles::SUBTITLE);
+        $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word, $msg_ui), styles::SUBTITLE);
         $test_name = 'all optional subtiles';
-        $title = $sfm->title_named($t_wrd->zh_full_ui());
+        $title = $sfm->title_named($t_wrd->zh_full_ui(), $msg_ui);
         $target = word_names::ZH . ' <' . icons::EDIT
             . '> (' . verbs::IS_NAME . ' ' . word_names::CITY . ', ' . word_names::CANTON . ', ... / '
             . phrase_types::MEASURE_NAME . ' / '
@@ -468,66 +520,83 @@ class word_tests
         $t->subheader($ts . 'im- and export');
 
         // TODO check that all objects have a im and export test
-        $t->assert_ex_and_import($t_wrd->word(), $usr_sys);
-        $t->assert_ex_and_import($t_wrd->word_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_wrd->word(), $t->usr_system);
+        $t->assert_ex_and_import($t_wrd->word_filled(), $t->usr_system);
         $json_file = 'unit/word/second.json';
-        $t->assert_json_file(new word($usr), $json_file);
+        $t->assert_json_file(new word($t->usr1), $json_file);
 
         $t->subheader($ts . 'sync and fill');
         $test_name = 'check if the word fill function set all database fields';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $wrd_imp = $t_wrd->word_filled();
         $wrd_db = new word($wrd_imp->get_user());
-        $wrd_db->fill($wrd_imp, $usr_sys);
-        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $wrd_db->fill($wrd_imp, $t->usr_dev);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
         $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if importing of just the admin protection does overwrite the protection in the database';
         $wrd_db = $t_wrd->word_filled();
         $wrd_imp = $t_wrd->word();
         $wrd_db_after = clone $wrd_db;
-        $wrd_db_after->fill($wrd_imp, $usr_sys);
-        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
+        $wrd_db_after->fill($wrd_imp, $t->usr1);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $msg)->names();
         $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if importing just the word name does not overwrite any database fields';
         $wrd_db = $t_wrd->word_filled();
         $wrd_imp = $t_wrd->word_name_only();
         $wrd_db_after = clone $wrd_db;
-        $wrd_db_after->fill($wrd_imp, $usr_sys);
-        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
+        $wrd_db_after->fill($wrd_imp, $t->usr1);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $msg)->names();
         $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->id = 0;
         $wrd_db = $t_wrd->word();
-        $wrd_imp->fill($wrd_db, $usr_sys);
-        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $wrd_imp->fill($wrd_db, $t->usr1);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if description can be set to an empty string';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_description('');
         $wrd_db = $t_wrd->word();
-        $wrd_db->fill($wrd_imp, $usr_sys);
-        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $wrd_db->fill($wrd_imp, $t->usr1);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
-        $wrd_imp->set_code_id('test code id', $usr_sys);
+        $wrd_imp->set_code_id('test code id', new user_message(test_users::user_sys_test()));
         $wrd_db = $t_wrd->word();
-        $wrd_db->fill($wrd_imp, $usr);
-        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $wrd_db->fill($wrd_imp, $t->usr_normal);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_CODE_ID]);
+
+        // the api write path maps the code id from the client json; a normal user must not be able
+        // to plant a system code_id (see sandbox_code_id::api_mapper -> the privilege-checked setter)
+        $test_name = 'the api mapper refuses the code id for a normal user';
+        $usr_msg_map = new user_message($t->usr_normal);
+        $wrd_map = $t_wrd->word();
+        $wrd_map->set_code_id_db(null);
+        $wrd_map->api_mapper([json_fields::CODE_ID => 'planted code id'], $usr_msg_map);
+        $t->assert_null($test_name, $wrd_map->get_code_id());
+        $test_name = 'the api mapper reports the refused code id to the normal user';
+        $t->assert_false($test_name, $usr_msg_map->is_ok());
+        $test_name = 'the api mapper sets the code id for a system user';
+        $usr_msg_map = new user_message(test_users::user_sys_test());
+        $wrd_map = $t_wrd->word();
+        $wrd_map->set_code_id_db(null);
+        $wrd_map->api_mapper([json_fields::CODE_ID => 'allowed code id'], $usr_msg_map);
+        $t->assert($test_name, $wrd_map->get_code_id(), 'allowed code id');
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t_wrd->word_name_only();
         $db_wrd = $t_wrd->word_filled();
-        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_wrd->needs_db_update($db_wrd), false);
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_wrd->needs_db_update($db_wrd, $msg), false);
 
         // TODO Prio 1 review
         /*
         $test_name = 'a word json without the phrase type keeps the type empty';
-        $wrd_new = new word($usr);
+        $wrd_new = new word($t->usr1);
         $wrd_new->import_mapper([json_fields::NAME => word_names::MATH], $usr_msg);
-        $t->assert_true($t->name . $test_name, $wrd_new->type_id() === null);
+        $t->assert_true($t->name . $test_name, $wrd_new->type_id($msg) === null);
 
         $test_name = 'a word without phrase type never overwrites the type in the database';
         $db_wrd = $t_wrd->word_filled();
@@ -537,7 +606,7 @@ class word_tests
         $t->assert($t->name . $test_name, $non_db_fld_names, []);
 
         $test_name = '... but a changed phrase type is written to the database';
-        $in_wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $usr_sys);
+        $in_wrd->set_type(phrase_type_shared::SCALING_HIDDEN, new user_message($t->usr_system));
         $non_db_fld_names = $in_wrd->db_fields_changed($db_wrd, $usr_msg)->names();
         $t->assert($t->name . $test_name, $non_db_fld_names, [phrase::FLD_TYPE]);
 

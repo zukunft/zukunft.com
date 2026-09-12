@@ -68,6 +68,24 @@ class triple_url_tests extends url_test_base
         // load the shared frontend run state and print the section header
         $this->init($t, 'triple url->', 'url triple ');
 
+        // this test has no pure read (url_to_html) and no routing-only (url_to_action) tests yet;
+        // when one is added, use the url_to_html_tests / url_to_action_tests split of word_url_tests
+        $this->workflow_tests($t);
+    }
+
+    /**
+     * the combined workflow snapshot tests: every step chains url_to_action (routing, with
+     * do_it false so nothing is written) and url_to_html (render) like a real user request
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function workflow_tests(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'workflow');
+
+        // the snapshot unit test only renders the steps
+        // for the write tests the same workflows are used the do_it = true
+        // the fail step are before the real step to leave the database in a correct state
         $this->add_triple_fail_workflow(workflows::WF_ADD_TRIPLE_FAIL_NBR);
         $this->add_triple_workflow(workflows::WF_ADD_TRIPLE_NBR);
         $this->change_triple_fail_workflow(workflows::WF_CHANGE_TRIPLE_FAIL_NBR);
@@ -107,10 +125,10 @@ class triple_url_tests extends url_test_base
     protected function add_triple_fail_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the add_triple workflow creates a new triple, so there is no object id to load yet
-        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty triple
-        $url_arr = test_triples::triple_new_url();
+        $url_arr = test_triples::triple_new_url($this->msg);
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
@@ -129,7 +147,7 @@ class triple_url_tests extends url_test_base
 
         // the missing from and to phrases are reported as a warning instead of confirming the new triple
         $test_name = $this->step_path . workflows::NAME_SEP . 'warns_no_phrases';
-        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
+        $this->t->assert_true($test_name, $this->msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
     }
 
     /**
@@ -143,11 +161,11 @@ class triple_url_tests extends url_test_base
     protected function add_triple_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the add_triple workflow creates a new triple, so there is no object id to load yet
-        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // initial url with an empty triple
-        $url_arr = test_triples::triple_new_url();
+        $url_arr = test_triples::triple_new_url($this->msg);
 
         $this->wf_id = 0;
         $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -195,7 +213,7 @@ class triple_url_tests extends url_test_base
         // sandbox overlay from a previous run must not mask the freshly written base value)
         if ($do_it) {
             $this->assert_triple_in_db('add_triple workflow has written the triple',
-                triple_names::SYSTEM_TEST_ADD, $this->t->usr_system, triple_names::SYSTEM_TEST_ADD_COM);
+                triple_names::SYSTEM_TEST_ADD, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_COM);
         }
     }
 
@@ -212,12 +230,13 @@ class triple_url_tests extends url_test_base
      */
     protected function change_triple_by_name_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_BY_NAME, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $msg = new user_message();
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_BY_NAME, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $trp = new triple($this->t->usr1);
-        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         // in a read-only run the add workflow has not written the triple, so use the fixed id directly
         if ($this->wf_id == 0) {
             $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -226,7 +245,7 @@ class triple_url_tests extends url_test_base
 
         // initial url with the added triple
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -270,14 +289,15 @@ class triple_url_tests extends url_test_base
      */
     protected function change_triple_fail_workflow(int $wf_nbr, bool $do_it = false): void
     {
+        $msg = new user_message();
         // the workflow runs on the reserved 'System Test Triple'; resolve its db id by name and set the
         // fixed snapshot id so the snapshot does not depend on the assigned id
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $trp = new triple($this->t->usr1);
-        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         // in a read-only run the add workflow has not written the triple, so use the fixed id directly
         if ($this->wf_id == 0) {
             $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -288,7 +308,7 @@ class triple_url_tests extends url_test_base
         // from and to words (the snapshot files normalize the ids back to the fixed test ids); the
         // description is seeded so its kept '8' baseline can be checked after the failed save
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
         $url_arr[url_var::ID] = $this->wf_id;
         $url_arr[url_var::DESCRIPTION] = triple_names::SYSTEM_TEST_ADD_COM;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
@@ -323,7 +343,7 @@ class triple_url_tests extends url_test_base
 
         // the missing from and to phrases are reported as a warning instead of confirming the change
         $test_name = $this->step_path . workflows::NAME_SEP . 'keeps_pre';
-        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
+        $this->t->assert_true($test_name, $this->msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
         // the original description '8' baseline is preserved for the next compare, not reset to the change
         $this->t->assert_text_contains($test_name, $html,
             'name="' . url_var::PRE . url_var::DESCRIPTION . '" value="' . triple_names::SYSTEM_TEST_ADD_COM . '"');
@@ -340,12 +360,13 @@ class triple_url_tests extends url_test_base
      */
     protected function change_triple_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $msg = new user_message();
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $trp = new triple($this->t->usr1);
-        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         // in a read-only run the add workflow has not written the triple, so use the fixed id directly
         if ($this->wf_id == 0) {
             $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -356,7 +377,7 @@ class triple_url_tests extends url_test_base
         // its from and to words so the confirmed write targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -451,14 +472,15 @@ class triple_url_tests extends url_test_base
      */
     protected function del_triple_fail_workflow(int $wf_nbr, bool $do_it = false): void
     {
+        $msg = new user_message();
         // the workflow runs on the reserved 'System Test Triple' so a blocked delete can never touch
         // seeded data; resolve its db id by name and set the fixed snapshot id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $trp = new triple($this->t->usr1);
-        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         // in a read-only run the add workflow has not written the triple, so use the fixed id directly
         if ($this->wf_id == 0) {
             $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -470,7 +492,7 @@ class triple_url_tests extends url_test_base
         // is forced so the frontend check reads the triple as still in use and blocks the deletion
         // TODO Prio 0 remove workaround until the backend maintains the usage field
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
         $url_arr[url_var::ID] = $this->wf_id;
         $url_arr[url_var::USAGE] = 1;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
@@ -495,7 +517,7 @@ class triple_url_tests extends url_test_base
 
         // the still-in-use triple is reported as a warning instead of confirming the deletion
         $test_name = $this->step_path . workflows::NAME_SEP . 'warns_in_use';
-        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::DELETE_IN_USE));
+        $this->t->assert_true($test_name, $this->msg->has_msg_id(msg_id::DELETE_IN_USE));
     }
 
     /**
@@ -508,14 +530,15 @@ class triple_url_tests extends url_test_base
      */
     protected function del_triple_workflow(int $wf_nbr, bool $do_it = false): void
     {
+        $msg = new user_message();
         // the del_triple workflow runs on the reserved 'System Test Triple'; resolve its current db id
         // by name and set the fixed snapshot id so the snapshot does not depend on the assigned id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $trp = new triple($this->t->usr1);
-        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         // in a read-only run the add workflow has not written the triple, so use the fixed id directly
         if ($this->wf_id == 0) {
             $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -526,7 +549,7 @@ class triple_url_tests extends url_test_base
         // its from and to words so the confirmed delete targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -589,8 +612,9 @@ class triple_url_tests extends url_test_base
      */
     private function assert_triple_in_db(string $test_name, string $name, user $usr, string $description): void
     {
+        $msg = new user_message();
         $trp = new triple($usr);
-        $trp->load_by_name($name);
+        $trp->load_by_name($name, $msg);
         $this->t->assert($test_name, $trp->name(), $name);
         $this->t->assert($test_name, $trp->description, $description);
     }
@@ -606,8 +630,9 @@ class triple_url_tests extends url_test_base
      */
     private function assert_triple_filled_in_db(string $test_name, string $name, user $usr): void
     {
+        $msg = new user_message();
         $trp = new triple($usr);
-        $trp->load_by_name($name);
+        $trp->load_by_name($name, $msg);
         $this->t->assert($test_name, $trp->name(), $name);
         $this->t->assert_true($test_name, $trp->weight == 1);
     }
@@ -625,8 +650,9 @@ class triple_url_tests extends url_test_base
      */
     private function assert_triple_removed(string $test_name): void
     {
+        $msg = new user_message();
         $trp = new triple($this->t->usr1);
-        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         $this->t->assert_true($test_name, $trp->id() == 0 || $trp->is_excluded());
     }
 

@@ -8,3 +8,4 @@ sys_log_function_id, sys_log_function_name, code_id, description
 7, 'cfg/application', 'cfg/application', 'fallback entry to log system errors'
 8, 'cfg/helper/config_numbers', 'cfg/helper/config_numbers', 'loader for the system and user configuration'
 9, 'Import sample view data', 'import_sample_view_data', 'Import the sample view test data used by the view unit tests'
+10, 'Import use case data', 'import_use_case_data', 'Import the use case data as the last step of the db setup'

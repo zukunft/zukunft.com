@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2024-03-26 19:58:00",
   "user": "zukunft.com system batch job",
   "selection": [
@@ -33,7 +34,7 @@
     },
     {
       "name": "problem",
-      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
+      "description": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
         {
           "name": "Problem_solving",
@@ -43,7 +44,7 @@
     },
     {
       "name": "global",
-      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
+      "description": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",
@@ -97,19 +98,6 @@
       "name": "warmer"
     },
     {
-      "name": "climate",
-      "refs": [
-        {
-          "name": "Climate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7937",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "System Test Word"
     },
     {
@@ -122,7 +110,7 @@
       "from": "problem",
       "verb": "can be",
       "to": "global",
-      "comment": "here more a personal issue (wikipedia does not really match)",
+      "description": "here more a personal issue (wikipedia does not really match)",
       "refs": [
         {
           "name": "List_of_global_issues",

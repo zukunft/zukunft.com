@@ -1,0 +1,17 @@
+GET
+http://localhost/http/view.php?id=993&k=System+Test+View+Component&8id=993&8k=System+Test+View+Component&9m=1&m=35&z=0
+/http/view.php?id=993&k=System+Test+View+Component&8id=993&8k=System+Test+View+Component&9m=1&m=35&z=0
+/http/view.php?id=993&name=System+Test+View+Component&8id=993&8name=System+Test+View+Component&9mask_id=entry_view&mask_id=component_del&step=no&
+{
+    "id": "993",
+    "name": "System Test View Component",
+    "mask_id": "component_del",
+    "step": "no",
+    "url_part_original_data": {
+        "id": "993",
+        "name": "System Test View Component"
+    },
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
+}

@@ -26,7 +26,7 @@ PREPARE formula_update_log_00200000000100000_user_call FROM
 SELECT formula_update_log_00200000000100000_user
     (3,
      2,
-     30,
+     119,
      '"one" = "millions" * 1000000',
      'System Test Formula Renamed',
      1);

@@ -36,7 +36,6 @@ namespace Zukunft\ZukunftCom\test\php\const;
 
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class formula_names
 {
@@ -74,13 +73,29 @@ class formula_names
     const string INCREASE = 'increase';
     const int INCREASE_ID = 21;
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
+    const string INCREASE_TEST_EXP = '"' . word_names::TEST_PERCENT . '" = ( "' . word_names::TEST_THIS . '" - "' . word_names::TEST_PRIOR . '" ) / "' . word_names::TEST_PRIOR . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
     const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . self::THIS_ID . '}-{f' . self::PRIOR_ID . '})/{f' . self::PRIOR_ID . '}';
     // each term is wrapped in \text{} so the expression_latex_link component can link it; the
     // increase object page sample renders it without a term list, so without the term links
     const string INCREASE_LATEX = '\text{' . words::PERCENT . '} = \frac{ \text{' . word_names::THIS_NAME . '} - \text{' . word_names::PRIOR_NAME . '} }{ \text{' . word_names::PRIOR_NAME . '} }';
+    // the formulas of solution_prio.json: the three scaling formulas that convert a number of
+    // the start page table to one and the sum that turns a percent loss into happy time points
+    const string SCALE_MIO_TO_ONE = 'scale million to one';
+    const int SCALE_MIO_TO_ONE_ID = 16;
+    const string SCALE_MIO_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::MIO . '" * 1000000';
+    const string SCALE_BIL_TO_ONE = 'scale billion to one';
+    const int SCALE_BIL_TO_ONE_ID = 17;
+    const string SCALE_BIL_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::BILLION . '" * 1000000000';
+    const string SCALE_TRILLION_TO_ONE = 'scale trillion to one';
+    const int SCALE_TRILLION_TO_ONE_ID = 22;
+    const string SCALE_TRILLION_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::TRILLION . '" * 1000000000000';
+    const string GLOBAL_HTP = 'global happy time points';
+    const int GLOBAL_HTP_ID = 23;
+    const string GLOBAL_HTP_EXP = '"' . word_names::HTP . '" = "' . word_names::HTP . '","' . words::PERCENT
+        . '" * "' . word_names::GLOBAL . '","' . word_names::HUMAN . '","' . word_names::POPULATION . '"';
     const string JOULE_DEF = 'definition of joule';
-    const int JOULE_DEF_ID = 27;
+    const int JOULE_DEF_ID = 14;
     const string JOULE_DEF_EXP = '"' . word_names::JOULE . '" = ( "' . word_names::KG . '" * "' . word_names::METRE . '" * "' . word_names::METRE . '" ) / ( "' . words::SECOND . '" * "' . words::SECOND . '" )';
     // each term is wrapped in \text{} so the expression_latex_link component can replace the
     // token with a link to the term
@@ -89,7 +104,7 @@ class formula_names
     const string LITRE_TO_M3 = 'scale litre to m3';
     const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH;
     const string SCALE_MIO = 'scale millions to one';
-    const int SCALE_MIO_ID = 3;
+    const int SCALE_MIO_ID = 16;
     const string SCALE_MIO_EXP = '"one" = "millions" * 1000000';
     const string SCALE_MIO_DB = '{w' . word_names::ONE_ID . '} = {w' . word_names::MIO_ID . '} * 1000000';
     const string PARTS_IN_PERCENT = 'parts in percent';

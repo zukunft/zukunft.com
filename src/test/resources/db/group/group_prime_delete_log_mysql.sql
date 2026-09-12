@@ -20,5 +20,5 @@ SELECT group_prime_delete_log
     (3,
      3,
      320,
-     'Pi (math)',
-     32770);
+     'π (unit symbol)',
+     5);

@@ -29,11 +29,11 @@ PREPARE value_prime_p3_insert_log_11000_user_call
 SELECT value_prime_p3_insert_log_11000_user
        (3::bigint,
         1::smallint,
-        1::smallint,
+        6::smallint,
         3.1415926535898::numeric,
-        919135977611::bigint,
-        214::smallint,
-        198::smallint,
-        139::smallint,
+        914840944775::bigint,
+        213::smallint,
+        197::smallint,
+        135::smallint,
         0::smallint,
         null::bigint);

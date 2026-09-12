@@ -1,236 +1,254 @@
-# pending.md
 
-## list of planned llm prompts
+# pending - list of planned llm prompts with prio 1
 
-## high prio
+## workflows
 
-if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
+add the missing workflows link workflows such as
 
-### security before go live
+- link a formula to a phrase
+- unlink a formula from a phrase
+- link a component to a view
+- unlink a component from a view
+- link a view to a term
+- unlink a view from a term
+- add a child view to a view
+- remove a child view from a view
 
-findings of the re-run security check on 2026-07-20, ordered by exploitability. six read-only review
-surfaces: an adversarial re-audit of the recent fixes (parts 16-21), auth/session/crypto/csrf,
-injection/files/deserialization/ssrf, xss across the whole web/ render layer, access control/idor
-across all endpoints, and config/cache/dos/business-logic. each finding below was verified against the
-code (file:line evidence in the text). the previously fixed items (parts 1-21) and the already-listed
-"security with low prio" items were excluded. two of these are gaps in the share-read fix itself.
+add a fa-plus icon at the end of the phrases linked to a formula in the formula default view and add and edit view that, based on url_to_action, call a confirm page that showns something like 'link phrase xxx to formula xxx' with a cancel and confirm button
 
-ALL FIXED 2026-07-20. summary of the fixes (each finding paragraph below is kept for the audit trail):
-- sys_log display xss: web/system/sys_log.php now esc()s text/description/trace/user_name/owner_name
-  in display(), page_view(), display_admin() and get_html() before td()/body concat.
-- word/triple embedded value idor: word.php and triple.php now call values_related->filter_readable_by($usr)
-  before api_json_array under INCL_RELATED.
-- admin->system escalation: user::can_set_profile() now blocks assigning TEST and LOG as well as SYSTEM
-  (all three make user::is_system() true).
-- named-object idor read: added sandbox::is_readable_by (seq-id branch), phrase::is_readable_by and
-  term::is_readable_by (delegating), and sandbox_list_named::filter_readable_by; gated the object
-  endpoints (word/triple/phrase/formula/source/reference/component/view/group) and filtered the list
-  endpoints (wordList/formulaList/viewList/componentList/sourceList/termList/phraseList) with a neutral
-  'missing id' message; group was already covered via sandbox_multi. read-access unit tests added to
-  word_tests.php (owner/other/admin/public).
-- file-cache path traversal / poisoning: config_numbers::cache_file() now keys by the integer user id,
-  not the raw name; plus a signup deny-list (frontend.php action_signup) rejecting a user name with a
-  slash, backslash or control character (new msg_id SIGNUP_ERR_NAME_INVALID + en/de translations).
-- is_admin_local() TypeError: single return at the end (user.php).
-- error.log / test/error.log: git rm --cached + added to .gitignore.
-- name_tip() overrides: source.php, ref.php, language.php now htmlspecialchars the name/external_key.
-- dev debug scripts: src/test/php/dev/test_js.php and test_jquery.php now ENV_DEV-gate the url debug level.
-- zip-slip: import_convert_xbrl.php validates every entry path before extractTo (defense-in-depth).
-the informational/by-design items (api csrf fail-open, reset key in url, broken api/json export param)
-were left as documented.
+add the missing workflows quick workflows such as
 
-stored xss in the system error-log display page (high, admin compromise): web/system/sys_log.php lines
-350-352 (get_html), 245 (display), 262-268 (page_view) and 293-294 (display_admin) pass the raw sys_log
-`text`, `description` and `trace` into html_base::td() / the html body, and td() (html_base.php) emits
-its cell body unescaped. these fields routinely embed user-supplied strings - e.g. html_base::ref()
-calls log_warning('link to "' . $url . '" is blocked ...') with the raw user source/ref url
-(html_base.php ~513), and many log_err/log_warning messages embed object names - so a user who sets a
-source/ref url (or a name) to `"><img src=x onerror=...>` stores a sys_log row whose text carries the
-payload; when an admin opens the error-log page the payload executes in the admin session. this is a
-different code path from the already-fixed backend log_err/critical_error_html echo (that one escapes;
-the frontend sys_log renderer does not). fix: esc() each field before td()/body concat, as
-change_log_named.php and change_log_link.php already do.
+- add a word or select a phrase
+- change a value
+- change a result
+- select a term and add it to a formula
 
-private value idor still open on the word/triple pages (high; a gap in the part-20 share-read fix):
-the filter_readable_by() gate was applied to the five direct value/result/figure endpoints but not to
-the same values embedded in a word/triple api response under api_types::INCL_RELATED. word.php ~543 and
-triple.php emit values_related->api_json_array(...) with no filter (verified: filter_readable_by is
-called only from the five api controllers, and load_by_phr / load_sql_by_phr_lst_multi add no
-share/owner where). so user A opening a public word that user B attached a private/personal value to
-receives B's value (number, group phrases, share flag) in the `values` array - the same idor closed on
-the direct endpoints, still open on the primary viewing path, no id guessing needed. fix: apply
-filter_readable_by(session_user) to values_related (and the triple's) before api_json_array; check
-against the session user, not the object's get_user().
+add group add, change and del workflows
 
-admin can escalate to full system privileges via the TEST/LOG profile (medium-high; admin-tier
-requester, self-escalation): user::is_system() (user.php ~2563-2566) is true for the TEST, LOG *and*
-SYSTEM profiles, but can_set_profile() (user.php ~1902-1906) only forbids an admin from assigning the
-SYSTEM profile - the broader check `// if (!$profile->is_system())` is commented out and replaced by
-the narrower `!$profile->is_type(SYSTEM)`. so an admin may assign TEST or LOG (to themselves via
-can_change, which permits an admin to change their own params); that account then satisfies is_system()
-everywhere - can_change any user incl. real system users, can_set_profile all profiles incl. SYSTEM,
-admin_mask_denied, reserved-name usage - defeating the intended admin↛system boundary. fix: block TEST
-and LOG as well as SYSTEM in can_set_profile (i.e. exclude every profile for which is_system() is true),
-or implement the intended numeric right_level comparison the enforce_profile_privilege TODO describes.
+## views
 
-idor read of private named sandbox objects by id (medium; same class as the value fix, seq-id branch
-not covered): is_readable_by() exists only on sandbox_multi (value/result) and figure, not on the
-seq-id sandbox branch, so api/word, api/triple, api/phrase, api/formula, api/source, api/reference,
-api/component, api/view, api/group (and the *List endpoints via load_by_ids) do load_by_id ->
-api_json with only the `id > 0` gate that every anonymous ip-user passes. these tables all carry a
-standard-row share_type_id "to restrict the access" but no load path filters on it, so an object a
-user set private/personal is returned in full (name, description, expression, url) to anyone iterating
-ids. severity medium because these graph objects are usually deliberately public; the confidential
-case leaks. fix: add is_readable_by to sandbox/sandbox_named (share public OR owner OR admin/system)
-and gate the object endpoints + filter the list load_by_ids, mirroring the value fix.
+check if the views_by_id are 'useful'
 
-path traversal / cache poisoning via an unvalidated username in the file config cache (medium,
-config-gated): config_numbers.php::cache_file() (~605) builds a filesystem path by concatenating
-$usr->name() (paths::CACHE . CACHE_CONFIG . SEP . name . .json) with no sanitisation, and there is NO
-username charset validation anywhere - verified: no preg_match/basename/ctype in user.php and
-frontend.php ~1428 assigns the raw signup username directly. with CACHE=file a user who registers a
-name like `x/../../../var/www/html/http/pwn` makes write_file_cache() write attacker-influenced json
-outside cache/, and a name containing `/` poisons another user's config cache. precondition CACHE=file
-(default and .env.example use CACHE=database, which keys by integer type_id+user_id via bound sql and
-is safe), hence medium. root cause - the missing username charset allow-list at signup - is worth
-fixing regardless of cache mode. fix: derive the cache filename from the integer user_id (as the db
-cache does) or hash()/basename() the name, and add a username charset allow-list at signup.
+## admin
 
-lower severity: is_admin_local() (user.php ~2535-2544) puts its `return $result;` inside the
-is_admin() branch, so a non-admin falls off the end and the `: bool` return type throws an uncaught
-TypeError (a php fatal on a permission path, e.g. type_object.php ~1087 when a normal user deletes a
-used type) - fails closed by crashing but violates the no-fatal rule; fix: single return at the end or
-`return $this->is_admin() && $this->ip_addr == 'localhost';`. error.log and test/error.log are
-git-tracked runtime log files (currently 0 bytes) that the app appends to (the sys_log throttle note,
-fatal errors) - a future commit could capture logged internal paths / request strings; fix: git rm
---cached and add to .gitignore like the server_admin state files. three name_tip() overrides return
-the raw name instead of the esc()'d base contract - web/ref/source.php ~207, web/ref/ref.php ~428
-(external_key is user input), web/system/language.php ~125 - latent xss: the primary render arms go
-through ui_base::dbo_name() which escapes, but a generic name_tip caller in a list would render raw;
-fix: escape in the overrides or route through the base. two dev-only harnesses set $debug from the
-request ungated - src/test/php/dev/test_js.php ~34 and test_jquery.php ~35 - not deployed (the three
-production bootstraps are correctly ENV_DEV-gated), low; add the same gate for consistency. zip-slip in
-import_convert_xbrl.php ~207 (ZipArchive::extractTo of `..` entry names) is not attacker-reachable
-today (test/cli-only tool, no web upload / $_FILES path exists); validate entry paths if a web import
-is ever added.
+add to the admin menu a page that shows the system errors
 
-informational / by-design (not counted as findings): the api write path's same-origin csrf check
-fails open when both Origin and Referer are absent, but a browser cannot be coerced into omitting both
-on a cross-origin state-changing request (browsers always send Origin on cross-site post; `Origin:
-null` is correctly rejected), so it is not browser-exploitable - it only allows genuine
-server-to-server calls, the documented intent; add a token/Sec-Fetch check if cookie auth is ever added
-to the api. the reset/activation key travels as a url query parameter (frontend.php ~1673) so it can
-land in access logs / history, mitigated by sha256-at-rest, one-time use, 1h expiry, 80-bit entropy and
-the Referrer-Policy header - low, a post-based activation form would avoid it. api/json/index.php ~995
-hard-codes $wrd_id = 1 overriding the request param (a broken export feature, ignores attacker input -
-not a security issue). the DUMMY_PW_HASH cost coupling and the no-login/reset-throttle items remain as
-already listed under "security with low prio".
+## main pages
 
-### security improvements
+in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
 
-add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
+## maybe to fix:
 
-### reduce response time
+1. Limit before sort — load_values_similar() reads with value_list::read_limit(), but the impact sort happens in the renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
+2. sort views and components so the the most must are on top
 
-if no prepared cached page is found, repeat the previous page with a 'processing' message and 'processing since 1 second', 2, 3 ... up to the timeout limit 
+## cleanup
 
-include in the install.sh script the creation of a crontab job 
+check why diff for docs/code_functions_all.md still takes very long
 
-create a job that checks for some users (the number of users to check should be defined in the config.yaml) if the 'uses_sandbox' is still valid and if not switch off the flag and set the 'last_update' time so that always the least updated users are checked with the next job run
-
-**4. Backend job: sandbox page generation**
-> Implement a backend job (queue-based) that regenerates the sandboxed HTML for a given user+view+object. On completion, write the result to the cache store keyed appropriately for that user's sandbox context, and mark it available for the frontend to fetch on next poll. Include a check to avoid enqueuing a duplicate job if one is already in flight for the same key.
-
-**5. Reactive cache invalidation**
-> Implement reactive invalidation: when a request finds the cached HTML for a view+object is stale (define staleness check — e.g. compare object's last-modified timestamp to cache timestamp), trigger the backend regeneration job instead of serving straight from cache, following the same stale-serve-with-refresh-flag pattern as sandbox users.
-
-**6. Proactive invalidation via object dependency index**
-> Implement a reverse index mapping object_id → list of dependent view cache keys. When an object is updated, look up dependents and enqueue regeneration jobs for each. Add a configurable limit on the number of dependent views invalidated per object update in a single pass, to prevent fan-out overload for widely-referenced objects (e.g. batch/throttle beyond the limit).
-
-**7. Frontend polling with backoff**
-> Implement frontend polling for pages served with the "refresh coming" flag: poll for the updated page with increasing interval (define starting interval and growth factor), up to a configured maximum number of attempts/time limit. On limit reached, fall back to [describe your auto-user/IP-whitelist fallback mechanism here — needs your existing spec, since I don't have those details].
-
-**8. Request logging**
-> Add a lightweight insert into the request log table for each page request, capturing at minimum: user_id, view_id, object_id, timestamp, and whether served from cache or freshly generated/regenerated.
-
-Fill the gap: Compare with the actual spec for your existing "auto user and IP whitelist fallback" mechanism, so prompt 7's fallback description is a placeholder — you'll want to fill that in from your existing plan before comparing.
-
-add to the config.yaml the size and age limit for the cache tables and use it to clean up the cache if needed
+write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
 
 
-### prepare denial-of-service protection
+create a script that checks that all fields of the main classes are shown on the related default view, add and edit view except the fields that are explicitly excluded
 
-use the cache for read only pages
+create a script loops over the resources that lists all queries '*.sql' that does not have a limit and that does not have a unique db id in the where condition.
 
-limit the number of read requests per time unit by the webbrowser and auto switch to ip whitelist mode
 
-count the number of db write requests by user and ip
+add the check of the open_api specification to /test/test.php
 
-add to config.yaml the max age for each db_cache_type 
+if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default page
 
-after each write to db_cache check if there are row older than defined in the setting and delete them using a prepared query
+fix the view selector link in the word_default page
 
-### denial of service test
+### verb default view
 
-The goal of this block is an end-to-end test that a flood of change requests first blacklists the abusing user and, if the abuse continues from more than one user, automatically raises the pod to user whitelist mode. The current protection is only the manual, file based whitelist in `src/main/php/web/server_guard.php` toggled from `http/server_admin.php` (state in `server_admin/state.json`); the automatic per-user rate limit, the database blacklist and the auto-switch to whitelist mode still have to be wired up. Build the prompts below in order: the first ones add the enforcement and the make-it-testable config knobs, the later ones are the actual DoS test that lowers those knobs, simulates the flood and asserts the reaction.
+a cut list shows that it continues, but not by how much: the verb page ends the triples with '...' without a number, because the loaded list is itself cut by the read limit, so the number of the remaining triples is not known (unlike value_list::more_tail, which knows the count within the loaded list). the exact number needs its own count query, the same open point as the per type count of the user page
 
-wire the existing `max change` config (config.yaml at `zukunft.com > system configuration > user > default > backend > max change > daily > ip user`, currently 1000 and only defined) to real enforcement: count the change requests a user has made in the configured period and reject a change that would exceed the limit. Add a second daily limit `logged in user` next to `ip user` so a registered user has its own threshold, and read both through the normal config accessor (the same path used for other `system configuration` values) instead of a hard coded number. Confirm no superglobals are read inside the enforcement method - the requesting user must be passed in as a parameter.
+triple_fields::FLD_NAME_GIVEN and FLD_NAME_AUTO are null for all 971 triples of the test database, although the import sets a name for each of them: the generated name lands in triple_name only, so a query that needs to know whether the user has given an own name cannot tell. check if the import should fill name_generated and if the two fields are needed at all beside triple_name
 
-when a user exceeds its `max change` daily limit add that user to the database blacklist (the fallback that `server_guard.php` and `http/server_admin.php` already refer to as "the database based blacklist") and from then on reject every further change request from that user with a clear user_message that tells the user why the change was refused and how to contact the admin. Keep the blacklist in the database, not in the file based `user_whitelist.txt`, so the manual whitelist and the automatic blacklist stay independent.
+### value page tabs
 
-add a new system configuration knob `user whitelist auto switch` = the number of distinct blacklisted users within the detection period that automatically activates the user whitelist mode (the same `user_whitelist_active` flag in `server_admin/state.json` that the admin page toggles). Default it to a high, production-safe value. When the number of freshly blacklisted users reaches this threshold, set `user_whitelist_active` to true exactly as the admin page would, and log a warning so the admins see why the pod switched to whitelist mode.
+the value default view now has the 'value tab box' component, so the value page shows the views that can show a value (all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
 
-write the denial of service test itself (a dedicated test, e.g. under `src/test/php/` following the existing test structure, runnable via `php test_unit.php`, admin via the IP_ADMIN fallback on the CLI). As the first step the test must lower the two knobs to test values and remember the previous values so it can restore them at the end: set the `max change` daily limit for `ip user` and for `logged in user` to a very low number (e.g. 2 changes per period) and set `user whitelist auto switch` to 2 users. Assert that reading the knobs back returns the lowered values before continuing.
+the 'my' tab of the value page has an undo icon for the numeric value, the source and the sandbox fields (see value::db_fld_to_url), but not for a text, time or geo value, because url_var has only NUMERIC_VALUE; the same applies to the apply icon of the 'others' tab
 
-in the same test simulate one user that sends more change requests than the lowered `max change` limit in a short period. Assert that after crossing the limit the user is added to the database blacklist, and assert that the next change request from that already-blacklisted user is rejected (the change is not stored and the returned user_message says the request was refused). The user whitelist mode must still be inactive at this point because only one user has been blacklisted (threshold is 2).
+the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
 
-extend the test with a second user that also sends too many change requests in a short period. Assert that once the second distinct user is blacklisted the `user whitelist auto switch` threshold of 2 is reached and `user_whitelist_active` in `server_admin/state.json` flips to true automatically. Then assert that an ip user (anonymous, not logged in) change request is now rejected by `server_guard.php` with the `optional/user_reject.html` reject page, and assert that the server admin page (`http/server_admin.php`) reports the user whitelist as active - check the rendered state that the page reads via `read_state()` / shows as "User whitelist: active".
+adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
 
-as the final step of the test reset everything to the pre-test state: restore the `max change` daily limits and the `user whitelist auto switch` knob to their remembered default values, clear the two test users from the database blacklist, and switch the user whitelist mode off again through the same code path the server admin page uses to deactivate it (the `toggle user whitelist` POST action in `http/server_admin.php`), leaving `user_whitelist_active` false in `server_admin/state.json`. Assert that after the reset a normal change request from a fresh user succeeds again, so the test is self-cleaning and leaves no active whitelist or blacklist behind.
+## user page
 
-### distributed denial of service test
+a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. a count per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows already builds that union per user and would only have to keep the per-table counts instead of summing them
 
-This block is the IP based sibling of the denial of service test above: instead of one logged in user flooding change requests, many different IP addresses each send too many requests in a short period, and the pod must blacklist each abusing IP and, once more than one IP is abusing, automatically raise the pod to IP whitelist mode. The existing pieces are the IP branch of `src/main/php/web/server_guard.php` (`ip_whitelist_active`, `server_admin/ip_whitelist.txt`, `ip_allowed()` with CIDR matching, `optional/ip_reject.html`), the IP toggle in `http/server_admin.php`, and the initial `ip_blacklist.json` (see `src/main/php/cfg/const/files.php::IP_BLACKLIST_FILE` and the `ip_ranges` test constants). The automatic per-IP request rate limit and the auto-switch to IP whitelist mode still have to be wired up. Build the prompts below in order, same as for the single-user test: enforcement and testable config knobs first, then the actual distributed test.
+## component page tabs
 
-add a per-IP request rate limit: count the requests coming from one client IP (`$_SERVER['REMOTE_ADDR']`, passed in as a parameter, never read as a superglobal inside the enforcement method) within a configured period and reject requests from an IP that exceeds the limit. Add the knob to config.yaml next to the existing `max change` values, e.g. `zukunft.com > system configuration > user > default > backend > max requests > per minute > ip` for the raw request flood limit (distinct from `max change` which counts stored changes), and read it through the normal config accessor. Note that a DDoS is about request volume, not only stored changes, so this limit must also cover anonymous read/GET requests that never reach the change logic.
+the component default view now has the 'component tab box' component with the changes and the my tab; it has no views tab, because the views that use the component are listed by the separate 'component views' component of the same page
 
-when an IP exceeds its request rate limit add that IP (or its /32 resp. /128 range) to the database IP blacklist that `server_guard.php` and `http/server_admin.php` already refer to as the fallback, reusing the same blacklist storage that `ip_blacklist.json` seeds. From then on reject every further request from that IP early in `server_guard.php` with `optional/ip_reject.html`, the same page an active IP whitelist uses for a non-listed IP. Keep the automatic IP blacklist independent of the file based `ip_whitelist.txt` so the manual whitelist and the automatic blacklist do not overwrite each other.
+api/component/index.php did not read the url flags at all, so it always sent api_json([]) and the owner of a component was never sent either although component::api_json_array emits it under incl_related; the endpoint now uses api_type_list::from_url_array like the triple and formula endpoint
 
-add a system configuration knob `ip whitelist auto switch` = the number of distinct blacklisted IPs within the detection period that automatically activates the IP whitelist mode (the `ip_whitelist_active` flag in `server_admin/state.json` that the admin page toggles). Default it to a high, production-safe value. When the number of freshly blacklisted IPs reaches the threshold, set `ip_whitelist_active` to true exactly as the admin page would, and log a warning so the admins see why the pod switched to IP whitelist mode. Note that activating an empty IP whitelist locks everyone out (the warning already emitted by `server_guard::warn_if_empty_ip_whitelist`), so on the auto-switch the current admin / server IPs must be seeded into `ip_whitelist.txt` first.
+web/component/component.php has a load_by_id_with_related and a db_fld_to_url, both only on the component: view_base and source extend the same web sandbox_code_id, so adding either to the parent would also change the view and the source page, which are separate pending items
 
-write the distributed denial of service test itself (a dedicated test under `src/test/php/`, runnable via `php test_unit.php`, admin via the IP_ADMIN fallback on the CLI). As the first step lower the two knobs to test values and remember the previous values for restore at the end: set the per-IP `max requests` limit to a very low number (e.g. 2 requests per period) and set `ip whitelist auto switch` to 2 IPs. Assert that reading the knobs back returns the lowered values before continuing. Since the CLI has no real remote address, drive the requests through a helper that lets the test set the client IP per request (the same value `server_guard.php` reads from `REMOTE_ADDR`), so the test can simulate distinct source IPs.
+change_log_list::table_field_to_query_name returns '_of_cmp' for a component changes tab (leading underscore) and logs 'field name not expected' although an empty field name is the normal case of load_obj_last; the same wart exists for the formula ('_of_frm'), view, source, verb, group and value branches, whereas the ref and the type branch handle the empty field name properly - fixing all of them renames the prepared statements and churns the committed fixtures, so it needs its own change
 
-in the same test simulate one IP address that sends more requests than the lowered per-IP limit in a short period. Assert that after crossing the limit that IP is added to the database IP blacklist, and assert that the next request from that already-blacklisted IP is rejected by `server_guard.php` with the `optional/ip_reject.html` page (403). The IP whitelist mode must still be inactive at this point because only one IP has been blacklisted (threshold is 2).
+adding the 'component tab box' to base_views.json shifts the database id of every component imported after it, like the value tab box did before
 
-extend the test with a second, different IP address that also sends too many requests in a short period. Assert that once the second distinct IP is blacklisted the `ip whitelist auto switch` threshold of 2 is reached and `ip_whitelist_active` in `server_admin/state.json` flips to true automatically. Then assert that a request from a further, non-whitelisted IP is now rejected with `optional/ip_reject.html`, that a request from an allowed IP in `ip_whitelist.txt` still passes, and that the server admin page (`http/server_admin.php`) reports the IP whitelist as active - check the rendered state it reads via `read_state()` and shows as "IP whitelist: active".
+### more
 
-as the final step reset everything to the pre-test state: restore the per-IP `max requests` limit and the `ip whitelist auto switch` knob to their remembered default values, clear the test IPs from the database IP blacklist, and switch the IP whitelist mode off again through the same code path the server admin page uses to deactivate it (the `toggle ip whitelist` POST action in `http/server_admin.php`; note that only a full-access admin may switch the IP whitelist off, restricted admins may not), leaving `ip_whitelist_active` false in `server_admin/state.json`. Assert that after the reset a normal request from a fresh IP succeeds again, so the test is self-cleaning and leaves no active whitelist or blacklist behind.
+find and fix the silent not-ok on the fresh-database reset path: during reset_db_forced the request message reached the config check of db_check with status NOK but without any error text (only the DONE and 'finished successful' infos), so a sub step of the fresh-db startup (user creation, type fill or base import) returns a failed message without recording the reason - a 'never fail silently' violation; the broken-sql side effect is fixed (db_object_seq_id::sql_write now uses a build-scoped message), so the next forced reset should surface which step it is
 
-## fine-tuning for next launch
+review Message::add_err: it passes ok=true to add(), so an error added via add_err never sets the message to not ok (is_ok() stays true), which inverts the intent of the plain add() that flips to not ok even for infos; decide the intended contract and align add, add_err, add_id and add_info_id
 
-add to the .env (and sample) parameter for the api to allow the cache (or deny) so that e.g. the api for the config just reads the env file checks the user / token and than returns the message from cache one-to-one. Review the debug call so that &debug=9 basically shows only these main steps
+decide how a no update import should treat the object type: sandbox_typed::diff_msg skips the type when $ex_def is set, so a re-declaration with another type is never reported and the later import file silently wins; company.json declares the components "Cash Flow Statement" and "company with ratios" as calc_sheet and companies.json declares the same names as values_related resp. word_value_list, so today companies.json overwrites the type of company.json without a message; either report the type like the other fields or give the two files their own component names resp. one code_id to merge (see docs/llm/json_views.md)
 
-moved to [pending_next_launch.md](pending_next_launch.md) to keep this file small; see also [pending_fermi_live.md](pending_fermi_live.md)
+thread the two fill() results of the no update import in sandbox_list_named::update: both $sbc->fill($dbo, ...) and $dbc->fill($sbx, ...) drop the returned user_message, so a permission problem of a fill setter (e.g. component::set_ui_msg_code_id for a user without can_set_ui_msg_id) is lost instead of being reported
 
-### security with low prio
+review buttons
 
-still open (deliberately skipped as too risky / too large to change safely without a test run):
-Content-Security-Policy is not set - needs an audit of the frontend inline styles first (the other
-headers are in place). the api write path has no anti-csrf check (api/word/index.php /
-api/controller.php) but is currently unreachable dead code because the method-detection uses
-`in_array(REQUEST_METHOD, $_SERVER)` (should be array_key_exists), so every request falls through to
-GET; close the csrf gap in the same change that fixes the method detection and enables writes. the
-bcrypt DUMMY_PW_HASH is pinned at cost 12 while real hashes use the runtime default cost - equal on
-php 8.4 (default 12) but diverges on any php where the default is 10, re-opening the timing oracle the
-dummy prevents; derive the dummy from the same cost (skipped: touches auth timing, wants a careful
-test). save_user() has no general can_change() gate (safe today because no write caller passes an
-attacker-influenced target, latent defense-in-depth; skipped: a guard risks breaking a normal user
-saving their own profile without a test run). api/job (api/job/index.php) and api/changeLogList are
-gated only by `id > 0` and leak another user's job / change-history metadata; api/job wants an owner
-filter (skipped: job ownership model unclear), api/changeLogList is largely intended for the public
-graph (needs an explicit access decision). login and the password-reset email have no throttle -
-covered by the planned rate limiter, ensure it also bounds the reset endpoint. informational
-(injection review): sql_par_field_list::par_sql() (line 785) builds inline unescaped sql but only into
-`$qp->call`, the documented never-executed sample string - add a guard/comment so it is never routed
-into exe(); finish deprecating sql_db::sf() in favour of bound parameters.
+web/value/value_list.php:1352 and :1360 were not migrated — $phr_row->btn_add($back) / $val_main->btn_add($back) still pass the old string $back into the new array $url_arr parameter. dsp_table($phr_row, $back, ...) is untyped so nothing catches it statically; at runtime this is a TypeError.
+
+deprecate dsp_edit
+
+deprecate http_old
+
+review $back
+
+review $msg
+
+repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
+
+Worth fixing
+formula button tooltips lost their object name
+button is now btn_edit() with no $url_arr at view.php:171 and word.php:751.
+Production web/ code now includes and reads test constants. web/view/view.php:67 and web/word/triple_list.php:51 add a real include_once test_paths::CONST . 'word_names.php' and hardcode word_names::ZH_ID as the back target. list_sort.php extends the same pattern to triple_names::GLOBAL_PROBLEM_ID — and there the include_once is commented out while the use is active, so it only works via the autoloader. triple_list.php:147 has a TODO Prio 0 admitting the $url_arr is a placeholder; view.php:145 has none. Either way "Zurich" as the back link on a generic view navbar is a placeholder, not behaviour.
+Dead code left behind in view.php:617,619 — $call_edit / $call_del are still built via url_back(...) but no longer used, since btn_edit()/btn_del() build their own url. The buttons also lost the word= and back context those urls carried.
+Unused additions in tests: graph_tests.php:60-62 adds $base_url, $lan, $url_arr — none used in the file; languages is imported unused in both graph_tests.php and horizontal_ui_tests.php.
+Tooltip regression, visible in base_ui_tests.php:512: the delete title went from delete this formula of scale minute to sec to delete this formula — the object name dropped out of the button title. Intentional?
+Nit: shared/const/words.php:335 inserts SOLUTION after STATEMENT, breaking the alphabetical order of that list.
+docs/llm/pending.md drops the self:: vs $this:: item (correctly — db_object::btn_add uses $this::VIEW_ADD_ID) but keeps the AUTO_UPDATE_TEST_FILES item, which is still open per point 1.              
+horizontal_ui_tests:106-111 calls these for many classes but only asserts the icon is present, not the url — so nothing catches it.
+dsp_list() drops the add button on an empty list. $vrb is assigned inside the foreach, so it stays null when there are no verbs and the if ($vrb != null) block is skipped — a user looking at an empty verb list has no way to add the first one. The old free btn_add() was unconditional. The button also now belongs to whichever verb happened to be last in the list, which reads oddly for an "add new verb" action.
+$add_script in dsp_list() is now dead (verb_list.php:131) — nothing consumes it since btn_add() builds its own url.
+Two url styles on one page, visible in the new snapshot: list() emits m=verb_edit / m=verb_add (code ids, via html_base::list()'s url_back) while the migrated dsp_list() button emits m=6 (view id). Same page, same action, two conventions — the html_base::list() side has not been through the #247 migration yet.
+My architecture.md section pins the wrong parameter order. It writes add_obj($obj, $allow_duplicates, $msg), which matches ListOfIdObjects and sandbox_list_named but not the new type_list::add_obj($obj, $msg, $allow_duplicates). The new order is the one the rules actually require (a user_message parameter must be required, so it cannot follow an optional one) — the two older siblings still have Message $msg = new Message(). The doc should either not name an order or say the new one is the target.
+type_list::get() now has a false alarm. It logs log_err('probably ... are duplicate code_id') whenever count($this->hash) != count($this->lst) — which is exactly the state a legitimately duplicated list is in, since hash is keyed by code_id. It only fires if someone calls get() on such a list, but the check contradicts the feature just added.
+url_back() lost its docblock (html_base.php:730-760). base_url_clean() was inserted between the existing /** … @return string the created url */ block and function url_back(, so that block now documents the private helper (which has its own docblock right below it) and url_back() is undocumented. Moving base_url_clean() above the docblock fixes it.
+sort_by_name()'s docblock is now false (type_list.php:403). It justifies returning a copy with "because get() maps the position in the hash to the position in the list" — but get() no longer does that, it was changed in this same diff. Returning a copy is still right (a preloaded type list is shared for the whole request and must not be reordered under other holders), but the stated reason has to be the new one.
+text_h4() breaks the pattern of its siblings. text_h1/2/3 pass the matching level as the non-bootstrap tag (H2,H1 / H4,H2 / H5,H3); text_h4 passes self::H6, self::H3, so with UI_USE_BOOTSTRAP = false an h4 renders as <h3>. Invisible today because bootstrap is on — the snapshot correctly shows <h6>.
+The snapshot does not actually exercise sort_by_impact(). Every verb from load_dummy() has impact 0.0, so the short and more versions fall through to the name tie-break and render alphabetically — identical to what sort_by_name() would produce. The new sort is unproven by the committed test; a fixture with distinct impacts (or an assert on sort_by_impact() directly) would close that.
+$url_arr is unused in both verb_list_ui_tests.php:64 and word_list_ui_tests.php:57. Nothing on either page takes one.
+word_list_ui_tests.php / word_list.html are unrelated to this change. The only effect is that the three stylesheet hrefs became absolute (http://localhost/…) because $base_url, $lan were added to its html_page_test call. Fine in itself, but it is a separate concern riding along — worth a glance that you want it in this commit.
+src/test/resources/import/carbon_leakage_effect.json is staged and unrelated — 244 new lines, referenced by no test and no PHP file, and nothing in this change set produces it. It looks like it wandered in from other work. Either it belongs to a different commit or its consumer is still missing.
+The component insertion point causes ~1,600 lines of avoidable churn. I placed system title user directly after system title user settings, which lands it at component id 98 and shifts every later component id by one: unit/component/list.csv 450 changed lines, unit/component_link/list.csv 1,866. Appending both new components at the end of their components blocks would have given the same result with a two-line fixture diff. I checked the pinned consts in shared/const/components.php — the highest is FORM_PLURAL_ID = 92, below the insertion point, so nothing is silently mis-pinned. But if you would rather not carry that renumbering, moving the two definitions to the end of their blocks and re-running is cheap now and awkward later.
+Seven user snapshots were renamed, not edited — 74_user.html → 74_user_9.html, and likewise 49, 50, 62, 85, 87, 89. The filename carries the dbo id, which is now 9 instead of 0. Correct consequence of user_filled_loaded, but it makes the diff read as delete+add; worth confirming the deletions are the paired old files and that the runner's "remove test files not used any more" pass did not drop anything else.
+component_types.csv gains a seeded row, so the database needs the new type. I read that as data rather than structure and left version.txt alone — your call if it should carry the minor bump plus a db_check step.
+The new component is not wrapped in the row col-md-12 column div — visible in 74_user_9.html: the first four components each sit in <div class="row col-md-12">, the fifth does not. Since the request was specifically "in a fixed column", this defeats the point of the placement.
+The cause is pre-existing, not introduced here: view_exe::show() wraps a row only when it reaches the next component ($result .= $html->div_row($row, $row_style) in the BELOW branch), and the final flush at line 271-273 is a bare $result .= $row; with no div_row(). So the last component of any view has always been unwrapped — in the committed snapshot it was user system errors that lacked the div, and now it is the new one. Fixing the flush to use div_row()  with the same style resolution would wrap both, and would change the tail of many view snapshots.
+The two change-log api fixtures now carry a per-run change_time. change_log_list_word_1_word_name.json gained "change_time": "2026-08-18T09:10:19+00:00", which the committed baseline did not have. assert_api_compare() strips it before comparing (json_remove_volatile → change_log::FLD_TIME), so tests still pass — but the stored file now holds a timestamp that differs on every reset, so these two files will churn on each run.
+Cause: the update_files_with_not_yet_fixed_db_id() helpers I added last commit write the raw api response ($lib->json_for_dev($created)) without passing it through json_remove_volatile() first. The type_list_check() pattern I copied has the same property (its header timestamp also moves each run), so this is consistent with the existing code — but for the change log it bakes a volatile value per row where there was none. Stripping volatile fields before writing would make these fixtures stable.
+The files also switched from 2-space to 4-space indentation, confirming a different writer than whatever produced the committed versions.
+rest_call::api_call() gained $extra_headers for a test-only need. The parameter exists solely so assert_api_get_not_permitted() can send X-Forwarded-For and reach the rejection arm — no production caller passes it. Defensible (the local test runner is an own-pod call, so there is no other way to exercise that branch), but it is production API surface added for a test.
+The two skip-guards in assert_api_get / assert_api_get_by_text got looser. They now also skip when the response lacks an email field. That correctly absorbs the new core-json response when the admin login fails — but it also means a genuine regression that drops the email from the admin response would be silently skipped rather than failing. Narrower would be to check for the msg key or an explicit core-shape match rather than "email missing".
+load_by_id_with_related() ignores the load_by_user result. The $msg is threaded and merged, so problems do reach the user; but a failed change-log call leaves chg_log as an empty list, which the renderer cannot distinguish from "this user has no changes" — the page then says "This user has not changed anything." even when the load failed.
+The changeLogList branch has no permission check, justified in the comment as "the change log is public like on the object pages". That is consistent with the existing by-object branch, which is equally unguarded — worth being deliberate about, since this is the first endpoint keyed on a user id rather than an object id.
+The budget can overshoot by design. A group renders whole once started, so the last group may push the total past the limit — with your 20 and a 15-member group starting at budget 1, the page shows 21. The comment says so, and it follows from your "cap each group / keep groups whole" choice, but the limit is a target rather than a hard ceiling. If you want a hard cap, the last group would have to be truncated mid-way.
+impact_group no longer defaults to the configured limit. Its $budget is now required and it uses max(0, $budget). Every caller passes a real value today, but a future caller that passes 0 gets a section with no rows and a tail counting everything — silently correct-looking, easy to get wrong. A ?int $budget = null defaulting to configured_limit() would be safer.
+The per-group cap re-reads the config per section. time_groups() and relevant_phrase_groups() each call configured_limit() for $per_group, and group_block() calls it again per group. Correct, just repeated work on a hot path; passing it down with the budget would do.
+The word pages moved too — word.html, word_api.html, word_default_word_1/197, word_del, word_edit, value_list.html all changed. Expected (the same renderer), but they are the pages to eyeball for over-truncation, since the fixtures there are small and now render against a limit of 6 in tests.
+The owner is still not rendered — the task is incomplete. No snapshot anywhere contains ow=. url_mapper::url_par() drops null values, so $obj->get_user()->name() is null when the test url is built, and the system show field owner component renders nothing on both 116_formula_link_1.html and 115_component_1.html. The transport chain exists end to end; the test fixture just never supplies the name.
+view_relation start position is now an empty field. Removing the 'position missing missing' placeholder was right, but test_mappers::view_relation_url doesn't carry url_var::POSITION (and view_relation has no to_url_array override), so 43_view_relation_update_1.html renders the field with no value. Component link works (value="1"), formula link is fully wired. That is exactly the "unexplained asymmetry" the fix-the-pattern rule warns about — one of the three is wired, one reads from an existing url var, one can't.
+Empty "Changes" tab on the formula link page. change_log_table_pure returns a table with when / who / what headers even with zero rows, so tab_box doesn't drop it. 116_formula_link_1.html shows a Changes tab containing only headers.
+form_field_formula_link_prio has no German translation. I changed the en text to "Priority"; de.yaml has no entry for it at all (nor for form_field_view_term_link_prio / form_field_component_link). Pre-existing, but the rule is en and de.
+Seed component ids shifted. The three new components in base_views.json pushed Cash Flow Statement 344→347 and company with ratios 345→348. list.csv is regenerated and no *_ID const pins either, so nothing broke — reporting it rather than absorbing it silently, as the json rules require.
+Two include_once lines commented out (yours): sandbox_named.php no longer includes its own parent sandbox.php, and type_list.php drops change_table_field.php. Same shape in web/sandbox/sandbox.php, where change_log_list.php is commented out while api_mapper does new change_log_list(). All load today, but each now depends on some other file loading the class first — the same class of fragility as the sandbox_link fatal.
+Minor: $url_arr is declared but unused in source_ui_tests.php and user_ui_tests.php (used 4× in component_ui_tests.php). And code_object_name_exceptions.md grew for formula_link — my test vars $lnk_fld_url, $lnk_plain, $lnk_tab — against the rule that the list stays short.
+Not a defect: the coverage doc lists show_link_type, show_order_nbr and link_type as "0 unit test calls". They are tested, but in unit_ui/, which that generator doesn't count.     
+api/ui_config/ui_config.json — timestamp-only diff. Only the header timestamp changed. Consider reverting; it's pure churn.
+load_sql_by_user_value() is public but has no external caller. load_by_user() is the only user. Its sibling load_sql_by_user() is public too, and the test calls it directly, so this matches the local convention — just noting it.
+sort_by_time_and_cut() duplicates the web twin. The frontend web/log/change_log_list already has sort_by_time_and_what() + head(). The two apps are deliberately independent (docs/llm/frontend.md), so this is the accepted pattern rather than a DRY violation — but the backend now sorts and the frontend re-sorts the same list.
+The changes table comment is the load contract. load_by_user() reading 13 tables rests entirely on that comment ("all tables except value and link changes"). If a value change ever lands in changes, it would be listed twice. Not currently possible, but nothing asserts it.
+version.txt correctly untouched — no json format or db structure change.
+Generated docs: code_user_message_exceptions.md only shifts a line number, doesn't grow. code_test_coverage.md adds the three new functions.
+The fold is duplicated verbatim in the backend and the frontend std_table* function. That mirrors the existing prefix-strip duplication rather than adding a new pattern, so it is consistent, but both copies now have to move together.
+Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.
+A caller I missed, already fixed by you: test_words::zh_full_ui() calls the web word's set_type, so it needed user_message_ui not user_message. My caller scan mis-classified it because zh_ui() returns a word_ui. I re-checked — that was the only one; every other set_type call is on a backend word, a component, element or sql_db.
+The fixtures are now coherent: component 352 = the new field, link 1013 = verb view position 7, sub-title 8, triples 9 — exactly as computed; the api type-list fixtures carry only the new system_show_field_name_in_formulas, none of the old colliding name. The verb snapshot's triples are in ascending id order, confirming the tie-break landed.
+change_log_list_word_1.json shifted by +3 (ids 6885→6888 …) — the re-import wrote three more change rows. That fixture pins absolute change-log ids, so it will drift on every re-import; not caused by this change, but worth knowing.
+docs/code_user_message_exceptions.md now reports db_object_seq_id.php:350 - user_message $msg = new user_message(), instead of the full signature — the generator matches a single line and your reformat of api_json split the signature across lines. Cosmetic, but the entry is now less readable than its siblings.
+Checked and clean: no &&/|| in added code, no secrets, includes and use blocks alphabetically placed, log_err only on genuine programming-error paths.
+
+Worth deciding
+Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.
+api/.htaccess — <FilesMatch "^[A-Za-z0-9_]+$"> re-allows every extensionless name under /api, which is what the routes need. Worth noting it also re-allows any other dot-free file that lands there; a tighter alternative is listing the route names, at the cost of maintenance. Your call — the current form is the one I proposed.
+src/test/resources/unit/user/list.csv and api/ui_config/ui_config.json changed too — presumably from a reset_db run; worth a glance that they belong in this commit.
+code_object_name_exceptions.md grows by two: $lst_dbl and $lst_empty are added to the verb_list line. Three instances in one scope is a legitimate deviation, but the file is supposed to shrink — $vrb_lst, $vrb_lst_dbl, $vrb_lst_empty in the test would keep it flat.
+test_verbs::list_short() mixes $this->verb_is() with self::verb_part() (the factory declares that one static) — harmless, just uneven.
+In the base type_list::set_from_json_array(), the verb arm calls $vrb->api_mapper($value, $msg) and ignores the returned bool, while verb_list's override guards on it. Pre-existing, but the two now sit side by side.
+ames_one_line() / the sort closures type the entries as verb|type_object while get() uses verb|ref_type|type_object. ref_type extends type_object, so it works, but the two unions should read the same.
+name_tip() entries without a description render as a bare <span>name</span> — a wrapper with neither class nor title. Only "is a" carries a tooltip in the snapshot, since load_dummy() sets no descriptions.
+Still open from earlier: get() opens with count($this->hash) != count($this->lst) and logs probably … are duplicate code_id, which is a false alarm on a duplicates-allowed list and fires on every call. It is the last consumer of the parallel-arrays assumption the rest of this diff removed.
+
+Fixtures are half-regenerated — rerun before committing. Two regeneration runs are mixed in the tree (28-08 22:25 and 29-08 10:05):
+- api/type_lists/type_lists.json is from the older run: its 13 system sub title usage number entries lack ui_msg_value_exception: 0, while ui_config.json has all 13.
+- views_by_id/component/34_component_update_1.html (older run) still renders Used 0 times, while its sibling views_by_object/component/component_edit_component_1.html renders Not used.
+- views_by_object/formula/formula_default_formula_21.html / _26.html still carry the live 29-08-2026 10:31; they pick up the fixed test time only on the next run.
+- Two snapshots from July still show Used 0 times and were never regenerated: workflow/change_triple_by_name_wf8/wf8_show_edit.html and workflow_write/change_word_wf2/wf2_show_edit_back_edit_save_cancel_edit_save_confirmed_edit.html (the second is one of the orphaned wf snapshots already listed in pending_prio_2.md).
+
+api/result/ is untracked — needs git add, and the served copy in /var/www/html needs the new endpoint plus the backend changes before the http api tests run.
+
+api/formula/formula_body.json lost "usage": 7 and "ref_text" while gaining need_all_val. Nothing in this batch removes either; both are db-state dependent (usage is written by a batch job, ref_text on save), so this may flip back on the next regeneration — worth confirming it is intended.
+
+## prepare
+
+create in triple list a 'validate_alias_direction' function that checks if the alias verb always leads to the same main phrase
+
+based on the /test/create/ class function and the solution_prio.json create a set of test data (a filled $dto object where the database id is taken from the /test/create/ class functions and the rest e.g. the val)
+
+## start page
+
+the basic steps to show the start page are
+
+- table with 'global issues'
+- sort global issues by impact which is htp
+- get mayor, main and minor columns linked to 'global issues' via triple
+- the order of the column may differ and is relative e.g. 'per cent is after number'
+- the number of rows to show is taken from the config but can be overwritten
+
+
+# move to Prio 2
+
+## triple add and edit view
+
+reduce the size of the triple description field to 8/12 and add after the description a formula selector for the conditional formula 
+
+## word db table
+
+similar to the triple table field 'triple_condition_id' add a field 'condition_formula_id' to the word table
+
+## word add and edit view
+
+reduce the size of the word description field to 8/12 and add after the description a formula selector for the conditional formula
+
+## triple db table
+
+rename the triples table field 'triple_condition_id' to 'condition_formula_id'
+
+## log in 
+
+if no picture of the user is uploaded create a random picture and show it in the top write corner if the user is logged in
+
+## language 
+
+### word
+
+add the missing db fields to the word add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
+
+show the missing db fields in the word default view the language e.g. as a small info line next to the description
+
+### triple
+
+add the missing db fields to the triple add and edit views: a language selection (language_id, preselected with the user language), the given name (name_given) as its own field beside the generated name (name_auto, display-only) so the user sees the difference and can empty the given name to fall back to the generated one, the condition formula selection (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
+
+## later
+
+add the word splitter to convert_wikipedia_table.php
 

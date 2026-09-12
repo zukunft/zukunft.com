@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2025-05-06 11:25:00",
   "user": "roman",
   "selection": [
@@ -12,7 +13,7 @@
   ],
   "references": [
     {
-      "phrase": "universe",
+      "from_phrase": "universe",
       "name": "Q1",
       "type": "wikidata"
     }

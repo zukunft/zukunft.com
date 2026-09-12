@@ -163,16 +163,16 @@ class config extends db_object_seq_id
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, self::FLD_ID);
+        $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->code_id = $db_row[fields::FLD_CODE_ID];
             $this->value = $db_row[fields::FLD_VALUE];
             $this->description = $db_row[fields::FLD_DESCRIPTION];
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -339,11 +339,11 @@ class config extends db_object_seq_id
 
         if ($db_row == null) {
             // automatically add the config entry
-            $sys->typ_lst->load_log_if_empty($db_con);
+            $sys->typ_lst->load_log_if_empty($db_con, $msg);
             $result = $cfg->db_add($msg, $db_con, $sc_par_lst);
         } else {
             $cfg_db = new config();
-            $cfg_db->row_mapper($db_row);
+            $cfg_db->row_mapper($db_row, $msg);
             // the update is done on the prepared object with the new value,
             // and the row id from the database, because the update row is selected by the id
             $cfg->id = $cfg_db->id();
@@ -353,7 +353,7 @@ class config extends db_object_seq_id
             }
             if ($value != $db_row[fields::FLD_VALUE]
                 or ($description != '' and $description != $db_row[fields::FLD_DESCRIPTION])) {
-                $sys->typ_lst->load_log_if_empty($db_con);
+                $sys->typ_lst->load_log_if_empty($db_con, $msg);
                 $result = $cfg->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
             }
         }

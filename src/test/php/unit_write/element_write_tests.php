@@ -55,26 +55,25 @@ class element_write_tests
         global $sys;
 
         // init
-        $back = 0;
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula element ';
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $wrd_total = $t_db->test_word($msg, word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);
-        $exp = $frm->expression();
-        $elm_lst = $exp->element_list($usr_msg);
+        $exp = $frm->expression($msg);
+        $elm_lst = $exp->element_list($msg);
 
         // get the test word ids
-        $wrd_country = $t_db->load_word(words::COUNTRY);
-        $wrd_canton = $t_db->load_word(word_names::CANTON);
+        $wrd_country = $t_db->load_word($msg, words::COUNTRY);
+        $wrd_canton = $t_db->load_word($msg, word_names::CANTON);
         $vrb_id = $sys->typ_lst->vrb->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
@@ -84,7 +83,7 @@ class element_write_tests
                 if ($elm->obj == null) {
                     log_err('object of formula element ' . $elm->dsp_id() . ' missing');
                 } else {
-                    $elm->load_obj_by_id($elm->obj->id, $elm->type());
+                    $elm->load_obj_by_id($elm->obj->id, $msg, $elm->type());
                 }
 
                 $result = $elm->dsp_id();
@@ -112,7 +111,7 @@ class element_write_tests
                 $t->assert('element->dsp_id', $result, $target);
 
                 $elm_ui = new element($elm->api_json());
-                $result = $elm_ui->link($back);
+                $result = $elm_ui->link([]);
                 $url = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
                 if ($pos == 0) {
                     $target = $url . $wrd_country->id . '&back=0" title="country">country</a>';
@@ -135,10 +134,10 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup formula element write');
-        $usr_msg->reset(true);
-        $usr_msg->usr = $t->usr1;
-        $frm_sector->del($usr_msg);
-        $wrd_total->del($usr_msg);
+        $msg->reset(true);
+        $msg->usr = $t->usr1;
+        $frm_sector->del($msg);
+        $wrd_total->del($msg);
 
     }
 
@@ -146,21 +145,21 @@ class element_write_tests
     {
 
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula element list ';
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $wrd_total = $t_db->test_word($msg, word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);
-        $trm_lst = $frm->load_terms($usr_msg);
-        $exp = $frm->expression($trm_lst);
-        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
+        $trm_lst = $frm->load_terms($msg);
+        $exp = $frm->expression($msg, $trm_lst);
+        $elm_lst = $exp->element_list($msg, $trm_lst);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
@@ -173,10 +172,10 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup');
-        $usr_msg->reset(true);
-        $usr_msg->usr = $t->usr1;
-        $frm_sector->del($usr_msg);
-        $wrd_total->del($usr_msg);
+        $msg->reset(true);
+        $msg->usr = $t->usr1;
+        $frm_sector->del($msg);
+        $wrd_total->del($msg);
 
     }
 

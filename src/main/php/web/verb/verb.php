@@ -42,23 +42,24 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\verb;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'view_types.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_types.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -66,9 +67,11 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -84,7 +87,9 @@ class verb extends sandbox_named
     const string VIEW_ADD = views::VERB_ADD;
     const string VIEW_EDIT = views::VERB_EDIT;
     const string VIEW_DEL = views::VERB_DEL;
+    const int VIEW_ADD_ID = views::VERB_ADD_ID;
     const int VIEW_EDIT_ID = views::VERB_EDIT_ID;
+    const int VIEW_DEL_ID = views::VERB_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VERB_ADD;
@@ -105,6 +110,9 @@ class verb extends sandbox_named
     // because there both sides are combined
     public ?string $frm_name = null;
     public float $impact = 0.0;
+    // the triples that use this verb, filled only if the verb has been loaded for its page
+    // (see load_by_id_with_related), otherwise null
+    public ?triple_list $trp_lst = null;
 
 
     /*
@@ -114,14 +122,14 @@ class verb extends sandbox_named
     /**
      * set the vars of this verb frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             // the code id is not set by the url and cannot be changed by the frontend
             if (array_key_exists(url_var::PLURAL, $url_array)) {
                 $this->plural = $url_array[url_var::PLURAL];
@@ -149,7 +157,7 @@ class verb extends sandbox_named
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -172,7 +180,7 @@ class verb extends sandbox_named
      * this function is only used as an interface mapping for the term
      * @return int|null
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->id;
     }
@@ -197,7 +205,7 @@ class verb extends sandbox_named
         return $this->frm_name;
     }
 
-    function impact(): int
+    function impact(): float
     {
         return $this->impact;
     }
@@ -251,16 +259,40 @@ class verb extends sandbox_named
         } else {
             $this->frm_name = '';
         }
+        // only the verb page asks for the triples, so a missing list is not an empty list
+        if (is_array($json_array[json_fields::TRIPLES] ?? null)) {
+            $trp_lst = new triple_list();
+            $trp_lst->api_mapper($json_array[json_fields::TRIPLES]);
+            $this->trp_lst = $trp_lst;
+        } else {
+            $this->trp_lst = null;
+        }
         return $msg->is_ok();
     }
 
     /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * load the verb by id AND ask the backend to include the triples that use this verb, which
+     * the 'verb triples' component of the verb default page shows
+     *
+     * the api handler sets api_types::INCL_RELATED and verb::api_json_array() emits the triples
+     * that the api_mapper above picks up into trp_lst
+     *
+     * @param int|string $id the verb id to load
+     * @param int $usr_id the id of the session user to load the verb for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
      */
-    function api_array(): array
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        $vars = parent::api_array();
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
+     */
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
+    {
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::CODE_ID] = $this->get_code_id();
         $vars[json_fields::PLURAL] = $this->plural;
         $vars[json_fields::REVERSE] = $this->reverse;
@@ -288,14 +320,19 @@ class verb extends sandbox_named
 
     /**
      * display the verb with a link to the main page for the verb
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::VERB_ID): string
+    function name_link(
+        array  $url_arr = [],
+        string $style = '',
+        int $msk_id = views::VERB_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -311,17 +348,18 @@ class verb extends sandbox_named
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->only_type(view_types::VERB);
+        $msk_lst = $msk_lst->only_type(view_types::VERB, $msg);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
@@ -331,7 +369,10 @@ class verb extends sandbox_named
      */
 
     // show the html form to add or edit a new verb
-    function dsp_edit(string $back = ''): string
+    /**
+     * @param array $url_arr the url vars of the calling page for the back link
+     */
+    function dsp_edit(array $url_arr = []): string
     {
         $html = new html_base();
         log_debug('verb->dsp_edit ' . $this->dsp_id());
@@ -378,10 +419,13 @@ class verb extends sandbox_named
         $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural_reverse" value="' . $this->rev_plural . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
-        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
+        // the calling page travels with the form as the '9'-prefixed hidden fields
+        foreach (html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="' . $key . '" value="' . $val . '">';
+        }
         $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="confirm" value="1">';
         $result .= $html->dsp_tbl_end();
-        $result .= $html->dsp_form_end('', $back);
+        $result .= $html->dsp_form_end('', $url_arr);
 
         log_debug('verb->dsp_edit ... done');
         return $result;

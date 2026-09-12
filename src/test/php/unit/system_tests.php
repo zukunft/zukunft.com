@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
@@ -86,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -131,9 +134,7 @@ class system_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         // TODO move system user to a test object vars
-        global $usr_sys;
         global $sys;
         global $mtr;
         global $cfg;
@@ -142,6 +143,7 @@ class system_tests
         $lib = new library();
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $msg = new user_message();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
         $t->usr_system = $t->user_system();
@@ -183,48 +185,53 @@ class system_tests
         $t_log = new test_log($t);
         $t_sys = new test_sys_log($t);
         $t_job = new test_jobs($t);
-        $t->assert_dsp_id($t_wrd->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_vrb->verb(), 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_trp->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_trp->triple_list_short(), '"Pi (math)","global warming potential" (triple_id 1,2,105) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_trp->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
-        $t->assert_dsp_id($t_phr->phrase_list_prime(), '"mathematics","constant","mathematical constant","Pi (math)" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,159,161,-1,-2,-99,-100,-101) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_grp->group(), '"Pi (math)" (group_id 32770) as "Pi (math)" for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_grp->group_list(), 'Pi (math)');
-        $t->assert_dsp_id($t_grp->group_list_long(), 'Pi (math) / Zurich city inhabitants (2019) / Zurich city inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
-        $t->assert_dsp_id($t_trm->term(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
+        $t->assert_dsp_id($t_wrd->word(), '"mathematics" (word_id 1) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_vrb->verb(), 'not set/not_set (verb_id 1) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id 1,5,111) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 3 (zukunft.com system test) as phrase');
+        $t->assert_dsp_id($t_phr->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-5) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,-2,135,4,158,160,-1,-5,-105,-106,-107) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_grp->group(), '"π (unit symbol)" (group_id 5) as "π (unit symbol)" for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_grp->group_list(), 'π (unit symbol)');
+        $t->assert_dsp_id($t_grp->group_list_long(), 'π (unit symbol) / Zurich city inhabitants (2019) / Zurich city inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
+        $t->assert_dsp_id($t_trm->term(), '"mathematics" (word_id 1) for user 3 (zukunft.com system test) as term');
         $t->assert_dsp_id($t_trm->term_list_short(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
-        $t->assert_dsp_id($t_val->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_val->value_list_short(), 'Pi (math): 3.1415926535898 / Zurich city inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 214,198,139,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_src->source_reserved(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_val->value($msg), 'π (unit symbol): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,,) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_val->value_list_short($msg), 'π (unit symbol): 3.1415926535898 / Zurich city inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,, / 213,197,135,) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_src->source_reserved(), '"The International System of Units" (source_id 1) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_ref->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
-        $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "minute" (word_id 103) as phrase as (formula_link_id 1)');
-        $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . word_names::MINUTE_ID . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1/103) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "minute" (word_id 100) as phrase as (formula_link_id 1)');
+        $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . word_names::MINUTE_ID . ') for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1/100) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->expression(), '""second (time)" = "minute" * 60" ({t' . triple_names::SECOND_ID . '}={w' . word_names::MINUTE_ID . '}*60)');
-        $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_fig->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
-        $t->assert_dsp_id($t_fig->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32770,-1)');
-        $t->assert_dsp_id($t_msk->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_msk->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_cmp->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_cmp->component_list(), '"Word","form field share type" (component_id 1,7) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_fig->figure_value($msg), 'value figure π (unit symbol): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,,) for user 3 (zukunft.com system test) 2022-12-26 18:23:45');
+        $t->assert_dsp_id($t_fig->figure_list($msg), ' 3.1415926535898 π (unit symbol)  123456 "mathematics"  (5,-1)');
+        $t->assert_dsp_id($t_msk->view(), '"Start view" (view_id 1) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_msk->view_list(), '"Start view","Add word" (view_id 1,2) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_cmp->component(), '"Word" (component_id 1) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_cmp->component_list(), '"Word","form field share type" (component_id 1,7) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
-        $t->assert_dsp_id($t_cmp->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_cmp->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_lan->language(), 'English/en (language_id 1)');
         $t->assert_dsp_id($t_log->log_word_add(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_list_short(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name is (id ) in row 2 at 2022-12-26T18:23:45+01:00 / log add triples,triple_name mathematical constant (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system (1) action add (1) table triples (7)');
-        $t->assert_dsp_id($t_log->log_value(), 'log add values,numeric_value (-2,,,) 3.1415927');
-        $t->assert_dsp_id($t_log->log_value_prime(), 'log add words,word_name  3.1415927');
-        $t->assert_dsp_id($t_log->log_value_big(), 'log add words,word_name  3.1415927');
+        $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system test (3) action add (1) table triples (7)');
+        $t->assert_dsp_id($t_log->log_value(), 'log add values,numeric_value (5,,,) 3.1415927');
+        $t->assert_dsp_id($t_log->log_value_prime(), 'log add values,numeric_value (213,197,135,) 3.1415927');
+        // the id of a big group packs the phrase ids into a text, so the group of the log entry
+        // is compared with the same group loaded by id, which is what change_value::name() does
+        $grp_big = new group($t->usr1, $t_grp->group_17_plus()->id());
+        // TODO Prio 3 use the id const instead of the function for the compare
+        $t->assert_dsp_id($t_log->log_value_big(),
+            'log add values,numeric_value ' . $grp_big->dsp_id_medium() . ' 3.1415927');
         $t->assert_dsp_id($t_sys->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
         $t->assert_dsp_id($t_job->job(), 'base_import (1) for user 1 (zukunft.com system)');
 
@@ -309,10 +316,39 @@ class system_tests
 
         $t->subheader($ts . 'user message');
 
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $test_name = 'message is translated';
-        $usr_msg->add_id(msg_id::CHECK);
-        $t->assert($test_name, $usr_msg->all_message_text(), msg_id::CHECK->value);
+        $msg->add_id(msg_id::CHECK);
+        $t->assert($test_name, $msg->all_message_text(), msg_id::CHECK->value);
+
+        // text() is the preferred reader (docs/llm/testing.md), so it must also show a message
+        // that has been added without vars
+        $test_name = 'a message added by its id only is shown by text';
+        $t->assert($test_name, $msg->text(), msg_id::CHECK->value);
+
+        // a message with vars is the more specific one, so it stays the main message
+        $test_name = 'a message with vars is the main message';
+        $msg->add(msg_id::ID_AND_NAME_MISSING, []);
+        $t->assert($test_name, $msg->text(), msg_id::ID_AND_NAME_MISSING->value);
+
+        // an empty message says nothing instead of an internal position text
+        $test_name = 'an empty message has no text';
+        $empty_msg = new user_message($t->usr1); // a message that has nothing to say
+        $t->assert($test_name, $empty_msg->text(), '');
+
+        // a report of several message parts joins them with a separator and never repeats a
+        // part (a doubled part like 'donedone' has hidden the reset db fail message)
+        $two_msg = new user_message($t->usr1); // a message of this positive report test block
+        $two_msg->add_info_id(msg_id::DONE);
+        $two_msg->add_info_with_vars(msg_id::IMPORT_DONE, [msg_id::VAR_SUMMARY => '2 words']);
+        $all_text = $two_msg->all_message_text();
+        $test_name = 'a report with an id and a var message shows the id part once';
+        $t->assert($test_name, substr_count($all_text, msg_id::DONE->value), 1);
+        $test_name = '... and also the var message';
+        $t->assert_text_contains($test_name, $all_text, '2 words imported');
+        // an info message must never set the message to not ok
+        $test_name = 'info messages keep the message ok';
+        $t->assert_true($test_name, $two_msg->is_ok());
 
 
         $t->subheader($ts . 'system config sql');
@@ -438,11 +474,12 @@ class system_tests
 
         $t->subheader($ts . 'list db write');
 
-        $usr_msg->reset();
+        $msg->reset();
+        $msg_ui = new user_message_ui();
         $test_name = 'database delete calls based on element list';
         $sc = $db_con->sql_creator();
         $elm_lst = $t_frm->element_list();
-        $del_calls = $elm_lst->sql_delete_call_with_par($sc, $usr_msg);
+        $del_calls = $elm_lst->sql_delete_call_with_par($sc, $msg);
         $target = 'element_delete_log: "DELETE FROM elements  WHERE element_id = ?;" with the parameters (1)';
         $t->assert($test_name, $del_calls->dsp_id(), $target);
 
@@ -454,7 +491,7 @@ class system_tests
         $t->subheader($ts . 'system log list');
 
         $log_lst = new sys_log_list();
-        $log_lst->set_user($usr);
+        $log_lst->set_user($t->usr1);
 
         // sql to load all
         $db_con->db_type = sql_db::POSTGRES;
@@ -487,8 +524,9 @@ class system_tests
         $t_sys = new test_sys_log($t);
         $log = $t_sys->sys_log();
         $api_msg = $log->api_json();
+        $msg = new user_message_ui();
         $log_ui = new sys_log_ui($api_msg);
-        $created = $log_ui->api_json();
+        $created = $log_ui->api_json($msg_ui);
         $expected = file_get_contents(test_files::SYS_LOG);
         $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
@@ -498,7 +536,7 @@ class system_tests
         $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
-        $usr_sys_ui = new user($usr_sys->api_json());
+        $usr_sys_ui = new user($t->usr_system->api_json());
         $created = $log_ui->display_admin($usr_sys_ui);
         $expected = file_get_contents(test_files::SYS_LOG_ADMIN);
         $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_ADMIN . ')', $lib->trim_html($created), $lib->trim_html($expected));
@@ -510,18 +548,20 @@ class system_tests
         $log_lst->add($log);
         $log_lst->add($log2);
 
-        $log_lst_ui = new sys_log_list_ui($log_lst->api_json());
+        $msg_ui = new user_message_ui();
+        $log_lst_ui = new sys_log_list_ui();
+        $log_lst_ui->set_from_json($log_lst->api_json(), $msg_ui);
         $usr1_ui = new user($t->usr1->api_json());
-        $created = $log_lst_ui->api_json([api_types::HEADER], $usr1_ui);
+        $created = $log_lst_ui->api_json([api_types::HEADER], $msg_ui, $usr1_ui);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_TEST);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json (file ' . test_files::SYS_LOG_LIST_TEST . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
-        $created = $log_lst_ui->get_html($usr1_ui);
+        $created = $log_lst_ui->get_html($msg, $usr1_ui);
         $test_name = 'sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_HTML . ')';
         $result = $t->assert_file($test_name, $created, test_files::SYS_LOG_LIST_HTML, test_files::HTML);
 
-        $created = $log_lst_ui->get_html_page($usr1_ui);
+        $created = $log_lst_ui->get_html_page($msg, $usr1_ui);
         $test_name = 'sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_PAGE . ')';
         $result = $t->assert_file($test_name, $created, test_files::SYS_LOG_LIST_PAGE, test_files::HTML);
 

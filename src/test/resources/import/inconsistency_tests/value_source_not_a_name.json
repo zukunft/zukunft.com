@@ -1,0 +1,60 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2020-07-23 18:07:26",
+  "user": "timon",
+  "selection": [
+    "a value that names its source with an object instead of a name"
+  ],
+  "sources": [
+    {
+      "name": "The World Factbook",
+      "description": "The World Factbook of the CIA",
+      "url": "https://www.cia.gov/the-world-factbook/",
+      "type": "website"
+    }
+  ],
+  "words": [
+    {
+      "name": "Switzerland",
+      "description": "a country in the center of Europe"
+    },
+    {
+      "name": "Austria",
+      "description": "a country in the east of the Alps"
+    },
+    {
+      "name": "inhabitants",
+      "plural": "inhabitants",
+      "description": "the number of people living in an area"
+    },
+    {
+      "name": "million",
+      "description": "the scaling factor of 10^6",
+      "type": "scaling"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Switzerland",
+        "inhabitants",
+        "million"
+      ],
+      "number": "8.7",
+      "source": "The World Factbook"
+    },
+    {
+      "words": [
+        "Austria",
+        "inhabitants",
+        "million"
+      ],
+      "number": "9.0",
+      "source": {
+        "name": "The World Factbook",
+        "url": "https://www.cia.gov/the-world-factbook/"
+      }
+    }
+  ]
+}

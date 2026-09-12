@@ -329,10 +329,10 @@ class sandbox_value extends sandbox_multi
      * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
+    function row_mapper_multi(?array $db_row, user_message $msg, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $this->set_last_update(null);
-        return parent::row_mapper_multi($db_row, $id_fld);
+        return parent::row_mapper_multi($db_row, $msg, $ext, $id_fld, $one_id_fld);
     }
 
     /**
@@ -360,6 +360,17 @@ class sandbox_value extends sandbox_multi
             $this->grp = $grp;
             $this->id = $grp->id();
         }
+    }
+
+    /**
+     * set the unique database id and the group id of a value or result
+     * e.g. so that the standard row can be loaded by the id into a fresh object
+     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
+     */
+    function set_id(int|string $id): void
+    {
+        $this->id = $id;
+        $this->grp()->set_id($id);
     }
 
     function grp(): group
@@ -1046,9 +1057,10 @@ class sandbox_value extends sandbox_multi
     /**
      * if the object has been changed by someone else than the owner the user id is returned
      * but only return the user id if the user has not also excluded it
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @returns int the user id of someone who has changed the object, but is not owner
      */
-    function changer(): int
+    function changer(user_message $msg): int
     {
         log_debug($this->dsp_id());
 
@@ -1058,7 +1070,7 @@ class sandbox_value extends sandbox_multi
         $db_con->set_class($this::class);
         $db_con->set_usr($this->get_user()->id);
         $qp = $this->load_sql_changer($db_con->sql_creator());
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         if ($db_row) {
             $user_id = $db_row[user_db::FLD_ID];
         }
@@ -1179,14 +1191,14 @@ class sandbox_value extends sandbox_multi
      */
     function fill(sandbox_value|db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->grp() === null and $obj->grp() != null) {
             $this->set_grp($obj->grp());
         }
         if ($this->last_update() === null and $obj->last_update() != null) {
             $this->set_last_update($obj->last_update());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1444,21 +1456,21 @@ class sandbox_value extends sandbox_multi
 
     /**
      * dummy function to be overwritten by the child value or result objects
-     * @param group $grp
+     * @param group $grp the group to select the values
+     * @param user_message $msg to collect any errors during load to present them to the user
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if the value or result has been loaded
      */
-    function load_by_grp(group $grp, bool $by_source = false): bool
+    function load_by_grp(group $grp, user_message $msg, bool $by_source = false): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'load_by_grp',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
         return false;
     }
 
-    function load_phrases(): void
+    function load_phrases(user_message $msg): void
     {
         log_err('the load_phrases function is expected to be overwritten by the child class');
     }
@@ -1479,22 +1491,22 @@ class sandbox_value extends sandbox_multi
      * @param phrase_list|null $phr_lst with the cache of the phrases already loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_names(array $names, ?phrase_list $phr_lst = null): int
+    function load_by_names(array $names, user_message $msg, ?phrase_list $phr_lst = null): int
     {
         $load_lst = new phrase_list($this->get_user());
         if ($phr_lst == null) {
-            $load_lst->load_by_names($names);
+            $load_lst->load_by_names($names, $msg);
         } else {
             foreach ($names as $name) {
-                $phr = $phr_lst->get_by_name($name);
+                $phr = $phr_lst->get_by_name($name, $msg);
                 if ($phr == null) {
                     $phr = new phrase($this->get_user());
-                    $phr->load_by_name($name);
+                    $phr->load_by_name($name, $msg);
                 }
                 $load_lst->add($phr);
             }
         }
-        return $this->load_by_grp($load_lst->get_grp_id());
+        return $this->load_by_grp($load_lst->get_grp_id(), $msg);
     }
 
 
@@ -1505,13 +1517,18 @@ class sandbox_value extends sandbox_multi
     /**
      * create the array for the api message
      * which is on this level the same as the export json array
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         if ($typ_lst->no_key_fill()) {
             $vars[json_fields::ID] = $this->grp()->id(true);
@@ -1526,10 +1543,10 @@ class sandbox_value extends sandbox_multi
             // prime and main values carry only the phrase ids, so load the names
             // from the group id before serializing them e.g. for the value page title
             if (!$this->grp()->phrase_list()->loaded()) {
-                $this->grp()->load_phrase_names();
+                $this->grp()->load_phrase_names($msg);
             }
             $phr_lst = $this->grp()->phrase_list();
-            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
+            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst, $msg);
         }
 
         return $vars;
@@ -1543,18 +1560,19 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         // reload the value parameters
         if ($do_load) {
-            $this->load_by_grp($this->grp());
-            $this->load_phrases();
+            $this->load_by_grp($this->grp(), $msg);
+            $this->load_phrases($msg);
         }
 
         // add all phrases (words and triples) under "words" so that the export matches the
@@ -1585,20 +1603,20 @@ class sandbox_value extends sandbox_multi
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      * @param change|change_value $log with the target table set
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change|change_value with the log id set
      */
-    protected function log_add_common(change|change_value $log): change|change_value
+    protected function log_add_common(change|change_value $log, user_message $msg): change|change_value
     {
         log_debug($this->dsp_id());
-        $usr_msg = new user_message();
-        $log->set_action(change_actions::ADD);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $log->group_id = $this->grp_id();
         $log->old_value = null;
         $log->new_value = $this->get_value();
 
         $log->row_id = 0;
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1614,24 +1632,24 @@ class sandbox_value extends sandbox_multi
 
     /**
      * set the log entry parameter to delete an object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_del(): change
+    function log_del(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $usr_msg = new user_message();
 
         $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE);
+        $log->set_action(change_actions::DELETE, $msg);
         $class = $lib->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $log->old_value = $this->get_value();
         $log->new_value = null;
 
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1691,13 +1709,13 @@ class sandbox_value extends sandbox_multi
      * create the sql statement to add a new value or result to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1709,7 +1727,7 @@ class sandbox_value extends sandbox_multi
         $db_row = $this->cloned(null);
         // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $db_row, $all_fields, $usr_msg, $sc_par_lst_used);
+        return $this->sql_write($sc, $db_row, $all_fields, $msg, $sc_par_lst_used);
     }
 
     /**
@@ -1718,14 +1736,14 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_value $db_row the sandbox object with the database values before the update
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         sandbox_value $db_row,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
@@ -1735,7 +1753,7 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used->add(sql_type::UPDATE);
         // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $db_row, $all_fields, $usr_msg, $sc_par_lst_used);
+        return $this->sql_write($sc, $db_row, $all_fields, $msg, $sc_par_lst_used);
     }
 
     /**
@@ -1800,13 +1818,13 @@ class sandbox_value extends sandbox_multi
      * TODO check if user-specific overwrites can be deleted
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1829,7 +1847,7 @@ class sandbox_value extends sandbox_multi
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $msg, $sc_par_lst_used);
         } else {
             // TODO add test fpr !$sc_par_lst_used->exclude_sql()
             $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
@@ -1846,12 +1864,14 @@ class sandbox_value extends sandbox_multi
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
      * @param sql_type_list $sc_par_lst
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst_id,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1892,7 +1912,7 @@ class sandbox_value extends sandbox_multi
         }
 
         // create the log entry for the value
-        $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log, $msg);
         $sql .= ' ' . $qp_log->sql;
 
         // list of parameters actually used in order of the function usage
@@ -2017,13 +2037,13 @@ class sandbox_value extends sandbox_multi
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox_multi|sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value $sbx,
-        user_message                $usr_msg,
+        user_message                $msg,
         sql_type_list               $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -2034,7 +2054,7 @@ class sandbox_value extends sandbox_multi
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
         $is_update = $sc_par_lst->is_update();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         /*
          * TODO check if sandbox named function match this logic
@@ -2046,12 +2066,12 @@ class sandbox_value extends sandbox_multi
 
         if ($is_insert) {
             if ($this::class == result::class and $this->is_main()) {
-                $lst = $this->grp()->id_fvt_main($usr_msg);
+                $lst = $this->grp()->id_fvt_main($msg);
             } else {
-                $lst = $this->grp()->id_fvt($usr_msg);
+                $lst = $this->grp()->id_fvt($msg);
             }
         }
-        $lst->merge(parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst));
+        $lst->merge(parent::db_fields_changed($sbx, $msg, $sc_par_lst));
         if (!$sc_par_lst->is_standard()) {
             if ($is_insert) {
                 $lst->add_user($this, $sbx, $do_log, $table_id);
@@ -2202,11 +2222,7 @@ class sandbox_value extends sandbox_multi
      */
     function db_changed(sandbox_value $sbv): array
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'db_changed',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('db_changed', $this::class);
         return [];
     }
 

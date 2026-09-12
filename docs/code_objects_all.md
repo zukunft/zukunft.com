@@ -61,6 +61,7 @@ the object structure is:
 ├── ref_link_wikidata - link for the reference type wikidata
 ├── source_db - the database const for source tables
 ├── result_db - the database const for triple tables
+├── sandbox_related - the related data of a sandbox object for its page tabs
 ├── user_service
 │   └── xml - to im- and export xml files
 ├── ip_range_db - the database const for ip_range tables
@@ -155,7 +156,7 @@ the object structure is:
 │           │   │       └── change_values_prime - log object for changes of values with a prime group id
 │           │   ├── sandbox
 │           │   │   ├── sandbox_link
-│           │   │   │   ├── component_link - link a single display component/element to a view
+│           │   │   │   ├── component_link - link a single display component to a view
 │           │   │   │   ├── formula_link - link a formula to a word
 │           │   │   │   ├── ref - $ref - a link between a phrase and another system such as wikidata
 │           │   │   │   ├── sandbox_link_named
@@ -231,6 +232,7 @@ the object structure is:
 │       │   │   │   ├── element_list - a list of formula elements to place the name function
 │       │   │   │   ├── figure_list - a list of figures, so either a value of a formula result object
 │       │   │   │   ├── group_list - a list of word and triple groups
+│       │   │   │   ├── ref_list - al list of ref objects
 │       │   │   │   ├── sandbox_link_list
 │       │   │   │   │   ├── component_link_list - a list of links between a view and a component
 │       │   │   │   │   ├── formula_link_list - a list of formula word links
@@ -270,7 +272,6 @@ the object structure is:
 │       │           ├── change_field_list - the const for the change log field table
 │       │           ├── change_table_list - to link coded functionality to a log log table
 │       │           ├── phrase_types - to link coded functionality to a word or a triple, which means to every phrase
-│       │           ├── ref_list - al list of ref objects
 │       │           ├── ref_type_list - to link coded functionality to a reference
 │       │           ├── source_type_list - to link coded functionality to a source
 │       │           ├── protection_type_list - $ptc_typ - a database based enum list for the data protection types
@@ -315,8 +316,9 @@ the object structure is:
 │           └── triple_listUi - a list function to create the HTML code to display a triple list
 ├── MapObjectShared - $map - temp helper object to map the frontend to backend objects until the api is fast enough
 ├── MessageShared
-│   ├── user_message - a complex object that functions can return
-│   └── user_messageUi - messages created by the frontend for the user
+│   ├── sql_message - $sql_msg - sql parameters and execution status
+│   ├── user_message - $msg - a complex object that functions can return
+│   └── user_messageUi - $msg - messages created by the frontend for the user
 ├── TextIdObjectShared
 │   ├── db_object_key
 │   │   └── db_object_multi
@@ -364,8 +366,7 @@ the object structure is:
 │       │       ├── resultUi - $res - the display extension of the api result object
 │       │       └── valueUi - $val - create the html code to show a value to the user
 │       ├── jobUi - $job - the extension of the batch task API objects to create job base html code
-│       └── userUi
-│           └── user_display_oldUi - to display the user-specific settings
+│       └── userUi - $usr - functions to create the HTML code to display the user setup and log information
 ├── TranslatorShared - $mtr - translates a message for the user into the user language
 ├── WorkflowShared - $wrk - defines which view to show next
 ├── json_fieldsShared - list of json field names used for the api and im- and export
@@ -415,7 +416,7 @@ the object structure is:
 │   └── display_listUi - to display a list that can be sorted
 ├── html_namesUi - HTML language const used for the html zukunft.com frontend
 ├── html_selectorUi - $sel - to select a word (or formula or verb)
-├── list_sortUi - create the html code to display a sortable list
+├── list_sortUi - deprecated placeholder of the fixed start page spreadsheet
 ├── rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 ├── scopesUi - scope constants used for html frontend
 ├── sheetUi - create the html code to display a spreadsheet
@@ -423,7 +424,6 @@ the object structure is:
 ├── tableUi - $tbl - create the html code to display a spreadsheet
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
-├── back_traceUi - list of links that the user has called in the past
 ├── sys_log_listUi - the display extension of the system error log api object
 ├── type_listUi
 │   ├── change_action_listUi - the preloaded change log actions used for the html frontend

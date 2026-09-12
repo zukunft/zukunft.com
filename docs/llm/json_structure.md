@@ -16,7 +16,8 @@ Every import JSON has this top-level shape:
 
 ```json
 {
-  "version":   "0.0.3",
+  "version":      "0.0.3",
+  "data_version": "0.0.1",
   "time":      "2026-06-04 12:00:00",
   "user":      "username",
   "selection": [ "..." ],
@@ -33,6 +34,32 @@ Every import JSON has this top-level shape:
 }
 ```
 
+### Change as little as the task asks for
+
+An import file is seed data with pinned ids, not a document to tidy up. The
+import assigns the database id of every object in the order in which the files
+and their entries are read, so **one added or removed word, triple, view,
+component, formula or source shifts the id of every later object of that class**
+— across all following files, not only the edited one. Those ids are pinned in
+`word_names`, `triple_names`, `views`, `shared/const/*` and in the generated
+`src/test/resources/unit/<class>/list.csv` baselines, so a shift turns into a
+wave of failing tests that can only be repaired by a full reset and a
+re-baseline run (`docs/llm/testing.md`).
+
+Therefore, when the task is to fix one entry:
+
+- change that entry and nothing else — no reformatting, no re-indenting, no
+  re-ordering of entries, no "while I am here" cleanup;
+- do not add or remove a word, a triple or any other object unless the task
+  explicitly asks for it, and prefer the fix that keeps the object count equal
+  (rename a key, correct a `verb`, move a description);
+- if the requested fix cannot avoid adding or removing an object, say so in the
+  report together with the id shift it causes, so the developer can plan the
+  re-baseline; never absorb it silently.
+
+A reformat is a task of its own: run the repo's own formatter only when asked
+for it, never as a side effect of another change.
+
 ### Self-consistency
 
 Every assigned phrase, every triple `from`/`to`, every formula input, and every
@@ -46,9 +73,76 @@ When a file *references* a base word it doesn't own (e.g. `chemistry`
 `{"name": "science"}` / `{"name": "law"}`. On import the name-only entry merges
 with the canonical definition in its home file — no data duplicated.
 
+### The home file is the one imported **first**, not the one that sounds canonical
+
+Which file owns a phrase is decided by the **import order**, because the first
+import creates the row and every later one merges into it (system imports run
+`no_upd`, so a later file cannot overwrite a filled field anyway). Read the order
+out of `cfg/const/files.php`:
+
+1. `SYSTEM_DATA_FILES` — `system_views`, `sources`, `units`, `scaling`,
+   `time_definition`, `base_phrases`, `base_views`, **`solution_prio`**,
+   `country`, `currency`, `company`, …
+2. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
+   const block itself labels *"loaded at the end not to change the id of objects
+   used by the system tests"*
+3. `BASE_DATA_PATH_FILES` — the per-topic demo files
+
+So `solution_prio.json` is the home of `probability`, `score`, `deviation`,
+`return`, `market`, `tax`, … even though `math.json` and `economics.json` look
+like the natural place for them: those import **later** and therefore re-declare
+name-only. Putting the definition in the late file instead is the mistake — the
+early file then ships a bare name and the tooltip stays empty until the late file
+happens to be imported.
+
+The reason is id stability, not taxonomy. The phrases the unit tests pin by id
+live in the early files, so their ids must not move; a domain file that is
+expected to grow (`math`, `physics`, `economics`) is imported last precisely so
+that adding to it shifts nothing the tests depend on (see
+*Phrase id consts are re-baselined …* in `docs/llm/testing.md`). Keep it that
+way: **add a new phrase to the latest file that can own it**, and only move a
+definition earlier when a test needs to pin it.
+
 A formula's `expression` may still reference phrases from earlier base files
 (every physics formula uses units like `kg`, `metre`); those resolve at
 calculation time, not via the per-file import cache.
+
+A borrowed **triple** cannot be re-declared name-only — it needs `from`/`verb`/
+`to` — so repeat the home definition **verbatim** (with one exception: a use case
+file drops the `code_id`, see *Use case files* below). Triples merge by name on
+import, so a divergent re-declaration means the last file imported silently wins
+and the relation depends on the import order. `climate gas` is the warning
+example: it is `gas can cause warming` in one file, `climate can cause warming`
+in a second and `gas of climate` in a third.
+
+### Use case files never carry a `code_id` and import for a normal user
+
+A use case file (`files::USE_CASE_FILES`, `src/main/resources/messages/use_cases/`,
+e.g. `pv_switzerland_co2.json`) answers a question with the data — the kind of file
+any user may add. So it is user data, not system data:
+
+- **no `code_id` anywhere** — not on a word, a triple, a formula, a view or a
+  component. A `code_id` marks an object the code addresses by a constant, and only
+  a system or developer user may set one (`user::can_set_code_id`); a normal user's
+  import of such a file is refused for that object and, through the shared message,
+  drops everything after it.
+- **a borrowed system triple is repeated without its `code_id`**: the
+  `from`/`verb`/`to` and the `name` stay verbatim, so the import merges it by name
+  into the existing row, which keeps the code id it already has.
+- **a use case view is a plain view**: it is found by its name or reached through
+  the system `calculator` view, never by a code id of its own.
+- **every row of a use case is selected by its name** — the view, the word or
+  triple of the page, the values — and never by a code id or a database id: the
+  code id does not exist, and the database id follows the import order, so it moves
+  with every file imported before it. In the tests this means
+  `test_base::assert_view_by_name(views::CALCULATOR_NAME, $usr, new triple(),
+  triple_names::PV_IN_SWITZERLAND, $cfg)` instead of `assert_view` with an id, a
+  `triple_names::PV_IN_SWITZERLAND` name const **without** an `_ID` twin, and a
+  snapshot file named by the names (`calculator_triple_pv_in_switzerland.html`),
+  so no re-baseline ever touches a use case test.
+- the unit test that runs the calc-validation of the file imports it as a **normal**
+  user (`import_tests`), so a code id in the file fails the test — that is the
+  coded form of this rule.
 
 ### Split a large domain into a concept file and a list file
 
@@ -93,11 +187,44 @@ users still see.
 
 ### Version check
 
+**`version` is the version of the json *format*, never of the data.** It says in
+which format the file is written, so it is matched against `def::PRG_VERSION`
+(the minor version of the program, raised whenever the json format or the
+database changes). Two files of completely different data have the same
+`version` as long as they use the same format.
+
 `version` is matched against `def::PRG_VERSION`. If the file's version is newer,
 the import emits `msg_id::IMPORT_VERSION_NEWER`:
 *`Import file has been created with version "X", which is newer than this,
 which is "Y"`*. The check is non-fatal — subsequent objects are still
 processed — but the message surfaces in the returned `user_message`.
+
+### `data_version` is the version of the content
+
+**`data_version`** names the version of the *data* in the file and is raised by
+the author with every data change, so that a pod can tell whether it already has
+the newest data of another pod. A new file starts at `0.0.1`; the program never
+compares it against its own version.
+
+`test/json_validation.php` maintains both fields as the **last** check of a file
+that has no other finding:
+
+- a file whose **format** version is behind `def::PRG_VERSION` is raised to it,
+  because the format has been migrated together with the program;
+- a file whose format version is **ahead** is only reported and never changed —
+  its data may need a program version that is not installed yet, which is exactly
+  what `IMPORT_VERSION_NEWER` warns about;
+- a file without a `data_version` gets the initial `0.0.1`.
+
+`src/test/resources/import/inconsistency_tests` is never scanned: every file
+there breaks a rule on purpose to test the import error handling, so a finding
+would be the expected result. `version_newer_test.json` lives there and keeps
+its `9.9.9` for the `IMPORT_VERSION_NEWER` test.
+
+The version is checked last on purpose: a file that breaks one of the other
+rules is not yet in the format of this program version, so raising its version
+would hide the finding. Only the version lines are rewritten (never the whole
+file via `json_encode`), so the diff of a data file stays reviewable.
 
 ## Words
 
@@ -419,8 +546,25 @@ at the moment:
 | `is time jump for` | `time_jump` | the default time period |
 | `is term jump for` | `term_jump` | the default term jump |
 | `is measure type for` | `measure_type` | the default measure type |
-| `is follower of` | `follow` | sequence / successor |
+| `is follower of` | `follow` | **time** ordering: sequence / successor (2025 is follower of 2024) |
+| `is next main column after` | `before` | **table column** ordering: this main column follows the other main column and all columns explaining it |
+| `is explaining column for` | `after` | **table column** ordering: this column explains the other one, so it is shown between its main column and the next main column |
 | `term type needed` | `term_needed` | the formula needs the linked term type |
+| `supports` | `supports` | argumentation: a finding backs a claim |
+| `explains` | `explains` | argumentation: gives the reason for another phrase |
+| `refines` | `refines` | argumentation: makes another phrase more precise |
+| `is evidence for` | `evidence` | argumentation: an observation is empirical evidence for a claim |
+| `is analogous to` | `analogous` | same structure without a causal link (symmetric) |
+| `limits` | `limits` | bounds how far another phrase can go; reverse `is limited by` |
+| `enables` | `enables` | makes another phrase possible without causing it |
+| `reduces` | `reduces` | lowers the size of another phrase |
+| `adds to` | `adds_to` | one amount is added to another to form the total |
+| `competes with` | `competes` | two options exclude or weaken each other (symmetric) |
+| `aims to trigger` | `aims_to_trigger` | the intended effect of an action |
+| `lowers barrier for` | `lowers_barrier` | makes another phrase easier to reach |
+| `is single attempt in` | `single_attempt` | one try of the attempts an ensemble rate is computed from |
+| `expected from` | `expected_from` | the expected value of an outcome |
+| `weighted by` | `weighted` | a quantity multiplied by a weight |
 | `not set` | `not_set` | none — no verb selected |
 
 ### Adding a new verb
@@ -530,6 +674,43 @@ wanted or when the auto-name would actually collide with another triple's name
 in the file. Re-importing files where every `is part of` triple repeats its own
 auto-name is a common LLM mistake — strip them.
 
+### An unnamed triple is reachable only by its auto-generated name
+
+The corollary of the rule above: a triple without a `name` **is** its
+`<from> <verb> <to>` string, and nothing can reach it by a shorter phrase. So
+when a value, a formula operand or another triple must reference the compound by
+a display name, that name has to be on the triple.
+
+- **Wrong** — the value can never resolve `m/s`, because the triple's phrase name
+  is the whole sentence `m/s is symbol for metre per second`:
+
+```json
+{ "from": "m/s", "verb": "is symbol for", "to": "metre per second" }
+{ "words": ["German North Sea Coast", "median", "Wind", "speed", "m/s"], "number": "6.9" }
+```
+
+- **Right** — the explicit `name` differs from the auto-form, so it is required:
+
+```json
+{ "name": "m/s", "from": "m/s", "verb": "is symbol for", "to": "metre per second" }
+```
+
+This failure is silent at authoring time and only surfaces on import as
+*the phrase(s) … are not defined in the import file*, so check every value
+phrase against the triple **names**, not against the triples.
+
+The auto-form is not always `<from> <verb> <to>`: `triple::generate_name()` gives
+the `is` verb its own shape, `<from> (<to>)`, so
+
+```json
+{ "from": "Swiss franc", "verb": "is a", "to": "currency" }
+```
+
+is stored as **`Swiss franc (currency)`**, not as `Swiss franc is a currency`.
+That is the name anything referencing this triple has to use — including a test
+const, which is why such a const is read out of `list.csv` rather than composed
+from the parts.
+
 ### Composition pattern
 
 For a compound noun `X Y` where `Y` is the head noun and `X` modifies it, the
@@ -551,6 +732,32 @@ conventional composition is:
 
 The triple's `name` is free-form and need not be grammatically derivable from
 its `from`/`verb`/`to` — it just has to be unique.
+
+### A building block is defined before the triple that uses it
+
+The import resolves the `from` and the `to` of a triple against the phrases it
+knows **at that point of the file**, in file order. So a composition has to
+stand **above** every triple that builds on it — a forward reference is not
+resolved later, it fails:
+
+```json
+"triples": [
+  { "name": "GDP per capita",        "from": "GDP",            "verb": "per", "to": "person" },
+  { "name": "canton GDP per capita", "from": "GDP per capita", "verb": "of",  "to": "canton" }
+]
+```
+
+Turned around, the import reports *`triple phrase from id is 0`*, *`Cannot find
+word or triple "GDP per capita"`* and drops the whole file, because the building
+block does not exist yet when the dependent triple is mapped.
+
+The same holds for a word: define the atoms in `words` (which the import reads
+before the triples) and only then compose them. When a new building block is
+inserted into an existing file, put it in front of its **first** user, not at
+the end of the block of related triples.
+
+`test/json_validation.php` reports a forward reference as *"triple uses a phrase
+that is defined later"*.
 
 ## Formulas
 
@@ -649,6 +856,32 @@ explicit `* 100`. Do not "fix" such formulas by adding `* 100` — the missing
 factor is intentional; scaling happens via the `percent` measure, not the
 expression.
 
+### A `percent` value is stored as the decimal ratio, never as the ×100 number
+
+The same scaling applies to a stored value: a value qualified with `percent`
+holds the **ratio**, and the `percent` measure turns it into a percentage for
+the user. So a share of 18 % is `"number": "0.18"`, not `"18"`.
+
+- **Right**: `{"words": ["share of population 65+", "Zurich (canton)", "2025", "percent"], "number": "0.18"}`
+- **Wrong** — off by a factor of 100 as soon as the number is calculated with:
+  `{"words": ["share of population 65+", "Zurich (canton)", "2025", "percent"], "number": "18"}`
+
+This is not cosmetic. A ×100 value silently breaks every formula that consumes
+it: `"profit" = "holders" * "switching willingness" * "market share" * "margin"`
+gives the right answer with `0.02` and `0.05`, and a 10 000× too large one with
+`2` and `5`. It also forces a compensating `/ 100` into the consumer and a
+`* 100` into the producer, both of which the `percent` measure already does.
+
+The decimal form covers the whole range: 0.5 % is `"0.005"`, 230 % is `"2.3"`,
+and a `calc-validation` entry whose `words` contain `percent` states its
+expected result the same way.
+
+**Before storing, sanity-check the magnitude** — the two forms are easy to
+confuse when the number is small. A housing vacancy rate of `0.06` is the ×100
+form of 0.06 % (`"0.0006"`), while an investor share of `0.85` is already the
+ratio for 85 %. Decide from the real-world quantity, not from the size of the
+number.
+
 ### Period-over-period change: reuse the system `increase` formula
 
 Do **not** write a bespoke "growth rate" / "year-over-year change" formula. The
@@ -684,19 +917,57 @@ unintended collision worth flagging. Convention: suffix the formula name with
 `disinformation dam expected value` + formula
 `disinformation dam expected value formula`).
 
+### A word and a triple must never share a name
+
+Word and triple live in **one** phrase namespace. A file that declares the word
+`km` *and* a triple named `km` creates two phrases with the same name, so every
+value naming `km` becomes ambiguous. This is the most common defect found when
+splitting a multi-word word into a triple: the compound becomes a triple while
+the old word declaration is left behind.
+
+The idiom for a symbol that must keep both is to qualify the triple name, as
+`units.json` does — the word stays `l`, `km`, `t`, and the relation triple is
+named `l (unit symbol)`, `km (unit symbol)`, `t (unit symbol)`:
+
+```json
+{ "name": "km" }
+{ "name": "km (unit symbol)", "from": "km", "verb": "is symbol for", "to": "kilometre" }
+```
+
+The same applies across files: a phrase that is a triple in its home file must
+not be re-declared as a word in a consumer file.
+
 ## Sources
 
 ```json
 {
   "name": "Berns paper",
   "description": "Berns GS, ... (2005). Biological Psychiatry 58:245-253",
-  "url":  "https://doi.org/..."
+  "doi":  "10.1016/j.biopsych.2005.04.012"
 }
 ```
 
 Sources are referenced by name in `value.source` and must be defined in the
 same file as the values that use them. Sources live in their own namespace —
 a source whose name equals a triple's name is fine.
+
+A source that has a **doi** carries it in `doi` — the bare identifier, without
+the `https://doi.org/` prefix, which the frontend adds to build the link. `url`
+stays the field for a source that has no doi (a website, a pdf, a dataset); a
+source may carry both, e.g. the doi of the paper and the url of the download.
+
+### A source name never appears in a value's `words`
+
+Because the namespaces are separate, a source name put into `words` is not a
+phrase and cannot resolve. Provenance goes in `source`; the phrase group names
+the **claim the number is about**.
+
+- **Wrong**: `{"words": ["confidence", "Berns paper", "assumed"], "number": "0.7"}`
+- **Right**: `{"words": ["confidence", "model harm weight", "assumed"], "number": "0.7", "source": "Berns paper"}`
+
+If two values would then share one phrase group, that is the signal that the
+group is under-qualified — name the distinct claim, do not fall back to the
+source name.
 
 ## Values
 
@@ -708,22 +979,25 @@ a source whose name equals a triple's name is fine.
 }
 ```
 
-### Qualify a value as specifically as the data allows — prefer triples from single words
+### Qualify a value as specifically as the data allows — build from single words
 
 A value's `words` array is the phrase group the number belongs to. **Always
 describe a value as specifically as the data allows**: add as many qualifying
 phrases as possible. A bare `{"words": ["price"], "number": "20"}` claims *the*
 price is 20 — meaningless. Add the context (dataset, entity, period, source).
 
-Express each qualifier as a **phrase built from single words**, and **prefer a
-triple over a flat extra word**:
+Express every qualifier through **single words**, and combine them into a triple
+only where the combination itself carries meaning — the entity, the order or the
+verb (see *Word vs triple in a value* below):
 
 - Define the individual words (`economics`, `textbook`, `example`).
 - Combine them with **existing verbs** into triples, building up. Because each
   triple's `to`/`from` is itself a named triple, give it an explicit `name`:
   - `{"from": "textbook", "verb": "of", "to": "economics", "name": "economics textbook"}`
   - `{"from": "example", "verb": "of", "to": "economics textbook", "name": "economics textbook example"}`
-- Reference the resulting triple by name in the value's `words` array.
+- Reference the resulting triple by name in the value's `words` array — here the
+  `of` chain is what says the example is *from* the textbook and the textbook is
+  *about* economics, which the three loose words would not.
 
 - **Vague**: `{"words": ["price"], "number": "20", "share": "public", "source": "economics textbook example"}`
 - **Specific**: `{"words": ["price", "economics textbook example"], "number": "20", "source": "economics textbook example"}`
@@ -738,7 +1012,7 @@ quantity in the whole graph. The qualifier that usually decides this is the
 - **Wrong** — generic entity word, group is not globally unique:
 
 ```json
-{ "words": ["canton", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+{ "words": ["canton", "GDP", "2022", "CHF"], "number": "159800000000" }
 ```
 
 There are 26 cantons, so this never says *which* canton's GDP it is — another
@@ -753,48 +1027,85 @@ no unique fact.
 ```
 
 ```json
-{ "words": ["Zurich (canton)", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+{ "words": ["Zurich (canton)", "GDP", "2022", "CHF"], "number": "159800000000" }
 ```
 
 Now the group identifies one number globally. The shared atoms (`canton`, `GDP`,
-`2022`, `CHF`, `measured value`) stay reusable across every entity; only the
-entity phrase carries the global identity. Apply it to every value —
+`2022`, `CHF`) stay reusable across every entity; only the entity phrase carries
+the global identity. Apply it to every value —
 `Zurich (city)` not bare `city`, `Vestas` not bare `company`. The entity triple
 doubles as the disambiguation of the ambiguous name (`Zurich` the canton vs the
 city — see *Disambiguate an ambiguous word with qualifier triples*).
 
-### Word vs triple in a value — does the order carry meaning?
+### Word vs triple in a value — single words unless the order or the verb carries meaning
 
-A value's `words` array is an **unordered set**: the import cannot tell `["A", "B"]`
-from `["B", "A"]`. So when two phrases qualify a value, ask whether their order
-could change the meaning:
+**Default to single words in a value's `words` array; reach for a triple only
+when the combination itself carries information that the flat words would lose.**
+That is the case for exactly two things: the **order** of the combined phrases
+and the **verb** that combines them.
 
-- **If the order could be relevant, use a triple** instead of two flat words.
-  The triple fixes the direction in its `from`/`verb`/`to`, and the value
-  references the single triple name — so the meaning survives.
-- **If the order is never relevant, use two (or more) flat words** and do *not*
-  invent a triple. A triple costs a name and a database row; spend it only where
-  direction earns it. Over-triplifying buries the reusable single-word atoms, so
-  when in doubt that the order matters, leave it as separate words.
+The reason is what the user can do with the result. Every phrase of the group is
+its own link, so
 
-**Order could matter → triple:**
+```json
+{ "words": ["primary", "school", "Zurich", "canton", "2024"], "number": "252" }
+```
 
-- A ratio — `revenue / cost` ≠ `cost / revenue`: tag the value with
-  `{"from": "revenue", "verb": "per", "to": "cost", "name": "revenue per cost"}`,
-  not the two bare words.
-- A directed flow — exports *from* Switzerland *to* Germany differ from the
-  reverse: `{"from": "Switzerland", "verb": "to", "to": "Germany", "name": "Switzerland to Germany"}`.
-- A signed change over a period — a value measured *from* 2023 *to* 2024 flips
-  sign if the years swap: `{"from": "2023", "verb": "to", "to": "2024", "name": "2023 to 2024"}`.
+gives the reader of "number of primary schools in Zurich (canton)" five entry
+points instead of one: from `school` they reach every other school figure, from
+`Zurich` the city and the canton alike, from `primary` every other primary
+measure. And nothing is lost, because the triples built from those words
+(`primary school`, `Zurich (canton)`) hang on the words themselves — so the
+single word is the *shorter* path to the triple, while a triple in the value is a
+dead end that leads back to its two parts and no further.
 
-**Order is irrelevant → flat words:**
+A triple also costs a name and a database row. Spend it only where the order or
+the verb earns it; when in doubt, leave the phrases separate.
+
+**The order carries meaning → triple.** A value's `words` array is an **unordered
+set**: the import cannot tell `["A", "B"]` from `["B", "A"]`. So whenever
+swapping two phrases would name a different quantity, the direction has to live
+in a triple's `from`/`to`. `forum_outreach_estimate.json` holds both directions
+of the same pair, and they are reciprocals:
+
+```json
+{ "name": "qualified collaborator per hour", "from": "qualified collaborator", "verb": "per", "to": "hour" },
+{ "name": "hour per qualified collaborator", "from": "hour", "verb": "per", "to": "qualified collaborator" }
+```
+
+As flat words both would be `["qualified collaborator", "hour"]` — one group for
+two different numbers. The same holds for any ratio (`revenue per cost`), any
+directed flow (exports *from* Switzerland *to* Germany) and any signed change
+over a period (*from* 2023 *to* 2024 flips sign if the years swap).
+
+**The verb carries meaning → triple.** Two phrases can be linked by more than one
+relation, and then the verb alone decides which number is meant. `zh_city.json`
+uses the same `from` and the same `to` twice and only changes the verb:
+
+```json
+{ "name": "inbound commuters to Zurich (city)",     "from": "commuter", "verb": "in", "to": "Zurich (city)" },
+{ "name": "outbound commuters from Zurich (city)",  "from": "commuter", "verb": "of", "to": "Zurich (city)" }
+```
+
+The 2023 values are 235'000 and 58'000. Flattened to
+`["commuter", "Zurich (city)", "2023"]` both would land in one group, and the
+question the number answers — who commutes *into* the city versus *out of* it —
+would be gone.
+
+**Neither → flat words:**
 
 - `{"words": ["Vestas", "revenue", "2024"], "number": "..."}` — "Vestas's revenue
-  in 2024" reads the same whatever the qualifier order; no triple needed.
-- `{"words": ["city of Zurich", "inhabitant", "2025"], "number": "443037"}` — the
+  in 2024" reads the same whatever the qualifier order, and no verb links the
+  three; no triple needed.
+- `{"words": ["Zurich", "city", "inhabitant", "2025"], "number": "443037"}` — the
   entity, measure and period have no direction among themselves.
 - `{"words": ["Switzerland", "population", "2023"], "number": "..."}` — a plain
   fact tagged by entity, measure and period.
+
+The one qualifier that stays a triple either way is the **entity**, because it
+must be globally unique (see *Name the entity globally, not just locally*):
+`Zurich (canton)` is a phrase in its own right, not the accident of two words
+meeting in a group.
 
 ### Naming a formula operand: triple vs flat atoms
 
@@ -833,6 +1144,33 @@ by a bare genus word alone.
 
 Only add `share` when it differs from `public`.
 
+### `measured value` is the default and must never be added
+
+A value is assumed to be measured: it comes from an observation or from the
+source named in its `source` field. So a `measured value` qualifier says nothing
+that is not already implied, while it lengthens every phrase group, creates a
+word or triple that must be re-declared in every file that borrows it, and makes
+two otherwise identical groups look different.
+
+Only the **deviation** from the default is worth recording. Keep the word
+`assumed` for a number that is *not* measured — a Fermi input, a policy
+parameter, an order-of-magnitude guess — so a reader can tell at a glance which
+numbers carry evidence and which do not. The qualifier is the single word, not
+an `assumed value` triple: the phrases of a value are the words of that value,
+so the `... value` part only repeats what the group already is.
+
+- **Right**: `{"words": ["carbon leakage rate", "global warming", "percent"], "number": "14", "source": "Branger & Quirion (2014b)"}`
+- **Right**: `{"words": ["disinformation", "public discourse", "assumed", "percent"], "number": "20"}`
+- **Wrong** — the qualifier only repeats the default:
+  `{"words": ["carbon leakage rate", "global warming", "measured value", "percent"], "number": "14", "source": "..."}`
+
+The same applies to the `context` of a `calc-validation` entry and to the word
+or triple itself: a file must not define a `measured value` word, nor a
+`value kind of measured` / `value must be one of measured` triple.
+
+A measured number without a `source` is a smell — either name the source or,
+if it really is an assumption, mark it `assumed`.
+
 ## Calc-validation
 
 Optional. A list of *expected* formula results: instead of being stored, each
@@ -855,7 +1193,7 @@ as a failed validation, never saved as a value.
   **literal, with no parent/child inheritance**: the validator takes each value
   whose phrase group is *wholly contained* in `context`, so `context` must be a
   **superset of every input value's full group** — include every qualifier the
-  values carry (measure, period, `measured value`, …), not just the phrase the
+  values carry (measure, period, currency, …), not just the phrase the
   expression names. A value tagged `city population` is therefore *not* found by a
   bare `population` unless the value also carries the word `population`; and to
   tell two same-measure inputs apart, put the distinguishing word (`city` /

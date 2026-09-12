@@ -40,6 +40,9 @@ class view_link_types
     const int MAIN_WORD_ID = 1;
     const string MAIN_WORD_NAME = "main word";
     const string MAIN_WORD_COM = "use the main word as start for the view";
-    const string SELECTED_WORD = "main_word"; // use the main word as start for the view
+    const string SELECTED_WORD = "selected_word"; // use the selected words of the main view
+    const int SELECTED_WORD_ID = 2;
+    const string SELECTED_WORD_NAME = "selected word";
+    const string SELECTED_WORD_COM = "use the selected words of the main view as a selector for the sub view";
 
 }

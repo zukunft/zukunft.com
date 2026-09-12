@@ -124,28 +124,28 @@ class job_status extends type_object
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
      */
-    function row_mapper_typ_obj(array $db_row, string $class): bool
+    function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        $result = parent::row_mapper_typ_obj($db_row, $class);
+        $result = parent::row_mapper_typ_obj($db_row, $msg, $class);
         if ($result) {
             if (array_key_exists(self::FLD_PRIO, $db_row)) {
                 $this->prio = ($db_row[self::FLD_PRIO]);
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * map the additional vars of a job status api json
      * to this job status object
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @param bool $trusted true if the api_json is from the cache
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
+    function api_mapper(array $api_json, user_message $msg, bool $trusted = false): bool
     {
-        parent::api_mapper($api_json, $usr_msg, $trusted);
+        parent::api_mapper($api_json, $msg, $trusted);
 
         if (array_key_exists(json_fields::PRIORITY, $api_json)) {
             if ($api_json[json_fields::PRIORITY] <> '') {
@@ -153,7 +153,7 @@ class job_status extends type_object
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -195,12 +195,13 @@ class job_status extends type_object
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         $vars[json_fields::PRIORITY] = $this->prio;
         return $vars;
     }
@@ -212,13 +213,14 @@ class job_status extends type_object
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->prio !== null) {
             $vars[json_fields::PRIORITY] = $this->prio;
         }

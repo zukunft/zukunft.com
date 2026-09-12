@@ -15,6 +15,21 @@ body {
     text-align: left;
 }
 
+/* opt-in for a row whose short fields read as one centred line, e.g. the last update and the */
+/* source of the default value view; the row keeps the bootstrap "row" class, which would make */
+/* every child a full width flex item and put each field on an own line, so the flex layout is */
+/* switched back to inline text that the body centre alignment then centres as one line */
+.fields-in-line {
+    display: block;
+    width: 100%;    /* keep the full width of the replaced col-md-12 row style */
+    text-align: center;
+}
+
+.fields-in-line > * {
+    display: inline;
+    width: auto;
+}
+
 /* header / navbar */
 .site-header {
     background: #f9fafb; /* Light grey-blue background for the top header */
@@ -242,6 +257,44 @@ body {
     vertical-align: middle;
 }
 
+/* grouped value list (value_list::list_most_relevant): a container of value groups, each with a */
+/* title and an item list; per value the phrase name on the left and the number on the right */
+.value-group {
+    margin-bottom: 0.5rem;
+}
+.value-group-title {
+    font-weight: bold;
+}
+.value-items {
+    list-style: none;       /* no bullet points */
+    margin: 0;
+    padding-left: 1rem;     /* small indent under the group title */
+}
+.value-items li {
+    display: flex;                  /* name on the left, number on the right */
+    justify-content: space-between;
+    gap: 1rem;
+}
+.value-name {
+    white-space: nowrap;    /* keep the phrases of one value on one line */
+}
+
+/* a value shown as one row (value::links_and_measure): the phrase links, the number and the */
+/* measure stay side by side on one line, the name shrinks first if the space gets tight */
+.value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+.value-row .value-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.value-unit {
+    white-space: nowrap;    /* keep the scaling and the measure together */
+}
+
 /* buttons */
 .btn {
     background: #9ea09e; /* Sets the button background to zukunft.com specific grey */
@@ -286,8 +339,19 @@ a:hover {
     color: #9ea09e; /* the zukunft.com grey used for the old value of a change */
 }
 
+/* the invisible change log table (class "table table-borderless grey") shows its cells in the
+   standard zukunft.com grey; the extra .grey class raises the specificity above the bootstrap
+   ".table > :not(caption) > * > *" cell color rule, which a plain .grey on the table would lose to */
+.table.grey > :not(caption) > * > * {
+    color: #9ea09e;
+}
+
 .changed {
     color: #6b86c2; /* a light blue between the grey old value and the #385eb7 link blue to mark a changed value */
+}
+
+.user-logged {
+    color: #274b8f; /* a dark blue variant of the #385eb7 link blue to show that a non-ip user is logged in */
 }
 
 /* TODO review and combine with the other width
@@ -397,4 +461,58 @@ a:hover {
 }
 .css-tabs:not(:has(> .css-tab:target)) > .css-tab:first-child > .css-tab-pane {
     display: block;
+}
+
+/* css-only "show password" toggle (no javascript): the password field is a text input that is masked
+   by default and revealed while the sibling "show password" checkbox is checked; the raw checkbox is
+   hidden and the eye / eye-slash icon in the label is the clickable symbol that toggles it */
+/* keep the input at its normal width but place the eye icon inside it on the right, so the icon never
+   wraps to the next line (the label's negative margin pulls it back over the field's right padding) */
+.password-field {
+    position: relative;
+    white-space: nowrap;
+}
+.password-field .password {
+    -webkit-text-security: disc;
+    text-security: disc;
+    padding-right: 2em; /* reserve room inside the field so the text does not run under the icon */
+    vertical-align: middle;
+}
+.password-field:has(.show-password:checked) .password {
+    -webkit-text-security: none;
+    text-security: none;
+}
+/* keep the checkbox out of view but focusable so the toggle also works with the keyboard */
+.password-field .show-password {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+}
+/* the show-password label is an inline toggle, not a stacked field label, so keep it on the same line
+   as the input; this overrides the generic ".main-container form label { display: block }" rule */
+.main-container form .password-field label {
+    display: inline-block;
+}
+.password-field label {
+    margin-left: -1.8em; /* pull the icon back over the field's reserved right padding */
+    vertical-align: middle;
+    cursor: pointer;
+}
+.password-field:has(.show-password:focus-visible) label {
+    outline: 2px solid;
+    outline-offset: 2px;
+}
+.password-field .password-icon-show {
+    display: inline-block;
+}
+.password-field .password-icon-hide {
+    display: none;
+}
+.password-field:has(.show-password:checked) .password-icon-show {
+    display: none;
+}
+.password-field:has(.show-password:checked) .password-icon-hide {
+    display: inline-block;
 }

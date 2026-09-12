@@ -23,9 +23,9 @@ PREPARE word_insert_log_1100000300000_user_call FROM
 SELECT word_insert_log_1100000300000_user
        (3,
         1,
-        85,
+        90,
         null,
         101,
         null,
         null,
-        190);
+        189);

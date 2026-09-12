@@ -78,6 +78,7 @@ class test_app
      */
     function start(
         string $code_name,
+        user_message $msg,
         bool   $echo_env = false
     ): sql_db
     {
@@ -123,7 +124,7 @@ class test_app
             phpinfo(INFO_GENERAL);
         }
 
-        return $this->open_db($code_name);
+        return $this->open_db($code_name, $msg);
     }
 
     /**
@@ -132,12 +133,12 @@ class test_app
      * @param string $code_name the place that is displayed to the user e.g. add a word
      * @return sql_db the open database connection
      */
-    function open_db(string $code_name): sql_db
+    function open_db(string $code_name, user_message $msg): sql_db
     {
 
-        global $sys;       // the global system time control including the preloaded types
+        global $sys;       // the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes
         global $db_con;    // the database connection
-        global $cac;       // the global user data cache including the system views
+        global $cac;       // the backend cache of user-specific data_object
         global $cfg;       // the user configuration values
         global $mtr;       // the translation object
 
@@ -163,16 +164,18 @@ class test_app
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
             $sys_msg = new user_message(user::system());
-            if (!$db_chk->db_check($db_con, $sys_msg)) {
-                echo '\n';
+            $db_ok = $db_chk->db_check($db_con, $sys_msg);
+            if (!$db_ok) {
+                echo "\n";
                 echo $sys_msg->all_message_text();
+                // close the connection but keep the sql_db object, so that the callers can
+                // detect the failed check via is_open() instead of crashing on a null return
                 $db_con->close();
-                $db_con = null;
             }
 
             // skip the start-up loading if the database check has failed and the connection has been closed,
             // because continuing without a database would end in a fatal crash that hides the fail message
-            if ($db_con != null) {
+            if ($db_ok) {
 
                 // create a virtual one-time system user to load the system users
                 $usr_sys = new user();
@@ -181,10 +184,10 @@ class test_app
 
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                $sys->load_cache_type($db_con);
+                $sys->load_cache_type($db_con, $msg);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
-                $cfg->load_cfg(null, $usr_sys);
+                $cfg->load_cfg($msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
                 // preload all types from the database
@@ -197,15 +200,15 @@ class test_app
                     log_err('Type loading incomplete due to ');
                 }
                 */
-                $sys->load_type_lists($db_con);
+                $sys->load_type_lists($db_con, $msg);
 
                 $log = new change_log($usr_sys);
-                $db_changed = $log->create_log_references($db_con);
+                $db_changed = $log->create_log_references($db_con, $msg);
 
                 // reload the type list if needed and trigger an update in the frontend
                 // even tough the update of the preloaded list should already be done by the single adds
                 if ($db_changed) {
-                    $sys->load_type_lists($db_con);
+                    $sys->load_type_lists($db_con, $msg);
                 }
             }
 
@@ -239,6 +242,7 @@ class test_app
     private function write_time($db_con): void
     {
         global $sys;
+        $msg = new user_message();
 
         $sys_time_end = microtime(true);
         if ($sys_time_end > $sys->time_limit) {
@@ -248,7 +252,7 @@ class test_app
                 $sys_script->name = $sys->script;
                 $sys_script->code_id = $sys->script;
                 $sys_usr = new user();
-                $sys_usr->load_by_id(users::SYSTEM_ID);
+                $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
                 $msg = new user_message($sys_usr);
                 $sys_script->save($msg);
                 if ($msg->is_ok()) {

@@ -105,53 +105,53 @@ class figure extends combine_object
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(?array $db_row, string $ext, string $id_fld = self::FLD_ID): bool
+    function row_mapper(?array $db_row, user_message $msg, string $ext, string $id_fld = self::FLD_ID): bool
     {
         $result = false;
         $this->set_id(0);
-        if ($db_row != null) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($db_row[$id_fld] > 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a user value
                 $val = new value($this->get_user());
-                $val->row_mapper_sandbox_multi($db_row, $ext);
+                $val->row_mapper_sandbox_multi($db_row, $msg, $ext);
                 $this->set_obj($val);
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a formula result
                 $res = new result($this->get_user());
-                $res->row_mapper($db_row);
+                $res->row_mapper($db_row, $msg);
                 $this->set_obj($res);
                 $result = true;
             } else {
                 log_warning('figure with id 0 is not expected');
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * map a figure api json to this model figure object
      * @param array $api_json the api array with the figure values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if ($api_json[json_fields::ID] > 0) {
             $val = new value($this->get_user());
-            if ($val->api_mapper($api_json, $usr_msg)) {
+            if ($val->api_mapper($api_json, $msg)) {
                 $this->obj = $val;
             }
         } else {
             $res = new result($this->get_user());
             $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-            if ($res->api_mapper($api_json, $usr_msg)) {
+            if ($res->api_mapper($api_json, $msg)) {
                 $this->obj = $res;
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

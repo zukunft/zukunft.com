@@ -96,7 +96,7 @@ class import_file
     {
         global $cfg;
 
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr); // the message IS the return value, so the caller merges it
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -106,7 +106,7 @@ class import_file
         // load the config e.g. after initial setup
         if ($cfg == null) {
             $cfg = new config_numbers($usr);
-            $cfg->load_cfg(null, $usr);
+            $cfg->load_cfg($msg, null, $usr);
         }
 
         // get the relevant config values
@@ -135,22 +135,22 @@ class import_file
 
         if (!$json_str) {
             log_err('import file ' . $filename . ' cannot be loaded');
-            $this->read_error($filename, file_types::JSOM, $usr_msg);
+            $this->read_error($filename, file_types::JSOM, $msg);
         } else {
             if ($json_str == '') {
-                $usr_msg->add_id(msg_id::FAILED_MESSAGE_EMPTY);
+                $msg->add_id(msg_id::FAILED_MESSAGE_EMPTY);
             } else {
 
                 // analyse the import file and update the database
                 if ($direct) {
-                    $imp->put_json_direct($json_str, $usr_msg);
+                    $imp->put_json_direct($json_str, $msg);
                 } else {
-                    $imp->put_json($json_str, $usr_msg);
+                    $imp->put_json($json_str, $msg);
                 }
 
                 // show the summery to the user
-                if ($usr_msg->is_ok()) {
-                    $usr_msg->add_info_text(' done ('
+                if ($msg->is_ok()) {
+                    $msg->add_info_text(' done ('
                         . $imp->words_done . ' words, '
                         . $imp->verbs_done . ' verbs, '
                         . $imp->triples_done . ' triples, '
@@ -164,14 +164,14 @@ class import_file
                         . $imp->calc_validations_done . ' results validated, '
                         . $imp->view_validations_done . ' views validated)');
                     if ($imp->users_done > 0) {
-                        $usr_msg->add_info_text(' ... and ' . $imp->users_done . ' $users');
+                        $msg->add_info_text(' ... and ' . $imp->users_done . ' $users');
                     }
                     if ($imp->system_done > 0) {
-                        $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
+                        $msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
                     // TODO Prio 1 move to calling function and include save
-                    $err_msg = 'import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text();
+                    $err_msg = 'import of ' . $filename . ' failed due to ' . $msg->all_message_text();
                     if (!$ignore_errors) {
                         log_err($err_msg);
                     } else {
@@ -181,7 +181,7 @@ class import_file
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -193,28 +193,28 @@ class import_file
      */
     function yaml_file(string $filename, user $usr): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         $yaml_str = file_get_contents($filename);
         if (!$yaml_str) {
-            $this->read_error($filename, file_types::YAML, $usr_msg);
+            $this->read_error($filename, file_types::YAML, $msg);
         } else {
             if ($yaml_str == '') {
-                $this->empty_warning($filename, $usr_msg);
+                $this->empty_warning($filename, $msg);
             } else {
                 $imp = new import($filename);
                 $imp->usr = $usr;
                 $import_result = $imp->put_yaml($yaml_str);
                 if ($import_result->is_ok()) {
-                    $this->done($imp->summary(), $usr_msg);
+                    $this->done($imp->summary(), $msg);
                 } else {
-                    $this->failed($import_result->all_message_text(), $usr_msg);
+                    $this->failed($import_result->all_message_text(), $msg);
                 }
-                $usr_msg->merge($import_result);
+                $msg->merge($import_result);
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -225,13 +225,11 @@ class import_file
      * @param bool $validate if true, the import is validated even if the number of the values matches
      * @return user_message true if the configuration has imported
      */
-    function import_config_yaml(user $usr, bool $validate = false): user_message
+    function import_config_yaml(user $usr, user_message $msg, bool $validate = false): user_message
     {
         global $sys;
         global $db_con;
         global $mtr;
-
-        $msg = new user_message();
 
         // only admin users are allowed to load the system config from the resource file
         if ($usr->is_admin() or $usr->is_system()) {
@@ -244,10 +242,10 @@ class import_file
             if (!$msg->is_ok() or $validate) {
 
                 // load the system configuration from the database
-                $sys->load_cache_type($db_con);
+                $sys->load_cache_type($db_con, $msg);
                 // TODO Prio 3 base the validation on the export yaml
                 $cfg = new config_numbers($usr);
-                $cfg->load_cfg(null, $usr);
+                $cfg->load_cfg($msg, null, $usr);
 
                 // check based on the number of values
                 $cfg_nbr = $cfg->count();
@@ -268,13 +266,14 @@ class import_file
                     $imp->usr = $usr;
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
-                    $dto = $imp->get_data_object_yaml($yaml_array);
-                    $load_msg = $dto->load($db_con);
-                    $sys->typ_lst->load($db_con);
-                    if (!$load_msg->is_ok()) {
+                    $dto = $imp->get_data_object_yaml($yaml_array, $msg);
+                    // the load reports the issues on $msg itself, so only its result is needed here
+                    $load_ok = $dto->load($db_con, $msg);
+                    $sys->typ_lst->load($db_con, $msg);
+                    if (!$load_ok) {
 
-                        // report the issues on loading the config values
-                        $msg->merge($load_msg);
+                        // the issues on loading the config values are already on $msg
+                        log_warning('loading the config values of ' . files::SYSTEM_CONFIG . ' failed');
                     } else {
                         if ($validate) {
 
@@ -403,6 +402,34 @@ class import_file
         }
 
         log_debug('load sample view data ... done');
+
+        return $result;
+    }
+
+    /**
+     * import the use case data, which shows how a question is answered with the data
+     * loaded as the last step of the standard db setup, because a use case builds on the
+     * phrases of the start page e.g. the column tiers of solution_prio.json
+     * @param user $usr the owner of the use case data
+     * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
+     * @return string any error or warning message during import
+     */
+    function import_use_case_data(user $usr, bool $direct = false): string
+    {
+        $result = '';
+        log_info('use case data setup',
+            sys_log_functions::IMPORT_USE_CASE_DATA_NAME,
+            'import of the use case data',
+            sys_log_functions::IMPORT_USE_CASE_DATA,
+            $usr, true
+        );
+
+        // the file names already carry the full path, so no message path is prepended
+        foreach (files::USE_CASE_FILES as $filename) {
+            $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
+        }
+
+        log_debug('load use case data ... done');
 
         return $result;
     }

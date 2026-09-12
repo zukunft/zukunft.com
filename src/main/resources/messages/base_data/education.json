@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-18 12:00:00",
   "user": "timon",
   "selection": [
@@ -22,20 +23,9 @@
     },
     {
       "name": "student",
-      "description": "a person enrolled in a school or other educational institution who attends classes to acquire knowledge.",
       "refs": [
         {
           "name": "Student",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "working memory",
-      "description": "a cognitive system with limited capacity that temporarily holds information available for processing.",
-      "refs": [
-        {
-          "name": "Working_memory",
           "type": "wikipedia"
         }
       ]
@@ -46,16 +36,6 @@
       "refs": [
         {
           "name": "Metacognition",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cognitive development",
-      "description": "the emergence of the ability to consciously think, reason and understand, from childhood to adulthood.",
-      "refs": [
-        {
-          "name": "Cognitive_development",
           "type": "wikipedia"
         }
       ]
@@ -76,36 +56,6 @@
       "refs": [
         {
           "name": "Zone_of_proximal_development",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "Bloom's taxonomy",
-      "description": "a set of hierarchical models used to classify educational learning objectives into levels of complexity.",
-      "refs": [
-        {
-          "name": "Bloom's_taxonomy",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "effect size",
-      "description": "a quantitative measure of the magnitude of a phenomenon, such as the standardised difference between two means.",
-      "refs": [
-        {
-          "name": "Effect_size",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "standard deviation",
-      "description": "a measure of the amount of variation or dispersion of a set of values.",
-      "refs": [
-        {
-          "name": "Standard_deviation",
           "type": "wikipedia"
         }
       ]
@@ -193,7 +143,18 @@
       "description": "Bloom level: produce new or original work"
     },
     {
-      "name": "learning"
+      "name": "learning",
+      "description": "process of acquiring new knowledge",
+      "refs": [
+        {
+          "name": "Learning",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q133500",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "score"
@@ -202,13 +163,56 @@
       "name": "transfer"
     },
     {
-      "name": "point"
+      "name": "point",
+      "description": "a single unit on a scale"
     },
     {
       "name": "percent"
     },
     {
-      "name": "efficiency"
+      "name": "efficiency",
+      "description": "the ratio of useful output to total input of a system",
+      "refs": [
+        {
+          "name": "Efficiency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1034411",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "memory"
+    },
+    {
+      "name": "working"
+    },
+    {
+      "name": "cognitive"
+    },
+    {
+      "name": "development"
+    },
+    {
+      "name": "Bloom",
+      "description": "Benjamin Bloom, the educational psychologist who chaired the committee of the taxonomy"
+    },
+    {
+      "name": "taxonomy"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "size"
+    },
+    {
+      "name": "deviation"
+    },
+    {
+      "name": "standard"
     }
   ],
   "triples": [
@@ -220,7 +224,6 @@
       "description": "a measurable result that a learner is expected to achieve"
     },
     {
-      "name": "transfer of learning",
       "from": "transfer",
       "verb": "of",
       "to": "learning",
@@ -232,13 +235,6 @@
       "verb": "of",
       "to": "knowledge",
       "description": "the proportion of learned knowledge still remembered after a delay"
-    },
-    {
-      "name": "working memory capacity",
-      "from": "capacity",
-      "verb": "of",
-      "to": "working memory",
-      "description": "the number of chunks that working memory can hold, about seven (Miller) or four (Cowan)"
     },
     {
       "from": "metacognition",
@@ -256,11 +252,6 @@
       "to": "learning"
     },
     {
-      "from": "working memory",
-      "verb": "influences",
-      "to": "learning"
-    },
-    {
       "name": "near transfer",
       "from": "transfer",
       "verb": "kind of",
@@ -271,36 +262,6 @@
       "from": "transfer",
       "verb": "kind of",
       "to": "far"
-    },
-    {
-      "from": "remember",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "understand",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "apply",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "analyze",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "evaluate",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
-    },
-    {
-      "from": "create",
-      "verb": "is part of",
-      "to": "Bloom's taxonomy"
     },
     {
       "name": "tutored score",
@@ -336,28 +297,135 @@
       "verb": "of",
       "to": "transfer",
       "description": "the transfer performance as a share of the trained performance"
+    },
+    {
+      "name": "working memory",
+      "from": "memory",
+      "verb": "kind of",
+      "to": "working",
+      "description": "a cognitive system with limited capacity that temporarily holds information available for processing.",
+      "refs": [
+        {
+          "name": "Working_memory",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cognitive development",
+      "from": "development",
+      "verb": "kind of",
+      "to": "cognitive",
+      "description": "the emergence of the ability to consciously think, reason and understand, from childhood to adulthood.",
+      "refs": [
+        {
+          "name": "Cognitive_development",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Bloom's taxonomy",
+      "from": "taxonomy",
+      "verb": "of",
+      "to": "Bloom",
+      "description": "a set of hierarchical models used to classify educational learning objectives into levels of complexity.",
+      "refs": [
+        {
+          "name": "Bloom's_taxonomy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "effect size",
+      "from": "size",
+      "verb": "of",
+      "to": "effect",
+      "description": "a quantitative measure of the magnitude of a phenomenon, such as the standardised difference between two means.",
+      "refs": [
+        {
+          "name": "Effect_size",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "standard deviation",
+      "from": "deviation",
+      "verb": "can be",
+      "to": "standard",
+      "description": "a measure of the amount of variation or dispersion of a set of values.",
+      "refs": [
+        {
+          "name": "Standard_deviation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "working memory capacity",
+      "from": "capacity",
+      "verb": "of",
+      "to": "working memory",
+      "description": "the number of chunks that working memory can hold, about seven (Miller) or four (Cowan)"
+    },
+    {
+      "from": "working memory",
+      "verb": "influences",
+      "to": "learning"
+    },
+    {
+      "from": "remember",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "understand",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "apply",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "analyze",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "evaluate",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "create",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
     }
   ],
   "sources": [
     {
       "name": "Ebbinghaus 1885 Murre Dros 2015",
       "description": "Ebbinghaus H (1885) Ueber das Gedaechtnis, replicated by Murre JMJ and Dros J (2015) PLoS ONE 10:e0120644: about 34 percent of learned material is retained one day after learning.",
-      "url": "https://doi.org/10.1371/journal.pone.0120644"
+      "doi": "10.1371/journal.pone.0120644"
     },
     {
       "name": "Bloom 1984 two sigma",
       "description": "Bloom BS (1984). The 2 sigma problem. Educational Researcher 13(6):4-16. One-to-one tutored students performed about two standard deviations above conventional class instruction.",
-      "url": "https://doi.org/10.3102/0013189X013006004"
+      "doi": "10.3102/0013189X013006004"
     },
     {
       "name": "Barnett Ceci 2002",
       "description": "Barnett SM, Ceci SJ (2002). When and where do we apply what we learn? A taxonomy for far transfer. Psychological Bulletin 128:612-637.",
-      "url": "https://doi.org/10.1037/0033-2909.128.4.612"
+      "doi": "10.1037/0033-2909.128.4.612"
     },
     {
       "name": "Miller 1956",
       "description": "Miller GA (1956). The magical number seven, plus or minus two. Psychological Review 63:81-97. Working memory holds about seven chunks of information.",
-      "url": "https://doi.org/10.1037/h0043158"
+      "doi": "10.1037/h0043158"
     }
   ],
   "values": [
@@ -385,7 +453,7 @@
         "knowledge retention",
         "percent"
       ],
-      "number": "34"
+      "number": "0.34"
     },
     {
       "words": [
@@ -427,7 +495,7 @@
         "trained performance",
         "percent"
       ],
-      "number": "80",
+      "number": "0.8",
       "source": "Barnett Ceci 2002"
     },
     {
@@ -436,7 +504,7 @@
         "transfer performance",
         "percent"
       ],
-      "number": "60",
+      "number": "0.6",
       "source": "Barnett Ceci 2002"
     },
     {
@@ -445,7 +513,7 @@
         "transfer efficiency",
         "percent"
       ],
-      "number": "75"
+      "number": "0.75"
     },
     {
       "words": [
@@ -459,7 +527,7 @@
   "formulas": [
     {
       "name": "knowledge retention (formula)",
-      "expression": "\"knowledge retention\" = \"recalled\" / \"learned\" * 100",
+      "expression": "\"knowledge retention\" = \"recalled\" / \"learned\"",
       "assigned": [
         "student"
       ]
@@ -473,7 +541,7 @@
     },
     {
       "name": "transfer efficiency (formula)",
-      "expression": "\"transfer efficiency\" = \"transfer performance\" / \"trained performance\" * 100",
+      "expression": "\"transfer efficiency\" = \"transfer performance\" / \"trained performance\"",
       "assigned": [
         "student"
       ]
@@ -493,7 +561,7 @@
         "knowledge retention",
         "percent"
       ],
-      "number": "34",
+      "number": "0.34",
       "note": "17 / 50 * 100"
     },
     {
@@ -525,7 +593,7 @@
         "transfer efficiency",
         "percent"
       ],
-      "number": "75",
+      "number": "0.75",
       "note": "60 / 80 * 100"
     }
   ]

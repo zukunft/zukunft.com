@@ -32,8 +32,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -43,8 +45,11 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -60,7 +65,7 @@ class term_list_tests
      */
     function run(test_cleanup $t): void
     {
-        global $usr;
+        $msg = new user_message(); // a test is an entry point, so it creates the message the list add reports into
 
         // init
         $sc = new sql_creator();
@@ -79,12 +84,12 @@ class term_list_tests
         $t->subheader($ts . 'sql statement creation');
 
         // load only the names
-        $phr_lst = new term_list($usr);
-        $t->assert_sql_names($sc, $phr_lst, new term($usr));
-        $t->assert_sql_names($sc, $phr_lst, new term($usr), verbs::IS_NAME);
+        $phr_lst = new term_list($t->usr1);
+        $t->assert_sql_names($sc, $phr_lst, new term($t->usr1));
+        $t->assert_sql_names($sc, $phr_lst, new term($t->usr1), verbs::IS_NAME);
 
         $test_name = 'load terms by ids';
-        $trm_lst = new term_list($usr);
+        $trm_lst = new term_list($t->usr1);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));
         $t->assert_sql_by_ids($test_name, $sc, $trm_lst, $trm_ids);
         $lst = $t_trm->term_list();
@@ -121,8 +126,8 @@ class term_list_tests
         $wrd_high->set_name('high impact term');
         $wrd_high->impact = 9.0;
         $trm_lst = new term_list_ui();
-        $trm_lst->add($wrd_low->term());
-        $trm_lst->add($wrd_high->term());
+        $trm_lst->add($wrd_low->term(), $msg);
+        $trm_lst->add($wrd_high->term(), $msg);
 
         // positive: term->impact returns the impact of the wrapped word
         $test_name = 'term->impact returns the impact of the wrapped word';
@@ -153,7 +158,7 @@ class term_list_tests
             $wrd->set_id($i);
             $wrd->set_name('term ' . $i);
             $wrd->impact = 6.0 - $i;
-            $col_lst->add($wrd->term());
+            $col_lst->add($wrd->term(), $msg);
         }
         $cols_html = $col_lst->links_with_context();
 
@@ -173,6 +178,31 @@ class term_list_tests
         $test_name = 'term_list->links_with_context edit link points to the term edit page';
         $t->assert($test_name, str_contains($cols_html, 'm=3&amp;id=1'), true);
 
+        // positive: the page-identifying url params of the calling page are added to the edit link
+        // with the url_var::BACK ('9') prefix so the edit mask can return to the calling page
+        // e.g. if the pod blocks the change of an ip user (see /http/view.php)
+        $test_name = 'term_list->links_with_context edit link carries the back params of the calling page';
+        $back_html = $col_lst->links_with_context([url_var::MASK => views::WORD_FIND_ID, url_var::PATTERN => 'term']);
+        $t->assert_text_contains($test_name, $back_html,
+            url_var::BACK . url_var::MASK . '=' . views::WORD_FIND_ID);
+        $test_name = 'term_list->links_with_context edit link keeps the search pattern for the back';
+        $t->assert_text_contains($test_name, $back_html, url_var::BACK . url_var::PATTERN . '=term');
+
+        // negative: form state and already prefixed params of the calling page are not repeated
+        // in the back part, so the url stays short and no '99m' or '98k' compounds are created
+        $test_name = 'term_list->links_with_context back part skips an already prefixed param';
+        $dirty_url = [
+            url_var::MASK => views::WORD_FIND_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::PRE . url_var::NAME => 'old name'
+        ];
+        $back_html = $col_lst->links_with_context($dirty_url);
+        $t->assert_text_not_contains($test_name, $back_html,
+            url_var::BACK . url_var::BACK . url_var::MASK . '=');
+        $test_name = 'term_list->links_with_context back part skips a form state param';
+        $t->assert_text_not_contains($test_name, $back_html,
+            url_var::BACK . url_var::PRE . url_var::NAME . '=');
+
         // negative: an empty term list renders no columns
         $test_name = 'term_list->links_with_context of an empty list is empty';
         $t->assert($test_name, (new term_list_ui())->links_with_context(), '');
@@ -185,10 +215,9 @@ class term_list_tests
      */
     function get_term_list_related(test_cleanup $t): term_list
     {
-        global $usr;
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
-        $trm_lst = new term_list($usr);
+        $trm_lst = new term_list($t->usr1);
         $trm_lst->add($t_trp->triple_pi()->term());
         $trm_lst->add($t_wrd->word()->term());
         return $trm_lst;
@@ -197,20 +226,19 @@ class term_list_tests
     /**
      * create the standard filled term object
      */
-    private function get_term(int $id, string $name, int $type): term
+    private function get_term(test_cleanup $t, int $id, string $name, int $type): term
     {
-        global $usr;
         $result = null;
         if ($type == 1) {
-            $wrd = new word($usr);
+            $wrd = new word($t->usr1);
             $wrd->set($id, $name);
             $result = $wrd->term();
         } elseif ($type == 2)  {
-            $trp = new triple($usr);
+            $trp = new triple($t->usr1);
             $trp->set($id, $name);
             $result = $trp->term();
         } elseif ($type == 3)  {
-            $frm = new formula($usr);
+            $frm = new formula($t->usr1);
             $frm->set($id, $name);
             $result = $frm->term();
         } elseif ($type == 4)  {

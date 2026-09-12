@@ -55,11 +55,10 @@ class job_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write job ';
@@ -76,20 +75,20 @@ class job_write_tests
 
 
         // prepare test adding a batch job via a list
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
-        $phr_lst->ex_time();
-        $val = new value($usr);
-        $val->load_by_grp($phr_lst->get_grp_id());
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
+        $phr_lst->ex_time($msg);
+        $val = new value($t->usr1);
+        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
         $result = $val->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert('job->value to link', $result, $target);
 
         // test adding a batch job
-        $job = new job($usr);
+        $job = new job($t->usr1);
         $job->row_id = $val->id();
-        $job->set_type(job_types::VALUE_UPDATE, $usr);
-        $result = $job->save($usr_msg);
+        $job->set_type(job_types::VALUE_UPDATE, $t->usr1);
+        $result = $job->save($msg);
         if ($result > 0) {
             $target = $result;
         }
@@ -99,8 +98,8 @@ class job_write_tests
 
     function run_list(test_cleanup $t): void
     {
+        $msg = new user_message();
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
@@ -111,14 +110,14 @@ class job_write_tests
 
         // prepare test adding a batch job via a list
         $frm = $t_db->load_formula(formula_names::INCREASE);
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
 
         // test adding a batch job via a list
-        $job_lst = new job_list($usr);
-        $calc_request = new job($usr);
+        $job_lst = new job_list($t->usr1);
+        $calc_request = new job($t->usr1);
         $calc_request->frm = $frm;
-        $calc_request->set_user($usr);
+        $calc_request->set_user($t->usr1);
         $calc_request->phr_lst = $phr_lst;
         $result = $job_lst->add($calc_request);
         // TODO review

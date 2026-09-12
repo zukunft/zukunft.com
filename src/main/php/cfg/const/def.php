@@ -245,6 +245,9 @@ class def
     // the minor version from version.txt because a json format or database change raises the minor version
     const string PRG_VERSION = SYSTEM_MINOR_VERSION;
     const string NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
+    // the data version of a newly created json file; unlike PRG_VERSION this is the version of
+    // the content, so the author raises it with every data change (docs/llm/json_structure.md)
+    const string DATA_VERSION_INIT = "0.0.1";
     const string FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process
 
     // parameters for internal testing and debugging

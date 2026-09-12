@@ -41,34 +41,36 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("job");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("job", $msg);
 
 if ($db_con->is_open()) {
 
-    // get the parameters
-    $job_id = $_GET[url_var::ID] ?? 0;
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
+    // get the parameters
+    $job_id = $_GET[url_var::ID] ?? 0;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($job_id > 0) {
             $job = new job($usr);
-            $job->load_by_id($job_id);
-            $result = $job->api_json();
+            $job->load_by_id($job_id, $msg);
+            $result = $job->api_json([], $msg);
         } else {
-            $msg = 'job id is missing';
+            $msg->add_message_text('job id is missing');
         }
     }
 
@@ -76,5 +78,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

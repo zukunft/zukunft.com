@@ -1,0 +1,24 @@
+GET
+http://localhost/http/view.php?k=System+Test+Word&o=test+description+added+to+the+word+via+import&uu=3&y=7&lp=System+Test+Words&d=90&ui=3.4&id=999&8id=999&8k=System+Test+Word&9m=90&9id=999&m=3&z=0
+/http/view.php?k=System+Test+Word&o=test+description+added+to+the+word+via+import&uu=3&y=7&lp=System+Test+Words&d=90&ui=3.4&id=999&8id=999&8k=System+Test+Word&9m=90&9id=999&m=3&z=0
+/http/view.php?name=System+Test+Word&description=test+description+added+to+the+word+via+import&usage=3&type=7&plural=System+Test+Words&view_id=90&impact=3.4&id=999&8id=999&8name=System+Test+Word&9mask_id=word_default&9id=999&mask_id=word_edit&step=no&
+{
+    "name": "System Test Word",
+    "description": "test description added to the word via import",
+    "usage": "3",
+    "type": "7",
+    "plural": "System Test Words",
+    "view_id": "90",
+    "impact": "3.4",
+    "id": "999",
+    "mask_id": "word_edit",
+    "step": "no",
+    "url_part_original_data": {
+        "id": "999",
+        "name": "System Test Word"
+    },
+    "url_part_back": {
+        "mask_id": "word_default",
+        "id": "999"
+    }
+}
