@@ -1,6 +1,28 @@
 
 # pending - list of planned llm prompts with prio 1
 
+## search page
+
+if no result offer to add a word
+
+## start page
+
+simple start page with on 4 col
+
+fix the more data
+
+## word default view
+
+add a list with the triples and a plus sign to add a new triple
+
+## triple view
+
+add values icon and add formula icon
+
+### add formula
+
+propagation of uncertainty
+
 ## workflows
 
 add the missing workflows link workflows such as
