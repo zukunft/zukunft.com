@@ -187,7 +187,8 @@ class system_form extends component
         // a name would be invisible
         if ($ui_msg_code_id == msg_id::FORM_TITLE_REF_EDIT and $dbo instanceof ref
             and $dbo->phrase()->name() != '') {
-            $result = new library()->msg_var_replace(
+            $lib = new library();
+            $result = $lib->msg_var_replace(
                 $mtr->txt(msg_id::FORM_TITLE_REF_EDIT_PHRASE),
                 msg_id::VAR_PHRASE_NAME,
                 $dbo->phrase()->name_link());

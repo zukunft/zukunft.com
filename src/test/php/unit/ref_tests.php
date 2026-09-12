@@ -191,7 +191,7 @@ class ref_tests
 
         // the ref edit view shows the last update time and the system calculated impact as
         // display only info, because the user can never change these two db fields
-        global $ui_sys;
+        global $ui_sys, $mtr;
         $form = new system_form();
         $ref_ui = $t_ref->ref_info_ui();
         $test_name = 'the ref edit view shows the time of the last update';
@@ -222,17 +222,16 @@ class ref_tests
         $t->assert($test_name, $form->show_impact($ref_plain), '');
         // the phrase of a reference cannot be changed, so the ref edit form has no phrase field
         // and names the word or triple in the form title instead
-        global $mtr;
-        $ttl_html = $form->form_tile(views::REF_EDIT, msg_id::FORM_TITLE_REF_EDIT, $ref_ui);
         $test_name = 'the ref edit form title names the change of a reference';
+        $ttl_html = $form->form_tile(views::REF_EDIT, msg_id::FORM_TITLE_REF_EDIT, $ref_ui);
         $t->assert_text_contains($test_name, $ttl_html, $mtr->txt(msg_id::FORM_TITLE_REF_EDIT));
         $test_name = 'the ref edit form title links the phrase of the reference';
         $t->assert_text_contains($test_name, $ttl_html, $ref_ui->phrase()->name_link());
         // a reference whose phrase is known by its id only (e.g. a test render from the url
         // values) has no phrase name, so the title shows no link without a name
         $test_name = 'the ref edit form title of a phrase without name has no phrase link';
-        $t->assert_text_not_contains($test_name,
-            $form->form_tile(views::REF_EDIT, msg_id::FORM_TITLE_REF_EDIT, $ref_plain), '<a ');
+        $ttl_plain_html = $form->form_tile(views::REF_EDIT, msg_id::FORM_TITLE_REF_EDIT, $ref_plain);
+        $t->assert_text_not_contains($test_name, $ttl_plain_html, '<a ');
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_ref->reference(), $t->usr_system);
