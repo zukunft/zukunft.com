@@ -1,6 +1,10 @@
 
 # pending - list of planned llm prompts with prio 1
 
+## word default view
+
+if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'perent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected 
+
 ## search page
 
 if no result offer to add a word

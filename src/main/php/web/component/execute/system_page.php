@@ -409,9 +409,63 @@ class system_page extends component
         }
         if ($trm_lst !== null and !$trm_lst->is_empty()) {
             $result .= $trm_lst->links_with_context($url_array);
+        } elseif ($pattern != '') {
+            // nothing has been found, so say so and offer to create what the user has looked for
+            $result .= $this->no_search_result($pattern);
+            $result .= $this->add_word_button($pattern);
         }
 
         return $result;
+    }
+
+    /**
+     * the message of a search that has found no word, triple, verb or formula, shown above the
+     * button that offers to add the search pattern as a new word
+     *
+     * @param string $pattern the search pattern that has not found a term
+     * @return string the html code of the no result message
+     */
+    private function no_search_result(string $pattern): string
+    {
+        global $mtr;
+        $lib = new library();
+
+        $html = new html_base();
+        // escape the user supplied pattern before it is placed into the html, so a reflected
+        // xss like ?pattern=<script>... is shown as text instead of executed (see search_title)
+        $text = $lib->msg_var_replace(
+            $mtr->txt(msg_id::INFO_NO_SEARCH_RESULT),
+            msg_id::VAR_PATTERN,
+            $html->esc($pattern));
+        return $html->div($text);
+    }
+
+    /**
+     * the button of a search without a result that opens the confirm page of the add word
+     * workflow with the search pattern as the suggested name, so that the user can add the
+     * word they have looked for without typing the name again
+     *
+     * the confirm step only shows the pending word and writes nothing, so the link needs no
+     * session token, and it sets the back target itself (see frontend::url_to_action)
+     *
+     * @param string $pattern the search pattern that has not found a term
+     * @return string the html code of the add word button
+     */
+    private function add_word_button(string $pattern): string
+    {
+        global $mtr;
+        $lib = new library();
+
+        $html = new html_base();
+        $par = url_var::STEP . url_var::EQ . url_var::STEP_CONFIRM
+            . url_var::ADD . url_var::NAME . url_var::EQ . urlencode($pattern);
+        $url = $html->url_back(views::WORD_ADD_ID, 0, [], $par);
+        // ref escapes the pattern, which is user input reflected from the url
+        $btn_text = $lib->msg_var_replace(
+            $mtr->txt(msg_id::SEARCH_ADD_WORD),
+            msg_id::VAR_NAME,
+            $pattern);
+        return $html->ref($url, $btn_text, '', html_base::CLASS_BUTTON . ' ' . html_base::BS_BTN_SUCCESS);
     }
 
     // TODO Prio 0 fill with real code

@@ -1715,6 +1715,8 @@ enum messages: string
     case INFO_VIEW_HAS_NO_COMPONENTS = 'info_view_has_no_components';
     case INFO_NOT_USED_IN_VIEWS = 'info_not_used_in_views';
     case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';
+    // shown on the search page if no word, triple, verb or formula matches the search pattern
+    case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1897,6 +1899,8 @@ enum messages: string
     case FORM_TITLE_ERROR_UPDATE = 'system_title_error_update';
     case FORM_TITLE_SEARCH = 'system_title_search';
     case FORM_TITLE_SEARCH_RESULT = 'system_title_search_result';
+    // the button of a search without a result that suggests to add the pattern as a new word
+    case SEARCH_ADD_WORD = 'system_search_add_word';
     case FORM_TITLE_SEARCH_FULL = 'system_title_search_full';
     case FORM_TITLE_SANDBOX = 'system_title_sandbox';
     case FORM_TITLE_UNDO = 'system_title_undo';

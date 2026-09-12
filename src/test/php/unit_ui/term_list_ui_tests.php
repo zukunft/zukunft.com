@@ -41,8 +41,11 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -50,8 +53,10 @@ class term_list_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $mtr;
 
         $html = new html_base();
+        $lib = new library();
         $t_trm = new test_terms($t);
         $msg = new user_message();
 
@@ -90,6 +95,41 @@ class term_list_ui_tests
         $test_page .= $page->body_search() . '<br>';
         $test_page .= 'terms matching the pattern with the highest impact first<br>';
         $test_page .= $page->body_search([url_var::PATTERN => 'impact'], $search_lst) . '<br>';
+        $test_page .= 'a pattern without a match offers to add the word<br>';
+        $test_page .= $page->body_search([url_var::PATTERN => word_names::TEST_ADD], new term_list()) . '<br>';
+
+        // a search that finds nothing says so and offers the pattern as the name of a new word,
+        // so that the user can create it in one click via the confirm page of the add workflow
+        $test_name = 'a search without a result suggests the pattern as a new word';
+        $no_hit_html = $page->body_search([url_var::PATTERN => word_names::TEST_ADD], new term_list());
+        $t->assert_text_contains($test_name, $no_hit_html, word_names::TEST_ADD);
+        $test_name = 'a search without a result says that nothing has been found';
+        $no_hit_msg = $lib->msg_var_replace(
+            $mtr->txt(msg_id::INFO_NO_SEARCH_RESULT), msg_id::VAR_PATTERN, word_names::TEST_ADD);
+        $t->assert_text_contains($test_name, $no_hit_html, $no_hit_msg);
+        $test_name = 'the no result message is shown above the add word button';
+        $t->assert_true($test_name,
+            strpos($no_hit_html, $no_hit_msg) < strpos($no_hit_html, html_base::BS_BTN_SUCCESS));
+        $test_name = 'a search with a result says nothing about a missing result';
+        $hit_msg = $lib->msg_var_replace(
+            $mtr->txt(msg_id::INFO_NO_SEARCH_RESULT), msg_id::VAR_PATTERN, 'impact');
+        $t->assert_text_not_contains($test_name,
+            $page->body_search([url_var::PATTERN => 'impact'], $search_lst), $hit_msg);
+        $test_name = 'the add word button opens the add word mask';
+        $t->assert_text_contains($test_name, $no_hit_html, url_var::MASK . url_var::EQ . views::WORD_ADD_ID);
+        $test_name = 'the add word button asks to confirm the new word';
+        $t->assert_text_contains($test_name, $no_hit_html,
+            url_var::STEP . url_var::EQ . url_var::STEP_CONFIRM);
+        $test_name = 'the add word button suggests the pattern as the word name';
+        $t->assert_text_contains($test_name, $no_hit_html,
+            url_var::NAME . url_var::EQ . urlencode(word_names::TEST_ADD));
+        $test_name = 'a search with a result offers no add word button';
+        $hit_html = $page->body_search([url_var::PATTERN => 'impact'], $search_lst);
+        $t->assert_text_not_contains($test_name, $hit_html, html_base::BS_BTN_SUCCESS);
+        // the pattern is user input that the button reflects into the page
+        $test_name = 'the add word button escapes a script tag in the pattern';
+        $xss_html = $page->body_search([url_var::PATTERN => '<script>alert(1)</script>'], new term_list());
+        $t->assert_false($test_name, str_contains($xss_html, '<script>'));
 
         // the search pattern is user input reflected into the search result title
         // (system_page::search_title), so it must be html-escaped to prevent a reflected xss
