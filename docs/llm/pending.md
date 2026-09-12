@@ -25,6 +25,12 @@ propagation of uncertainty
 
 ## workflows
 
+### views
+
+in the view default view e.g. src/test/resources/web/html/views_by_object/view/view_default_view_90.html in the 'Components' column add at the end a component select input field and an fa_plus icon that calls an add_component_link confirm page that links the component from the select field to the view   
+
+### general
+
 add the missing workflows link workflows such as
 
 - link a formula to a phrase
