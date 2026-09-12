@@ -137,16 +137,17 @@ class sandbox_link_named extends sandbox_link
      * @return bool true if the word is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = '',
-        string $name_fld = '',
-        string $type_fld = ''
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = '',
+        string       $name_fld = '',
+        string       $type_fld = ''
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
-        if ($result) {
+        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
+        if ($this->id() != 0) {
             if (array_key_exists($name_fld, $db_row)) {
                 if ($db_row[$name_fld] != null) {
                     $this->set_name($db_row[$name_fld]);
@@ -159,18 +160,18 @@ class sandbox_link_named extends sandbox_link
                 $this->type_id = $db_row[$type_fld];
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
@@ -181,9 +182,13 @@ class sandbox_link_named extends sandbox_link
             }
         }
         if (array_key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
+            // the requesting user normally comes from the message, but the frontend write bridge
+            // (MapObject::convertToDb) maps with a message that has no user set, so fall back to
+            // the object's own user (the requesting user the object was created with); set_type_id
+            // needs a non-null user for the permission check
+            $this->set_type_id($api_json[json_fields::TYPE], $msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -223,21 +228,25 @@ class sandbox_link_named extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if ($typ_lst->with_excluded()) {
             $vars[json_fields::NAME] = $this->name(true);
         } else {
             $vars[json_fields::NAME] = $this->name();
         }
         $vars[json_fields::DESCRIPTION] = $this->get_description();
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
 
         return $vars;
     }
@@ -298,12 +307,7 @@ class sandbox_link_named extends sandbox_link
      */
     function name_field(): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'name_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $usr_msg->get_last_message();
+        return log_missing_overwrite_warning('name_field', $this::class);
     }
 
     /**
@@ -355,14 +359,17 @@ class sandbox_link_named extends sandbox_link
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the type has been set, false if the requesting user is not permitted
      */
-    function set_type_id(?int $type_id, user $usr_req): user_message
+    function set_type_id(?int $type_id, user_message $msg): bool
     {
-        $msg = new user_message();
+        $result = false;
+        // fall back to the object user if the message carries no requesting user (e.g. an internal call)
+        $usr_req = $msg->usr ?? $this->get_user();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
@@ -372,13 +379,13 @@ class sandbox_link_named extends sandbox_link
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
      * @return int|null the database id of the type
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->type_id;
     }
@@ -389,30 +396,31 @@ class sandbox_link_named extends sandbox_link
      * @param string|null $code_id the code id that should be added to this view
      * @param type_list $typ_lst the parent object specific preloaded list of types
      * @param msg_id $msg_id the id of the message used to report a missing type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the type has been set, false if the code id is unknown or not permitted
      */
     function set_type_by_code_id(
-        ?string   $code_id,
-        type_list $typ_lst,
-        msg_id    $msg_id,
-        user      $usr_req = new user()
-    ): user_message
+        ?string      $code_id,
+        type_list    $typ_lst,
+        msg_id       $msg_id,
+        user_message $msg
+    ): bool
     {
-        $msg = new user_message();
+        $result = true;
         if ($code_id == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_code_id($code_id)) {
-                $this->set_type_id($typ_lst->id($code_id), $usr_req);
+                $result = $this->set_type_id($typ_lst->id($code_id), $msg);
             } else {
-                $msg->add($msg_id, [
+                $msg->add_warning_with_vars($msg_id, [
                     msg_id::VAR_NAME => $code_id
                 ]);
                 $this->type_id = null;
+                $result = false;
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -423,30 +431,31 @@ class sandbox_link_named extends sandbox_link
      * @param string|null $name the code id that should be added to this view
      * @param type_list $typ_lst the parent object specific preloaded list of types
      * @param msg_id $msg_id the id of the message used to report a missing type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the type has been set, false if the name is unknown or not permitted
      */
     function set_type_by_name(
-        ?string   $name,
-        type_list $typ_lst,
-        msg_id    $msg_id,
-        user      $usr_req = new user()
-    ): user_message
+        ?string      $name,
+        type_list    $typ_lst,
+        msg_id       $msg_id,
+        user_message $msg
+    ): bool
     {
-        $msg = new user_message();
+        $result = true;
         if ($name == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_name($name)) {
-                $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
+                $result = $this->set_type_id($typ_lst->id_by_name($name), $msg);
             } else {
-                $msg->add($msg_id, [
+                $msg->add_warning_with_vars($msg_id, [
                     msg_id::VAR_NAME => $name
                 ]);
                 $this->type_id = null;
+                $result = false;
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -464,11 +473,11 @@ class sandbox_link_named extends sandbox_link
             if ($trm->load_standard_by_name($name, $msg)) {
                 $result = $trm;
             } else {
-                if ($trm->load_by_name($name)) {
+                if ($trm->load_by_name($name, $msg)) {
                     $result = $trm;
                 }
             }
-            $trm->load_by_name($name);
+            $trm->load_by_name($name, $msg);
         }
         return $result;
     }
@@ -482,13 +491,13 @@ class sandbox_link_named extends sandbox_link
      * same as in cfg/sandbox/sandbox_named, but php does not yet allow multi extends
      * @param object $api_obj frontend API objects that should be filled with unique object name
      */
-    function fill_api_obj(object $api_obj): void
+    function fill_api_obj(object $api_obj, user_message $msg): void
     {
-        parent::fill_api_obj($api_obj);
+        parent::fill_api_obj($api_obj, $msg);
 
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
-        $api_obj->set_type_id($this->type_id());
+        $api_obj->set_type_id($this->type_id($msg));
     }
 
 
@@ -556,11 +565,12 @@ class sandbox_link_named extends sandbox_link
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->name != null) {
             if ($this->name != $db_obj->name) {
                 $result = true;
@@ -654,7 +664,7 @@ class sandbox_link_named extends sandbox_link
         }
         if ($this->type_id === null and $obj->type_id != null) {
             $this->type_id = $obj->type_id;
-        } elseif ($this->type_id() != $obj->type_id()) {
+        } elseif ($this->type_id($msg) != $obj->type_id($msg)) {
             $lib = new library();
             $msg->add(msg_id::DIFF_TYPE, [
                 msg_id::VAR_TYPE => $obj->type_name(),
@@ -687,6 +697,21 @@ class sandbox_link_named extends sandbox_link
         }
 
         return $result;
+    }
+
+    /**
+     * only the link fields (e.g. from, verb and to of a triple) identify the database row of a
+     * named link object: a change of the name alone is a normal field update or a name in the
+     * user overlay row (e.g. user_triples has its own name columns), so the database id and the
+     * related values stay; the name still counts as a key update (see is_key_updated above) so
+     * that the duplicate name check of sandbox::save keeps running on a rename
+     *
+     * @param sandbox_named|db_object_seq_id $db_rec the database record before the saving
+     * @return bool true only if the changed link fields identify the database row
+     */
+    function is_id_key_updated(sandbox_named|db_object_seq_id $db_rec): bool
+    {
+        return parent::is_key_updated($db_rec);
     }
 
     /**
@@ -736,11 +761,11 @@ class sandbox_link_named extends sandbox_link
                 if ($trm != null) {
                     $sim = $trm->obj();
                     if (!$this->is_similar_named($sim)) {
-                        log_err($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not');
+                        log_err_msg($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not', $msg);
                     }
                 } else {
                     $trp = new triple($this->get_user());
-                    $trp->load_by_name_generated($this->name());
+                    $trp->load_by_name_generated($this->name(), $msg);
                     if ($trp->id() > 0) {
                         $trp->reload_objects($msg);
                         log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $trp->dsp_id() . '"');
@@ -748,7 +773,7 @@ class sandbox_link_named extends sandbox_link
                     }
                 }
             } else {
-                log_err($this->dsp_id() . ' is not expected to be a named sandbox link object');
+                log_err_msg($this->dsp_id() . ' is not expected to be a named sandbox link object', $msg);
             }
         }
 
@@ -763,25 +788,27 @@ class sandbox_link_named extends sandbox_link
     /**
      * get the description of the latest change related to this object
      * @param user $usr who has requested to see the change
+     * @param user_message $msg to collect any problem while loading the change
      * @return string the description of the latest change
      */
-    function log_last_msg(user $usr): string
+    function log_last_msg(user $usr, user_message $msg): string
     {
         $log = new change_log_list();
-        $log->load_obj_last($this, $usr);
+        $log->load_obj_last($this, $usr, $msg);
         return $log->first_msg();
     }
 
     /**
      * get the description of the latest change related to this object and the given field
      * @param user $usr who has requested to see the change
+     * @param user_message $msg to collect any problem while loading the change
      * @param string $fld the field name to filter the changes
      * @return string the description of the latest change
      */
-    function log_last_field_msg(user $usr, string $fld): string
+    function log_last_field_msg(user $usr, user_message $msg, string $fld): string
     {
         $log = new change_log_list();
-        $log->load_obj_field_last($this, $usr, $fld);
+        $log->load_obj_field_last($this, $usr, $msg, $fld);
         return $log->first_msg();
     }
 
@@ -798,7 +825,7 @@ class sandbox_link_named extends sandbox_link
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -807,7 +834,7 @@ class sandbox_link_named extends sandbox_link
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -818,10 +845,10 @@ class sandbox_link_named extends sandbox_link
         // list of parameters actually used in order of the function usage
         $sql = '';
 
-        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
+        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $msg, $sc_par_lst_sub);
 
         // create the sql to insert the row
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
         if ($fvt_insert !== null) {
             $fvt_insert_list = new sql_par_field_list();
             $fvt_insert_list->add($fvt_insert);
@@ -891,7 +918,7 @@ class sandbox_link_named extends sandbox_link
     {
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included

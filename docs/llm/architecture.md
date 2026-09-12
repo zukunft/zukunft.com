@@ -78,7 +78,14 @@ These nouns have precise, non-interchangeable meanings — use them exactly:
 - **formula** — an expression for calculation
 - **result** — the numeric result of a formula
 - **view** — a named display mask
-- **component** — parts of a display mask
+- **component** — a part of a display mask
+- **element** — a part of a formula (`cfg/element/element.php`), never a part of a view
+
+A part of a view is a **component** — in the code, in a comment and in every text
+shown to the user. Never call it an *element*: `element` is the cached part of a
+formula expression, so "view element" reads as if a formula were meant. The html
+`<div>`, `<input>` and `<select>` tags stay *elements*, because that is what the
+html standard calls them, and a *list element* is fine where a list is meant.
 
 Two collective nouns build on the above and must not be confused:
 
@@ -95,6 +102,20 @@ a formula are both *terms* (not *phrases*, because a formula is not a phrase).
 **User Sandbox**: Every main object (`word`, `triple`, `value`, `formula`,
 `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never
 overwrite shared data; user-specific overrides are stored in `*_user` tables.
+
+**Admin protection does not block user changes**: an object protected at admin
+level (or higher) can still be changed by a normal user — the change creates
+the user's own sandbox overlay like any other edit. The only thing the admin
+protection protects is the standard object of the owner: a normal user cannot
+take over the ownership (`sandbox::take_ownership`) and cannot raise or reduce
+the protection level (`sandbox::check_protection` in the save path). So never
+show a "can be changed only by an administrator" style message just because an
+object is admin protected: on a display view the user does not want to change
+anything, so the message is irrelevant, and on an edit view it is wrong because
+the user *can* change the object (as a personal overlay). The protection
+messages that are correct to show are the save-path warnings when a normal
+user tries to change the protection level itself (`PROTECTION_RAISE_DENIED`,
+`PROTECTION_REDUCE_DENIED`).
 
 **Configuration follows the user sandbox**: `config.yaml` is only the seed of
 the system configuration, which lives in the database as normal values on the
@@ -283,7 +304,7 @@ Each main object file follows this section order:
 7. load — DAO functions (`load_by_name`, `load_by_id`, etc.)
 8. load sql — SQL statement builders
 9. cast / api — `api_json()`, `api_mapper()`
-10. im- and export — `export_json()`, `import_mapper()`
+10. im- and export — `export_json($msg, )`, `import_mapper()`
 11. save — `save()`, `insert()`, `update()`, `delete()`
 12. sql write — `sql_insert()`, `sql_update()`, `sql_delete()`
 13. info / internal / debug — `name()`, `dsp_id()`, helpers
@@ -314,6 +335,73 @@ the save path to patch it up.
 Why: a stray load during save makes the write depend on database state mid-change,
 hides ordering bugs (an object reaching `save()` half-loaded), and couples the two
 responsibilities so neither can be reasoned about or tested in isolation.
+
+## The readiness ladder — an object without a db id is normal, not invalid
+
+A list can be a place where objects live **before** they are written, so an object
+without its own database id belongs in it. The id of a row is assigned by the
+insert; requiring it earlier would mean nothing could ever be prepared in memory.
+Three different questions are therefore asked with three different functions, and
+mixing them up is the recurring defect:
+
+| Question | Function | True when |
+|---|---|---|
+| may it be held in a list / could it become writable? | `can_be_ready($msg)` | the objects it points to exist (a name is enough); their ids may still be missing |
+| may it be written **now**? | `db_ready($msg)` | every object it points to has a database id; its **own** id is *not* required |
+| has it been written already? | `is_valid()` / `id() != 0` | the row exists in the database |
+
+For a link (`triple`, `term_view`, `component_link`, `formula_link`, `ref`) this
+means precisely:
+
+- **own id missing, linked object ids set** → `db_ready` is **true**: this is a
+  new link, and the insert is what gives it its id.
+- **a linked object id missing** → `db_ready` is **false**: the link cannot be
+  written, because there is nothing to point at. It stays in the list and the
+  reason is recorded on `$msg`.
+- the linked objects are saved by their own save pass; when they come back with
+  ids, the next pass finds the link `db_ready` and writes it. An import therefore
+  runs several passes, and "not ready yet" can be a **normal** intermediate state, not
+  an error — see `docs/llm/dependent-errors.md` for why that notice must not reach
+  a caller's `is_ok()` gate. "not ready yet" is only an error if this message remains after the last try.
+
+`*_list::get_ready()` e.g. `triple_list::get_ready()` is the pattern to copy: it filters by `db_ready()` and
+collects with `add_by_key()` — for named objects a **name based** key, the object's own id only if set already. For non named objects a unique key is generated base on other fields.
+`list_db_write::sql_insert_call_with_par()` re-checks `db_ready()` as the second
+line of defence right before the insert is built.
+
+So list membership and duplicate detection are decided by the object's key (its
+name, or the linked objects of a link), and only the write is decided by
+`db_ready()`. A list that gates membership on the object's own id silently drops
+everything an import prepares — and if the add still reports "added", the caller
+cannot even see it (the open case in `docs/llm/pending_prio_2.md`).
+
+## A list is not a set — a repeated entry can be the data
+
+A list may hold the same object more than once, and where it does the repetition
+*is* the information:
+
+- a **view** uses the same **component** several times (once per position), so
+  the component list of a view legitimately contains one entry per usage;
+- a **verb list** built from a **triple list** counts how often each verb is
+  used, so the same verb appears once per triple.
+
+The duplicate check is therefore a **parameter of the add, never a fixed rule**:
+`add_obj($obj, $allow_duplicates, $msg)` (`shared/helper/ListOfIdObjects.php`,
+`web/sandbox/sandbox_list_named.php`, `web/types/type_list.php`).
+
+- `$allow_duplicates = false` — the list is a set: the repeat is refused and
+  reported as `msg_id::LIST_DOUBLE_ENTRY`. This is the default, because most
+  lists map unique database rows.
+- `$allow_duplicates = true` — the repeat is the data: it is added and **nothing
+  is reported**; a double entry message here would be a false alarm.
+
+The caller decides, because only the caller knows what the list means: a list
+filled from an api message of unique rows passes `false`, a usage or position
+list passes `true`. Never hard-code the check inside the list class.
+
+Both branches are behaviour, so **both need a test**: one that the repeat is
+refused and reported, and one that it is kept and silent (`testing.md`, "a
+positive and a negative test for every feature").
 
 ## Standard function names
 
@@ -392,3 +480,27 @@ docblock, on its own line immediately after the one-line description:
 The abbreviation matches the 3-letter prefix convention (`$wrd` word, `$frm`
 formula, `$msk` view/mask). For compound names combine the parts: `$sbx_lnk`
 sandbox_link, `$frm_lnk` formula_link, `$cmp_lnk` component_link.
+
+### Use the suggested var name — deviations are the exception
+
+Once a class declares its suggested var name, **every** variable holding an
+instance of that class uses it. Deviate only for a genuinely good reason — the
+common one is that **two instances of the same class share a scope** (`$src1` and
+`$src2`, `$frm_this` and `$frm_next`, a `$db_rec` reload compared against the
+object), where a second, meaningful name is clearer than `$src` / `$src2`. "It
+read fine at the time" is not a reason; reach for the suggested name first.
+
+The check `coding_rule_tests::php_class_name_check` scans the source and writes
+every deviation to the generated `docs/code_object_name_exceptions.md` (never edit
+that file by hand — it is regenerated from the code). That list is the scoreboard:
+it must stay **short**, and a rename that removes a line from it is the right
+direction. A class whose exception list is long signals variables that should be
+renamed back to the suggested name.
+
+A `user_message` is always **`$msg`** — the single most-passed object in the code
+(the append-only message threaded from the entry point, see
+[state-and-messages.md](state-and-messages.md)). Do not introduce `$usr_msg`,
+`$sys_msg`, `$db_msg` and the like for a lone message in a scope; use `$msg`. A
+second message buffer that genuinely coexists with `$msg` in one function (a local
+buffer merged back into the threaded `$msg`) is the sanctioned deviation and keeps
+a distinct name.

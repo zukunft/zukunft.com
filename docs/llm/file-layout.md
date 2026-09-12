@@ -42,3 +42,34 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 ```
+
+## never remove an include that looks unused
+
+There is no autoloader, so a class exists only because some file has included it,
+and the order in which the files are included decides whether a class is already
+defined when another class body needs it. An `include_once` that this file does
+not seem to need can therefore be the one that defines a parent class before a
+child extends it, in this file or in a file included later.
+
+Until the code is stable and the includes are changed to the proper dynamic
+loading, **leave an include that looks unused in place**. Removing it may work in
+the one page that was tested and fatal in another, because the surviving order
+depends on which entry point was called first — the failure then shows up as
+`Class "..." not found` in a completely different file (see the commented-out
+includes listed in `docs/llm/pending.md`).
+
+## include everything a file needs, always in block 2
+
+Loading a php file costs nothing worth optimising on the machines this runs on,
+so every class a file uses is included in block 2 — never lazily inside the
+function that happens to need it, because a conditional include hides the
+dependency from the reader and from the include check of `coding_rule_tests`.
+
+The order within block 2 can matter. A file that is loaded early may include a
+class whose own include chain leads back to a class that is not defined yet, e.g.
+`web/component/component.php` includes `view_list.php`, which leads back to
+`component_exe.php`, which loads `system_form.php`, which extends `component` —
+still undefined while `component.php` is being parsed. In that case include the
+file that loads the package in the working order first (here `component_exe.php`,
+which loads `component.php` and only then `system_form.php`), then the file
+itself, and say in a comment why the extra include is there.

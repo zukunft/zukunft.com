@@ -34,17 +34,18 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'combine_object.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class combine_named extends combine_object
@@ -143,9 +144,9 @@ class combine_named extends combine_object
      * e.g. if the type of the triple "Pi (math)" is not set
      * but the triple is "Pi is a math const" and the type for "math const" is set it is used
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
-        return $this->obj()?->type_id();
+        return $this->obj()?->type_id($msg);
     }
 
 
@@ -155,19 +156,18 @@ class combine_named extends combine_object
 
     /**
      * load the phrase by name via api
-     * TODO Prio 1 add user_message as parameter
-     * @param string $name
+     * @param string $name with the unique name
+     * @param user_message $msg to collect the load warnings for the user
      * @return bool
      */
-    function load_by_name(string $name): bool
+    function load_by_name(string $name, user_message $msg): bool
     {
         $result = false;
-        $usr_msg = new user_message();
 
         $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->api_mapper($json_body, $usr_msg);
+            $this->api_mapper($json_body, $msg);
             if ($this->obj_id() != 0) {
                 $result = true;
             }
@@ -183,13 +183,13 @@ class combine_named extends combine_object
     /**
      * @return array the json message array to send the updated data to the backend
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         $vars[json_fields::ID] = $this->obj()?->id();
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::DESCRIPTION] = $this->get_description();
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
         return $vars;
     }
 

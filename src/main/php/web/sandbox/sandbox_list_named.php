@@ -32,7 +32,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::HELPER . 'config.php';
@@ -46,13 +45,13 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::HTML . 'rest_call.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_ENUM . 'value_types.php';
-include_once paths::SHARED_HELPER . 'IdObject.php';
-include_once paths::SHARED_HELPER . 'TextIdObject.php';
-include_once paths::SHARED_HELPER . 'CombineObject.php';
-include_once paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_ENUM . 'value_types.php';
+include_once html_paths::SHARED_HELPER . 'IdObject.php';
+include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_HELPER . 'CombineObject.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -117,9 +116,9 @@ class sandbox_list_named extends sandbox_list
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        $usr_msg = $this->api_mapper(json_decode($json_api_msg, true));
+        $msg = $this->api_mapper(json_decode($json_api_msg, true));
         $this->set_hash_dirty();
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -168,29 +167,29 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create the html code to display the e.g. the phrases with the most useful link
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with a list of the component names with html links
      * ex. names_linked
      */
-    function name_link(string $back = '', $limit = config::LIMIT_NAME_LIST): string
+    function name_link(array $url_arr = [], $limit = config::LIMIT_NAME_LIST): string
     {
         $this->sort_by_name();
-        return implode(', ', $this->names_linked($back, $limit));
+        return implode(', ', $this->names_linked($url_arr, $limit));
     }
 
     /**
      * an array of the names with a http link
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param int $limit the max number of entries to show
      * @return array with a list of the component names with html links
      */
-    protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    protected function names_linked(array $url_arr = [], int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
         $i = 0;
         foreach ($this->lst() as $sbx) {
             if ($i < $limit) {
-                $result[] = $sbx->name_link($back);
+                $result[] = $sbx->name_link($url_arr);
                 $i++;
             }
         }
@@ -206,27 +205,47 @@ class sandbox_list_named extends sandbox_list
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
      * @param sandbox_named|triple|phrase|term|sandbox_value|value|result|IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @param user_message $usr_msg to report which entry is double
+     * @param user_message $msg to report which entry is double
      * @returns bool true the object has been added
      */
     function add(
         triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add,
-        bool                                                                                                 $allow_duplicates = false,
-        user_message                                                                                         $usr_msg = new user_message()
+        user_message                                                                                         $msg,
+        bool                                                                                                 $allow_duplicates = false
     ): bool
     {
+        $added = false;
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $this->add_obj($to_add, $allow_duplicates, $usr_msg);
+                $added = $this->add_and_report($to_add, $allow_duplicates, $msg);
             } else {
                 if (!in_array($to_add->id(), $this->ids())) {
                     if ($to_add->id() != 0) {
-                        $this->add_obj($to_add, $allow_duplicates, $usr_msg);
+                        $added = $this->add_and_report($to_add, $allow_duplicates, $msg);
                     }
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $added;
+    }
+
+    /**
+     * add the object to the list and tell the caller's message if the entry is a double
+     * @param triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject $to_add the named object that should be added
+     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
+     * @param user_message $msg to report which entry is double
+     * @returns bool true if the object has been added
+     */
+    private function add_and_report(
+        triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject $to_add,
+        bool                                                                                            $allow_duplicates,
+        user_message                                                                                    $msg
+    ): bool
+    {
+        $add_msg = new user_message(); // add_obj returns is_ok(), so the double check must judge only this add
+        $added = $this->add_obj($to_add, $allow_duplicates, $add_msg);
+        $msg->merge($add_msg);
+        return $added;
     }
 
     /**
@@ -279,14 +298,14 @@ class sandbox_list_named extends sandbox_list
         global $ui_sys;
         $usr = $ui_sys->usr;
 
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get($sbx_new->id());
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {
-                    $this->add($sbx_new);
+                    $this->add($sbx_new, $msg);
                 }
             } else {
                 $msg->add(msg_id::ID_AND_NAME_MISSING, [
@@ -306,13 +325,13 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_name(sandbox_list_named $lst_new): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_name($sbx_new->name());
+                $sbx_old = $this->get_by_name($sbx_new->name(), $msg);
                 // TODO check if and how a sync of the objects can be done
                 if ($sbx_old == null) {
-                    $this->add($sbx_new);
+                    $this->add($sbx_new, $msg);
                 }
             } else {
                 $msg->add(msg_id::ID_AND_NAME_MISSING, [
@@ -350,7 +369,10 @@ class sandbox_list_named extends sandbox_list
      * @param string $name the unique name of the object that should be returned
      * @return IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null
+    function get_by_name(
+        string               $name,
+        user_message|Message $msg
+    ): IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;
@@ -358,7 +380,7 @@ class sandbox_list_named extends sandbox_list
             $pos = $key_lst[$name];
         }
         if ($pos !== null) {
-            return $this->get_by_key($pos);
+            return $this->get_by_key($pos, $msg);
         } else {
             return null;
         }

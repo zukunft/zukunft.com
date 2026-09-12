@@ -36,54 +36,112 @@ namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SYSTEM . 'list_db_read.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+//include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_COMPONENT . 'component_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+// the value change classes of change_value::CHANGE_CLASSES, which load_by_user reads one by one
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_REF . 'ref_list.php';
+include_once paths::MODEL_REF . 'source_list.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VIEW . 'term_view_list.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
+include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class change_log_list extends list_db_read
@@ -106,17 +164,319 @@ class change_log_list extends list_db_read
      * create the api json array with one entry per change so that the frontend
      * can show e.g. the recent changes of a word on the default word page
      *
-     * @param api_type_list $typ_lst configuration for the api message
+     * @param api_type_list|array $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         $vars = [];
         foreach ($this->lst() as $chg) {
-            $vars[] = $chg->api_json_array($typ_lst, $usr);
+            $vars[] = $chg->api_json_array($typ_lst, $msg, $usr);
         }
         return $vars;
+    }
+
+    /**
+     * TODO Prio 2 instead of using an array for $other_values create a helper class with vars
+     * set on each change of this list what the change log itself does not contain: the name of the
+     * changed object, e.g. the word name of a word change, and the value of the shared standard
+     * object of the changed field, so that a change log listing the changes of more than one object
+     * can name the object (see web/log/change_log_named::object_prefix) and can show the user value
+     * beside the common value like the 'my' tab of an object page
+     *
+     * the changed objects are loaded with one query per object type, because a change log page can
+     * contain many changes; the standard object however has to be read per changed object, so this
+     * is called by the api controller only for the row-limited change log that spans the objects of
+     * one user, because an object page already names the object it shows and its 'my' tab reads the
+     * standard object anyway; an object type that is not (yet) in name_lists keeps an empty name and
+     * the frontend then shows the change without the object, so a missing type never hides a change
+     *
+     * @param user $usr the user who has requested the change log, so that the names are the ones
+     *                  this user may see
+     * @param user_message $msg to collect the problems of loading the changed objects
+     * @return void
+     */
+    function load_changed_objects(user $usr, user_message $msg): void
+    {
+        $names = [];
+        $std_values = [];
+        $other_values = [];
+        $ids = $this->row_ids_by_table();
+        foreach ($this->name_lists($usr) as $table => $obj_lst) {
+            $row_ids = $ids[$table] ?? [];
+            if ($row_ids != []) {
+                $obj_lst->load_by_ids($row_ids, $msg);
+                // a value has no name of its own, so its list loads the phrases of the group
+                $obj_lst->load_names_related($msg);
+                $names[$table] = $this->names_by_id($obj_lst->lst());
+                $this->values_by_id($obj_lst->lst(), $msg, $std_values[$table], $other_values[$table]);
+            }
+        }
+        foreach ($this->lst() as $chg) {
+            $table = $this->std_table($chg->table());
+            $fld = $chg->field();
+            $chg->row_name = $names[$table][$chg->row_id] ?? null;
+            $chg->std_value = $std_values[$table][$chg->row_id][$fld] ?? null;
+            $chg->other_values = $other_values[$table][$chg->row_id][$fld] ?? [];
+        }
+    }
+
+    /**
+     * the value of the shared standard object and the values of the other users per changed field
+     * and object id, for the objects that the user still overwrites; a field that the user has
+     * meanwhile reset has no standard value, because there is nothing left to compare, and a field
+     * that no other user has overwritten has no other values (the same two diffs as the 'my' and
+     * the 'others' tab, see sandbox_related::user_overwrites and other_overwrites)
+     *
+     * both are read in one pass, so that the standard object of an object is loaded only once; this
+     * is the reason why this is not simply two calls of the sandbox_related functions
+     *
+     * @param array $lst the loaded objects of one type, each as the user of the change log sees it
+     * @param user_message $msg to collect the problems of loading the standard objects
+     * @param array|null $std_values filled with the standard value by db field name, by object id
+     * @param array|null $other_values filled with the value by user name, by db field name, by object id
+     * @return void
+     */
+    private function values_by_id(
+        array         $lst,
+        user_message  $msg,
+        ?array        &$std_values,
+        ?array        &$other_values
+    ): void
+    {
+        $std_values = [];
+        $other_values = [];
+        // the standard rows and the users that have changed any of these objects are read with one
+        // query each for all of them instead of one query per object
+        $std_rows = [];
+        $changers = [];
+        $batched = false;
+        $first = reset($lst);
+        if ($first instanceof sandbox) {
+            $ids = $this->ids_of($lst);
+            $std_rows = $first->load_standard_rows_by_ids($ids, $msg);
+            $changers = $first->changed_by_ids($ids, $msg);
+            // an empty result means that no other user has changed any of these objects, which is
+            // not the same as 'not read yet', so the flag and not the list decides the fallback
+            $batched = true;
+        } elseif ($first instanceof sandbox_multi) {
+            // a value is stored in the table that matches its value type and the size of its group
+            // id, so the values are grouped by table and each table is read with its own query
+            foreach ($this->by_table($lst) as $tbl_lst) {
+                $rep = reset($tbl_lst);
+                $ids = $this->ids_of($tbl_lst);
+                $std_rows += $rep->load_standard_rows_by_ids($ids, $msg);
+                $changers += $rep->changed_by_ids($ids, $msg);
+            }
+            $batched = true;
+        }
+        foreach ($lst as $sbx) {
+            $std = null;
+            if ($sbx->has_usr_cfg()) {
+                $std = $this->std_of($sbx, $std_rows, $msg);
+                $fvt_lst = $sbx->db_fields_changed($std, $msg);
+                foreach ($fvt_lst->names() as $name) {
+                    $std_values[$sbx->id()][$name] = $fvt_lst->get($name, $msg)?->old;
+                }
+            }
+            // the standard object and the users that have changed the object are given, so that the
+            // values of the other users read neither of them a second time for the same object
+            $row_changers = $changers[$sbx->id()] ?? null;
+            if ($batched and $row_changers == null) {
+                // no other user has changed this object, so there is nothing left to read
+                continue;
+            }
+            foreach ($this->other_user_values($sbx, $msg, $std, $row_changers) as $fld => $by_user) {
+                $other_values[$sbx->id()][$fld] = $by_user;
+            }
+        }
+    }
+
+    /**
+     * the standard object of the given object, from the rows that have been read for all objects of
+     * the type at once, or read for this object alone if the batched read has no row for it
+     *
+     * the row is mapped into a clone of the loaded object and not into an empty one, because a link
+     * object needs the linked objects to map its row (the same as sandbox::load_standard does)
+     *
+     * @param sandbox|sandbox_multi $sbx the changed object as the user of the change log sees it
+     * @param array $std_rows the standard rows by object id, empty if they have not been read
+     * @param user_message $msg to collect the problems of mapping the standard row
+     * @return sandbox|sandbox_multi the standard object
+     */
+    private function std_of(
+        sandbox|sandbox_multi $sbx,
+        array                 $std_rows,
+        user_message          $msg
+    ): sandbox|sandbox_multi
+    {
+        $std = clone $sbx;
+        if (array_key_exists($sbx->id(), $std_rows)) {
+            // a value is stored in one table per value type and group id size, so it needs the
+            // table extension to map its row (see sandbox_multi::load_standard)
+            if ($std instanceof sandbox_multi) {
+                $std->row_mapper_sandbox_multi(
+                    $std_rows[$sbx->id()], $msg, $std->table_extension(), true, false);
+            } else {
+                $std->row_mapper_sandbox($std_rows[$sbx->id()], $msg, true, false);
+            }
+        } else {
+            $std->load_standard($sbx->id(), $msg);
+        }
+        return $std;
+    }
+
+    /**
+     * group the given values by the table they are stored in, because a value is stored in the
+     * table that matches its value type and the size of its group id, and a by ids query can read
+     * only one table
+     *
+     * @param array $lst the loaded values
+     * @return array the list of values by the table key
+     */
+    private function by_table(array $lst): array
+    {
+        $result = [];
+        foreach ($lst as $sbx) {
+            $key = $sbx->table_type()->value . sql::NAME_SEP . $sbx->value_type()->value;
+            $result[$key][] = $sbx;
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $lst the loaded objects of one type
+     * @return array the database ids of the given objects
+     */
+    private function ids_of(array $lst): array
+    {
+        $result = [];
+        foreach ($lst as $sbx) {
+            $result[] = $sbx->id();
+        }
+        return $result;
+    }
+
+    /**
+     * the value that each other user has set for a field of the given object, keyed by the user
+     * name and the db field name; the same selection as the 'others' tab of the object page, so
+     * an overwrite that the other user does not share is never included
+     *
+     * this costs one query for the users that have changed the object plus one load per other user,
+     * which is why it is done only for the row-limited change log of one user
+     *
+     * @param sandbox|sandbox_multi $sbx the changed object as the user of the change log sees it
+     * @param user_message $msg to collect the problems of loading the objects of the other users
+     * @param sandbox|sandbox_multi|null $std the standard object of the changed object if it has
+     *                                        already been loaded for the standard value
+     * @param user_list|null $changers the users that have changed the object if they have already
+     *                                 been read for all objects of the type at once
+     * @return array the value by user name, by db field name
+     */
+    private function other_user_values(
+        sandbox|sandbox_multi      $sbx,
+        user_message               $msg,
+        sandbox|sandbox_multi|null $std = null,
+        ?user_list                 $changers = null
+    ): array
+    {
+        $result = [];
+        $rel = new sandbox_related();
+        foreach ($rel->other_overwrites($sbx, $msg, $std, $changers) as $row) {
+            $fld = $row[json_fields::FIELD] ?? '';
+            $usr_name = $row[json_fields::USER_NAME] ?? '';
+            if ($fld != '' and $usr_name != '') {
+                $result[$fld][$usr_name] = $row[json_fields::USR_VALUE];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the empty object list per standard table name that can load the names of the changed rows
+     * of that table with one query; a table that is missing here simply gets no object name in
+     * the change log, so add the list of an object type as soon as its page or its overwrites
+     * are shown (see docs/llm/pending.md)
+     *
+     * @param user $usr the user for whom the object names should be loaded
+     * @return array the empty name list by the standard table name
+     */
+    private function name_lists(user $usr): array
+    {
+        return [
+            change_tables::WORD => new word_list($usr),
+            change_tables::TRIPLE => new triple_list($usr),
+            change_tables::VALUE => new value_list($usr),
+            change_tables::FORMULA => new formula_list($usr),
+            change_tables::FORMULA_LINK => new formula_link_list($usr),
+            change_tables::REF => new ref_list($usr),
+            change_tables::SOURCE => new source_list($usr),
+            change_tables::VIEW => new view_list($usr),
+            change_tables::VIEW_COMPONENT => new component_list($usr),
+            change_tables::VIEW_LINK => new component_link_list($usr),
+            change_tables::VIEW_TERM_LINK => new term_view_list($usr),
+            change_tables::VIEW_RELATION => new view_relation_list($usr),
+        ];
+    }
+
+    /**
+     * the row ids of this list grouped by the standard table name, so that the names of the changed
+     * objects can be loaded with one query per object type; a user sandbox (overlay) change is
+     * grouped with the change of the standard object, because both name the same object
+     *
+     * @return array a list of the changed row ids by the standard table name
+     */
+    private function row_ids_by_table(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $chg) {
+            $table = $this->std_table($chg->table());
+            // the id of a value is its group id, which is a text for a group of more than four
+            // phrases, so only a numeric id is used as an int
+            $row_id = is_numeric($chg->row_id) ? (int)$chg->row_id : $chg->row_id;
+            // the same object is usually changed more than once, so load each id only once
+            if ($row_id != null and $row_id != 0
+                and !in_array($row_id, $result[$table] ?? [], true)) {
+                $result[$table][] = $row_id;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $table the change log table name e.g. 'user_words'
+     * @return string the name of the table with the standard objects e.g. 'words'
+     */
+    private function std_table(string $table): string
+    {
+        $result = $table;
+        if (str_starts_with($table, change_tables::USER_PREFIX)) {
+            $result = substr($table, strlen(change_tables::USER_PREFIX));
+        }
+        // a value is stored in the table that matches its type and the size of its group id, but
+        // all of them name a value, so 'values_prime' or 'user_values_text' name the value class
+        if (in_array($result, change_tables::VALUE_TABLES, true)) {
+            $result = change_tables::VALUE;
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $lst a list of named objects e.g. the loaded words
+     * @return array the object name by the object id
+     */
+    private function names_by_id(array $lst): array
+    {
+        $result = [];
+        foreach ($lst as $obj) {
+            $result[$obj->id()] = $obj->name();
+        }
+        return $result;
     }
 
 
@@ -125,44 +485,75 @@ class change_log_list extends list_db_read
      */
 
     /**
-     * load the changes of one user
+     * load the changes of one user including the value changes, which are logged in one table per
+     * value type and group id type and can therefore not be read with the query of the named
+     * objects; the lists are merged, sorted by time and cut to the page limit, because each query
+     * returns its own newest rows (same reason as in value_list::load_by_ids)
+     *
      * @param user $usr the user sandbox object
      * @return bool true if at least one change found
      */
-    function load_by_user(user $usr): bool
+    function load_by_user(user $usr, user_message $msg): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_user($sc, $usr);
-        return $this->load($qp, $usr);
+        $result = $this->load($qp, $usr, $msg);
+        foreach (change_value::CHANGE_CLASSES as $class) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_user_value($sc, $usr, new $class($usr));
+            if ($this->load($qp, $usr, $msg)) {
+                $result = true;
+            }
+        }
+        $this->sort_by_time_and_cut();
+        return $result;
+    }
+
+    /**
+     * sort the merged changes of load_by_user by the change time, newest first, and keep only the
+     * page limit, because every single query has selected its own newest rows
+     * @return void
+     */
+    private function sort_by_time_and_cut(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(change $a, change $b) => [$b->time(), $b->id()] <=> [$a->time(), $a->id()]);
+        if ($this->limit > 0) {
+            $lst = array_slice($lst, 0, $this->limit);
+        }
+        $this->set_lst($lst);
     }
 
     /**
      * load the latest changes of one object
-     * @param sandbox $sbx e.g. the word with id set
+     * @param sandbox|sandbox_multi $sbx e.g. the word with id set or the value with the group id set
      * @param user $usr who has requested to see the changed
+     * @param user_message $msg to collect any problem while loading the changes
      * @return bool true if at least one change found
      */
-    function load_obj_last(sandbox $sbx, user $usr): bool
+    function load_obj_last(sandbox|sandbox_multi $sbx, user $usr, user_message $msg): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_obj_last($sc, $sbx::class, $sbx->id(), $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
      * load the latest changes of one object
      * @param sandbox $sbx e.g. the word with id set
      * @param user $usr who has requested to see the changed
+     * @param user_message $msg to collect any problem while loading the changes
+     * @param string $fld the field name to filter the changes for
      * @return bool true if at least one change found
      */
-    function load_obj_field_last(sandbox $sbx, user $usr, string $fld): bool
+    function load_obj_field_last(sandbox $sbx, user $usr, user_message $msg, string $fld): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_obj_fld($sc, $sbx::class, $fld, $sbx->id(), $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -177,7 +568,7 @@ class change_log_list extends list_db_read
      */
     function load_by_obj_fld(
         string          $class,
-        int|string|null $id = null,
+        user_message $msg, int|string|null $id = null,
         user|null       $usr = null,
         string|null     $field_name = ''
     ): bool
@@ -189,7 +580,7 @@ class change_log_list extends list_db_read
             $field_name,
             $id,
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -199,7 +590,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_wrd(word $wrd, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_wrd(word $wrd, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -208,7 +599,7 @@ class change_log_list extends list_db_read
             $field_name,
             $wrd->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -218,7 +609,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_vrb(verb $trp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_vrb(verb $trp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -227,7 +618,7 @@ class change_log_list extends list_db_read
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -237,7 +628,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_trp(triple $trp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_trp(triple $trp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -246,7 +637,7 @@ class change_log_list extends list_db_read
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -256,7 +647,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_val(value_base $val, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_val(value_base $val, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
 
@@ -266,7 +657,7 @@ class change_log_list extends list_db_read
             $field_name,
             $val->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -276,7 +667,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_frm(formula $trp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_frm(formula $trp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -285,7 +676,7 @@ class change_log_list extends list_db_read
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -295,7 +686,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_src(source $src, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_src(source $src, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -304,7 +695,7 @@ class change_log_list extends list_db_read
             $field_name,
             $src->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -314,7 +705,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_ui(view $msk, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_ui(view $msk, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -323,7 +714,7 @@ class change_log_list extends list_db_read
             $field_name,
             $msk->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -333,7 +724,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_cmp(component $cmp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_cmp(component $cmp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -342,7 +733,7 @@ class change_log_list extends list_db_read
             $field_name,
             $cmp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
 
@@ -351,7 +742,14 @@ class change_log_list extends list_db_read
      */
 
     /**
-     * create an SQL statement to retrieve the changes done by the given user
+     * create an SQL statement to retrieve the overwrites done by the given user
+     *
+     * only the changes of the user sandbox (overlay) tables are selected, because this is what the
+     * only consumer shows (the all user overwrites column of the user page, see
+     * web/component/execute/ui_log::all_user_overwrites) and because only then the row limit is
+     * correct: with all changes selected, the limit would cut off the overwrites of a user who has
+     * also changed many standard objects (over 15'000 for the system user), so that the column
+     * would show none of the overwrites
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr the user sandbox object
@@ -362,9 +760,61 @@ class change_log_list extends list_db_read
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
         $sc->add_where(user_db::FLD_ID, $usr->id);
+        // TODO replace 'l2' with a var or const (like load_sql_by_obj_fld)
+        $sc->add_where(change_field::FLD_TABLE, $this->user_table_ids(), sql_par_type::INT_LIST, 'l2');
+        // the page limit set by the caller, so that a user page never reads the complete change
+        // log of the user just to show the newest rows
+        $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve the value overwrites done by the given user from one of
+     * the value change tables; the same selection as load_sql_by_user, but built from the given
+     * value change class, because a value change is logged per value type and group id type
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user $usr the user sandbox object
+     * @param change_value $log_val an empty log object of the value change class to read
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_user_value(sql_creator $sc, user $usr, change_value $log_val): sql_par
+    {
+        $lib = new library();
+        $qp = $log_val->load_sql($sc, 'user_last');
+        // the three numeric value change classes share the query base name of change_value,
+        // so the name is set from the class to keep one prepared statement name per table
+        $qp->name = $lib->class_to_name($log_val::class) . sql::NAME_SEP . 'user_last';
+        $sc->set_name($qp->name);
+
+        $sc->add_where(user_db::FLD_ID, $usr->id);
+        // TODO replace 'l2' with a var or const (like load_sql_by_obj_fld)
+        $sc->add_where(change_field::FLD_TABLE, $this->user_table_ids(), sql_par_type::INT_LIST, 'l2');
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * @return array the database ids of the user sandbox (overlay) tables e.g. of user_words,
+     *               used to select only the changes that a user has done on an own overlay row
+     */
+    private function user_table_ids(): array
+    {
+        global $sys;
+        $result = [];
+        foreach (change_tables::USER_TABLES as $table_name) {
+            // checked without auto-adding the table, because a table that is not used yet
+            // simply has no changes to select
+            $table_id = $sys->typ_lst->cng_tbl->id($table_name, false);
+            if ($table_id > 0) {
+                $result[] = $table_id;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -436,6 +886,23 @@ class change_log_list extends list_db_read
         } elseif ($class == component::class) {
             $result = $field_name . '_of_cmp';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
+        } elseif ($class == ref::class) {
+            if ($field_name != '') {
+                $result = $field_name . '_of_ref';
+                log_info('field name ' . $field_name . ' not expected for table ' . $class);
+            } else {
+                $result = 'ref';
+            }
+        } elseif (is_subclass_of($class, type_object::class)) {
+            // a type row e.g. a sys log function logs to the changes table like the named objects
+            // (used by the test cleanup to remove the change log of a type test row); type changes
+            // are rare, so the query name is simply based on the class name
+            $lib = new library();
+            if ($field_name != '') {
+                $result = $field_name . '_of_' . $lib->class_to_name($class);
+            } else {
+                $result = $lib->class_to_name($class);
+            }
         } else {
             log_err('table name ' . $class . ' not expected');
         }
@@ -464,9 +931,8 @@ class change_log_list extends list_db_read
         global $sys;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
-        $lib = new library();
-        $table_name = $lib->class_to_table($class);
-        $table_id = $sys->typ_lst->cng_tbl->id($table_name);
+        $table_id = $this->change_table_id($class);
+        $usr_table_id = $this->change_table_id($class, true);
         if ($field_name != '') {
             $table_field_name = $table_id . $field_name;
             $table_field_id = $sys->typ_lst->cng_fld->id($table_field_name);
@@ -475,6 +941,11 @@ class change_log_list extends list_db_read
         }
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
+        if ($field_name == '' and $usr_table_id > 0) {
+            // an own prepared query name, because the table filter parameter is a list here
+            // and a shared name with different parameter types is rejected by the database
+            $query_ext .= sql::NAME_SEP . 'with_usr';
+        }
         if ($class == value::class) {
             $grp_id = new group_id();
             $typ = $grp_id->table_type($id);
@@ -507,7 +978,11 @@ class change_log_list extends list_db_read
             $sc->add_where(change::FLD_FIELD_ID, $table_field_id);
         } else {
             // TODO replace 'l2' with a var or const
-            $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
+            if ($usr_table_id > 0) {
+                $sc->add_where(change_field::FLD_TABLE, [$table_field_id, $usr_table_id], sql_par_type::INT_LIST, 'l2');
+            } else {
+                $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
+            }
         }
         if ($class == value::class) {
             $sc->add_where(group_fields::FLD_ID, $id);
@@ -565,10 +1040,25 @@ class change_log_list extends list_db_read
                 $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
             }
         }
+        // add 'last' to the query name because this query selects by the row id only (3 parameters),
+        // whereas load_sql_obj_fld without a field name shares the base name but filters additionally
+        // by the change table (4 parameters); a shared prepared name with different parameters makes
+        // the database reject the second bind
+        $query_ext .= sql::NAME_SEP . 'last';
         $qp = $log_named->load_sql($sc, $query_ext);
         if ($class == value::class) {
             $sc->add_where(group_fields::FLD_ID, $id);
         } else {
+            // a row id is unique only within a table, so without the table filter the changes of
+            // every object with the same id (the word, the triple, the view ... with this id)
+            // compete for the row limit and the changes of the requested object are cut off
+            // TODO replace 'l2' with a var or const
+            $tbl_ids = [$this->change_table_id($class)];
+            $usr_table_id = $this->change_table_id($class, true);
+            if ($usr_table_id > 0) {
+                $tbl_ids[] = $usr_table_id;
+            }
+            $sc->add_where(change_field::FLD_TABLE, $tbl_ids, sql_par_type::INT_LIST, 'l2');
             $sc->add_where(change_log::FLD_ROW_ID, $id);
         }
         $sc->set_page($this->limit, $this->offset());
@@ -578,12 +1068,35 @@ class change_log_list extends list_db_read
     }
 
     /**
+     * the change table id that logs the changes of an object of the given class: the table of the
+     * object or, because a user change is logged for the user overlay table (e.g. user_words for
+     * a word), the id of the overlay table; not every class has an overlay table, so the overlay
+     * id is not positive if the class has none (checked without auto-adding the table)
+     *
+     * @param string $class the class of the changed object e.g. word::class
+     * @param bool $usr_tbl true to get the id of the user overlay table instead of the object table
+     * @return int the change table id or not positive if the class has no user overlay table
+     */
+    private function change_table_id(string $class, bool $usr_tbl = false): int
+    {
+        global $sys;
+        $lib = new library();
+        $table_name = $lib->class_to_table($class);
+        if ($usr_tbl) {
+            $result = $sys->typ_lst->cng_tbl->id(sql_db::TBL_USER_PREFIX . $table_name, false);
+        } else {
+            $result = $sys->typ_lst->cng_tbl->id($table_name);
+        }
+        return $result;
+    }
+
+    /**
      * load this list of changes
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @param user $usr the user who wants to see the changes e.g. to check the permission
      * @return bool true if at least one change found
      */
-    private function load(sql_par $qp, user $usr): bool
+    private function load(sql_par $qp, user $usr, user_message $msg): bool
     {
         global $db_con;
         $result = false;
@@ -591,12 +1104,15 @@ class change_log_list extends list_db_read
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_rows = $db_con->get($qp, 'change log list');
+            $db_rows = $db_con->get($qp, $msg, 'change log list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);
-                    $chg->row_mapper($db_row, '', $usr);
-                    $this->add_obj($chg);
+                    $chg->row_mapper($db_row, $msg, '', $usr);
+                    // allow duplicates, because the change id is unique per change table only:
+                    // a list that merges the changes of the named objects with the changes of
+                    // the value tables (see load_by_user) always has repeated ids
+                    $this->add_obj($chg, true);
                     $result = true;
                 }
             }

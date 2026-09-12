@@ -226,40 +226,33 @@ class ListOfIdNamedCodeObjects extends ListOfIdNamedObjects
      * add an object to the list or fill up the object with the same code id
      *
      * @param type_object|IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
-     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
      * @param Message $msg to report which entry is double
-     * @returns bool false if the object has not been added
+     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
+     * @returns bool true if the object has been added to this list
      */
     function add_obj_by_code_id(
         type_object|IdObject|TextIdObject|CombineObject $obj_to_add,
-        bool                                $allow_duplicates = false,
-        Message                             $msg = new Message()
+        Message                             $msg,
+        bool                                $allow_duplicates = false
     ): bool
     {
+        $added = false;
+        // an entry is a double if the code id or, for a named entry, the name is already in the list
+        $is_double = $this->has_code_id($obj_to_add->code_id)
+            || ($obj_to_add->name != '' && $this->has_name($obj_to_add->name));
         // check boolean first because in_array might take longer
-        if ($allow_duplicates) {
+        if ($allow_duplicates or !$is_double) {
             $this->add_direct($obj_to_add);
             $this->set_hash_dirty();
+            $added = true;
         } else {
-            if (!$this->has_code_id($obj_to_add->code_id)) {
-                if ($obj_to_add->name == '') {
-                    $this->add_direct($obj_to_add);
-                } elseif (!$this->has_name($obj_to_add->name)) {
-                    $this->add_direct($obj_to_add);
-                } else {
-                    $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
-                        msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                        msg_id::VAR_CLASS_NAME => $obj_to_add::class
-                    ]);
-                }
-            } else {
-                $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
-                    msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                    msg_id::VAR_CLASS_NAME => $obj_to_add::class
-                ]);
-            }
+            $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
+                // the name and not the dsp_id, because the user reads this message
+                msg_id::VAR_NAME => $obj_to_add->name,
+                msg_id::VAR_CLASS_NAME => library::class_to_name($obj_to_add::class)
+            ]);
         }
-        return $msg->is_ok();
+        return $added;
     }
 
     /**

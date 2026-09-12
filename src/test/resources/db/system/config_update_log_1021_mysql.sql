@@ -35,8 +35,8 @@ PREPARE config_update_log_1021_call FROM
     'SELECT config_update_log_1021 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT config_update_log_1021
-       (1,
-        1,
+       (3,
+        2,
         176,
         null,
         'Database version',

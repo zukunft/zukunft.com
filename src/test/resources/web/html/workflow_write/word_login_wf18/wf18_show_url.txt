@@ -1,0 +1,10 @@
+GET
+http://localhost/http/view.php?id=999&k=System+Test+Word&m=90&z=0
+/http/view.php?id=999&k=System+Test+Word&m=90&z=0
+/http/view.php?id=999&name=System+Test+Word&mask_id=word_default&step=no&
+{
+    "id": "999",
+    "name": "System Test Word",
+    "mask_id": "word_default",
+    "step": "no"
+}

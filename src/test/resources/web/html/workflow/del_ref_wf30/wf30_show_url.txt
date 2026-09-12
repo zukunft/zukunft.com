@@ -1,0 +1,21 @@
+GET
+http://localhost/http/view.php?id=992&p=5&ek=System+Test+Reference+External+Key&y=2&8id=992&8p=5&8ek=System+Test+Reference+External+Key&8y=2&9m=1&m=94&z=0
+/http/view.php?id=992&p=5&ek=System+Test+Reference+External+Key&y=2&8id=992&8p=5&8ek=System+Test+Reference+External+Key&8y=2&9m=1&m=94&z=0
+/http/view.php?id=992&phrase_id=5&external_key=System+Test+Reference+External+Key&type=2&8id=992&8phrase_id=5&8external_key=System+Test+Reference+External+Key&8type=2&9mask_id=entry_view&mask_id=ref_default&step=no&
+{
+    "id": "992",
+    "phrase_id": "5",
+    "external_key": "System Test Reference External Key",
+    "type": "2",
+    "mask_id": "ref_default",
+    "step": "no",
+    "url_part_original_data": {
+        "id": "992",
+        "phrase_id": "5",
+        "external_key": "System Test Reference External Key",
+        "type": "2"
+    },
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
+}

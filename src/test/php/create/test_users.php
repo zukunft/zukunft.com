@@ -186,6 +186,21 @@ class test_users
     }
 
     /**
+     * the same user as user_filled but as it is loaded from the database, so with the id set
+     * unlike user_filled the id is set, because a page that shows a user is requested by id
+     * and an object without an id cannot show its name (see docs/llm/testing.md)
+     *
+     * @param test_cleanup $t the test object with some base test functions
+     * @return user with all vars set including the database id
+     */
+    function user_filled_loaded(test_cleanup $t): user
+    {
+        $usr = $this->user_filled($t);
+        $usr->id = users::TEST_USER_ID;
+        return $usr;
+    }
+
+    /**
      * a user without login as it is loaded from the database, so with the id set
      * unlike user_ip the id is set, because the permission checks (e.g. sandbox->save)
      * use the requesting user of the message only if the user has an id
@@ -220,7 +235,7 @@ class test_users
     }
 
     /**
-     * @return user a user used for unit testing with the test profile
+     * @return user a normal user used for unit testing with the test profile that e.g. allowes to set the code id
      */
     static function user_sys_test(): user
     {
@@ -229,8 +244,29 @@ class test_users
         $usr = new user();
         $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::TEST);
+        // the code id like the seeded database row, because the frontend detects by the code id
+        // that this user is a test user that should see the pages like a normal user
+        // (see the user::is_system of the frontend)
+        $usr->code_id = users::SYSTEM_TEST_CODE_ID;
         $usr->description = users::SYSTEM_TEST_COM;
         $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
+        return $usr;
+    }
+
+    /**
+     * a logged-in user with the normal profile as it is loaded from the database, so with the id set
+     * unlike user_filled the id is set, because the frontend shows the user-specific parts of a page
+     * (e.g. the 'my' tab of a word) only if the session user has an id
+     *
+     * @return user a normal user used for unit testing the pages of a logged-in user
+     */
+    function user_sys_normal(): user
+    {
+        global $sys;
+
+        $usr = new user();
+        $usr->set(users::SYSTEM_TEST_NORMAL_ID, users::SYSTEM_TEST_NORMAL_NAME, users::SYSTEM_TEST_NORMAL_EMAIL);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
         return $usr;
     }
 

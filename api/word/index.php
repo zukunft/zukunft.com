@@ -32,50 +32,58 @@
 include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::HTML . 'rest_call.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("word", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("word", $msg);
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
-    $msg = '';
     $usr = new user;
-    $msg .= $usr->get();
+    $msg->add_message_text($usr->get($msg));
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     $ctrl = new controller();
-    $rest_ctrl = new rest_call();
     $result = ''; // reset the json message string
 
-    // TODO remove temp
-    if (in_array(rest_ctrl::REQUEST_METHOD, $_SERVER)) {
+    // read the http method and request body of a real web request; array_key_exists (not in_array)
+    // because REQUEST_METHOD is a $_SERVER *key*, so the previous in_array (which searched the values)
+    // was always false and every request silently fell through to the GET debug branch, disabling all
+    // writes. the else branch stays the cli / test default where $_SERVER has no REQUEST_METHOD
+    if (array_key_exists(rest_ctrl::REQUEST_METHOD, $_SERVER)) {
         $method = $_SERVER[rest_ctrl::REQUEST_METHOD];
-        if (in_array(rest_ctrl::REQUEST_URI, $_SERVER)) {
-            $uri = $_SERVER[rest_ctrl::REQUEST_URI];
+        $uri = $_SERVER[rest_ctrl::REQUEST_URI] ?? '';
+        // only a write (post/put/delete) carries a json body; a GET has none, so reading php://input
+        // for a GET would be pointless (and used to be unreachable while the method detection was broken)
+        if ($method !== rest_ctrl::GET) {
+            $json_body = $ctrl->request_json();
         } else {
-            $uri = '';
+            $json_body = [];
         }
-        $json_body = $rest_ctrl->request_json();
     } else {
-        // for debugging only
+        // cli / test default (no REQUEST_METHOD in $_SERVER)
         $method = rest_ctrl::GET;
         $json_body = [];
         $uri = '/api/word';
@@ -94,8 +102,11 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
 
         // the session user may differ from the data user e.g. an admin wants to see the data
-        // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+        // of a user or the own html frontend requests the data for the browsing user whose
+        // session it has validated itself; the data user is included in the request in
+        // url_var::USER and honored for a server-to-server call of this pod, so that e.g.
+        // a description changed by the browsing user is shown in the word and edit views
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
 
         $wrd = new word($load_usr);
 
@@ -109,36 +120,38 @@ if ($db_con->is_open()) {
             $typ_lst = api_type_list::from_url_array($_GET, [api_types::HEADER]);
 
             if ($wrd_id > 0) {
-                $wrd->load_by_id($wrd_id);
-                $result = $wrd->api_json($typ_lst, $load_usr);
+                $wrd->load_by_id($wrd_id, $msg);
+                $result = $wrd->api_json($typ_lst, $msg, $load_usr);
             } elseif ($wrd_name != '') {
-                $wrd->load_by_name($wrd_name);
-                $result = $wrd->api_json($typ_lst, $load_usr);
+                $wrd->load_by_name($wrd_name, $msg);
+                $result = $wrd->api_json($typ_lst, $msg, $load_usr);
             } else {
-                $msg = 'word id or name is missing';
+                $msg->add_message_text('word id or name is missing');
             }
 
             // do not disclose another user's private word loaded by id/name (idor); the same
-            // neutral message as a missing id so the response does not confirm the word exists
-            if ($result != '' and !$wrd->is_readable_by($usr)) {
+            // neutral message as a missing id so the response does not confirm the word exists;
+            // checked against the data user, because for a trusted pod call the data user is
+            // the browsing user who must be able to see the own private words
+            if ($result != '' and !$wrd->is_readable_by($load_usr)) {
                 $result = '';
-                $msg = 'word id or name is missing';
+                $msg->add_message_text('word id or name is missing');
             }
 
             // return either the api json to fill the frontend object
             // or the message why the api json could not be created
             $ctrl->get_json($result, $msg);
         } elseif ($method === rest_ctrl::POST) {
-            $ctrl->post_json($json_body, $wrd, $usr, $msg);
+            $ctrl->post_json($json_body, $wrd, $msg);
         } elseif ($method === rest_ctrl::PUT) {
-            $ctrl->put_json(basename($uri), $json_body, $wrd, $usr, $msg);
+            $ctrl->put_json(basename($uri), $json_body, $wrd, $msg);
         } elseif ($method === rest_ctrl::DELETE) {
-            $ctrl->delete(basename($uri), $wrd, $usr, $msg);
+            $ctrl->delete(basename($uri), $wrd, $msg);
         }
 
     } else {
         $ctrl->not_permitted($msg);
     }
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

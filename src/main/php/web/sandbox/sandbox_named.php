@@ -39,7 +39,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::GROUP . 'group.php';
@@ -48,14 +47,17 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -63,7 +65,10 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -163,11 +168,11 @@ class sandbox_named extends sandbox
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::DESCRIPTION] = $this->get_description();
@@ -179,17 +184,17 @@ class sandbox_named extends sandbox
      * besides the base checks a named object requires a non-empty name to be confirmed,
 r     * unless it is being deleted or excluded (soft-deleted) which does not need a name
      *
-     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param user_message $msg to enrich with a warning per invalid field
      * @param string $action the crud action of the change; a delete needs no name
      * @param array $url_array the pending change url (passed on to the parent checks)
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action, $url_array);
+        $result = parent::input_valid($msg, $action, $url_array);
         if ($action != url_var::CRUD_DELETE and !$this->is_excluded()) {
             if ($this->name == null or $this->name == '') {
-                $usr_msg->add_warning_with_vars(msg_id::NAME_EMPTY, [
+                $msg->add_warning_with_vars(msg_id::NAME_EMPTY, [
                     msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
                 ]);
                 $result = false;
@@ -202,18 +207,29 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         if (array_key_exists(url_var::NAME, $url_array)) {
             $this->set_name($url_array[url_var::NAME]);
         } else {
-            $this->set_name('');
-            log_warning('Mandatory field name missing in form array ' . json_encode($url_array));
+            // the name may arrive under NAME_GIVEN ('kg') instead of NAME ('k'), or the object may be
+            // identified by id (an edit); an id-identified url (e.g. the my tab undo link) carries
+            // only the changed fields, so keep the already known name - a partial url must never
+            // overwrite fields it does not carry - and only clear it for a url without an id.
+            // kept log-only (the user-facing mandatory-name check lives in api_mapper, which reads the
+            // canonical json name field) — surfacing this to $msg is deferred until the tests confirm it
+            if (!array_key_exists(url_var::ID, $url_array)) {
+                $this->set_name('');
+            }
+            if (!array_key_exists(url_var::NAME_GIVEN, $url_array)
+                and !array_key_exists(url_var::ID, $url_array)) {
+                log_warning('Mandatory field name missing in form array ' . json_encode($url_array));
+            }
         }
         if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
             $this->set_description($url_array[url_var::DESCRIPTION]);
@@ -223,15 +239,15 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
                 $this->usage = $url_array[url_var::USAGE];
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
      * @return array parent url array extended with the name and description of this named object
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_array = parent::to_url_array();
+        $url_array = parent::to_url_array($msg);
         $url_array[url_var::NAME] = $this->name();
         $url_array[url_var::DESCRIPTION] = $this->get_description();
         if ($this->usage > 0) {
@@ -249,17 +265,17 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * load the named user sandbox object e.g. word by name via api
      * TODO Prio 1 add user_message as parameter
      * @param string $name
+     * @param user_message|Message $msg to collect the load warnings for the user
      * @return bool
      */
-    function load_by_name(string $name): bool
+    function load_by_name(string $name, user_message|Message $msg): bool
     {
         $result = false;
 
-        $usr_msg = new user_message();
         $api = new rest_call();
-        $json_body = $api->api_call_name($this::class, $name);
+        $json_body = $api->api_call_name($this->api_class(), $name);
         if ($json_body) {
-            $this->api_mapper($json_body, $usr_msg);
+            $this->api_mapper($json_body, $msg);
             if ($this->id() != 0) {
                 $result = true;
             }
@@ -299,17 +315,48 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
 
     /**
      * display a word with a link to the main page for the word
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
+     * @param int $msk_id the view that shows the object, overwritten by the child class
+     * @param string $base_url to set an absolut html path for urls
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
+    function name_link(
+        array  $url_arr = [],
+        string $style = '',
+        int $msk_id = views::GROUP_EDIT_ID,
+        string $base_url = ''
+    ): string
     {
         $html = new html_base();
-        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
         // escape the user settable name (link body); ref() escapes the
         // description that becomes the title attribute
         return $html->ref($url, $this->name(), $this->get_description(), $style);
+    }
+
+    /**
+     * like name_link, but with the plural of the name as the link body, e.g. for a headline
+     * above a table that shows more than one row
+     *
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
+     * @param string $style the CSS style that should be used
+     * @param int $msk_id database id of the view that should be shown
+     * @return string the html code of the link with the plural name
+     */
+    function name_link_plural(
+        string  $lan = languages::DEFAULT,
+        array   $url_arr = [],
+        string  $style = '',
+        int     $msk_id = views::GROUP_EDIT_ID,
+        string  $base_url = ''
+    ): string
+    {
+        $html = new html_base();
+        $url = $html->url_back($msk_id, $this->id(), $url_arr, base_url: $base_url);
+        // escape the user settable plural (link body) like name_link escapes the name
+        return $html->ref($url, $this->plural_name($lan), $this->get_description(), $style);
     }
 
 
@@ -326,7 +373,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      */
     function save_view(): user_message
     {
-        return new user_message();
+        return new user_message(); // the ok message IS the return value of this stub, see the TODO above
     }
 
 

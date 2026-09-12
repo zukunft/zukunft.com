@@ -25,7 +25,7 @@ END;
 SELECT component_link_delete_log_user
        (3,
         3,
-        16,
+        17,
         'Start view',
         'always',
         'Word',

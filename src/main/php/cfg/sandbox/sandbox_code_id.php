@@ -68,6 +68,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -92,6 +93,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -136,21 +138,22 @@ class sandbox_code_id extends sandbox_typed
      * @return bool true if this object is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = '',
-        string $name_fld = '',
-        string $type_fld = ''
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = '',
+        string       $name_fld = '',
+        string       $type_fld = ''
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        if ($result) {
+        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        if ($this->id() != 0) {
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -162,15 +165,19 @@ class sandbox_code_id extends sandbox_typed
      * @param user_message ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
-        if ($this->get_code_id() == null) {
-            if (array_key_exists(json_fields::CODE_ID, $api_json)) {
-                $this->set_code_id_db($api_json[json_fields::CODE_ID]);
-            }
+        parent::api_mapper($api_json, $msg);
+        // the code id links a database row to system program code, so only a system / developer user
+        // may set it - route through the privilege-checked set_code_id (not the raw set_code_id_db)
+        // so a normal user's request is refused and reported on $usr_msg, matching import_mapper. the
+        // previous `if (get_code_id() == null)` guard was always true for a new (POST) object, which
+        // let any user plant an arbitrary code_id. the null-user guard fails closed if no requesting
+        // user is set on the message
+        if (array_key_exists(json_fields::CODE_ID, $api_json) and $msg->usr != null) {
+            $this->set_code_id($api_json[json_fields::CODE_ID], $msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -193,7 +200,7 @@ class sandbox_code_id extends sandbox_typed
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
             }
         }
 
@@ -208,13 +215,14 @@ class sandbox_code_id extends sandbox_typed
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         // the code id is included in the api message towards the frontend
         // but not overwritten via api message
         if ($this->get_code_id() != null) {
@@ -230,13 +238,14 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         // include the code id in the api message so that the frontend can execute some behavior
         if ($this->get_code_id() != '' and $this->get_code_id() != null) {
             $vars[json_fields::CODE_ID] = $this->get_code_id();
@@ -253,24 +262,25 @@ class sandbox_code_id extends sandbox_typed
      * set the unique id to select a single word by the program
      *
      * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the code id has been set, false if the requesting user is not permitted
      */
-    function set_code_id(?string $code_id, user $usr): user_message
+    function set_code_id(?string $code_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_code_id()) {
+        $result = false;
+        if ($msg->usr->can_set_code_id()) {
             $this->code_id = $code_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -300,13 +310,13 @@ class sandbox_code_id extends sandbox_typed
      * @param string $code_id the code id of the word, triple, source, formula, view or component
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_code_id(string $code_id): int
+    function load_by_code_id(string $code_id, user_message|Message $msg): int
     {
         global $db_con;
 
         log_debug($code_id);
         $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
-        return parent::load($qp);
+        return parent::load($qp, $msg);
     }
 
 
@@ -425,12 +435,13 @@ class sandbox_code_id extends sandbox_typed
     /**
      * check if the named object in the database needs to be updated
      * is expected to be similar to the diff_msg function
-     * @param sandbox|sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param sandbox|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox|sandbox_link|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(sandbox|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->code_id != null) {
             if ($this->get_code_id() != $db_obj->get_code_id()) {
                 $result = true;
@@ -456,11 +467,14 @@ class sandbox_code_id extends sandbox_typed
      */
     function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_code_id() === null and $obj->get_code_id() != null) {
-            $usr_msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
+            // a local buffer for the requesting user of the fill, merged into the returned message
+            $code_msg = new user_message($usr_req);
+            $this->set_code_id($obj->get_code_id(), $code_msg);
+            $msg->merge($code_msg);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -502,7 +516,7 @@ class sandbox_code_id extends sandbox_typed
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->code_id !== $this->code_id) {

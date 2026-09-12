@@ -41,7 +41,7 @@ SELECT position_type_insert_log_1111
 
 SELECT position_type_insert_log_1111
     ('below'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      764::smallint,
      765::smallint,

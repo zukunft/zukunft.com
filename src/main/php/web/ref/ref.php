@@ -36,7 +36,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\ref;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
@@ -54,12 +53,15 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::REF . 'source.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_types.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'ref_fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_TYPES . 'view_types.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -74,8 +76,11 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -92,7 +97,9 @@ class ref extends sandbox
     const string VIEW_ADD = views::REF_ADD;
     const string VIEW_EDIT = views::REF_EDIT;
     const string VIEW_DEL = views::REF_DEL;
+    const int VIEW_ADD_ID = views::REF_ADD_ID;
     const int VIEW_EDIT_ID = views::REF_EDIT_ID;
+    const int VIEW_DEL_ID = views::REF_DEL_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::REF_ADD;
@@ -147,14 +154,14 @@ class ref extends sandbox
     /**
      * set the vars of this reference frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE, $url_array)) {
                 $this->set_phrase_by_id($url_array[url_var::PHRASE]);
             } else {
@@ -180,13 +187,41 @@ class ref extends sandbox
             } else {
                 $this->set_predicate_id();
             }
+            // the reference type field is posted as url_var::REF_TYPE ('lt'), not the generic
+            // url_var::TYPE read above, so capture it here to persist the type of the add form
+            // (like the phrase type of a word)
+            if (array_key_exists(url_var::REF_TYPE, $url_array)) {
+                if ($url_array[url_var::REF_TYPE] != null) {
+                    $this->set_predicate_id($url_array[url_var::REF_TYPE]);
+                }
+            }
             if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
                 $this->description = $url_array[url_var::DESCRIPTION];
             } else {
                 $this->description = null;
             }
         }
-        return $usr_msg;
+        return $msg;
+    }
+
+    /**
+     * the url vars that url_mapper reads back for the user-editable fields of a reference;
+     * the reference type is the predicate, which the parent reads from url_var::TYPE
+     *
+     * @return array db field name => url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            ref_fields::FLD_EX_KEY => url_var::EXTERNAL_KEY,
+            ref_fields::FLD_TYPE => url_var::TYPE,
+            ref_fields::FLD_SOURCE => url_var::SOURCE,
+            fields::FLD_URL => url_var::URL,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
 
@@ -216,7 +251,7 @@ class ref extends sandbox
             if (count($phr_lst_json) > 1) {
                 log_warning('reference ' . json_encode($json_array) . 'is not expected to have more than on phrase');
             } elseif (count($phr_lst_json) < 1) {
-                log_warning('reference ' . json_encode($json_array)  . 'is not expected to have no phrase');
+                log_warning('reference ' . json_encode($json_array) . 'is not expected to have no phrase');
             } else {
                 $phr = new phrase();
                 $phr_json = $phr_lst_json[0];
@@ -226,7 +261,13 @@ class ref extends sandbox
         } else {
             $this->phr = null;
         }
-        if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
+        if (array_key_exists(json_fields::SOURCE, $json_array)) {
+            // the nested source with the name is sent for a page request,
+            // so the ref default page can link the source
+            $src = new source();
+            $src->api_mapper($json_array[json_fields::SOURCE], $msg);
+            $this->source = $src;
+        } elseif (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
             $this->set_source_by_id($json_array[json_fields::SOURCE_ID]);
         } else {
             $this->source = null;
@@ -276,20 +317,13 @@ class ref extends sandbox
 
     /**
      * @return phrase the phrase this external reference is linked to, or an empty phrase if it is
-     *                not yet set e.g. for a new reference of an add form (like db_object::phrase)
+     *                not yet set e.g. for a new reference of an add form or a reference only known
+     *                by its id like a back link in a test render (like db_object::phrase); a stored
+     *                reference without a phrase is reported by api_mapper, not here
      */
     function phrase(): phrase
     {
-        $phr = $this->phr;
-        if ($phr == null) {
-            // only a new reference of an add form has no phrase yet; a stored reference must be
-            // linked to a phrase, so a missing phrase is a data error (like triple::get_verb)
-            if ($this->id() > 0) {
-                log_err('phrase missing for reference ' . $this->dsp_id(), 'ref->phrase');
-            }
-            $phr = new phrase();
-        }
-        return $phr;
+        return $this->phr ?? new phrase();
     }
 
     private function set_phrase_by_id(int $id): void
@@ -350,7 +384,7 @@ class ref extends sandbox
      * TODO Prio 2 either this or predicate_id should be deprecated
      * @return int|null the database id of the type
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->predicate_id;
     }
@@ -402,12 +436,42 @@ class ref extends sandbox
      */
 
     /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * load the reference by id AND ask the backend to include the names of the linked phrase
+     * and of the source, which the ref default page shows as links (see the incl_related
+     * emit of the backend cfg/ref/ref::api_json_array)
+     *
+     * @param int|string $id the database id of the reference to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
      */
-    function api_array(): array
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        $vars = parent::api_array();
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
+    }
+
+    /**
+     * @return array parent url array extended with the fields of this reference that url_mapper reads
+     *               back (see db_fld_to_url), e.g. to open the edit form of the reference
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::PHRASE] = $this->phr?->id();
+        $url_array[url_var::EXTERNAL_KEY] = $this->external_key();
+        $url_array[url_var::TYPE] = $this->predicate_id();
+        $url_array[url_var::SOURCE] = $this->source?->id();
+        $url_array[url_var::URL] = $this->url();
+        $url_array[url_var::DESCRIPTION] = $this->get_description();
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
+     */
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
+    {
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::PHRASE_ID] = $this->phr?->id();
         $vars[json_fields::SOURCE_ID] = $this->source?->id();
         $vars[json_fields::URL] = $this->url();
@@ -454,7 +518,8 @@ class ref extends sandbox
                 $this->type_name(),
                 $this->get_description()
             );
-            return $name . ' ' . $this->refresh_job_link($html);
+            // the edit icon follows the refresh icon so the user can correct e.g. the external key
+            return $name . ' ' . $this->refresh_job_link($html) . ' ' . $this->edit_icon_link();
         } else {
             return 'ERROR: url is null';
         }
@@ -471,7 +536,7 @@ class ref extends sandbox
         global $mtr;
         // TODO point to the dedicated refresh-job creation once that job and its view exist;
         //      for now the link only opens the async job view and does not yet create a real job
-        $url = $html->url_new(views::JOB_ASYNC_ID, $this->id());
+        $url = $html->url_back(views::JOB_ASYNC_ID, $this->id());
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::REFRESH . '"></' . html_base::I . '>';
         // reuse the small inline icon style of the page title edit icon so the refresh icon
         // is shown in a reduced size on the same line as the reference name
@@ -556,7 +621,7 @@ class ref extends sandbox
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
     }
 
 
@@ -572,17 +637,18 @@ class ref extends sandbox
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->only_type(view_types::REF);
+        $msk_lst = $msk_lst->only_type(view_types::REF, $msg);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

@@ -52,7 +52,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 111;
+    const int MAX_TEST_ID = 120;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -268,6 +268,7 @@ class views
     const string WORD = 'word_default';
     const int WORD_ID = 90;
     const string WORD_NAME = 'Word';
+    const string WORD_COM = 'The default view for words';
     const string VERB = 'verb_default';
     const int VERB_ID = 91;
     const string VERB_NAME = 'Verb';
@@ -275,6 +276,7 @@ class views
     const int TRIPLE_ID = 92;
     const string SOURCE = 'source_default';
     const int SOURCE_ID = 93;
+    const string SOURCE_NAME = 'Source';
     const string REF = 'ref_default';
     const int REF_ID = 94;
     const string LANGUAGE = 'language_default';
@@ -285,6 +287,20 @@ class views
     const int FORMULA_ID = 97;
     const string RESULT = 'result_default';
     const int RESULT_ID = 98;
+    // appended at the end of base_views.json, so the import position is after the last
+    // view of the previously imported files (see docs/llm/json_views.md)
+    const string VIEW = 'view_default';
+    const int VIEW_DEFAULT_ID = 114;
+    const string COMPONENT = 'component_default';
+    const int COMPONENT_DEFAULT_ID = 115;
+    const string FORMULA_LINK_DEFAULT = 'formula_link_default';
+    const int FORMULA_LINK_DEFAULT_ID = 116;
+    const string TERM_VIEW_DEFAULT = 'term_view_default';
+    const int TERM_VIEW_DEFAULT_ID = 117;
+    const string COMPONENT_LINK_DEFAULT = 'component_link_default';
+    const int COMPONENT_LINK_DEFAULT_ID = 118;
+    const string VIEW_RELATION_DEFAULT = 'view_relation_default';
+    const int VIEW_RELATION_DEFAULT_ID = 119;
 
     // base views for users
     const string RANKING = 'ranking';
@@ -340,6 +356,30 @@ class views
     const string WORD_RELATED = 'word_related';
     const int WORD_RELATED_ID = 111;
 
+    // all values of a word/triple in up to four columns headed by the phrases used most often
+    // within these values (e.g. inhabitants, area and elevation for a city) — the "more" link
+    // target of the values list shown on the default word page
+    const string PHRASE_VALUES = 'phrase_values';
+    const int PHRASE_VALUES_ID = 112;
+    const string PHRASE_VALUES_NAME = 'Values of a phrase';
+    const string PHRASE_VALUES_COM = 'All values related to a word or triple, grouped into up to four columns by the phrases used most often within the values';
+
+    // the values of a word/triple as a table: one column per phrase used most often within the
+    // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
+    // (e.g. per year), headed by the phrase title of a word or of a triple
+    const string TABLE = 'table';
+    const int TABLE_ID = 113;
+    const string TABLE_NAME = 'Table';
+    const string TABLE_COM = 'The values related to a word or triple as a table with one column per phrase used most often within the values';
+
+    // the calculator: the values of a word/triple as a table with the columns the system column
+    // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
+    // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
+    const string CALCULATOR = 'calculator';
+    const int CALCULATOR_ID = 120;
+    const string CALCULATOR_NAME = 'Calculator';
+    const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
+
 
     /*
      * const string for system testing
@@ -351,21 +391,25 @@ class views
     // TC_* means 'test code id'
     // TI_* means 'test id'
     const string TEST_ADD_NAME = 'System Test View';
+    const int TEST_ADD_ID = 994; // fixed snapshot id of the add workflow view (like word_names::TEST_ADD_ID)
     const string TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
     const string TEST_ADD_COM = 'System Test View Description';
     const string TEST_ADD = 'System Test View Code Id';
+    // the description that the change_view workflow writes in its second round
+    const string TEST_DESCRIPTION_CHANGED = 'System Test View Description Changed';
     const string TEST_RENAMED_NAME = 'System Test View Renamed';
     const string TEST_COMPLETE_NAME = 'System Test View Complete';
     const string TEST_EXCLUDED_NAME = 'System Test View Excluded';
     const string TEST_TABLE_NAME = 'System Test View Table';
-    const string TEST_ALL_NAME = 'complete';
+    // the name of the view with the code id self::COMPLETE, which is capitalised unlike the code id
+    const string TEST_ALL_NAME = 'Complete';
 
     // to test a system view (add word) as unit test without database
     const string TEST_FORM_NAME = 'Add word';
     const string TEST_FORM_NEW_NAME = 'Add new word';
     const string TEST_FORM_COM = 'system form to add a word';
     const string TEST_FORM = 'word_add';
-    const int TEST_FORM_ID = 3;
+    const int TEST_FORM_ID = 2;
 
     // code if of views that should be checked before deployment if they are still fine with the base setup
     const string CURRENCY = 'currency'; // the default view for all currencies
@@ -489,6 +533,8 @@ class views
         self::WORD_ID,
         self::WORD_LOG_ID,
         self::WORD_RELATED_ID,
+        self::PHRASE_VALUES_ID,
+        self::TABLE_ID,
     ];
 
     // system masks that have a verb as the main object
@@ -508,9 +554,10 @@ class views
         self::TRIPLE_ID,
     ];
 
-    // default view for a phrase
+    // default view for a phrase and the views that show a word or a triple the same way
     const array PHRASE_MASKS_IDS = [
         self::PHRASE_ID,
+        self::CALCULATOR_ID,
     ];
 
     // system masks that have a source as the main object
@@ -567,42 +614,48 @@ class views
     const array VIEW_MASKS_IDS = [
         self::VIEW_ADD_ID,
         self::VIEW_EDIT_ID,
-        self::VIEW_DEL_ID
+        self::VIEW_DEL_ID,
+        self::VIEW_DEFAULT_ID,
     ];
 
     // system masks that have a component as the main object
     const array COMPONENT_MASKS_IDS = [
         self::COMPONENT_ADD_ID,
         self::COMPONENT_EDIT_ID,
-        self::COMPONENT_DEL_ID
+        self::COMPONENT_DEL_ID,
+        self::COMPONENT_DEFAULT_ID,
     ];
 
     // system masks that have a term to view link as the main object
     const array VIEW_LINK_MASKS_IDS = [
         self::VIEW_LINK_ADD_ID,
         self::VIEW_LINK_EDIT_ID,
-        self::VIEW_LINK_DEL_ID
+        self::VIEW_LINK_DEL_ID,
+        self::TERM_VIEW_DEFAULT_ID,
     ];
 
     // system masks that have a component to view link as the main object
     const array COMPONENT_LINK_MASKS_IDS = [
         self::COMPONENT_LINK_ADD_ID,
         self::COMPONENT_LINK_EDIT_ID,
-        self::COMPONENT_LINK_DEL_ID
+        self::COMPONENT_LINK_DEL_ID,
+        self::COMPONENT_LINK_DEFAULT_ID,
     ];
 
     // system masks that have a phrase to formula link as the main object
     const array FORMULA_LINK_MASKS_IDS = [
         self::FORMULA_LINK_ADD_ID,
         self::FORMULA_LINK_EDIT_ID,
-        self::FORMULA_LINK_DEL_ID
+        self::FORMULA_LINK_DEL_ID,
+        self::FORMULA_LINK_DEFAULT_ID,
     ];
 
     // system masks that have a view to view link as the main object
     const array VIEW_RELATION_MASKS_IDS = [
         self::VIEW_RELATION_ADD_ID,
         self::VIEW_RELATION_EDIT_ID,
-        self::VIEW_RELATION_DEL_ID
+        self::VIEW_RELATION_DEL_ID,
+        self::VIEW_RELATION_DEFAULT_ID,
     ];
 
     // system masks that have a language as the main object
@@ -727,6 +780,15 @@ class views
         self::GLOBAL_PROBLEM_ID,
         self::PHRASE_ID,
         self::WORD_RELATED_ID,
+        self::PHRASE_VALUES_ID,
+        self::TABLE_ID,
+        self::CALCULATOR_ID,
+        self::VIEW_DEFAULT_ID,
+        self::COMPONENT_DEFAULT_ID,
+        self::FORMULA_LINK_DEFAULT_ID,
+        self::TERM_VIEW_DEFAULT_ID,
+        self::COMPONENT_LINK_DEFAULT_ID,
+        self::VIEW_RELATION_DEFAULT_ID,
     ];
 
     // system masks that add a sandbox object
@@ -859,6 +921,15 @@ class views
         self::FORMULA_TEST_ID,
     ];
 
+    // process masks whose plain view page (the form before any process step is started) may still be
+    // read from and written to the html page cache; the per-session anti-csrf token is stripped and
+    // restored per request by db_cache_page and the submit is a POST action that is never cached, so
+    // only the static login / signup form is served from the cache (see frontend->url_cache_key)
+    const array PAGE_CACHE_ALLOWED_MASKS_IDS = [
+        self::LOGIN_ID,
+        self::SIGNUP_ID,
+    ];
+
     // system masks that trigger an action via GET (no form submission required)
     const array GET_ACTION_IDS = [
         self::LOGOUT_ID,
@@ -978,7 +1049,16 @@ class views
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
         self::PHRASE_ID => self::PHRASE,
+        self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
+        self::TABLE_ID => self::TABLE,
+        self::CALCULATOR_ID => self::CALCULATOR,
         self::CURRENCY_ID => self::CURRENCY,
+        self::VIEW_DEFAULT_ID => self::VIEW,
+        self::COMPONENT_DEFAULT_ID => self::COMPONENT,
+        self::FORMULA_LINK_DEFAULT_ID => self::FORMULA_LINK_DEFAULT,
+        self::TERM_VIEW_DEFAULT_ID => self::TERM_VIEW_DEFAULT,
+        self::COMPONENT_LINK_DEFAULT_ID => self::COMPONENT_LINK_DEFAULT,
+        self::VIEW_RELATION_DEFAULT_ID => self::VIEW_RELATION_DEFAULT,
     ];
 
     const array SYSTEM_VIEWS = [
@@ -1081,7 +1161,6 @@ class views
     /**
      * returns the code id of the base view that is used to show the changeable object
      * e.g. for word_edit the word view is returned
-     * TODO easy add missing default views e.g. for component
      *
      * @param string $msk_ci
      * @return string
@@ -1097,8 +1176,12 @@ class views
             self::VALUE_ADD, self::VALUE_EDIT, self::VALUE_DEL => self::VALUE,
             //self::GROUP_ADD, self::GROUP_EDIT, self::GROUP_DEL => self::GROUP,
             self::FORMULA_ADD, self::FORMULA_EDIT, self::FORMULA_DEL => self::FORMULA,
-            //self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
-            //self::COMPONENT_ADD, self::COMPONENT_EDIT, self::COMPONENT_DEL => self::COMPONENT,
+            self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
+            self::COMPONENT_ADD, self::COMPONENT_EDIT, self::COMPONENT_DEL => self::COMPONENT,
+            self::FORMULA_LINK_ADD, self::FORMULA_LINK_EDIT, self::FORMULA_LINK_DEL => self::FORMULA_LINK_DEFAULT,
+            self::VIEW_LINK_ADD, self::VIEW_LINK_EDIT, self::VIEW_LINK_DEL => self::TERM_VIEW_DEFAULT,
+            self::COMPONENT_LINK_ADD, self::COMPONENT_LINK_EDIT, self::COMPONENT_LINK_DEL => self::COMPONENT_LINK_DEFAULT,
+            self::VIEW_RELATION_ADD, self::VIEW_RELATION_EDIT, self::VIEW_RELATION_DEL => self::VIEW_RELATION_DEFAULT,
             default => ''
         };
     }
@@ -1213,6 +1296,38 @@ class views
             'user' => self::USER_ADMIN_DEL_ID,
             'language' => self::LANGUAGE_DEL_ID,
             default => -1
+        };
+    }
+
+    /**
+     * the mask to show the main object of a blocked change mask
+     * e.g. if this pod does not allow an ip user to open the word edit mask
+     *      show the word default view with the blocked message instead (see /http/view.php)
+     *
+     * @param int $msk_id the id of the blocked change mask
+     * @return int the id of the default mask that shows the object
+     *             or the start mask id for masks without an object view e.g. undo or import
+     */
+    function change_to_show_id(int $msk_id): int
+    {
+        return match ($msk_id) {
+            self::WORD_ADD_ID, self::WORD_EDIT_ID, self::WORD_DEL_ID => self::WORD_ID,
+            self::VERB_ADD_ID, self::VERB_EDIT_ID, self::VERB_DEL_ID => self::VERB_ID,
+            self::TRIPLE_ADD_ID, self::TRIPLE_EDIT_ID, self::TRIPLE_DEL_ID => self::TRIPLE_ID,
+            self::SOURCE_ADD_ID, self::SOURCE_EDIT_ID, self::SOURCE_DEL_ID => self::SOURCE_ID,
+            self::REF_ADD_ID, self::REF_EDIT_ID, self::REF_DEL_ID => self::REF_ID,
+            self::VALUE_ADD_ID, self::VALUE_EDIT_ID, self::VALUE_DEL_ID => self::VALUE_DEFAULT_ID,
+            self::FORMULA_ADD_ID, self::FORMULA_EDIT_ID, self::FORMULA_DEL_ID,
+            self::FORMULA_TEST_ID => self::FORMULA_ID,
+            self::RESULT_ADD_ID, self::RESULT_EDIT_ID, self::RESULT_DEL_ID => self::RESULT_ID,
+            self::LANGUAGE_ADD_ID, self::LANGUAGE_EDIT_ID, self::LANGUAGE_DEL_ID => self::LANGUAGE_ID,
+            self::VIEW_ADD_ID, self::VIEW_EDIT_ID, self::VIEW_DEL_ID => self::VIEW_DEFAULT_ID,
+            self::COMPONENT_ADD_ID, self::COMPONENT_EDIT_ID, self::COMPONENT_DEL_ID => self::COMPONENT_DEFAULT_ID,
+            self::FORMULA_LINK_ADD_ID, self::FORMULA_LINK_EDIT_ID, self::FORMULA_LINK_DEL_ID => self::FORMULA_LINK_DEFAULT_ID,
+            self::VIEW_LINK_ADD_ID, self::VIEW_LINK_EDIT_ID, self::VIEW_LINK_DEL_ID => self::TERM_VIEW_DEFAULT_ID,
+            self::COMPONENT_LINK_ADD_ID, self::COMPONENT_LINK_EDIT_ID, self::COMPONENT_LINK_DEL_ID => self::COMPONENT_LINK_DEFAULT_ID,
+            self::VIEW_RELATION_ADD_ID, self::VIEW_RELATION_EDIT_ID, self::VIEW_RELATION_DEL_ID => self::VIEW_RELATION_DEFAULT_ID,
+            default => self::START_ID
         };
     }
 

@@ -34,23 +34,19 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
-// to allow debugging of errors in the library that only appear on the server
-$debug = $_GET['debug'] ?? 0;
-// get the root path from the path of this file (relative path)
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-// set the other path once for all scripts
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-// load once the common const and vars used almost every time
+include_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR . 'const.php';
 
-include_once PHP_PATH . 'frontend.php';
+include_once WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
 $result = '';
 
 // start the user session
 $session = new frontend('view');
+$msg = new user_message();
 global $sys;
 $db_con = $session->start('view pur'); // e.g. if requested write to the system log server that a user has sent a new request
 
@@ -68,7 +64,7 @@ if ($result != '') {
     $view_id = $_GET[frontend::PAR_VIEW_ID] ?? '';
 
     // get the view from the backend if not a cache
-    $result .= $session->show_view($view_id);
+    $result .= $session->show_view($view_id, $msg);
 
     // get the data to show if not in cache
 

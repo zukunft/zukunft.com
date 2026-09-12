@@ -48,6 +48,7 @@ include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
@@ -87,6 +89,14 @@ class system_object
     public system_time_list $times;
     // to avoid repeating the same message
     public array $log_msg_lst;
+    // true while a log entry is written to the database, so that an error inside the log writer
+    // itself (e.g. a failed sys_log insert or a permission check of the log function name) does
+    // not call the log writer again, which would never end (see log_msg)
+    public bool $log_writing = false;
+    // the number of log entries dropped because they have been caused by the log writer itself;
+    // these errors are still counted in errors above (log_err counts before it writes), so a log
+    // loop is never hidden, and this counter tells how many of the errors the log writer caused
+    public int $log_dropped = 0;
     // the log object for standard io logging
     public text_log $log_txt;
 
@@ -96,9 +106,6 @@ class system_object
     // the system users as a private var to restrict the access
     // TODO Prio check where this is used and make sure it is only used for system testing
     public user_list $sys_usr_lst;
-
-    // the session user that has requested the current action (set once the user data is loaded)
-    public ?user $usr_req = null;
 
     // the preloaded system views (mask cache) used to link code to the views by code id
     public ?view_sys_list $msk_cac = null;
@@ -124,6 +131,8 @@ class system_object
         $this->time_limit = microtime(true) + 2;
         $this->times = new system_time_list();
         $this->log_msg_lst = array();
+        $this->log_writing = false;
+        $this->log_dropped = 0;
         $this->typ_lst = new type_lists();
         $this->log_txt = new text_log();
         $this->sys_usr_lst = new user_list();
@@ -137,40 +146,46 @@ class system_object
     /**
      * load the base data (types, system views) from the database
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
      * @return bool
      */
-    function load_type_lists(sql_db $db_con): bool
+    function load_type_lists(sql_db $db_con, user_message $msg): bool
     {
-        return $this->typ_lst->load($db_con);
+        return $this->typ_lst->load($db_con, $msg);
     }
 
     /**
      * load the type lists from the cached types json with one database read
      * or with one select per type list if the cache is missing or outdated
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
      * @return bool true if the loading is complete
      */
-    function load_type_lists_cached(sql_db $db_con): bool
+    function load_type_lists_cached(sql_db $db_con, user_message $msg): bool
     {
-        return $this->typ_lst->load_cached($db_con);
+        return $this->typ_lst->load_cached($db_con, $msg);
     }
 
     /**
      * load the cache types and statuum upfront from the database
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
      * @return bool
      */
-    function load_cache_type(sql_db $db_con): bool
+    function load_cache_type(sql_db $db_con, user_message $msg): bool
     {
-        return $this->typ_lst->load_cache($db_con);
+        return $this->typ_lst->load_cache($db_con, $msg);
     }
 
     /**
      * load all system users that have a code id
+     * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
+     * @return bool
      */
-    function load_system_users(sql_db $db_con): bool
+    function load_system_users(sql_db $db_con, user_message $msg): bool
     {
-        $this->sys_usr_lst->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
+        $this->sys_usr_lst->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST, $msg);
         return true;
     }
 
@@ -179,12 +194,12 @@ class system_object
      * user
      */
 
-    function user_log(): user
+    function user_log(user_message $msg): user
     {
         $usr = $this->sys_usr_lst->get_by_code_id(users::SYSTEM_LOG_CODE_ID, false);
         if ($usr == null) {
             $usr = new user();
-            $usr->load_by_code_id(users::SYSTEM_LOG_CODE_ID);
+            $usr->load_by_code_id(users::SYSTEM_LOG_CODE_ID, $msg);
             if ($usr->has_db_id()) {
                 $this->sys_usr_lst->add($usr);
             } else {
@@ -221,6 +236,18 @@ class system_object
     function system_users(): user_list
     {
         return $this->sys_usr_lst;
+    }
+
+    // often used shortcut functions
+
+    /**
+     * get a verb
+     * @param string $code_id to select the verb
+     * @return verb object
+     */
+    function verb(string $code_id): verb
+    {
+        return $this->typ_lst->vrb->get_verb($code_id);
     }
 
     /**

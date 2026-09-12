@@ -42,35 +42,37 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("phraseType", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("phraseType", $msg);
 
 if ($db_con->is_open()) {
 
-    // get the parameters
-    $phr_typ_id = $_GET[url_var::ID] ?? 0;
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
+    // get the parameters
+    $phr_typ_id = $_GET[url_var::ID] ?? 0;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($phr_typ_id != 0) {
             $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
-            $phr_typ->load_by_id($phr_typ_id);
-            $result = $phr_typ->api_json();
+            $phr_typ->load_by_id($phr_typ_id, $msg);
+            $result = $phr_typ->api_json([], $msg);
         } else {
-            $msg = 'phrase type id is missing';
+            $msg->add_message_text('phrase type id is missing');
         }
     }
 
@@ -78,5 +80,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

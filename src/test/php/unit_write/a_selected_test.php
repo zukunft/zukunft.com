@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'files.php';
@@ -52,6 +53,8 @@ include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
@@ -59,29 +62,17 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
-use Zukunft\ZukunftCom\main\php\cfg\const\files;
-use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
-use Zukunft\ZukunftCom\main\php\service\export\json_io;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
-use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
-use Zukunft\ZukunftCom\test\php\unit\import_tests;
-use Zukunft\ZukunftCom\test\php\unit\user_tests;
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
-use Zukunft\ZukunftCom\test\php\unit_write_workflow\formula_write_url_tests;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
-class a_selected_test extends test_cleanup
+class a_selected_test extends all_unit_tests
 {
 
     // the import json files to load for a fast single-file debugging cycle
@@ -115,12 +106,12 @@ class a_selected_test extends test_cleanup
     {
 
         global $db_con;
-        global $usr;
 
         // init
         $tl = new test_lib();
         $t_db = new test_db_load($this);
         $u_env = new unit_env();
+        $msg_ui = new user_message();
 
         // start the test section (ts)
         $ts = 'db write job ';
@@ -132,15 +123,14 @@ class a_selected_test extends test_cleanup
 
         // remember the global var for restore after the unit tests
         $global_db_con = $db_con;
-        $global_usr = $usr;
 
         // prepare for unit testing
         $db_con = $tl->unit_test_db_con();
-        $this->usr1 = $tl->users_for_unit_tests();
+        $this->users_for_unit_tests();
         // set the system user like all_unit_tests->set_users does for the full test suite,
         // because e.g. the delete sql creation tests are done with the system user
         $this->usr_system = $this->user_system();
-        $u_env->init_unit_tests();
+        $u_env->init_unit_tests($this->usr1);
 
         /*
          * unit testing - without users
@@ -152,12 +142,10 @@ class a_selected_test extends test_cleanup
         //new formula_link_tests()->run($this);
         //new formula_calc_tests()->run($this);
         //new api_tests()->run($this);
-        new user_tests()->run($this);
+        //new user_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
-        $usr = $global_usr;
-
 
         /*
          * db testing - prepare
@@ -201,7 +189,7 @@ class a_selected_test extends test_cleanup
 
             global $sys;
             $ui = new frontend('api based ui tests');
-            $ui->load_cache();
+            $ui->load_cache($msg_ui);
             // the html renderers read the type cache from the global $ui_sys; point it at the just
             // loaded frontend cache so the render does not depend on a stale cache of the unit tests
             // (same pattern as url_test_base and /http/view.php)
@@ -289,7 +277,7 @@ class a_selected_test extends test_cleanup
              * user interface
              */
 
-            new horizontal_ui_tests()->run($this, $ui);
+            //new horizontal_ui_tests()->run($this, $ui);
 
             /*
              * db write
@@ -299,12 +287,13 @@ class a_selected_test extends test_cleanup
             $this->cleanup_objects_ex_user();
 
             // run the selected db write tests
-            run_system_test($this);
+            //run_system_test($this);
+            $t_db->create_test_db_entries($this);
             //new user_write_tests()->run($this);
             //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
 
-            //new word_write_tests()->run($this);
+            new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
             //new triple_write_tests()->run($this);
@@ -327,21 +316,22 @@ class a_selected_test extends test_cleanup
             //new formula_write_tests()->run_list($this);
             //new formula_link_write_tests()->run($this);
             //new formula_link_write_tests()->run_list($this);
-            //new formula_trigger_tests()->run($t);
-            //new result_write_tests()->run($t);
-            //new result_write_tests()->run_list($t);
-            //new job_write_tests()->run($t);
-            //new job_write_tests()->run_list($t);
+            //new formula_trigger_tests()->run($this);
+            //new result_write_tests()->run($this);
+            //new result_write_tests()->run_list($this);
+            //new job_write_tests()->run($this);
+            //new job_write_tests()->run_list($this);
             //new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
 
+            // the only active main test: read each main object type via a REST api get call
             //new api_write_tests()->run($this);
             new import_write_tests()->run($this);
-            //new xbrl_write_tests()->run($this);
-            //new wikidata_write_tests()->run($this);
+            new xbrl_write_tests()->run($this);
+            new wikidata_write_tests()->run($this);
 
             //$import = new import_file();
             //$import->import_test_files($usr);
@@ -350,7 +340,9 @@ class a_selected_test extends test_cleanup
              * url
              */
 
-            //new word_url_tests()->run($this);
+            new word_url_tests()->run($this);
+            new word_write_url_tests()->run($this);
+            //new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
 
             // cleanup - fallback delete

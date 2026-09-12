@@ -60,6 +60,7 @@ class triples
     const string FACTOR_WRONG = 'factor wrong';
     const string FILE_READ = 'file read';
     const string FILE_SIZE = 'file size';
+    const string FORMULA_LIST = 'formula list';
     const string FUTURE_PERCENT = 'future percent';
     const string INCREASE_LIST = 'increase list';
     const string IP_USER = 'ip user';
@@ -89,6 +90,8 @@ class triples
     const string PER_MONTH = 'per month';
     const string PER_VERB = 'per verb';
     const string PER_WEEK = 'per week';
+    const string PHRASE_LIST = 'phrase list';
+    const string CHANGE_LOG = 'change log';
     const string PER_YEAR = 'per year';
     const string PHRASE_DISTRIBUTION = 'phrase distribution';
     const string RESPONSE_TIME = 'response time';
@@ -98,14 +101,34 @@ class triples
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
-    const int SYSTEM_CONFIG_ID = 97;
+    const int SYSTEM_CONFIG_ID = 103;
+    // the column priority of a table, defined in solution_prio.json: a mayor column is shown
+    // on every screen, a main column only if the screen is not small and a minor column only
+    // if it is wide; a phrase is assigned to a tier with "<phrase> can be <tier>"
+    const string SYSTEM_COLUMN = 'column (system)';
+    const string SYSTEM_COLUMN_CODE_ID = 'system_column';
+    const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
+    const string SYSTEM_COLUMN_MAYOR_CODE_ID = 'system_column_mayor';
+    const string SYSTEM_COLUMN_MAIN = 'main column (system)';
+    const string SYSTEM_COLUMN_MAIN_CODE_ID = 'system_column_main';
+    const string SYSTEM_COLUMN_MINOR = 'minor column (system)';
+    const string SYSTEM_COLUMN_MINOR_CODE_ID = 'system_column_minor';
+
+    // the column tiers in the order they are shown, widest priority first
+    const array SYSTEM_COLUMN_TIERS = [
+        self::SYSTEM_COLUMN_MAYOR,
+        self::SYSTEM_COLUMN_MAIN,
+        self::SYSTEM_COLUMN_MINOR,
+    ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';
     const string TOP_LEVEL = 'top level';
     const string USER_FRONTEND = 'user frontend';
+    const string VALUE_LIST = 'value list';
     const string VALUE_TABLE = 'value table';
     const string WEB_MOBILE = 'web mobile';
+    const string WHAT_LIMIT = 'what limit';
     const string WORD_CHANGES = 'word changes';
 
     const array BASE_TRIPLES = [

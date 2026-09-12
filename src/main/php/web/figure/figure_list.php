@@ -34,15 +34,14 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\figure;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FIGURE . 'figure.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_HELPER . 'CombineObject.php';
-include_once paths::SHARED_HELPER . 'IdObject.php';
-include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_HELPER . 'CombineObject.php';
+include_once html_paths::SHARED_HELPER . 'IdObject.php';
+include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -75,9 +74,10 @@ class figure_list extends ListBase
     /**
      * add a figure to the list
      * @param figure|IdObject|TextIdObject|CombineObject|null $to_add the figure frontend object that should be added to the list
+     * @param user_message $msg to report which entry is double
      * @returns bool true if the figure has been added
      */
-    function add(figure|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(figure|IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
         if (!in_array($to_add->id(), $this->id_lst())) {
@@ -107,24 +107,24 @@ class figure_list extends ListBase
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @return string with a list of the figure names with html links
      * ex. names_linked
      */
-    function display_linked(string $back = ''): string
+    function display_linked(user_message $msg, array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($msg, $url_arr));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
      * @return array with a list of the figure names with html links
      */
-    function names_linked(string $back = ''): array
+    function names_linked(user_message $msg, array $url_arr = []): array
     {
         $names = array();
         foreach ($this->lst() as $fig) {
-            $names[] = $fig->display_linked();
+            $names[] = $fig->display_linked($msg, $url_arr);
         }
         return $names;
     }

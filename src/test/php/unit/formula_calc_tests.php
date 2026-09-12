@@ -42,11 +42,13 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -67,12 +69,12 @@ class formula_calc_tests
 {
     function run(test_cleanup $t): void
     {
-
-        global $usr;
-        global $usr_sys;
+        $msg = new user_message(); // a test is an entry point, so it creates the message the conversion reports into
 
         // init
         $lib = new library();
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $t_frm = new test_formulas($t);
         $t_wrd = new test_words($t);
         $t_phr = new test_phrases($t);
@@ -94,7 +96,7 @@ class formula_calc_tests
         $trm_lst = $t_trm->term_list_increase();
 
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
-        $exp = $frm->expression($trm_lst);
+        $exp = $frm->expression($msg, $trm_lst);
 
         $result = $exp->dsp_id();
         $target = '""' . words::PERCENT . '" = ( "'
@@ -110,7 +112,7 @@ class formula_calc_tests
 
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
         $test_name = 'formula increase: test the element group creation';
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"'
             . formula_names::THIS_NAME . '" ('
@@ -124,18 +126,18 @@ class formula_calc_tests
         $test_name = 'formula increase; test the display name that can be used for user debugging';
         $frm_html = new formula_ui($frm->api_json());
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
-        $back = 0;
-        $result = $frm_html->dsp_text($back, $trm_lst_ui);
+        $result = $frm_html->dsp_text($msg_ui, [], $trm_lst_ui);
         $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&amp;id=';
+        // the links carry no back part, because the formula is shown without a calling page
         $target = '"' . words::PERCENT
             . '" = ( <a href="' . $frm_edit_url
-            . $frm_this->id() . '&amp;back=0">'
+            . $frm_this->id() . '">'
             . word_names::THIS_NAME
             . '</a> - <a href="' . $frm_edit_url
             . $frm_prior->id()
-            . '&amp;back=0">'
+            . '">'
             . word_names::PRIOR_NAME
-            . '</a> ) / <a href="' . $frm_edit_url . '20&amp;back=0">'
+            . '</a> ) / <a href="' . $frm_edit_url . '20">'
             . word_names::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 
@@ -160,8 +162,7 @@ class formula_calc_tests
             $test_name = 'formula increase; test if the values for an element group are displayed correctly';
             $frm_html = new formula_dsp($frm->api_json());
             $trm_lst_ui = new term_list_dsp($trm_lst->api_json());
-            $back = 0;
-            $result = $frm_html->dsp_text($back, $trm_lst_ui);
+            $result = $frm_html->dsp_text($msg_ui, [], $trm_lst_ui);
             $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
             $t->assert($test_name, $result, $target);
         }
@@ -173,32 +174,32 @@ class formula_calc_tests
         $t->assert_false($ts . 'without predefined formula', $t_frm->formula()->is_predefined());
 
         // get the id of the phrases that should be added to the result based on the formula reference text
-        $target = new phrase_list($usr);
-        $trm_lst = new term_list($usr);
-        $frm->set_user($usr);
+        $target = new phrase_list($t->usr1);
+        $trm_lst = new term_list($t->usr1);
+        $frm->set_user($t->usr1);
         $frm_wrd = $t_wrd->word_one();
         $target->add($frm_wrd->phrase());
         $trm_lst->add($frm_wrd->term());
         $exp = new expression($frm);
-        $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $t_trm->term_list_scale());
-        $result = $exp->load_result_phrases($trm_lst);
+        $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $msg, $t_trm->term_list_scale());
+        $result = $exp->load_result_phrases($msg, $trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_names::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
         // e.g. "next" is a special formula to get the following values
         /*
-        $frm_next = new formula($usr);
+        $frm_next = new formula($t->usr1);
         $frm_next->name = "next";
         $frm_next->type_id = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
         $frm_next->id = 1;
-        $frm_has_next = new formula($usr);
+        $frm_has_next = new formula($t->usr1);
         $frm_has_next->usr_text = '=next';
         $t->assert('Expression->res_phr_lst for ' . formulas::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
 
         $test_name = 'formula term list';
         $frm = $t_frm->formula();
-        $trm_lst = $frm->term_list($t_trm->term_list_time());
+        $trm_lst = $frm->term_list($t_trm->term_list_time(), $msg);
         $t->assert($test_name, $trm_lst->dsp_id(),
             '"' . word_names::MINUTE . '","' . triple_names::SECOND . '" ('
             . $lib->term_id(triple_names::SECOND_ID, triple::class) . ','
@@ -227,7 +228,7 @@ class formula_calc_tests
         // TODO Prio 2 add calculation test
         $test_name = 'formula city population reference text';
         $frm = $t_frm->formula_city_population();
-        $result = $frm->get_ref_text();
+        $result = $frm->get_ref_text($msg);
         $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . word_names::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . word_names::CITY_ID . '})';
         // building the reference text resolves the phrases, so a page timeout is used to avoid a false timeout
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
@@ -240,7 +241,7 @@ class formula_calc_tests
         $test_name = 'result_can_calc allows the calculation when not all values are needed';
         $frm = $t_frm->formula_increase();
         $frm->need_all_val = false;
-        $res = new result($usr);
+        $res = new result($t->usr1);
         $t->assert_true($test_name, $frm->result_can_calc($res));
 
         // ... but it denies the calculation when all values are needed and one is still missing

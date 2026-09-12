@@ -41,9 +41,10 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
-include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
@@ -81,12 +83,13 @@ class term_list extends sandbox_list_named
      * actually set the term object for the parent function
      *
      * @param array|null $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded terms e.g. for admins
      * @return bool true if at least one term has been added
      */
-    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(?array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new term($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new term($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -150,18 +153,18 @@ class term_list extends sandbox_list_named
      *                       and the details of each term e.g. the triple from and to objects
      * @return bool true if at least one term has been loaded
      */
-    function load_by_ids(trm_ids $ids, bool $load_all = false): bool
+    function load_by_ids(trm_ids $ids, user_message $msg, bool $load_all = false): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        $result = $this->load($qp);
+        $result = $this->load($qp, $msg);
         if ($load_all) {
             // reload the missing triple and formula parameters
             // TODO Prio 1 reload including excluded terms
             if ($result) {
                 $trp_lst = $this->triple_list();
-                $result = $trp_lst->load_by_ids($trp_lst->ids());
+                $result = $trp_lst->load_by_ids($trp_lst->ids(), $msg);
                 $this->fill_by_id($trp_lst);
             }
             if ($result) {
@@ -178,7 +181,7 @@ class term_list extends sandbox_list_named
             }
             if ($result) {
                 $frm_lst = $this->formula_list();
-                $result = $frm_lst->load_by_ids($frm_lst->ids());
+                $result = $frm_lst->load_by_ids($frm_lst->ids(), $msg);
                 $this->fill_by_id($frm_lst);
             }
         }
@@ -192,38 +195,39 @@ class term_list extends sandbox_list_named
      * @param int $offset jump over these numbers of pages
      * @return bool true if at least one term found
      */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    function load_names(string $pattern, user_message $msg, int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new term($this->get_user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new term($this->get_user()), $pattern, $msg, $limit, $offset);
     }
 
     /**
      * load the terms that match the given pattern
      * @param string $pattern part of the name that should be used to select the terms
      */
-    function load_like(string $pattern): bool
+    function load_like(string $pattern, user_message $msg): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
      * load the terms that based on the given query parameters
      * @param sql_par $qp the query parameters created by the calling function
+     * @param user_message $msg to collect the load warnings for the user
      * @param bool $load_all force to include also the excluded terms e.g. for admins
      * @return bool true if at least one term has been loaded
      */
-    protected function load(sql_par $qp, bool $load_all = false): bool
+    protected function load(sql_par $qp, user_message $msg, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;
 
-        $trm_lst = $db_con->get($qp, 'term list');
+        $trm_lst = $db_con->get($qp, $msg, 'term list');
         foreach ($trm_lst as $db_row) {
             $trm = new term($this->get_user());
-            $trm->row_mapper_sandbox($db_row);
+            $trm->row_mapper_sandbox($db_row, $msg);
             if ($trm->id() != 0) {
                 $this->add($trm);
                 $result = true;
@@ -238,12 +242,12 @@ class term_list extends sandbox_list_named
      * @param trm_ids $id_lst the term ids that should be added to this list
      * @return bool true if at least one term has been added
      */
-    function load_additional_by_id(trm_ids $id_lst): bool
+    function load_additional_by_id(trm_ids $id_lst, user_message $msg): bool
     {
         $result = false;
         if (!$id_lst->is_empty()) {
             $trm_lst = new term_list($this->get_user());
-            $trm_lst->load_by_ids($id_lst);
+            $trm_lst->load_by_ids($id_lst, $msg);
             if (!$trm_lst->is_empty()) {
                 $result = true;
                 $this->merge($trm_lst);

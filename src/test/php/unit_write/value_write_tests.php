@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -80,8 +81,6 @@ class value_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $test_val_lst;
-
         // init
         $t->name = 'value->';
         $t_val = new test_values($t);
@@ -89,15 +88,18 @@ class value_write_tests
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
-        $usr_msg = new user_message($t->usr1);
-        $usr_msg_ui = new user_message_ui();
+        $msg = new user_message($t->usr1);
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'db write value ';
         $t->header($ts);
+        // cleanup any leftovers of a previous failed test run (values first because they use words)
+        $t_val->cleanup($ts);
+        $t_wrd->cleanup($ts);
 
         $t->subheader($ts . 'prepare');
-        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD);
+        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD, $msg);
 
         $t->subheader($ts . 'create');
         $test_name = 'create test word used for test values';
@@ -109,27 +111,27 @@ class value_write_tests
             word_names::ZH,
             word_names::INHABITANTS,
             word_names::MIO,
-            word_names::YEAR_2020))->get_grp();
+            word_names::YEAR_2020))->get_grp($msg);
         $chk_val = new value($t->usr1);
         if ($chk_phr_grp != null) {
-            $chk_val->load_by_grp($chk_phr_grp);
+            $chk_val->load_by_grp($chk_phr_grp, $msg);
         }
         if (!$chk_val->is_id_set()) {
             $chk_phr_grp = $t_db->load_word_list(array(
                 word_names::CANTON,
                 word_names::ZH,
                 word_names::INHABITANTS,
-                word_names::MIO))->get_grp();
+                word_names::MIO))->get_grp($msg);
             $chk_val = new value($t->usr1);
             if ($chk_phr_grp != null) {
-                $chk_val->load_by_grp($chk_phr_grp);
+                $chk_val->load_by_grp($chk_phr_grp, $msg);
             }
         }
         if (!$chk_val->is_id_set()) {
             $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
             $t->assert(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $result, true, $t::TIMEOUT_LIMIT_DB_MULTI);
         } else {
-            $result = $chk_val->check();
+            $result = $chk_val->check($msg);
             $t->assert(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $result, true, $t::TIMEOUT_LIMIT_DB_MULTI);
 
             // ... and check the number
@@ -148,7 +150,7 @@ class value_write_tests
 
             // ... and check the word reloading by group
             $chk_val->phr_lst()->set_lst(array());
-            $chk_val->load_phrases();
+            $chk_val->load_phrases($msg);
             if (!$chk_val->phr_lst()->is_empty()) {
                 // TODO check if sort is needed
                 //$chk_val->phr_lst()->wlsort();
@@ -166,13 +168,13 @@ class value_write_tests
             word_names::INHABITANTS,
             word_names::MIO,
             word_names::YEAR_2020));
-        //$phr_lst->ex_time();
-        $grp = $phr_lst->get_grp();
+        //$phr_lst->ex_time($msg);
+        $grp = $phr_lst->get_grp($msg);
         if (!$grp->is_id_set()) {
             $result = 'No word list found.';
         } else {
             $val = new value($t->usr1);
-            $val->load_by_grp($grp);
+            $val->load_by_grp($grp, $msg);
             $result = '';
             if (!$val->is_id_set()) {
                 $result = 'No value found for ' . $val->dsp_id() . '.';
@@ -198,7 +200,7 @@ class value_write_tests
             word_names::YEAR_2020));
         $api_msg = $pct_val->api_json([api_types::INCL_PHRASES]);
         $val_ui = new value_ui($api_msg);
-        $result = $val_ui->value(0);
+        $result = $val_ui->value($msg_ui);
         $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
@@ -207,42 +209,45 @@ class value_write_tests
         // are covered by the unit tests in value_tests "scaling"
         $phr_lst = $t_db->load_phrase_list(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $dest_phr_lst = new phrase_list($t->usr1);
-        $dest_phr_lst->load_by_names(array(word_names::INHABITANTS, word_names::ONE));
+        $dest_phr_lst->load_by_names(array(word_names::INHABITANTS, word_names::ONE), $msg);
         $mio_val = new value($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp_id());
-        $result = $mio_val->scale($dest_phr_lst, $usr_msg);
+        $mio_val->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $result = $mio_val->scale($dest_phr_lst, $msg);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
-        $t->assert_true(', value->val_scaling reports no problem', $usr_msg->is_ok());
+        $t->assert_true(', value->val_scaling reports no problem', $msg->is_ok());
 
         // test the figure object creation
         $phr_lst = $t_db->load_phrase_list(array(word_names::CANTON, word_names::ZH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $mio_val = new value($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp_id());
+        $mio_val->load_by_grp($phr_lst->get_grp_id(), $msg);
         $mio_val_ui = new value_ui();
-        $mio_val_ui->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $usr_msg_ui);
+        $mio_val_ui->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $msg_ui);
         $fig = $mio_val->figure();
         $fig_ui = $tl->ui_obj($fig, new figure_ui());
-        $result = $fig_ui->display_linked('1');
-        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $mio_val_ui->id() . '&amp;back=1">1.55</a>';
+        $result = $fig_ui->display_linked($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
+        // the phrase id 1 given as the back parameter becomes the phrase page as the back part
+        $back_part = '&amp;' . url_var::BACK . url_var::MASK . '=' . views::PHRASE_ID
+            . '&amp;' . url_var::BACK . url_var::ID . '=1';
+        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
-        $result = $mio_val_ui->value();
+        $result = $mio_val_ui->value($msg_ui);
         $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, shared_config::DEFAULT_DEC_POINT, shared_config::DEFAULT_THOUSAND_SEP);
         $t->assert(', value->display', $result, $target);
 
         // test the HTML code creation including the hyperlink
-        $result = $mio_val_ui->value_edit('1');
+        $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . '&amp;back=1">1.55</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
         $mio_val_ui->number = values::SAMPLE_INT;
-        $result = $mio_val_ui->value_edit('1');
+        $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . '&amp;back=1">123\'456</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database
@@ -264,11 +269,11 @@ class value_write_tests
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(values::SAMPLE_BIG);
-        $add_val->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $add_val->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
-        $test_val_lst[] = $add_val->id();
+        $t->test_val_ids[] = $add_val->id();
 
 
         // ... check if the value adding has been logged
@@ -279,7 +284,7 @@ class value_write_tests
             } elseif ($add_val->is_big()) {
                 $val_class = change_values_big::class;
             }
-            $result = $t->log_last_by_field($add_val, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
+            $result = $t->log_last_by_field($add_val, $msg, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
         }
         $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST;
         // TODO Prio 2 activate
@@ -287,21 +292,21 @@ class value_write_tests
 
         // ... check if the value has been added
         $added_val = new value($t->usr1);
-        $added_val->load_by_grp($phr_grp);
+        $added_val->load_by_grp($phr_grp, $msg);
         $result = $added_val->number();
         $target = self::NUMBER_TEST;
         $t->assert(', value->load the value previous saved for "' . $phr_grp->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
         $added_val_id = $added_val->id();
-        $test_val_lst[] = $added_val->id();
+        $t->test_val_ids[] = $added_val->id();
 
         // test if a value with the same phrases, but different time can be added
         $phr_grp2 = $t_db->load_phrase_group(array(word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019));
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(values::SAMPLE_BIGGER);
-        $add_val2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $add_val2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -320,7 +325,7 @@ class value_write_tests
 
         // ... check if the value adding has been logged
         if ($add_val->is_id_set()) {
-            $result = $t->log_last_by_field($add_val2, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
+            $result = $t->log_last_by_field($add_val2, $msg, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
         }
         $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_ADD2;
         // TODO Prio 2 activate
@@ -328,25 +333,25 @@ class value_write_tests
 
         // ... check if the value has been added
         $added_val2 = new value($t->usr1);
-        $added_val2->load_by_grp($phr_grp2);
+        $added_val2->load_by_grp($phr_grp2, $msg);
         $result = $added_val2->number();
         $target = self::NUMBER_ADD2;
         $t->assert(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
-        $test_val_lst[] = $added_val2->id();
+        $t->test_val_ids[] = $added_val2->id();
 
         // check if the value can be changed
         $added_val = new value($t->usr1);
-        $added_val->load_by_id($added_val_id);
+        $added_val->load_by_id($added_val_id, $msg);
         $added_val->set_number(self::NUMBER_ADD);
-        $added_val->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $added_val->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value change has been logged
         if ($added_val->is_id_set()) {
-            $result = $t->log_last_by_field($added_val, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
+            $result = $t->log_last_by_field($added_val, $msg, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
         // TODO fix it
         $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
@@ -358,7 +363,7 @@ class value_write_tests
 
         // ... check if the value has really been updated
         $added_val = new value($t->usr1);
-        $added_val->load_by_id($added_val_id);
+        $added_val->load_by_id($added_val_id, $msg);
         $result = $added_val->number();
         $target = self::NUMBER_ADD;
         $t->assert(', value->load the value previous updated for "' . word_names::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -366,34 +371,34 @@ class value_write_tests
         // check if a user-specific value is created if another user changes the value
         // TODO check loaded value matches the value for usr1
         $val_usr2 = new value($t->usr2);
-        $val_usr2->load_by_id($added_val_id);
+        $val_usr2->load_by_id($added_val_id, $msg);
         $val_usr2->set_number(self::NUMBER_CHANGED);
-        $val_usr2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $val_usr2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value change for the other user has been logged
         $val_usr2 = new value($t->usr2);
-        $val_usr2->load_by_id($added_val_id);
+        $val_usr2->load_by_id($added_val_id, $msg);
         if ($val_usr2->is_id_set()) {
-            $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
+            $result = $t->log_last_by_field($val_usr2, $msg, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
-        $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_ADD . '" to "' . self::NUMBER_CHANGED . '"';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed to "' . self::NUMBER_CHANGED . '" from "' . self::NUMBER_ADD . '"';
         // TODO Prio 2 activate
         //$t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been updated
         $added_val_usr2 = new value($t->usr2);
-        $added_val_usr2->load_by_grp($phr_grp);
+        $added_val_usr2->load_by_grp($phr_grp, $msg);
         $result = $added_val_usr2->number();
         $target = self::NUMBER_CHANGED;
         $t->assert(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value for the original user remains unchanged
         $added_val = new value($t->usr1);
-        $added_val->load_by_grp($phr_grp);
+        $added_val->load_by_grp($phr_grp, $msg);
         $result = $added_val->number();
         $target = self::NUMBER_ADD;
         $t->assert(', value->load for user "' . $t->usr1->name . '" is still', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -401,26 +406,29 @@ class value_write_tests
         // check if undo all specific changes removes the user value
         $test_name = 'change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change';
         $added_val_usr2 = new value($t->usr2);
-        $added_val_usr2->load_by_grp($phr_grp);
+        $added_val_usr2->load_by_grp($phr_grp, $msg);
         $added_val_usr2->set_number(self::NUMBER_ADD);
-        $added_val_usr2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $added_val_usr2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert($ts . $test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // ... check if the value change for the other user has been logged
+        // ... check if the value change for the other user has been logged; the change of the
+        // other user is written to the user values row and shown with 'user' after the action
         $val_usr2 = new value($t->usr2);
-        $val_usr2->load_by_grp($phr_grp);
+        $val_usr2->load_by_grp($phr_grp, $msg);
+        $usr_marker = '';
         if ($val_usr2->is_id_set()) {
-            $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
-                true);
+            $log_ui = $t->log_last_ui_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(), $msg);
+            $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+            $result = $log_ui->dsp(true);
         }
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_PARTNER_NAME . ' changed ' . $usr_marker . 'to "' . self::NUMBER_ADD . '" from "' . self::NUMBER_CHANGED . '"';
         $t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been changed back
         $added_val_usr2 = new value($t->usr2);
-        $added_val_usr2->load_by_grp($phr_grp);
+        $added_val_usr2->load_by_grp($phr_grp, $msg);
         $result = $added_val_usr2->number();
         $target = self::NUMBER_ADD;
         $t->assert(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -476,11 +484,11 @@ class value_write_tests
         $t_wrd->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg, library::class_to_name(value::class));
 
     }
 
-    function create_test_values(test_cleanup $t): void
+    function create_test_values(test_cleanup|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
 

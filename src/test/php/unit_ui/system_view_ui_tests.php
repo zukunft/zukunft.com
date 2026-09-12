@@ -98,8 +98,10 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -113,7 +115,9 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -161,18 +165,26 @@ class system_view_ui_tests
         $test_name = 'a relative url is linked';
         $t->assert_text_contains($test_name,
             $html->ref('/http/view.php?m=1', 'start'), '<a href="/http/view.php?m=1">');
+        // switch usr1 to the system test profile user (needed for the ui cache imports)
+        // and remember the normal usr1 so the end of this run can restore it - otherwise every
+        // later test would see a system-tier usr1 instead of the normal email profile user
+        $usr1_saved = $t->usr1;
         $t->usr1 = $t_usr->user_sys_test();
-        $usr_msg = new user_message();
-        $usr_ui = $map_ui->convertToUi($t->usr1, $usr_msg);
-        $usr_msg->usr = $usr_ui;
+        $msg = new user_message();
+        $usr_ui = $map_ui->convertToUi($t->usr1, $msg);
+        $msg->usr = $usr_ui;
 
 
         // shared frontend instance for all page tests
         $ui = new frontend('unit test');
-        $dto = $tl->ui_test_cache($t->usr1, $t);
+        $cac_msg = new user_message();
+        // the cache is created by the dev user, because the system views set a code id,
+        // which the normal test user is not permitted to do (see user::can_set_code_id)
+        // TODO Prio 2 check if a user with less permissions can be used
+        $dto = $tl->ui_test_cache($t->usr_dev, $t, $cac_msg);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
-        $ui->load_dummy_cache_from_test_resources($t->usr1);
+        $ui->load_dummy_cache_from_test_resources($msg);
         $usr_sys_ui = $tl->cast_user($t->usr1);
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
@@ -248,6 +260,46 @@ class system_view_ui_tests
         $test_name = 'the start view is not blocked for an ip user';
         $t->assert_false($test_name, in_array(views::START_ID, views::IP_BLOCKED_MASKS_IDS));
 
+        // a blocked change mask is answered with the calling page from the '9'-prefixed back
+        // params or, if the request has no back e.g. a typed url, with the default view of
+        // the target object so the user stays on the object (see /http/view.php)
+        $msk = new views();
+        $test_name = 'a blocked word edit shows the word default view again';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::WORD_EDIT_ID) == views::WORD_ID);
+        $test_name = 'a blocked formula test shows the formula default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::FORMULA_TEST_ID) == views::FORMULA_ID);
+        $test_name = 'a blocked view edit shows the view default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_EDIT_ID) == views::VIEW_DEFAULT_ID);
+        $test_name = 'a blocked component edit shows the component default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::COMPONENT_EDIT_ID) == views::COMPONENT_DEFAULT_ID);
+        $test_name = 'a blocked formula link edit shows the formula link default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::FORMULA_LINK_EDIT_ID) == views::FORMULA_LINK_DEFAULT_ID);
+        $test_name = 'a blocked view link edit shows the term view default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_LINK_EDIT_ID) == views::TERM_VIEW_DEFAULT_ID);
+        $test_name = 'a blocked component link edit shows the component link default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::COMPONENT_LINK_EDIT_ID) == views::COMPONENT_LINK_DEFAULT_ID);
+        $test_name = 'a blocked view relation edit shows the view relation default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_RELATION_EDIT_ID) == views::VIEW_RELATION_DEFAULT_ID);
+        $test_name = 'a blocked mask without an object view falls back to the start view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::UNDO_ID) == views::START_ID);
+
+        // the edit form's cancel button returns to the object's default view, so the base view
+        // of the view and the component change masks is their new default view
+        $test_name = 'the base view of the view edit mask is the view default view';
+        $t->assert($test_name, $msk->system_to_base(views::VIEW_EDIT), views::VIEW);
+        $test_name = 'the base view of the component edit mask is the component default view';
+        $t->assert($test_name, $msk->system_to_base(views::COMPONENT_EDIT), views::COMPONENT);
+        $test_name = 'the base view of the formula link edit mask is the formula link default view';
+        $t->assert($test_name, $msk->system_to_base(views::FORMULA_LINK_EDIT), views::FORMULA_LINK_DEFAULT);
+        $test_name = 'the base view of the view link edit mask is the term view default view';
+        $t->assert($test_name, $msk->system_to_base(views::VIEW_LINK_EDIT), views::TERM_VIEW_DEFAULT);
+        $test_name = 'the base view of the component link edit mask is the component link default view';
+        $t->assert($test_name, $msk->system_to_base(views::COMPONENT_LINK_EDIT), views::COMPONENT_LINK_DEFAULT);
+        $test_name = 'the base view of the view relation edit mask is the view relation default view';
+        $t->assert($test_name, $msk->system_to_base(views::VIEW_RELATION_EDIT), views::VIEW_RELATION_DEFAULT);
+        $test_name = 'a mask without a base view returns an empty code id';
+        $t->assert($test_name, $msk->system_to_base(views::UNDO), '');
+
         // tls is enforced (plain http redirected to https) in the prod and test environment so the
         // session cookie is never sent in the clear, but not in dev so the local http docker works;
         // the api entry (application::start_api) and the html frontend share this via server_guard
@@ -279,6 +331,23 @@ class system_view_ui_tests
         $test_name = 'a same host on a non-standard port is allowed';
         $t->assert_true($test_name, server_guard::origin_allowed('http://localhost:8080', '', 'localhost:8080'));
 
+        // a read api call from the pod itself (the html frontend calling its own api) may act for
+        // the browsing user (user::data_user), but only a genuine local call is trusted: a request
+        // forwarded by a proxy on the same host must never count as the pod itself
+        $t->subheader($ts . 'api call from the own pod');
+        $test_name = 'a loopback call without a forward header is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('127.0.0.1', '', false));
+        $test_name = 'an ipv6 loopback call is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('::1', '', false));
+        $test_name = 'a call from the own server address is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('10.0.0.5', '10.0.0.5', false));
+        $test_name = 'an external call is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('203.0.113.7', '10.0.0.5', false));
+        $test_name = 'a proxied loopback call is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('127.0.0.1', '', true));
+        $test_name = 'an unknown remote address is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('', '', false));
+
         // test the notification component standalone
         $t->subheader($ts . 'notification');
         $html_base = new html_base();
@@ -294,7 +363,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::PASSWORD_WRONG, []);
         $url_array = [url_var::MASK => views::LOGIN_ID];
-        $login_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
+        $login_html = $ui->url_to_html($url_array, $err_msg, $ui->dto, true);
 
         $notification_div = '<div class="alert alert-warning notification-bar">';
         $test_name = 'login page with failed login shows notification bar';
@@ -303,6 +372,15 @@ class system_view_ui_tests
         $expected_msg = msg_id::PASSWORD_WRONG->value;
         $test_name = 'login page notification contains password wrong message';
         $t->assert_text_contains($test_name, $login_html, $expected_msg);
+
+        // optional: only active when the login password field uses the css-only show-password toggle
+        // (form_input_password) instead of the native type=password field that keeps the browser auto fill
+        //$test_name = 'login page password field can be revealed';
+        //$t->assert_text_contains($test_name, $login_html, html_base::CLASS_SHOW_PASSWORD);
+        //$test_name = 'login page password field is masked by the show-password css class';
+        //$t->assert_text_contains($test_name, $login_html, html_base::CLASS_INPUT . ' ' . html_base::CLASS_PASSWORD);
+        //$test_name = 'login page show-password toggle uses the eye icon';
+        //$t->assert_text_contains($test_name, $login_html, icons::PASSWORD_SHOW);
 
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'login_notification';
         $test_name = 'login page with failed login notification matches snapshot';
@@ -317,7 +395,8 @@ class system_view_ui_tests
             $back_id_key => '123',
         ];
         $fail_msg = new user_message();
-        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $usr_sys_ui, $fail_msg, $ui->dto, false);
+        $fail_msg->usr = $usr_sys_ui;
+        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $fail_msg, $ui->dto, false);
 
         $test_name = 'failed login preserves back mask param in returned url';
         $t->assert($test_name, $result_url[$back_mask_key] ?? '', views::WORD_ID);
@@ -332,7 +411,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
         $url_array = [url_var::MASK => views::SIGNUP_ID];
-        $signup_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
+        $signup_html = $ui->url_to_html($url_array, $err_msg, $ui->dto, true);
 
         $test_name = 'signup page with duplicate name shows notification bar';
         $t->assert_text_contains($test_name, $signup_html, $notification_div);
@@ -341,14 +420,14 @@ class system_view_ui_tests
         $test_name = 'signup page with name exists notification matches snapshot';
         $t->assert_html_page($test_name, $signup_html, $file_path);
 
-        // test that url_to_action on logout resets both user objects to anonymous state
+        // test that url_to_action on logout resets both user objects to anonymous state:
+        // the backend user by reference and the frontend user via the message (docs/llm/state-and-messages.md)
         $logout_backend = clone $t->usr1;
-        $logout_frontend = $tl->cast_user($logout_backend);
         $logout_msg = new user_message();
+        $logout_msg->usr = $tl->cast_user($logout_backend);
         $logout_result_url = $ui->url_to_action(
             [url_var::MASK => views::LOGOUT_ID],
             $logout_backend,
-            $logout_frontend,
             $logout_msg,
             $ui->dto,
             false
@@ -360,13 +439,13 @@ class system_view_ui_tests
         $test_name = 'logout action resets backend user to anonymous';
         $t->assert($test_name, $logout_backend->has_db_id(), false);
 
-        $test_name = 'logout action resets frontend user to ip-only';
-        $t->assert($test_name, $logout_frontend->is_ip_only(), true);
+        $test_name = 'logout action resets the message user to ip-only';
+        $t->assert($test_name, $logout_msg->usr->is_ip_only(), true);
 
         // test that the logout page shows the success message
         global $mtr;
         $url_array = [url_var::MASK => views::LOGOUT_ID];
-        $logout_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
+        $logout_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         $test_name = 'logout page shows logout notice text';
         $t->assert_text_contains($test_name, $logout_html, $mtr->txt(msg_id::LOGOUT_NOTICE));
@@ -381,7 +460,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::ACTIVATE_ERR_KEY_MISMATCH, []);
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
-        $activate_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
+        $activate_html = $ui->url_to_html($url_array, $err_msg, $ui->dto, true);
 
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page with key mismatch shows notification bar';
@@ -400,7 +479,7 @@ class system_view_ui_tests
         $t->subheader($ts . 'login reset');
 
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
-        $reset_sent_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
+        $reset_sent_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page after reset email shows activation key label';
@@ -412,7 +491,7 @@ class system_view_ui_tests
 
         // test that the login_reset form renders with a cancel and go back link when no back params are given
         $url_array = [url_var::MASK => views::LOGIN_RESET_ID];
-        $reset_form_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
+        $reset_form_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         $test_name = 'login reset page shows cancel and go back link';
         $t->assert_text_contains($test_name, $reset_form_html, $mtr->txt(msg_id::CANCEL_AND_GO));
@@ -430,7 +509,7 @@ class system_view_ui_tests
         $url = 'http://localhost/http/view.php';
         $url_part = parse_url($url);
         parse_str($url_part["query"], $url_array);
-        $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto, true);
+        $html = $ui->url_to_html($url_array, $usr_msg, $ui->dto, true);
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'start_page';
         $t->assert_html_page($test_name, $html, $file_path);
         */
@@ -443,7 +522,7 @@ class system_view_ui_tests
         $add_url = $t_map->class_to_filled_url(formula_link::class, views::FORMULA_LINK_ADD_ID, change_actions::ADD);
         $add_part = parse_url($add_url);
         parse_str($add_part['query'], $add_array);
-        $add_html = $ui->url_to_html($add_array, null, new user_message(), $ui->dto, true);
+        $add_html = $ui->url_to_html($add_array, $msg, $ui->dto, true);
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'add view keeps the hidden id field at 0';
         $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"', $t::TIMEOUT_LIMIT_PAGE);
@@ -458,7 +537,7 @@ class system_view_ui_tests
         // negative: an anonymous user is sent to the start view with a permission message and never
         // sees the admin content
         $anon_msg = new user_message();
-        $anon_html = $ui->url_to_html($admin_url, null, $anon_msg, $ui->dto, true);
+        $anon_html = $ui->url_to_html($admin_url, $anon_msg, $ui->dto, true);
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'the admin main view is not rendered for an anonymous user';
         $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin', $t::TIMEOUT_LIMIT_PAGE);
@@ -467,7 +546,8 @@ class system_view_ui_tests
 
         // positive: an admin (here the system user, see admin_mask_denied) may render the admin view
         $adm_msg = new user_message();
-        $adm_html = $ui->url_to_html($admin_url, $usr_sys_ui, $adm_msg, $ui->dto, true);
+        $adm_msg->usr = $usr_sys_ui;
+        $adm_html = $ui->url_to_html($admin_url, $adm_msg, $ui->dto, true);
         $test_name = 'the admin main view is rendered for a system user';
         $t->assert_text_contains($test_name, $adm_html, 'system_title_admin');
 
@@ -475,13 +555,16 @@ class system_view_ui_tests
         // start view instead of acting on it (a fresh frontend user has the ip-only profile)
         $act_msg = new user_message();
         $act_backend = clone $t->usr1;
-        $act_usr = new user_ui();
-        $act_url = $ui->url_to_action($admin_url, $act_backend, $act_usr, $act_msg, $ui->dto, false);
+        $act_msg->usr = new user_ui();
+        $act_url = $ui->url_to_action($admin_url, $act_backend, $act_msg, $ui->dto, false);
         $test_name = 'url_to_action sends a non-admin admin mask request to the start view';
         $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
 
         // loop over the system views
-        $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $usr_msg, $lib);
+        $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $msg, $lib);
+
+        // restore the normal usr1 so the following tests run with the email profile user again
+        $t->usr1 = $usr1_saved;
 
     }
 
@@ -491,7 +574,7 @@ class system_view_ui_tests
      * @param test_mappers $t_map builds filled test URLs per class and action
      * @param frontend $ui renders HTML from a URL array
      * @param user_ui $usr_sys_ui logged-in user used for views that require a session
-     * @param user_message $usr_msg collects any messages produced during rendering
+     * @param user_message $msg collects any messages produced during rendering
      * @param library $lib converts class names to file-path segments
      */
     private function assert_views_by_id(
@@ -499,11 +582,22 @@ class system_view_ui_tests
         test_mappers $t_map,
         frontend     $ui,
         user_ui      $usr_sys_ui,
-        user_message $usr_msg,
+        user_message $msg,
         library      $lib
     ): void
     {
         $updated_files = [];
+        // the start view shows the global problems as a table, which the frontend fills from the
+        // api; a unit test has no api, so the cache of that view is filled from the factories,
+        // and only of that view, so the snapshots of the other views stay unchanged
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $dto_start = new data_object();
+        $dto_start->online = false;
+        $dto_start->typ_lst_cache = $ui->dto->typ_lst_cache;
+        $dto_start->msk_lst = $ui->dto->msk_lst;
+        $dto_start->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
         // TODO Prio 3 review and use random?
         for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
             for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
@@ -523,14 +617,23 @@ class system_view_ui_tests
                 // instead of the anonymous login/signup menu
                 if (in_array($id, views::TEST_LOGIN_VIEW_IDS)
                     or in_array($id, views::ADMIN_MASK_IDS)) {
-                    $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto, true);
+                    $msg->usr = $usr_sys_ui;
                 } else {
-                    $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto, true);
+                    $msg->usr = null;
                 }
+                // the start page and the calculator show the values of the global problems, so
+                // both render with the start page cache that carries them
+                $dto = $ui->dto;
+                if ($id == views::START_ID or $id == views::CALCULATOR_ID) {
+                    $dto = $dto_start;
+                }
+                $html = $ui->url_to_html($url_array, $msg, $dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
                 $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
-                $t->assert_html_page($test_name, $html, $file_path);
+                // link to the pod like the views_by_object snapshots, so that a snapshot opened in
+                // the ide does not link to the ide preview server port (see test_base::link_to_pod)
+                $t->assert_html_page($test_name, $t->link_to_pod($html, THIS_URL), $file_path);
             }
         }
         // remove test files not used any more

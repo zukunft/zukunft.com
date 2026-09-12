@@ -31,21 +31,21 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\system;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::LOG . 'log.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\log;
@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTimeInterface;
@@ -185,11 +186,11 @@ class sys_log extends log
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::TIME] = $this->time?->format(DateTimeInterface::ATOM);
         if ($this->user_id() > 0) {
             $vars[json_fields::USER_ID] = $this->user_id();
@@ -277,11 +278,11 @@ class sys_log extends log
 
     /**
      * display a sys_log with a link to the main page for the sys_log
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the close link
      * @param string $style the CSS style that should be used
      * @returns string the html code to show one system log entry for admin users
      */
-    function display_admin(user $usr, ?string $back = '', string $style = ''): string
+    function display_admin(user $usr, array $url_arr = [], string $style = ''): string
     {
         global $mtr, $sys;
 
@@ -302,7 +303,7 @@ class sys_log extends log
         if ($usr->is_admin() or $usr->is_system()) {
             $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
             // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-            $url = $html->url_with_token($html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status));
+            $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
             $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
         }
         return $html->tr($row);
@@ -340,7 +341,11 @@ class sys_log extends log
         return $html->tr($result);
     }
 
-    function get_html(?user $usr = null, string $back = ''): string
+    /**
+     * @param user|null $usr e.g. an admin user to allow closing the system log entry
+     * @param array $url_arr the url vars of the calling page for the back link of the close link
+     */
+    function get_html(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
         global $mtr, $sys;
 
@@ -349,7 +354,7 @@ class sys_log extends log
         // escape the user-controlled names and the request-derived log fields (stored xss); the
         // sys_log text/description/trace embed strings from log_err/log_warning (e.g. a blocked url)
         if ($this->user_id() > 0) {
-            $row_text .= $html->td($html->esc($this->user_name() ?? $this->user()->name()));
+            $row_text .= $html->td($html->esc($this->user_name() ?? $this->user($msg)->name()));
         } else {
             $row_text .= $html->td();
         }
@@ -358,7 +363,7 @@ class sys_log extends log
         $row_text .= $html->td($html->esc($this->trace));
         $row_text .= $html->td($html->esc($this->function_id));
         if ($this->owner_id() > 0) {
-            $row_text .= $html->td($html->esc($this->owner_name()));
+            $row_text .= $html->td($html->esc($this->owner_name($msg)));
         } else {
             $row_text .= $html->td();
         }
@@ -367,7 +372,7 @@ class sys_log extends log
             if ($usr->is_admin() or $usr->is_system()) {
                 $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
                 // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-                $url = $html->url_with_token($html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status));
+                $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
                 $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
             }
         }
@@ -375,27 +380,27 @@ class sys_log extends log
         return $html->tr($row_text);
     }
 
-    function user(): user
+    function user(user_message $msg): user
     {
         $usr = new user();
-        $usr->load_by_id($this->user_id);
+        $usr->load_by_id($this->user_id, $msg);
         return $usr;
     }
 
-    function owner(): user
+    function owner(user_message $msg): user
     {
         $usr = new user();
-        $usr->load_by_id($this->owner_id());
+        $usr->load_by_id($this->owner_id(), $msg);
         return $usr;
     }
 
     /** the owner (solver) name to show; the name from the api message, else a db lookup by id */
-    function owner_name(): string
+    function owner_name(user_message $msg): string
     {
         if ($this->solver_name !== null && $this->solver_name !== '') {
             return $this->solver_name;
         }
-        return $this->owner()->name();
+        return $this->owner($msg)->name();
     }
 
     // TODO review

@@ -30,6 +30,7 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 // keep the requested debug level untrusted until the environment is known: honoring it outside
 // the dev environment would echo sql and the call graph to any visitor (see http/const.php)
@@ -43,6 +44,7 @@ if (getenv(ENVIRONMENT) == ENV_DEV) {
 }
 
 $app = new application();
+$msg = new user_message();
 $db_con = $app->start("start test.php");
 
 /*
@@ -274,6 +276,6 @@ $db_con = $app->start("start test.php");
 //mysqli_free_result();
 
 // Closing connection
-$app->end($db_con);
+$app->end($db_con, $msg);
 
 ?>

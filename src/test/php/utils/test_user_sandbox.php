@@ -49,8 +49,8 @@ function run_sandbox_test(all_tests $t): void
     // start the test section (ts)
     $ts = 'db write sandbox ';
     $t->header($ts);
-    $usr_msg = new user_message($t->usr1);
-    $usr_msg->usr = $t->usr1;
+    $msg = new user_message($t->usr1);
+    $msg->usr = $t->usr1;
 
     $t->subheader($ts . 'is_same and is_similar');
 
@@ -75,8 +75,8 @@ function run_sandbox_test(all_tests $t): void
     // create a new source (_sandbox->save case 1)
     $src = new source($t->usr1);
     $src->set_name(sources::IPCC_AR6_SYNTHESIS);
-    $src->save($usr_msg);
-    $result = $usr_msg->get_last_message();
+    $src->save($msg);
+    $result = $msg->get_last_message();
     $target = '';
     $t->assert('_sandbox->save create a new source', $result, $target);
 
@@ -88,7 +88,7 @@ function run_sandbox_test(all_tests $t): void
 
     // check if the source has been saved (check _sandbox->save case 1)
     $src = new source($t->usr1);
-    if ($src->load_by_id($src_id)) {
+    if ($src->load_by_id($src_id, $msg)) {
         $result = $src->name();
     }
     $target = sources::IPCC_AR6_SYNTHESIS;
@@ -98,8 +98,8 @@ function run_sandbox_test(all_tests $t): void
     $src = new source($t->usr1);
     $src->set_name(sources::IPCC_AR6_SYNTHESIS);
     $src->url = sources::IPCC_AR6_SYNTHESIS_URL;
-    $src->save($usr_msg);
-    $result = $usr_msg->get_last_message();
+    $src->save($msg);
+    $result = $msg->get_last_message();
     $target = '';
     $t->assert('_sandbox->save update the source url by name', $result, $target);
 
@@ -111,7 +111,7 @@ function run_sandbox_test(all_tests $t): void
 
     // check if the source url has been updates (check _sandbox->save case 2)
     $src = new source($t->usr1);
-    if ($src->load_by_id($src_id)) {
+    if ($src->load_by_id($src_id, $msg)) {
         $result = $src->url;
     }
     $target = sources::IPCC_AR6_SYNTHESIS_URL;

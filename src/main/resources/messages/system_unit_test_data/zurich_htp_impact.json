@@ -1,28 +1,29 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-07 10:00:00",
   "user": "timon",
   "selection": [
     "average HTP impact of the city, canton, workplaces and insurance of Zurich"
   ],
   "words": [
-    { "name": "Zurich", "description": "the largest city of Switzerland and the capital of its canton" },
+    { "name": "Zurich" },
     { "name": "city", "description": "a large permanent human settlement" },
     { "name": "canton", "description": "a member state of the Swiss federation" },
     { "name": "workplace", "plural": "workplaces", "description": "a location that hosts jobs" },
-    { "name": "Zurich Insurance", "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich" },
+    { "name": "company" },
     { "name": "entity", "plural": "entities", "description": "an organisation or administrative body that can influence people" },
-    { "name": "inhabitant", "plural": "inhabitants", "description": "a person who lives in a place" },
+    { "name": "inhabitant", "plural": "inhabitants" },
     { "name": "customer", "plural": "customers", "description": "a person served by a commercial entity" },
     { "name": "person", "plural": "persons", "description": "an individual human being" },
     { "name": "employed", "description": "holding a job" },
     { "name": "influenced", "description": "affected by an entity" },
     { "name": "happy", "description": "feeling or showing pleasure or contentment" },
-    { "name": "time", "description": "the indefinite continued progress of existence" },
+    { "name": "time" },
     { "name": "point", "plural": "points", "description": "a single unit on a scale" },
     { "name": "impact", "description": "a marked effect or influence" },
     { "name": "factor", "description": "a circumstance that contributes to a result" },
-    { "name": "HTP", "description": "the acronym used for the happy time point measure" },
+    { "name": "HTP" },
     { "name": "weighted", "description": "scaled by a relative weight" },
     { "name": "reach", "description": "the number of people exposed to or affected by something" },
     { "name": "average", "description": "the mean value of a set of numbers" },
@@ -31,6 +32,7 @@
     { "name": "2023", "type": "time" }
   ],
   "triples": [
+    { "name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company" },
     { "name": "city of Zurich", "from": "city", "verb": "of", "to": "Zurich", "description": "the municipality of Zurich, the largest city of Switzerland" },
     { "name": "canton of Zurich", "from": "canton", "verb": "of", "to": "Zurich", "description": "the most populous canton of Switzerland" },
     { "name": "city of Zurich workplaces", "from": "workplace", "verb": "of", "to": "city of Zurich", "description": "the city of Zurich seen as an employer location, hosting the jobs within the municipality including commuters" },
@@ -57,9 +59,9 @@
     { "name": "World Happiness Report", "url": "https://worldhappiness.report" }
   ],
   "references": [
-    { "phrase": "city of Zurich", "name": "Q72", "type": "wikidata" },
-    { "phrase": "canton of Zurich", "name": "Q11943", "type": "wikidata" },
-    { "phrase": "Zurich Insurance", "name": "Q680524", "type": "wikidata" }
+    { "from_phrase": "city of Zurich", "name": "Q72", "type": "wikidata" },
+    { "from_phrase": "canton of Zurich", "name": "Q11943", "type": "wikidata" },
+    { "from_phrase": "Zurich Insurance", "name": "Q680524", "type": "wikidata" }
   ],
   "values": [
     {

@@ -84,6 +84,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -125,6 +126,8 @@ class api_tests
     function run(test_cleanup $t): void
     {
         global $sys;
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'api ';
@@ -136,11 +139,13 @@ class api_tests
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, url_var::EMAIL);
         // an anonymous visitor only gets an auto created ip user and must not be
-        // able to read another user, so a read by id, name or email is rejected
-        // with 'not permitted' and does not leak the email of the system test user
-        $t->assert_api_get_not_permitted(url_var::ID, users::SYSTEM_TEST_ID, users::SYSTEM_TEST_EMAIL);
-        $t->assert_api_get_not_permitted(url_var::NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
-        $t->assert_api_get_not_permitted(url_var::EMAIL, users::SYSTEM_TEST_EMAIL, users::SYSTEM_TEST_EMAIL);
+        // able to read another user: the call from the own pod (like the frontend
+        // that renders the user page title) gets only the core data without the
+        // email, and the same call of an external visitor (marked by the forward
+        // header) is rejected with 'not permitted'
+        $t->assert_api_get_not_permitted(url_var::ID, users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
+        $t->assert_api_get_not_permitted(url_var::NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
+        $t->assert_api_get_not_permitted(url_var::EMAIL, users::SYSTEM_TEST_EMAIL, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $t->assert_api_get(word::class);
         $t->assert_api_get_json(word::class, url_var::WORD);
         $t->assert_api_get_by_text(word::class, word_names::MATH);
@@ -149,8 +154,7 @@ class api_tests
         $t->assert_api_get(triple::class);
         //$t->assert_api_get_by_text(triple::class, triples::TN_READ);
         //$t->assert_api_get(phrase::class);
-        // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
-        $t->assert_api_get(value::class, values::PI_ID);
+        $t->assert_api_get(value::class, values::PI_MATH_ID);
         $t->assert_api_get(group::class, groups::CH_2019_MIO);
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_names::SCALE_TO_SEC);
@@ -203,13 +207,13 @@ class api_tests
         $t->subheader($ts . 'api config');
 
         $cfg = new config();
-        $cfg->load($sys);
+        $cfg->load($sys, $msg_ui);
         // loading the configuration triggers a REST api call, so a REST timeout is used to avoid a false timeout
         $test_name = 'the default configuration api message must at least contain the pod name';
-        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME, $t::TIMEOUT_LIMIT_REST);
+        $t->assert($test_name, $cfg->get_by([words::POD, words::URL], $msg_ui), POD_NAME, $t::TIMEOUT_LIMIT_REST);
 
         $cfg_all = new config();
-        $cfg_all->load($sys, api::CONFIG_ALL);
+        $cfg_all->load($sys, $msg_ui, api::CONFIG_ALL);
         $test_name = 'there must be more configuration values than the frontend configuration values';
         // TODO Prio 2 activate
         //$t->assert_greater($test_name, $cfg->count(), $cfg_all->count());
@@ -224,7 +228,7 @@ class api_tests
         $t->subheader($ts . 'api frontend config');
 
         $cfg = new config();
-        $cfg->load($sys, api::CONFIG_FRONTEND);
+        $cfg->load($sys, $msg_ui, api::CONFIG_FRONTEND);
         // loading the configuration triggers a REST api call, so a REST timeout is used to avoid a false timeout
         $test_name = 'at least one frontend configuration value must be loaded via api message';
         $t->assert_not($test_name, $cfg->count(), 0, $t::TIMEOUT_LIMIT_REST);
@@ -242,7 +246,7 @@ class api_tests
         $t->subheader($ts . 'api user config');
 
         $cfg = new config();
-        $cfg->load($sys, api::CONFIG_USER);
+        $cfg->load($sys, $msg_ui, api::CONFIG_USER);
         // loading the configuration triggers a REST api call, so a REST timeout is used to avoid a false timeout
         $test_name = 'at least one frontend configuration value must be loaded via api message';
         $t->assert_not($test_name, $cfg->count(), 0, $t::TIMEOUT_LIMIT_REST);
@@ -255,15 +259,15 @@ class api_tests
         // loading the frontend object via api triggers a REST api call, so a REST timeout is used
         $test_name = 'api id and name call of a word';
         $wrd_zh = new word_ui();
-        $wrd_zh->load_by_name(word_names::ZH);
-        $wrd_zh->load_by_id($wrd_zh->id());
+        $wrd_zh->load_by_name(word_names::ZH, $msg_ui);
+        $wrd_zh->load_by_id($wrd_zh->id(), $msg_ui);
         $t->assert($test_name, $wrd_zh->name(), word_names::ZH, $t::TIMEOUT_LIMIT_REST);
 
         // loading the frontend object via api triggers a REST api call, so a REST timeout is used
         $test_name = 'api id and name call of a phrase';
         $phr_zh = new phrase_ui();
-        $phr_zh->load_by_name(word_names::ZH);
-        $phr_zh->load_by_id($phr_zh->id());
+        $phr_zh->load_by_name(word_names::ZH, $msg_ui);
+        $phr_zh->load_by_id($phr_zh->id(), $msg_ui);
         $t->assert($test_name, $phr_zh->name(), word_names::ZH, $t::TIMEOUT_LIMIT_REST);
 
     }
@@ -277,14 +281,15 @@ class api_tests
     {
         $t_db = new test_db_load($t);
         $t_map = new test_mappers($t);
+        $msg = new user_message();
         foreach (def::MAIN_CLASSES as $class) {
             $obj = $t_map->class_to_filled_object($class);
             switch ($obj::class) {
-                case word::class;
-                    $this->test_api_write_no_rest($obj, $t_db->word_put_json(), $t_db->word_post_json(), $t);
+                case word::class:
+                    $this->test_api_write_no_rest($obj, $t_db->word_put_json($msg), $t_db->word_post_json($msg), $t);
                     break;
-                case source::class;
-                    $this->test_api_write_no_rest($obj, $t_db->source_put_json(), $t_db->source_post_json(), $t);
+                case source::class:
+                    $this->test_api_write_no_rest($obj, $t_db->source_put_json($msg), $t_db->source_post_json($msg), $t);
                     break;
                 default:
                     // TODO Prio 1 add all missing objects
@@ -302,8 +307,9 @@ class api_tests
     function test_api_write_all(test_cleanup $t): void
     {
         $t_db = new test_db_load($t);
-        $this->test_api_write(word::class, $t_db->word_put_json(), $t_db->word_post_json(), $t);
-        $this->test_api_write(source::class, $t_db->source_put_json(), $t_db->source_post_json(), $t);
+        $msg = new user_message();
+        $this->test_api_write(word::class, $t_db->word_put_json($msg), $t_db->word_post_json($msg), $t);
+        $this->test_api_write(source::class, $t_db->source_put_json($msg), $t_db->source_post_json($msg), $t);
     }
 
     /**
@@ -316,14 +322,14 @@ class api_tests
      */
     function test_api_write_no_rest(sandbox $sbx, array $add_data, array $upd_data, test_cleanup $t): void
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         // create a new object via api call and remember the id
-        $id = $t->assert_api_no_rest($sbx, 0, $add_data, $usr_msg);
+        $id = $t->assert_api_no_rest($sbx, 0, $add_data, $msg);
         // check if the object has been created
         // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
         $t->assert_api_get($sbx::class, $id, 0, $add_data, true);
         // update the previous created test object
-        $id = $t->assert_api_no_rest($sbx, $id, $upd_data, $usr_msg);
+        $id = $t->assert_api_no_rest($sbx, $id, $upd_data, $msg);
         // remove the previous created test object
         $t->assert_api_del_no_rest($sbx::class, $id);
         // check the previous created test object really has been removed

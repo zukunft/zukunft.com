@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -46,17 +47,16 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 function run_user_test(all_tests $t): void
 {
 
-    global $usr;
 
-    $back = 0;
+    $msg = new user_message();
 
     // test the user display after the word changes to have a sample case
     // start the test section (ts)
     $ts = 'db write user ';
     $t->header($ts);
 
-    $usr_ui = new user_ui($usr->api_json());
-    $result = $usr_ui->form_edit($back);
+    $usr_ui = new user_ui($t->usr1->api_json());
+    $result = $usr_ui->form_edit();
     $target = users::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 
@@ -68,12 +68,12 @@ function run_user_test(all_tests $t): void
             echo_timestamped('remote user: ' . $_SERVER[rest_ctrl::REMOTE_USER] . '<br>');
         }
     }
-    echo_timestamped('user id: ' . $usr->id . '<br>');
+    echo_timestamped('user id: ' . $t->usr1->id . '<br>');
 
     $t->subheader($ts . 'permission');
 
     $ip_addr = '2.204.210.217';
-    $result = $usr->ip_check($ip_addr);
+    $result = $t->usr1->ip_check($ip_addr, $msg);
     $target = '';
     $t->assert(', usr->ip_check', $result, $target);
 

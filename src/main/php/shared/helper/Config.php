@@ -48,10 +48,21 @@ class Config
     // number of entries initial to show in a value list
     const int LIMIT_VALUE_LIST = 6;
 
+    // number of entries initial to show in a list of links e.g. the triples that use a verb
+    const int LIMIT_LINK_LIST = 30;
+
     // a phrase linked to more values than this to form its own group
     const int MIN_PHRASE_GROUP = 2;
 
     // number of entries initial to show in a named list
     const int LIMIT_SEARCH_LIST = 40;
+
+    // number of entries shown in the short version of a list (config.yaml select: initial: entries)
+    // TODO Prio 0 use this only as the fallback value for the changeable value from config.yaml
+    const int LIMIT_SHORT_LIST = 5;
+
+    // number of entries shown in the more version of a list (config.yaml select: more: entries)
+    // TODO Prio 0 use this only as the fallback value for the changeable value from config.yaml
+    const int LIMIT_MORE_LIST = 20;
 
 }

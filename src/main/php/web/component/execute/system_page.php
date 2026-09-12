@@ -37,30 +37,39 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_HELPER . 'Translator.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -88,6 +97,35 @@ class system_page extends component
             } else {
                 $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
             }
+        }
+        return $result;
+    }
+
+    /**
+     * HTML for a page title that names the object shown on the page e.g. User "zukunft.com system test"
+     * the object word comes from the message id of the component, so the same component type can title
+     * the default page of any object, and the name is the name of the object the page has been called for
+     *
+     * @param msg_id|null $ui_msg_code_id the message id of the object word in the user-specific frontend language
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object shown on the page
+     * @return string the html code of the page title
+     */
+    function title_with_object_name(
+        ?msg_id                                               $ui_msg_code_id = null,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+    ): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $title = $mtr->txt($ui_msg_code_id);
+            if ($dbo != null) {
+                // escape the user settable name, because the title is shown as raw html
+                $title .= ' "' . $html->esc($dbo->name()) . '"';
+            }
+            $result = $html->text_h2($title);
         }
         return $result;
     }
@@ -170,7 +208,12 @@ class system_page extends component
 
                 // TODO Prio 1 move to a general function
                 if ($msg_id == msg_id::FORM_SUB_TITLE_VAR_USAGE->value) {
-                    $msg_txt = msg_id::SYS_MSG_USAGE;
+                    // a single usage needs the singular, because "Used 1 times" is wrong
+                    if ($value_numeric === 1) {
+                        $msg_txt = msg_id::SYS_MSG_USAGE_ONE;
+                    } else {
+                        $msg_txt = msg_id::SYS_MSG_USAGE;
+                    }
                     $msg_txt = $lib->msg_var_replace(
                         $msg_txt->value,
                         msg_id::VAR_USAGE,
@@ -184,6 +227,7 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+
     /**
      * show a view zoomed to 1/3 of its original size as a preview so that the user can see a
      * preview of the original page based on a different view mask
@@ -201,6 +245,7 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+
     /**
      * request from the user the values relevant for the initial setup
      * so the main question ist that the user confirms the admin username and password from the .env for
@@ -363,7 +408,7 @@ class system_page extends component
             $trm_lst->get_by_pattern($pattern);
         }
         if ($trm_lst !== null and !$trm_lst->is_empty()) {
-            $result .= $trm_lst->links_with_context();
+            $result .= $trm_lst->links_with_context($url_array);
         }
 
         return $result;
@@ -445,13 +490,15 @@ class system_page extends component
      *                           legacy /http/error_update.php behaviour where anyone but an admin
      *                           saw the permission notice; the same user is forwarded to the
      *                           per-row renderer so each status-change link carries the right context
-     * @param string $back back-link forwarded to each row's status-change link so navigation is preserved
+     * @param array $url_arr the url vars of the calling page, forwarded to each row's
+     *                       status-change link so navigation is preserved
      * @return string the HTML body for the error_update page
      */
     function error_update(
+        user_message  $msg,
         ?sys_log_list $errors = null,
         ?user_dsp     $usr = null,
-        string        $back = ''
+        array         $url_arr = []
     ): string
     {
         global $mtr;
@@ -463,7 +510,7 @@ class system_page extends component
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PERMISSION_DENIED));
         } elseif ($errors !== null and !$errors->is_empty()) {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PROGRAM_ISSUES))
-                . $errors->get_html($usr, $back);
+                . $errors->get_html($msg, $usr, $url_arr);
         } else {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_NO_OPEN));
         }

@@ -40,6 +40,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
@@ -82,14 +84,15 @@ class group_link extends db_object_seq_id
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if one phrase group triple link is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, self::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             $this->grp_id = $db_row[group_fields::FLD_ID];
             $this->trp_id = $db_row[triple_fields::FLD_ID];
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -123,7 +126,7 @@ class group_link extends db_object_seq_id
      * @param group $grp the phrase group which should be used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_by_group_id_sql(sql_db $db_con, group $grp): sql_par
+    function load_by_group_id_sql(sql_db $db_con, group $grp, user_message $msg): sql_par
     {
         $db_con->set_class(self::class);
         $qp = new sql_par(self::class);

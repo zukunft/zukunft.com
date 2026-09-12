@@ -43,7 +43,7 @@ PREPARE user_profile_insert_log_11111_call
 
 SELECT user_profile_insert_log_11111
     ('ip only',
-     1,
+     3,
      1,
      250,
      251,

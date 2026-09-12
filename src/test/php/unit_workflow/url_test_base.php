@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::CONST . 'workflows.php';
@@ -42,6 +43,7 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
@@ -54,24 +56,37 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class url_test_base
 {
 
+    // the role that is always shown in the navbar user menu of a snapshot (see normalize_navbar_role)
+    const string WF_FIXED_ROLE = 'system test';
+    // the display names of the elevated profiles that user::navbar_role can render (user_profiles.csv),
+    // longest first so that collapsing 'system test' never leaves a partial 'system' prefix behind
+    const array NAVBAR_ROLE_NAMES = [
+        'system test',
+        'system link',
+        'system log',
+        'developer',
+        'system',
+        'admin',
+    ];
+
     // the run state shared by all workflow steps so the step calls stay short (see docs/llm/testing.md)
-    protected test_cleanup $t;       // the test environment
-    protected string $ts;            // the test section prefix used in the headers
-    protected frontend $ui;          // the frontend used to render the html
-    protected user_ui $usr;          // the rendering (frontend) user
-    protected user_ui $usr_sys;      // the system (admin) user used for admin protected objects
-    protected user_message $usr_msg; // the message buffer carried through the steps
-    protected user_request $req;     // the bundled request context for the workflow steps
-    protected int $wf_id;            // the dynamic db id of the object the workflow runs on
-    protected int $wf_fixed_id;      // the fixed snapshot id that replaces the dynamic id
+    protected test_cleanup $t;         // the test environment
+    protected string $ts;              // the test section prefix used in the headers
+    protected frontend $ui;            // the frontend used to render the html
+    protected user_ui $usr;            // the rendering (frontend) user
+    protected user_message $msg;       // the message buffer carried through the steps
+    protected user_request $req;       // the bundled request context for the workflow steps
+    protected int $wf_id = 0;          // the dynamic db id of the object the workflow runs on (0 for an add workflow that has no object yet)
+    protected int $wf_fixed_id = 0;    // the fixed snapshot id that replaces the dynamic id
     protected array $wf_norm_ids = []; // more volatile db ids replaced in the snapshots by their fixed test id (real id => fixed id) e.g. the from and to words of the test triple
-    protected string $step_path;     // the snapshot file path grown by the cumulative spine steps
-    protected string $http_method;   // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
-    protected string $url;           // the last call url of the workflow
+    protected string $step_path;       // the snapshot file path grown by the cumulative spine steps
+    protected string $http_method;     // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
+    protected string $url;             // the last call url of the workflow
 
 
     /**
@@ -85,9 +100,9 @@ class url_test_base
     {
         $this->t = $t;
         $this->ts = $ts;
-        $this->usr_msg = new user_message();
+        $this->msg = new user_message();
         $this->ui = new frontend('view');
-        $this->ui->load_cache();
+        $this->ui->load_cache($this->msg);
         // the html renderers read the type cache from the global $ui_sys; point it at the just loaded
         // frontend cache so the render does not depend on a stale cache left by another test
         global $ui_sys;
@@ -96,10 +111,12 @@ class url_test_base
         // the shared default format so an object with history renders
         $ui_sys->cfg = new config_ui();
         $this->usr = new user_ui();
-        $this->usr->set_from_json($t->usr1->api_json(), $this->usr_msg);
-        $this->usr_sys = new user_ui();
-        $this->usr_sys->set_from_json($t->usr_system->api_json(), $this->usr_msg);
-        $this->usr_msg->usr = $this->usr_sys;
+        $this->usr->set_from_json($t->usr1->api_json(), $this->msg);
+        // the backend attributes an insert (the new row user and the change log author) to the
+        // message user (see db_object_seq_id insert log), so use usr1 - the preferred test user -
+        // to record all workflow changes for usr1; the test profile of usr1 is system privileged
+        // (user::is_system), so adding the reserved test names is still allowed (check_preserved)
+        $this->msg->usr = $this->usr;
         $t->name = $name;
         $t->header($ts);
     }
@@ -110,11 +127,18 @@ class url_test_base
      *
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 2 for wf2
      * @param string $name the workflow name used for the snapshot folder and the subheader e.g. 'change_word'
+     * @param user $usr the requesting user that is performing the workflow actions
      * @param int $fix_id if the workflow adds an object the database id of the object may change. For the test files the id is fixed so that the test files are not volatile any more
      * @param bool $do_it false to only render the steps (snapshot unit test), true to also write the
      *                     confirmed change to the database (workflow write test)
      */
-    protected function wf_start(int $wf_nbr, string $name, int $fix_id = 0, bool $do_it = false): void
+    protected function wf_start(
+        int $wf_nbr,
+        string $name,
+        user $usr,
+        int $fix_id = 0,
+        bool $do_it = false
+    ): void
     {
         // the snapshot file name prefix of this workflow e.g. 'wf2'
         $wf = workflows::WF_PREFIX . $wf_nbr;
@@ -122,12 +146,19 @@ class url_test_base
         $this->wf_fixed_id = $fix_id;
         // each workflow sets its own additional ids to normalize (e.g. the triple from/to words)
         $this->wf_norm_ids = [];
+        // fix the user
+        $usr_ui = new user_ui($usr->api_json());
+        $this->usr = $usr_ui;
         // start each workflow with a fresh message buffer so a warning from a previous workflow
         // (e.g. the empty-name warning of a *_fail workflow) does not leak into this workflow's first snapshot;
-        $this->usr_msg = new user_message();
-        $this->usr_msg->usr = $this->usr_sys;
-        // render in test mode so that the snapshot is reproducible without backend calls
-        $this->req = new user_request($this->t->usr1, $this->usr, $this->usr_msg, $this->ui->dto, $do_it, true);
+        // the message user is usr1 so the workflow writes are recorded for the preferred test user (see init)
+        $this->msg = new user_message();
+        $this->msg->usr = $this->usr;
+        // a read run renders in test mode so the snapshot is reproducible without backend calls;
+        // a write run ($do_it) is a real deployment with a real object row, so it renders the real
+        // pages including the backend filled views, my and others tabs, and the snapshot
+        // reproducibility comes from the normalizers (normalize_ids, normalize_change_log_time, ...)
+        $this->req = new user_request($this->t->usr1, $this->msg, $this->ui->dto, $do_it, !$do_it);
         // no page has been rendered yet; default the form method to get until the first render updates it
         $this->http_method = rest_ctrl::GET;
         // a write run (do_it true) persists the change and snapshots into the parallel workflow_write
@@ -170,11 +201,14 @@ class url_test_base
         global $sys;
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->ui->url_to_action($url_arr,
-            $this->req->usr_backend, $this->req->usr, $this->req->usr_msg,
+            $this->req->usr_backend, $this->req->msg,
             $this->req->dto, $this->req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        // render in test mode so that the snapshot is reproducible without backend calls
-        $result = $this->ui->url_to_html($next_url, $this->req->usr, $this->req->usr_msg,
+        // render in test mode so that the snapshot is reproducible without backend calls;
+        // the start view, which every back step reaches, is the exception: it shows the global
+        // problems as a table that the frontend fills from the api, so that the snapshot shows
+        // the same table as the live start page, including the values and the tooltips
+        $result = $this->ui->url_to_html($next_url, $this->req->msg,
             $this->req->dto, $this->req->test_mode);
         // return to the default section for the following assertions
         $sys->times->switch(system_time_type::DEFAULT);
@@ -263,9 +297,9 @@ class url_test_base
         // directly; the standard url is the relative request the form sends
         $call_url = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . $query;
         $std_url = $script . $query;
-        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->usr_msg);
+        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->msg);
         // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
-        $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
+        $human_json = $url_map->human_url_to_json($url_arr, $this->msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
         $content = $this->normalize_ids($content, $url_arr[url_var::ID] ?? 0);
         // building the human url and json mapping reads from the database and compares against a file,
@@ -285,12 +319,24 @@ class url_test_base
      */
     private function normalize_ids(string $content, int $id): string
     {
-        $norm_ids = [$id => $this->wf_fixed_id] + $this->wf_norm_ids;
+        // beside the id of the step url also normalize the workflow object id itself, because
+        // e.g. the back step after a delete has no id in the url anymore, but the page can still
+        // name the removed object by its volatile id (e.g. 'the triple with id 809 cannot be found')
+        $norm_ids = [$id => $this->wf_fixed_id, $this->wf_id => $this->wf_fixed_id] + $this->wf_norm_ids;
         foreach ($norm_ids as $db_id => $fixed_id) {
-            if ($db_id > 0 and $db_id != $fixed_id) {
+            // both ids must be known: without a db id there is nothing to replace and without
+            // a fixed id a replacement would erase a real id with a zero
+            if ($db_id > 0 and $fixed_id > 0 and $db_id != $fixed_id) {
                 $content = str_replace(
                     [url_var::EQ . $db_id, '"' . $db_id . '"'],
                     [url_var::EQ . $fixed_id, '"' . $fixed_id . '"'],
+                    $content);
+                // ... and the id in the plain text of a user message e.g. 'the triple with id 809
+                // cannot be found' (msg_id::OBJECT_NOT_FOUND); the word boundary prevents that
+                // e.g. the id 809 corrupts an unrelated 8091 on the page
+                $content = preg_replace(
+                    '/\bid ' . $db_id . '\b/',
+                    'id ' . $fixed_id,
                     $content);
             }
         }
@@ -328,9 +374,9 @@ class url_test_base
         // directly; the standard url is the relative request the form sends
         $call_url = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . $query;
         $std_url = $script . $query;
-        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->usr_msg);
+        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->msg);
         // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
-        $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
+        $human_json = $url_map->human_url_to_json($url_arr, $this->msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
         $content = $this->normalize_ids($content, $this->wf_id);
         // building the human url and json mapping reads from the database and compares against a file,
@@ -375,22 +421,12 @@ class url_test_base
         // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
         $html = $this->normalize_ids($html, $this->wf_id);
         // the change history of the test object shows the real change time and change user, both of
-        // which vary per run; replace each change log line (date time + user + action) with a fixed
-        // text - this covers the default view (in a container div) and the edit view (a bare line)
-        $html = preg_replace(
-            '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
-            workflows::WF_CHANGE_LOG,
-            $html);
-        // user::navbar_role() resolves the elevated role label only when the user profile cache is
-        // loaded; that is not guaranteed across test runners (a missing profile gives an empty role),
-        // so always show the system role in the navbar user menu to keep the snapshot deterministic
-        $name = $this->req->usr->name();
-        if ($name != null and $name != '') {
-            // 'system test' is the display name of the system user profile (no const exists for it)
-            $role_name = 'system test ' . $name;
-            $html = str_replace($role_name, $name, $html); // collapse an already present role prefix
-            $html = str_replace($name, $role_name, $html); // then always show the role
-        }
+        // which vary per run; replace each change log time with a dummy time sequence (see below)
+        $html = $this->normalize_change_log_time($html);
+        $html = $this->normalize_navbar_role($html);
+        // link to the pod like the views_by_id and views_by_object snapshots, so that a step opened
+        // in the ide does not link to the ide preview server port (see test_base::link_to_pod)
+        $html = $this->t->link_to_pod($html, THIS_URL);
         $this->t->assert_html_page($test_name, $html, $test_name);
     }
 
@@ -409,23 +445,82 @@ class url_test_base
         // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
         $html = $this->normalize_ids($html, $url_arr[url_var::ID] ?? 0);
         // the change history of the test object shows the real change time and change user, both of
-        // which vary per run; replace each change log line (date time + user + action) with a fixed
-        // text - this covers the default view (in a container div) and the edit view (a bare line)
-        $html = preg_replace(
-            '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
-            workflows::WF_CHANGE_LOG,
-            $html);
-        // user::navbar_role() resolves the elevated role label only when the user profile cache is
-        // loaded; that is not guaranteed across test runners (a missing profile gives an empty role),
-        // so always show the system role in the navbar user menu to keep the snapshot deterministic
-        $name = $this->req->usr->name();
-        if ($name != null and $name != '') {
-            // 'system test' is the display name of the system user profile (no const exists for it)
-            $role_name = 'system test ' . $name;
-            $html = str_replace($role_name, $name, $html); // collapse an already present role prefix
-            $html = str_replace($name, $role_name, $html); // then always show the role
-        }
+        // which vary per run; replace each change log time with a dummy time sequence (see below)
+        $html = $this->normalize_change_log_time($html);
+        $html = $this->normalize_navbar_role($html);
+        // link to the pod like the views_by_id and views_by_object snapshots, so that a step opened
+        // in the ide does not link to the ide preview server port (see test_base::link_to_pod)
+        $html = $this->t->link_to_pod($html, THIS_URL);
         $this->t->assert_html_page($test_name, $html, $test_name);
+    }
+
+    /**
+     * replace each change log time in the rendered html with a dummy time so the snapshot does not
+     * vary with the real change time; instead of one repeated placeholder the times form a readable
+     * sequence: the change log is shown newest first, so the last (oldest) entry gets the fixed dummy
+     * start time (workflows::WF_CHANGE_LOG_START) and every entry above it one second more, giving an
+     * ascending time from the bottom to the top of the list based on the real change time order
+     *
+     * the whole time expression (the date time plus any trailing text up to the next tag) is replaced,
+     * which covers both the change log table (a 'when' cell) and the edit view (a bare change line)
+     *
+     * @param string $html the rendered html of the workflow step
+     * @return string the html with the change log times replaced by the dummy time sequence
+     */
+    private function normalize_change_log_time(string $html): string
+    {
+        $pattern = '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#';
+        $matches = [];
+        $count = preg_match_all($pattern, $html, $matches);
+        $i = 0;
+        $result = preg_replace_callback($pattern, function () use (&$i, $count) {
+            $time = new DateTime(workflows::WF_CHANGE_LOG_START);
+            $time->modify('+' . ($count - 1 - $i) . ' second');
+            $i++;
+            return $time->format('d-m-Y H:i:s');
+        }, $html);
+        return $result;
+    }
+
+    /**
+     * user::navbar_role() resolves the elevated role label only when the user profile cache is
+     * loaded; that is not guaranteed across test runners (a missing profile gives an empty role
+     * and a differing cache another role name), so any rendered role prefix is collapsed first and
+     * the system test role is always shown in the navbar user menu to keep the snapshot deterministic
+     *
+     * @param string $html the rendered html of the step
+     * @return string the html with the fixed navbar user role
+     */
+    private function normalize_navbar_role(string $html): string
+    {
+        $result = $html;
+        $name = $this->req->msg->usr?->name();
+        if ($name != null and $name != '') {
+            // scope the role prefix to the navbar user menu (the <details class="user-menu"> block)
+            // only, so it is never added to other occurrences of the user name on the page e.g. in
+            // the change log 'who' column (the navbar_role label is a navbar-only display of the
+            // requesting user, see user::navbar_role)
+            $open = '<' . html_base::DETAILS . ' ' . html_base::CLASS_HTML . '="user-menu">';
+            $close = '</' . html_base::DETAILS . '>';
+            $start = strpos($html, $open);
+            if ($start !== false) {
+                $end = strpos($html, $close, $start);
+                if ($end !== false) {
+                    $end += strlen($close);
+                    $navbar = substr($html, $start, $end - $start);
+                    // collapse any elevated role prefix (see user::navbar_role) that the live render
+                    // has added, so re-adding the fixed role below never stacks e.g. to 'system
+                    // system test'; the display names of the elevated profiles have no const (csv)
+                    foreach (self::NAVBAR_ROLE_NAMES as $role) {
+                        $navbar = str_replace($role . ' ' . $name, $name, $navbar);
+                    }
+                    // then always show the fixed system test role in the navbar user menu
+                    $navbar = str_replace($name, self::WF_FIXED_ROLE . ' ' . $name, $navbar);
+                    $result = substr($html, 0, $start) . $navbar . substr($html, $end);
+                }
+            }
+        }
+        return $result;
     }
 
 }

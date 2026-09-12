@@ -75,7 +75,8 @@ class wikidata_write_tests
         // positive: retrieve and store the wikidata json of a property (P2284)
         $this->assert_property_capture($t, $imp);
 
-        // convert the captured US dollar price (Q4917 + P2284) into a zukunft.com import json
+        // convert the captured US dollar price (Q4917 + P2284) into a
+        // zukunft.com import json in src/test/resources/import/wikidata/to_import
         $this->assert_convert($t, $imp);
 
         // negative: an unknown wikidata id returns a failure message and stores nothing
@@ -95,14 +96,14 @@ class wikidata_write_tests
         // get the property json via the general property getter and store it in the same way as the entities
         $test_name = 'store the wikidata property json for ' . self::PRICE_PROPERTY;
         $json = $imp->get_property_json(self::PRICE_PROPERTY);
-        $usr_msg = $imp->store_text(self::PRICE_PROPERTY, $json);
-        $t->assert_true($test_name . ' ' . $usr_msg->all_message_text(), $usr_msg->is_ok());
+        $msg = $imp->store_text(self::PRICE_PROPERTY, $json);
+        $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
 
         // and the captured json file contains the requested property id
         // only checked if wikidata could be reached so that an offline test run continues with a warning
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $test_name = 'the captured wikidata property json for ' . self::PRICE_PROPERTY . ' contains the property id';
-            $file = test_paths::IMPORT_WIKIDATA . self::PRICE_PROPERTY . import_wikidata::JSON_EXTENSION;
+            $file = test_paths::IMPORT_WIKIDATA_CACHE . self::PRICE_PROPERTY . import_wikidata::JSON_EXTENSION;
             $t->assert_text_contains($test_name, file_get_contents($file), self::PRICE_PROPERTY);
         }
     }
@@ -118,27 +119,27 @@ class wikidata_write_tests
     {
         // capture the euro unit so that its name resolves when the entity-in-unit triple is built
         $imp->store_json(self::EURO_KEY);
-        $entity_json = file_get_contents(test_paths::IMPORT_WIKIDATA . self::USD_KEY . import_wikidata::JSON_EXTENSION);
-        $property_json = file_get_contents(test_paths::IMPORT_WIKIDATA . self::PRICE_PROPERTY . import_wikidata::JSON_EXTENSION);
+        $entity_json = file_get_contents(test_paths::IMPORT_WIKIDATA_CACHE . self::USD_KEY . import_wikidata::JSON_EXTENSION);
+        $property_json = file_get_contents(test_paths::IMPORT_WIKIDATA_CACHE . self::PRICE_PROPERTY . import_wikidata::JSON_EXTENSION);
 
-        // convert and write the zukunft.com import json to the wikidata cache folder
-        $test_name = 'the converted import json is written to the wikidata cache folder';
+        // convert and write the zukunft.com import json to the wikidata to import folder
+        $test_name = 'the converted import json is written to the wikidata to import folder';
         $file = $imp->convert_to_file(self::USD_KEY, $entity_json, $property_json);
-        $t->assert_text_contains($test_name, $file, test_paths::IMPORT_WIKIDATA_CACHE . import_wikidata::IMPORT_PREFIX . self::USD_KEY);
+        $t->assert_text_contains($test_name, $file, test_paths::IMPORT_WIKIDATA_TO_IMPORT . import_wikidata::IMPORT_PREFIX . self::USD_KEY);
 
-        // the written cache file contains the price word and the United States dollar in euro triple
+        // the written import file contains the price word and the United States dollar in euro triple
         if ($file != '') {
             $json = file_get_contents($file);
-            $test_name = 'the cache file contains the "' . self::PRICE_NAME . '" word';
+            $test_name = 'the import file contains the "' . self::PRICE_NAME . '" word';
             $t->assert_text_contains($test_name, $json, self::PRICE_NAME);
-            $test_name = 'the cache file contains the "' . self::USD_NAME . ' ' . import_wikidata::IN_VERB . ' ' . self::EURO_NAME . '" triple';
+            $test_name = 'the import file contains the "' . self::USD_NAME . ' ' . import_wikidata::IN_VERB . ' ' . self::EURO_NAME . '" triple';
             $t->assert_text_contains($test_name, $json, self::USD_NAME . ' ' . import_wikidata::IN_VERB . ' ' . self::EURO_NAME);
-            $test_name = 'the cache file contains the wikidata reference (' . self::USD_KEY . ') of the words';
+            $test_name = 'the import file contains the wikidata reference (' . self::USD_KEY . ') of the words';
             $t->assert_text_contains($test_name, $json, self::USD_KEY);
         }
 
-        // the cleanup is switched off for the test so that the converted cache file can be inspected
-        // (in an import pipeline call $imp->cleanup_file($file) after the import to remove the cache file)
+        // the cleanup is switched off for the test so that the converted import file can be inspected
+        // (in an import pipeline call $imp->cleanup_file($file) after the import to remove the file)
     }
 
     /**
@@ -152,14 +153,14 @@ class wikidata_write_tests
     {
         // store the wikidata json as a test fixture
         $test_name = 'store the wikidata json for ' . $wikidata_id;
-        $usr_msg = $imp->store_json($wikidata_id);
-        $t->assert_true($test_name . ' ' . $usr_msg->all_message_text(), $usr_msg->is_ok());
+        $msg = $imp->store_json($wikidata_id);
+        $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
 
         // and the captured json file contains the requested entity id
         // only checked if wikidata could be reached so that an offline test run continues with a warning
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $test_name = 'the captured wikidata json for ' . $wikidata_id . ' contains the entity id';
-            $file = test_paths::IMPORT_WIKIDATA . $wikidata_id . import_wikidata::JSON_EXTENSION;
+            $file = test_paths::IMPORT_WIKIDATA_CACHE . $wikidata_id . import_wikidata::JSON_EXTENSION;
             $t->assert_text_contains($test_name, file_get_contents($file), $wikidata_id);
         }
     }

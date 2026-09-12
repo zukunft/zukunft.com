@@ -37,7 +37,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\element;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -46,14 +45,15 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word;use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class element extends db_object
@@ -132,16 +132,16 @@ class element extends db_object
     /**
      * create an api json array for the backend based on this frontend object
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::ID] = $this->id();
-        $vars[json_fields::FORMULA] = $this->frm->api_array();
+        $vars[json_fields::FORMULA] = $this->frm->api_array($typ_lst, $msg);
         if ($this->obj != null) {
-            $vars[json_fields::TERM] = $this->obj->api_array();
+            $vars[json_fields::TERM] = $this->obj->api_array($typ_lst, $msg);
             if ($this->obj->term()->is_word()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
             } elseif ($this->obj->term()->is_verb()) {
@@ -169,10 +169,10 @@ class element extends db_object
     /**
      * return the HTML code for the element name including a link to inspect the element
      *
-     * @param string $back
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @return string
      */
-    function link(string $back = ''): string
+    function link(array $url_arr = []): string
     {
         $result = '';
 
@@ -181,13 +181,13 @@ class element extends db_object
                 // TODO replace with phrase
                 if ($this->obj::class == word::class
                     or $this->obj::class == triple::class) {
-                    $result = $this->obj->name_link($back);
+                    $result = $this->obj->name_link($url_arr);
                 }
                 if ($this->obj::class == verb::class) {
                     $result = $this->obj->name();
                 }
                 if ($this->obj::class == formula::class) {
-                    $result = $this->obj->edit_link($back);
+                    $result = $this->obj->edit_link($url_arr);
                 }
             }
         }

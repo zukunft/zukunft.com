@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -44,6 +45,7 @@ class component_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
         // init
         $t->name = 'component read db->';
@@ -59,11 +61,11 @@ class component_read_tests
         $t->subheader($ts . 'link');
         $test_name = 'load component link ' . views::START_NAME . ' to ' . components::WORD_NAME . ' by id';
         $msk = new view($t->usr1);
-        $msk->load_by_name(views::START_NAME);
+        $msk->load_by_name(views::START_NAME, $msg);
         $cmp = new component($t->usr1);
-        $cmp->load_by_name(components::WORD_NAME);
+        $cmp->load_by_name(components::WORD_NAME, $msg);
         $cmp_lnk = new component_link($t->usr1);
-        $cmp_lnk->load_by_link_and_type(1, 1, 1);
+        $cmp_lnk->load_by_link_and_type(1, 1, 1, $msg);
         $test_name .= ' view id';
         $t->assert($test_name, $cmp_lnk->get_view()->id, $msk->id);
         $test_name .= ' component id';

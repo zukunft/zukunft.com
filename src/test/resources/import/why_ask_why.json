@@ -1,0 +1,917 @@
+{
+  "version": "0.0.1",
+  "description": "Why-questions across the human lifespan: studies and hormones. Request (translated from the German original, 2026-08-27): Children at a certain age ask many 'why?' questions. Adults do this less, which was presumably selected by evolution, because if adults also asked too many 'why?' questions they would neglect food gathering and starve. The further a society develops, the more 'why?' questions it can afford. The evolutionary selection pressure, however, is likely to be small. Which studies exist in this context and which hormones play a role? Compile the data as JSON in English and repeat this request in the description. Sourced findings are tagged 'measured value'; the two conjectures from the dialogue (foraging-time hypothesis, prosperity hypothesis) and the competing explanations are tagged 'assumed value' with a confidence number. All DOIs were verified on 2026-08-27.",
+  "words": [
+    {
+      "name": "child",
+      "description": "a human being below the age of adulthood; here mainly preschool age (2-5 years).",
+      "refs": [
+        {
+          "name": "Child",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7569",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "adult",
+      "description": "a human being who has reached maturity.",
+      "refs": [
+        {
+          "name": "Adult",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9584",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "question",
+      "description": "an utterance that requests information."
+    },
+    {
+      "name": "causal question",
+      "description": "a question asking for a cause, reason or mechanism (why, how come, how does)."
+    },
+    {
+      "name": "why-question",
+      "description": "a causal question introduced by 'why'; the subject of this dataset."
+    },
+    {
+      "name": "information-seeking question",
+      "description": "a question whose purpose is to obtain information, as opposed to requests for attention, permission or help (Chouinard 2007 coding)."
+    },
+    {
+      "name": "question rate",
+      "description": "number of questions asked per unit of time."
+    },
+    {
+      "name": "share",
+      "description": "a fraction of a whole, expressed in percent."
+    },
+    {
+      "name": "adult question decline",
+      "description": "the observation that adults ask far fewer why-questions than preschool children; the explanandum of this dataset."
+    },
+    {
+      "name": "knowledge gap closure",
+      "description": "the reduction of gaps, ambiguities and inconsistencies in a person's knowledge as it approaches the adult state; Chouinard's Information Requesting Mechanism predicts fewer questions once gaps close."
+    },
+    {
+      "name": "curiosity",
+      "description": "intrinsic motivation to seek information; a state (momentary) or a trait (stable disposition).",
+      "refs": [
+        {
+          "name": "Curiosity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1364001",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "trait curiosity",
+      "description": "curiosity as a stable personality disposition, measured by questionnaires."
+    },
+    {
+      "name": "state curiosity",
+      "description": "curiosity as a momentary reaction to a specific stimulus, e.g. a trivia question."
+    },
+    {
+      "name": "exploration",
+      "description": "sampling unknown or lesser-known options to gain information."
+    },
+    {
+      "name": "exploitation",
+      "description": "choosing the option currently known to be best."
+    },
+    {
+      "name": "explore-exploit trade-off",
+      "description": "the dilemma between gathering information (explore) and using known good options (exploit); in life-history terms, childhood as an explore phase and adulthood as an exploit phase (Gopnik 2020)."
+    },
+    {
+      "name": "random exploration",
+      "description": "value-free exploration that ignores all prior knowledge; one of two cheap exploration heuristics identified by Dubois et al. 2021."
+    },
+    {
+      "name": "overexploitation",
+      "description": "staying with a depleting option longer than the optimal foraging policy (marginal value theorem) prescribes."
+    },
+    {
+      "name": "learning",
+      "description": "acquisition of knowledge or skill."
+    },
+    {
+      "name": "memory",
+      "description": "retention of information; in Gruber 2014 measured as recall of trivia answers and of incidental faces."
+    },
+    {
+      "name": "childhood",
+      "description": "the developmental period between infancy and adolescence; in humans exceptionally long and protected."
+    },
+    {
+      "name": "life history",
+      "description": "the schedule of growth, reproduction and survival of a species."
+    },
+    {
+      "name": "juvenile dependence",
+      "description": "the period in which offspring consume more energy than they produce and are subsidized by adults."
+    },
+    {
+      "name": "duration",
+      "description": "length of a time period."
+    },
+    {
+      "name": "brain",
+      "description": "the organ of the central nervous system.",
+      "refs": [
+        {
+          "name": "Brain",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1073",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "glucose use",
+      "description": "consumption of glucose as metabolic fuel."
+    },
+    {
+      "name": "resting metabolic rate",
+      "description": "the energy expended by the body at rest (RMR)."
+    },
+    {
+      "name": "daily energy requirement",
+      "description": "the total energy the body needs per day including activity (DER)."
+    },
+    {
+      "name": "peak",
+      "description": "the maximum of a quantity over age or time."
+    },
+    {
+      "name": "foraging",
+      "description": "searching for and collecting food from the wild; in decision science also the generic patch-leaving problem."
+    },
+    {
+      "name": "hunter-gatherer",
+      "description": "a member of a society that lives mainly from foraging.",
+      "refs": [
+        {
+          "name": "Hunter-gatherer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43082",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hunting productivity",
+      "description": "food energy returned per unit of hunting effort."
+    },
+    {
+      "name": "hunting record",
+      "description": "one documented hunting trip in the Koster et al. 2020 dataset."
+    },
+    {
+      "name": "individual",
+      "description": "one person in a sample."
+    },
+    {
+      "name": "site",
+      "description": "one study population or location in a cross-cultural dataset."
+    },
+    {
+      "name": "natural selection",
+      "description": "differential survival and reproduction of heritable variants.",
+      "refs": [
+        {
+          "name": "Natural_selection",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43478",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "selection pressure",
+      "description": "the strength with which natural selection acts on a trait."
+    },
+    {
+      "name": "society",
+      "description": "a group of humans sharing institutions and territory."
+    },
+    {
+      "name": "prosperity",
+      "description": "the level of material wealth and surplus of a society."
+    },
+    {
+      "name": "aging",
+      "description": "the process of growing older in adulthood."
+    },
+    {
+      "name": "foraging-time hypothesis",
+      "description": "conjecture from the dialogue: adults who asked as many why-questions as children would neglect food gathering and starve, so natural selection reduced adult question-asking. Not an established position in the literature."
+    },
+    {
+      "name": "prosperity hypothesis",
+      "description": "conjecture from the dialogue: the more developed and wealthy a society, the more why-questions it can afford."
+    },
+    {
+      "name": "hormone",
+      "description": "a signalling molecule released into the blood by an endocrine gland.",
+      "refs": [
+        {
+          "name": "Hormone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11364",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "neuromodulator",
+      "description": "a brain-borne signalling molecule that changes the gain of neural circuits; dopamine and noradrenaline act mainly as neuromodulators, not as classical blood-borne hormones."
+    },
+    {
+      "name": "dopamine",
+      "description": "catecholamine neuromodulator of reward prediction, motivation and memory consolidation.",
+      "refs": [
+        {
+          "name": "Dopamine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170304",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "noradrenaline",
+      "description": "catecholamine neuromodulator (norepinephrine) of arousal, attention and behavioural variability; released by the locus coeruleus.",
+      "refs": [
+        {
+          "name": "Norepinephrine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q132724",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cortisol",
+      "description": "glucocorticoid stress hormone released by the adrenal cortex.",
+      "refs": [
+        {
+          "name": "Cortisol",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190875",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stress",
+      "description": "the physiological response to a perceived threat or demand; acute (minutes) or chronic (weeks to months)."
+    },
+    {
+      "name": "propranolol",
+      "description": "beta-adrenergic receptor antagonist used to block noradrenergic signalling.",
+      "refs": [
+        {
+          "name": "Propranolol",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q407241",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "amisulpride",
+      "description": "dopamine D2/D3 receptor antagonist used to block dopaminergic signalling.",
+      "refs": [
+        {
+          "name": "Amisulpride",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q411548",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "nucleus accumbens",
+      "description": "ventral striatal reward region; part of the dopaminergic circuit.",
+      "refs": [
+        {
+          "name": "Nucleus_accumbens",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1189150",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "midbrain",
+      "description": "here the dopaminergic midbrain (ventral tegmental area and substantia nigra)."
+    },
+    {
+      "name": "hippocampus",
+      "description": "medial temporal lobe structure required for episodic memory.",
+      "refs": [
+        {
+          "name": "Hippocampus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q48360",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dose",
+      "description": "amount of a drug administered."
+    },
+    {
+      "name": "age",
+      "description": "time since birth."
+    },
+    {
+      "name": "year",
+      "description": "unit of time (365.25 days).",
+      "type": "measure"
+    },
+    {
+      "name": "hour",
+      "description": "unit of time (60 minutes).",
+      "type": "measure"
+    },
+    {
+      "name": "milligram",
+      "description": "unit of mass (1/1000 gram).",
+      "type": "measure"
+    },
+    {
+      "name": "percent",
+      "description": "one hundredth, scaled by 100 in formulas.",
+      "type": "measure"
+    },
+    {
+      "name": "minimum",
+      "description": "lower end of a reported range."
+    },
+    {
+      "name": "maximum",
+      "description": "upper end of a reported range."
+    },
+    {
+      "name": "confidence",
+      "description": "subjective probability (0 to 1) that a claim tagged as assumed value is true."
+    },
+    {
+      "name": "measured value",
+      "description": "a value taken from a verified source."
+    },
+    {
+      "name": "assumed value",
+      "description": "a conjecture or estimate, not directly measured; carries a confidence number."
+    }
+  ],
+  "triples": [
+    {
+      "name": "why-question is a causal question",
+      "from": "why-question",
+      "verb": "is a",
+      "to": "causal question"
+    },
+    {
+      "name": "causal question is a question",
+      "from": "causal question",
+      "verb": "is a",
+      "to": "question"
+    },
+    {
+      "name": "information-seeking question is a question",
+      "from": "information-seeking question",
+      "verb": "is a",
+      "to": "question"
+    },
+    {
+      "name": "trait curiosity is a curiosity",
+      "from": "trait curiosity",
+      "verb": "is a",
+      "to": "curiosity"
+    },
+    {
+      "name": "state curiosity is a curiosity",
+      "from": "state curiosity",
+      "verb": "is a",
+      "to": "curiosity"
+    },
+    {
+      "name": "random exploration is a exploration",
+      "from": "random exploration",
+      "verb": "is a",
+      "to": "exploration"
+    },
+    {
+      "name": "dopamine is a neuromodulator",
+      "from": "dopamine",
+      "verb": "is a",
+      "to": "neuromodulator"
+    },
+    {
+      "name": "noradrenaline is a neuromodulator",
+      "from": "noradrenaline",
+      "verb": "is a",
+      "to": "neuromodulator"
+    },
+    {
+      "name": "cortisol is a hormone",
+      "from": "cortisol",
+      "verb": "is a",
+      "to": "hormone"
+    },
+    {
+      "name": "childhood is part of life history",
+      "from": "childhood",
+      "verb": "is part of",
+      "to": "life history"
+    },
+    {
+      "name": "child question rate",
+      "from": "question rate",
+      "verb": "of",
+      "to": "child",
+      "description": "questions per hour asked by engaged preschool children at home; Chouinard 2007, four children aged 1-5 from the CHILDES corpus."
+    },
+    {
+      "name": "information-seeking question share",
+      "from": "share",
+      "verb": "of",
+      "to": "information-seeking question",
+      "description": "share of children's questions to parents that seek information rather than attention, permission or help; Chouinard 2007."
+    },
+    {
+      "name": "brain glucose use",
+      "from": "glucose use",
+      "verb": "of",
+      "to": "brain"
+    },
+    {
+      "name": "brain glucose share of resting metabolic rate",
+      "from": "brain glucose use",
+      "verb": "per",
+      "to": "resting metabolic rate",
+      "description": "brain glucose uptake expressed as share of the body's resting metabolic rate; Kuzawa et al. 2014, PET/MRI data from birth to adulthood."
+    },
+    {
+      "name": "brain glucose share of daily energy requirement",
+      "from": "brain glucose use",
+      "verb": "per",
+      "to": "daily energy requirement"
+    },
+    {
+      "name": "brain glucose use peak",
+      "from": "peak",
+      "verb": "of",
+      "to": "brain glucose use",
+      "description": "the age at which brain glucose demand is maximal; it lies in childhood, not at birth, and coincides with slowest body growth."
+    },
+    {
+      "name": "juvenile dependence duration",
+      "from": "duration",
+      "verb": "of",
+      "to": "juvenile dependence",
+      "description": "years during which hunter-gatherer offspring are energetically subsidized by adults; embodied capital model (Kaplan et al. 2000)."
+    },
+    {
+      "name": "hunting productivity peak",
+      "from": "peak",
+      "verb": "of",
+      "to": "hunting productivity",
+      "description": "age of peak hunting return; Koster et al. 2020, ~23,000 hunting records, high skill is maintained through much of adulthood."
+    },
+    {
+      "name": "propranolol dose",
+      "from": "dose",
+      "verb": "of",
+      "to": "propranolol"
+    },
+    {
+      "name": "amisulpride dose",
+      "from": "dose",
+      "verb": "of",
+      "to": "amisulpride"
+    },
+    {
+      "name": "curiosity influences memory",
+      "from": "curiosity",
+      "verb": "influences",
+      "to": "memory",
+      "description": "high state curiosity improves memory for the curiosity-target and for incidental material, immediately and after one day; associated with anticipatory activity in midbrain and nucleus accumbens and midbrain-hippocampus coupling (Gruber et al. 2014)."
+    },
+    {
+      "name": "dopamine influences curiosity",
+      "from": "dopamine",
+      "verb": "influences",
+      "to": "curiosity",
+      "description": "curiosity states engage the dopaminergic midbrain-accumbens-hippocampus circuit (Gruber et al. 2014, fMRI, correlational); Dubois et al. 2021 found no effect of the D2/D3 antagonist amisulpride on value-free random exploration, so dopamine's role is in valued, reward-anticipating curiosity rather than in cheap random sampling."
+    },
+    {
+      "name": "noradrenaline influences random exploration",
+      "from": "noradrenaline",
+      "verb": "influences",
+      "to": "random exploration",
+      "description": "40 mg propranolol attenuated value-free random exploration in a double-blind placebo-controlled bandit study; amisulpride did not (Dubois et al. 2021)."
+    },
+    {
+      "name": "cortisol influences overexploitation",
+      "from": "cortisol",
+      "verb": "influences",
+      "to": "overexploitation",
+      "description": "higher cortisol response to an acute stressor and higher chronic stress scores predicted staying too long at depleting patches in a virtual foraging task (Lenow et al. 2017)."
+    },
+    {
+      "name": "stress influences exploitation",
+      "from": "stress",
+      "verb": "influences",
+      "to": "exploitation",
+      "description": "acute and chronic stress shift foraging-like choices toward exploitation, i.e. away from sampling alternatives (Lenow et al. 2017)."
+    },
+    {
+      "name": "aging influences trait curiosity",
+      "from": "aging",
+      "verb": "influences",
+      "to": "trait curiosity",
+      "description": "trait curiosity and novelty seeking decline with age; preserved curiosity is associated with better cognitive, emotional and physical outcomes, with dopaminergic and noradrenergic mechanisms proposed (Sakaki et al. 2018)."
+    },
+    {
+      "name": "aging influences state curiosity",
+      "from": "aging",
+      "verb": "influences",
+      "to": "state curiosity",
+      "description": "state curiosity for specific trivia questions increases across adulthood while trait curiosity declines (Whatley et al. 2025), so the adult decline is not uniform across curiosity types."
+    },
+    {
+      "name": "explore-exploit trade-off influences adult question decline",
+      "from": "explore-exploit trade-off",
+      "verb": "influences",
+      "to": "adult question decline",
+      "description": "life-history explanation: the protected, adult-subsidized childhood is an evolved explore phase of broad hypothesis search; goal-directed exploitation sets in later (Gopnik 2020). Under this view the adaptation is the long childhood, not a suppression of adult questioning."
+    },
+    {
+      "name": "knowledge gap closure influences adult question decline",
+      "from": "knowledge gap closure",
+      "verb": "influences",
+      "to": "adult question decline",
+      "description": "developmental explanation: questions are triggered by gaps, ambiguities and inconsistencies in current knowledge (Chouinard 2007; Frazier et al. 2009); as knowledge structures approach adult states fewer triggers occur."
+    },
+    {
+      "name": "foraging influences adult question decline",
+      "from": "foraging",
+      "verb": "influences",
+      "to": "adult question decline",
+      "description": "the foraging-time hypothesis from the dialogue. Counter-evidence: hunter-gatherer skill and productivity keep rising until the early-to-mid 30s (Koster et al. 2020), i.e. adult learning remains adaptive for decades; the cost that selection visibly acted on is the energetic cost of the childhood brain, not adult question time."
+    },
+    {
+      "name": "prosperity influences question rate",
+      "from": "prosperity",
+      "verb": "influences",
+      "to": "question rate",
+      "description": "the prosperity hypothesis from the dialogue. Indirect support: children of lower socio-economic status ask fewer questions (Chouinard 2007 discussion; Kurkul and Corriveau 2018), and stress reduces exploration (Lenow et al. 2017); no direct cross-societal measurement of adult why-question rates was found."
+    },
+    {
+      "name": "selection pressure on adult question decline",
+      "from": "selection pressure",
+      "verb": "on",
+      "to": "adult question decline",
+      "description": "the dialogue's own assessment that direct selection against adult questioning is weak; consistent with the literature, which attributes the pattern to life-history timing and development rather than to a selected adult trait."
+    }
+  ],
+  "sources": [
+    {
+      "name": "Chouinard 2007",
+      "description": "Chouinard, M. M. (2007). Children's questions: a mechanism for cognitive development. Monographs of the Society for Research in Child Development, 72(1). DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1111/j.1540-5834.2007.00412.x"
+    },
+    {
+      "name": "Frazier 2009",
+      "description": "Frazier, B. N., Gelman, S. A., Wellman, H. M. (2009). Preschoolers' search for explanatory information within adult-child conversation. Child Development, 80(6), 1592-1611. Children aged 2-4 re-ask and supply their own explanations after non-explanatory answers. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1111/j.1467-8624.2009.01356.x"
+    },
+    {
+      "name": "Gruber 2014",
+      "description": "Gruber, M. J., Gelman, B. D., Ranganath, C. (2014). States of curiosity modulate hippocampus-dependent learning via the dopaminergic circuit. Neuron, 84(2), 486-496. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1016/j.neuron.2014.08.060"
+    },
+    {
+      "name": "Gopnik 2020",
+      "description": "Gopnik, A. (2020). Childhood as a solution to explore-exploit tensions. Philosophical Transactions of the Royal Society B, 375(1803), 20190502. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1098/rstb.2019.0502"
+    },
+    {
+      "name": "Kuzawa 2014",
+      "description": "Kuzawa, C. W. et al. (2014). Metabolic costs and evolutionary implications of human brain development. PNAS, 111(36), 13010-13015. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1073/pnas.1323099111"
+    },
+    {
+      "name": "Kaplan 2000",
+      "description": "Kaplan, H., Hill, K., Lancaster, J., Hurtado, A. M. (2000). A theory of human life history evolution: diet, intelligence, and longevity. Evolutionary Anthropology, 9(4), 156-185. Embodied capital model. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1002/1520-6505(2000)9:4<156::AID-EVAN5>3.0.CO;2-7"
+    },
+    {
+      "name": "Koster 2020",
+      "description": "Koster, J. et al. (2020). The life history of human foraging: cross-cultural and individual variation. Science Advances, 6(26), eaax9070. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1126/sciadv.aax9070"
+    },
+    {
+      "name": "Sakaki 2018",
+      "description": "Sakaki, M., Yagi, A., Murayama, K. (2018). Curiosity in old age: a possible key to achieving adaptive aging. Neuroscience and Biobehavioral Reviews, 88, 106-116. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1016/j.neubiorev.2018.03.007"
+    },
+    {
+      "name": "Whatley 2025",
+      "description": "Whatley, M. C., Murayama, K., Sakaki, M., Castel, A. D. (2025). Curiosity across the adult lifespan: age-related differences in state and trait curiosity. PLoS ONE, 20(5), e0320600. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1371/journal.pone.0320600"
+    },
+    {
+      "name": "Lenow 2017",
+      "description": "Lenow, J. K., Constantino, S. M., Daw, N. D., Phelps, E. A. (2017). Chronic and acute stress promote overexploitation in serial decision making. Journal of Neuroscience, 37(23), 5681-5689. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.1523/JNEUROSCI.3618-16.2017"
+    },
+    {
+      "name": "Dubois 2021",
+      "description": "Dubois, M., Habicht, J., Michely, J., Moran, R., Dolan, R. J., Hauser, T. U. (2021). Human complex exploration strategies are enriched by noradrenaline-modulated heuristics. eLife, 10, e59907. DOI verified 2026-08-27.",
+      "url": "https://doi.org/10.7554/eLife.59907"
+    },
+    {
+      "name": "zukunft.com dialogue 2026-08-27",
+      "description": "Conjectures and confidence numbers formulated in the dialogue between Timon and Claude on 2026-08-27; not a published source."
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "child question rate",
+        "hour",
+        "measured value"
+      ],
+      "number": "76",
+      "source": "Chouinard 2007"
+    },
+    {
+      "words": [
+        "information-seeking question share",
+        "percent",
+        "measured value"
+      ],
+      "number": "70",
+      "source": "Chouinard 2007"
+    },
+    {
+      "words": [
+        "child question rate",
+        "age",
+        "minimum",
+        "year",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "Chouinard 2007"
+    },
+    {
+      "words": [
+        "child question rate",
+        "age",
+        "maximum",
+        "year",
+        "measured value"
+      ],
+      "number": "5",
+      "source": "Chouinard 2007"
+    },
+    {
+      "words": [
+        "causal question",
+        "child",
+        "age",
+        "minimum",
+        "year",
+        "measured value"
+      ],
+      "number": "2",
+      "source": "Frazier 2009"
+    },
+    {
+      "words": [
+        "causal question",
+        "child",
+        "age",
+        "maximum",
+        "year",
+        "measured value"
+      ],
+      "number": "4",
+      "source": "Frazier 2009"
+    },
+    {
+      "words": [
+        "brain glucose share of resting metabolic rate",
+        "childhood",
+        "peak",
+        "percent",
+        "measured value"
+      ],
+      "number": "66",
+      "source": "Kuzawa 2014"
+    },
+    {
+      "words": [
+        "brain glucose share of daily energy requirement",
+        "childhood",
+        "peak",
+        "percent",
+        "measured value"
+      ],
+      "number": "43",
+      "source": "Kuzawa 2014"
+    },
+    {
+      "words": [
+        "brain glucose share of resting metabolic rate",
+        "adult",
+        "percent",
+        "measured value"
+      ],
+      "number": "20",
+      "source": "Gopnik 2020"
+    },
+    {
+      "words": [
+        "brain glucose use peak",
+        "age",
+        "year",
+        "measured value"
+      ],
+      "number": "4",
+      "source": "Gopnik 2020"
+    },
+    {
+      "words": [
+        "juvenile dependence duration",
+        "hunter-gatherer",
+        "year",
+        "measured value"
+      ],
+      "number": "20",
+      "source": "Kaplan 2000"
+    },
+    {
+      "words": [
+        "hunting productivity peak",
+        "age",
+        "minimum",
+        "year",
+        "measured value"
+      ],
+      "number": "30",
+      "source": "Koster 2020"
+    },
+    {
+      "words": [
+        "hunting productivity peak",
+        "age",
+        "maximum",
+        "year",
+        "measured value"
+      ],
+      "number": "35",
+      "source": "Koster 2020"
+    },
+    {
+      "words": [
+        "hunting record",
+        "measured value"
+      ],
+      "number": "23000",
+      "source": "Koster 2020"
+    },
+    {
+      "words": [
+        "hunting record",
+        "individual",
+        "measured value"
+      ],
+      "number": "1800",
+      "source": "Koster 2020"
+    },
+    {
+      "words": [
+        "hunting record",
+        "site",
+        "measured value"
+      ],
+      "number": "40",
+      "source": "Koster 2020"
+    },
+    {
+      "words": [
+        "propranolol dose",
+        "milligram",
+        "measured value"
+      ],
+      "number": "40",
+      "source": "Dubois 2021"
+    },
+    {
+      "words": [
+        "amisulpride dose",
+        "milligram",
+        "measured value"
+      ],
+      "number": "400",
+      "source": "Dubois 2021"
+    },
+    {
+      "words": [
+        "foraging influences adult question decline",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.15",
+      "source": "zukunft.com dialogue 2026-08-27"
+    },
+    {
+      "words": [
+        "explore-exploit trade-off influences adult question decline",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.7",
+      "source": "zukunft.com dialogue 2026-08-27"
+    },
+    {
+      "words": [
+        "knowledge gap closure influences adult question decline",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.75",
+      "source": "zukunft.com dialogue 2026-08-27"
+    },
+    {
+      "words": [
+        "prosperity influences question rate",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.5",
+      "source": "zukunft.com dialogue 2026-08-27"
+    },
+    {
+      "words": [
+        "selection pressure on adult question decline",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.8",
+      "source": "zukunft.com dialogue 2026-08-27"
+    },
+    {
+      "words": [
+        "dopamine influences curiosity",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.7",
+      "source": "zukunft.com dialogue 2026-08-27"
+    }
+  ]
+}

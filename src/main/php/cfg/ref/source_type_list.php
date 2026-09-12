@@ -40,6 +40,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -69,11 +71,11 @@ class source_type_list extends type_list
      * @param string $class the database name e.g. the table name without s
      * @return array the list of source types
      */
-    protected function load_list(sql_db $db_con, string $class): array
+    protected function load_list(sql_db $db_con, user_message $msg, string $class): array
     {
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp, 'source type list');
+        $db_lst = $db_con->get($qp, $msg, 'source type list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_code_id = strval($db_entry[fields::FLD_CODE_ID]);
@@ -135,7 +137,7 @@ function get_source_type(string $code_id): ?source_type
 {
     global $sys;
     $id = $sys->typ_lst->src_typ->id($code_id);
-    return $sys->typ_lst->src_typ->get_by_id($id);
+    return $sys->typ_lst->src_typ->get($id);
 }
 
 function get_source_type_id(string $code_id): int
@@ -147,5 +149,5 @@ function get_source_type_id(string $code_id): int
 function get_source_type_by_id(string $id): source_type
 {
     global $sys;
-    return $sys->typ_lst->src_typ->get_by_id($id);
+    return $sys->typ_lst->src_typ->get($id);
 }

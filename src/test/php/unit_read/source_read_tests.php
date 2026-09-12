@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_ENUM . 'source_types.php';
 
@@ -52,6 +53,7 @@ class source_read_tests
 
         global $sys;
         global $db_con;
+        $msg = new user_message();
 
         // init
         $lib = new library();
@@ -70,7 +72,7 @@ class source_read_tests
 
         $t->subheader($ts . 'types');
         $lst = new source_type_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert('load_source_types', $result, true);
         $test_name = '... and check if at least ' . source_types::XBRL . ' is loaded';
         $t->assert($test_name, $sys->typ_lst->src_typ->id(source_types::XBRL), source_types::XBRL_ID);
@@ -78,7 +80,7 @@ class source_read_tests
         $t->subheader($ts . 'list');
         $test_name = 'loading by source list by ids ';
         $src_lst = new source_list($t->usr1);
-        $src_lst->load_by_ids([sources::WIKIDATA_ID]);
+        $src_lst->load_by_ids([sources::WIKIDATA_ID], $msg);
         $t->assert($test_name . $src_lst->dsp_id(), $src_lst->name(), '"' . sources::WIKIDATA . '"');
 
         $test_name = 'loading the api message creation of the api index file for ';
@@ -91,7 +93,7 @@ class source_read_tests
         $test_name = 'loading by source list by pattern ';
         $src_lst = new source_list($t->usr1);
         $pattern = substr(sources::WIKIDATA, 0, -1);
-        $src_lst->load_like($pattern);
+        $src_lst->load_like($pattern, $msg);
         $t->assert_contains($test_name, $src_lst->names(), sources::WIKIDATA);
 
     }

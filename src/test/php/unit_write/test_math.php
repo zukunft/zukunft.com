@@ -31,6 +31,7 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -38,8 +39,8 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_math_test(all_tests $t): void
 {
+        $msg = new user_message();
 
-    global $usr;
 
     // init
     $t_db = new test_db_load($t);
@@ -106,12 +107,12 @@ function run_math_test(all_tests $t): void
     $t->assert(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $result, $target);
     */
 
-    $time_phr = $t_db->load_phrase(word_names::YEAR_2020);
+    $time_phr = $t_db->load_phrase(word_names::YEAR_2020, $msg);
 
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";
-    $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word_names::ABB, word_names::SALES, word_names::MIO));
+    $wrd_lst = new word_list($t->usr1);
+    $wrd_lst->load_by_names(array(word_names::ABB, word_names::SALES, word_names::MIO), $msg);
     $target = 1;
     $result = $calc->is_math_symbol_or_num($formula_part_text);
     $t->assert(", zuc_is_math_symbol_or_num: the result for formula \"" . $formula_part_text . "\"", $result, $target);
@@ -160,8 +161,8 @@ function run_math_test(all_tests $t): void
     */
     /*
     $frm_id = 31;
-    $frm_text = zuf_text($frm_id, $usr->id());
-    zuf_element_refresh($frm_id, $frm_text, $usr->id(), 20);
+    $frm_text = zuf_text($frm_id, $t->usr1->id());
+    zuf_element_refresh($frm_id, $frm_text, $t->usr1->id(), 20);
     */
 
 

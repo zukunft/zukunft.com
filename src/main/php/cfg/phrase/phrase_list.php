@@ -140,6 +140,10 @@ class phrase_list extends sandbox_list_named
     // so a normal 0 to n order could have more advantages)
     // $usr of sandbox list is the user object of the person for whom the phrase list is loaded, so to say the viewer
 
+    // the maximum number of link levels that load_by_phr_levels follows, because the level is
+    // requested by the url and each level multiplies the number of database reads
+    const int MAX_LINK_LEVELS = 3;
+
 
     /*
      * construct and map
@@ -150,30 +154,31 @@ class phrase_list extends sandbox_list_named
      * actually just set the phrase object for the parent function
      *
      * @param array|null $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one phrase has been added
      */
-    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(?array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new phrase($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new phrase($this->get_user()), $db_rows, $msg, $load_all);
     }
 
     /**
      * map a phrase list api json to this model phrase list object
      * @param array $api_json the api array with the phrases that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         foreach ($api_json as $json_phr) {
             $phr = new phrase($this->get_user());
-            if ($phr->api_mapper($json_phr, $usr_msg)) {
+            if ($phr->api_mapper($json_phr, $msg)) {
                 $this->add($phr);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -201,7 +206,7 @@ class phrase_list extends sandbox_list_named
                 $msg->add(msg_id::PHRASE_NAME_EMPTY, [msg_id::VAR_VALUE_LIST => implode(',', $json_obj)]);
             } else {
                 if ($msg->is_ok()) {
-                    $phr = $phr_lst->get_by_name($phr_name);
+                    $phr = $phr_lst->get_by_name($phr_name, $msg);
                     if ($phr == null) {
                         // TODO Prio 3 check if in some cases a warning message might be useful
                         // $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
@@ -234,13 +239,13 @@ class phrase_list extends sandbox_list_named
      * @param string $pattern to select the phrases
      * @return bool true if at least one phrase has been loaded
      */
-    function load_like(string $pattern): bool
+    function load_like(string $pattern, user_message $msg): bool
     {
         global $db_con;
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_like($sc, $pattern);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -252,7 +257,7 @@ class phrase_list extends sandbox_list_named
      * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
+    function load_by_ids(phr_ids $ids, user_message $msg, ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
 
@@ -267,7 +272,7 @@ class phrase_list extends sandbox_list_named
         // create the sql and load
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_ids($sc, $ids_to_load);
-        $result = $this->load($qp);
+        $result = $this->load($qp, $msg);
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
             if (!$phr_lst_to_add->is_empty()) {
@@ -432,7 +437,7 @@ class phrase_list extends sandbox_list_named
      * @param phrase_list|null $phr_lst list of the phrases already loaded to reduce traffic
      * @return bool true if at least one phrase has been loaded
      */
-    function load_names_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
+    function load_names_by_ids(phr_ids $ids, user_message $msg, ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
         if ($phr_lst != null) {
@@ -442,7 +447,7 @@ class phrase_list extends sandbox_list_named
             $ids_to_load = $ids;
         }
         $qp = $this->load_names_sql_by_ids($db_con->sql_creator(), $ids_to_load);
-        $result = $this->load($qp);
+        $result = $this->load($qp, $msg);
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
             if (!$phr_lst_to_add->is_empty()) {
@@ -460,9 +465,9 @@ class phrase_list extends sandbox_list_named
      * @param int $offset jump over these number of pages
      * @return bool true if at least one phrase found
      */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    function load_names(string $pattern, user_message $msg, int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new phrase($this->get_user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new phrase($this->get_user()), $pattern, $msg, $limit, $offset);
     }
 
 
@@ -546,12 +551,12 @@ class phrase_list extends sandbox_list_named
      * TODO replace it with the phrase list save function
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @return bool true if everything was fine
      */
     function import_lst(
         array        $json_obj,
-        user_message $usr_msg
+        user_message $msg
     ): bool
     {
         global $sys;
@@ -560,32 +565,32 @@ class phrase_list extends sandbox_list_named
         foreach ($json_obj as $phr_name) {
             if ($phr_name != '') {
                 $phr = new phrase($this->get_user());
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     if ($db_con->is_open()) {
                         // TODO prevent that this happens at all
                         if (is_array($phr_name)) {
                             $lib = new library();
-                            log_err($lib->dsp_array($phr_name) . ' is expected to be a string');
+                            log_err_msg($lib->dsp_array($phr_name) . ' is expected to be a string', $msg);
                             // TODO remove this fallback solution
                             if (count($phr_name) == 1) {
                                 $phr_name = $phr_name[0];
                             }
                         }
                         if (!is_array($phr_name)) {
-                            $phr->load_by_name($phr_name);
+                            $phr->load_by_name($phr_name, $msg);
                             if ($phr->id() == 0) {
                                 // for new phrase use the word object
                                 // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
                                 //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
                                 $wrd = new word($this->get_user());
-                                $wrd->load_by_name($phr_name);
+                                $wrd->load_by_name($phr_name, $msg);
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
                                     $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
-                                    $wrd->save($usr_msg);
+                                    $wrd->save($msg);
                                 }
                                 if ($wrd->id() == 0) {
-                                    log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                                    log_err_msg('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), $msg);
                                 } else {
                                     $phr = $wrd->phrase();
                                 }
@@ -603,98 +608,103 @@ class phrase_list extends sandbox_list_named
 
         // save the word in the database
         // TODO check why this is needed
-        if ($usr_msg->is_ok() and $db_con->is_open()) {
-            $this->save($usr_msg);
+        if ($msg->is_ok() and $db_con->is_open()) {
+            $this->save($msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $msg to report an entry of the json array that names no phrase
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if every entry of the json array names a phrase
      */
-    function import_map_names(array $json_obj, ?data_object $dto = null): user_message
+    function import_map_names(array $json_obj, user_message $msg, ?data_object $dto = null): bool
     {
-        $msg = new user_message();
+        $result = true;
         foreach ($json_obj as $word_name) {
-            $phr = null;
-            $phr = $dto?->get_phrase_by_name($word_name);
+            $phr = $dto?->get_phrase_by_name($word_name, $msg);
             if ($phr == null and $word_name != '') {
                 $wrd = new word($this->get_user());
                 $wrd->set_name($word_name);
                 $phr = $wrd->phrase();
             }
             if ($phr == null) {
-                $msg->add(msg_id::IMPORT_SOURCE_NOT_FOUND, [
-
+                $msg->add(msg_id::IMPORT_PHRASE_NAME_EMPTY, [
+                    msg_id::VAR_JSON_PART => library::dsp_array($json_obj)
                 ]);
+                $result = false;
             } else {
-                $this->add($phr);
+                // by name, because an import assigns phrases before they have an id and the id
+                // keyed add would keep only the first of them (docs/llm/architecture.md)
+                $this->add_by_name_direct($phr, $msg);
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
-     * import a word list object from a JSON array object
+     * import a word list object from a JSON array object and save it to the database
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $msg to report an entry that names no phrase or a phrase that cannot be saved
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if every entry of the json array names a phrase and the list has been saved
      */
-    function import_names(array $json_obj, ?data_object $dto = null): user_message
+    function import_names(array $json_obj, user_message $msg, ?data_object $dto = null): bool
     {
-        $usr_msg = $this->import_map_names($json_obj, $dto);
-        $this->save($usr_msg);
+        $mapped = $this->import_map_names($json_obj, $msg, $dto);
+        $saved = $this->save($msg);
 
-        return $usr_msg;
+        return $mapped and $saved;
     }
 
     /**
      * fill this list with the phrases of the given json without writing to the database
      * @param array $json_array
-     * @param user_message $usr_msg to collect the message and including the requesting user
+     * @param user_message $msg to collect the message and including the requesting user
      * @return bool true if the import context has been mapped
      */
-    function import_context(array $json_array, user_message $usr_msg): bool
+    function import_context(array $json_array, user_message $msg): bool
     {
         foreach ($json_array as $key => $json_obj) {
             if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
-                    $wrd = new word($usr_msg->usr);
-                    if ($wrd->import_mapper($word, $usr_msg)) {
+                    $wrd = new word($msg->usr);
+                    if ($wrd->import_mapper($word, $msg)) {
                         $this->add_by_key($wrd->phrase());
                     }
                 }
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
-                    $trp = new triple($usr_msg->usr);
-                    if ($trp->import_mapper($triple, $usr_msg)) {
+                    $trp = new triple($msg->usr);
+                    if ($trp->import_mapper($triple, $msg)) {
                         $this->add_by_key($trp->phrase());
                     }
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * create an array with the export json phrases
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $phr_lst = [];
 
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class or get_class($phr) == triple::class) {
-                $phr_lst[] = $phr->export_json($exp_typ, $do_load);
+                $phr_lst[] = $phr->export_json($msg, $exp_typ, $do_load);
             } else {
                 log_err('The function phrase_list->export_json returns ' . $phr->dsp_id() . ', which is ' . get_class($phr) . ', but not a word.', 'export->get');
             }
@@ -768,7 +778,12 @@ class phrase_list extends sandbox_list_named
      * @return phrase_list the accumulated list of added phrases
      */
     private function foaf_level(
-        int $level, phrase_list $added_phr_lst, ?verb $vrb, foaf_direction $direction, int $max_level
+        int            $level,
+        phrase_list    $added_phr_lst,
+        ?verb          $vrb,
+        foaf_direction $direction,
+        int            $max_level,
+        user_message   $msg
     ): phrase_list
     {
         // use the default max search level if nothing is given
@@ -794,7 +809,7 @@ class phrase_list extends sandbox_list_named
                 // to not include the direct linked "parents" because they are not real parents
                 if ($direction == foaf_direction::DOWN) {
                     // load the linking triples but only if the verb suggest it
-                    $additional_added_triples = $accumulated_list->load_linking_triples($vrb, $direction);
+                    $additional_added_triples = $accumulated_list->load_linking_triples($vrb, $direction, $msg);
                     // get the phrases not added before
                     $additional_added_triples->remove($added_phr_lst);
                     // remember the added phrases
@@ -803,21 +818,24 @@ class phrase_list extends sandbox_list_named
 
                 if ($direction == foaf_direction::BOTH) {
                     // load all linked up phrases
-                    $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, foaf_direction::UP);
+                    $additional_added_phrases = $accumulated_list->load_linked_phrases(
+                        $vrb, foaf_direction::UP, $msg);
                     // get the phrases not added before
                     $additional_added_phrases->remove($added_phr_lst);
                     // remember the added phrases
                     $added_phr_lst->merge($additional_added_phrases);
 
                     // load all linked down phrases
-                    $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, foaf_direction::DOWN);
+                    $additional_added_phrases = $accumulated_list->load_linked_phrases(
+                        $vrb, foaf_direction::DOWN, $msg);
                     // get the phrases not added before
                     $additional_added_phrases->remove($added_phr_lst);
                     // remember the added phrases
                     $added_phr_lst->merge($additional_added_phrases);
                 } else {
                     // load all linked phrases
-                    $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, $direction);
+                    $additional_added_phrases = $accumulated_list->load_linked_phrases(
+                        $vrb, $direction, $msg);
                     // get the phrases not added before
                     $additional_added_phrases->remove($added_phr_lst);
                     // remember the added phrases
@@ -845,9 +863,10 @@ class phrase_list extends sandbox_list_named
      *
      * @param verb|null $vrb if set to filter the children by the relation type
      * @param foaf_direction $direction to define the link direction
+     * @param user_message $msg to collect the load warnings for the user
      * @return phrase_list with only the new added phrases
      */
-    function load_linked_phrases(?verb $vrb, foaf_direction $direction): phrase_list
+    function load_linked_phrases(?verb $vrb, foaf_direction $direction, user_message $msg): phrase_list
     {
 
         global $db_con;
@@ -859,7 +878,7 @@ class phrase_list extends sandbox_list_named
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {
             $db_con->usr_id = $this->get_user()->id;
-            $db_phr_lst = $db_con->get($qp, 'phrase list');
+            $db_phr_lst = $db_con->get($qp, $msg, 'phrase list');
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
@@ -867,7 +886,7 @@ class phrase_list extends sandbox_list_named
                         // add the phrase linked by the triple
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
                             $new_phrase = new phrase($this->get_user());
-                            $new_phrase->row_mapper_sandbox($db_phr);
+                            $new_phrase->row_mapper_sandbox($db_phr, $msg);
                             $additional_added->add($new_phrase);
                             log_debug('added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb_db::FLD_ID] . ')');
                         }
@@ -887,10 +906,10 @@ class phrase_list extends sandbox_list_named
      * @param foaf_direction $direction to define the link direction
      * @return phrase_list with only the new added phrases
      */
-    function load_linking_triples(?verb $vrb, foaf_direction $direction): phrase_list
+    function load_linking_triples(?verb $vrb, foaf_direction $direction, user_message $msg): phrase_list
     {
         $trp_lst = new triple_list($this->get_user());
-        $trp_lst->load_by_phr_lst($this, $vrb, $direction);
+        $trp_lst->load_by_phr_lst($this, $msg, $vrb, $direction);
         return $trp_lst->phrase_list();
     }
 
@@ -901,11 +920,11 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb if not null the verbs to filter the parents
      * @param int $level is the number of levels that should be looked into and 0 (zero) loads unlimited levels
      */
-    function parents(?verb $vrb = null, int $level = 0): phrase_list
+    function parents(user_message $msg, ?verb $vrb = null, int $level = 0): phrase_list
     {
         log_debug($vrb->dsp_id());
-        $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->parents($vrb, $level);
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $added_wrd_lst = $wrd_lst->parents($vrb, $msg, $level);
         $added_phr_lst = $added_wrd_lst->phrase_list();
 
         log_debug($added_phr_lst->name());
@@ -919,10 +938,10 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb if set to filter the children by the relation type
      * @returns phrase_list the accumulated list of added words
      */
-    function all_children(?verb $vrb): phrase_list
+    function all_children(?verb $vrb, user_message $msg): phrase_list
     {
-        $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->children($vrb);
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $added_wrd_lst = $wrd_lst->children($vrb, $msg);
         $added_phr_lst = $added_wrd_lst->phrase_list();
 
         log_debug($added_phr_lst->name());
@@ -938,9 +957,13 @@ class phrase_list extends sandbox_list_named
      * @param int $max_level to limit the search depth
      * @return phrase_list with all phrases "below" the original list
      */
-    function foaf_children(?verb $vrb = null, int $max_level = 0): phrase_list
+    function foaf_children(
+        user_message $msg,
+        ?verb $vrb = null,
+        int $max_level = 0
+    ): phrase_list
     {
-        return $this->foaf(foaf_direction::DOWN, $vrb, $max_level);
+        return $this->foaf(foaf_direction::DOWN, $msg, $vrb, $max_level);
     }
 
     /**
@@ -951,9 +974,13 @@ class phrase_list extends sandbox_list_named
      * @param int $max_level to limit the search depth
      * @returns array a list of phrases, that characterises the given phrase
      */
-    function foaf_parents(?verb $vrb = null, int $max_level = 0): phrase_list
+    function foaf_parents(
+        user_message $msg,
+        ?verb $vrb = null,
+        int $max_level = 0
+    ): phrase_list
     {
-        return $this->foaf(foaf_direction::UP, $vrb, $max_level);
+        return $this->foaf(foaf_direction::UP, $msg, $vrb, $max_level);
     }
 
     /**
@@ -964,9 +991,13 @@ class phrase_list extends sandbox_list_named
      * @param int $max_level to limit the search depth
      * @returns array a list of phrases, that characterises the given phrase
      */
-    function foaf_related(?verb $vrb = null, int $max_level = 1): phrase_list
+    function foaf_related(
+        user_message $msg,
+        ?verb $vrb = null,
+        int $max_level = 1
+    ): phrase_list
     {
-        return $this->foaf(foaf_direction::BOTH, $vrb, $max_level);
+        return $this->foaf(foaf_direction::BOTH, $msg, $vrb, $max_level);
     }
 
     /**
@@ -981,12 +1012,17 @@ class phrase_list extends sandbox_list_named
      * @param int $max_level to limit the search depth
      * @return phrase_list with all phrases "below" the original list
      */
-    private function foaf(foaf_direction $direction, ?verb $vrb = null, int $max_level = 0): phrase_list
+    private function foaf(
+        foaf_direction $direction,
+        user_message   $msg,
+        ?verb          $vrb = null,
+        int            $max_level = 0
+    ): phrase_list
     {
         $level = 0;
         $added_phr_lst = new phrase_list($this->get_user()); // list of the added phrases
         $added_phr_lst = $this->foaf_level(
-            $level, $added_phr_lst, $vrb, $direction, $max_level
+            $level, $added_phr_lst, $vrb, $direction, $max_level, $msg
         );
 
         log_debug($added_phr_lst->name());
@@ -1000,10 +1036,10 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb if set to filter the children by the relation type
      * @return phrase_list the phrase list of the direct children without th original list
      */
-    function direct_children(?verb $vrb = null): phrase_list
+    function direct_children(user_message $msg, ?verb $vrb = null): phrase_list
     {
-        $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->direct_children($vrb);
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $added_wrd_lst = $wrd_lst->direct_children($vrb, $msg);
         $added_phr_lst = $added_wrd_lst->phrase_list();
 
         log_debug($added_phr_lst->dsp_id());
@@ -1014,12 +1050,75 @@ class phrase_list extends sandbox_list_named
      * @return phrase_list list of phrases that are related to this phrase list
      * e.g. for "ABB" and "Daimler" it will return "company" (but not "ABB"???)
      */
-    function is(): phrase_list
+    function is(user_message $msg): phrase_list
     {
         global $sys;
-        $phr_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
+        $phr_lst = $this->foaf_parents($msg, $sys->verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
+    }
+
+    /**
+     * the categories of the phrases of this list e.g. "mathematical constant" for "Pi (math)"
+     *
+     * a word is linked to its category by an 'is a' triple, so is() finds the category by
+     * following the links up from the word; a triple with the verb 'is a' is itself that link,
+     * and nothing links away from it, so its category is the phrase it points to: "Pi (math)"
+     * is "Pi is a mathematical constant" and is() alone returns nothing for it
+     *
+     * the phrase of a group carries the object id only, so the verb and the target of a triple
+     * are read from the database here before they can be used
+     *
+     * @param user_message $msg to collect the problems while reading the triples
+     * @return phrase_list the categories of the phrases of this list without duplicates
+     */
+    function categories(user_message $msg): phrase_list
+    {
+        $cat_lst = $this->is($msg);
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                // is_triple() answers by the class of the object or by the sign of the phrase id,
+                // whereas id_obj() needs the object, so without it the triple with the id zero
+                // would be read here and the category would be missing without any message
+                $trp_id = $phr->id_obj();
+                if ($trp_id == 0) {
+                    log_err_msg('the triple of ' . $phr->dsp_id()
+                        . ' is not loaded, so its category cannot be read', $msg);
+                } else {
+                    $trp = new triple($this->get_user());
+                    $trp->load_by_id($trp_id, $msg);
+                    if ($trp->get_verb_code_id() == verbs::IS) {
+                        $cat_lst->add($trp->get_to());
+                    }
+                }
+            }
+        }
+        log_debug($this->dsp_id() . ' is a ' . $cat_lst->dsp_name());
+        return $cat_lst;
+    }
+
+    /**
+     * the members of the categories of this list e.g. "Pi (math)" and "𝑒 (math)" for
+     * "mathematical constant", so the counterpart of categories()
+     *
+     * a member is linked to its category by an 'is a' triple and a value of the member is keyed
+     * by that triple (the pi value by "Pi (math)"), so the linking triples are returned and not
+     * the linked words: are() dissolves a category triple into its words first (see wrd_lst_all)
+     * and returns the words below them, so it can never return the phrases that carry the values
+     *
+     * the list itself is kept, so a value assigned to the category is a member too
+     *
+     * @param user_message $msg to collect the problems while reading the triples
+     * @return phrase_list the linking triples of the categories and the categories themselves
+     */
+    function category_members(user_message $msg): phrase_list
+    {
+        global $sys;
+
+        $mbr_lst = $this->load_linking_triples($sys->verb(verbs::IS), foaf_direction::DOWN, $msg);
+        $mbr_lst->merge($this);
+        log_debug($this->dsp_id() . ' are ' . $mbr_lst->dsp_name());
+        return $mbr_lst;
     }
 
     /**
@@ -1028,11 +1127,11 @@ class phrase_list extends sandbox_list_named
      *
      * @return phrase_list a list of phrases that are related to this phrase list
      */
-    function are(): phrase_list
+    function are(user_message $msg): phrase_list
     {
         global $sys;
         log_debug($this->dsp_id());
-        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::IS));
+        $phr_lst = $this->all_children($sys->verb(verbs::IS), $msg);
         log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -1042,10 +1141,10 @@ class phrase_list extends sandbox_list_named
     /**
      * @returns phrase_list a list of phrases that are related to this phrase list
      */
-    function contains(): phrase_list
+    function contains(user_message $msg): phrase_list
     {
         global $sys;
-        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
+        $phr_lst = $this->all_children($sys->verb(verbs::PART_NAME), $msg);
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1083,14 +1182,15 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to report a phrase that is in the list twice
      * @return phrase_list with all phrases that does not yet have a database id
      */
-    function missing_ids(): phrase_list
+    function missing_ids(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->id() == 0) {
-                $phr_lst->add_by_key($phr);
+                $phr_lst->add_by_key($phr, false, $msg);
             }
         }
         return $phr_lst;
@@ -1262,14 +1362,14 @@ class phrase_list extends sandbox_list_named
      * makes sure that all combinations of "are" and "contains" are included
      * @return phrase_list with the additional are and contains phrases
      */
-    function are_and_contains(): phrase_list
+    function are_and_contains(user_message $msg): phrase_list
     {
         log_debug('phrase_list->are_and_contains for ' . $this->dsp_id());
 
         // this first time get all related items
         $phr_lst = clone $this;
-        $phr_lst = $phr_lst->are();
-        $phr_lst = $phr_lst->contains();
+        $phr_lst = $phr_lst->are($msg);
+        $phr_lst = $phr_lst->contains($msg);
         $added_lst = clone $phr_lst;
         $added_lst->remove($this);
         // ... and after that get only for the new
@@ -1278,8 +1378,8 @@ class phrase_list extends sandbox_list_named
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
                 $next_lst = clone $added_lst;
-                $next_lst = $next_lst->are();
-                $added_lst = $next_lst->contains();
+                $next_lst = $next_lst->are($msg);
+                $added_lst = $next_lst->contains($msg);
                 $added_lst->remove($phr_lst);
                 if ($added_lst->count() > 0) {
                     log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
@@ -1295,11 +1395,11 @@ class phrase_list extends sandbox_list_named
     /**
      * add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
      */
-    function differentiators(): phrase_list
+    function differentiators(user_message $msg): phrase_list
     {
         global $sys;
         log_debug('for ' . $this->dsp_id());
-        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
+        $phr_lst = $this->all_children($sys->verb(verbs::CAN_CONTAIN), $msg);
         log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -1309,23 +1409,23 @@ class phrase_list extends sandbox_list_named
     /**
      * same as differentiators, but including the subtypes e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
      */
-    function differentiators_all(): phrase_list
+    function differentiators_all(user_message $msg): phrase_list
     {
         global $sys;
         log_debug('for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
-        $phr_lst = $phr_lst->are();
-        $added_lst = $phr_lst->contains();
+        $phr_lst = $this->all_children($sys->verb(verbs::CAN_CONTAIN), $msg);
+        $phr_lst = $phr_lst->are($msg);
+        $added_lst = $phr_lst->contains($msg);
         $added_lst->remove($this);
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
-                $next_lst = $next_lst->are();
-                $added_lst = $next_lst->contains();
+                $next_lst = $added_lst->all_children($sys->verb(verbs::CAN_CONTAIN), $msg);
+                $next_lst = $next_lst->are($msg);
+                $added_lst = $next_lst->contains($msg);
                 $added_lst->remove($phr_lst);
                 if ($added_lst->count() > 0) {
                     log_debug('add ' . $added_lst->name() . ' to ' . $phr_lst->name());
@@ -1341,10 +1441,10 @@ class phrase_list extends sandbox_list_named
     /**
      * similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
      */
-    function differentiators_filtered($filter_lst): phrase_list
+    function differentiators_filtered(phrase_list $filter_lst, user_message $msg): phrase_list
     {
         log_debug('for ' . $this->dsp_id());
-        $result = $this->differentiators_all();
+        $result = $this->differentiators_all($msg);
         $result = $result->del_list($filter_lst);
         log_debug($result->dsp_id());
         return $result;
@@ -1481,14 +1581,14 @@ class phrase_list extends sandbox_list_named
     /**
      * add one phrase to the phrase list defined by the phrase name
      */
-    function add_name($phr_name_to_add): void
+    function add_name(string $phr_name_to_add, user_message $msg): void
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
         if (is_null($this->get_user()->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
             $phr_to_add = new phrase($this->get_user());
-            $phr_to_add->load_by_name($phr_name_to_add);
+            $phr_to_add->load_by_name($phr_name_to_add, $msg);
 
             if ($phr_to_add->id() <> 0) {
                 $this->add($phr_to_add);
@@ -1503,14 +1603,14 @@ class phrase_list extends sandbox_list_named
      * del one phrase to the phrase list, but only if it is not yet part of the phrase list
      * @param phrase $phr_to_del the phrase that should be removed from the list
      */
-    function del(phrase $phr_to_del): void
+    function del(phrase $phr_to_del, user_message $msg): void
     {
         log_debug($phr_to_del->dsp_id());
         $phr_ids = $this->id_lst();
         if (count($phr_ids) > 0) {
             if (in_array($phr_to_del->id(), $phr_ids)) {
                 $del_pos = array_search($phr_to_del->id(), $phr_ids);
-                if ($this->get_by_key($del_pos)->id() == $phr_to_del->id()) {
+                if ($this->get_by_key($del_pos, $msg)->id() == $phr_to_del->id()) {
                     unset($this->lst()[$del_pos]);
                 } else {
                     log_err('Remove of ' . $phr_to_del->dsp_id() . ' failed');
@@ -1673,6 +1773,24 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * remove the phrases of the given term list from this list object
+     *
+     * e.g. for "2014", "2015", "2016", "2017"
+     * and delete list of "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * the term ids cannot be compared directly with the phrase ids, because a term
+     * uses a different id encoding than a phrase (e.g. word id 2 is term id 3 but
+     * phrase id 2), so the term list is cast to a phrase list before the diff
+     *
+     * @param term_list $del_lst is the list of terms whose phrases should be removed from this list object
+     */
+    function remove_terms(term_list $del_lst): void
+    {
+        $this->remove($del_lst->phrase_list());
+    }
+
+    /**
      * same as diff but sometimes this name looks better
      */
     function not_in(phrase_list $del_phr_lst): void
@@ -1748,7 +1866,7 @@ class phrase_list extends sandbox_list_named
     /**
      * @return bool true if a phrase lst contains a time phrase
      */
-    function has_time(): bool
+    function has_time(user_message $msg): bool
     {
         $result = false;
         $lib = new library();
@@ -1756,7 +1874,7 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $phr) {
             log_debug('check (' . $phr->name() . ')');
             if ($result == false) {
-                if ($phr->is_time()) {
+                if ($phr->is_time($msg)) {
                     $result = true;
                 }
             }
@@ -1768,7 +1886,7 @@ class phrase_list extends sandbox_list_named
     /**
      * @return bool true if a phrase lst contains a measure phrase
      */
-    function has_measure(): bool
+    function has_measure(user_message $msg): bool
     {
         log_debug('for ' . $this->dsp_id());
         $result = false;
@@ -1777,7 +1895,7 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $phr) {
             log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
-                if ($phr->is_measure()) {
+                if ($phr->is_measure($msg)) {
                     $result = true;
                 }
             }
@@ -1809,7 +1927,7 @@ class phrase_list extends sandbox_list_named
     /**
      * @return bool true if a phrase lst contains a percent scaling phrase, which is used for a predefined formatting of the value
      */
-    function has_percent(): bool
+    function has_percent(user_message $msg): bool
     {
         $result = false;
         $lib = new library();
@@ -1819,7 +1937,7 @@ class phrase_list extends sandbox_list_named
             $phr->set_user($this->get_user());
             log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
-                if ($phr->is_percent()) {
+                if ($phr->is_percent($msg)) {
                     $result = true;
                 }
             }
@@ -1833,7 +1951,7 @@ class phrase_list extends sandbox_list_named
      * TODO to be replaced by time_lst
      * @return array of time phrases
      */
-    function time_lst_old(): array
+    function time_lst_old(user_message $msg): array
     {
         global $sys;
 
@@ -1843,7 +1961,7 @@ class phrase_list extends sandbox_list_named
         $time_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
-            if ($phr->type_id() == $time_type) {
+            if ($phr->type_id($msg) == $time_type) {
                 $result[] = $phr;
             }
         }
@@ -1855,19 +1973,19 @@ class phrase_list extends sandbox_list_named
      * TODO use a phrase list instead of a word list because the same word can be of type time and id
      * @return word_list the list object of the time words (not the time phrases!)
      */
-    function time_word_list(): word_list
+    function time_word_list(user_message $msg): word_list
     {
-        $wrd_lst = $this->wrd_lst_all();
-        $result = $wrd_lst->time_lst();
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $result = $wrd_lst->time_lst($msg);
         $result->set_user($this->get_user());
         return $result;
     }
 
-    function time_list(): phrase_list
+    function time_list(user_message $msg): phrase_list
     {
         $lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
-            if ($phr->is_time()) {
+            if ($phr->is_time($msg)) {
                 $lst->add($phr);
             }
         }
@@ -1901,20 +2019,20 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase with the most useful time phrase
      */
-    function time_useful(): ?phrase
+    function time_useful(user_message $msg): ?phrase
     {
         log_debug('phrase_list->time_useful for ' . $this->dsp_name());
 
         $result = null;
 
-        $wrd_lst = $this->wrd_lst_all();
-        $time_wrds = $wrd_lst->time_lst();
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $time_wrds = $wrd_lst->time_lst($msg);
         log_debug('phrase_list->time_useful times ');
         log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids()));
         foreach ($time_wrds->ids() as $time_id) {
             if (is_null($result)) {
                 $time_wrd = new word($this->get_user());
-                $time_wrd->load_by_id($time_id);
+                $time_wrd->load_by_id($time_id, $msg);
                 // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned
                 $result = $time_wrd->phrase();
             } else {
@@ -1949,11 +2067,11 @@ class phrase_list extends sandbox_list_named
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null with the most useful time phrase
      */
-    function assume_time(?term_list $trm_lst = null): ?phrase
+    function assume_time(user_message $msg, ?term_list $trm_lst = null): ?phrase
     {
         $time_phr = null;
-        $wrd_lst = $this->wrd_lst_all();
-        $time_wrd = $wrd_lst->assume_time($trm_lst);
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $time_wrd = $wrd_lst->assume_time($msg, $trm_lst);
         if ($time_wrd != null) {
             $time_phr = $time_wrd;
         }
@@ -1964,7 +2082,7 @@ class phrase_list extends sandbox_list_named
      * filter the measure phrases out of the list of phrases
      * @return phrase_list with the measure phrases
      */
-    function measure_lst(): phrase_list
+    function measure_lst(user_message $msg): phrase_list
     {
         global $sys;
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
@@ -1978,11 +2096,11 @@ class phrase_list extends sandbox_list_named
                 log_warning('The phrase list contains ' . $this->dsp_id() . ' of type ' . get_class($phr) . ', which is not supposed to be in the list.', 'phrase_list->measure_lst');
                 log_debug('phrase_list->measure_lst contains object ' . get_class($phr) . ', which is not a phrase');
             } else {
-                if ($phr->type_id() == $measure_type) {
+                if ($phr->type_id($msg) == $measure_type) {
                     $result->add($phr);
                     log_debug('found (' . $phr->name() . ')');
                 } else {
-                    log_debug($phr->name() . ' has type id ' . $phr->type_id() . ', which is not the measure type id ' . $measure_type);
+                    log_debug($phr->name() . ' has type id ' . $phr->type_id($msg) . ', which is not the measure type id ' . $measure_type);
                 }
             }
         }
@@ -2016,10 +2134,10 @@ class phrase_list extends sandbox_list_named
     /**
      * Exclude all time phrases out of the list of phrases
      */
-    function ex_time(): void
+    function ex_time(user_message $msg): void
     {
         log_debug($this->dsp_id());
-        $del_wrd_lst = $this->time_word_list();
+        $del_wrd_lst = $this->time_word_list($msg);
         $del_phr_lst = $del_wrd_lst->phrase_list();
         $this->remove($del_phr_lst);
     }
@@ -2027,9 +2145,9 @@ class phrase_list extends sandbox_list_named
     /**
      * Exclude all measure phrases out of the list of phrases
      */
-    function ex_measure(): void
+    function ex_measure(user_message $msg): void
     {
-        $del_phr_lst = $this->measure_lst();
+        $del_phr_lst = $this->measure_lst($msg);
         $this->remove($del_phr_lst);
         log_debug($this->dsp_name() . ' (exclude measure ' . $del_phr_lst->dsp_name() . ')');
     }
@@ -2050,7 +2168,7 @@ class phrase_list extends sandbox_list_named
      * TODO Prio 1 check if a unit test exists
      * @return array list with the phrases (not a phrase list object!) sorted by name
      */
-    function name_sort(): array
+    function name_sort(user_message $msg): array
     {
         log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
         $lib = new library();
@@ -2066,7 +2184,7 @@ class phrase_list extends sandbox_list_named
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_key) {
             log_debug('get ' . $sorted_key);
-            $phr_to_add = $this->get_by_key($sorted_key);
+            $phr_to_add = $this->get_by_key($sorted_key, $msg);
             log_debug('got ' . $phr_to_add->name());
             $result[] = $phr_to_add;
         }
@@ -2086,14 +2204,14 @@ class phrase_list extends sandbox_list_named
      * sort the phrase object list by id
      * @return phrase_list with the phrases (not a phrase list object!) sorted by name
      */
-    function sort_by_id(): phrase_list
+    function sort_by_id(user_message $msg): phrase_list
     {
         $result = clone $this;
         $id_lst = $this->id_lst();
         asort($id_lst);
         $result->set_lst(array());
         foreach (array_keys($id_lst) as $sorted_key) {
-            $phr_to_add = $this->get_by_key($sorted_key);
+            $phr_to_add = $this->get_by_key($sorted_key, $msg);
             $result->add($phr_to_add);
         }
         return $result;
@@ -2104,14 +2222,14 @@ class phrase_list extends sandbox_list_named
      * sort the phrase object list by id in reverse order
      * @return phrase_list with the phrases (not a phrase list object!) sorted by name
      */
-    function sort_rev_by_id(): phrase_list
+    function sort_rev_by_id(user_message $msg): phrase_list
     {
         $result = clone $this;
         $id_lst = $this->id_lst();
         arsort($id_lst);
         $result->set_lst(array());
         foreach (array_keys($id_lst) as $sorted_key) {
-            $phr_to_add = $this->get_by_key($sorted_key);
+            $phr_to_add = $this->get_by_key($sorted_key, $msg);
             $result->add($phr_to_add);
         }
         return $result;
@@ -2204,10 +2322,10 @@ class phrase_list extends sandbox_list_named
     /**
      * @return value_list all values related to this phrase list
      */
-    function val_lst(): value_list
+    function val_lst(user_message $msg): value_list
     {
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_phr_lst($this, true);
+        $val_lst->load_by_phr_lst($this, $msg, true);
         $val_lst->sort();
 
         return $val_lst;
@@ -2216,10 +2334,10 @@ class phrase_list extends sandbox_list_named
     /**
      * @return formula_list all formulas related to this phrase list
      */
-    function frm_lst(): formula_list
+    function frm_lst(user_message $msg): formula_list
     {
         $frm_lst = new formula_list($this->get_user());
-        $frm_lst->load_by_phr_lst($this);
+        $frm_lst->load_by_phr_lst($this, $msg);
 
         return $frm_lst;
     }
@@ -2238,10 +2356,10 @@ class phrase_list extends sandbox_list_named
      *
      * @return value the best matching value
      */
-    function value(): value
+    function value(user_message $msg): value
     {
         $val = new value($this->get_user());
-        $val->load_by_grp($this->get_grp_id());
+        $val->load_by_grp($this->get_grp_id(), $msg);
 
         return $val;
     }
@@ -2252,8 +2370,8 @@ class phrase_list extends sandbox_list_named
      */
     function value_scaled(user_message $msg): value
     {
-        $val = $this->value();
-        $wrd_lst = $this->wrd_lst_all();
+        $val = $this->value($msg);
+        $wrd_lst = $this->wrd_lst_all($msg);
         $val->set_number($val->scale($wrd_lst, $msg));
 
         return $val;
@@ -2268,16 +2386,16 @@ class phrase_list extends sandbox_list_named
      * save all changes of the phrase list to the database
      * TODO speed up by creation one SQL statement
      *
-     * @param user_message $usr_msg the message that should be shown to the user if something went wrong
+     * @param user_message $msg the message that should be shown to the user if something went wrong
      * @param import|null $imp the import object with the estimate of the total save time
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?import $imp = null): bool
+    function save(user_message $msg, ?import $imp = null): bool
     {
         // get the phrase names that are already in the database
         $db_lst = clone $this;
         $db_lst->reset();
-        $db_lst->load_by_names($this->names());
+        $db_lst->load_by_names($this->names(), $msg);
 
         // create a list of phrase that needs to be added and that needs to be updated
         $add_lst = clone $this;
@@ -2285,11 +2403,11 @@ class phrase_list extends sandbox_list_named
         $chg_lst = clone $this;
         $chg_lst->reset();
         foreach ($this->lst() as $phr) {
-            $db_phr = $db_lst->get_by_name($phr->name());
+            $db_phr = $db_lst->get_by_name($phr->name(), $msg);
             if ($db_phr == null) {
                 $add_lst->add_by_key($phr);
             } else {
-                if ($phr->needs_db_update($db_phr)) {
+                if ($phr->needs_db_update($db_phr, $msg)) {
                     $chg_lst->add_by_key($phr);
                 }
             }
@@ -2299,24 +2417,24 @@ class phrase_list extends sandbox_list_named
         foreach ($add_lst->lst() as $phr) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $phr_usr_msg = $usr_msg->clone_reset();
+            $phr_usr_msg = $msg->clone_reset();
             // actual save the phrase to the database
             $phr->save($phr_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($phr_usr_msg);
+            $msg->merge($phr_usr_msg);
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $phr_usr_msg = $usr_msg->clone_reset();
+            $phr_usr_msg = $msg->clone_reset();
             // actual save the phrase to the database
-            $phr->save($usr_msg);
+            $phr->save($msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($phr_usr_msg);
+            $msg->merge($phr_usr_msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -2447,6 +2565,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_by_phr(
         phrase         $phr,
+        user_message   $msg,
         ?verb          $vrb = null,
         foaf_direction $direction = foaf_direction::BOTH
     ): bool
@@ -2454,11 +2573,11 @@ class phrase_list extends sandbox_list_named
         $this->reset();
 
         $wrd_lst = new word_list($this->get_user());
-        $wrd_lst->load_linked_words($vrb, $direction);
+        $wrd_lst->load_linked_words($vrb, $direction, $msg);
         $wrd_added = $this->add_wrd_lst($wrd_lst);
 
         $trp_lst = new triple_list($this->get_user());
-        $trp_lst->load_by_phr($phr, $vrb, $direction);
+        $trp_lst->load_by_phr($phr, $msg, $vrb, $direction);
         $trp_added = $this->add_trp_lst($trp_lst);
 
         if ($wrd_added or $trp_added) {
@@ -2466,6 +2585,109 @@ class phrase_list extends sandbox_list_named
         } else {
             return false;
         }
+    }
+
+    /**
+     * load a list of phrases by a given phrase and direction following more than one link level
+     *
+     * a second level also loads the phrases related to the phrases that the first level has
+     * found, e.g. for "column (system)" and "both" the first level gives the column tiers, which
+     * "column (system)" can be, and the second level the column definitions, which point to a
+     * tier, so that the frontend can fill its cache with one api call instead of one per tier
+     *
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param user_message $msg to report a load problem to the caller
+     * @param foaf_direction $direction to select either the parents, children or all related phrases
+     * @param int $levels the number of link levels to follow, one for the direct links only
+     * @return bool true if at least one phrase has been found
+     */
+    function load_by_phr_levels(
+        phrase         $phr,
+        user_message   $msg,
+        foaf_direction $direction = foaf_direction::BOTH,
+        int            $levels = 1
+    ): bool
+    {
+        // the level is user input from the url, so it is bounded here to protect the backend
+        if ($levels > self::MAX_LINK_LEVELS) {
+            $levels = self::MAX_LINK_LEVELS;
+        }
+        $result = $this->load_by_phr($phr, $msg, null, $direction);
+        // the start phrase is already expanded, so the walk never follows it again
+        $done = [$phr->id()];
+        for ($i = 1; $i < $levels; $i++) {
+            // the phrases of the level before are taken before the load, because the load adds
+            // to this list and a phrase already expanded must not be followed a second time,
+            // which also ends a circular link chain
+            $next = [];
+            foreach ($this->lst() as $lst_phr) {
+                if (!in_array($lst_phr->id(), $done)) {
+                    $done[] = $lst_phr->id();
+                    $next[] = $lst_phr;
+                }
+            }
+            foreach ($next as $lst_phr) {
+                // only the triples, because a phrase is linked to another phrase by a triple and
+                // the word part of load_by_phr would only add a warning for the still empty list
+                $trp_lst = new triple_list($this->get_user());
+                $trp_lst->load_by_phr($lst_phr, $msg, null, $direction);
+                if ($this->add_trp_lst($trp_lst)) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * load the from and to of the triples that the links of this list point to
+     *
+     * a list load fills the from and to of each link with the id and the name only, so a triple
+     * nested in a link carries no from and to of its own; the frontend needs them e.g. to head a
+     * table by the phrase that the page phrase is built from ("problem" of "global problem") or
+     * to match the parts of a column phrase ("potential" and "loss" of "potential loss"), so the
+     * nested triples are loaded with one read and put back into their links
+     *
+     * @param user_message $msg to report a load problem to the caller
+     * @return void
+     */
+    function load_linked_sides(user_message $msg): void
+    {
+        $sides = $this->linked_triple_sides();
+        $ids = [];
+        foreach ($sides as $side) {
+            if (!in_array($side->obj()->id(), $ids)) {
+                $ids[] = $side->obj()->id();
+            }
+        }
+        if ($ids != []) {
+            $trp_lst = new triple_list($this->get_user());
+            $trp_lst->load_by_ids($ids, $msg);
+            foreach ($sides as $side) {
+                $trp = $trp_lst->get($side->obj()->id());
+                if ($trp != null) {
+                    $side->set_obj($trp);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array the from and to phrases of the links of this list that are a triple
+     */
+    private function linked_triple_sides(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $side) {
+                    if ($side != null and $side->is_triple()) {
+                        $result[] = $side;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2480,7 +2702,7 @@ class phrase_list extends sandbox_list_named
     function load_by_phr_vrb_and_type(
         phrase         $phr,
         phrase_types   $wrd_types,
-        ?verb          $vrb = null,
+        user_message   $msg, ?verb $vrb = null,
         foaf_direction $direction = foaf_direction::BOTH): phrase_list
     {
         $result = new phrase_list($this->get_user());
@@ -2577,7 +2799,7 @@ class phrase_list extends sandbox_list_named
      * build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
      * @return word_list with all words of the phrases split into single words
      */
-    function wrd_lst_all(): word_list
+    function wrd_lst_all(user_message $msg): word_list
     {
         log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
 
@@ -2597,7 +2819,7 @@ class phrase_list extends sandbox_list_named
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
                     if ($phr->name() == '') {
-                        $phr->load_by_name($phr->name());
+                        $phr->load_by_name($phr->name(), $msg);
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
                     // TODO check if old can ge removed: if ($phr->id() > 0) {
@@ -2605,10 +2827,10 @@ class phrase_list extends sandbox_list_named
                         $wrd_lst->add($phr->obj());
                     } elseif (get_class($phr->obj()) == triple::class) {
                         // use the recursive triple function to include the foaf words
-                        $sub_wrd_lst = $phr->obj()->wrd_lst();
+                        $sub_wrd_lst = $phr->obj()->wrd_lst($msg);
                         foreach ($sub_wrd_lst->lst() as $wrd) {
                             if ($wrd->name() == '') {
-                                $wrd->load();
+                                $wrd->load($msg);
                                 log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                             }
                             $wrd_lst->add($wrd);

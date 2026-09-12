@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2021-09-19 21:09:00",
   "user": "timon",
   "selection": [
@@ -28,15 +29,6 @@
       "name": "Euro"
     },
     {
-      "name": "US dollar"
-    },
-    {
-      "name": "Pound (sterling)"
-    },
-    {
-      "name": "Japanese yen"
-    },
-    {
       "name": "Denomination"
     },
     {
@@ -52,7 +44,8 @@
       "name": "£"
     },
     {
-      "name": "p"
+      "name": "p",
+      "description": "probability of obtaining the observed result under the null hypothesis"
     },
     {
       "name": "Equity"
@@ -93,22 +86,61 @@
       "name": "Earnings"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something"
     },
     {
       "name": "parts"
     },
     {
-      "name": "total"
+      "name": "total",
+      "description": "the whole amount or count, e.g. the total number of possible outcomes"
     },
     {
       "name": "income"
     },
     {
-      "name": "tax"
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
+    },
+    {
+      "name": "dollar"
+    },
+    {
+      "name": "US"
+    },
+    {
+      "name": "yen"
+    },
+    {
+      "name": "Japanese"
+    },
+    {
+      "name": "pound"
+    },
+    {
+      "name": "sterling"
     }
   ],
   "triples": [
+    {
+      "name": "US dollar",
+      "from": "dollar",
+      "verb": "of",
+      "to": "US"
+    },
+    {
+      "name": "Japanese yen",
+      "from": "yen",
+      "verb": "kind of",
+      "to": "Japanese"
+    },
+    {
+      "name": "Pound (sterling)",
+      "from": "pound",
+      "verb": "must be one of",
+      "to": "sterling"
+    },
     {
       "from": "Euro",
       "verb": "is a",
@@ -169,9 +201,10 @@
     },
     {
       "name": "cash flow statement",
-      "from": "cash flow",
-      "verb": "can use",
-      "to": "statement"
+      "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
+      "from": "statement",
+      "verb": "of",
+      "to": "cash flow"
     },
     {
       "name": "income taxes",
@@ -180,16 +213,16 @@
       "to": "income"
     },
     {
-      "name": "Share Price",
-      "from": "Share",
-      "verb": "has a",
-      "to": "price"
+      "name": "Share price",
+      "from": "price",
+      "verb": "of",
+      "to": "Share"
     }
   ],
   "formulas": [
     {
       "name": "PE Ratio",
-      "expression": "= \"Share Price\" / \"Earnings\"",
+      "expression": "= \"Share price\" / \"Earnings\"",
       "assigned_word": "Share"
     },
     {
@@ -218,7 +251,7 @@
   "views": [
     {
       "name": "company sheet",
-      "comment": "The income statement, balance sheet or cash flow sheet of a big company",
+      "description": "The income statement, balance sheet or cash flow sheet of a big company",
       "components": [
         {
           "position": "1",
@@ -232,7 +265,7 @@
     },
     {
       "name": "company list with main ratios",
-      "comment": "list the most interesting companies with the main ratios",
+      "description": "list the most interesting companies with the main ratios",
       "components": [
         {
           "position": "1",

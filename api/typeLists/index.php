@@ -41,32 +41,34 @@ use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("typeLists", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("typeLists", $msg);
 
 if ($db_con->is_open()) {
 
-    // no parameters needed
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
+    // no parameters needed
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
         $ui_cfg = new ui_config();
-        $result = $ui_cfg->get([api_types::HEADER, api_types::INCL_COMPONENTS], $usr);
+        $result = $ui_cfg->get([api_types::HEADER, api_types::INCL_COMPONENTS], $msg);
     }
 
     $ctrl = new controller();
 
     $ctrl->get_json($result, $msg);
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

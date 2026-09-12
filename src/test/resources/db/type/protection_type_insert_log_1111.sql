@@ -41,7 +41,7 @@ SELECT protection_type_insert_log_1111
 
 SELECT protection_type_insert_log_1111
     ('no protection'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      190::smallint,
      191::smallint,

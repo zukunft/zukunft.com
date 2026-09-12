@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "pod": "zukunft.com",
   "time": "2026-05-20 10:30:00",
   "user": "zukunft.com system",
@@ -107,16 +108,29 @@
       "name": "cross"
     },
     {
-      "name": "interest"
+      "name": "interest",
+      "description": "In finance and economics, interest is payment from a borrower or deposit-taking financial institution to a lender or depositor of an amount above repayment of the principal sum.",
+      "refs": [
+        {
+          "name": "Interest",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179179",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "amount"
     },
     {
-      "name": "old"
+      "name": "old",
+      "description": "the previous or earlier value in a comparison, e.g. in percent change"
     },
     {
-      "name": "new"
+      "name": "new",
+      "description": "the current or later value in a comparison, e.g. in percent change"
     },
     {
       "name": "change"
@@ -125,7 +139,14 @@
       "name": "rate"
     },
     {
-      "name": "price"
+      "name": "price",
+      "description": "amount of money required to buy something",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "base"
@@ -171,15 +192,16 @@
       "name": "trading"
     },
     {
-      "name": "average"
+      "name": "average",
+      "description": "the mean value of a set of numbers"
     }
   ],
   "triples": [
     {
       "name": "exchange rate",
-      "from": "exchange",
-      "verb": "has a",
-      "to": "rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "exchange",
       "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.",
       "refs": [
         {
@@ -324,9 +346,9 @@
     },
     {
       "name": "interest rate",
-      "from": "interest",
-      "verb": "has a",
-      "to": "rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "interest",
       "description": "The interest rate is the proportion of a loan or deposit that is charged or paid as interest, typically expressed as an annual percentage. Central bank policy rates are key drivers of currency valuations and forward rates.",
       "refs": [
         {

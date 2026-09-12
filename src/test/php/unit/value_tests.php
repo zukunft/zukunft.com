@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -45,8 +47,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_obj;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -56,22 +60,29 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\words as shared_words;
 use DateTime;
 
 class value_tests
@@ -80,11 +91,10 @@ class value_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
-        $usr_msg = new user_message();
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $tl = new test_lib();
@@ -102,84 +112,116 @@ class value_tests
 
         $t->subheader($ts . 'value object selection');
         $test_name = 'create a numeric value object';
-        $val = new value_obj()->get($usr, values::PI_LONG);
+        $val = new value_obj()->get($t->usr1, values::PI_LONG);
         $t->assert($test_name, $val::class, value::class);
         $test_name = 'create a time value object';
-        $val = new value_obj()->get($usr, new DateTime(values::TIME));
+        $val = new value_obj()->get($t->usr1, new DateTime(values::TIME));
         $t->assert($test_name, $val::class, value_time::class);
         $test_name = 'create a text value object';
-        $val = new value_obj()->get($usr, values::TEXT);
+        $val = new value_obj()->get($t->usr1, values::TEXT);
         $t->assert($test_name, $val::class, value_text::class);
         $test_name = 'create a geolocation value object';
-        $val = new value_obj()->get($usr, values::GEO);
+        $val = new value_obj()->get($t->usr1, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
+
+        $t->subheader($ts . 'union row mapping');
+        // a value list is loaded with one union query over the prime, most and big value tables
+        // (see value_list::load_sql_by_phr), so a prime row arrives with an empty group_id and
+        // the phrase ids in the phrase_id_* columns; the mapper must build the group from these
+        // columns, because e.g. the deletion of a linked word excludes the value via its group
+        $test_name = 'a prime union row is mapped to a value with the phrases of the group';
+        $val = new value($t->usr1);
+        $id_flds = $val->id_fields_prime();
+        $db_row = [
+            group_fields::FLD_ID => '',
+            $id_flds[0] => word_names::MATH_ID,
+            $id_flds[1] => shared_words::CHF_ID,
+            $id_flds[2] => null,
+            $id_flds[3] => null,
+            user_db::FLD_ID => 0,
+            value::FLD_VALUE => values::EARNINGS_PER_SHARE,
+            source_fields::FLD_ID => null,
+            fields::FLD_LAST_UPDATE => null,
+        ];
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert($test_name, $val->phrase_list()->count(), 2);
+        $test_name = '... and the group id of the prime union row value is set';
+        $t->assert_true($test_name, $val->id() != 0);
+        // negative: a corrupted row without any group information leaves the value id unset,
+        // which value_list::rows_mapper_multi uses to skip and report the row
+        $test_name = 'a union row without any group information leaves the value id unset';
+        $val_bad = new value($t->usr1);
+        $db_row[$id_flds[0]] = null;
+        $db_row[$id_flds[1]] = null;
+        $val_bad->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert_true($test_name, $val_bad->id() == 0 or $val_bad->id() == '');
 
         $t->subheader($ts . 'scaling');
         $test_name = 'scale the Swiss inhabitants from millions to one';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
         $trm_lst_scale = $t_trm->term_list_scale_mio();
-        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $msg, $trm_lst_scale);
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
         $test_name = '... and the scaling reports no problem';
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $t->assert_true($test_name, $msg->is_ok());
 
-        $test_name = 'if "mio" of the value is not a scaling word ask the user to set the type';
-        $usr_msg = new user_message();
+        $test_name = 'if "million" of the value is not a scaling word ask the user to set the type';
+        $msg = new user_message();
         $val = $t_val->value_ch_unscaled();
-        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $msg, $trm_lst_scale);
         $target = 'to scale a value one word of ' . $val->phrase_list()->dsp_name()
             . ' needs to be of type scaling';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $test_name = 'if "one" of the target list is not a scaling word ask the user to set the type';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
         $trg_phr_lst = $t_phr->inhabitant_one_unscaled_phrase_list();
-        $result = $val->scale_new($trg_phr_lst, $usr_msg, $trm_lst_scale);
+        $result = $val->scale_new($trg_phr_lst, $msg, $trm_lst_scale);
         $target = 'to scale a value one word of ' . $trg_phr_lst->dsp_name()
             . ' needs to be of type scaling';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $test_name = 'scale the Swiss inhabitants to one based on a preloaded data object';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
-        $result = $val->scale_calc($t_trm->dto_scale_mio(), $usr_msg);
+        $result = $val->scale_calc($t_trm->dto_scale_mio(), $msg);
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
         $test_name = '... and the scaling reports no problem';
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $t->assert_true($test_name, $msg->is_ok());
 
         $test_name = 'if "one" of the formula result is not a scaling word report the problem';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
-        $result = $val->scale_calc($t_trm->dto_scale_mio_unscaled(), $usr_msg);
+        $result = $val->scale_calc($t_trm->dto_scale_mio_unscaled(), $msg);
         $target = 'the result part of the scaling formula ' . formula_names::SCALE_MIO
             . ' does not contain exactly one word of type scaling';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $test_name = 'if the data object has no formula for the scaling word report the problem';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
-        $result = $val->scale_calc($t_trm->dto_scale_none(), $usr_msg);
+        $result = $val->scale_calc($t_trm->dto_scale_none(), $msg);
         $target = 'no scaling formula found for the word ' . word_names::MIO_SHORT;
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $t->subheader($ts . 'sql setup');
-        $val = $t_val->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
+        $val = $t_val->value($msg); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
         $t->subheader($ts . 'sql read');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $val_16 = $t_val->value_16();
         $val_txt = $t_val->text_value();
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_prime_3());
@@ -189,7 +231,7 @@ class value_tests
         $t->assert_sql_by_id($sc, $val_16);
 
         $t->subheader($ts . 'sql read default and user changes');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $val_3 = $t_val->value_prime_3();
         $val_16 = $t_val->value_16();
         $val_17 = $t_val->value_17_plus();
@@ -202,16 +244,27 @@ class value_tests
         $t->assert_sql_user_changes($sc, $val_txt_4);
         $t->assert_sql_changer($sc, $val_3);
         $t->assert_sql_changer($sc, $val_17);
+        // a prime value has one id field per phrase, so the queries that select it by its key
+        // must use every id field and the table of that id field count (see load_sql_where_id)
+        $t->assert_sql_changing_users($sc, $val_3);
+        $t->assert_sql_changing_users($sc, $val_17);
         $t->assert_sql_median_user($sc, $val_3);
         $t->assert_sql_median_user($sc, $val_16);
         $t->assert_sql_standard($sc, $val);
         $t->assert_sql_standard($sc, $val_16);
         $t->assert_sql_standard($sc, $val_17);
         $t->assert_sql_standard($sc, $val_txt);
+        // the same two queries for many values of one table at once, which the user page uses; a
+        // prime value is selected by its phrase ids, so each id adds an own union sub-query
+        $t->assert_sql_standard_by_ids($sc, $val);
+        $t->assert_sql_standard_by_ids($sc, $val_17);
+        $t->assert_sql_standard_by_ids($sc, $val_txt);
+        $t->assert_sql_changing_users_by_ids($sc, $val_3);
+        $t->assert_sql_changing_users_by_ids($sc, $val_17);
 
         // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql write insert');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $db_val = $val->cloned(values::SAMPLE_FLOAT);
         $val_upd = $val->updated();
         $val_0 = $t_val->value_zero();
@@ -247,7 +300,7 @@ class value_tests
         $t->assert_sql_insert($sc, $val_txt);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::LOG, sql_type::USER]);
-        $val = $t_val->value_incomplete();
+        $val = $t_val->value_incomplete($msg);
         $t->assert_sql_insert_fail($sc, $val, [sql_type::LOG]);
 
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
@@ -255,7 +308,7 @@ class value_tests
         // TODO add test to change owner of the normal (not user-specific) value
         // TODO add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG]);
@@ -283,60 +336,60 @@ class value_tests
         // gating as the seq-id branch (see word_tests protection); a normal user may neither raise
         // a value to admin protection (self-lock) nor reduce it below the stored level
         global $sys;
-        $val_db = $t_val->value_protected(); // a value with admin protection stored in the database
+        $val_db = $t_val->value_protected($msg); // a value with admin protection stored in the database
         $protect_denied = 'Only an admin'; // stable start of both protection warning translations
 
         $test_name = 'a normal user cannot reduce the value protection level';
-        $usr_msg = new user_message();
-        $val_imp = $t_val->value();
+        $msg = new user_message($t->usr_normal);
+        $val_imp = $t_val->value($msg);
         $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $val_imp->check_protection_change($val_db, $t->usr_normal, $usr_msg);
+        $val_imp->check_protection_change($val_db, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
         $test_name = 'the denied value reduction is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'an admin user can reduce the value protection level';
-        $usr_msg = new user_message();
-        $val_imp = $t_val->value();
+        $msg = new user_message($t->usr_admin);
+        $val_imp = $t_val->value($msg);
         $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $val_imp->check_protection_change($val_db, $t->usr_admin, $usr_msg);
+        $val_imp->check_protection_change($val_db, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
         $test_name = 'the admin value reduction is not reported';
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $t->assert($test_name, $msg->all_message_text(), '');
 
         $test_name = 'a normal user cannot raise the value protection to no change';
-        $usr_msg = new user_message();
-        $val_imp = $t_val->value();
+        $msg = new user_message($t->usr_normal);
+        $val_imp = $t_val->value($msg);
         $val_imp->set_protection_by_code_id(protection_types::NO_CHANGE);
-        $val_imp->check_protection_change($val_db, $t->usr_normal, $usr_msg);
+        $val_imp->check_protection_change($val_db, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
         $test_name = 'the denied value raise is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'a normal user cannot set the admin protection on a new value';
-        $usr_msg = new user_message();
-        $val_new = $t_val->value();
+        $msg = new user_message($t->usr_normal);
+        $val_new = $t_val->value($msg);
         $val_new->set_protection_by_code_id(protection_types::ADMIN);
-        $val_new->check_protection_change(null, $t->usr_normal, $usr_msg);
+        $val_new->check_protection_change(null, $msg);
         $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::USER));
         $test_name = 'the denied protection of the new value is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'an admin user can set the admin protection on a new value';
-        $usr_msg = new user_message();
-        $val_new = $t_val->value();
+        $msg = new user_message($t->usr_admin);
+        $val_new = $t_val->value($msg);
         $val_new->set_protection_by_code_id(protection_types::ADMIN);
-        $val_new->check_protection_change(null, $t->usr_admin, $usr_msg);
+        $val_new->check_protection_change(null, $msg);
         $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         $test_name = 'the admin protection of the new value is not reported';
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $t->assert($test_name, $msg->all_message_text(), '');
 
         $t->subheader($ts . 'read access (share)');
         // a non-public value must not be disclosed to another user loaded by id (idor);
         // see value::is_readable_by and value_list::filter_readable_by
         $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
 
-        $val_priv = $t_val->value();
+        $val_priv = $t_val->value($msg);
         $val_priv->set_owner_id($t->usr1->id);
         $val_priv->set_share_id($private_id);
         $test_name = 'the owner may read their own private value';
@@ -346,7 +399,7 @@ class value_tests
         $test_name = 'an admin may read another user private value';
         $t->assert_true($test_name, $val_priv->is_readable_by($t->usr_admin));
 
-        $val_pub = $t_val->value();
+        $val_pub = $t_val->value($msg);
         $val_pub->set_owner_id($t->usr1->id);
         $test_name = 'a public value is readable by another user';
         $t->assert_true($test_name, $val_pub->is_readable_by($t->usr2));
@@ -384,17 +437,17 @@ class value_tests
         $t->assert_reset($val);
 
         $t->subheader($ts . 'value im- and export');
-        $t->assert_ex_and_import($t_val->value(), $usr_sys);
-        $t->assert_ex_and_import($t_val->value_16_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_val->value($msg), $t->usr_system);
+        $t->assert_ex_and_import($t_val->value_16_filled(), $t->usr_system);
         $json_file = 'unit/value/speed_of_light.json';
-        $t->assert_json_file(new value($usr), $json_file);
+        $t->assert_json_file(new value($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'ui formatting');
 
         $test_case = 'show the unit after the value';
         $val = $tl->ui_value($t_val->light_speed());
-        $result = $tl->text_from_html($val->with_unit_and_info());
+        $result = $tl->text_from_html($val->with_unit_and_info($msg_ui));
         $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triple_names::M_PER_S;
         $t->assert($test_case, $result, $target);
 
@@ -402,26 +455,49 @@ class value_tests
 
         $test_case = 'check the warning message if a value has more than one unit phrase';
         $val = $tl->ui_value($t_val->light_speed_with_two_units());
-        $result = $val->warning_text();
-        // TODO add warning
-        $target = '';
+        $result = $val->warning_text($msg_ui);
+        $target = 'the value has more than one unit: "'
+            . triple_names::M_PER_S . '","' . word_names::HZ . '"';
         $t->assert($test_case, $result, $target);
+        // negative: a value with a single unit is fine and stays without a warning
+        $test_case = 'a value with one unit phrase has no warning';
+        $val = $tl->ui_value($t_val->light_speed());
+        $t->assert($test_case, $val->warning_text($msg_ui), '');
 
         $t->subheader($ts . 'html frontend');
 
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         // TODO add class field to api message
         $t->assert_api_to_ui($val, new value_ui());
 
+        // the value default page also shows the source with a link to the source page
+        // and the time of the last update in the user's date time format
+        global $ui_sys;
+        $form = new system_form();
+        $val_page = $t_val->value_page_ui($msg);
+        $test_name = 'the value page shows the source with a link to the source';
+        $t->assert_text_contains($test_name, $form->show_source($val_page), sources::SIB);
+        $test_name = 'the value page shows the time of the last update';
+        $t->assert_text_contains($test_name, $form->show_last_update($val_page),
+            date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
+        // a value without a source or an update time shows the labels of the empty fields
+        $val_plain = $t_val->people_zh_canton_mio_symbol_ui();
+        $test_name = 'a value without a source shows only the source label';
+        $t->assert($test_name, $form->show_source($val_plain),
+            $t->labeled(msg_id::FORM_SELECT_SOURCE, ''));
+        // the last update is written by the system, so it shows no lonely label
+        $test_name = 'a value without an update time shows no last update line';
+        $t->assert($test_name, $form->show_last_update($val_plain), '');
+
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_ui->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=32770">3.14</a>');
+        $t->assert('value edit link', $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 
         // casting API
         $grp = $t_grp->group();
-        $val = new value($usr, round(values::PI_LONG, 13), $grp);
+        $val = new value($t->usr1, round(values::PI_LONG, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
         $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->time_value();
@@ -435,7 +511,7 @@ class value_tests
         $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
 
         // casting figure
-        $val = new value($usr);
+        $val = new value($t->usr1);
         $val->set_number(values::SAMPLE_PCT);
         $fig = $val->figure();
         $t->assert($t->name . ' get figure', $fig->number(), $val->number());
@@ -447,7 +523,7 @@ class value_tests
         $t->subheader($ts . 'database query creation');
 
         // sql to load a user-specific time series by id
-        $vts = new value_time_series($usr);
+        $vts = new value_time_series($t->usr1);
         $vts->set_grp($t_grp->group_16());
         $t->assert_sql_by_id($sc, $vts);
 
@@ -474,7 +550,7 @@ class value_tests
         $trm_lst = $t_phr->ch_inhabitants_in_mio_2019()->term_list();
         $res_phr_lst = $t_phr->phrase_list_one();
         $mio_val = $t_val->value_ch();
-        $result = $mio_val->scale_new($res_phr_lst, $usr_msg, $trm_lst);
+        $result = $mio_val->scale_new($res_phr_lst, $msg, $trm_lst);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         //$t->assert($test_name, $result, $target);
 
@@ -489,7 +565,6 @@ class value_tests
      */
     private function assert_sql_by_grp(test_cleanup $t, sql_db $db_con, object $usr_obj, group $grp): void
     {
-        global $usr;
 
         $sc = $db_con->sql_creator();
 
@@ -523,18 +598,18 @@ class value_tests
     ): bool
     {
         $sc = $db_con->sql_creator();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $fields = array(fields::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $val->sql_update($sc, $db_val, $usr_msg);
+        $qp = $val->sql_update($sc, $db_val, $msg);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $val->sql_update($sc, $db_val, $usr_msg);
+            $qp = $val->sql_update($sc, $db_val, $msg);
             $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;

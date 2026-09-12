@@ -29,8 +29,8 @@ PREPARE view_insert_log_11110000000_user_call
 SELECT view_insert_log_11110000000_user (
                3::bigint,
                1::smallint,
-               42::smallint,
+               720::smallint,
                'Start view'::text,
                1::bigint,
-               43::smallint,
+               46::smallint,
                'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.'::text);

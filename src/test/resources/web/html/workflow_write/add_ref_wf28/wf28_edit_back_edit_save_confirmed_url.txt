@@ -1,0 +1,19 @@
+GET
+http://localhost/http/view.php?p=5&ek=System+Test+Reference+External+Key&lt=2&ur=https%3A%2F%2Fwww.zukunft.com%2F&o=System+Test+Reference+Type&s=1&sp=1&id=0&9m=94&m=54&z=2&submit=
+/http/view.php?p=5&ek=System+Test+Reference+External+Key&lt=2&ur=https%3A%2F%2Fwww.zukunft.com%2F&o=System+Test+Reference+Type&s=1&sp=1&id=0&9m=94&m=54&z=2&submit=
+/http/view.php?phrase_id=5&external_key=System+Test+Reference+External+Key&ref_type=2&url=https%3A%2F%2Fwww.zukunft.com%2F&description=System+Test+Reference+Type&share=1&protection=1&id=0&9mask_id=ref_default&mask_id=confirm_add&step=confirmed&
+{
+    "phrase_id": "5",
+    "external_key": "System Test Reference External Key",
+    "ref_type": "2",
+    "url": "https://www.zukunft.com/",
+    "description": "System Test Reference Type",
+    "share": "1",
+    "protection": "1",
+    "id": "0",
+    "mask_id": "confirm_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "ref_default"
+    }
+}

@@ -69,6 +69,7 @@ class files
     const string SYSTEM_UNIT_TEST_DATA_FOLDER = 'system_unit_test_data' . DIRECTORY_SEPARATOR;
     const string DATA_START_PAGE_PATH = self::MESSAGE_PATH . 'start_page' . DIRECTORY_SEPARATOR;
     const string BASE_DATA_PATH = self::MESSAGE_PATH . 'base_data' . DIRECTORY_SEPARATOR;
+    const string USE_CASE_PATH = self::MESSAGE_PATH . 'use_cases' . DIRECTORY_SEPARATOR;
     const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
@@ -142,9 +143,44 @@ class files
     // data for the default start page
     const string START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
     const string CONFORMITY_MRI_BERNS_FILE = self::DATA_START_PAGE_PATH . 'conformity_mri_berns' . self::JSON;
+    const string CO2_EQ_REDUCTION_RANKING_FILE = self::DATA_START_PAGE_PATH . 'co2_eq_reduction_ranking' . self::JSON;
+
+    // one file per use case that shows how a question is answered with the data, e.g. the
+    // climate benefit of photovoltaic electricity in Switzerland with and without the
+    // displacement mix concept (docs/llm/pending_prio_2.md "use case")
+    const string PV_SWITZERLAND_CO2_FILE = self::USE_CASE_PATH . 'pv_switzerland_co2' . self::JSON;
+
+    // one file per problem of the start page ranking with the most relevant number of the problem
+    // and the potential solutions, each value with the source it is taken from;
+    // imported after solution_prio, because that file is the home of the problem and solution
+    // keywords which these files only re-declare (see docs/llm/json_structure.md)
+    const string PROBLEM_GLOBAL_WARMING_FILE = self::DATA_START_PAGE_PATH . 'problem_global_warming' . self::JSON;
+    const string PROBLEM_POPULISM_FILE = self::DATA_START_PAGE_PATH . 'problem_populism' . self::JSON;
+    const string PROBLEM_POVERTY_FILE = self::DATA_START_PAGE_PATH . 'problem_poverty' . self::JSON;
+    const string PROBLEM_HEALTH_FILE = self::DATA_START_PAGE_PATH . 'problem_health' . self::JSON;
+    const string PROBLEM_EDUCATION_FILE = self::DATA_START_PAGE_PATH . 'problem_education' . self::JSON;
+    const string PROBLEM_WEALTH_CONCENTRATION_FILE = self::DATA_START_PAGE_PATH . 'problem_wealth_concentration' . self::JSON;
+    const string PROBLEM_DISINFORMATION_FILE = self::DATA_START_PAGE_PATH . 'problem_disinformation' . self::JSON;
+    const string PROBLEM_MARKET_POWER_FILE = self::DATA_START_PAGE_PATH . 'problem_market_power' . self::JSON;
+    const string PROBLEM_BIASED_INFORMATION_FILE = self::DATA_START_PAGE_PATH . 'problem_biased_information' . self::JSON;
+    const string PROBLEM_BLACK_BOX_AI_FILE = self::DATA_START_PAGE_PATH . 'problem_black_box_ai' . self::JSON;
+    const string PROBLEM_CITIZEN_PARTICIPATION_FILE = self::DATA_START_PAGE_PATH . 'problem_citizen_participation' . self::JSON;
+    const string PROBLEM_GDP_MISMEASUREMENT_FILE = self::DATA_START_PAGE_PATH . 'problem_gdp_mismeasurement' . self::JSON;
+    const string PROBLEM_PROPRIETARY_SOFTWARE_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software' . self::JSON;
+
+    // the Fermi estimates and thesis chains of the start page, loaded by the full load
+    const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
+    const string FORUM_OUTREACH_ESTIMATE_FILE = self::DATA_START_PAGE_PATH . 'forum_outreach_estimate' . self::JSON;
+    const string FORUM_REACTION_ESTIMATE_FILE = self::DATA_START_PAGE_PATH . 'forum_reaction_estimate' . self::JSON;
+    const string THESES_COMPLEX_SIMPLE_FILE = self::DATA_START_PAGE_PATH . 'theses_complex_simple' . self::JSON;
+
+    // sample references
+    const string REFS_FILE = self::MESSAGE_PATH . 'refs' . self::JSON;
 
     // initial data just to add some sample data and for system testing
     const string ZURICH_HTP_IMPACT_FILE = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'zurich_htp_impact' . self::JSON;
+    // the same file with the complete path for the lists that name the file without the message path
+    const string ZURICH_HTP_IMPACT_PATH_FILE = self::SYSTEM_UNIT_TEST_DATA_PATH . 'zurich_htp_impact' . self::JSON;
 
     // temp setup files that are loaded at the end not to change the id of objects used by the system tests
     const string MATH_FILE = 'math' . self::JSON;
@@ -246,6 +282,43 @@ class files
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
+        self::CO2_EQ_REDUCTION_RANKING_FILE,
+        // the problems of the start page ranking in the order of the ranking
+        self::PROBLEM_GLOBAL_WARMING_FILE,
+        self::PROBLEM_POPULISM_FILE,
+        self::PROBLEM_POVERTY_FILE,
+        self::PROBLEM_HEALTH_FILE,
+        self::PROBLEM_EDUCATION_FILE,
+        self::PROBLEM_WEALTH_CONCENTRATION_FILE,
+        self::PROBLEM_DISINFORMATION_FILE,
+        self::PROBLEM_MARKET_POWER_FILE,
+        self::PROBLEM_BIASED_INFORMATION_FILE,
+        self::PROBLEM_BLACK_BOX_AI_FILE,
+        self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
+        self::PROBLEM_GDP_MISMEASUREMENT_FILE,
+        self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
+    ];
+
+    // sample data that only test/test_full_load.php imports, loaded after the data of a pod,
+    // so that the id of the objects used by the system tests does not change
+    // TODO Prio 1 group the files mainly into 2 groups: loaded during full test and loaded after test
+    const array FULL_LOAD_FILES = [
+        self::FERMI_INTERNET_PRO_CONTRA_FILE,
+        self::FORUM_OUTREACH_ESTIMATE_FILE,
+        self::FORUM_REACTION_ESTIMATE_FILE,
+        self::THESES_COMPLEX_SIMPLE_FILE,
+        self::REFS_FILE,
+        self::ZURICH_HTP_IMPACT_PATH_FILE,
+    ];
+
+    // the use case files, imported as the last step of the standard db setup
+    // (import_file::import_use_case_data), because a use case builds on the phrases of the
+    // start page e.g. the column tiers of solution_prio.json; a use case file never carries a
+    // code_id and must be importable by a normal user, because a use case is user data that
+    // any user may add, so a borrowed system triple is repeated without its code_id
+    // (docs/llm/json_structure.md "use case files")
+    const array USE_CASE_FILES = [
+        self::PV_SWITZERLAND_CO2_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

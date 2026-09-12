@@ -46,6 +46,8 @@ include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -61,6 +63,23 @@ class formula_url_tests extends url_test_base
         // load the shared frontend run state and print the section header
         $this->init($t, 'formula url->', 'url formula ');
 
+        // this test has no pure read (url_to_html) and no routing-only (url_to_action) tests yet;
+        // when one is added, use the url_to_html_tests / url_to_action_tests split of word_url_tests
+        $this->workflow_tests($t);
+    }
+
+    /**
+     * the combined workflow snapshot tests: every step chains url_to_action (routing, with
+     * do_it false so nothing is written) and url_to_html (render) like a real user request
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function workflow_tests(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'workflow');
+
+        // the snapshot unit test only renders the steps
+        // for the write tests the same workflows are used the do_it = true
         $this->add_formula_workflow(workflows::WF_ADD_FORMULA_NBR);
         $this->change_formula_workflow(workflows::WF_CHANGE_FORMULA_NBR);
         $this->del_formula_workflow(workflows::WF_DEL_FORMULA_NBR);
@@ -78,10 +97,10 @@ class formula_url_tests extends url_test_base
     protected function add_formula_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the add_formula workflow creates a new formula, so there is no object id to load yet
-        $this->wf_start($wf_nbr, workflows::WF_ADD_FORMULA, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_ADD_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty formula
-        $url_arr = test_formulas::formula_new_url();
+        $url_arr = test_formulas::formula_new_url($this->msg);
 
         $this->wf_id = 0;
         $this->wf_fixed_id = formula_names::SYSTEM_TEST_ADD_ID;
@@ -128,7 +147,7 @@ class formula_url_tests extends url_test_base
         // sandbox overlay from a previous run must not mask the freshly written base value)
         if ($do_it) {
             $this->assert_formula_in_db('add_formula workflow has written the formula',
-                formula_names::SYSTEM_TEST_ADD, $this->t->usr_system, formula_names::SYSTEM_TEST_ADD_COM);
+                formula_names::SYSTEM_TEST_ADD, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_COM);
         }
     }
 
@@ -144,13 +163,15 @@ class formula_url_tests extends url_test_base
      */
     protected function change_formula_workflow(int $wf_nbr, bool $do_it = false): void
     {
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         // the workflow runs on the reserved 'System Test Formula' added above, not on seeded data;
         // resolve its current database id by name and set the fixed snapshot id of the test formula
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_FORMULA, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $frm = new formula($this->t->usr1);
-        $this->wf_id = $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
+        $this->wf_id = $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg);
         // in a read-only run the add workflow has not written the formula, so use the fixed id directly
         if ($this->wf_id == 0) {
             $this->wf_id = formula_names::SYSTEM_TEST_ADD_ID;
@@ -161,7 +182,7 @@ class formula_url_tests extends url_test_base
         // rendered buttons and the confirmed write target the real row (the snapshot files normalize
         // the id back to the fixed test id)
         $t_frm = new test_formulas($this->t);
-        $url_arr = $t_frm->formula_add_url();
+        $url_arr = $t_frm->formula_add_url($msg_ui);
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -245,13 +266,15 @@ class formula_url_tests extends url_test_base
      */
     protected function del_formula_workflow(int $wf_nbr, bool $do_it = false): void
     {
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         // the del_formula workflow runs on the reserved 'System Test Formula'
         // resolve its current db id by name and set the fixed snapshot id so the snapshot does not depend on the assigned id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_FORMULA, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $frm = new formula($this->t->usr1);
-        $this->wf_id = $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
+        $this->wf_id = $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg);
         // in a read-only run the add workflow has not written the formula, so use the fixed id directly
         if ($this->wf_id == 0) {
             $this->wf_id = formula_names::SYSTEM_TEST_ADD_ID;
@@ -262,7 +285,7 @@ class formula_url_tests extends url_test_base
         // its from and to words so the confirmed delete targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
         $t_frm = new test_formulas($this->t);
-        $url_arr = $t_frm->formula_add_url();
+        $url_arr = $t_frm->formula_add_url($msg_ui);
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -321,8 +344,9 @@ class formula_url_tests extends url_test_base
      */
     private function assert_formula_in_db(string $test_name, string $name, user $usr, string $description): void
     {
+        $msg = new user_message();
         $frm = new formula($usr);
-        $frm->load_by_name($name);
+        $frm->load_by_name($name, $msg);
         $this->t->assert($test_name, $frm->name(), $name);
         $this->t->assert($test_name, $frm->description, $description);
     }
@@ -334,8 +358,9 @@ class formula_url_tests extends url_test_base
      */
     private function assert_formula_removed(string $test_name): void
     {
+        $msg = new user_message();
         $trp = new formula($this->t->usr1);
-        $trp->load_by_name(formula_names::SYSTEM_TEST_ADD);
+        $trp->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg);
         $this->t->assert_true($test_name, $trp->id() == 0 || $trp->is_excluded());
     }
 

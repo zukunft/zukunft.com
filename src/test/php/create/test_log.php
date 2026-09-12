@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_table.php';
@@ -55,11 +56,14 @@ include_once paths::MODEL_LOG . 'change_values_time_norm.php';
 include_once paths::MODEL_LOG . 'change_values_time_prime.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_VALUE . 'value_text.php';
 include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VIEW . 'view_relation_db.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
@@ -68,26 +72,35 @@ include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_formulas.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
+include_once paths::MODEL_USER . 'user_message.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_db;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
@@ -107,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -118,14 +132,17 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -133,8 +150,10 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 
 
@@ -151,6 +170,48 @@ class test_log
     function __construct(test_cleanup $env) {
         $this->env = $env;
     }
+
+
+    /*
+     * const
+     */
+
+    // the number of user overwrites of log_list_many_user_overwrites, which must be higher than
+    // the change log row limit, so that a test can check that the list is cut; the unit tests use
+    // an empty frontend config (see test_lib::ui_test_cache), so the limit of a unit test is the
+    // fallback of ui_log::configured_row_limit and not the value of config.yaml
+    const int MANY_OVERWRITES = 25;
+    // the start of the value of each overwrite of log_list_many_user_overwrites
+    const string OVERWRITE_VALUE = 'no ';
+    // the user value of the formula description overwrite of log_formula_increase_description,
+    // which must not contain the formula name, so that a test can tell the object name that the
+    // what column puts in front of the change from the change text itself
+    const string FORMULA_OVERWRITE_COM = 'my own text for this calculation';
+    // the user value of the formula link order number overwrite of log_formula_link_order_overwrite
+    const int FORMULA_LINK_OVERWRITE_ORDER_NBR = 7;
+    // the user value of the component description overwrite of log_component_overwrite, which
+    // must not contain the component name, so that a test can tell the object name that the what
+    // column puts in front of the change from the change text itself
+    const string COMPONENT_OVERWRITE_COM = 'my own text for this component';
+    // the user value of the view description overwrite of log_view_overwrite, which must not
+    // contain the view name for the same reason as the component overwrite above
+    const string VIEW_OVERWRITE_COM = 'my own text for this page';
+    // the user value of the source description overwrite of log_source_overwrite, which must not
+    // contain the source name for the same reason as the component overwrite above
+    const string SOURCE_OVERWRITE_COM = 'my own text for this publication';
+    // the user value and the object name of the ref external key overwrite of log_ref_overwrite;
+    // a ref has no name of its own, so it is named by the phrase and the type that it links
+    const string REF_OVERWRITE_KEY = 'Q167-my-own';
+    const string REF_OVERWRITE_NAME = 'ref of "Pi" to "wikidata"';
+    // the value that each other user has set for a changed field, used to show the inline column of
+    // change_log_actions::OTHERS_INLINE; one user more than change_log_named::OTHERS_MAX_INLINE, so
+    // that a test can also check how the column indicates the users that it does not name
+    const array OTHER_VALUES = [
+        'linus' => 'the text of linus',
+        'lea' => 'the text of lea',
+        'julian' => 'the text of julian',
+        'mia' => 'the text of mia',
+    ];
 
 
     /*
@@ -195,8 +256,9 @@ class test_log
 
     private function log_entry_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry();
-        $chg->set_action(change_actions::ADD);
+        $chg->set_action(change_actions::ADD, $msg);
         return $chg;
     }
 
@@ -206,9 +268,10 @@ class test_log
      */
     function log_word_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = word_names::MATH;
         $chg->row_id = word_names::MATH_ID;
         return $chg;
@@ -220,8 +283,9 @@ class test_log
      */
     function log_word_update(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_add();
-        $chg->set_action(change_actions::UPDATE);
+        $chg->set_action(change_actions::UPDATE, $msg);
         $chg->old_value = word_names::TEST_RENAMED;
         return $chg;
     }
@@ -232,8 +296,9 @@ class test_log
      */
     function log_word_delete(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_update();
-        $chg->set_action(change_actions::DELETE);
+        $chg->set_action(change_actions::DELETE, $msg);
         $chg->new_value = null;
         return $chg;
     }
@@ -244,9 +309,10 @@ class test_log
      */
     function log_word_add_type(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         global $sys;
         $chg = $this->log_word_add();
-        $chg->set_field(change_fields::FLD_PHRASE_TYPE);
+        $chg->set_field(change_fields::FLD_PHRASE_TYPE, $msg);
         $chg->new_value = phrase_types::TIME;
         $chg->new_id = $sys->typ_lst->phr_typ->id(phrase_types::TIME);
         return $chg;
@@ -258,9 +324,10 @@ class test_log
      */
     function log_word_update_type(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         global $sys;
         $chg = $this->log_word_add_type();
-        $chg->set_action(change_actions::UPDATE);
+        $chg->set_action(change_actions::UPDATE, $msg);
         $chg->old_value = phrase_types::MEASURE;
         $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $chg;
@@ -272,10 +339,138 @@ class test_log
      */
     function log_word_delete_type(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_word_update_type();
-        $chg->set_action(change_actions::DELETE);
+        $chg->set_action(change_actions::DELETE, $msg);
         $chg->new_value = null;
         $chg->new_id = null;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the description of a named user sandbox object
+     * @return change with a change log entry of adding a word description as a sample
+     */
+    function log_word_add_description(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = word_names::MATH_COM;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the cached impact number of a named user sandbox object;
+     * the initial impact of an added object is zero, so the change log table pure
+     * shows 'added impact "0"'
+     * @return change with a change log entry of adding the word impact as a sample
+     */
+    function log_word_add_impact(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_IMPACT, $msg);
+        $chg->new_value = '0';
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the cached usage counter of a named user sandbox object;
+     * like the impact the usage is a system internal, so the change log table pure
+     * shows 'added usage "0"' to admin users only
+     * @return change with a change log entry of adding the word usage as a sample
+     */
+    function log_word_add_usage(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_USAGE, $msg);
+        $chg->new_value = '0';
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the protection type of a named user sandbox object;
+     * the protection is logged with the numeric type id as the value (like sandbox_multi::add_field,
+     * not add_type_field), so the change log table pure must resolve the id to the protection name
+     * @return change with a change log entry of increasing the word protection as a sample
+     */
+    function log_word_update_protection(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        global $sys;
+        $chg = $this->log_word_add();
+        $chg->set_action(change_actions::UPDATE, $msg);
+        $chg->set_field(fields::FLD_PROTECT, $msg);
+        $chg->old_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT);
+        $chg->new_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::ADMIN);
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the owner (user id) of a named user sandbox object; the owner is
+     * set to the change author (the system user), so the change log table pure resolves the user id to
+     * the author name and shows 'set owner to zukunft.com system' (see change_log_named::what_text)
+     * @return change with a change log entry of setting the word owner to the system user as a sample
+     */
+    function log_word_add_user_id(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_word_add();
+        $chg->set_field(user_db::FLD_ID, $msg);
+        $chg->new_value = (string)users::SYSTEM_ID;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the default view (view_id) of a named object in the user sandbox
+     * (the user_words overlay table); the view name is stored as the value and the view id as the
+     * reference (like sql_par_field_list::add_link_field), and because it is a user sandbox change the
+     * change log table pure shows 'added user view id "Word"' (see change_log_named::what_text)
+     * @return change with a change log entry of setting the word view in the user sandbox
+     */
+    function log_word_add_view(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_word_add();
+        $chg->set_table(change_tables::WORD_USR, $msg);
+        $chg->set_field(fields::FLD_VIEW, $msg);
+        $chg->new_value = views::WORD_NAME;
+        $chg->new_id = views::WORD_ID;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the default view of a named object where only the view id is
+     * logged (like a save that only carries the view id, see word::set_view_id); the change log
+     * display resolves the view name from the cache so that not an empty value is shown to the user
+     * @return change with a change log entry of setting the word view by id as a sample
+     */
+    function log_word_add_view_id(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_VIEW, $msg);
+        $chg->new_value = null;
+        $chg->new_id = views::START_ID;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry that adds an empty view (view_id) in the user sandbox (user_words);
+     * adding an empty value in the sandbox removes the user's overwrite for that field, so the change
+     * log table pure shows 'remove user overwrite for view' instead of 'added user view id ""'
+     * (see change_log_named::what_text)
+     * @return change with a change log entry of removing the user view overwrite
+     */
+    function log_word_remove_view(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_word_add();
+        $chg->set_table(change_tables::WORD_USR, $msg);
+        $chg->set_field(fields::FLD_VIEW, $msg);
+        $chg->new_value = '';
         return $chg;
     }
 
@@ -284,9 +479,10 @@ class test_log
      */
     function log_verb_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::VERB);
-        $chg->set_field(change_fields::FLD_VERB_NAME);
+        $chg->set_table(change_tables::VERB, $msg);
+        $chg->set_field(change_fields::FLD_VERB_NAME, $msg);
         $chg->new_value = verbs::IS;
         $chg->row_id = verbs::IS_ID;
         return $chg;
@@ -297,11 +493,30 @@ class test_log
      */
     function log_triple_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::TRIPLE);
-        $chg->set_field(change_fields::FLD_TRIPLE_NAME);
+        $chg->set_table(change_tables::TRIPLE, $msg);
+        $chg->set_field(change_fields::FLD_TRIPLE_NAME, $msg);
         $chg->new_value = triple_names::MATH_CONST;
         $chg->row_id = triple_names::MATH_CONST_ID;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry in the triple user sandbox (overlay) table, the triple twin of
+     * log_word_add_description, so that the all user overwrites column of the user page can be
+     * tested with the overwrites of more than one object type
+     * @return change with a change log entry of a user setting an own triple description
+     */
+    function log_triple_add_description(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_triple_add();
+        $chg->set_table(change_tables::TRIPLE_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = triple_names::MATH_CONST_COM;
+       // the name of the changed object as change_log_list::load_changed_objects sets it from the db
+        $chg->row_name = triple_names::MATH_CONST;
         return $chg;
     }
 
@@ -310,12 +525,71 @@ class test_log
      */
     function log_source_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::SOURCE);
-        $chg->set_field(change_fields::FLD_SOURCE_NAME);
+        $chg->set_table(change_tables::SOURCE, $msg);
+        $chg->set_field(change_fields::FLD_SOURCE_NAME, $msg);
         $chg->new_value = sources::SIB;
         $chg->row_id = sources::SIB_ID;
         return $chg;
+    }
+
+    /**
+     * @return change the log entry created by overwriting the description of the sib source
+     *         in the user sandbox (user_sources)
+     */
+    function log_source_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_source_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::SOURCE_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = self::SOURCE_OVERWRITE_COM;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
+        $chg->row_name = sources::SIB;
+        return $chg;
+    }
+
+    /**
+     * @return change the log entry created by overwriting the external key of the pi reference
+     *         in the user sandbox (user_refs)
+     */
+    function log_ref_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::REF_USR, $msg);
+        $chg->set_field(change_fields::FLD_REF_KEY, $msg);
+        $chg->new_value = self::REF_OVERWRITE_KEY;
+        $chg->row_id = refs::PI_ID;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the
+        // db, where a ref is named by the phrase and the type it links (see cfg/ref/ref::name)
+        $chg->row_name = self::REF_OVERWRITE_NAME;
+        return $chg;
+    }
+
+    /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the bfs source
+     * that the source page test shows and not the sib source of log_source_add
+     *
+     * @return change_log_list the changes of the bfs source shown by the changes tab of the
+     *         source page
+     */
+    function log_list_source(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::SOURCE, $msg);
+        $chg->set_field(change_fields::FLD_SOURCE_NAME, $msg);
+        $chg->new_value = sources::BFS;
+        $chg->row_id = sources::BFS_ID;
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
     }
 
     /**
@@ -323,9 +597,10 @@ class test_log
      */
     function log_ref_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::REF);
-        $chg->set_field(change_fields::FLD_REF_KEY);
+        $chg->set_table(change_tables::REF, $msg);
+        $chg->set_field(change_fields::FLD_REF_KEY, $msg);
         $chg->new_value = refs::PI_KEY;
         $chg->row_id = refs::PI_ID;
         return $chg;
@@ -336,9 +611,10 @@ class test_log
      */
     function log_ref_update(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         global $sys;
         $chg = $this->log_ref_add();
-        $chg->set_action(change_actions::UPDATE);
+        $chg->set_action(change_actions::UPDATE, $msg);
         $chg->old_value = phrase_types::MEASURE;
         $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $chg;
@@ -360,13 +636,13 @@ class test_log
      */
     function log_value_add(): change_values_prime
     {
-        global $usr_sys;
-        $chg = new change_values_prime($usr_sys);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = new change_values_prime($this->env->usr_system);
         $chg->id = $this->chg_log_seq();
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::VALUE);
-        $chg->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $chg->new_value = values::PI;
         $chg->row_id = values::PI_ID;
         return $chg;
@@ -377,9 +653,10 @@ class test_log
      */
     function log_formula_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::FORMULA);
-        $chg->set_field(change_fields::FLD_FORMULA_NAME);
+        $chg->set_table(change_tables::FORMULA, $msg);
+        $chg->set_field(change_fields::FLD_FORMULA_NAME, $msg);
         $chg->new_value = formula_names::SCALE_TO_SEC;
         $chg->row_id = formula_names::SCALE_TO_SEC_ID;
         return $chg;
@@ -390,9 +667,10 @@ class test_log
      */
     function log_formula_increase_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::FORMULA);
-        $chg->set_field(change_fields::FLD_FORMULA_NAME);
+        $chg->set_table(change_tables::FORMULA, $msg);
+        $chg->set_field(change_fields::FLD_FORMULA_NAME, $msg);
         $chg->new_value = formula_names::INCREASE;
         $chg->row_id = formula_names::INCREASE_ID;
         return $chg;
@@ -403,11 +681,48 @@ class test_log
      */
     function log_formula_increase_exp(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::FORMULA);
-        $chg->set_field(change_fields::FLD_FORMULA_USR_TEXT);
+        $chg->set_table(change_tables::FORMULA, $msg);
+        $chg->set_field(change_fields::FLD_FORMULA_USR_TEXT, $msg);
         $chg->new_value = formula_names::INCREASE_EXP;
         $chg->row_id = formula_names::INCREASE_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by overwriting the description of the increase formula in
+     *         the user sandbox (user_formulas), so that the all user overwrites column of the
+     *         user page can be tested with a formula overwrite
+     */
+    function log_formula_increase_description(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_formula_increase_add();
+        $chg->set_table(change_tables::FORMULA_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = self::FORMULA_OVERWRITE_COM;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
+        $chg->row_name = formula_names::INCREASE;
+        return $chg;
+    }
+
+    /**
+     * @return change the log entry created by overwriting the pi value in the user sandbox
+     *         (user_values); a value has no name of its own, so the row name is the group name
+     *         that change_log_list::load_changed_objects reads from the phrases of the group
+     */
+    function log_value_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_grp = new test_groups($this->env);
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VALUE_USR, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->new_value = values::SAMPLE_INT;
+        $chg->row_id = values::PI_ID;
+        $chg->row_name = $t_grp->group()->name();
         return $chg;
     }
 
@@ -423,16 +738,165 @@ class test_log
     }
 
     /**
+     * the changes of a value as change_log_list::load creates them: a loaded list holds plain
+     * change entries for every table, whereas the change_values_* classes are the writers of
+     * the value tables and are siblings of change, not children
+     *
+     * @return change_log_list the changes of the pi value shown by the changes tab of the value page
+     */
+    function log_list_value(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->new_value = values::PI_SHORT;
+        $chg->row_id = values::PI_ID;
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
+    }
+
+    /**
+     * @return change log entry created by setting the order number of the filled formula link
+     */
+    function log_formula_link_order(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_frm = new test_formulas($this->env);
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::FORMULA_LINK, $msg);
+        $chg->set_field(formula_link::FLD_ORDER, $msg);
+        $chg->new_value = test_const::FORMULA_LINK_ORDER_NBR;
+        $chg->row_id = $t_frm->formula_link()->id();
+        return $chg;
+    }
+
+    /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the filled
+     * component link that the component link page test shows
+     *
+     * @return change_log_list the changes of the component link shown by the changes tab of the
+     *         component link page
+     */
+    function log_list_component_link(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_cmp = new test_components($this->env);
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_LINK, $msg);
+        $chg->set_field(component_link::FLD_ORDER_NBR, $msg);
+        $chg->new_value = test_const::COMPONENT_LINK_ORDER_NBR;
+        $chg->row_id = $t_cmp->component_link_filled()->id();
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
+    }
+
+    /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the filled view
+     * relation that the view relation page test shows
+     *
+     * @return change_log_list the changes of the view relation shown by the changes tab of the
+     *         view relation page
+     */
+    function log_list_view_relation(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_msk = new test_views($this->env);
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_RELATION, $msg);
+        $chg->set_field(view_relation_db::FLD_START_POS, $msg);
+        $chg->new_value = test_const::VIEW_RELATION_START_POS;
+        $chg->row_id = $t_msk->view_relation()->id();
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
+    }
+
+    /**
+     * @return change log entry created by overwriting the order number of the filled formula link
+     *         in the user sandbox (user_formula_links)
+     */
+    function log_formula_link_order_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_frm = new test_formulas($this->env);
+        $chg = $this->log_formula_link_order();
+        $chg->set_table(change_tables::FORMULA_LINK_USR, $msg);
+        // set the field after the table, because the field id is unique per table
+        $chg->set_field(formula_link::FLD_ORDER, $msg);
+        $chg->new_value = self::FORMULA_LINK_OVERWRITE_ORDER_NBR;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
+        $chg->row_name = $t_frm->formula_link()->name();
+        return $chg;
+    }
+
+    /**
+     * @return change_log_list the changes of the filled formula link
+     */
+    function log_list_formula_link(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->log_formula_link_order());
+        return $log_lst;
+    }
+
+    /**
      * @return change log entry created by adding a view
      */
     function log_view_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::VIEW);
-        $chg->set_field(change_fields::FLD_VIEW_NAME);
+        $chg->set_table(change_tables::VIEW, $msg);
+        $chg->set_field(change_fields::FLD_VIEW_NAME, $msg);
         $chg->new_value = views::START;
         $chg->row_id = views::START_ID;
         return $chg;
+    }
+
+    /**
+     * @return change the log entry created by overwriting the description of the start view
+     *         in the user sandbox (user_views)
+     */
+    function log_view_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_view_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = self::VIEW_OVERWRITE_COM;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
+        $chg->row_name = views::START_NAME;
+        return $chg;
+    }
+
+    /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the start view
+     * that the view page test shows; the name is the value, because the what column of the tab
+     * shows the change text and a code id would not tell the user which view has been added
+     *
+     * @return change_log_list the changes of the start view shown by the changes tab of the view page
+     */
+    function log_list_view(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW, $msg);
+        $chg->set_field(change_fields::FLD_VIEW_NAME, $msg);
+        $chg->new_value = views::START_NAME;
+        $chg->row_id = views::START_ID;
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
     }
 
     /**
@@ -440,12 +904,52 @@ class test_log
      */
     function log_component_add(): change
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $chg = $this->log_entry_add();
-        $chg->set_table(change_tables::VIEW_COMPONENT);
-        $chg->set_field(change_fields::FLD_COMPONENT_NAME);
+        $chg->set_table(change_tables::VIEW_COMPONENT, $msg);
+        $chg->set_field(change_fields::FLD_COMPONENT_NAME, $msg);
         $chg->new_value = components::MATRIX_NAME;
         $chg->row_id = components::MATRIX_ID;
         return $chg;
+    }
+
+    /**
+     * @return change the log entry created by overwriting the description of the matrix component
+     *         in the user sandbox (user_components)
+     */
+    function log_component_overwrite(): change
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_component_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_COMPONENT_USR, $msg);
+        $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+        $chg->new_value = self::COMPONENT_OVERWRITE_COM;
+        // the name of the changed object as change_log_list::load_changed_objects sets it from the db
+        $chg->row_name = components::MATRIX_NAME;
+        return $chg;
+    }
+
+    /**
+     * the changes tab of an object page shows only the changes of the object that the page shows
+     * (change_log_list::filter compares the row id), so the row id is the id of the word component
+     * that the component page test shows and not the matrix component of log_component_add
+     *
+     * @return change_log_list the changes of the word component shown by the changes tab of the
+     *         component page
+     */
+    function log_list_component(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_entry_add();
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VIEW_COMPONENT, $msg);
+        $chg->set_field(change_fields::FLD_COMPONENT_NAME, $msg);
+        $chg->new_value = components::WORD_NAME;
+        $chg->row_id = components::WORD_ID;
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
     }
 
     /**
@@ -453,13 +957,12 @@ class test_log
      */
     function log_norm(): changes_norm
     {
-        global $usr_sys;
-
-        $chg = new changes_norm($usr_sys);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = new changes_norm($this->env->usr_system);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = word_names::MATH;
         $chg->row_id = 1;
         return $chg;
@@ -470,13 +973,12 @@ class test_log
      */
     function log_big(): changes_big
     {
-        global $usr_sys;
-
-        $chg = new changes_big($usr_sys);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = new changes_big($this->env->usr_system);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
         $chg->new_value = word_names::MATH;
         $chg->row_id = 1;
         return $chg;
@@ -487,6 +989,7 @@ class test_log
      */
     function log_obj_from_class(string $class): object
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $lib = new library();
 
         $t_grp = new test_groups($this->env);
@@ -495,9 +998,9 @@ class test_log
         $val_fld = $this->log_class_to_value_field($class);
         $val = $this->log_class_to_value($class);
         $log->set_time_str(test_const::DUMMY_DATETIME);
-        $log->set_action(change_actions::ADD);
-        $log->set_table($lib->class_to_table($val_class));
-        $log->set_field($val_fld);
+        $log->set_action(change_actions::ADD, $msg);
+        $log->set_table($lib->class_to_table($val_class), $msg);
+        $log->set_field($val_fld, $msg);
         $log->group_id = $t_grp->group()->id();
         $log->new_value = $val;
         $log->row_id = 1;
@@ -511,41 +1014,40 @@ class test_log
      */
     private function log_class_to_object(string $class): change|change_values_big|change_values_geo_big|change_values_geo_norm|change_values_geo_prime|change_values_norm|change_values_prime|change_values_text_prime|change_values_text_norm|change_values_text_big|change_values_time_big|change_values_time_norm|change_values_time_prime|changes_big|changes_norm
     {
-        global $usr_sys;
 
         if ($class == change::class) {
-            $chg = new change($usr_sys);
+            $chg = new change($this->env->usr_system);
         } elseif ($class == changes_norm::class) {
-            $chg = new changes_norm($usr_sys);
+            $chg = new changes_norm($this->env->usr_system);
         } elseif ($class == changes_big::class) {
-            $chg = new changes_big($usr_sys);
+            $chg = new changes_big($this->env->usr_system);
         } elseif ($class == change_values_prime::class) {
-            $chg = new change_values_prime($usr_sys);
+            $chg = new change_values_prime($this->env->usr_system);
         } elseif ($class == change_values_norm::class) {
-            $chg = new change_values_norm($usr_sys);
+            $chg = new change_values_norm($this->env->usr_system);
         } elseif ($class == change_values_big::class) {
-            $chg = new change_values_big($usr_sys);
+            $chg = new change_values_big($this->env->usr_system);
         } elseif ($class == change_values_time_prime::class) {
-            $chg = new change_values_time_prime($usr_sys);
+            $chg = new change_values_time_prime($this->env->usr_system);
         } elseif ($class == change_values_time_norm::class) {
-            $chg = new change_values_time_norm($usr_sys);
+            $chg = new change_values_time_norm($this->env->usr_system);
         } elseif ($class == change_values_time_big::class) {
-            $chg = new change_values_time_big($usr_sys);
+            $chg = new change_values_time_big($this->env->usr_system);
         } elseif ($class == change_values_text_prime::class) {
-            $chg = new change_values_text_prime($usr_sys);
+            $chg = new change_values_text_prime($this->env->usr_system);
         } elseif ($class == change_values_text_norm::class) {
-            $chg = new change_values_text_norm($usr_sys);
+            $chg = new change_values_text_norm($this->env->usr_system);
         } elseif ($class == change_values_text_big::class) {
-            $chg = new change_values_text_big($usr_sys);
+            $chg = new change_values_text_big($this->env->usr_system);
         } elseif ($class == change_values_geo_prime::class) {
-            $chg = new change_values_geo_prime($usr_sys);
+            $chg = new change_values_geo_prime($this->env->usr_system);
         } elseif ($class == change_values_geo_norm::class) {
-            $chg = new change_values_geo_norm($usr_sys);
+            $chg = new change_values_geo_norm($this->env->usr_system);
         } elseif ($class == change_values_geo_big::class) {
-            $chg = new change_values_geo_big($usr_sys);
+            $chg = new change_values_geo_big($this->env->usr_system);
         } else {
             log_err('change log class ' . $class . ' not expected');
-            $chg = new change($usr_sys);
+            $chg = new change($this->env->usr_system);
         }
         return $chg;
     }
@@ -636,14 +1138,13 @@ class test_log
      */
     function log_value(): change_values_norm
     {
-        global $usr_sys;
-
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
         $t_grp = new test_groups($this->env);
-        $chg = new change_values_norm($usr_sys);
+        $chg = new change_values_norm($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::VALUE);
-        $chg->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $chg->group_id = $t_grp->group()->id();
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
@@ -655,13 +1156,15 @@ class test_log
      */
     function log_value_prime(): change_values_prime
     {
-        global $usr_sys;
-
-        $chg = new change_values_prime($usr_sys);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_grp = new test_groups($this->env);
+        $chg = new change_values_prime($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->group_id = $t_grp->group_prime_3()->id();
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
@@ -672,13 +1175,15 @@ class test_log
      */
     function log_value_big(): change_values_big
     {
-        global $usr_sys;
-
-        $chg = new change_values_big($usr_sys);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_grp = new test_groups($this->env);
+        $chg = new change_values_big($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::WORD);
-        $chg->set_field(change_fields::FLD_WORD_NAME);
+        $chg->set_action(change_actions::ADD, $msg);
+        // set the field after the table, because the field id is unique per table
+        $chg->set_table(change_tables::VALUE, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->group_id = $t_grp->group_17_plus()->id();
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
@@ -709,12 +1214,11 @@ class test_log
      */
     function log_link(): change_link
     {
-        global $usr_sys;
-
-        $chg = new change_link($usr_sys);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = new change_link($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
-        $chg->set_action(change_actions::ADD);
-        $chg->set_table(change_tables::TRIPLE);
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::TRIPLE, $msg);
         $chg->new_from_id = word_names::CONST_ID;
         $chg->new_link_id = verbs::PART_ID;
         $chg->new_to_id = word_names::MATH_ID;
@@ -726,6 +1230,122 @@ class test_log
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->log_list_named(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return change_log_list_ui the changes of one word as an api mapped frontend list
+     *                            including one user sandbox change (the word view overwrite)
+     *                            e.g. to test the all user overwrites column of the user page
+     */
+    function log_list_word_changes_ui(): change_log_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->log_list_word_changes(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return change_log_list_ui the sandbox overwrites of one user on more than one object type
+     *                            as an api mapped frontend list e.g. to test the all user
+     *                            overwrites column of the user page
+     */
+    function log_list_user_overwrites_ui(): change_log_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->log_list_user_overwrites(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the changes of one user on more than one object type: the word, the triple, the formula, the
+     * formula link, the value, the component, the view and the source overwrites written to the
+     * user sandbox (overlay) tables plus a change of the shared standard object, so that a test can
+     * check that the all user overwrites column lists the overwrites of every object type but never
+     * a change of the standard object
+     * @return change_log_list the sandbox overwrites of one user and one standard change
+     */
+    function log_list_user_overwrites(): change_log_list
+    {
+        // the word overwrite carries the name of the changed word like the triple overwrite, so that
+        // the column can name the object of every change (see change_log_list::load_changed_objects)
+        $wrd_chg = $this->log_word_add_view();
+        $wrd_chg->row_name = word_names::MATH;
+        // only the word overwrite carries the values of the other users, which the same function
+        // adds from the changed object, so that a test can check that the icon to the values of the
+        // other users is shown for this change and not for a change that no other user has touched
+        $wrd_chg->other_values = self::OTHER_VALUES;
+        $log_lst = new change_log_list();
+        $log_lst->add($wrd_chg);
+        $log_lst->add($this->log_triple_add_description());
+        $log_lst->add($this->log_formula_increase_description());
+        $log_lst->add($this->log_formula_link_order_overwrite());
+        $log_lst->add($this->log_value_overwrite());
+        // the component overwrite carries the value of the shared standard object, which the same
+        // function adds from the changed object, so that the column can show the user value beside
+        // the common value; only this one change has it, so that a test can check that a change
+        // without a standard value simply shows no comparison
+        $cmp_chg = $this->log_component_overwrite();
+        $cmp_chg->std_value = components::WORD_COM;
+        $log_lst->add($cmp_chg);
+        $log_lst->add($this->log_view_overwrite());
+        $log_lst->add($this->log_source_overwrite());
+        $log_lst->add($this->log_ref_overwrite());
+        // a change of the shared standard word, which the column must never list as an overwrite;
+        // the renamed-from value is unique to this change, so a test can detect it
+        $log_lst->add($this->log_word_update());
+        return $log_lst;
+    }
+
+    /**
+     * @return change_log_list_ui more user overwrites than a page can show as an api mapped
+     *                            frontend list e.g. to test the row limit of a change log table
+     */
+    function log_list_many_user_overwrites_ui(): change_log_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->log_list_many_user_overwrites(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * more user sandbox overwrites of one user than a change log table shows, each with an own
+     * value that names its position, so that a test can check which of them are shown; the value
+     * is short enough to stay within the configured what limit, so that the test does not depend
+     * on the shortening of the what column
+     * @return change_log_list the overwrites of one user, newest (the highest number) written last
+     */
+    function log_list_many_user_overwrites(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        for ($i = 1; $i <= self::MANY_OVERWRITES; $i++) {
+            $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+            $chg = $this->log_word_add();
+            $chg->set_table(change_tables::WORD_USR, $msg);
+            $chg->set_field(fields::FLD_DESCRIPTION, $msg);
+            // a two digit number, so that the value of one entry is not part of the value of
+            // another entry e.g. 'no 1' would be part of 'no 12'
+            $chg->new_value = self::OVERWRITE_VALUE . str_pad((string)$i, 2, '0', STR_PAD_LEFT);
+            $log_lst->add($chg);
+        }
+        return $log_lst;
+    }
+
+    /**
+     * @return change_log_list the changes of one word (name, phrase type, description, impact,
+     *                         usage and protection type), used e.g. to show the change log table
+     *                         pure with a deterministic row per change field type
+     */
+    function log_list_word_changes(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->log_word_add());
+        $log_lst->add($this->log_word_update_type());
+        $log_lst->add($this->log_word_add_description());
+        $log_lst->add($this->log_word_add_impact());
+        $log_lst->add($this->log_word_add_usage());
+        $log_lst->add($this->log_word_update_protection());
+        $log_lst->add($this->log_word_add_user_id());
+        $log_lst->add($this->log_word_add_view());
+        $log_lst->add($this->log_word_add_view_id());
+        $log_lst->add($this->log_word_remove_view());
+        return $log_lst;
     }
 
     /**
@@ -764,6 +1384,48 @@ class test_log
         $log_lst->add($this->log_view_add());
         $log_lst->add($this->log_component_add());
         return $log_lst;
+    }
+
+    /**
+     * @return change_log_list two changes of one word within the same second where the
+     *         alphabetical order of the what texts equals the write order, so that only
+     *         the change id can prove that the sort shows the newest change first
+     */
+    function log_list_same_second(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        // written first: the lower change id and the alphabetically first what text
+        $log_lst->add($this->log_word_add());
+        $log_lst->add($this->log_word_add_description());
+        return $log_lst;
+    }
+
+    /**
+     * @return change_log_list two changes of one word one second apart where the newer
+     *         change has the lower change id, to test that the change time stays the
+     *         first sort key before the change id
+     */
+    function log_list_second_apart(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $newer = $this->log_word_add();
+        $newer->set_time_str(test_const::DUMMY_DATETIME_LATER);
+        $log_lst->add($newer);
+        $log_lst->add($this->log_word_add_description());
+        return $log_lst;
+    }
+
+    /**
+     * @return change_log_list_ui the same second changes like an api message from before
+     *         the change id was added (all id 0), to test the what text fallback sort
+     */
+    function log_list_same_second_no_id_ui(): change_log_list_ui
+    {
+        $json = json_decode($this->log_list_same_second()->api_json(), true);
+        foreach (array_keys($json) as $i) {
+            unset($json[$i][json_fields::ID]);
+        }
+        return new change_log_list_ui(json_encode($json));
     }
 
 }

@@ -40,6 +40,30 @@ cosmetic layout changes.
 }
 ```
 
+### A seed component gets its database id from its import position — append, then pin
+
+The import json cannot choose a database id: a seed component's id is simply its
+creation order across the seed files (`cfg/const/files.php`:
+`SYSTEM_DATA_FILES` → `BASE_DATA_FILES`, and within a file top to bottom). Two
+consequences for every **new** seed component (and equally for seed views):
+
+1. **Append, never insert.** Add the definition at the **end** of the
+   `components` block of its file, and prefer the **latest-imported** file that
+   can hold it. An insertion in the middle shifts the id of every later
+   component and churns the generated baselines
+   (`src/test/resources/unit/component/list.csv`,
+   `.../component_link/list.csv`) by hundreds of rows. Real case: `system title
+   verb` defined mid-`system_views.json` landed at id 99 and renumbered ~180
+   rows; moved to `base_views.json` it became id 283 and the shift reverted.
+2. **Pin the id where a test needs the number.** Code references a component
+   only by `code_id` (never by the numeric id). But when a test needs the id,
+   record it as a `*_ID` const in `shared/const/components.php`, re-baselined
+   from the regenerated `list.csv` after a reset — never guessed — so a later
+   shift fails the test loudly instead of drifting silently (same rule as the
+   phrase id consts in `docs/llm/testing.md`). Test-only components that never
+   come from the seed use the out-of-band 900 range (`COL_FIRST_ID = 901`) so
+   they cannot collide with seed ids.
+
 ### `ui_msg_code_id` is globally unique — never reuse on a new component
 
 The `components` table has a unique key `components_ui_msg_code_id_uk` on

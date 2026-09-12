@@ -121,7 +121,7 @@ class job_cache_refresh implements job_exe
     {
         $result = false;
         $cac = new db_cache($usr);
-        $id = $cac->load_by_type($type_code_id);
+        $id = $cac->load_by_type($type_code_id, $msg);
         if ($id > 0 and $cac->is_outdated()) {
             $result = $cac->del($msg);
         }

@@ -99,6 +99,7 @@ class url_var
     const string PHRASE_COL = 'c2';
     const string PHRASE_COL_SUB = 'c3';
     const string COMPONENT_LINK = 'cl'; // to link a component to a view
+    const string LINKED_COMPONENT = 'ck'; // the component that a component links to
     const string POSITION_TYPE = 'cp';
     const string STYLE = 'cs';
     const string COMPONENT_TYPE = 'ct';
@@ -119,7 +120,10 @@ class url_var
     const string VIEW_LINK = 'dc'; // display connector to link a view to another view
     const string VIEW_PARENT = 'df'; // the "from" display view that should be modified
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
+    const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
+    const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
+    const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
     const string VIEW_TYPE = 'dt';
     const string VIEW_RELATION_TYPE = 'dr'; // the type of the view to view link
@@ -133,6 +137,12 @@ class url_var
     const string USER_EXPRESSION = 'fe';
     const string FORMULA_LINK = 'fl'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO = 'fp';
+    // which part of the formula form the user has asked to recalculate, one of the REFRESH_* values
+    // the values repeat the key, because a url var is unique within the complete url_var class
+    const string REFRESH = 'fr';
+    const string REFRESH_EXPRESSION = 'fre'; // recalculate the expression based on the latex changes
+    const string REFRESH_LATEX = 'frx'; // recalculate the latex based on the expression
+    const string REFRESH_TERMS = 'frt'; // only resolve the terms of the expression and the latex again
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -170,6 +180,11 @@ class url_var
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
     const string NAME_GIVEN = 'kg'; // the overwrite name of a triple, group
     const string CODE_ID = 'ki'; // the code id
+    // the user interface message links of a component, only changeable like the code id
+    const string UI_MSG_CODE_ID = 'ku';
+    const string UI_MSG_CODE_ID_VARS = 'kv';
+    const string UI_MSG_CODE_ID_EXCEPTION = 'kx';
+    const string UI_MSG_VALUE_EXCEPTION = 'kn';
     const string PATTERN = 'kp'; // the wildcard pattern to select a list of objects by name
     const string REF = 'l'; // l for data link to external
     const string REF_TYPE = 'lt';
@@ -180,6 +195,7 @@ class url_var
     const string NUMERIC_VALUE = 'n';
     const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
+    const string OWNER = 'ow'; // the name of the user who owns the object, for display on the default page
     const string PHRASE = 'p'; // the id or name of one phrase
     const string PHRASE_CLASS = 'pc'; // word or triple class indicator of the phrase
     const string DIRECTION = 'pd'; // 'up' to get the parents and 'down' for the children
@@ -295,6 +311,42 @@ class url_var
     const int DEBUG_LEVEL_MAIN_STEP = 9; // the ninth debug level is to show the main processing steps such as start and end
     const int DEBUG_LEVEL_MAX_FIXED = 10; // the max number of predefined debug level and the staring of the depth debug levels
 
+    // the url vars that identify the page a request shows: the mask, the object selection,
+    // the search pattern and the list size and page, so that a back link returns to the list
+    // as the user has expanded it; used to build the '9'-prefixed back part of an edit link
+    // (html_base::page_url_array), so form state and already prefixed params are never
+    // repeated in the back part and the url stays short
+    const array PAGE_VARS = [
+        self::MASK,
+        self::ID,
+        self::ID_LST,
+        self::PATTERN,
+        self::PATTERN_HUMAN,
+        self::DISPLAY_LIST_SIZE,
+        self::DISPLAY_LIST_PAGE,
+    ];
+
+    // the page vars where a zero is a value and not the "not set" default, so that
+    // page_url_array keeps them: a list size of zero is value_list::LIMIT_ALL, i.e. the user
+    // has expanded the list to every row, which a back link must repeat; for every other page
+    // var a zero names nothing (no view, no object, the first list page) and is dropped
+    const array PAGE_VARS_KEEP_ZERO = [
+        self::DISPLAY_LIST_SIZE,
+    ];
+
+    // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
+    // form) and must never be written to a log or reflected in a page; used to redact the post array
+    // before it is logged in http/view.php (see without_secrets)
+    const array SECRET_VARS = [
+        self::USER_PASSWORD,
+        self::USER_PASSWORD_HUMAN,
+        self::USER_PASSWORD_RETYPE,
+        self::USER_PASSWORD_RETYPE_HUMAN,
+    ];
+
+    // the placeholder shown instead of a secret value in a redacted url / post array
+    const string SECRET_MASK = '***';
+
     // the url vars that control the view, the object selection and the render mode of a request
     // and that never carry an object field value (used e.g. by frontend::url_has_object_values)
     const array CONTROL_VARS = [
@@ -355,6 +407,10 @@ class url_var
     const string PATTERN_HUMAN = 'pattern'; // part of a name to select a named object such as word, triple, ...
     const string DESCRIPTION_HUMAN = 'description';
     const string CODE_ID_HUMAN = 'code_id';
+    const string UI_MSG_CODE_ID_HUMAN = 'ui_msg_code_id';
+    const string UI_MSG_CODE_ID_VARS_HUMAN = 'ui_msg_code_id_vars';
+    const string UI_MSG_CODE_ID_EXCEPTION_HUMAN = 'ui_msg_code_id_exception';
+    const string UI_MSG_VALUE_EXCEPTION_HUMAN = 'ui_msg_value_exception';
     const string EXCLUDED_HUMAN = 'excluded';
 
     // language
@@ -394,6 +450,10 @@ class url_var
     const string LINK_PHRASE_HUMAN = 'link_phrase';
     const string UNLINK_PHRASE_HUMAN = 'unlink_phrase';
 
+    // list display
+    const string DISPLAY_LIST_SIZE_HUMAN = 'display_list_size'; // the number of list rows shown on a page
+    const string DISPLAY_LIST_PAGE_HUMAN = 'display_list_page'; // the page of a list longer than the size
+
     // graph
     const string DIRECTION_HUMAN = 'dir'; // 'up' to get the parents and 'down' for the children
     const string LEVELS_HUMAN = 'levels'; // the number of search levels'
@@ -402,6 +462,7 @@ class url_var
     const string SOURCE_HUMAN = 'source_id';
     const string SOURCE_TYPE_HUMAN = 'source_type';
     const string URL_HUMAN = 'url';
+    const string DOI_HUMAN = 'doi';
 
     // ref
     const string REF_HUMAN = 'ref_id';
@@ -423,6 +484,12 @@ class url_var
     const string NEED_ALL_HUMAN = 'need_all_val';
     const string USER_EXPRESSION_HUMAN = 'formula_text';
     const string LATEX_HUMAN = 'latex'; // the formula in latex format
+    // which part of the formula form the user has asked to recalculate, one of the REFRESH_*_HUMAN
+    // values; each value names what it creates from what, so that it stays unique and self-explaining
+    const string REFRESH_HUMAN = 'refresh';
+    const string REFRESH_EXPRESSION_HUMAN = 'expression_from_latex';
+    const string REFRESH_LATEX_HUMAN = 'latex_from_expression';
+    const string REFRESH_TERMS_HUMAN = 'terms_only';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -457,6 +524,7 @@ class url_var
     const string COMPONENT_HUMAN = 'component_id';
     const string COMPONENT_TYPE_HUMAN = 'component_type';
     const string COMPONENT_LINK_HUMAN = 'component_link_id'; // link a component to a view
+    const string LINKED_COMPONENT_HUMAN = 'linked_component_id';
     const string COMPONENT_LINK_TYPE_HUMAN = 'component_link_type';
     const string LINK_TYPE_HUMAN = 'link_type';
     const string POSITION_TYPE_HUMAN = 'position_type';
@@ -574,6 +642,10 @@ class url_var
         [self::PATTERN_HUMAN, self::PATTERN],
         [self::DESCRIPTION_HUMAN, self::DESCRIPTION],
         [self::CODE_ID_HUMAN, self::CODE_ID],
+        [self::UI_MSG_CODE_ID_HUMAN, self::UI_MSG_CODE_ID],
+        [self::UI_MSG_CODE_ID_VARS_HUMAN, self::UI_MSG_CODE_ID_VARS],
+        [self::UI_MSG_CODE_ID_EXCEPTION_HUMAN, self::UI_MSG_CODE_ID_EXCEPTION],
+        [self::UI_MSG_VALUE_EXCEPTION_HUMAN, self::UI_MSG_VALUE_EXCEPTION],
         [self::EXCLUDED_HUMAN, self::EXCLUDED],
 
         // language
@@ -611,6 +683,10 @@ class url_var
         [self::PHRASE_LIST_HUMAN, self::PHRASE_LIST],
         [self::PHRASE_POS_HUMAN, self::PHRASE_POS],
 
+        // list display
+        [self::DISPLAY_LIST_SIZE_HUMAN, self::DISPLAY_LIST_SIZE],
+        [self::DISPLAY_LIST_PAGE_HUMAN, self::DISPLAY_LIST_PAGE],
+
         // graph
         [self::DIRECTION_HUMAN, self::DIRECTION],
         [self::LEVELS_HUMAN, self::LEVELS],
@@ -619,6 +695,7 @@ class url_var
         [self::SOURCE_HUMAN, self::SOURCE],
         [self::SOURCE_TYPE_HUMAN, self::SOURCE_TYPE],
         [self::URL_HUMAN, self::URL],
+        [self::DOI_HUMAN, self::DOI],
 
         // ref
         [self::REF_HUMAN, self::REF],
@@ -639,6 +716,7 @@ class url_var
         [self::FORMULA_TYPE_HUMAN, self::FORMULA_TYPE],
         [self::USER_EXPRESSION_HUMAN, self::USER_EXPRESSION],
         [self::LATEX_HUMAN, self::LATEX],
+        [self::REFRESH_HUMAN, self::REFRESH],
         [self::NEED_ALL_HUMAN, self::NEED_ALL],
         [self::FORMULA_LINK_HUMAN, self::FORMULA_LINK],
         [self::FORMULA_LINK_PRIO_HUMAN, self::FORMULA_LINK_PRIO],
@@ -673,6 +751,7 @@ class url_var
         [self::COMPONENT_HUMAN, self::COMPONENT],
         [self::COMPONENT_TYPE_HUMAN, self::COMPONENT_TYPE],
         [self::COMPONENT_LINK_HUMAN, self::COMPONENT_LINK],
+        [self::LINKED_COMPONENT_HUMAN, self::LINKED_COMPONENT],
         [self::COMPONENT_LINK_TYPE_HUMAN, self::COMPONENT_LINK_TYPE],
         [self::LINK_TYPE_HUMAN, self::LINK_TYPE],
         [self::POSITION_TYPE_HUMAN, self::POSITION_TYPE],
@@ -731,6 +810,13 @@ class url_var
         self::SHOW_FULL => self::CRUD_FULL_HUMAN,
         self::SHOW_POPUP => self::CRUD_POPUP_HUMAN,
         self::SHOW_CREATE => self::CRUD_CELL_HUMAN,
+    ];
+
+    // map human-readable url values to standard url values
+    const array HUMAN_TO_STD_REFRESH_VAL = [
+        self::REFRESH_EXPRESSION => self::REFRESH_EXPRESSION_HUMAN,
+        self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
+        self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -804,6 +890,24 @@ class url_var
         foreach (self::HUMAN_TO_STD as $entry) {
             if ($entry[1] == $std) {
                 $result = $entry[0];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a copy of the given url / post array with every secret value (the unhashed password) masked,
+     * so the array can be logged or shown without leaking the plain password (see http/view.php)
+     *
+     * @param array $url_array the raw url / post array possibly carrying a plain password
+     * @return array a copy with every SECRET_VARS value replaced by SECRET_MASK
+     */
+    static function without_secrets(array $url_array): array
+    {
+        $result = $url_array;
+        foreach (self::SECRET_VARS as $secret) {
+            if (array_key_exists($secret, $result)) {
+                $result[$secret] = self::SECRET_MASK;
             }
         }
         return $result;

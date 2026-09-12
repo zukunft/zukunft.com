@@ -58,7 +58,6 @@ class job_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $sc = new sql_creator();
@@ -76,7 +75,7 @@ class job_tests
         $t->assert_sql_foreign_key_create($job_tim);
 
         $t->subheader($ts . 'sql setup');
-        $job = new job($usr);
+        $job = new job($t->usr1);
         $t->assert_sql_table_create($job);
         $t->assert_sql_index_create($job);
         $t->assert_sql_foreign_key_create($job);
@@ -85,7 +84,7 @@ class job_tests
         $t->subheader($ts . 'sql read');
 
         // sql to load one batch job
-        $job = new job($usr);
+        $job = new job($t->usr1);
         $t->assert_sql_by_id($sc, $job);
 
         // sql to load a list of open batch jobs

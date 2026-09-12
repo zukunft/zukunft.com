@@ -33,62 +33,69 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("ref", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("ref", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $src_id = $_GET[url_var::ID] ?? 0;
     $src_name = $_GET[url_var::NAME] ?? '';
     $src_code_id = $_GET[url_var::CODE_ID] ?? '';
-
-    // load the session user parameters
-    $msg = '';
-    $usr = new user;
-    $msg .= $usr->get();
+    // e.g. ir=1 to include the views, changes and overwrites shown by the source page tabs
+    $typ_lst = api_type_list::from_url_array($_GET, [api_types::HEADER]);
 
     $ctrl = new controller();
-    $result = ''; // reset the json message string
-
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         // the session user may differ from the data user e.g. an admin wants to see the data
         // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
 
         // load the source from the database for GET, UPDATE and DELETE
         $src = new source($load_usr);
         if ($src_id > 0) {
-            $src->load_by_id($src_id);
-            $result = $src->api_json([api_types::HEADER], $load_usr);
+            $src->load_by_id($src_id, $msg);
+            $result = $src->api_json($typ_lst, $msg, $load_usr);
         } elseif ($src_name != '') {
-            $src->load_by_name($src_name);
-            $result = $src->api_json([api_types::HEADER], $load_usr);
+            $src->load_by_name($src_name, $msg);
+            $result = $src->api_json($typ_lst, $msg, $load_usr);
         } elseif ($src_code_id != '') {
-            $src->load_by_code_id($src_code_id);
-            $result = $src->api_json([api_types::HEADER], $load_usr);
+            $src->load_by_code_id($src_code_id, $msg);
+            $result = $src->api_json($typ_lst, $msg, $load_usr);
         } else {
-            $msg = 'Cannot load source because id, name and code id is missing';
+            $msg->add_message_text('Cannot load source because id, name and code id is missing');
         }
 
         // do not disclose another user's private source loaded by id/name/code (idor); neutral message
         if ($result != '' and !$src->is_readable_by($usr)) {
             $result = '';
-            $msg = 'Cannot load source because id, name and code id is missing';
+            $msg->add_message_text('Cannot load source because id, name and code id is missing');
         }
 
         // add, update or delete the source
@@ -98,5 +105,5 @@ if ($db_con->is_open()) {
         $ctrl->not_permitted($msg);
     }
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

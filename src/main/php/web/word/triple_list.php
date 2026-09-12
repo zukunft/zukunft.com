@@ -31,8 +31,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -43,10 +43,10 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_TYPES . 'phrase_types.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -56,8 +56,8 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
@@ -88,13 +88,13 @@ class triple_list extends ListBase
      * @param verb|null $vrb
      * @return triple_list
      */
-    function get_by_verb(verb|null $vrb): triple_list
+    function get_by_verb(verb|null $vrb, user_message $msg): triple_list
     {
         $trp_lst = new triple_list();
         if ($vrb != null) {
             foreach ($this->lst() as $trp) {
                 if ($trp->has_verb($vrb)) {
-                    $trp_lst->add($trp);
+                    $trp_lst->add($trp, $msg);
                 }
             }
         }
@@ -107,25 +107,37 @@ class triple_list extends ListBase
      */
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * the names are separated by a blank and not by a comma, because each name is already a link
+     * and so stands out on its own, whereas a comma between two links adds a line to the page
+     *
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the links
+     * @param int|null $limit the max number of triples to show, null for all of them
      * @return string with a list of the triple names with html links
      * ex. names_linked
      */
-    function display(string $back = ''): string
+    function display(user_message $msg, array $url_arr = [], ?int $limit = null): string
     {
-        return implode(', ', $this->names_linked($back));
+        $names = $this->names_linked($msg, $url_arr);
+        $result = implode(' ', array_slice($names, 0, $limit ?? count($names)));
+        // never cut silently: tell the user that the list continues, but without a number, because
+        // the list itself is already cut by the read limit (see cfg/verb/verb::triples_read_limit)
+        // and so the true number of the remaining triples is not known here
+        if ($limit != null and count($names) > $limit) {
+            $result .= ' ' . msg_id::THREE_POINTS->text();
+        }
+        return $result;
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return array with a list of the triple names with html links
      */
-    function names_linked(string $back = ''): array
+    function names_linked(user_message $msg, array $url_arr = []): array
     {
         $result = array();
         foreach ($this->lst() as $trp) {
-            if (!$trp->is_hidden()) {
-                $result[] = $trp->name_link($back);
+            if (!$trp->is_hidden($msg)) {
+                $result[] = $trp->name_link($url_arr);
             }
         }
         return $result;
@@ -133,11 +145,11 @@ class triple_list extends ListBase
 
     /**
      * show all triples of the list as table row (ex display)
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param bool $add_btn set to true for eas allow of similar triples
      * @return string the html code with all triples of the list
      */
-    function tbl(string $back = '', bool $add_btn = false): string
+    function tbl(user_message $msg, array $url_arr = [], bool $add_btn = false): string
     {
         $html = new html_base();
         $cols = '';
@@ -145,13 +157,13 @@ class triple_list extends ListBase
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $trp) {
-            $lnk = $trp->name_link($back);
+            $lnk = $trp->name_link($url_arr);
             $cols .= $html->td($lnk);
             $last_trp = $trp;
         }
         if ($add_btn) {
-            $add_trp = $this->suggested();
-            $add_url = $add_trp->btn_add($back);
+            $add_trp = $this->suggested($msg);
+            $add_url = $add_trp->btn_add($url_arr);
             $cols .= $html->td($add_url);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
@@ -162,7 +174,7 @@ class triple_list extends ListBase
      * shows all words the link to the given word
      * returns the html code to select a word that can be edited
      */
-    function graph(string $back = ''): string
+    function graph(user_message $msg, array $url_arr = []): string
     {
         global $ui_sys;
 
@@ -171,7 +183,7 @@ class triple_list extends ListBase
 
         // check the all minimal input parameters
         if (isset($this->wrd)) {
-            log_debug('graph->display for ' . $this->wrd->name() . ' called from ' . $back);
+            log_debug('graph->display for ' . $this->wrd->name() . ' called from ' . $html->page_url($url_arr));
         }
         $prev_verb_id = 0;
 
@@ -180,11 +192,11 @@ class triple_list extends ListBase
             // reset the vars
             $directional_link_type_id = 0;
 
-            $lnk = $this->get_by_key($lnk_key);
+            $lnk = $this->get_by_key($lnk_key, $msg);
             // get the next link to detect if there is more than one word linked with the same link type
             // TODO check with a unit test if last element is used
             if ($this->count() - 1 > $lnk_key) {
-                $next_lnk = $this->get_by_key($lnk_key + 1);
+                $next_lnk = $this->get_by_key($lnk_key + 1, $msg);
             } else {
                 $next_lnk = $lnk;
             }
@@ -235,7 +247,8 @@ class triple_list extends ListBase
                         $dsp_obj = $lnk->tob()->get_dsp_obj();
                         $result .= $dsp_obj->dsp_tbl_cell(0);
                     }
-                    $lnk_ui = new triple_ui($lnk->api_json());
+                    $api_msg = new user_message(); // not reported: a legacy display function without a message, see graph
+                    $lnk_ui = new triple_ui($lnk->api_json([], $api_msg));
                     $result .= $lnk_ui->btn_edit($lnk->fob()->dsp_obj());
                     if ($lnk->fob() != null) {
                         $dsp_obj = $lnk->fob()->get_dsp_obj();
@@ -275,9 +288,10 @@ class triple_list extends ListBase
                     // give the user the possibility to add a similar word
                     $result .= '  <tr>';
                     $result .= '    <td>';
-                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add similar word",
-                            $html->url_new(views::WORD_ADD_ID, 0, '', (string)$start_id, '', 'verb=' .
-                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id));
+                    // TODO Prio 1 add a tooltip like "Add similar word",
+                    //                            $html->url_back(views::WORD_ADD_ID, 0, $url_arr, 'verb=' .
+                    //                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id)
+                    $result .= '      ' . $lnk->tob()->btn_add();
                     $result .= '    </td>';
                     $result .= '  </tr>';
 
@@ -321,12 +335,12 @@ class triple_list extends ListBase
      * @param string $type the ENUM string of the fixed type
      * @return triple_list_ui with the all triples of the give type
      */
-    private function filter(string $type): triple_list_ui
+    private function filter(string $type, user_message $msg): triple_list_ui
     {
         $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
-            if ($wrd->is_type($type)) {
-                $result->add($wrd);
+            if ($wrd->is_type($type, $msg)) {
+                $result->add($wrd, $msg);
             }
         }
         return $result;
@@ -335,28 +349,28 @@ class triple_list extends ListBase
     /**
      * get all time triples from this list of triples
      */
-    function time_lst(): triple_list_ui
+    function time_lst(user_message $msg): triple_list_ui
     {
-        return $this->filter(phrase_type_shared::TIME);
+        return $this->filter(phrase_type_shared::TIME, $msg);
     }
 
     /**
      * get all measure triples from this list of triples
      */
-    function measure_lst(): triple_list_ui
+    function measure_lst(user_message $msg): triple_list_ui
     {
-        return $this->filter(phrase_type_shared::MEASURE);
+        return $this->filter(phrase_type_shared::MEASURE, $msg);
     }
 
     /**
      * get all scaling triples from this list of triples
      */
-    function scaling_lst(): triple_list_ui
+    function scaling_lst(user_message $msg): triple_list_ui
     {
         $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
-            if ($wrd->is_scaling()) {
-                $result->add($wrd);
+            if ($wrd->is_scaling($msg)) {
+                $result->add($wrd, $msg);
             }
         }
         return $result;
@@ -366,20 +380,20 @@ class triple_list extends ListBase
      * get all measure and scaling triples from this list of triples
      * @returns triple_list_ui triples that are usually shown after a number
      */
-    function measure_scale_lst(): triple_list_ui
+    function measure_scale_lst(user_message $msg): triple_list_ui
     {
-        $scale_lst = $this->scaling_lst();
-        $measure_lst = $this->measure_lst();
-        $measure_lst->merge($scale_lst);
+        $scale_lst = $this->scaling_lst($msg);
+        $measure_lst = $this->measure_lst($msg);
+        $measure_lst->merge($scale_lst, $msg);
         return $measure_lst;
     }
 
     /**
      * get all measure triples from this list of triples
      */
-    function percent_lst(): triple_list_ui
+    function percent_lst(user_message $msg): triple_list_ui
     {
-        return $this->filter(phrase_type_shared::PERCENT);
+        return $this->filter(phrase_type_shared::PERCENT, $msg);
     }
 
     /**
@@ -388,56 +402,56 @@ class triple_list extends ListBase
      * TODO call this from the display object t o avoid casting again
      * @returns triple_list_ui a triple
      */
-    function ex_measure_and_time_lst(): triple_list_ui
+    function ex_measure_and_time_lst(user_message $msg): triple_list_ui
     {
         $wrd_lst_ex = clone $this;
-        $wrd_lst_ex->ex_time();
-        $wrd_lst_ex->ex_measure();
-        $wrd_lst_ex->ex_scaling();
-        $wrd_lst_ex->ex_percent(); // the percent sign is normally added to the value
+        $wrd_lst_ex->ex_time($msg);
+        $wrd_lst_ex->ex_measure($msg);
+        $wrd_lst_ex->ex_scaling($msg);
+        $wrd_lst_ex->ex_percent($msg); // the percent sign is normally added to the value
         return $wrd_lst_ex;
     }
 
     /**
      * Exclude all time triples from this triple list
      */
-    function ex_time(): void
+    function ex_time(user_message $msg): void
     {
-        $this->remove($this->time_lst());
+        $this->remove($this->time_lst($msg));
     }
 
     /**
      * Exclude all measure triples from this triple list
      */
-    function ex_measure(): void
+    function ex_measure(user_message $msg): void
     {
-        $this->remove($this->measure_lst());
+        $this->remove($this->measure_lst($msg));
     }
 
     /**
      * Exclude all measure triples from this triple list
      */
-    function ex_scaling(): void
+    function ex_scaling(user_message $msg): void
     {
-        $this->remove($this->scaling_lst());
+        $this->remove($this->scaling_lst($msg));
     }
 
     /**
      * Exclude all measure triples from this triple list
      */
-    function ex_percent(): void
+    function ex_percent(user_message $msg): void
     {
-        $this->remove($this->percent_lst());
+        $this->remove($this->percent_lst($msg));
     }
 
     /**
      * @return phrase_list_ui with all from phrases
      */
-    function phrase_list(): phrase_list_ui
+    function phrase_list(user_message $msg): phrase_list_ui
     {
         $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
-            $lst->add($trp->phrase());
+            $lst->add($trp->phrase(), $msg);
         }
         return $lst;
     }
@@ -445,11 +459,11 @@ class triple_list extends ListBase
     /**
      * @return phrase_list_ui with all from phrases
      */
-    function from_phrase_list(): phrase_list_ui
+    function from_phrase_list(user_message $msg): phrase_list_ui
     {
         $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
-            $lst->add($trp->from);
+            $lst->add($trp->from, $msg);
         }
         return $lst;
     }
@@ -457,25 +471,25 @@ class triple_list extends ListBase
     /**
      * @return phrase_list_ui with all from phrases
      */
-    function to_phrase_list(): phrase_list_ui
+    function to_phrase_list(user_message $msg): phrase_list_ui
     {
         $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
-            $lst->add($trp->to);
+            $lst->add($trp->to, $msg);
         }
         return $lst;
     }
 
-    function suggested(): triple_ui
+    function suggested(user_message $msg): triple_ui
     {
         $trp = new triple_ui();
-        $from_lst = $this->from_phrase_list();
+        $from_lst = $this->from_phrase_list($msg);
         $from_phr = $from_lst->mainly();
         if ($from_phr != null) {
             $trp->set_from($from_phr);
         }
         // TODO preset verb
-        $to_lst = $this->to_phrase_list();
+        $to_lst = $this->to_phrase_list($msg);
         $to_phr = $to_lst->mainly();
         if ($to_phr != null) {
             $trp->set_to($to_phr);

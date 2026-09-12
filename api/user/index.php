@@ -36,31 +36,35 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("user", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("user", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $usr_id = $_GET[url_var::ID] ?? 0;
     $usr_name = $_GET[url_var::NAME] ?? '';
     $usr_email = $_GET[url_var::EMAIL] ?? '';
-
-    $msg = '';
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -68,26 +72,34 @@ if ($db_con->is_open()) {
         $db_usr = new user();
         $found = false;
         if ($usr_id != 0) {
-            $db_usr->load_by_id($usr_id);
+            $db_usr->load_by_id($usr_id, $msg);
             $found = true;
         } elseif ($usr_name != '') {
-            $db_usr->load_by_name($usr_name);
+            $db_usr->load_by_name($usr_name, $msg);
             $found = true;
         } elseif ($usr_email != '') {
-            $db_usr->load_by_email($usr_email);
+            $db_usr->load_by_email($usr_email, $msg);
             $found = true;
         } else {
-            $msg = 'user id or name missing';
+            $msg->add_message_text('user id or name missing');
         }
 
-        // only an admin or the user himself may read a user record; otherwise
+        // only an admin or the user himself may read the full user record; otherwise
         // an anonymous visitor (who always gets an auto created ip user) could
-        // enumerate users and read the email, ip address and activation key
+        // enumerate users and read the email, ip address and activation key;
+        // the core fields (only the id and the name) are additionally sent to the
+        // session-less server side call of the own frontend that renders the user
+        // page title (see server_guard::from_own_pod), because the frontend has
+        // validated the browsing user's session before calling the api; any other
+        // requester gets not even the core fields, so an external caller cannot
+        // use the api to enumerate the usernames
         if ($found) {
             if ($usr->is_admin() or $db_usr->id() == $usr->id) {
-                $result = $db_usr->api_json();
+                $result = $db_usr->api_json([], $msg);
+            } elseif (server_guard::from_own_pod()) {
+                $result = $db_usr->api_json_core([], $msg);
             } else {
-                $msg = 'not permitted';
+                $msg->add_message_text('not permitted');
             }
         }
     }
@@ -96,5 +108,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

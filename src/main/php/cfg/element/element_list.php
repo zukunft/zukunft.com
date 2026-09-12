@@ -80,12 +80,13 @@ class element_list extends sandbox_list
      * to the parent function that fills the element list based on a database record
      *
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one element has been loaded
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new element($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new element($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -107,22 +108,22 @@ class element_list extends sandbox_list
      * load
      */
 
-    function load_by_frm(int $frm_id): bool
+    function load_by_frm(int $frm_id, user_message $msg): bool
     {
         global $db_con;
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_frm_id($sc, $frm_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
-    function load_by_frm_and_type_id(int $frm_id, int $elm_type_id): bool
+    function load_by_frm_and_type_id(int $frm_id, int $elm_type_id, user_message $msg): bool
     {
         global $db_con;
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_frm_and_type_id($sc, $frm_id, $elm_type_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -246,14 +247,14 @@ class element_list extends sandbox_list
      * but has linked objects
      *
      * @param element|db_object_seq_id|null $to_add the object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
     function add_by_link(
         element|db_object_seq_id|null $to_add,
-        bool                          $allow_duplicates = false,
-        Message                       $msg = new Message()
+        Message                       $msg,
+        bool                          $allow_duplicates = false
     ): bool
     {
         $result = false;
@@ -357,12 +358,12 @@ class element_list extends sandbox_list
     {
         global $db_con;
 
-        $usr_msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $sc = $db_con->sql_creator();
         $qp = $this->del_sql_without_log($sc);
-        $usr_msg->add_message_text(
+        $msg->add_message_text(
             $db_con->exe_try('del elements', $qp->sql, $qp->name, $qp->par, sys_log_levels::FATAL_ID));
-        return $usr_msg;
+        return $msg;
     }
 
     /**

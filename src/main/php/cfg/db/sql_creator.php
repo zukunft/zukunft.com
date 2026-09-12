@@ -217,6 +217,15 @@ class sql_creator
         change_values_prime::class,
         change_values_norm::class,
         change_values_big::class,
+        change_values_time_prime::class,
+        change_values_time_norm::class,
+        change_values_time_big::class,
+        change_values_text_prime::class,
+        change_values_text_norm::class,
+        change_values_text_big::class,
+        change_values_geo_prime::class,
+        change_values_geo_norm::class,
+        change_values_geo_big::class,
         change_link::class,
         sys_log::class,
         job::class,
@@ -573,12 +582,19 @@ class sql_creator
      * get the preloaded table id for change log entries
      *
      * @param string $class the class name including the namespace
+     * @param sql_type_list $sc_par_lst the parameters of the sql statement creation; a write to
+     *                      the user sandbox (overlay) table is logged to the user table
+     *                      e.g. user_words instead of words
      * @return int the database id of the table selected by the given class
      */
-    function table_id(string $class): int
+    function table_id(string $class, sql_type_list $sc_par_lst = new sql_type_list()): int
     {
         global $sys;
-        return $sys->typ_lst->cng_tbl->id($this->get_table_name($class));
+        $tbl_name = $this->get_table_name($class);
+        if ($sc_par_lst->is_usr_tbl()) {
+            $tbl_name = sql_db::TBL_USER_PREFIX . $tbl_name;
+        }
+        return $sys->typ_lst->cng_tbl->id($tbl_name);
     }
 
 
@@ -612,8 +628,10 @@ class sql_creator
      */
     function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): bool
     {
-        global $sys;
-        $usr = $sys?->usr_req;
+        // the requesting user comes from the connection (sql_db), which the entry point sets;
+        // read here so both factory-built and directly-built sql_creators use the same default user
+        global $db_con;
+        $usr = $db_con?->usr_req;
 
         $this->reset();
         $this->class = $class;
@@ -687,6 +705,27 @@ class sql_creator
     function set_fields_num_dummy(array $field_lst): void
     {
         $this->field_lst_num_dummy = $field_lst;
+    }
+
+    /**
+     * the placeholder of a field that a table of a union query does not have
+     *
+     * an id field that can be either int or text (e.g. the source_group_id, see
+     * def::MIXED_ID_FIELDS) is a text column in the tables that do have it, so its placeholder
+     * must be a text too - a numeric zero would make postgres refuse the union with
+     * "UNION types integer and character do not match"
+     *
+     * @param string $field the database field name that is missing in this table of the union
+     * @return string the sql placeholder value including the surrounding blanks
+     */
+    private function dummy_value(string $field): string
+    {
+        if (in_array($field, def::MIXED_ID_FIELDS)) {
+            $result = " '' ";
+        } else {
+            $result = " 0 ";
+        }
+        return $result;
     }
 
     /**
@@ -1130,6 +1169,7 @@ class sql_creator
                 or $spt == sql_par_type::INT_OR
                 or $spt == sql_par_type::INT_NOT
                 or $spt == sql_par_type::INT_NOT_OR_NULL
+                or $spt == sql_par_type::INT_USR
                 or $spt == sql_par_type::LIMIT
                 or $spt == sql_par_type::OFFSET) {
                 $this->add_par($spt, $fld_val, $name);
@@ -1187,6 +1227,8 @@ class sql_creator
      * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @param bool $prepare can be set to false the created sql parts of a union query
+     * @param bool $union true if this select is one part of a union, so the fields of the other tables get a placeholder
+     * @param bool $num_id true if this union part reads a table with a numeric id, so a mixed id field is cast to text (see def::MIXED_ID_FIELDS)
      * @return string the created SQL statement in the previous set dialect
      */
     function sql(
@@ -1751,7 +1793,7 @@ class sql_creator
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param value_base|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
@@ -1761,7 +1803,7 @@ class sql_creator
         user               $usr,
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst,
         sandbox_multi|null $val = null
     ): sql_par
@@ -1796,13 +1838,13 @@ class sql_creator
                 if (in_array($fld, def::NAMED_ID_FIELDS)) {
                     $log = $val->log_named_id_object();
                 } else {
-                    $log = $val->log_object();
+                    $log = $val->log_object($msg);
                 }
             } else {
                 $log = new change($usr);
             }
-            $log->set_class($class);
-            $log->set_field($fld);
+            $log->set_class($class, $msg);
+            $log->set_field($fld, $msg);
             $log->new_value = $fvt_lst->get_value($fld);
             if ($fvt_lst->get_id($fld) != null) {
                 $log->new_id = $fvt_lst->get_id($fld);
@@ -1814,7 +1856,7 @@ class sql_creator
 
             // create the sql for the log entry
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
+                $sc_log, $msg, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
 
             // add the fields used to the list
             // maybe later get the fields used in the change log sql from the sql
@@ -1876,15 +1918,15 @@ class sql_creator
                     $fvt_lst->get_id($fld),
                     $fvt_lst->get_type_id($fld));
             } else {
-                $par_lst_out->add($fvt_lst->get($fld, $usr_msg));
+                $par_lst_out->add($fvt_lst->get($fld, $msg));
             }
             if ($usr_tbl) {
                 if (is_array($id_fld)) {
                     foreach ($id_fld as $is_fld_part) {
-                        $par_lst_out->add($fvt_lst->get($is_fld_part, $usr_msg));
+                        $par_lst_out->add($fvt_lst->get($is_fld_part, $msg));
                     }
                 } else {
-                    $par_lst_out->add($fvt_lst->get($id_fld, $usr_msg));
+                    $par_lst_out->add($fvt_lst->get($id_fld, $msg));
                 }
             }
         }
@@ -1925,6 +1967,7 @@ class sql_creator
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param int|string $id the id of the db row that should be updated
      * @param sandbox_multi|null $val the value object e.g. the select the correct log table
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log_update(
@@ -1934,6 +1977,7 @@ class sql_creator
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst,
         int|string         $id,
+        user_message       $msg,
         sandbox_multi|null $val = null
     ): sql_par
     {
@@ -1964,8 +2008,8 @@ class sql_creator
             } else {
                 $log = new change($usr);
             }
-            $log->set_class($class);
-            $log->set_field($fld);
+            $log->set_class($class, $msg);
+            $log->set_field($fld, $msg);
             $log->old_value = $fvt_lst->get_old($fld);
             if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
                 $log->old_id = $fvt_lst->get_old_id($fld);
@@ -1986,7 +2030,7 @@ class sql_creator
 
             // TODO replace dummy value table with an enum value
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
+                $sc_log, $msg, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
 
             // TODO get the fields used in the change log sql from the sql
             $qp->sql .= ' ' . $qp_log->sql . ';';
@@ -2074,6 +2118,7 @@ class sql_creator
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     function sql_func_log_link(
@@ -2081,7 +2126,8 @@ class sql_creator
         sandbox|sandbox_link|sandbox_link_named $dbo,
         user                                    $usr,
         sql_par_field_list                      $fvt_lst,
-        sql_type_list                           $sc_par_lst
+        sql_type_list                           $sc_par_lst,
+        user_message                            $msg
     ): sql_par
     {
         // create the parameter fields for the log entry
@@ -2101,7 +2147,7 @@ class sql_creator
             sql_par_type::INT_SMALL);
 
         $log = new change_link($usr);
-        $log->set_class($sbx::class);
+        $log->set_class($sbx::class, $msg);
         if ($sc_par_lst->is_update_part() or $sc_par_lst->is_delete_part()) {
             $log->old_from_id = $dbo->from_id();
             $log->old_text_from = $dbo->from_name();
@@ -2146,7 +2192,7 @@ class sql_creator
 
         // create the sql for the log entry
         $qp = $log->sql_insert_link(
-            $sc_log, $sc_par_lst, $sbx);
+            $sc_log, $sc_par_lst, $msg, $sbx);
         $qp->par_fld_lst = $par_lst_out;
 
         return $qp;
@@ -2158,18 +2204,20 @@ class sql_creator
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     function sql_func_log_user_link(
         sandbox|sandbox_link|sandbox_link_named $sbx,
         user                                    $usr,
         sql_par_field_list                      $fvt_lst,
-        sql_type_list                           $sc_par_lst
+        sql_type_list                           $sc_par_lst,
+        user_message                            $msg
     ): sql_par
     {
         // set the vars of the log link object
         $log = new change_link($usr);
-        $log->set_class($sbx::class);
+        $log->set_class($sbx::class, $msg);
         $log->old_from_id = $sbx->from_id();
         $log->new_from_id = 0;
         $log->old_text_from = $sbx->from_name();
@@ -2205,7 +2253,7 @@ class sql_creator
 
         // create the sql for the log entry
         $qp = $log->sql_insert_link(
-            $sc_log, $sc_par_lst, $sbx);
+            $sc_log, $sc_par_lst, $msg, $sbx);
 
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_field(
@@ -2233,28 +2281,34 @@ class sql_creator
      * @param user $usr the user who has requested the change
      * @param sql_par_field_list $fvt_lst list of fields, values and types to fill the log entry
      * @param sql_type_list $sc_par_lst sql parameters e.g. if the prime table should be used
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par the sql statement with the parameter to add the log entry
      */
     function sql_func_log_value(
         sandbox_multi      $sbx,
         user               $usr,
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst
+        sql_type_list      $sc_par_lst,
+        user_message       $msg
     ): sql_par
     {
         global $sys;
 
-        // get the change table id
+        // get the change table id; a write to the user sandbox (overlay) table is logged
+        // to the user table e.g. user_values instead of values
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
+        if ($sc_par_lst->is_usr_tbl()) {
+            $table_name = sql_db::TBL_USER_PREFIX . $table_name;
+        }
         $table_id = $sys->typ_lst->cng_tbl->id($table_name);
 
         // select which log to use and set the parameters
         $num_fld = $sbx::FLD_VALUE;
         $num_fld_typ = $sbx->sql_field_type();
         $log = $this->log_value_object($sbx, $usr, $sc_par_lst);
-        $log->set_class($sbx::class);
-        $log->set_field($num_fld);
+        $log->set_class($sbx::class, $msg);
+        $log->set_field($num_fld, $msg);
 
         $log->group_id = $fvt_lst->get_value(group_fields::FLD_ID);
         $val_old = null;
@@ -2272,7 +2326,7 @@ class sql_creator
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert_log($sc_log, $sc_par_lst, '', '', $num_fld);
+        $qp = $log->sql_insert_log($sc_log, $msg, $sc_par_lst, '', '', $num_fld);
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();
@@ -3120,12 +3174,12 @@ class sql_creator
                 if ($this->field_lst_num_dummy != '') {
                     if (is_array($this->field_lst_num_dummy)) {
                         if (in_array($field, $this->field_lst_num_dummy)) {
-                            $result .= " 0 " . sql::AS . " " . $field;
+                            $result .= $this->dummy_value($field) . sql::AS . " " . $field;
                             $fld_used = true;
                         }
                     } else {
                         if ($field == $this->field_lst_num_dummy) {
-                            $result .= " 0 " . sql::AS . " " . $field;
+                            $result .= $this->dummy_value($field) . sql::AS . " " . $field;
                             $fld_used = true;
                         }
                     }
@@ -3744,8 +3798,9 @@ class sql_creator
             }
         }
 
-        // select by the user-specific name
-        if ($typ == sql_par_type::TEXT_USR) {
+        // select by the user-specific name or id, which is the where of the CASE that the field
+        // list uses: the user value if the user has one, else the value of the standard row
+        if ($typ == sql_par_type::TEXT_USR or $typ == sql_par_type::INT_USR) {
             $sql_where .= '(' . sql_db::USR_TBL . '.';
             $sql_where .= $fld . " = " . $par->name;
             $sql_where .= ' ' . sql::OR . ' (' . sql_db::STD_TBL . '.';
@@ -3878,8 +3933,8 @@ class sql_creator
 
                     $par_pos = $i + 1 + $par_offset;
 
-                    // select by the user-specific name
-                    if ($typ == sql_par_type::TEXT_USR) {
+                    // select by the user-specific name or id (see the same where above)
+                    if ($typ == sql_par_type::TEXT_USR or $typ == sql_par_type::INT_USR) {
                         $result .= '(' . sql_db::USR_TBL . '.';
                         $result .= $this->par_lst->name($i) . " = " . $this->par_name($par_pos);
                         $result .= ' ' . sql::OR . ' (' . sql_db::STD_TBL . '.';
@@ -5355,10 +5410,6 @@ class sql_creator
         }
         if ($result == 'db_cache_type_name') {
             $result = fields::FLD_TYPE_NAME;
-        }
-        // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
-        if ($result == 'triple_name') {
-            $result = 'name';
         }
         return $result;
     }

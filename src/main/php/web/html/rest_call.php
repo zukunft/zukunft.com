@@ -32,20 +32,53 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-//include_once paths::API_OBJECT . 'controller.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
+//include_once html_paths::API_OBJECT . 'controller.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
 
 class rest_call
 {
+
+    // the session cookie file used for all api calls of this process:
+    // set by the test bootstrap after the admin login (test_base::api_login) so that the
+    // api calls of a test run are permitted like the calls of a logged in user,
+    // because a pod can block the changes of a user without login;
+    // empty if the api calls are done without a session e.g. by the productive frontend
+    private static string $session_cookie_file = '';
+
+    // the anti csrf token of the session of the cookie file above, sent as a http header
+    // with every api call so that the api write calls pass the csrf check of the backend
+    // (see server_guard::csrf_token_valid); empty if no session is used
+    private static string $session_token = '';
+
+    /**
+     * use the session of the given cookie file for all following api calls of this process
+     * @param string $file the path of the session cookie file of a logged in user
+     * @return void
+     */
+    static function set_session_cookie_file(string $file): void
+    {
+        self::$session_cookie_file = $file;
+    }
+
+    /**
+     * send the given anti csrf token with all following api calls of this process
+     * @param string $token the anti csrf token of the session of the logged in user
+     * @return void
+     */
+    static function set_session_token(string $token): void
+    {
+        self::$session_token = $token;
+    }
 
     /**
      * create the class name as used for the api
@@ -55,8 +88,7 @@ class rest_call
     function class_to_api_name(string $class): string
     {
         $lib = new library();
-        $class = $lib->class_to_name($class);
-        return $lib->camelize_ex_1($class);
+        return $lib->class_to_api_route($class);
     }
 
     /**
@@ -159,21 +191,26 @@ class rest_call
      * @param string $method the REST method (GET, POST, PUT or DELETE)
      * @param string $url the url that should be called
      * @param array $data the data as a json array that should be included in the call
+     * @param array $extra_headers additional http headers e.g. a forward header so that
+     *                             a test can simulate an external caller (see server_guard::from_own_pod)
      * @return string the result from the backend
      */
-    function api_call(string $method, string $url, array $data): string
+    function api_call(string $method, string $url, array $data, array $extra_headers = []): string
     {
         $curl = curl_init();
         $data_json = json_encode($data);
+
+        // collect the http headers of the request so that e.g. the put content type
+        // and the anti csrf token can be combined
+        $headers = $extra_headers;
 
         switch ($method) {
             case rest_ctrl::POST:
                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, rest_ctrl::POST);
                 break;
             case rest_ctrl::PUT:
-                curl_setopt($curl,
-                    CURLOPT_HTTPHEADER,
-                    array('Content-Type: application/json', 'Content-Length: ' . strlen($data_json)));
+                $headers[] = 'Content-Type: application/json';
+                $headers[] = 'Content-Length: ' . strlen($data_json);
                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, rest_ctrl::PUT);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
                 break;
@@ -186,6 +223,15 @@ class rest_call
 
         }
 
+        // send the anti csrf token of the session so that the api write calls pass
+        // the csrf check of the backend (see server_guard::csrf_token_valid)
+        if (self::$session_token != '') {
+            $headers[] = api::CSRF_TOKEN_HEADER . ': ' . self::$session_token;
+        }
+        if ($headers != []) {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        }
+
         // Authentication:
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($curl, CURLOPT_USERPWD, "username:password");
@@ -193,6 +239,13 @@ class rest_call
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+
+        // use the session of a logged in user if a session cookie file has been set
+        // e.g. so that the api calls of a test run are permitted like a logged in user
+        if (self::$session_cookie_file != '') {
+            curl_setopt($curl, CURLOPT_COOKIEFILE, self::$session_cookie_file);
+            curl_setopt($curl, CURLOPT_COOKIEJAR, self::$session_cookie_file);
+        }
 
         // show every api call from '&debug=5' upward (url_var::DEBUG_LEVEL_API_CALL) to trace which
         // backend calls a rendering triggers, because an api call is neither a db read nor a db write
@@ -218,10 +271,5 @@ class rest_call
         }
     }
 
-    function request_json(): array
-    {
-        $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
-        return json_decode($request_text, true);
-    }
 
 }

@@ -35,28 +35,35 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\component;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'component_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\view\view;
@@ -72,6 +79,9 @@ class component_link extends sandbox_link
     const string VIEW_ADD = views::COMPONENT_LINK_ADD;
     const string VIEW_EDIT = views::COMPONENT_LINK_EDIT;
     const string VIEW_DEL = views::COMPONENT_LINK_DEL;
+    const int VIEW_ADD_ID = views::COMPONENT_LINK_ADD_ID;
+    const int VIEW_EDIT_ID = views::COMPONENT_LINK_EDIT_ID;
+    const int VIEW_DEL_ID = views::COMPONENT_LINK_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::COMPONENT_LINK_ADD;
@@ -96,19 +106,24 @@ class component_link extends sandbox_link
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
+            // the page url carries only the ids of the linked objects, so the names for the
+            // link title come from the request cache
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 $this->set_view_id($url_array[url_var::VIEW]);
+                $this->set_view($this->view_named_from_cache($this->get_view(), $dto));
             }
             if (array_key_exists(url_var::COMPONENT, $url_array)) {
                 $this->set_component_id($url_array[url_var::COMPONENT]);
+                $this->set_component(
+                    $this->named_from_cache($this->get_component(), $dto?->component_list()));
             }
             if (array_key_exists(url_var::POSITION, $url_array)) {
                 $this->order_nbr = $url_array[url_var::POSITION];
@@ -120,7 +135,26 @@ class component_link extends sandbox_link
                 $this->style_id = $url_array[url_var::STYLE];
             }
         }
-        return $usr_msg;
+        return $msg;
+    }
+
+    /**
+     * the url vars that url_mapper reads back for the user-editable fields of a component link;
+     * the link type is the predicate, which the parent reads from url_var::TYPE
+     *
+     * @return array db field name => url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            fields::FLD_ORDER_NBR => url_var::POSITION,
+            component_fields::FLD_POS_TYPE => url_var::POSITION_TYPE,
+            component_fields::FLD_LINK_COMP_TYPE => url_var::TYPE,
+            fields::FLD_STYLE => url_var::STYLE,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
     /**
@@ -165,22 +199,24 @@ class component_link extends sandbox_link
             }
         } else {
             // the full object detail version
-            if (array_key_exists(json_fields::VIEW, $json_array)) {
-                $msk = new view();
-                $msk->api_mapper($json_array[json_fields::VIEW], $msg);
-                $this->set_view($msk);
-            }
             if (array_key_exists(json_fields::VIEW_ID, $json_array)) {
                 $this->set_view_id($json_array[json_fields::VIEW_ID]);
-            }
-            if (array_key_exists(json_fields::COMPONENT, $json_array)) {
-                $cmp = new component();
-                $cmp->api_mapper($json_array[json_fields::COMPONENT], $msg);
-                $this->set_component($cmp);
             }
             if (array_key_exists(json_fields::COMPONENT_ID, $json_array)) {
                 $this->set_component_id($json_array[json_fields::COMPONENT_ID]);
             }
+        }
+        // a page request adds the two linked objects with their names for the link title, so
+        // they win over the id only version of both json layouts above
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $msk = new view();
+            $msk->api_mapper($json_array[json_fields::VIEW], $msg);
+            $this->set_view($msk);
+        }
+        if (array_key_exists(json_fields::COMPONENT, $json_array)) {
+            $cmp = new component();
+            $cmp->api_mapper($json_array[json_fields::COMPONENT], $msg);
+            $this->set_component($cmp);
         }
         return $msg->is_ok();
     }
@@ -193,11 +229,11 @@ class component_link extends sandbox_link
     /**
      * create an api json array for the backend based on this frontend object
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::VIEW_ID] = $this->get_view()?->id();
         $vars[json_fields::COMPONENT_ID] = $this->get_component()?->id();
@@ -242,6 +278,31 @@ class component_link extends sandbox_link
     }
 
 
+    /**
+     * the link type of a component link is the position type, which says where the component is
+     * shown within the view e.g. below or right of the previous component
+     *
+     * @return type_object|null the position type or null if the link uses the default position
+     */
+    function link_type(): ?type_object
+    {
+        global $ui_sys;
+        $result = null;
+        if ($this->pos_type_id != null) {
+            $result = $ui_sys->typ_lst_cache->pos_typ->get($this->pos_type_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @return int|null the style of this link, which overwrites the style of the linked component
+     */
+    function get_style_id(): ?int
+    {
+        return $this->style_id;
+    }
+
+
     /*
      * select
      */
@@ -253,7 +314,7 @@ class component_link extends sandbox_link
      * @param type_lists|null $typ_lst the frontend cache with the preloaded view styles
      * @return string the html code to select the component style
      */
-    public function component_style_selector(string $form, ?type_lists $typ_lst): string
+    public function component_style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -275,36 +336,37 @@ class component_link extends sandbox_link
 
     /**
      * return the html code to display the link name
+     * @return string|null the generated link name or an empty string e.g. for a new link of an add form
      */
     function name(): string|null
     {
         $result = '';
-
+        // a new component link of an add form has no linked objects or names yet,
+        // which is a normal state and not an error
         if ($this->get_view() != null and $this->get_component() != null) {
             if ($this->get_view()->name() <> null and $this->get_component()->name() <> null) {
-                $result .= '"' . $this->get_component()->name() . '" extends "'; // e.g. company details
-                $result .= $this->get_view()->name() . '"';     // e.g. cash flow statement
+                $result .= '"' . $this->get_component()->name() . '" extends "'; // e.g. "Word" extends
+                $result .= $this->get_view()->name() . '"';     // e.g. "Start view"
             }
-        } else {
-            $result .= 'view link objects not set';
         }
         return $result;
     }
 
     /**
+     * TODO Prio 1 review and add else error message
      * return the html code to display the link name with the hyperlink to the link
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the linked names or an empty string e.g. for a new link of an add form
      */
-    function name_linked(string $back = ''): string
+    function name_linked(array $url_arr = []): string
     {
         $result = '';
-
-        //$this->load_objects();
+        // a new component link of an add form has no linked objects yet,
+        // which is a normal state and not an error
         if ($this->get_view() != null and $this->get_component() != null) {
-            $result = $this->get_view()->name_link(NULL, $back) . ' to ' . $this->get_component()->name_link(NULL, $back);
-        } else {
-            $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
+            global $mtr;
+            $result = $this->get_view()->name_link($url_arr) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->get_component()->name_link($url_arr);
         }
-
         return $result;
     }
 

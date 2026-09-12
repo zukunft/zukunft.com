@@ -31,7 +31,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FORMULA . 'formula.php';
@@ -49,16 +48,16 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_HELPER . 'CombineObject.php';
-include_once paths::SHARED_HELPER . 'IdObject.php';
-include_once paths::SHARED_HELPER . 'TextIdObject.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_types.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'CombineObject.php';
+include_once html_paths::SHARED_HELPER . 'IdObject.php';
+include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_TYPES . 'view_types.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
@@ -118,7 +117,7 @@ class view_list extends ListBase
      * load
      */
 
-    function load_by_pattern(string $pattern = '%'): bool
+    function load_by_pattern(user_message $msg, string $pattern = '%'): bool
     {
         $result = false;
 
@@ -138,7 +137,7 @@ class view_list extends ListBase
      * @param int $id of the component
      * @return bool true if the load has been successful
      */
-    function load_by_component_id(int $id): bool
+    function load_by_component_id(int $id, user_message $msg): bool
     {
         $result = false;
 
@@ -171,26 +170,26 @@ class view_list extends ListBase
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
-    function name_link(string $back = ''): string
+    function name_link(array $url_arr = []): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($url_arr));
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return array with a list of the view names with html links
      */
-    private function names_linked(string $back = ''): array
+    private function names_linked(array $url_arr = []): array
     {
         // key by name and sort so the rendered order is deterministic and independent
         // of the api/db row order (see the frontend list-sorting rule)
         $views = array();
         foreach ($this->lst() as $msk) {
-            $views[$msk->name()] = $msk->name_link();
+            $views[$msk->name()] = $msk->name_link($url_arr);
         }
         ksort($views, SORT_NATURAL);
         return array_values($views);
@@ -228,14 +227,14 @@ class view_list extends ListBase
      * filter
      */
 
-    public function ex_system(): view_list
+    public function ex_system(user_message $msg): view_list
     {
-        return $this->ex_type(view_types::SYSTEM_TYPES);
+        return $this->ex_type(view_types::SYSTEM_TYPES, $msg);
     }
 
-    public function ex_non_phrase(): view_list
+    public function ex_non_phrase(user_message $msg): view_list
     {
-        return $this->ex_type(view_types::NON_PHRASE_TYPES);
+        return $this->ex_type(view_types::NON_PHRASE_TYPES, $msg);
     }
 
     /**
@@ -243,13 +242,13 @@ class view_list extends ListBase
      * @param array $typ_lst list of view_types
      * @return view_list this list excluding the views of the given types
      */
-    private function ex_type(array $typ_lst): view_list
+    private function ex_type(array $typ_lst, user_message $msg): view_list
     {
         $views = new view_list();
         foreach ($this->lst() as $msk) {
-            $code_id = $msk->type_code_id();
+            $code_id = $msk->type_code_id($msg);
             if (!in_array($code_id, $typ_lst)) {
-                $views->add($msk);
+                $views->add($msk, $msg);
             }
         }
         return $views;
@@ -260,13 +259,13 @@ class view_list extends ListBase
      * @param string $typ the view_type to select the views
      * @return view_list with the views of the given type
      */
-    function only_type(string $typ): view_list
+    function only_type(string $typ, user_message $msg): view_list
     {
         $views = new view_list();
         foreach ($this->lst() as $msk) {
-            $code_id = $msk->type_code_id();
+            $code_id = $msk->type_code_id($msg);
             if ($code_id == $typ) {
-                $views->add($msk);
+                $views->add($msk, $msg);
             }
         }
         return $views;
@@ -298,47 +297,5 @@ class view_list extends ListBase
     {
         return parent::selector($form, $selected, $name, $label_id, $style, $type);
     }
-
-    /**
-     * create a selection page where the user can select a view that should be used for a view
-     */
-    /*
-    function selector_page($wrd_id, $back): string
-    {
-
-        $result = '';
-
-        $sql = "SELECT view_id, view_name
-                  FROM views
-                 WHERE code_id IS NULL
-              ORDER BY view_name;";
-        $sql = sql_lst_usr("view", $this->user());
-        $call = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
-        $field = 'new_id';
-
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
-        $msk_lst = $db_con->get_old($sql);
-        foreach ($msk_lst as $msk) {
-            $view_id = $msk['id'];
-            $view_name = $msk['name'];
-            if ($view_id == $this->id()) {
-                $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
-            } else {
-                $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
-            }
-            $call_edit = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_EDIT
-                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_DEL
-                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_del('delete the view', $call_del) . ' ';
-            $result .= '<br>';
-        }
-
-        log_debug('done');
-        return $result;
-    }
-    */
 
 }

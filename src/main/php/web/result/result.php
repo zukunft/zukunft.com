@@ -36,7 +36,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\result;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_value.php';
@@ -47,11 +46,12 @@ include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -79,6 +80,7 @@ class result extends sandbox_value
     const string VIEW_EDIT = views::RESULT_EDIT;
     const string VIEW_DEL = views::RESULT_DEL;
     const int VIEW_EDIT_ID = views::RESULT_EDIT_ID;
+    const int VIEW_DEL_ID = views::RESULT_DEL_ID;
 
     // curl message id
     const msg_id MSG_EDIT = msg_id::RESULT_EDIT;
@@ -111,7 +113,13 @@ class result extends sandbox_value
     {
         parent::api_mapper($json_array, $msg);
 
-        if (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
+        if (array_key_exists(json_fields::FORMULA, $json_array)) {
+            // the nested formula with the name is sent for a page request,
+            // so the result default page can link the formula that calculated the result
+            $frm = new formula();
+            $frm->api_mapper($json_array[json_fields::FORMULA], $msg);
+            $this->frm = $frm;
+        } elseif (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
             $frm = new formula();
             $frm->set_id($json_array[json_fields::FORMULA_ID]);
             $this->frm = $frm;
@@ -130,6 +138,20 @@ class result extends sandbox_value
     function formula_id(): ?int
     {
         return $this->frm?->id;
+    }
+
+    /**
+     * load the result by id AND ask the backend to include the names of the result phrases
+     * and of the formula that calculated the result, which the result default page shows as
+     * links (see the incl_related emit of the backend cfg/result/result::api_json_array)
+     *
+     * @param int|string $id the group id of the result to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
 
@@ -214,15 +236,15 @@ class result extends sandbox_value
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         if ($this->frm != null) {
             $vars[json_fields::FORMULA_ID] = $this->frm->id();
         }
-        //$vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
+        //$vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array($typ_lst, $msg);
         $vars[json_fields::NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -234,35 +256,13 @@ class result extends sandbox_value
 
     /**
      * overwrite because results should not be added via the user interface by the user
+     * @param array $url_arr the previous url with the back part
+     * @param string $base_url to set an absolut html path for urls
      * @return string an empty string
      */
-    function btn_add(string $back = ''): string
+    function btn_add(array $url_arr = [], string $base_url = ''): string
     {
         return '';
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a result e.g. to add a description as not
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return $this->btn_edit_sbx(
-            $this::VIEW_EDIT,
-            $this::MSG_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude a result from further usage
-     */
-    function btn_del(string $back = ''): string
-    {
-        return $this->btn_del_sbx(
-            $this::VIEW_DEL,
-            $this::MSG_DEL,
-            $back);
     }
 
 
@@ -270,9 +270,12 @@ class result extends sandbox_value
      * review
      */
 
-    // explain a formula result to the user
-    // create an HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
-    function explain($lead_phr_id, $back): string
+    /**
+     * explain a formula result to the user
+     * create an HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
+     * @param array $url_arr the url vars of the calling page for the back link
+     */
+    function explain(int $lead_phr_id, user_message $msg, array $url_arr = []): string
     {
         $lib = new library();
         $html = new html_base();
@@ -289,8 +292,8 @@ class result extends sandbox_value
         // build the title
         $title = '';
         // add the words that specify the calculated value to the title
-        $val_phr_lst = clone $this->grp->phrase_list();
-        $val_wrd_lst = $val_phr_lst->wrd_lst_all();
+        $val_phr_lst = clone $this->grp->phrase_list($msg);
+        $val_wrd_lst = $val_phr_lst->wrd_lst_all($msg);
         $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
         $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->names_linked());
         if ($time_phr <> '') {
@@ -298,7 +301,7 @@ class result extends sandbox_value
         }
         $title .= ': ';
         // add the value  to the title
-        $title .= $this->display($back);
+        $title .= $this->display();
         $result .= $html->dsp_text_h1($title);
         log_debug('explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_grp->phrase_list()->dsp_name());
 
@@ -312,11 +315,11 @@ class result extends sandbox_value
 
         // display the formula with links
         $frm = new formula();
-        $frm->load_by_id($this->frm->id());
+        $frm->load_by_id($this->frm->id(), $msg);
         $frm_html = $frm;
-        $result .= ' based on</br>' . $frm_html->name_link($back);
-        $result .= ' ' . $frm_html->dsp_text($back) . "\n";
-        $result .= ' ' . $frm_html->btn_edit($back) . "\n";
+        $result .= ' based on</br>' . $frm_html->name_link($url_arr);
+        $result .= ' ' . $frm_html->dsp_text($msg, $url_arr) . "\n";
+        $result .= ' ' . $frm_html->btn_edit() . "\n";
         $result .= '</br></br>' . "\n";
 
         // load the formula element groups
@@ -324,9 +327,8 @@ class result extends sandbox_value
         // e.g. for <journey time premium offset = "journey time average" / "journey time max premium" "percent">
         // <"journey time max premium" "percent"> is one element group with two elements
         // and these two elements together are used to select the value
-        $exp = $frm->expression();
-        //$elm_lst = $exp->element_lst ($back);
-        $elm_grp_lst = $exp->element_grp_lst($back);
+        $exp = $frm->expression($msg);
+        $elm_grp_lst = $exp->element_grp_lst($msg);
         log_debug("elements loaded (" . $lib->dsp_count($elm_grp_lst->lst()) . " for " . $frm->ref_text() . ")");
 
         $result .= ' where</br>';
@@ -340,8 +342,8 @@ class result extends sandbox_value
             foreach ($elm_grp_lst->lst() as $elm_grp) {
 
                 // display the formula element names and create the element group object
-                $result .= $elm_grp->dsp_names($back) . ' ';
-                log_debug('elm grp name "' . $elm_grp->dsp_names($back) . '" with back "' . $back . '"');
+                $result .= $elm_grp->dsp_names($url_arr) . ' ';
+                log_debug('elm grp name "' . $elm_grp->dsp_names($url_arr) . '"');
 
 
                 // exclude the formula word from the words used to select the formula element values
@@ -353,7 +355,7 @@ class result extends sandbox_value
 
                 // select or guess the element time word if needed
                 log_debug('guess the time ... ');
-                $elm_time_phr = $this->src_grp->phrase_list()->assume_time();
+                $elm_time_phr = $this->src_grp->phrase_list()->assume_time($msg);
 
                 $elm_grp->set_phrase_list($this->src_grp->phrase_list());
                 $elm_grp->time_phr = $elm_time_phr;
@@ -361,7 +363,7 @@ class result extends sandbox_value
                 log_debug('words set ' . $elm_grp->phrase_list()->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
                 // finally, display the value used in the formula
-                $result .= ' = ' . $elm_grp->dsp_values($back);
+                $result .= ' = ' . $elm_grp->dsp_values_old($msg, $url_arr);
                 $result .= '</br>';
                 log_debug('next element');
                 $elm_nbr++;

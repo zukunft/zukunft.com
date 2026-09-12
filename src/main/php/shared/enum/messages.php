@@ -437,6 +437,10 @@ enum messages: string
 
     case INTERNAL = 'an internal system error has occurred that you can track with this link: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+    case INTERNAL_WARNING = 'a system warning has been logged that you can track with this link: '
+        . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+    case BACKEND_OLDER_THAN_DB = 'The zukunft.com backend is older than the database used. '
+        . 'This may cause damage on the database. Please upgrade the backend program.';
 
     case LOAD_FORMULA_ID = 'unexpected formula id '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
@@ -474,6 +478,9 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case TYPE_CHANGE_NOT_ALLOWED = 'changing the type of the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' is not allowed for your user profile';
+    case CODE_ID_CHANGE_NOT_ALLOWED = 'changing the code id of the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' is not allowed for your user profile';
     case WORD_ID_ADDITIONAL = 'word id additional of "'
@@ -678,6 +685,11 @@ enum messages: string
         . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is not found any more after expected to be added to the database';
+    case OBJECT_NOT_FOUND = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' with id '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be found; it may have been deleted';
 
     case USER_IP_ADDR_MISSING = 'ip addr for user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
@@ -685,6 +697,9 @@ enum messages: string
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END
         . '" is missing in the import message '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case IMPORT_SOURCE_NOT_A_NAME = 'the source of a value must be the name of a source'
+        . ' declared in the "sources" section of the file, but is '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case PHRASE_MISSING_IMPORT = 'phrase "'
         . self::VAR_START . self::VAR_PHRASE . self::VAR_END
@@ -734,6 +749,10 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case FORMULA_LATEX_CHANGE_NOT_MAPPED = 'the latex change adds or removes a term or a number, '
+        . 'which cannot be assigned to a part of the expression, so please change the expression itself';
+    case FORMULA_LATEX_DIFFERS_FROM_EXPRESSION = 'the latex does not name the same terms and numbers '
+        . 'as the expression, so the latex change cannot be applied to the expression';
     case FORMULA_NAME_EQUALS_TERM = 'the formula name "'
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" is also used as a '
@@ -1030,6 +1049,7 @@ enum messages: string
     case FORM_NAME_USER_NAME_OR_EMAIL = 'username or email';
     case FORM_NAME_PASSWORD = 'password';
     case FORM_NAME_PASSWORD_RE = 're-type password';
+    case FORM_SHOW_PASSWORD = 'show password';
     case FORM_NAME_LOGIN = 'Login';
     case PASSWORD_TOO_SHORT = 'password must be at least '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
@@ -1059,6 +1079,11 @@ enum messages: string
         . ' found';
 
     case NOT_YET_IMPLEMENTED = 'not yet implemented';
+    case TABLE_COLUMNS_NOT_IMPLEMENTED = 'the table with related columns is not yet implemented for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    case VALUE_UNIT_NOT_UNIQUE = 'the value has more than one unit: "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
     case CANNOT_ADD_TIMESTAMP = 'Cannot add timestamp "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . '" when importing '
@@ -1110,7 +1135,7 @@ enum messages: string
     case USER_SANDBOX_CANNOT_BE_CLEANED = ' and user sandbox cannot be cleaned';
     case FAILED_TO_DELETE_UNUSED = 'Failed to delete the unused '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
-    case FAILED_TO_EXCLUDE_UNUSED = 'Failed to exclude the unused '
+    case FAILED_TO_EXCLUDE_USED = 'Failed to exclude the used '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case IMPORT_COUNT_DIFF = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
@@ -1178,6 +1203,9 @@ enum messages: string
         . ' ip of range missing in import json part "'
         . self::VAR_START . self::VAR_IP_RANGE . self::VAR_END
         . '".';
+    case IMPORT_PHRASE_NAME_EMPTY = 'an empty phrase name cannot be assigned in the import json part "'
+        . self::VAR_START . self::VAR_JSON_PART . self::VAR_END
+        . '".';
     case IMPORT_TERM_VIEW_DOUBLE = 'the term '
         . self::VAR_START . self::VAR_TERM_NAME . self::VAR_END
         . ' is probable assigned more than once to the view "'
@@ -1186,6 +1214,10 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_PART . self::VAR_END
         . '".';
     case IMPORT_NOT_FIND_VIEW = 'Cannot find view "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case IMPORT_NOT_FIND_FORMULA = 'Cannot find formula "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" when importing '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
@@ -1442,6 +1474,12 @@ enum messages: string
     case DB_INSERT_ID_MISSING = 'insert of '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' does not return the expected database id';
+    // reported instead of a database duplicate key error, which would only name the zero ids
+    case DB_INSERT_NOT_READY = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not added to the database, because it is not complete';
     case DB_PHRASE_MISSING = 'phrase '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';
@@ -1457,9 +1495,11 @@ enum messages: string
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
 
-    case DB_CLEANUP_ERROR = 'There are '
-        . self::VAR_START . self::VAR_COUNTER . self::VAR_END
-        . ' unexpected system test rows detected by '
+    case DB_CLEANUP_ERROR = 'There is '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" remaining in the database detected by '
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END;
 
     case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'
@@ -1567,6 +1607,11 @@ enum messages: string
         . self::VAR_START . self::VAR_USAGE . self::VAR_END
         . ' times';
 
+    // the singular of SYS_MSG_USAGE, because "Used 1 times" is wrong
+    case SYS_MSG_USAGE_ONE = 'Used '
+        . self::VAR_START . self::VAR_USAGE . self::VAR_END
+        . ' time';
+
 
     case JOB_FORMULA_MISSING = 'Job '
         . self::VAR_START . self::VAR_ID . self::VAR_END
@@ -1598,11 +1643,51 @@ enum messages: string
     case LOG_DEL = 'deleted';
     case LOG_LINK = 'linked';
     case LOG_TO = 'to';
+    // shown for a change of the object owner (the user_id field) instead of 'added user id'
+    case LOG_SET_OWNER = 'set owner to';
+    // shown after the action for a change in the user sandbox e.g. 'added user view id ""'
+    case LOG_USER = 'user';
+    // shown when a user sandbox change adds an empty field, i.e. removes the user overwrite for a
+    // field, so 'added user view id ""' becomes 'remove user overwrite for view'
+    case LOG_REMOVE_USER_OVERWRITE = 'remove user overwrite for';
+    // shown after the user value of an overwrite to name the value of the shared standard object,
+    // e.g. 'added user description "my text" instead of "the common text"'
+    case LOG_INSTEAD_OF = 'instead of';
     // the change preview table column headers and the impact label
     case CHANGE_TBL_FIELD = 'change_tbl_field';
     case CHANGE_TBL_FROM = 'change_tbl_from';
     case CHANGE_TBL_TO = 'change_tbl_to';
+    // the 'my' tab table column headers: the user value ('your') and the standard value ('instead')
+    // of an overwritten field; the field column reuses CHANGE_TBL_FIELD
+    case MY_TBL_YOUR = 'my_tbl_your';
+    case MY_TBL_INSTEAD = 'my_tbl_instead';
+    // the tooltip of the undo icon link that sets the overwritten field back to the standard value
+    case MY_TBL_UNDO = 'my_tbl_undo';
+    // the 'others' tab table column headers: the user that has done the overwrite and the value
+    // of that user; the field and 'instead' columns reuse the my tab headers
+    case OTHERS_TBL_USER = 'others_tbl_user';
+    case OTHERS_TBL_VALUE = 'others_tbl_value';
+    // the tooltip of the apply icon link that takes over the overwrite of another user
+    case OTHERS_TBL_APPLY = 'others_tbl_apply';
+    // the tooltip of the icon link of the all user overwrites column that opens the 'others' tab
+    // of the changed object
+    case OTHERS_TBL_SHOW = 'others_tbl_show';
     case POPUP_IMPACT = 'popup_impact';
+    // the fallback unit for the impact of a change if no other impact unit is set
+    case POPUP_IMPACT_UNIT_FALLBACK = 'happy_time_points';
+    // shown as the impact number if the impact of the change cannot be calculated (yet)
+    case POPUP_IMPACT_UNKNOWN = 'unknown';
+    // the text of the link to request the recalculation of the impact of the change
+    case POPUP_IMPACT_UPDATE = 'update';
+    // the column headers of the change log table pure
+    case CHANGE_LOG_TBL_WHEN = 'change_log_tbl_when';
+    case CHANGE_LOG_TBL_WHO = 'change_log_tbl_who';
+    case CHANGE_LOG_TBL_WHAT = 'change_log_tbl_what';
+    // the header of the type column, which only a change log that lists more than one object has
+    case CHANGE_LOG_TBL_TYPE = 'change_log_tbl_type';
+    // separates the unit from the phrase of a value table column header, so that the header
+    // reads like a sentence e.g. "cost in trillion EUR"
+    case VALUE_TBL_UNIT = 'value_tbl_unit';
 
     // import
     case IMPORT_JSON = 'import';
@@ -1624,6 +1709,12 @@ enum messages: string
     case NOT_USED_FOR_VERB = 'not used for verb';
     case NOT_USED_FOR_TRIPLES = 'not used for triples';
     case INFO_NOT_USED_FOR_FORMULAS = 'info_not_used_for_formulas';
+    case INFO_NOT_USED_FOR_VALUES = 'info_not_used_for_values';
+    case INFO_NOT_USED_FOR_RESULTS = 'info_not_used_for_results';
+    case INFO_NO_SIMILAR_VALUES = 'info_no_similar_values';
+    case INFO_VIEW_HAS_NO_COMPONENTS = 'info_view_has_no_components';
+    case INFO_NOT_USED_IN_VIEWS = 'info_not_used_in_views';
+    case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1781,11 +1872,19 @@ enum messages: string
     case FORM_SUB_TITLE_DESCRIPTION = 'system_sub_title_description';
     case FORM_SUB_TITLE_REF = 'system_sub_title_references';
     case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
+    case FORM_SUB_TITLE_RELATED_VALUES = 'system_sub_title_related_values';
     case FORM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
     case FORM_SUB_TITLE_ASSIGNED_PHRASES = 'system_sub_title_assigned_phrases';
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
     case FORM_SUB_TITLE_VIEWS = 'system_sub_title_views';
+    // the used by column of the view pages with the terms that use the view
+    case FORM_SUB_TITLE_TERMS = 'system_sub_title_terms';
+    case FORM_SUB_TITLE_COMPONENTS = 'system_sub_title_components';
+    // the tab with the session user's own overwrites (the user_ table rows) of the shown object
+    case FORM_SUB_TITLE_MY = 'system_sub_title_my';
+    // the tab with the shared overwrites that other users have done on the shown object
+    case FORM_SUB_TITLE_OTHERS = 'system_sub_title_others';
 
     // log, im- and export titles
     case FORM_TITLE_ERROR_LOG = 'system_title_error_log';
@@ -1850,6 +1949,11 @@ enum messages: string
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case SYSTEM_TITLE_USER = 'system_title_user';
+    case SYSTEM_TITLE_VERB = 'system_title_verb';
+    // the class word in front of the object name of a page title e.g. view "Word"
+    case SYSTEM_TITLE_VIEW = 'system_title_view';
+    case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
@@ -1857,10 +1961,16 @@ enum messages: string
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
     case USER_SYSTEM_ERRORS = 'user_system_errors';
     case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
+    case ALL_USER_OVERWRITES = 'all_user_overwrites';
+    case ALL_USER_OVERWRITES_NONE = 'all_user_overwrites_none';
     // shown if a user without login tries to change data, but the pod does not permit that
     case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
+
+    // the start page, which ranks the global problems by the potential loss they can avoid
+    case SOLUTION_PRIO_TITLE = 'solution_prio_title';
+    case SOLUTION_PRIO_RANKING_TABLE = 'solution_prio_ranking_table';
 
     // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
     case PHRASE_HAS = 'phrase_has';
@@ -1874,6 +1984,11 @@ enum messages: string
 
     // if a non admin user tries to set the admin protection (or higher) on an object
     case PROTECTION_RAISE_DENIED = 'protection_raise_denied';
+
+    // if an import step has not been checked, because its errors would only be a consequence
+    // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
+    // always added with ok = true, because it explains a suppression instead of causing one
+    case IMPORT_STEP_SKIPPED = 'import_step_skipped';
 
 
     /*
@@ -1900,6 +2015,8 @@ enum messages: string
 
     // word, triple and phrase fields
     case FORM_FIELD_WEIGHT = 'form_field_weight';
+    // the label of the formula that decides if a triple is used
+    case FORM_FIELD_CONDITION_FORMULA = 'form_field_condition_formula';
     case FORM_FIELD_PHRASE_LIST = 'form_field_phrase_list';
 
     // value and result fields
@@ -1910,16 +2027,20 @@ enum messages: string
 
     // source and reference fields
     case FORM_FIELD_URL = 'form_field_url';
+    case FORM_FIELD_DOI = 'form_field_doi';
     case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
 
     // formula fields
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
+    case FORM_FIELD_FORMULA_LATEX = 'form_field_formula_latex';
+    // the label of the column that shows what the entered expression or latex selects
+    case FORM_FIELD_FORMULA_EXPRESSION_VALIDATED = 'form_field_formula_expression_validated';
+    case FORM_FIELD_FORMULA_LATEX_VALIDATED = 'form_field_formula_latex_validated';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
 
     // view fields
     case FORM_FIELD_VIEW_TERM_LINK_PRIO = 'form_field_view_term_link_prio';
-    case FORM_FIELD_COMPONENT_LINK = 'form_field_component_link';
 
     // export fields
     case FORM_FIELD_SELECTION_NAME = 'system_form_selection_name';
@@ -2022,6 +2143,13 @@ enum messages: string
     case FORM_SELECT_SHARE_TYPE = 'form_select_share';
     case FORM_SELECT_PROTECTION_TYPE = 'form_select_protection';
 
+    // labels of read only page fields whose component serves several object types, so that the
+    // label of one matching form field cannot be reused (see system_form::show_field_labeled)
+    case SHOW_FIELD_LINK_TYPE = 'show_field_link_type';
+    case SHOW_FIELD_LINKED_COMPONENT = 'show_field_linked_component';
+    case SHOW_FIELD_ORDER_NBR = 'show_field_order_nbr';
+    case SHOW_FIELD_START_POS = 'show_field_start_pos';
+
     // TODO review
     case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
     case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
@@ -2040,8 +2168,13 @@ enum messages: string
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_CONFIRM = 'form_button_confirm';
     case FORM_BUTTON_DEL = 'form_button_del';
-    case BUTTON_VIEW_OPEN = 'button_view_open';
-    case BUTTON_VIEW_SWITCH = 'button_view_switch';
+    // the tooltip of the refresh icon beside a form field label
+    case FORM_BUTTON_REFRESH = 'form_button_refresh';
+    // the tooltips of the views tab of an object page: show the object with the view, set the view
+    // as the default view of the object and change the view itself (see view::open_link)
+    case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
+    case BUTTON_VIEW_SWITCH_TIP = 'button_view_switch_tip';
+    case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
@@ -2333,6 +2466,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_DATETIME_PRECISION = 'system_db_field_datetime_precision';
     case SYSTEM_DB_FIELD_DB_CACHE_ID = 'system_db_field_db_cache_id';
     case SYSTEM_DB_FIELD_DESCRIPTION = 'system_db_field_description';
+    case SYSTEM_DB_FIELD_DOI = 'system_db_field_doi';
     case SYSTEM_DB_FIELD_DOMAIN_DEFAULT = 'system_db_field_domain_default';
     case SYSTEM_DB_FIELD_DTD_IDENTIFIER = 'system_db_field_dtd_identifier';
     case SYSTEM_DB_FIELD_ELEMENT_TYPE_ID = 'system_db_field_element_type_id';

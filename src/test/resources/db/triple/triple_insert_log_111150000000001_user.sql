@@ -40,13 +40,13 @@ PREPARE triple_insert_log_111150000000001_user_call
 SELECT triple_insert_log_111150000000001_user (
                3::bigint,
                1::smallint,
-               18::smallint,
+               22::smallint,
                'mathematical constant'::text,
                1::bigint,
-               68::smallint,
+               100::smallint,
                'A mathematical constant that never changes e.g. Pi'::text,
-               69::smallint,
+               101::smallint,
                'math constant'::text,
                17::smallint,
-               97::smallint,
+               105::smallint,
                3::smallint);

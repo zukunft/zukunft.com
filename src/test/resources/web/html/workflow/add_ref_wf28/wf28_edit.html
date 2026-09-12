@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            - Add new reference - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="67">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=31&amp;id=15&amp;9m=15">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=30&amp;9m=15">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=15&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=15&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=15&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=15&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=15&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=15&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=15&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    system test zukunft.com system test
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=64&amp;9m=15&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9m=15">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Add a new ref
+            </h4>
+            <form action="http://localhost/http/view.php" id="ref_add">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input class="form-control" type="hidden" name="m" id="mask" value="15">
+                <input class="form-control" type="hidden" name="id" id="id" value="0">
+                <input type="hidden" name="9m" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
+                <div class="row col-md-4">
+                    <div class="form-group col-md-4">
+                        <label for="p_form_select_phrase">
+                            word or triple
+                        </label>
+                        <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="ref_add" id="p_form_select_phrase" >
+                        <datalist id="p_form_select_phrase_list">
+                            <option value="2013" data-value="326">
+                            </option>
+                            <option value="2014" data-value="327">
+                            </option>
+                            <option value="2015" data-value="328">
+                            </option>
+                            <option value="2016" data-value="329">
+                            </option>
+                            <option value="2017" data-value="330">
+                            </option>
+                            <option value="2018" data-value="331">
+                            </option>
+                            <option value="2019" data-value="135">
+                            </option>
+                            <option value="2020" data-value="136">
+                            </option>
+                            <option value="ABB" data-value="548">
+                            </option>
+                            <option value="Bern" data-value="185">
+                            </option>
+                            <option value="Bern (city)" data-value="-106">
+                            </option>
+                            <option value="CHF" data-value="407">
+                            </option>
+                            <option value="CHF is symbol for Swiss franc" data-value="-368">
+                            </option>
+                            <option value="Geneva" data-value="192">
+                            </option>
+                            <option value="Geneva (city)" data-value="-107">
+                            </option>
+                            <option value="Pi" data-value="17">
+                            </option>
+                            <option value="Pi (math)" data-value="-56">
+                            </option>
+                            <option value="Switzerland" data-value="206">
+                            </option>
+                            <option value="USD" data-value="393">
+                            </option>
+                            <option value="Vestas" data-value="549">
+                            </option>
+                            <option value="Zurich" data-value="213">
+                            </option>
+                            <option value="Zurich (canton)" data-value="-105">
+                            </option>
+                            <option value="Zurich (city)" data-value="-104">
+                            </option>
+                            <option value="Zurich Insurance" data-value="-210">
+                            </option>
+                            <option value="billion" data-value="159">
+                            </option>
+                            <option value="canton" data-value="186">
+                            </option>
+                            <option value="cash" data-value="551">
+                            </option>
+                            <option value="cash flow" data-value="-534">
+                            </option>
+                            <option value="cash flow statement" data-value="-537">
+                            </option>
+                            <option value="circumference" data-value="15">
+                            </option>
+                            <option value="city" data-value="188">
+                            </option>
+                            <option value="climate" data-value="226">
+                            </option>
+                            <option value="company" data-value="189">
+                            </option>
+                            <option value="day" data-value="102">
+                            </option>
+                            <option value="diameter" data-value="16">
+                            </option>
+                            <option value="education" data-value="253">
+                            </option>
+                            <option value="education can be global problem" data-value="-120">
+                            </option>
+                            <option value="fact" data-value="191">
+                            </option>
+                            <option value="flow" data-value="97">
+                            </option>
+                            <option value="global" data-value="194">
+                            </option>
+                            <option value="global problem" data-value="-102">
+                            </option>
+                            <option value="global warming" data-value="-110">
+                            </option>
+                            <option value="global warming (global problem)" data-value="-151">
+                            </option>
+                            <option value="global warming potential" data-value="-111">
+                            </option>
+                            <option value="government" data-value="193">
+                            </option>
+                            <option value="group" data-value="195">
+                            </option>
+                            <option value="hand" data-value="196">
+                            </option>
+                            <option value="happy" data-value="264">
+                            </option>
+                            <option value="happy time points" data-value="-150">
+                            </option>
+                            <option value="health" data-value="249">
+                            </option>
+                            <option value="health can be a global problem" data-value="-117">
+                            </option>
+                            <option value="htp" data-value="269">
+                            </option>
+                            <option value="income" data-value="298">
+                            </option>
+                            <option value="income taxes" data-value="-535">
+                            </option>
+                            <option value="inhabitants" data-value="197">
+                            </option>
+                            <option value="life" data-value="12">
+                            </option>
+                            <option value="man" data-value="199">
+                            </option>
+                            <option value="mathematical constant" data-value="-1">
+                            </option>
+                            <option value="mathematics" data-value="1">
+                            </option>
+                            <option value="million" data-value="158">
+                            </option>
+                            <option value="minute" data-value="100">
+                            </option>
+                            <option value="number" data-value="137">
+                            </option>
+                            <option value="one" data-value="4">
+                            </option>
+                            <option value="part" data-value="200">
+                            </option>
+                            <option value="parts" data-value="554">
+                            </option>
+                            <option value="percent" data-value="160">
+                            </option>
+                            <option value="person" data-value="201">
+                            </option>
+                            <option value="place" data-value="202">
+                            </option>
+                            <option value="points" data-value="266">
+                            </option>
+                            <option value="populism" data-value="233">
+                            </option>
+                            <option value="populism (global problem)" data-value="-116">
+                            </option>
+                            <option value="potential" data-value="222">
+                            </option>
+                            <option value="poverty" data-value="251">
+                            </option>
+                            <option value="poverty (global problem)" data-value="-119">
+                            </option>
+                            <option value="problem" data-value="205">
+                            </option>
+                            <option value="sales" data-value="550">
+                            </option>
+                            <option value="second" data-value="22">
+                            </option>
+                            <option value="solution" data-value="214">
+                            </option>
+                            <option value="statement" data-value="552">
+                            </option>
+                            <option value="tax" data-value="301">
+                            </option>
+                            <option value="time points" data-value="-114">
+                            </option>
+                            <option value="total" data-value="334">
+                            </option>
+                            <option value="trillion" data-value="270">
+                            </option>
+                            <option value="warmer" data-value="229">
+                            </option>
+                            <option value="way" data-value="208">
+                            </option>
+                            <option value="week" data-value="103">
+                            </option>
+                            <option value="woman" data-value="209">
+                            </option>
+                            <option value="work" data-value="210">
+                            </option>
+                            <option value="world" data-value="211">
+                            </option>
+                            <option value="π" data-value="5">
+                            </option>
+                            <option value="π (unit symbol)" data-value="-5">
+                            </option>
+                            <option value="𝑒" data-value="6">
+                            </option>
+                            <option value="𝑒 (unit symbol)" data-value="-58">
+                            </option>
+                        </datalist>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="lt_form_select_ref_type">
+                            Reference type
+                        </label>
+                        <select class="form-control" name="lt" form="ref_add" id="lt_form_select_ref_type" >
+                            <option value="1"  >
+                                wikipedia
+                            </option>
+                            <option value="2"  selected >
+                                wikidata
+                            </option>
+                            <option value="3"  >
+                                conceptnet
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="external_key">
+                            External key
+                        </label>
+                        <input class="form-control" type="text" name="ek" id="external_key">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="so_form_select_source">
+                            source
+                        </label>
+                        <select class="form-control" name="so" form="ref_add" id="so_form_select_source" >
+                            <option value="0" selected>
+                                please select ...
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-8">
+                        <label for="url">
+                            URL
+                        </label>
+                        <input class="form-control" type="text" name="ur" id="url">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="description">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="o" id="description">
+                    </div>
+                    <input type="hidden" name="8o" value="">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="s_form_select_share_type">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="ref_add" id="s_form_select_share_type" >
+                            <option value="1"  selected >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8s" value="1">
+                    <div class="form-group col-md-4">
+                        <label for="sp_form_select_protection_type">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="ref_add" id="sp_form_select_protection_type" >
+                            <option value="1"  selected >
+                                no protection
+                            </option>
+                            <option value="2"  >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8sp" value="1">
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="http://localhost/http/view.php?m=94" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

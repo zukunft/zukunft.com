@@ -5,6 +5,8 @@
     web/user/user_message.php - messages created by the frontend for the user
     -------------------------
 
+    $msg is the suggested var name
+
 
     This file is part of zukunft.com - calc with words
 
@@ -32,17 +34,18 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_HELPER . 'Message.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\library;
 
 class user_message extends Message
 {
@@ -77,6 +80,22 @@ class user_message extends Message
         $this->usr = $usr;
     }
 
+    /**
+     * clear the collected messages and the status, but keep the user, like the backend message
+     *
+     * only a test may call this on the message it owns (testing.md "created once and reset after
+     * each checked test"); a function that has received a message never resets it
+     *
+     * @return void
+     */
+    function reset(): void
+    {
+        parent::reset();
+        $this->txt = [];
+        $this->info = [];
+        $this->db_row_id = 0;
+    }
+
 
     /*
      * api
@@ -88,7 +107,7 @@ class user_message extends Message
      * TODO Prio 2 add the solution with the prepared job id
      * @return array with the messages
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         $msg_lst = [];
@@ -103,7 +122,7 @@ class user_message extends Message
         $vars[json_fields::USER_MESSAGES_WITH_VARS] = $var_lst;
         $vars[json_fields::USER_MESSAGES_STATUS] = $this->msg_status;
         if ($this->usr != null) {
-            $vars[json_fields::USER] = $this->usr->api_array();
+            $vars[json_fields::USER] = $this->usr->api_array($typ_lst, $msg);
         }
         return $vars;
     }
@@ -113,14 +132,14 @@ class user_message extends Message
      */
     function api_json(): string
     {
-        return json_encode($this->api_array());
+        return json_encode($this->api_array([], $this));
     }
 
     /**
      * fill the vars with this database message object based on the given api json array
      * @param array $api_json the api array with the frontend message
      */
-    function api_mapper(array $api_json): void
+    function api_mapper(array $api_json, user_message $msg): void
     {
         if (array_key_exists(json_fields::USER_MESSAGES, $api_json)) {
             $msg_lst = $api_json[json_fields::USER_MESSAGES];
@@ -139,9 +158,8 @@ class user_message extends Message
         }
         if (array_key_exists(json_fields::USER, $api_json)) {
             $usr = new user();
-            $usr_msg = new user_message();
-            $usr->api_mapper($api_json[json_fields::USER],$usr_msg);
-            if ($usr_msg->is_ok()) {
+            $usr->api_mapper($api_json[json_fields::USER], $msg);
+            if ($msg->is_ok()) {
                 $this->usr = $usr;
             }
         }
@@ -361,36 +379,30 @@ class user_message extends Message
      */
 
     /**
-     * TODO should pick the last either from msg_var_lst or msg_id_lst
-     * @return string with the latest added message translated to the user language
-     */
-    function get_last_message_translated(): string
-    {
-        return $this->get_message_translated(count($this->msg_var_lst));
-    }
-
-    /**
+     * TODO Prio 2 make it protected
      * @return array with all the text messages
      */
-    protected function get_all_messages(): array
+    function get_all_messages(): array
     {
         return $this->txt;
     }
 
     /**
+     * TODO Prio 2 make it protected
      * @return array with all the translatable messages with vars
      */
-    protected function get_all_var_messages(): array
+    function get_all_var_messages(): array
     {
         return $this->msg_var_lst;
     }
 
     /**
      * combine the status of two user messages and assume the worst
-     * @param user_message $msg_to_add the user messages that should be combined with this user message
+     * TODO Prio 2 make it private
+     * @param user_message|Message $msg_to_add the user messages that should be combined with this user message
      * @return void
      */
-    private function combine_status(user_message $msg_to_add): void
+    function combine_status(user_message|Message $msg_to_add): void
     {
         if (!$msg_to_add->is_ok()) {
             $this->msg_status = msg_id::NOK;

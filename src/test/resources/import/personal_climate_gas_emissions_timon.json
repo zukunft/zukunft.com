@@ -1,5 +1,6 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2020-03-08 10:55:00",
   "user": "timon",
   "selection": [
@@ -11,36 +12,32 @@
       "type": "time"
     },
     {
-      "name": "kWh",
-      "type": "measure"
-    },
-    {
-      "name": "per kWh",
-      "type": "measure_divisor"
-    },
-    {
-      "name": "electricity"
+      "name": "CO2"
     },
     {
       "name": "consumed"
     },
     {
+      "name": "electricity"
+    },
+    {
       "name": "gram"
     },
     {
-      "name": "CO2"
+      "name": "hydropower"
     },
     {
-      "name": "solar"
+      "name": "kWh",
+      "type": "measure"
     },
     {
       "name": "power"
     },
     {
-      "name": "Swiss"
+      "name": "solar"
     },
     {
-      "name": "hydropower"
+      "name": "Swiss"
     }
   ],
   "triples": [
@@ -61,6 +58,12 @@
       "from": "hydropower",
       "verb": "kind of",
       "to": "Swiss"
+    },
+    {
+      "name": "per kWh",
+      "from": "gram",
+      "verb": "per",
+      "to": "kWh"
     }
   ],
   "formulas": [],
@@ -149,7 +152,7 @@
   "views": [
     {
       "name": "personal climate gas emission",
-      "comment": "overview over the climate gas emissions of the current user",
+      "description": "overview over the climate gas emissions of the current user",
       "type": "detail_view",
       "components": [
         {

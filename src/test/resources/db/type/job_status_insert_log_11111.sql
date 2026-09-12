@@ -47,7 +47,7 @@ SELECT job_status_insert_log_11111
 
 SELECT job_status_insert_log_11111
     ('created'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      855::smallint,
      856::smallint,

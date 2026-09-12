@@ -52,8 +52,10 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -73,6 +75,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -80,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -114,6 +118,15 @@ class term_view extends sandbox_link
     const string TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const string FLD_ID = 'term_view_id';
     const string FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+    // the order number is called priority in the frontend and the api
+    const string FLD_ORDER = fields::FLD_ORDER_NBR;
+    const string FLD_ORDER_COM = 'to set the priority of the views linked to one term';
+    const sql_par_type FLD_ORDER_SQL_TYP = sql_par_type::INT;
+    const string FLD_STYLE_COM = 'the display style of the view if it is shown for this term';
+    // the names of the linked objects as the list query joins them; the suffix is the position
+    // of the join, so both must match the join order of term_view_list::load_sql_by_ids
+    const string FLD_VIEW_NAME_JOINED = view_fields::FLD_NAME . '1';
+    const string FLD_TERM_NAME_JOINED = term::FLD_NAME . '2';
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
@@ -125,11 +138,20 @@ class term_view extends sandbox_link
     const array FLD_NAMES_USR = array(
         fields::FLD_DESCRIPTION
     );
+    // list of the user-specific numeric database field names
+    const array FLD_NAMES_NUM_USR = array(
+        self::FLD_ORDER,
+        fields::FLD_STYLE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
+    );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
-    // TODO Prio 2 maybe add a priority
     const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
+        self::FLD_ORDER,
+        fields::FLD_STYLE,
         fields::FLD_DESCRIPTION,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
@@ -143,11 +165,15 @@ class term_view extends sandbox_link
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const array FLD_LST_MUST_BUT_STD_ONLY = array(
+        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ORDER_COM],
+        [fields::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
+        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ORDER_COM],
+        [fields::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
@@ -162,6 +188,10 @@ class term_view extends sandbox_link
      */
 
     public ?string $description = null;
+    // to set the priority of the views linked to one term
+    public ?int $order_nbr = null;
+    // the style that overwrites the view style if the view is shown for this term
+    private ?type_object $style = null;
 
 
     /*
@@ -183,6 +213,8 @@ class term_view extends sandbox_link
         parent::reset($keep_user);
         $this->set_predicate_id(null);
         $this->description = null;
+        $this->order_nbr = null;
+        $this->style = null;
     }
 
     /**
@@ -196,12 +228,13 @@ class term_view extends sandbox_link
      * @return bool true if the view component link is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID): bool
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = self::FLD_ID): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             if (key_exists(view_fields::FLD_ID, $db_row)) {
                 $msk = new view($this->get_user());
@@ -212,24 +245,38 @@ class term_view extends sandbox_link
                 $this->set_term($trm);
                 $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
                 $this->description = $db_row[fields::FLD_DESCRIPTION];
+                if (key_exists(self::FLD_ORDER, $db_row)) {
+                    $this->order_nbr = $db_row[self::FLD_ORDER];
+                }
+                if (key_exists(fields::FLD_STYLE, $db_row)) {
+                    $this->set_style_by_id($db_row[fields::FLD_STYLE]);
+                }
+                // the list query joins the names of both linked objects, so that the link can
+                // name them e.g. in the change log; a load by id has no join and no names
+                if (array_key_exists(self::FLD_VIEW_NAME_JOINED, $db_row)) {
+                    $msg->merge($msk->set_name($db_row[self::FLD_VIEW_NAME_JOINED]));
+                }
+                if (array_key_exists(self::FLD_TERM_NAME_JOINED, $db_row)) {
+                    $trm->set_name($db_row[self::FLD_TERM_NAME_JOINED]);
+                }
             } else {
                 log_warning('view id missing for ' . $this->dsp_id());
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * fill the vars with this link type view link object based on the given api json array
      * basically use the json field type instead of predicate and
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
 
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (key_exists(json_fields::VIEW_ID, $api_json)) {
             // TODO Prio 1 get from dto cache if possible
@@ -250,8 +297,15 @@ class term_view extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
             $this->description = $api_json[json_fields::DESCRIPTION];
         }
+        // priority is the api name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $api_json)) {
+            $this->order_nbr = $api_json[json_fields::PRIORITY];
+        }
+        if (array_key_exists(json_fields::STYLE, $api_json)) {
+            $this->set_style_by_id($api_json[json_fields::STYLE]);
+        }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -282,7 +336,7 @@ class term_view extends sandbox_link
                 }
             }
             if (is_string($msk_json)) {
-                $msk = $dto?->get_view_by_name($msk_json);
+                $msk = $dto?->get_view_by_name($msk_json, $msg);
                 if ($msk == null) {
                     $msg->add(msg_id::VIEW_MISSING_IMPORT, [
                         msg_id::VAR_VIEW => $msk_json,
@@ -317,7 +371,7 @@ class term_view extends sandbox_link
                 }
             }
             if (is_string($trm_json)) {
-                $trm = $dto?->get_term_by_name($trm_json);
+                $trm = $dto?->get_term_by_name($trm_json, $msg);
                 if ($trm == null) {
                     $msg->add(msg_id::TERM_MISSING_IMPORT, [
                         msg_id::VAR_TERM => $trm_json,
@@ -350,6 +404,13 @@ class term_view extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
             $this->description = $in_ex_json[json_fields::DESCRIPTION];;
         }
+        // priority is the json name of the order_nbr db field
+        if (array_key_exists(json_fields::PRIORITY, $in_ex_json)) {
+            $this->order_nbr = $in_ex_json[json_fields::PRIORITY];
+        }
+        if (array_key_exists(json_fields::STYLE, $in_ex_json)) {
+            $this->set_style($in_ex_json[json_fields::STYLE], $msg);
+        }
 
         return $msg->is_ok();
     }
@@ -362,24 +423,29 @@ class term_view extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         if ($this->get_view()?->id() != 0) {
             if ($typ_lst->include_views()) {
-                $vars[json_fields::VIEW] = $this->get_view()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::VIEW] = $this->get_view()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::VIEW_ID] = $this->get_view()->id();
             }
         }
         if ($this->term()?->id() != 0) {
             if ($typ_lst->include_phrases()) {
-                $vars[json_fields::TERM] = $this->term()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::TERM] = $this->term()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::TERM_ID] = $this->term()->id();
             }
@@ -387,6 +453,28 @@ class term_view extends sandbox_link
 
         if ($this->description != null) {
             $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        // priority is the api name of the order_nbr db field
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+        if ($this->get_style_id() != null) {
+            $vars[json_fields::STYLE] = $this->get_style_id();
+        }
+
+        // a page request needs the names of the linked objects for the link title subtitle
+        if ($typ_lst->incl_related()) {
+            $vars = $this->api_json_array_linked(
+                $vars, json_fields::VIEW, json_fields::TERM, $msg, $usr);
+            // the owner, changes and overwrites of the term view default page
+            if (!$typ_lst->test_mode()) {
+                $owner_name = $this->owner_api_name($msg);
+                if ($owner_name != null) {
+                    $vars[json_fields::OWNER] = $owner_name;
+                }
+            }
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
         return $vars;
@@ -479,6 +567,52 @@ class term_view extends sandbox_link
         }
     }
 
+    /**
+     * set the style of this link by the code id, which the im- and export uses
+     *
+     * @param string|null $code_id the code id of the display style
+     * @param user_message $msg to report a style code id that is not found
+     * @return void
+     */
+    function set_style(?string $code_id, user_message $msg): void
+    {
+        global $sys;
+        $this->style = null;
+        if ($code_id != null) {
+            if ($sys->typ_lst->msk_sty->has_code_id($code_id)) {
+                $this->style = $sys->typ_lst->msk_sty->get_by_code_id($code_id);
+            } else {
+                $msg->add(msg_id::VIEW_STYLE_NOT_FOUND, [
+                    msg_id::VAR_NAME => $code_id
+                ]);
+            }
+        }
+    }
+
+    /**
+     * set the style of this link by the database id, which the db and the api use
+     *
+     * @param int|null $style_id the database id of the display style
+     * @return void
+     */
+    function set_style_by_id(?int $style_id): void
+    {
+        global $sys;
+        if ($style_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $sys->typ_lst->msk_sty->get($style_id);
+        }
+    }
+
+    /**
+     * @return int|null the database id of the style or null if the view style should be used
+     */
+    function get_style_id(): ?int
+    {
+        return $this->style?->id();
+    }
+
 
     /*
      * info
@@ -501,6 +635,12 @@ class term_view extends sandbox_link
         if ($std_obj->description !== $this->description) {
             $result->description = $this->description;
         }
+        if ($std_obj->order_nbr !== $this->order_nbr) {
+            $result->order_nbr = $this->order_nbr;
+        }
+        if ($std_obj->get_style_id() !== $this->get_style_id()) {
+            $result->set_style_by_id($this->get_style_id());
+        }
         return $result;
     }
 
@@ -520,11 +660,17 @@ class term_view extends sandbox_link
      */
     function fill(term_view|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
-        return $usr_msg;
+        if ($this->order_nbr === null and $obj->order_nbr != null) {
+            $this->order_nbr = $obj->order_nbr;
+        }
+        if ($this->get_style_id() === null and $obj->get_style_id() != null) {
+            $this->set_style_by_id($obj->get_style_id());
+        }
+        return $msg;
     }
 
     /*
@@ -658,7 +804,7 @@ class term_view extends sandbox_link
         $msk = $this->get_view();
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
-                if (!$msk->load_by_name($msk->name())) {
+                if (!$msk->load_by_name($msk->name(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_BY_NAME_FAILED, [
                         msg_id::VAR_VIEW => $this->get_view()->dsp_id()
                     ]);
@@ -668,7 +814,7 @@ class term_view extends sandbox_link
             }
         } else {
             if ($msk->name() == '') {
-                if (!$msk->load_by_id($msk->id())) {
+                if (!$msk->load_by_id($msk->id(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
                         msg_id::VAR_VIEW => $this->get_view()->dsp_id()
                     ]);
@@ -679,7 +825,7 @@ class term_view extends sandbox_link
         $trm = $this->term();
         if ($trm->id() == 0) {
             if ($trm->name() != '') {
-                if (!$trm->load_by_name($trm->name())) {
+                if (!$trm->load_by_name($trm->name(), $msg)) {
                     $msg->add(msg_id::LOAD_TERM_BY_NAME_FAILED, [
                         msg_id::VAR_TERM => $this->term()->dsp_id()
                     ]);
@@ -689,7 +835,7 @@ class term_view extends sandbox_link
             }
         } else {
             if ($trm->name() == '') {
-                if (!$trm->load_by_id($trm->id())) {
+                if (!$trm->load_by_id($trm->id(), $msg)) {
                     $msg->add(msg_id::LOAD_TERM_BY_ID_FAILED, [
                         msg_id::VAR_TERM => $this->term()->dsp_id()
                     ]);
@@ -707,18 +853,19 @@ class term_view extends sandbox_link
     /**
      * create an array with the export json fields of this component
      * which does not include the internal database id
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->get_view()?->name() != null) {
-            $vars[json_fields::VIEW] = $this->get_view()->export_json($exp_typ, $do_load);
+            $vars[json_fields::VIEW] = $this->get_view()->export_json($msg, $exp_typ, $do_load);
         }
         if ($this->term()?->name() != null) {
-            $vars[json_fields::TERM] = $this->term()->export_json($exp_typ, $do_load);
+            $vars[json_fields::TERM] = $this->term()->export_json($msg, $exp_typ, $do_load);
         }
 
         global $sys;
@@ -727,6 +874,14 @@ class term_view extends sandbox_link
         }
         if ($this->description != null) {
             $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        // priority is the json name of the order_nbr db field
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+        // the export uses the code id of the style, because the database id can differ per pod
+        if ($this->get_style_id() != null) {
+            $vars[json_fields::STYLE] = $sys->typ_lst->msk_sty->code_id($this->get_style_id());
         }
 
         return $vars;
@@ -750,6 +905,8 @@ class term_view extends sandbox_link
             [
                 fields::FLD_DESCRIPTION,
                 view_link_type::FLD_ID,
+                self::FLD_ORDER,
+                fields::FLD_STYLE,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -773,7 +930,7 @@ class term_view extends sandbox_link
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
 
@@ -814,6 +971,39 @@ class term_view extends sandbox_link
                 $obj->predicate_id(),
                 $sys->typ_lst->msk_lnk_typ);
         }
+
+        if ($obj->order_nbr !== $this->order_nbr) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_ORDER),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_ORDER,
+                $this->order_nbr,
+                self::FLD_ORDER_SQL_TYP,
+                $obj->order_nbr
+            );
+        }
+
+        if ($obj->get_style_id() !== $this->get_style_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_STYLE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_STYLE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_type_field(
+                fields::FLD_STYLE,
+                view_style::FLD_NAME,
+                $this->get_style_id(),
+                $obj->get_style_id(),
+                $sys->typ_lst->msk_sty
+            );
+        }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
@@ -853,6 +1043,29 @@ class term_view extends sandbox_link
             msg_id::VAR_TERM_NAME => $this->term()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string|null the name of the two linked objects e.g. for the change log
+     */
+    function name(): string|null
+    {
+        $result = null;
+
+        if ($this->get_view() != null) {
+            $result = $this->get_view()->name();
+        }
+        if ($this->term() != null) {
+            // append, because the name of a link is the name of both linked objects
+            $result .= ' to ' . $this->term()->name();
+        }
+
+        return $result;
     }
 
 }

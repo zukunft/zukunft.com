@@ -6,6 +6,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -22,12 +23,14 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -39,13 +42,13 @@ class triple_tests
 {
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
         $t_trp = new test_triples($t);
+        $msg_ui = new user_message_ui();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
@@ -60,20 +63,24 @@ class triple_tests
         $t->assert_sql_foreign_key_create($trp);
 
         $t->subheader($ts . 'sql read');
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $t->assert_sql_by_id($sc, $trp);
         $t->assert_sql_by_name($sc, $trp);
         $t->assert_sql_by_link($sc, $trp);
         $this->assert_sql_by_name_generated($sc, $trp, $t);
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->id = 2;
         $t->assert_sql_standard($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $trp);
+        $t->assert_sql_changing_users_by_ids($sc, $trp);
 
         $t->subheader($ts . 'sql read standard by name');
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->set_name(triple_names::PI);
         $t->assert_sql_standard_by_name($sc, $trp);
 
@@ -90,7 +97,7 @@ class triple_tests
         $trp_excl->excluded = true;
         $t->assert_sql_insert($sc, $trp_excl);
         $trp_excl->description = '';
-        $trp_excl->set_type('');
+        $trp_excl->set_type('', new user_message($t->usr1));
         $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
         $trp = $t_trp->triple_incomplete();
         $t->assert_sql_insert_fail($sc, $trp, [sql_type::LOG]);
@@ -119,12 +126,30 @@ class triple_tests
         $trp = $t_trp->triple_filled_add_name();
         $t->assert_reset($trp);
 
+        $t->subheader($ts . 'rename routing');
+
+        // a name change of a triple is a key update (so the duplicate name check of the save
+        // runs), but it never identifies the database row: only a change of the link fields
+        // (from, verb, to) forces a new row, so a rename keeps the id and the related values
+        // (see sandbox::save and is_id_key_updated)
+        $trp_db = $t_trp->triple();
+        $trp_ren = $t_trp->triple();
+        $trp_ren->set_name($trp_db->name() . ' renamed');
+        $test_name = 'a triple rename is a key update for the duplicate check';
+        $t->assert_true($test_name, $trp_ren->is_key_updated($trp_db));
+        $test_name = 'a triple rename never changes the database row identity';
+        $t->assert_false($test_name, $trp_ren->is_id_key_updated($trp_db));
+        $trp_lnk = $t_trp->triple();
+        $trp_lnk->set_from($t_trp->triple_pi()->phrase());
+        $test_name = 'a changed from phrase changes the database row identity of a triple';
+        $t->assert_true($test_name, $trp_lnk->is_id_key_updated($trp_db));
+
         $t->subheader($ts . 'no update diff treats an unset link end as empty');
         // under ex_def (the no_upd import mode) an unset from (id 0) is empty,
         // so filling it from the import is a fill-up, not a reported overwrite
         $trp_full = $t_trp->triple();
         $trp_empty_from = $t_trp->triple();
-        $trp_empty_from->set_from(new phrase($usr));
+        $trp_empty_from->set_from(new phrase($t->usr1));
         $test_name = 'diff_msg reports no overwrite when the db from is empty and ex_def is set';
         $diff = $trp_empty_from->diff_msg($trp_full, true);
         $t->assert_true($test_name, $diff->is_ok());
@@ -147,35 +172,35 @@ class triple_tests
         $t->subheader($ts . 'api mapping of an incomplete message');
         // an api message with only the id maps the id and does not fail
         $test_name = 'api_mapper with only the id keeps the id';
-        $trp = new triple($usr);
-        $trp->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], new user_message());
+        $trp = new triple($t->usr1);
+        $trp->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], $msg);
         $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
 
         // an api message with only the name maps the name and leaves the id at 0
         $test_name = 'api_mapper with only the name keeps the name';
-        $trp = new triple($usr);
-        $trp->api_mapper([json_fields::NAME => triple_names::MATH_CONST], new user_message());
+        $trp = new triple($t->usr1);
+        $trp->api_mapper([json_fields::NAME => triple_names::MATH_CONST], $msg);
         $t->assert($test_name, $trp->name(), triple_names::MATH_CONST);
         $test_name = 'api_mapper with only the name leaves the id at 0';
         $t->assert($test_name, $trp->id(), 0);
 
         // an api message with neither the id nor the name maps nothing and leaves the id at 0
         $test_name = 'api_mapper with neither id nor name leaves the id at 0';
-        $trp = new triple($usr);
-        $trp->api_mapper([], new user_message());
+        $trp = new triple($t->usr1);
+        $trp->api_mapper([], $msg);
         $t->assert($test_name, $trp->id(), 0);
 
         // an api message where the from, verb and to are present but null (an incomplete triple) maps
         // them to empty objects instead of throwing a TypeError; guards the phrase_from_api_json and
         // verb_from_api_json regression
         $test_name = 'api_mapper with a null from leaves the from phrase empty';
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->api_mapper([
             json_fields::ID => triple_names::MATH_CONST_ID,
             json_fields::FROM => null,
             json_fields::VERB => null,
             json_fields::TO => null
-        ], new user_message());
+        ], $msg);
         $t->assert($test_name, $trp->get_from()?->id() ?? 0, 0);
         $test_name = 'api_mapper with a null to leaves the to phrase empty';
         $t->assert($test_name, $trp->get_to()?->id() ?? 0, 0);
@@ -185,6 +210,45 @@ class triple_tests
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();
         $t->assert_api_to_ui($trp, new triple_ui());
+
+        // the weight is a float, so the edit field must keep the fraction; without float in
+        // the form_field value union the coercion tries int before string and truncates
+        // 0.5 to 0 (see html_base::form_field)
+        $form = new system_form();
+        $test_name = 'the edit form shows the fractional weight of a triple unchanged';
+        $t->assert_text_contains($test_name, $form->form_field_weight($t_trp->triple_impact_ui()), 'value="0.5"');
+        $test_name = 'the edit form of a triple without a weight starts with an empty weight field';
+        $t->assert_false($test_name, str_contains($form->form_field_weight($t_trp->swiss_franc_ui()), 'value='));
+
+        // the url array is the inverse of url_mapper, so it carries the linked phrases, the verb and
+        // the triple fields that the edit form posts; a field that is not set is left out, so that a
+        // union with a posted url never masks a posted value with an empty one
+        $test_name = 'the url array of a triple contains the linked phrases and the verb';
+        $trp_url = test_triples::triple_add_ui()->to_url_array($msg_ui);
+        $t->assert($test_name, $trp_url[url_var::PHRASE_FROM], word_names::TEST_ADD_ID);
+        $t->assert($test_name . ' and the verb', $trp_url[url_var::VERB], verbs::PART_ID);
+        $t->assert($test_name . ' and the to phrase', $trp_url[url_var::PHRASE_TO], word_names::TEST_ADD_TO_ID);
+
+        // the expected weight is the same fractional one as in the edit form test above, which
+        // test_triples::triple_impact sets to match the db row of units.json
+        $test_name = 'the url array of a triple contains the weight, plural and impact';
+        $trp_ui = $t_trp->triple_impact_ui();
+        $trp_ui->plural = triple_names::MATH_CONST_PLURAL;
+        $trp_url = $trp_ui->to_url_array($msg_ui);
+        $t->assert($test_name, $trp_url[url_var::WEIGHT], 0.5);
+        $t->assert($test_name . ' and the plural', $trp_url[url_var::PLURAL], triple_names::MATH_CONST_PLURAL);
+        $t->assert($test_name . ' and the impact', $trp_url[url_var::IMPACT], impacts::MAX);
+
+        // the usage and the impact are never null, so both are dropped by their value like in the
+        // word url array, which leaves the id as the only field of a triple that is always sent
+        $test_name = 'the url array of a new triple contains only the id';
+        $trp_url = new triple_ui()->to_url_array($msg_ui);
+        $t->assert($test_name, $trp_url[url_var::ID], 0);
+        $t->assert_contains_not($test_name . ' and no unset field', array_keys($trp_url), [
+            url_var::PHRASE_FROM, url_var::VERB, url_var::PHRASE_TO, url_var::WEIGHT,
+            url_var::PLURAL, url_var::USAGE, url_var::IMPACT,
+            url_var::NAME, url_var::DESCRIPTION, url_var::TYPE,
+            url_var::SHARE, url_var::PROTECTION, url_var::OWNER]);
 
         $t->subheader($ts . 'url mapping of phrases posted by name');
         // the datalist edit fields submit the shown phrase name instead of the id, so the url
@@ -219,8 +283,8 @@ class triple_tests
         $test_name = 'a triple with only one linked phrase is rejected';
         $trp_ui = new triple_ui();
         $trp_ui->set_name(triple_names::SYSTEM_TEST_ADD);
-        $trp_ui->set_from_by_id(1, $dto_ui);
         $val_msg = new user_message_ui();
+        $trp_ui->set_from_by_id(1, $val_msg, $dto_ui);
         $t->assert_false($test_name, $trp_ui->input_valid($val_msg, url_var::CRUD_UPDATE));
         $test_name = '... and the user is told that both phrases are needed';
         $t->assert_true($test_name, $val_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
@@ -229,13 +293,13 @@ class triple_tests
         // build a target phrase ("Pi") that should appear in the triple's related list, and
         // wrap it in a one-entry json array. The frontend phrase_list api_mapper then turns
         // it into a phrase_list whose api_array round-trips back to the same json shape.
-        $target_trp = $t_trp->triple_pi();
+        $target_trp = $t_trp->triple_pi_name();
         $related_json = [[
             json_fields::OBJECT_CLASS => json_fields::CLASS_TRIPLE,
             json_fields::ID => $target_trp->id(),
             json_fields::NAME => $target_trp->name(),
         ]];
-        $symbol_trp = $t_trp->triple_pi_symbol();
+        $symbol_trp = $t_trp->triple_pi();
         $trp_json = json_decode($symbol_trp->api_json(), true);
         $trp_json[json_fields::PHRASES_RELATED] = $related_json;
         $trp_ui = new triple_ui(json_encode($trp_json));
@@ -244,20 +308,20 @@ class triple_tests
             $trp_ui->phr_lst !== null and !$trp_ui->phr_lst->is_empty());
         $test_name = 'triple ui api_array re-emits phrases_related';
         $t->assert_true($t->name . $test_name,
-            array_key_exists(json_fields::PHRASES_RELATED, $trp_ui->api_array()));
+            array_key_exists(json_fields::PHRASES_RELATED, $trp_ui->api_array([], $msg_ui)));
         // negative: a triple without phrases_related in its json keeps the field null
         $bare_trp_ui = new triple_ui($symbol_trp->api_json());
         $test_name = 'triple ui phrases_related stays null when json key is absent';
         $t->assert_true($t->name . $test_name, $bare_trp_ui->phr_lst === null);
         $test_name = 'triple ui api_array omits phrases_related when null';
         $t->assert_true($t->name . $test_name,
-            !array_key_exists(json_fields::PHRASES_RELATED, $bare_trp_ui->api_array()));
+            !array_key_exists(json_fields::PHRASES_RELATED, $bare_trp_ui->api_array([], $msg_ui)));
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t_trp->triple(), $usr_sys);
-        $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $usr_sys);
+        $t->assert_ex_and_import($t_trp->triple(), $t->usr_system);
+        $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $t->usr_system);
         $json_file = 'unit/triple/pi.json';
-        $t->assert_json_file(new triple($usr), $json_file);
+        $t->assert_json_file(new triple($t->usr1), $json_file);
 
         // the impact field is part of the triple im- and export
         // even if the impact is expected to be calculated internal
@@ -265,23 +329,23 @@ class triple_tests
         // e.g. if the calculation definition is not yet set 
         $trp = $t_trp->triple();
         $trp->set_impact(impacts::HIGH);
-        $json_ex = $trp->export_json([], false);
+        $json_ex = $trp->export_json($msg, [], false);
         // the assert follows the json export above, so a page timeout is used to avoid a false timeout
         $t->assert($ts . 'export includes the impact', $json_ex[json_fields::IMPACT] ?? null, impacts::HIGH, $t::TIMEOUT_LIMIT_PAGE);
         // re-import the exported json and check that the impact is read back
-        $trp_in = new triple($usr_sys);
-        $trp_in->import_mapper($json_ex, new user_message($usr_sys), new data_object($usr_sys));
+        $trp_in = new triple($t->usr_system);
+        $trp_in->import_mapper($json_ex, new user_message($t->usr_system), new data_object($t->usr_system));
         $t->assert($ts . 'import reads the impact', $trp_in->impact, impacts::HIGH);
 
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_trp = $t_trp->triple_name_only();
         $db_trp = $t_trp->triple();
-        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp, $msg), false);
 
         $in_trp = $t_trp->triple_link_only();
         $db_trp = $t_trp->triple();
-        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp, $msg), false);
 
     }
 

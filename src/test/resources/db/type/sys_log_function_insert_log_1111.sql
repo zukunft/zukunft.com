@@ -41,7 +41,7 @@ SELECT sys_log_function_insert_log_1111
 
 SELECT sys_log_function_insert_log_1111
     ('Import system configuration'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      847::smallint,
      848::smallint,

@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-05-22 09:00:00",
   "user": "timon",
   "selection": [
@@ -25,7 +26,8 @@
       "name": "science"
     },
     {
-      "name": "density"
+      "name": "density",
+      "description": "quantity per unit area or volume"
     },
     {
       "name": "mineralogy",
@@ -337,7 +339,6 @@
     },
     {
       "name": "hardness",
-      "description": "measure of how resistant solid matter is to various kinds of permanent shape change when a force is applied",
       "refs": [
         {
           "name": "Hardness",
@@ -1281,7 +1282,8 @@
       "name": "conductivity"
     },
     {
-      "name": "head"
+      "name": "head",
+      "description": "anterior portion of the caudate nucleus"
     },
     {
       "name": "radiometric"
@@ -1305,7 +1307,8 @@
       "name": "volume"
     },
     {
-      "name": "total"
+      "name": "total",
+      "description": "the whole amount or count, e.g. the total number of possible outcomes"
     },
     {
       "name": "substance"
@@ -1889,7 +1892,6 @@
     },
     {
       "name": "shear modulus",
-      "description": "ratio of shear stress to the shear strain",
       "from": "modulus",
       "verb": "kind of",
       "to": "shear",

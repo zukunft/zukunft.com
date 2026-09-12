@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-05-22 09:00:00",
   "user": "timon",
   "selection": [
@@ -1043,7 +1044,14 @@
       "name": "traits"
     },
     {
-      "name": "mental"
+      "name": "mental",
+      "description": "relating to the mind and cognitive processes",
+      "refs": [
+        {
+          "name": "Mind",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "disorder"
@@ -1181,7 +1189,8 @@
       "name": "compulsive"
     },
     {
-      "name": "post"
+      "name": "post",
+      "description": "after the primary analysis"
     },
     {
       "name": "traumatic"
@@ -1316,7 +1325,6 @@
     },
     {
       "name": "working memory",
-      "description": "cognitive system with a limited capacity that is responsible for temporarily holding information available for processing. see Wikipedia: Working memory (Q11337567)",
       "from": "memory",
       "verb": "kind of",
       "to": "working"
@@ -1386,7 +1394,6 @@
     },
     {
       "name": "cognitive development",
-      "description": "field of study in neuroscience and psychology. see Wikipedia: Cognitive development (Q2910672)",
       "from": "development",
       "verb": "kind of",
       "to": "cognitive"
@@ -1675,9 +1682,8 @@
     },
     {
       "name": "standard deviation",
-      "description": "a measure of the amount of variation or dispersion of a set of values around their mean",
       "from": "deviation",
-      "verb": "kind of",
+      "verb": "can be",
       "to": "standard"
     },
     {

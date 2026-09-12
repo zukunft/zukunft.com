@@ -52,8 +52,10 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'triple.php';
@@ -68,12 +70,14 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -104,6 +108,10 @@ class horizontal_tests
         // start the test section (ts)
         $ts = 'unit horizontal ';
         $t->header($ts);
+        // switch usr1 to the system test profile user (needed for the reserved-name imports)
+        // and remember the normal usr1 so the end of this run can restore it - otherwise every
+        // later test would see a system-tier usr1 instead of the normal email profile user
+        $usr1_saved = $t->usr1;
         $t->usr1 = $t_usr->user_sys_test();
 
         $t->subheader($ts . 'fill');
@@ -169,7 +177,7 @@ class horizontal_tests
         $t->subheader($ts . 'frontend api');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'frontend of ' . $lib->class_to_name($class) . ' can reproduce the same backend object';
-            $usr_msg = new user_message($t->usr1);
+            $msg = new user_message($t->usr1);
             $usr_msg_ui = new user_message_ui();
             $filled_obj = $t_map->class_to_filled_object($class);
             if (in_array($class, def::SANDBOX_CLASSES)) {
@@ -188,7 +196,7 @@ class horizontal_tests
             // by the api message from the frontend to the backend
             $check_obj->reset(true);
             // create the api message to the backend
-            $ui_json = $ui_obj->api_json();
+            $ui_json = $ui_obj->api_json($usr_msg_ui);
             // remove the fields from the message to the frontend that are never updated by the frontend
             // such as the usage and the impact that are always updated by the backend
             $api_json_ui = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
@@ -198,7 +206,7 @@ class horizontal_tests
             if ($class == component_link::class) {
                 $api_json_ui = json_encode($t->json_remove_component_fields(json_decode($api_json_ui, true)));
             }
-            $check_obj->set_from_api($ui_json, $usr_msg);
+            $check_obj->set_from_api($ui_json, $msg);
             // build the reference object from the api the backend actually sends
             // (without the unidirectional and the combined child fields) because the
             // diff_msg also covers fields that are only used for the database import
@@ -218,7 +226,7 @@ class horizontal_tests
         $t->subheader($ts . 'im- and export');
         foreach (def::MAIN_CLASSES as $class) {
             $dto = new data_object($t->usr1);
-            $usr_msg = new user_message($t->usr1);
+            $msg = new user_message($t->usr1);
             // TODO add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t_map->class_to_filled_object($class);
@@ -226,55 +234,67 @@ class horizontal_tests
             $id = $filled_obj->id();
             // fill up cache to avoid db access in unit tests
             if ($class == user::class) {
-                $dto->add_term($filled_obj->trm);
-                $dto->add_view($filled_obj->msk);
-                $dto->add_source($filled_obj->src);
+                $dto->add_term($filled_obj->trm, $msg);
+                $dto->add_view($filled_obj->msk, $msg);
+                $dto->add_source($filled_obj->src, $msg);
             } elseif ($class == word::class) {
-                $dto->add_view($filled_obj->get_view());
+                $dto->add_view($filled_obj->get_view($msg), $msg);
+            } elseif ($class == source::class) {
+                // the import resolves the default view by its name via the import cache
+                $dto->add_view($filled_obj->view, $msg);
             } elseif ($class == triple::class) {
-                $dto->add_phrase($filled_obj->get_from());
-                $dto->add_phrase($filled_obj->get_to());
+                $dto->add_phrase($filled_obj->get_from(), $msg);
+                $dto->add_phrase($filled_obj->get_to(), $msg);
             } elseif ($class == ref::class) {
-                $dto->add_phrase($filled_obj->phrase());
-                $dto->add_source($filled_obj->get_source());
+                $dto->add_phrase($filled_obj->phrase(), $msg);
+                $dto->add_source($filled_obj->get_source(), $msg);
             } elseif ($class == value::class) {
-                $dto->add_source($filled_obj->get_source());
+                $dto->add_source($filled_obj->get_source(), $msg);
             } elseif ($class == result::class) {
-                $dto->add_formula($filled_obj->frm);
+                $dto->add_formula($filled_obj->frm, $msg);
             } elseif ($class == formula_link::class) {
-                $dto->add_formula($filled_obj->formula());
-                $dto->add_phrase($filled_obj->phrase());
+                $dto->add_formula($filled_obj->formula(), $msg);
+                $dto->add_phrase($filled_obj->phrase(), $msg);
             } elseif ($class == term_view::class) {
-                $dto->add_term($filled_obj->term());
-                $dto->add_view($filled_obj->get_view());
+                $dto->add_term($filled_obj->term(), $msg);
+                $dto->add_view($filled_obj->get_view(), $msg);
             } elseif ($class == view_relation::class) {
-                $dto->add_view($filled_obj->parent());
-                $dto->add_view($filled_obj->child());
+                $dto->add_view($filled_obj->parent(), $msg);
+                $dto->add_view($filled_obj->child(), $msg);
+            } elseif ($class == component::class) {
+                // TODO Prion 1 review and at least prevent the potential polymorph warning in the IDE
+                // the import resolves the row and column phrase names via the import cache
+                $dto->add_phrase($filled_obj->row_phrase, $msg);
+                $dto->add_phrase($filled_obj->col_phrase, $msg);
+                $dto->add_phrase($filled_obj->col_sub_phrase, $msg);
             } elseif ($class == component_link::class) {
-                $dto->add_view($filled_obj->get_view());
-                $dto->add_component($filled_obj->get_component());
+                $dto->add_view($filled_obj->get_view(), $msg);
+                $dto->add_component($filled_obj->get_component(), $msg);
             }
-            $ex_json = $filled_obj->export_json([], false);
+            $ex_json = $filled_obj->export_json($msg, [], false);
             $api_json = $filled_obj->api_json([api_types::TEST_MODE]);
             // the json export and api build above take longer than a normal unit function, so a page timeout is used
             $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY, $t::TIMEOUT_LIMIT_PAGE);
             $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
             $filled_obj->reset();
-            $empty_json = json_encode($filled_obj->export_json([], false));
+            $empty_json = json_encode($filled_obj->export_json($msg, [], false));
             $empty_target_json = $lib->class_to_empty_json($class);
             $t->assert_json_string($test_name, $empty_json, $empty_target_json);
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
-                $usr_msg->usr = $t->user_system();
+                $msg->usr = $t->user_system();
             }
-            $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
+            $filled_obj->import_mapper($ex_json, $msg, $dto);
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->id = $id;
             $final_json = $filled_obj->api_json([api_types::TEST_MODE]);
             $api_json_ex = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
+
+        // restore the normal usr1 so the following tests run with the email profile user again
+        $t->usr1 = $usr1_saved;
 
     }
 

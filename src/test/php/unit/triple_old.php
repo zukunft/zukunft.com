@@ -51,7 +51,6 @@ class triple_old
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -66,24 +65,24 @@ class triple_old
         $t->subheader($ts . 'sql statement');
 
         // sql to load a triple by id
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->id = 1;
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
 
         // sql to load a triple by name
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->set_name(triple_names::COMPANY_ZURICH);
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
 
         // sql to load a triple by link ids
-        $trp = new triple($usr);
-        $wrd_from = new word($usr);
+        $trp = new triple($t->usr1);
+        $wrd_from = new word($t->usr1);
         $wrd_from->id = 2;
         $vrb = new verb();
         $vrb->id = 3;
-        $wrd_to = new word($usr);
+        $wrd_to = new word($t->usr1);
         $wrd_to->id = 4;
         $trp->set_from($wrd_from->phrase());
         $trp->set_verb($vrb);
@@ -98,7 +97,7 @@ class triple_old
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/triple/pi.json';
-        $t->assert_json_file(new triple($usr), $json_file);
+        $t->assert_json_file(new triple($t->usr1), $json_file);
     }
 
 }

@@ -45,9 +45,11 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -59,7 +61,7 @@ class sys_log_write_tests
 
         // init
         $t_sys = new test_sys_log($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $t->name = 'system log db write->';
 
         // start the test section (ts)
@@ -70,17 +72,17 @@ class sys_log_write_tests
         $t->subheader($ts . 'functions / program parts');
         $test_name = 'add function ' . sys_log_functions::TEST_NAME . ' via sql function';
         $sys_log = new sys_log_function('sys_log_write_tests', sys_log_functions::TEST_NAME);
-        $t->assert_insert($test_name, $sys_log, $usr_msg);
+        $t->assert_insert($test_name, $sys_log, $msg);
         $test_name = 'update description of function ' . sys_log_functions::TEST_NAME;
         $sys_log->description = sys_log_functions::TEST_COM;
-        $t->assert_update($test_name, $sys_log, $usr_msg, [sql_type::LOG]);
+        $t->assert_update($test_name, $sys_log, $msg, [sql_type::LOG]);
 
 
         // cleanup - fallback delete
         $t_sys->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg, library::class_to_name(sandbox::class));
 
     }
 

@@ -47,6 +47,7 @@ class sql_db_read_tests
         global $db_con;
 
         // init
+        $msg = new user_message();
         $t->name = 'sql read db->';
 
         // start the test section (ts)
@@ -55,14 +56,14 @@ class sql_db_read_tests
 
         $t->subheader($ts . 'upgrade');
 
-        $result = $db_con->has_column('user_values', 'user_value');
+        $result = $db_con->has_column('user_values', 'user_value', $msg);
         $t->assert('change_column_name', $result, false);
 
-        $result = $db_con->has_column('user_values', 'numeric_value');
+        $result = $db_con->has_column('user_values', 'numeric_value', $msg);
         $t->assert('change_column_name', $result, true);
 
         $result = $db_con->change_column_name(
-            'user_values', 'user_value', 'numeric_value'
+            'user_values', 'user_value', 'numeric_value', $msg
         );
         $t->assert('change_column_name', $result, '');
 

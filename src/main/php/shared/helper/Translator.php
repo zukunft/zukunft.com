@@ -33,6 +33,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
+use ValueError;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED . 'json_fields.php';
@@ -45,7 +46,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use ValueError;
 
 class Translator
 {
@@ -174,14 +174,19 @@ class Translator
             try {
                 return msg_id::get($msg_id_txt);
             } catch (ValueError $error) {
-                $msg = new user_message();
+                $msg = new user_message(); // a local buffer only to build the text of the log entry
                 $msg->add(msg_id::MISSING_TRANSLATION, [
                     msg_id::VAR_MESSAGE_ID => $msg_id_txt,
                     msg_id::VAR_LANGUAGE => $this->lan,
                     msg_id::VAR_ERROR_TEXT => $error->getMessage()
                 ]);
                 $msg_txt = $msg->var_message_text();
-                log_err($msg_txt);
+                // a warning and not an error, because a message id that the database has and the
+                // code does not is the normal state between a seed data import and the deploy of
+                // the matching code: an error is echoed as a critical error page (see log_msg and
+                // text_log::MSG_LEVEL), which would turn one missing label into a dead page for
+                // every request, while the warning still tells the admin via the sys log
+                log_warning($msg_txt);
                 return msg_id::ERROR_TEXT;
             }
         }

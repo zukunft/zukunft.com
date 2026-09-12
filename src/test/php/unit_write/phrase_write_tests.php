@@ -59,7 +59,6 @@ class phrase_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         global $sys;
 
         // init
@@ -67,30 +66,33 @@ class phrase_write_tests
         $t_db = new test_db_load($t);
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write phrase ';
         $t->header($ts);
+        // cleanup any leftovers of a previous failed test run (triples first because they link words)
+        $t_trp->cleanup($ts);
+        $t_wrd->cleanup($ts);
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company
-        $wrd = $t_db->test_word(word_names::COMPANY);
+        $wrd = $t_db->test_word($msg, word_names::COMPANY);
         $company_id = $wrd->id();
         // load or create a word that can be parts of a group e.g. Zurich
-        $wrd = $t_db->test_word(word_names::ZH);
+        $wrd = $t_db->test_word($msg, word_names::ZH);
         $zh_id = $wrd->id();
         $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
-        $trp = new triple($usr);
-        $trp->load_by_link_id($zh_id, $is_id, $company_id);
+        $trp = new triple($t->usr1);
+        $trp->load_by_link_id( $zh_id, $msg, $is_id, $company_id );
         $zh_company_id = $trp->phrase()->id();
 
 
         // test the phrase display functions for words
-        $phr = new phrase($usr);
-        $phr->set_user($usr);
-        $phr->load_by_id($company_id);
+        $phr = new phrase($t->usr1);
+        $phr->set_user($t->usr1);
+        $phr->load_by_id($company_id, $msg);
         $result = $phr->name();
         $target = word_names::COMPANY;
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
@@ -105,21 +107,21 @@ class phrase_write_tests
         $t->assert('phrase->dsp_tbl word for ' . word_names::COMPANY, $result, $target);
 
         // test the phrase display functions for triples
-        $phr = new phrase($usr);
+        $phr = new phrase($t->usr1);
         $phr->set_id_from_obj($zh_company_id, triple::class);
-        $phr->load_by_id($zh_company_id);
+        $phr->load_by_id($zh_company_id, $msg);
         $result = $phr->name();
         $target = triple_names::COMPANY_ZURICH;
         $t->assert('phrase->load triple by id ' . $zh_company_id, $result, $target);
 
         $phr_ui = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_ui->dsp_tbl());
-        $target = $lib->trim_html(' <tr> <td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . VIEWS::TRIPLE_ID . '&amp;id=' . $trp->id() . '">' . triple_names::COMPANY_ZURICH . '</a></td></tr> ');
+        $target = $lib->trim_html(' <tr> <td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . VIEWS::TRIPLE_ID . '&amp;id=' . $trp->id() . '" title="Zurich Insurance Group, a global multi-line insurer headquartered in Zurich">' . triple_names::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test getting the parent for phrase Vestas
-        $phr = $t_db->load_phrase(word_names::VESTAS);
-        $is_phr = $phr->is_mainly();
+        $phr = $t_db->load_phrase(word_names::VESTAS, $msg);
+        $is_phr = $phr->is_mainly($msg);
         if ($is_phr != null) {
             $result = $is_phr->name();
         } else {
@@ -135,7 +137,7 @@ class phrase_write_tests
         $t_trp->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg, library::class_to_name(phrase::class));
 
     }
 

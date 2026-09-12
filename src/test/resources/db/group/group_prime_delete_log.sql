@@ -19,5 +19,5 @@ SELECT group_prime_delete_log
     (3::bigint,
      3::smallint,
      320::smallint,
-     'Pi (math)'::text,
-     32770::bigint);
+     'π (unit symbol)'::text,
+     5::bigint);

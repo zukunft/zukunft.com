@@ -1,14 +1,15 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2024-03-26 19:58:00",
   "user": "zukunft.com system batch job",
   "selection": [
     "solution priorities"
   ],
+  "description": "the main data used for start page with the global problems and most effizient solutions. Contains also the words and triples with description and reference used for unit testing to fix the id that are not part of the other files loaded before the config.yaml. The potential loss values are own estimates in trillion EUR per year, each with a basis in the note and a separate confidence value; they replace the earlier values that were derived from the htp share.",
   "words": [
     {
       "name": "problem",
-      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
         {
           "name": "Problem_solving",
@@ -18,7 +19,6 @@
     },
     {
       "name": "global",
-      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",
@@ -28,9 +28,10 @@
     },
     {
       "name": "solution",
+      "description": "a homogeneous mixture of a solute dissolved in a solvent",
       "refs": [
         {
-          "name": "Problem solving",
+          "name": "Problem_solving",
           "type": "wikipedia"
         },
         {
@@ -41,6 +42,7 @@
     },
     {
       "name": "priority",
+      "description": "the rank that decides which problem is worked on first",
       "refs": [
         {
           "name": "Prioritization",
@@ -53,7 +55,53 @@
       ]
     },
     {
+      "name": "ranking"
+    },
+    {
+      "name": "probability",
+      "description": "Probability is the branch of mathematics concerning numerical descriptions of how likely an event is to occur.",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "expected",
+      "description": "the value weighted by its probability, as opposed to the value of a single outcome"
+    },
+    {
+      "name": "return",
+      "description": "the money made or lost on an investment over a period, as a change in value or a percentage of the amount invested",
+      "refs": [
+        {
+          "name": "Rate_of_return",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "score",
+      "description": "a standardized value derived from data, e.g. a z score"
+    },
+    {
+      "name": "standard",
+      "description": "describes the conventional reference form, e.g. standard deviation"
+    },
+    {
+      "name": "deviation",
+      "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
+      "refs": [
+        {
+          "name": "Deviation_(statistics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "potential",
+      "description": "the size an effect can reach if nothing counteracts it",
       "refs": [
         {
           "name": "Potential",
@@ -67,6 +115,7 @@
     },
     {
       "name": "gain",
+      "description": "the ratio of output to input of a system or amplifier",
       "refs": [
         {
           "name": "Utility",
@@ -79,7 +128,12 @@
       ]
     },
     {
+      "name": "effort",
+      "description": "the work needed to implement a solution, the counterpart of the gain"
+    },
+    {
       "name": "loss",
+      "description": "the part of a value that is destroyed or never created",
       "refs": [
         {
           "name": "Loss",
@@ -92,6 +146,7 @@
     },
     {
       "name": "climate",
+      "description": "long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more",
       "refs": [
         {
           "name": "Climate",
@@ -105,9 +160,10 @@
     },
     {
       "name": "warm",
+      "description": "having or giving off heat",
       "refs": [
         {
-          "name": "heating",
+          "name": "Heating",
           "type": "wikipedia"
         },
         {
@@ -117,19 +173,23 @@
       ]
     },
     {
-      "name": "warming"
+      "name": "warming",
+      "description": "the process of getting warmer"
     },
     {
-      "name": "warmer"
+      "name": "warmer",
+      "description": "having a higher temperature than before"
     },
     {
-      "name": "reduce"
+      "name": "reduce",
+      "description": "to make something smaller in size or amount"
     },
     {
       "name": "gas",
+      "description": "a state of matter that has neither a fixed shape nor a fixed volume",
       "refs": [
         {
-          "name": "gas",
+          "name": "Gas",
           "type": "wikipedia"
         },
         {
@@ -139,20 +199,8 @@
       ]
     },
     {
-      "name": "global",
-      "refs": [
-        {
-          "name": "Globalization",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7181",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "emissions"
+      "name": "emissions",
+      "description": "the substances released into the air by a process"
     },
     {
       "name": "populism",
@@ -170,6 +218,7 @@
     },
     {
       "name": "right",
+      "description": "on the right side or, in answers, matching the correct option",
       "refs": [
         {
           "name": "Right_(direction)",
@@ -179,6 +228,7 @@
     },
     {
       "name": "left",
+      "description": "on the left side of the brain",
       "refs": [
         {
           "name": "Left_(direction)",
@@ -187,67 +237,166 @@
       ]
     },
     {
-      "name": "wing"
+      "name": "wing",
+      "description": "a side of the political spectrum, left or right"
     },
     {
-      "name": "simple"
+      "name": "simple",
+      "description": "built from few parts and therefore easy to understand"
     },
     {
-      "name": "ordinary"
+      "name": "ordinary",
+      "description": "the plain form of a method, without weighting or another refinement"
     },
     {
-      "name": "least"
+      "name": "least",
+      "description": "the smallest of the compared values"
     },
     {
       "name": "square"
     },
     {
-      "name": "OLS"
+      "name": "OLS",
+      "description": "the symbol used in formulas for ordinary least squares"
     },
     {
-      "name": "aftermath"
+      "name": "aftermath",
+      "description": "the period following an event, in which its consequences are measured"
     },
     {
-      "name": "5-year"
+      "name": "5-year",
+      "description": "covering the five years after the event"
     },
     {
-      "name": "15-year"
+      "name": "15-year",
+      "description": "covering the fifteen years after the event"
     },
     {
-      "name": "avoid"
+      "name": "avoid",
+      "description": "to keep something from happening"
     },
     {
-      "name": "wrong"
+      "name": "wrong",
+      "description": "not matching the facts or not reaching the intended goal"
     },
     {
-      "name": "decisions"
+      "name": "decisions",
+      "description": "Decision-making is the process of making choices by identifying a decision, gathering information, and assessing alternative resolutions.",
+      "refs": [
+        {
+          "name": "Decision-making",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "artificial"
+      "name": "artificial",
+      "description": "made by humans rather than occurring in nature"
     },
     {
-      "name": "intelligence"
+      "name": "intelligence",
+      "description": "Intelligence is the ability to perceive or infer information and to retain it as knowledge to be applied to adaptive behaviours within an environment or context.",
+      "refs": [
+        {
+          "name": "Intelligence",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "health"
+      "name": "health",
+      "description": "a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.",
+      "refs": [
+        {
+          "name": "Health",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "research"
+      "name": "research",
+      "description": "systematic investigation to discover new knowledge",
+      "refs": [
+        {
+          "name": "Research",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "poverty"
+      "name": "poverty",
+      "description": "the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.",
+      "refs": [
+        {
+          "name": "Poverty",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "taxes"
+      "name": "taxes",
+      "description": "A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.",
+      "refs": [
+        {
+          "name": "Tax",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "education"
+      "name": "education",
+      "description": "process of teaching and learning",
+      "refs": [
+        {
+          "name": "Education",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "spending"
+      "name": "spending",
+      "description": "an outlay of money for goods or services"
+    },
+    {
+      "name": "zukunft.com",
+      "description": "the name of this system, used to mark its internal keywords"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "column",
+      "description": "a vertical structural element that carries compressive loads"
+    },
+    {
+      "name": "prime",
+      "description": "of the first rank, shown before everything else"
+    },
+    {
+      "name": "third",
+      "description": "the third in an order"
+    },
+    {
+      "name": "mayor"
+    },
+    {
+      "name": "main",
+      "description": "primary, isolated from interactions"
+    },
+    {
+      "name": "minor"
+    },
+    {
+      "name": "before",
+      "description": "placed ahead of another element in an order"
+    },
+    {
+      "name": "after",
+      "description": "placed behind another element in an order"
     },
     {
       "name": "pension",
+      "description": "a regular payment made to a person after retirement",
       "refs": [
         {
           "name": "Pension",
@@ -260,19 +409,23 @@
       ]
     },
     {
-      "name": "happy"
+      "name": "happy",
+      "description": "feeling or showing pleasure or contentment"
     },
     {
-      "name": "unhappy"
+      "name": "unhappy",
+      "description": "feeling worse than the personal normal state"
     },
     {
       "name": "time"
     },
     {
-      "name": "points"
+      "name": "points",
+      "description": "a counted unit on a rating scale"
     },
     {
       "name": "DALY",
+      "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",
       "refs": [
         {
           "name": "Disability-adjusted life year",
@@ -299,6 +452,7 @@
     },
     {
       "name": "population",
+      "description": "number of people living in a place",
       "refs": [
         {
           "name": "Population",
@@ -311,7 +465,9 @@
       ]
     },
     {
-      "name": "htp"
+      "name": "htp",
+      "type": "measure",
+      "description": "the symbol used in formulas for happy time points"
     },
     {
       "name": "one"
@@ -323,16 +479,20 @@
       "name": "billion"
     },
     {
-      "name": "trillion"
+      "name": "trillion",
+      "type": "scaling",
+      "description": "the scaling factor of 10^12"
     },
     {
-      "name": "mio"
+      "name": "mio",
+      "description": "the symbol used in formulas for million"
     },
     {
       "name": "m"
     },
     {
-      "name": "b"
+      "name": "b",
+      "description": "the symbol used in formulas for billion"
     },
     {
       "name": "EUR",
@@ -340,19 +500,284 @@
       "description": "ISO 4217 alphabetic code for the euro."
     },
     {
-      "name": "world"
+      "name": "world",
+      "description": "all countries of the earth taken together"
     },
     {
-      "name": "annual"
+      "name": "annual",
+      "description": "measured over one year"
     },
     {
-      "name": "GDP"
+      "name": "GDP",
+      "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "decline"
+      "name": "decline",
+      "description": "downward change of a quantity over a period"
     },
     {
-      "name": "2024"
+      "name": "2024",
+      "description": "the year 2024"
+    },
+    {
+      "name": "disinformation",
+      "description": "false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.",
+      "refs": [
+        {
+          "name": "Disinformation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wealth",
+      "description": "the total value of the assets owned by a person, community or country, minus liabilities.",
+      "refs": [
+        {
+          "name": "Wealth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "concentration",
+      "description": "the amount of a substance in a defined volume or mass"
+    },
+    {
+      "name": "market",
+      "description": "mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284)",
+      "refs": [
+        {
+          "name": "Market_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.",
+      "refs": [
+        {
+          "name": "Power_(social_and_political)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "biased",
+      "description": "systematically leaning to one side instead of showing the full picture"
+    },
+    {
+      "name": "information",
+      "description": "message provided to the participant about the correct response",
+      "refs": [
+        {
+          "name": "Information",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "description": "the symbol used in formulas for artificial intelligence"
+    },
+    {
+      "name": "black-box",
+      "description": "usable from the outside while the inner working stays hidden"
+    },
+    {
+      "name": "citizen",
+      "description": "Citizenship is a membership and allegiance to a sovereign state.",
+      "refs": [
+        {
+          "name": "Citizenship",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "participation",
+      "description": "taking part in a decision that affects oneself"
+    },
+    {
+      "name": "mismeasurement",
+      "description": "measuring something other than what is meant to be measured"
+    },
+    {
+      "name": "proprietary",
+      "description": "owned by one party, who decides who may use and change it"
+    },
+    {
+      "name": "software",
+      "description": "Software consists of computer programs that instruct the execution of a computer.",
+      "refs": [
+        {
+          "name": "Software",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7397",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reduction",
+      "description": "the gain of electrons by a species during a reaction"
+    },
+    {
+      "name": "avoidance",
+      "description": "the act of keeping something from happening"
+    },
+    {
+      "name": "platform",
+      "description": "a service that hosts and distributes the content of other people"
+    },
+    {
+      "name": "regulation",
+      "description": "Regulation is the management of complex systems according to a set of rules and trends.",
+      "refs": [
+        {
+          "name": "Regulation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Delphi",
+      "description": "the ancient oracle after which the Delphi method is named"
+    },
+    {
+      "name": "method",
+      "description": "a defined procedure for reaching a result"
+    },
+    {
+      "name": "basic",
+      "description": "covering the minimum that is needed"
+    },
+    {
+      "name": "income",
+      "description": "Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.",
+      "refs": [
+        {
+          "name": "Income",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "public",
+      "description": "provided by or open to the general population"
+    },
+    {
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
+    },
+    {
+      "name": "tax",
+      "description": "compulsory financial charge to public authority",
+      "refs": [
+        {
+          "name": "Tax",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "free",
+      "description": "usable, studyable, shareable and improvable by everyone"
+    },
+    {
+      "name": "fluid",
+      "description": "changing continuously instead of only at fixed points in time"
+    },
+    {
+      "name": "democracy",
+      "description": "system of government by the whole population",
+      "refs": [
+        {
+          "name": "Democracy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gross",
+      "description": "counted before any deduction"
+    },
+    {
+      "name": "domestic",
+      "description": "within the borders of one country"
+    },
+    {
+      "name": "usage",
+      "description": "how frequently a word, term, or service is used"
+    },
+    {
+      "name": "assumed",
+      "description": "qualifier: value is an explicit modelling assumption"
+    },
+    {
+      "name": "cost",
+      "description": "value of money that has been used up to produce something",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "source",
+      "description": "The origin or starting point of something. In a currency conversion, the source side refers to the currency being converted from."
+    },
+    {
+      "name": "confidence",
+      "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value."
+    },
+    {
+      "name": "initial",
+      "description": "the first of a series: of a work the first step before any repetition or roll-out, of a measure the value before any correction or exclusion"
+    },
+    {
+      "name": "reward",
+      "description": "the part of the potential loss that a solution can avoid"
+    },
+    {
+      "name": "ratio",
+      "description": "the quotient of two values of the same or of a different unit"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "validation",
+      "description": "the check that a shown table can be reproduced from the values"
+    },
+    {
+      "name": "low",
+      "description": "the lower bound of the probability range of a value; the width of the range is defined by the file that states it"
+    },
+    {
+      "name": "high",
+      "description": "the upper bound of the probability range of a value; the width of the range is defined by the file that states it"
+    },
+    {
+      "name": "centre",
+      "description": "the middle of a range or of an area; of a value it is the best guess between the low and the high bound, so a value without a range word is the centre"
+    },
+    {
+      "name": "range",
+      "description": "the interval between a lower and an upper bound"
     }
   ],
   "triples": [
@@ -361,7 +786,6 @@
       "from": "problem",
       "verb": "can be",
       "to": "global",
-      "comment": "here more a personal issue (wikipedia does not really match)",
       "refs": [
         {
           "name": "List_of_global_issues",
@@ -401,28 +825,33 @@
     },
     {
       "name": "global warming potential",
+      "description": "see Wikipedia: Global warming potential",
       "from": "warming",
       "verb": "can use",
-      "to": "potential"
+      "to": "potential",
+      "refs": [
+        {
+          "name": "Global_warming_potential",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "climate gas",
+      "description": "A gas that contributes to the greenhouse effect and thus to climate change.",
       "from": "gas",
       "verb": "can cause",
       "to": "warming",
       "refs": [
         {
-          "name": "Climate_change",
+          "name": "Greenhouse_gas",
           "type": "wikipedia"
-        },
-        {
-          "name": "Q7942",
-          "type": "wikidata"
         }
       ]
     },
     {
       "name": "world population",
+      "description": "the number of humans living on earth",
       "from": "population",
       "verb": "of",
       "to": "human",
@@ -483,12 +912,14 @@
     },
     {
       "name": "health can be a global problem",
+      "description": "poor health of many people is one of the problems ranked on the start page",
       "from": "health",
       "verb": "can be",
       "to": "global problem"
     },
     {
       "name": "GDP decline",
+      "description": "a fall of the gross domestic product compared to the period before",
       "from": "GDP",
       "verb": "can",
       "to": "decline"
@@ -505,15 +936,29 @@
     },
     {
       "name": "least squares",
+      "description": "Least squares is a parameter estimation method that minimises the sum of the squares of the residuals between the observed and the predicted values.",
       "from": "square",
       "verb": "can be",
-      "to": "least"
+      "to": "least",
+      "refs": [
+        {
+          "name": "Least_squares",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "ordinary least squares",
+      "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
       "from": "least squares",
       "verb": "can be",
-      "to": "ordinary"
+      "to": "ordinary",
+      "refs": [
+        {
+          "name": "Ordinary_least_squares",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "from": "OLS",
@@ -524,6 +969,592 @@
       "from": "populism",
       "verb": "can cause",
       "to": "GDP decline"
+    },
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "potential loss",
+      "description": "the loss that a problem can cause if it is not solved",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "description": "the gain that a solution can reach if it is implemented",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "column (system)",
+      "description": "keyword for columns used by the system components",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_column"
+    },
+    {
+      "name": "mayor column (system)",
+      "description": "keyword for columns that should be shown in a table even if the screen is small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "mayor",
+      "code_id": "system_column_mayor"
+    },
+    {
+      "name": "main column (system)",
+      "description": "keyword for columns that should always be shown if the screen not small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "main",
+      "code_id": "system_column_main"
+    },
+    {
+      "name": "minor column (system)",
+      "description": "keyword for columns that should always be shown if the screen wide",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "minor",
+      "code_id": "system_column_minor"
+    },
+    {
+      "name": "column problem (high prio)",
+      "description": "the table column 'problem' that should be shown also on small screens",
+      "from": "problem",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column solution (high prio)",
+      "description": "the table column 'solution' that should be shown also on small screens",
+      "from": "solution",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column cost",
+      "description": "the table column 'cost' with the cost of the problem in a currency, which explains the loss column and is therefore shown only if the screen is not small",
+      "from": "cost",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column gain",
+      "description": "the table column 'gain' that should be shown also on small screens",
+      "from": "gain",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column loss",
+      "description": "the table column 'loss' that should be shown also on small screens; the values name the measure with the words 'potential' and 'loss', so the column of the potential loss is headed by 'loss'",
+      "from": "loss",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column priority",
+      "description": "the table column 'priority' that should not be shown on small screens",
+      "from": "priority",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column ranking",
+      "description": "the table column 'ranking' that should not be shown on small screens",
+      "from": "ranking",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column probability",
+      "description": "the table column 'probability' that should not be shown on small screens",
+      "from": "probability",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "standard deviation",
+      "from": "deviation",
+      "verb": "can be",
+      "to": "standard",
+      "refs": [
+        {
+          "name": "Standard_deviation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "expected return",
+      "description": "Derived criterion: reduction potential multiplied by fulfillment probability. Unit: Gt CO2eq per year (expected value).",
+      "from": "return",
+      "verb": "can be",
+      "to": "expected",
+      "refs": [
+        {
+          "name": "Expected_return",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "column standard deviation",
+      "description": "the table column 'standard deviation' that should not be shown on small screens",
+      "from": "standard deviation",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column expected return",
+      "description": "the table column 'expected return' that should not be shown on small screens",
+      "from": "expected return",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column effort",
+      "description": "the table column 'effort' with the effort needed to implement the solution, the counterpart of the gain column",
+      "from": "effort",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column percent",
+      "description": "the table column 'percent' with the loss as a share of the world GDP or of the global happy time points, the relative counterpart of the absolute cost column",
+      "from": "percent",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column source",
+      "description": "the table column 'source' with the origin of the number, so that a measured value can be told apart from an assumed one",
+      "from": "source",
+      "verb": "can be",
+      "to": "minor column (system)"
+    },
+    {
+      "name": "column potential loss",
+      "description": "the table column 'potential loss' with the loss of the problem as a share of the world GDP or of the global happy time points",
+      "from": "potential loss",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column potential gain",
+      "description": "the table column 'potential gain' with the gain of the solution as a share of the global happy time points",
+      "from": "potential gain",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column confidence",
+      "description": "the table column 'confidence' that tells how well the number of the row is backed",
+      "from": "confidence",
+      "verb": "can be",
+      "to": "minor column (system)"
+    },
+    {
+      "name": "wealth concentration",
+      "description": "concentration of money and power that destroys democratic participation (concept paper section 5)",
+      "from": "concentration",
+      "verb": "of",
+      "to": "wealth",
+      "refs": [
+        {
+          "name": "Distribution_of_wealth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "market power",
+      "description": "the ability of a market dominant company to prevent competition, dictate prices and shift profits to low tax jurisdictions (concept paper section 7)",
+      "from": "power",
+      "verb": "of",
+      "to": "market",
+      "refs": [
+        {
+          "name": "Market_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "biased information",
+      "description": "incomplete or one sided information used as the basis for political and social decisions (concept paper section 4)",
+      "from": "information",
+      "verb": "can be",
+      "to": "biased"
+    },
+    {
+      "name": "artificial intelligence",
+      "description": "Artificial intelligence is the capability of computational systems to perform tasks typically associated with human intelligence, such as learning, reasoning and decision-making.",
+      "from": "intelligence",
+      "verb": "can be",
+      "to": "artificial",
+      "refs": [
+        {
+          "name": "Artificial_intelligence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11660",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "AI",
+      "verb": "is symbol for",
+      "to": "artificial intelligence"
+    },
+    {
+      "name": "black-box AI",
+      "description": "proprietary AI systems without disclosed training data, open source code or accountability chain, which reproduce a text in its intended reading instead of exposing its weaknesses (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "black-box"
+    },
+    {
+      "name": "citizen participation",
+      "description": "the missing overview of the solidarity effects of an initiative, which reduces a multifaceted issue to a binary yes or no decision (concept paper section 10)",
+      "from": "participation",
+      "verb": "of",
+      "to": "citizen",
+      "refs": [
+        {
+          "name": "Public_participation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "GDP mismeasurement",
+      "description": "gross domestic product measures the market production and not the benefit, so free goods count as zero and unrepaired damage does not reduce it (concept paper section 11)",
+      "from": "mismeasurement",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "proprietary software",
+      "description": "closed source software in the public sector that causes opacity, missing verifiability, vendor dependency and risks to national security (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "proprietary",
+      "refs": [
+        {
+          "name": "Proprietary_software",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "climate gas emissions",
+      "description": "Greenhouse gas emissions are the release of gases into the atmosphere that trap heat and thereby warm the climate.",
+      "from": "emissions",
+      "verb": "of",
+      "to": "climate gas",
+      "refs": [
+        {
+          "name": "Greenhouse_gas_emissions",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reduce climate gas emissions",
+      "description": "a transparent, publicly calculated climate tariff that prices the emissions of imports and exports and thereby stops carbon leakage (concept paper section 3)",
+      "from": "reduction",
+      "verb": "of",
+      "to": "climate gas emissions",
+      "refs": [
+        {
+          "name": "Climate_change_mitigation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wrong decisions",
+      "description": "decisions that do not reach the intended goal, e.g. because the knowledge was incomplete",
+      "from": "decisions",
+      "verb": "can be",
+      "to": "wrong"
+    },
+    {
+      "name": "avoid wrong decisions",
+      "description": "decisions based on precise and neutral knowledge instead of the emotional impulse of the group (concept paper section 4)",
+      "from": "avoidance",
+      "verb": "of",
+      "to": "wrong decisions"
+    },
+    {
+      "from": "reduce climate gas emissions",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "avoid wrong decisions",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "research",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "taxes",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "spending",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "name": "platform regulation",
+      "description": "democratically legitimised, transparent and justiciable rules against disinformation on internet platforms (concept paper section 2)",
+      "from": "regulation",
+      "verb": "of",
+      "to": "platform"
+    },
+    {
+      "name": "Delphi method",
+      "description": "structured, iterative and anonymised consultation of experts, in a real time variant used to let transparent consensus building set the direction instead of the emotional impulse (concept paper section 4)",
+      "from": "method",
+      "verb": "of",
+      "to": "Delphi",
+      "refs": [
+        {
+          "name": "Delphi_method",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "basic income",
+      "description": "a proto unconditional basic income implemented as a negative income tax, started so low that almost nobody feels an effect and raised as long as the net effect stays positive (concept paper section 5)",
+      "from": "income",
+      "verb": "can be",
+      "to": "basic",
+      "refs": [
+        {
+          "name": "Basic_income",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "public AI",
+      "description": "AI systems with societal decision relevance organised as a public good with disclosed training data, open source availability and clear liability rules (concept paper section 6)",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "market share",
+      "description": "Market share is the percentage of the total revenue or sales in a market that a company captures.",
+      "from": "share",
+      "verb": "of",
+      "to": "market",
+      "refs": [
+        {
+          "name": "Market_share",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "market share tax",
+      "description": "supplementary taxation of corporate profits linked to the market share in the smallest relevant market segment and levied where the economic use occurs (concept paper section 7)",
+      "from": "tax",
+      "verb": "of",
+      "to": "market share"
+    },
+    {
+      "name": "free software",
+      "description": "free, secure and transparent software in the public sector following the principle public money, public code (concept paper section 9)",
+      "from": "software",
+      "verb": "can be",
+      "to": "free",
+      "refs": [
+        {
+          "name": "Free_software",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q341",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fluid democracy",
+      "description": "a structured, argument based and iterative process in which every citizen can propose, debate and decide binding rules (concept paper section 10)",
+      "from": "democracy",
+      "verb": "can be",
+      "to": "fluid"
+    },
+    {
+      "name": "domestic usage",
+      "description": "the actual usage within one country, the base of the gross domestic usage",
+      "from": "usage",
+      "verb": "can be",
+      "to": "domestic"
+    },
+    {
+      "name": "gross domestic usage",
+      "description": "a measure of the actual usage instead of the market turnover, so that free goods and avoided damage are part of the result (concept paper section 11)",
+      "from": "domestic usage",
+      "verb": "can be",
+      "to": "gross"
+    },
+    {
+      "from": "column problem (high prio)",
+      "verb": "is next main column after",
+      "to": "column priority"
+    },
+    {
+      "from": "column solution (high prio)",
+      "verb": "is next main column after",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column probability",
+      "verb": "is explaining column for",
+      "to": "column priority"
+    },
+    {
+      "from": "column standard deviation",
+      "verb": "is explaining column for",
+      "to": "column priority"
+    },
+    {
+      "from": "column ranking",
+      "verb": "is explaining column for",
+      "to": "column priority"
+    },
+    {
+      "from": "column source",
+      "verb": "is explaining column for",
+      "to": "column priority"
+    },
+    {
+      "from": "column loss",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column cost",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column potential loss",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column percent",
+      "verb": "is explaining column for",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column gain",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
+    },
+    {
+      "from": "column effort",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
+    },
+    {
+      "from": "column potential gain",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
+    },
+    {
+      "from": "column expected return",
+      "verb": "is explaining column for",
+      "to": "column solution (high prio)"
+    },
+    {
+      "name": "loss reduction",
+      "description": "the share of the potential loss of a problem that a solution can avoid",
+      "from": "reduction",
+      "verb": "of",
+      "to": "loss"
+    },
+    {
+      "name": "initial effort",
+      "description": "the work needed to implement a solution the first time, without the recurring operation",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "reward ratio",
+      "description": "the avoided potential loss per unit of initial effort, used to sort the solutions by efficiency instead of by problem size",
+      "from": "ratio",
+      "verb": "of",
+      "to": "reward"
+    },
+    {
+      "name": "person year",
+      "description": "the work of one person during one year, the unit of the initial effort",
+      "type": "measure",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "name": "EUR per person year",
+      "description": "the unit of the reward ratio",
+      "from": "EUR",
+      "verb": "per",
+      "to": "person year"
+    },
+    {
+      "name": "column loss reduction",
+      "from": "loss reduction",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column initial effort",
+      "from": "initial effort",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column reward ratio",
+      "from": "reward ratio",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "probability range",
+      "description": "the interval that contains the true value with a probability of 80 percent; the width is derived from the confidence of the value, so it is itself an assumption and not a measured dispersion",
+      "from": "range",
+      "verb": "of",
+      "to": "probability"
+    },
+    {
+      "name": "column probability range",
+      "from": "probability range",
+      "verb": "can be",
+      "to": "main column (system)"
     }
   ],
   "sources": [
@@ -562,7 +1593,7 @@
         "percent",
         "htp"
       ],
-      "number": "-37"
+      "number": "-0.37"
     },
     {
       "words": [
@@ -572,7 +1603,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-32"
+      "number": "-0.32"
     },
     {
       "words": [
@@ -582,7 +1613,7 @@
         "percent",
         "htp"
       ],
-      "number": "-28"
+      "number": "-0.28"
     },
     {
       "words": [
@@ -592,7 +1623,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-31"
+      "number": "-0.31"
     },
     {
       "words": [
@@ -602,7 +1633,7 @@
         "percent",
         "htp"
       ],
-      "number": "-24"
+      "number": "-0.24"
     },
     {
       "words": [
@@ -612,7 +1643,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-31"
+      "number": "-0.31"
     },
     {
       "words": [
@@ -622,7 +1653,7 @@
         "percent",
         "htp"
       ],
-      "number": "-16"
+      "number": "-0.16"
     },
     {
       "words": [
@@ -632,7 +1663,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-8"
+      "number": "-0.08"
     },
     {
       "words": [
@@ -642,7 +1673,7 @@
         "percent",
         "htp"
       ],
-      "number": "-11"
+      "number": "-0.11"
     },
     {
       "words": [
@@ -652,7 +1683,7 @@
         "percent",
         "GDP"
       ],
-      "number": "-13"
+      "number": "-0.13"
     },
     {
       "words": [
@@ -665,7 +1696,7 @@
         "aftermath",
         "OLS"
       ],
-      "number": "-0.97",
+      "number": "-0.0097",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)"
     },
     {
@@ -679,8 +1710,2553 @@
         "aftermath",
         "OLS"
       ],
-      "number": "-1.04",
+      "number": "-0.0104",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "35.2"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "34.1"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "34.1"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "8.8"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "potential",
+        "gain",
+        "billion",
+        "htp"
+      ],
+      "number": "14.3"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "16"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "9"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "7"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "5.5"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "5.5",
+      "description": "about 5 percent of the world GDP: lost labour input and avoidable treatment cost, scaled from the production function effect of Bloom, Canning & Sevilla (2004); health is the factor named most often for happiness (own estimate; the previous value of this file was 13.6, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "4.0",
+      "description": "the measured -1.04 percent GDP per year over 15 years compounds to about -14 percent in level; applied to the roughly one quarter of the world GDP governed by populist leaders (own estimate; the previous value of this file was 23.8, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "2.2",
+      "description": "about 2 percent of the world GDP as current annual damage; the long run figure is far higher, this is the loss already realised per year (own estimate; the previous value of this file was 31.5, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "2.0",
+      "description": "roughly 700 million people below the 2.15 USD line; the gap to a level at which basic needs are met, about 8 USD per person and day (own estimate; the previous value of this file was 20.4, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "1.6",
+      "description": "about 1.5 percent of the world GDP as deadweight loss from markups, the middle of the range in the markup literature (own estimate; the previous value of this file was 7.3, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "1.4",
+      "description": "capital misallocation and lost demand; no accepted measurement exists, so this is an order of magnitude only (own estimate; the previous value of this file was 11.2, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.55",
+      "description": "the World Bank present value of the lifetime earnings lost by the current learning poor cohort, annualised over a working life of about 40 years (own estimate; the previous value of this file was 9.4, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.45",
+      "description": "the assumed 30 percent of decisions taken on incomplete information, applied to the part of the public budget where a wrong decision destroys value (own estimate; the previous value of this file was 6.5, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.35",
+      "description": "the assumed 20 percent of the public discourse, valued through its effect on the quality of political decisions (own estimate; the previous value of this file was 8, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.25",
+      "description": "the measured understatement of 0.05 to 0.11 percentage points of growth per year; the loss is the steering error it causes, not the unmeasured value itself (own estimate; the previous value of this file was 2.5, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.22",
+      "description": "wrong decisions taken on unverifiable AI output; the concept paper documents the mechanism but no frequency, so the level is an order of magnitude only (own estimate; the previous value of this file was 4.5, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.18",
+      "description": "the welfare lost because a referendum reduces a multifaceted issue to two positions instead of the assumed twenty (own estimate; the previous value of this file was 3.2, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.1",
+      "description": "the assumed 10 billion EUR of annual public licence spending, extended to the lock-in cost of the wider public and private sector (own estimate; the previous value of this file was 1.8, derived from the htp share and not an independent estimate)"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.25"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.15"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.15"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "1.0",
+      "description": "loss reduction derived from two values of the problem detail file: the solution value fully offsets the measured problem value"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.01",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3",
+      "description": "no loss reduction value exists in the problem detail file, so the share is an own assumption with low confidence"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3",
+      "description": "no loss reduction value exists in the problem detail file, so the share is an own assumption with low confidence"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.05",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.15",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "1.0",
+      "description": "loss reduction derived from two values of the problem detail file: the solution value fully offsets the measured problem value"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "no loss reduction value exists in the problem detail file, so the share is an own assumption with low confidence"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "loss reduction taken from the solution value of the problem detail file"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "6",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "8",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "3",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "10",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "2",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "5",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "6",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "4",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "12",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "4",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "20",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "6",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "own order of magnitude estimate, not contained in any source"
+    },
+    {
+      "words": [
+        "health",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "populism",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "global warming",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "poverty",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "market power",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "education",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "biased information",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "disinformation",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "initial effort",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "uniform placeholder: the effort estimates are not differentiated by confidence, because no source distinguishes them"
+    },
+    {
+      "words": [
+        "global",
+        "human",
+        "population",
+        "billion",
+        "low"
+      ],
+      "number": "5.67",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "global",
+        "human",
+        "population",
+        "billion",
+        "high"
+      ],
+      "number": "12.75",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "million",
+        "EUR",
+        "2024",
+        "low"
+      ],
+      "number": "73364739",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "million",
+        "EUR",
+        "2024",
+        "high"
+      ],
+      "number": "165070664",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "low"
+      ],
+      "number": "-0.925",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "high"
+      ],
+      "number": "-0.148",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "low"
+      ],
+      "number": "-0.8",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "high"
+      ],
+      "number": "-0.128",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "low"
+      ],
+      "number": "-0.56",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "high"
+      ],
+      "number": "-0.14",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "low"
+      ],
+      "number": "-0.62",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "high"
+      ],
+      "number": "-0.155",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "low"
+      ],
+      "number": "-0.6",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "high"
+      ],
+      "number": "-0.096",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "low"
+      ],
+      "number": "-0.775",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "high"
+      ],
+      "number": "-0.124",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "low"
+      ],
+      "number": "-0.32",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "high"
+      ],
+      "number": "-0.08",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "low"
+      ],
+      "number": "-0.16",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "high"
+      ],
+      "number": "-0.04",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "low"
+      ],
+      "number": "-0.275",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "high"
+      ],
+      "number": "-0.044",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "low"
+      ],
+      "number": "-0.325",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "high"
+      ],
+      "number": "-0.052",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "5-year",
+        "aftermath",
+        "OLS",
+        "low"
+      ],
+      "number": "-0.0116",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "80 percent probability range, factor 1.2 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "5-year",
+        "aftermath",
+        "OLS",
+        "high"
+      ],
+      "number": "-0.0081",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "80 percent probability range, factor 1.2 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "15-year",
+        "aftermath",
+        "OLS",
+        "low"
+      ],
+      "number": "-0.0125",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "80 percent probability range, factor 1.2 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "15-year",
+        "aftermath",
+        "OLS",
+        "high"
+      ],
+      "number": "-0.0087",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "80 percent probability range, factor 1.2 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "low"
+      ],
+      "number": "23.47",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "high"
+      ],
+      "number": "52.8",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "low"
+      ],
+      "number": "22.73",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "high"
+      ],
+      "number": "51.15",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "low"
+      ],
+      "number": "22.73",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "high"
+      ],
+      "number": "51.15",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "low"
+      ],
+      "number": "5.87",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "high"
+      ],
+      "number": "13.2",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "low"
+      ],
+      "number": "9.53",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "high"
+      ],
+      "number": "21.45",
+      "description": "80 percent probability range, factor 1.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "6.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "40.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "4.8",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "30.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "2.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "15.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "3.6",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "22.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "2.8",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "17.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "2.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "13.75",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "1.6",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "10.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "1.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "7.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "2.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "13.75",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "2.0",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "8.0",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.88",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "5.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "1.0",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "4.0",
+      "description": "80 percent probability range, factor 2.0 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.64",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "4.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.4667",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "4.2",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.22",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "1.38",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.15",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "1.35",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.1167",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "1.05",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.1",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "0.625",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.0733",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "0.66",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.06",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "0.54",
+      "description": "80 percent probability range, factor 3.0 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.04",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "0.25",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.04",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.25",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "1.0",
+      "description": "80 percent probability range, factor 2.5 on the centre; clamped at the share limit"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.032",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.004",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.025",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.12",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.75",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.12",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.75",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.02",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.125",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.06",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.375",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.04",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.25",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "1.0",
+      "description": "80 percent probability range, factor 2.5 on the centre; clamped at the share limit"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "1.0",
+      "description": "80 percent probability range, factor 2.5 on the centre; clamped at the share limit"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "1.0",
+      "description": "80 percent probability range, factor 2.5 on the centre; clamped at the share limit"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "1.0",
+      "description": "80 percent probability range, factor 2.5 on the centre; clamped at the share limit"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "2.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "health",
+        "taxes",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "15.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "3.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "populism",
+        "avoid wrong decisions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "20.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "1.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "7.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "4.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "25.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "0.8",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "market share tax",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "5.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "2.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "12.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "2.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "education",
+        "spending",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "15.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "1.6",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "10.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "4.8",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "30.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "1.6",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "10.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "8.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "50.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "2.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "15.0",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "free software",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
     }
   ],
   "formulas": [
@@ -703,6 +4279,18 @@
       "name": "global happy time points",
       "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
       "assigned_word": "htp"
+    },
+    {
+      "name": "avoided potential loss",
+      "expression": "\"reward\",\"trillion\",\"EUR\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "R = L_{pot} \\cdot r",
+      "assigned_word": "reward"
+    },
+    {
+      "name": "reward ratio (formula)",
+      "expression": "\"reward ratio\",\"trillion\",\"EUR per person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\" / \"initial effort\",\"person year\"",
+      "latex": "\\rho = \\frac{L_{pot} \\cdot r}{E_{init}}",
+      "assigned_word": "reward ratio"
     }
   ],
   "results": [
@@ -722,7 +4310,801 @@
         "htp"
       ],
       "number": "31.5"
+    },
+    {
+      "context": [
+        "health",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "health",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.092",
+      "note": "5.5 * 0.1 / 6"
+    },
+    {
+      "context": [
+        "health",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "health",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0059",
+      "note": "2.2 * 0.04 / 15.0"
+    },
+    {
+      "context": [
+        "health",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "health",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "1.43",
+      "note": "13.75 * 0.25 / 2.4"
+    },
+    {
+      "context": [
+        "populism",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "populism",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.5",
+      "note": "4.0 * 1.0 / 8"
+    },
+    {
+      "context": [
+        "populism",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "populism",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.04",
+      "note": "2.0 * 0.4 / 20.0"
+    },
+    {
+      "context": [
+        "populism",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "populism",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "2.5",
+      "note": "8.0 * 1.0 / 3.2"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "global warming",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.059",
+      "note": "2.2 * 0.08 / 3"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "global warming",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0038",
+      "note": "0.88 * 0.032 / 7.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "global warming",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.9167",
+      "note": "5.5 * 0.2 / 1.2"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "poverty",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.002",
+      "note": "2.0 * 0.01 / 10"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "poverty",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0002",
+      "note": "1.0 * 0.004 / 25.0"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "poverty",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.025",
+      "note": "4.0 * 0.025 / 4.0"
+    },
+    {
+      "context": [
+        "market power",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "market power",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.24",
+      "note": "1.6 * 0.3 / 2"
+    },
+    {
+      "context": [
+        "market power",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "market power",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0154",
+      "note": "0.64 * 0.12 / 5.0"
+    },
+    {
+      "context": [
+        "market power",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "market power",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "3.75",
+      "note": "4.0 * 0.75 / 0.8"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "wealth concentration",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.084",
+      "note": "1.4 * 0.3 / 5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "wealth concentration",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0045",
+      "note": "0.4667 * 0.12 / 12.5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "wealth concentration",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "1.58",
+      "note": "4.2 * 0.75 / 2.0"
+    },
+    {
+      "context": [
+        "education",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "education",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.005",
+      "note": "0.55 * 0.05 / 6"
+    },
+    {
+      "context": [
+        "education",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "education",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0003",
+      "note": "0.22 * 0.02 / 15.0"
+    },
+    {
+      "context": [
+        "education",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "education",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.0719",
+      "note": "1.38 * 0.125 / 2.4"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "biased information",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.017",
+      "note": "0.45 * 0.15 / 4"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "biased information",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0009",
+      "note": "0.15 * 0.06 / 10.0"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "biased information",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.3164",
+      "note": "1.35 * 0.375 / 1.6"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "disinformation",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.003",
+      "note": "0.35 * 0.1 / 12"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "disinformation",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0002",
+      "note": "0.1167 * 0.04 / 30.0"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "disinformation",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.0547",
+      "note": "1.05 * 0.25 / 4.8"
+    },
+    {
+      "context": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "GDP mismeasurement",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.062",
+      "note": "0.25 * 1.0 / 4"
+    },
+    {
+      "context": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "GDP mismeasurement",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.004",
+      "note": "0.1 * 0.4 / 10.0"
+    },
+    {
+      "context": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "GDP mismeasurement",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.3906",
+      "note": "0.625 * 1.0 / 1.6"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "black-box AI",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.005",
+      "note": "0.22 * 0.5 / 20"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "black-box AI",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0003",
+      "note": "0.0733 * 0.2 / 50.0"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "black-box AI",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.0825",
+      "note": "0.66 * 1.0 / 8.0"
+    },
+    {
+      "context": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "citizen participation",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.015",
+      "note": "0.18 * 0.5 / 6"
+    },
+    {
+      "context": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "citizen participation",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0008",
+      "note": "0.06 * 0.2 / 15.0"
+    },
+    {
+      "context": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "citizen participation",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.225",
+      "note": "0.54 * 1.0 / 2.4"
+    },
+    {
+      "context": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "proprietary software",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.05",
+      "note": "0.1 * 0.5 / 1"
+    },
+    {
+      "context": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "proprietary software",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0032",
+      "note": "0.04 * 0.2 / 2.5"
+    },
+    {
+      "context": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "proprietary software",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.625",
+      "note": "0.25 * 1.0 / 0.4"
+    }
+  ],
+  "components": [
+    {
+      "name": "Title solution priority",
+      "type": "system_title",
+      "code_id": "solution_prio_title",
+      "ui_msg_code_id": "solution_prio_title",
+      "description": "page title: the global problems ranked by their potential loss",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "table problem ranking by potential loss",
+      "type": "table_with_related_columns",
+      "code_id": "solution_prio_ranking_table",
+      "ui_msg_code_id": "solution_prio_ranking_table",
+      "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either."
+    }
+  ],
+  "views": [
+    {
+      "name": "solution priority validation",
+      "description": "the ranking of the global problems by potential loss with the solution, its loss reduction, the initial effort and the reward ratio",
+      "code_id": "solution_prio_validation",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Title solution priority"
+        },
+        {
+          "position": "2",
+          "name": "table problem ranking by potential loss"
+        }
+      ]
+    }
+  ],
+  "view-validation": [
+    {
+      "url": "mask=solution priority validation&words=problem,global",
+      "result": "# Global problems ranked by potential loss\n \nCompanion overview to `solution_prio.json`. Global scope, annual values.\nEvery figure is given as centre (low - high). The bounds are the 80 percent\nprobability range and are stored as separate values tagged `low` and `high`;\na value without a range word is the centre.\n \n## Ranking\n \n| rank | problem | potential loss (trillion EUR / year) | solution | loss reduction | initial effort (person year) | reward ratio |\n| ---: | --- | --- | --- | --- | --- | --- |\n| 1 | health | 5.5 (2.2 – 14) | taxes | 10% (4% – 25%) | 6.0 (2.4 – 15) | 0.09 (0.006 – 1.4) |\n| 2 | populism | 4.0 (2.0 – 8.0) | avoid wrong decisions | 100% (40% – 100%) | 8.0 (3.2 – 20) | 0.5 (0.04 – 2.5) |\n| 3 | global warming | 2.2 (0.88 – 5.5) | reduce climate gas emissions | 8% (3.2% – 20%) | 3.0 (1.2 – 7.5) | 0.06 (0.004 – 0.92) |\n| 4 | poverty | 2.0 (1.0 – 4.0) | research | 1% (0.4% – 2.5%) | 10 (4.0 – 25) | 0.002 (0.0002 – 0.03) |\n| 5 | market power | 1.6 (0.64 – 4.0) | market share tax | 30% (12% – 75%) | 2.0 (0.8 – 5.0) | 0.24 (0.02 – 3.8) |\n| 6 | wealth concentration | 1.4 (0.47 – 4.2) | basic income | 30% (12% – 75%) | 5.0 (2.0 – 12) | 0.08 (0.004 – 1.6) |\n| 7 | education | 0.55 (0.22 – 1.4) | spending | 5% (2% – 12.5%) | 6.0 (2.4 – 15) | 0.005 (0.0003 – 0.07) |\n| 8 | biased information | 0.45 (0.15 – 1.4) | Delphi method | 15% (6% – 37.5%) | 4.0 (1.6 – 10) | 0.02 (0.0009 – 0.32) |\n| 9 | disinformation | 0.35 (0.12 – 1.1) | platform regulation | 10% (4% – 25%) | 12 (4.8 – 30) | 0.003 (0.0002 – 0.05) |\n| 10 | GDP mismeasurement | 0.25 (0.1 – 0.62) | gross domestic usage | 100% (40% – 100%) | 4.0 (1.6 – 10) | 0.06 (0.004 – 0.39) |\n| 11 | black-box AI | 0.22 (0.07 – 0.66) | public AI | 50% (20% – 100%) | 20 (8.0 – 50) | 0.005 (0.0003 – 0.08) |\n| 12 | citizen participation | 0.18 (0.06 – 0.54) | fluid democracy | 50% (20% – 100%) | 6.0 (2.4 – 15) | 0.01 (0.0008 – 0.23) |\n| 13 | proprietary software | 0.1 (0.04 – 0.25) | free software | 50% (20% – 100%) | 1.0 (0.4 – 2.5) | 0.05 (0.003 – 0.62) |\n \n## Probability range\n \nThe range is not a measured dispersion. It is derived from the confidence of the\nvalue by a multiplicative factor around the centre, `[x / f, x * f]`:\n \n| kind of value | factor |\n| --- | ---: |\n| taken from a source, not assumed | 1.2 |\n| assumed, confidence at least 0.25 | 2.0 |\n| assumed, confidence 0.15 to 0.25 | 2.5 |\n| assumed, confidence below 0.15 | 3.0 |\n| definitional or structural | 1.5 |\n \nShares are clamped at 1, which is why the loss reduction of populism and of GDP\nmismeasurement has an upper bound equal to its centre. Confidence values carry no\nrange of their own. The factor table is itself an assumption: it makes the ranges\ncomparable across the file, but it does not make any single range empirical, and\ntwo values with the same factor are not equally well known.\n \n## Reward ratio\n \n`reward ratio = potential loss * loss reduction / initial effort`\n \nThe range of the ratio combines the worst corner (low loss, low reduction, high\neffort) with the best corner (high loss, high reduction, low effort). This is a\ncorner combination and not a convolution, so the interval is far wider than 80\npercent: it assumes the three errors move together, which is the pessimistic\nreading. The ranges of all thirteen problems overlap, so the ranking by reward\nratio is not resolved by this data. Only the distance between populism at the top\nand poverty at the bottom survives the overlap.\n \nThe initial effort remains the weakest column: no source contains it, every\nfigure is an own order of magnitude estimate with a uniform confidence of 0.2.\nThe two loss reduction figures at the share limit are the weakest rows: populism\nassumes that the solution fully offsets the measured GDP decline, which is what\nthe value in `problem_populism.json` implies but is a very strong claim for a\nknowledge infrastructure.\n \nTwo errors of the earlier data should be corrected independently of this table:\nhealth and poverty are swapped both in the potential loss and in the potential\ngain. The htp shares give -0.24 for health and -0.16 for poverty, which yield\n20.4 and 13.6, while the file carried 13.6 for health and 20.4 for poverty.\n"
     }
   ]
 }
-

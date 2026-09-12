@@ -44,12 +44,19 @@ class position_types
 
     // place the component right or left of the previous component depending on the language write order e.g for arabic it will be left
     const string SIDE = "side";
+    const string SIDE_NAME = "side";
 
     // place the component below the previous component but within an explicitly defined row
     const string COMBINE = "combine";
 
     // place the component right or left the previous component but within an explicitly defined row
     const string COLUMN = "column";
+
+    // continue the line of the previous component instead of starting an own one and separate
+    // the two by a middle dot e.g. the last update and the source of the value default page;
+    // unlike 'column' the line stays in the collected row, so it can become a side-or-below column
+    const string SAME_LINE = "same_line";
+    const int SAME_LINE_ID = 8;
 
     // start the first column of a group that is shown side by side on wide screens
     // and below each other if the screen width in pixel is below

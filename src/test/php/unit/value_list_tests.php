@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VALUE . 'value_list.php';
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -67,14 +69,15 @@ class value_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
+        $msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_val = new test_values($t);
         $t_phr = new test_phrases($t);
         $t_wrd = new test_words($t);
+        $t_src = new test_sources($t);
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 
@@ -84,11 +87,11 @@ class value_list_tests
 
         $t->subheader($ts . 'info value list');
         $test_name = 'test the grp_ids function';
-        $val_ids = $t_val->value_list()->grp_ids()->dsp_id();
-        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich city inhabitants (2019)');
+        $val_ids = $t_val->value_list($msg)->grp_ids()->dsp_id();
+        $t->assert($test_name, $val_ids, 'π (unit symbol) / Zurich city inhabitants (2019)');
 
         $t->subheader($ts . 'modify value list');
-        $time_val_lst = $t_val->value_list()->filter_by_time($t_phr->phrase_list());
+        $time_val_lst = $t_val->value_list($msg)->filter_by_time($msg, $t_phr->phrase_list());
 
         $t->subheader($ts . 'sort value list');
         // the factory adds the low impact value first and the high impact value second
@@ -100,7 +103,7 @@ class value_list_tests
         $t->assert($test_name, $impact_lst->lst()[1]->impact(), impacts::LOW);
 
         // two values of the same (zero) impact are sorted by the numeric value descending
-        $num_lst = new value_list($usr);
+        $num_lst = new value_list($t->usr1);
         $num_lst->add($t_val->value_for_phrases([$t_wrd->word_zh()->phrase()], 2));
         $num_lst->add($t_val->value_for_phrases([$t_wrd->word_city()->phrase()], 8));
         $num_lst->sort();
@@ -112,7 +115,7 @@ class value_list_tests
         // two values with the same impact and number are sorted by the group name, not by the
         // volatile group id (packed from the seed-assigned word ids), so the order is stable across
         // test database rebuilds; "city" is added first but "Zurich" must sort ahead of it by name
-        $tie_lst = new value_list($usr);
+        $tie_lst = new value_list($t->usr1);
         $tie_lst->add($t_val->value_for_phrases([$t_wrd->word_city()->phrase()], 5));
         $tie_lst->add($t_val->value_for_phrases([$t_wrd->word_zh()->phrase()], 5));
         $tie_lst->sort();
@@ -122,19 +125,53 @@ class value_list_tests
         $t->assert($test_name, $tie_lst->lst()[1]->name(), word_names::CITY);
 
         $test_name = 'sort of an empty value list keeps it empty';
-        $empty_lst = new value_list($usr);
+        $empty_lst = new value_list($t->usr1);
         $empty_lst->sort();
         $t->assert($test_name, $empty_lst->count(), 0);
 
+        $t->subheader($ts . 'keep most relevant');
+        // the factory adds the low impact value first and the high impact value second
+        $keep_lst = $t_val->value_list_zh_impact();
+        $keep_lst->keep_most_relevant(1);
+        $test_name = 'keep most relevant cuts the list to the requested size';
+        $t->assert($test_name, $keep_lst->count(), 1);
+        $test_name = 'keep most relevant keeps the value with the highest impact';
+        $t->assert($test_name, $keep_lst->lst()[0]->impact(), impacts::HIGH);
+
+        $test_name = 'a max above the list size keeps every value';
+        $all_lst = $t_val->value_list_zh_impact();
+        $all_lst->keep_most_relevant(10);
+        $t->assert($test_name, $all_lst->count(), 2);
+        $test_name = 'a max of zero means no limit and keeps every value';
+        $no_max_lst = $t_val->value_list_zh_impact();
+        $no_max_lst->keep_most_relevant(0);
+        $t->assert($test_name, $no_max_lst->count(), 2);
+        $test_name = 'keep most relevant of an empty value list keeps it empty';
+        $empty_keep_lst = new value_list($t->usr1);
+        $empty_keep_lst->keep_most_relevant(5);
+        $t->assert($test_name, $empty_keep_lst->count(), 0);
+
+        $t->subheader($ts . 'remove');
+        // the list is keyed by the value id, so remove must resolve the id to the position in the
+        // list (see value_list::remove), else the value stays e.g. in its own related values
+        $test_name = 'removing a value of the list drops it';
+        $math_lst = $t_val->value_list_math();
+        $t->assert($test_name, $math_lst->remove($t_val->value_pi()), true);
+        $test_name = '... so only the other math constant is left';
+        $t->assert($test_name, $math_lst->count(), 1);
+        $test_name = 'removing a value that is not in the list reports false and keeps the list';
+        $t->assert($test_name, $math_lst->remove($t_val->value_pi()), false);
+        $t->assert($test_name . ' size', $math_lst->count(), 1);
+
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
-        $api_json = $t_val->value_list()->api_json();
+        $api_json = $t_val->value_list($msg)->api_json();
         $val_lst_ui = new value_list_ui($api_json);
         $t->assert_json_string($test_name, $val_lst_ui->api_json(), $api_json);
 
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';
-        $val_lst = new value_list($usr);
+        $val_lst = new value_list($t->usr1);
         $test_name = $test_names . 'a related to a phrase e.g. all value related to the city of Zurich';
         $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr);
@@ -144,8 +181,21 @@ class value_list_tests
         $test_name = $test_names . 'a related to a phrase whose id matches the user id '
             . 'still binds all three query parameters';
         $this->assert_sql_by_phr_same_id($test_name, $t, $db_con);
+        // the source of a value is user-specific, so the union has one source parameter for the
+        // user tables and one for the standard tables (see value_list::load_sql_by_source)
+        $test_name = $test_names . 'the source that they name e.g. all values of the SI brochure';
+        $src = $t_src->source();
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src), sql_db::MYSQL);
+        $test_name = $test_names . 'the source that they name, but only the text values';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src, 0, 0, value_types::TEXT), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($val_lst->load_sql_by_source($sc, $src, 0, 0, value_types::TEXT), sql_db::MYSQL);
         $test_name = $test_names . 'a list of ids';
-        $val_ids = $t_val->value_list()->id_lst();
+        $val_ids = $t_val->value_list($msg)->id_lst();
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids);
         $test_name = 'a list of ids including text values';
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids, value_types::TEXT);
@@ -165,7 +215,7 @@ class value_list_tests
         $test_name = 'load values related to any phrase of a list '
             . 'e.g. the match const pi and e';
         // temp line until the function usage is checked correctly by the ide
-        $sql = $t_val->value_list()->load_sql_by_phr_lst($sc, $t_phr->phrase_list_math_const());
+        $sql = $t_val->value_list($msg)->load_sql_by_phr_lst($sc, $t_phr->phrase_list_math_const());
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->phrase_list_math_const(), true);
         $test_name = 'load values related to any phrase of a longer word and triple list '
             . 'e.g. all phrase related to the math number pi';
@@ -174,12 +224,12 @@ class value_list_tests
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/value/travel_scoring_value_list.json';
-        $t->assert_json_file(new value_list($usr), $json_file);
+        $t->assert_json_file(new value_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t_val->value_list();
+        $trp_lst = $t_val->value_list($msg);
         $t->assert_api_to_ui($trp_lst, new value_list_ui());
 
     }

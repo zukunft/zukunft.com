@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-05-21 09:28:00",
   "user": "timon",
   "selection": [
@@ -154,7 +155,6 @@
     },
     {
       "name": "velocity",
-      "description": "Velocity is the directional speed of a motion of an object as a function of time; it is the rate of change of an object's position with respect to a frame of reference.",
       "type": "measure",
       "refs": [
         {
@@ -169,7 +169,6 @@
     },
     {
       "name": "acceleration",
-      "description": "In mechanics, acceleration is the rate of change of the velocity of an object with respect to time.",
       "type": "measure",
       "refs": [
         {
@@ -302,7 +301,7 @@
     },
     {
       "name": "density",
-      "description": "The density of a substance is its mass per unit volume; the SI unit is the kilogram per cubic metre.",
+      "description": "quantity per unit area or volume",
       "type": "measure",
       "refs": [
         {
@@ -647,7 +646,14 @@
       ]
     },
     {
-      "name": "field"
+      "name": "field",
+      "description": "magnetic field strength of the MRI scanner",
+      "refs": [
+        {
+          "name": "Magnetic_resonance_imaging",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "flux"
@@ -672,6 +678,9 @@
     },
     {
       "name": "angular"
+    },
+    {
+      "name": "angle"
     },
     {
       "name": "linear"
@@ -722,7 +731,8 @@
       "name": "amplitude"
     },
     {
-      "name": "phase"
+      "name": "phase",
+      "description": "one distinguishable segment of a procedure"
     },
     {
       "name": "height"
@@ -744,12 +754,6 @@
     },
     {
       "name": "distance"
-    },
-    {
-      "name": "time"
-    },
-    {
-      "name": "number"
     },
     {
       "name": "constant",
@@ -858,7 +862,7 @@
       "description": "Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918."
     },
     {
-      "name": "de Broglie",
+      "name": "deBroglie",
       "description": "Louis de Broglie was a French physicist and aristocrat known for his contributions to quantum theory.",
       "refs": [
         {
@@ -1012,7 +1016,6 @@
     },
     {
       "name": "g",
-      "description": "g is the standard acceleration due to gravity at Earth's surface, approximately 9.80665 m/s².",
       "type": "constant",
       "refs": [
         {
@@ -1083,7 +1086,6 @@
     },
     {
       "name": "R",
-      "description": "R is the molar gas constant, equivalent to the Boltzmann constant multiplied by the Avogadro constant.",
       "type": "constant",
       "refs": [
         {
@@ -1303,12 +1305,10 @@
       "description": "the branch of physics that deals with heat, work, temperature and the statistical behaviour of systems."
     },
     {
-      "name": "physics",
-      "description": "the natural science that studies matter, energy, motion and their interactions; its subareas used here are mechanics, thermodynamics, electromagnetism, optics and quantum mechanics"
+      "name": "physics"
     },
     {
-      "name": "mechanics",
-      "description": "the branch of physics that deals with the motion, forces and energy of objects"
+      "name": "mechanics"
     },
     {
       "name": "electromagnetism",
@@ -1319,11 +1319,17 @@
       "description": "the branch of physics that deals with light and its interaction with matter"
     },
     {
-      "name": "quantum mechanics",
-      "description": "the branch of physics that describes matter and energy at atomic and subatomic scales"
+      "name": "quantum"
     }
   ],
   "triples": [
+    {
+      "name": "quantum mechanics",
+      "from": "mechanics",
+      "verb": "kind of",
+      "to": "quantum",
+      "description": "the branch of physics that describes matter and energy at atomic and subatomic scales"
+    },
     {
       "name": "time unit",
       "from": "unit",
@@ -1340,7 +1346,6 @@
     },
     {
       "name": "second (time)",
-      "description": "the time-unit reading of the ambiguous word 'second'; displayed as 'second' with 'time unit' shown only in the tooltip",
       "from": "second",
       "verb": "must be one of",
       "to": "time unit"
@@ -1485,10 +1490,9 @@
     },
     {
       "name": "angular velocity",
-      "description": "In physics, angular velocity is a pseudovector representation of how the angular position or orientation of an object changes with time.",
-      "from": "angular",
-      "verb": "kind of",
-      "to": "velocity",
+      "from": "velocity",
+      "verb": "per",
+      "to": "angle",
       "refs": [
         {
           "name": "Angular velocity",
@@ -1783,7 +1787,7 @@
     {
       "name": "de Broglie relation",
       "description": "The de Broglie hypothesis proposes that all matter exhibits wave-like behaviour, and the de Broglie wavelength of a particle is inversely proportional to its momentum.",
-      "from": "de Broglie",
+      "from": "deBroglie",
       "verb": "name of",
       "to": "equation",
       "refs": [

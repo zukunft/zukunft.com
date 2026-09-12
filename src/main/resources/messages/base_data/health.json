@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-18 12:00:00",
   "user": "timon",
   "selection": [
@@ -46,7 +47,6 @@
     },
     {
       "name": "mortality",
-      "description": "the number of deaths in a population, scaled to the size of that population per unit of time.",
       "refs": [
         {
           "name": "Mortality_rate",
@@ -59,14 +59,7 @@
       "description": "the rate or condition of being diseased in a population; the prevalence or incidence of ill health"
     },
     {
-      "name": "life expectancy",
-      "description": "a statistical measure of the average time an organism is expected to live, based on the year of birth and other demographic factors.",
-      "refs": [
-        {
-          "name": "Life_expectancy",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "expectancy"
     },
     {
       "name": "HALE",
@@ -122,7 +115,6 @@
     },
     {
       "name": "life",
-      "description": "a quality that distinguishes living organisms from inorganic matter, marked by growth, reproduction and response to stimuli.",
       "refs": [
         {
           "name": "Life",
@@ -145,14 +137,14 @@
       "description": "persisting for a long time or constantly recurring"
     },
     {
-      "name": "gap",
-      "description": "the difference between a quantity and a reference level"
+      "name": "gap"
     },
     {
       "name": "world"
     },
     {
-      "name": "DALY"
+      "name": "DALY",
+      "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life."
     },
     {
       "name": "percent"
@@ -166,6 +158,23 @@
     }
   ],
   "triples": [
+    {
+      "name": "life expectancy",
+      "description": "a statistical measure of the average time an organism is expected to live, based on the year of birth and other demographic factors.",
+      "from": "expectancy",
+      "verb": "of",
+      "to": "life",
+      "refs": [
+        {
+          "name": "Life expectancy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188419",
+          "type": "wikidata"
+        }
+      ]
+    },
     {
       "from": "DALY",
       "verb": "kind of",
@@ -227,7 +236,7 @@
     {
       "name": "Weinstein Stason 1977 NEJM",
       "description": "Weinstein MC, Stason WB (1977). Foundations of cost-effectiveness analysis for health and medical practices. New England Journal of Medicine 296:716-721. A QALY is a life year weighted by a health-utility factor between 0 and 1.",
-      "url": "https://doi.org/10.1056/NEJM197703312961304"
+      "doi": "10.1056/NEJM197703312961304"
     }
   ],
   "values": [
@@ -267,7 +276,7 @@
         "2021",
         "percent"
       ],
-      "number": "0.85",
+      "number": "0.0085",
       "source": "WHO Global Health Observatory 2021"
     },
     {

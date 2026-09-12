@@ -1,5 +1,6 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-04 12:00:00",
   "user": "timon",
   "selection": [
@@ -408,7 +409,6 @@
     },
     {
       "name": "precipitation",
-      "description": "liquid or solid water that falls to the ground",
       "refs": [
         {
           "name": "Precipitation (meteorology)",
@@ -797,7 +797,8 @@
       "name": "greenhouse"
     },
     {
-      "name": "effect"
+      "name": "effect",
+      "description": "change attributable to a manipulation"
     },
     {
       "name": "outgoing"
@@ -881,7 +882,8 @@
       "name": "ratio"
     },
     {
-      "name": "point"
+      "name": "point",
+      "description": "a single unit on a scale"
     },
     {
       "name": "vapor"
@@ -932,7 +934,7 @@
       "name": "parameter"
     },
     {
-      "name": "angular"
+      "name": "angle"
     },
     {
       "name": "velocity"
@@ -1338,8 +1340,8 @@
     {
       "name": "angular velocity",
       "from": "velocity",
-      "verb": "kind of",
-      "to": "angular"
+      "verb": "per",
+      "to": "angle"
     },
     {
       "description": "the rate of rotation of the Earth about its axis, about 7.292e-5 radians per second",

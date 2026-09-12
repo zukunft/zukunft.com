@@ -37,7 +37,7 @@ PREPARE job_type_insert_log_1111_call
 
 SELECT job_type_insert_log_1111
     ('update value',
-     1,
+     3,
      1,
      232,
      233,

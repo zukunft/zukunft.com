@@ -41,6 +41,7 @@ include_once test_paths::UNIT_UI . 'user_ui_tests.php';
 include_once test_paths::UNIT_UI . 'word_ui_tests.php';
 include_once test_paths::UNIT_UI . 'word_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'verb_ui_tests.php';
+include_once test_paths::UNIT_UI . 'verb_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'triple_ui_tests.php';
 include_once test_paths::UNIT_UI . 'triple_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'phrase_ui_tests.php';
@@ -74,6 +75,7 @@ include_once test_paths::UNIT_UI . 'start_ui_tests.php';
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -88,14 +90,12 @@ class all_ui_tests extends all_unit_tests
         $ts = 'unit ui html ';
         $t->header($ts);
 
-        // create a dummy users for testing
-        $t->users_for_unit_tests();
-
         // prepare the unit tests
         $tl = new test_lib();
-        $tl->ui_test_cache($t->usr_dev, $t);
+        $cac_msg = new user_message();
+        $tl->ui_test_cache($t->usr_dev, $t, $cac_msg);
         $u_env = new unit_env();
-        $u_env->init_unit_tests();
+        $u_env->init_unit_tests($t->usr1);
 
         $t->subheader($ts . 'base');
         // the used html elements e.g. the buttons
@@ -108,6 +108,7 @@ class all_ui_tests extends all_unit_tests
         new word_ui_tests()->run($t, $ui->dto->typ_lst_cache);
         new word_list_ui_tests()->run($t);
         new verb_ui_tests()->run($t);
+        new verb_list_ui_tests()->run($t);
         new triple_ui_tests()->run($t, $ui);
         new triple_list_ui_tests()->run($t);
         new phrase_ui_tests()->run($t);

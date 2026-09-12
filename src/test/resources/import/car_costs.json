@@ -1,5 +1,6 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2020-07-21 10:57:32",
   "user": "timon",
   "selection": [
@@ -7,16 +8,27 @@
   ],
   "words": [
     {
+      "name": "100"
+    },
+    {
+      "name": "2013",
+      "type": "time"
+    },
+    {
+      "name": "2014",
+      "type": "time"
+    },
+    {
+      "name": "2015",
+      "type": "time"
+    },
+    {
       "name": "2020",
       "type": "time",
       "protection": "admin_protection"
     },
     {
-      "name": "costs"
-    },
-    {
-      "name": "per day",
-      "type": "measure divisor",
+      "name": "car",
       "protection": "admin_protection"
     },
     {
@@ -24,95 +36,33 @@
       "protection": "admin_protection"
     },
     {
-      "name": "currency"
-    },
-    {
-      "name": "metre",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "kilometre",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "km",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "100 km",
-      "type": "scaled_measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per km",
-      "type": "measure divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per 100 km",
-      "type": "measure divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "kWh",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per kWh",
-      "type": "measure divisor",
-      "protection": "admin_protection"
-    },
-    {
       "name": "CO2",
       "protection": "admin_protection"
     },
     {
-      "name": "emission",
-      "protection": "admin_protection"
+      "name": "consumed"
     },
     {
-      "name": "insurance",
+      "name": "consumption",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Insurance",
+          "name": "Consumption_(economics)",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "tax",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Tax",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "cost"
     },
     {
-      "name": "car maintenance",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Service_(motor_vehicle)",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "costs"
     },
     {
-      "name": "fuel",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Fuel",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "currency"
+    },
+    {
+      "name": "day"
     },
     {
       "name": "diesel",
@@ -125,14 +75,55 @@
       ]
     },
     {
-      "name": "consumption",
+      "name": "electric"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "emission",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "fuel",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Consumption_(economics)",
+          "name": "Fuel",
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "g",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "gram",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hybrid"
+    },
+    {
+      "name": "insurance",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Insurance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kg",
+      "type": "measure",
+      "protection": "admin_protection"
     },
     {
       "name": "kilogram",
@@ -146,34 +137,27 @@
       ]
     },
     {
-      "name": "kg",
+      "name": "kilometre",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "gram",
+      "name": "km",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "g",
+      "name": "kWh",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "tonne",
+      "name": "l",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "t",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per t",
-      "type": "measure divisor",
-      "protection": "admin_protection"
+      "name": "lifetime"
     },
     {
       "name": "litre",
@@ -187,81 +171,154 @@
       ]
     },
     {
-      "name": "l",
+      "name": "luxury"
+    },
+    {
+      "name": "maintenance"
+    },
+    {
+      "name": "max"
+    },
+    {
+      "name": "metre",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "per l",
-      "type": "measure divisor",
-      "protection": "admin_protection"
+      "name": "min"
+    },
+    {
+      "name": "product"
     },
     {
       "name": "production",
       "protection": "admin_protection"
     },
     {
-      "name": "car",
+      "name": "purchase"
+    },
+    {
+      "name": "t",
+      "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "luxury hybrid car"
-    },
-    {
-      "name": "electric car"
-    },
-    {
-      "name": "at purchase"
-    },
-    {
-      "name": "year"
-    },
-    {
-      "name": "per year"
-    },
-    {
-      "name": "min"
-    },
-    {
-      "name": "max"
-    },
-    {
-      "name": "min to max factor"
-    },
-    {
-      "name": "per kWh",
-      "type": "measure divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "product lifetime",
+      "name": "tax",
+      "protection": "admin_protection",
       "refs": [
         {
-          "name": "Product_lifetime",
+          "name": "Tax",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "electricity"
+      "name": "tonne",
+      "type": "measure",
+      "protection": "admin_protection"
     },
     {
-      "name": "consumed"
-    },
-    {
-      "name": "2013",
-      "type": "time"
-    },
-    {
-      "name": "2014",
-      "type": "time"
-    },
-    {
-      "name": "2015",
-      "type": "time"
+      "name": "year"
     }
   ],
   "triples": [
+    {
+      "name": "per day",
+      "verb": "per",
+      "to": "day",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per km",
+      "verb": "per",
+      "to": "km",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per kWh",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per t",
+      "verb": "per",
+      "to": "t",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per l",
+      "verb": "per",
+      "to": "litre",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per year",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "100 km",
+      "from": "100",
+      "verb": "times",
+      "to": "km",
+      "type": "scaled_measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per 100 km",
+      "verb": "per",
+      "to": "100 km",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "car maintenance",
+      "from": "maintenance",
+      "verb": "of",
+      "to": "car",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hybrid car",
+      "from": "car",
+      "verb": "can be",
+      "to": "hybrid"
+    },
+    {
+      "name": "luxury hybrid car",
+      "from": "hybrid car",
+      "verb": "can be",
+      "to": "luxury"
+    },
+    {
+      "name": "electric car",
+      "from": "car",
+      "verb": "can be",
+      "to": "electric"
+    },
+    {
+      "from": "min",
+      "verb": "to",
+      "to": "max"
+    },
+    {
+      "name": "min to max factor",
+      "from": "factor",
+      "verb": "of",
+      "to": "min to max"
+    },
+    {
+      "name": "product lifetime",
+      "from": "lifetime",
+      "verb": "of",
+      "to": "product"
+    },
     {
       "from": "CHF",
       "verb": "is a",
@@ -274,32 +331,52 @@
       "to": "consumed"
     },
     {
-      "name": "km",
+      "name": "km (unit symbol)",
       "from": "km",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "kilometre"
     },
     {
-      "name": "t",
+      "name": "t (unit symbol)",
       "from": "t",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "tonne"
-    },
-    {
-      "from": "luxury hybrid car",
-      "verb": "is a",
-      "to": "car"
-    },
-    {
-      "from": "electric car",
-      "verb": "is a",
-      "to": "car"
     },
     {
       "name": "diesel fuel",
       "from": "diesel",
       "verb": "is a",
       "to": "fuel"
+    },
+    {
+      "from": "cost",
+      "verb": "per",
+      "to": "100 km"
+    },
+    {
+      "from": "cost",
+      "verb": "per",
+      "to": "day"
+    },
+    {
+      "from": "cost",
+      "verb": "per",
+      "to": "km"
+    },
+    {
+      "from": "cost",
+      "verb": "per",
+      "to": "l"
+    },
+    {
+      "from": "cost",
+      "verb": "per",
+      "to": "t"
+    },
+    {
+      "from": "cost",
+      "verb": "per",
+      "to": "year"
     }
   ],
   "formulas": [
@@ -367,7 +444,7 @@
       "words": [
         "car",
         "km",
-        "at purchase",
+        "purchase",
         "2014"
       ],
       "number": "11000",
@@ -377,7 +454,7 @@
       "words": [
         "car",
         "CHF",
-        "at purchase",
+        "purchase",
         "2014"
       ],
       "number": "41000",
@@ -587,7 +664,7 @@
   "views": [
     {
       "name": "car cost agreement",
-      "comment": "view the cost agreement of car usage",
+      "description": "view the cost agreement of car usage",
       "type": "detail_view",
       "components": [
         {

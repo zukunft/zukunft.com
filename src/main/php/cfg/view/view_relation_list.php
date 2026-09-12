@@ -84,12 +84,13 @@ class view_relation_list extends sandbox_link_list
      * map only the valid view relations
      *
      * @param array|null $db_rows with the data directly from the database
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if the view relation is loaded and valid
      */
-    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(?array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new view_relation($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new view_relation($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -104,7 +105,7 @@ class view_relation_list extends sandbox_link_list
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view(view $msk, ?sql_db $db_con_given = null): bool
+    function load_by_view(view $msk, user_message $msg, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
@@ -114,7 +115,7 @@ class view_relation_list extends sandbox_link_list
         }
 
         $qp = $this->load_sql_by_view($db_con_used->sql_creator(), $msk);
-        return $this->load_sys($qp, false, $db_con_given);
+        return $this->load_sys($qp, $msg, false, $db_con_given);
     }
 
 
@@ -145,6 +146,40 @@ class view_relation_list extends sandbox_link_list
     }
 
     /**
+     * set the SQL query parameters to load a list of view relations by the view relation ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of view relation ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        if (count($ids) > 0) {
+            $sc->add_where(view_relation_db::FLD_ID, $ids, sql_par_type::INT_LIST);
+            // also load the names of both linked views, so that the relation can name them
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_FROM, '', true);
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_TO, '', true);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * load a list of view relations by the given view relation ids
+     * @param array $ids an array of view relation ids which should be loaded
+     * @return bool true if at least one view relation found
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp, $msg);
+    }
+
+    /**
      * set the common part of the SQL query view relations
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
@@ -170,15 +205,16 @@ class view_relation_list extends sandbox_link_list
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
         foreach ($this->lst() as $lnk) {
-            $vars[] = $lnk->export_json($exp_typ, $do_load);
+            $vars[] = $lnk->export_json($msg, $exp_typ, $do_load);
         }
         return $vars;
     }
@@ -203,25 +239,24 @@ class view_relation_list extends sandbox_link_list
     {
         $added = false;
         if ($this->can_add($to_add)) {
-            $this->add_link_by_key($to_add);
-            $added = true;
+            $added = $this->add_link_by_key($to_add, $msg, $allow_duplicates);
         }
         return $added;
     }
 
     /**
      * delete all loaded view relations e.g. to delete all the links assigned to a view
-     * @param user_message $usr_msg the message for the user why deleting this view relation has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting this view relation has failed and a suggested solution
      * @return bool true if the view relations have been deleted
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         if (!$this->is_empty()) {
             foreach ($this->lst() as $dsp_cmp_lnk) {
-                $dsp_cmp_lnk->del($usr_msg);
+                $dsp_cmp_lnk->del($msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -274,15 +309,15 @@ class view_relation_list extends sandbox_link_list
      * simple but slow function to add of update all list items in the database
      * TODO faster mass db update
      *
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(user_message $msg): bool
     {
         foreach ($this->lst() as $sbx) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $msk_rel_usr_msg = $usr_msg->clone_reset();
+            $msk_rel_usr_msg = $msg->clone_reset();
             // save upfront and missing components
             $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
@@ -293,9 +328,9 @@ class view_relation_list extends sandbox_link_list
             // save the link of the view to the component
             $sbx->save($msk_rel_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($msk_rel_usr_msg);
+            $msg->merge($msk_rel_usr_msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -304,33 +339,20 @@ class view_relation_list extends sandbox_link_list
       */
 
     /**
-     * test if the link at the same position already exists and if yes return false to prevent duplicates
-     * overwrites the parent because the same component can be used in a view at different positions
-     * but not at the same position
+     * the same view can be related to another view more than once, but not at the same position,
+     * so the position is part of the duplicate check of a view relation
+     *
+     * @param view_relation|sandbox_link $lnk a link that is already in this list
      * @param view_relation|sandbox_link $lnk_to_add the link that should be added to the list
-     * @return bool true if the link can be added
+     * @return bool true if both links relate the same views at the same position
      */
-    protected function can_add(view_relation|sandbox_link $lnk_to_add): bool
+    protected function is_same_link(
+        view_relation|sandbox_link $lnk,
+        view_relation|sandbox_link $lnk_to_add
+    ): bool
     {
-        $can_add = true;
-
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $lnk) {
-                if ($can_add) {
-                    if ($lnk->from_id() == $lnk_to_add->from_id()
-                        and $lnk->to_id() == $lnk_to_add->to_id()
-                        and $lnk->get_pos() == $lnk_to_add->get_pos()) {
-                        $can_add = false;
-                    }
-                    if ($lnk->id() == $lnk_to_add->id()
-                        and $lnk->id() != 0 and $lnk_to_add->id() != 0
-                        and $lnk->id() !== null and $lnk_to_add->id() !== null) {
-                        $can_add = false;
-                    }
-                }
-            }
-        }
-        return $can_add;
+        return parent::is_same_link($lnk, $lnk_to_add)
+            and $lnk->get_pos() == $lnk_to_add->get_pos();
     }
 
 }

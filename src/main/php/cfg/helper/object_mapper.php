@@ -78,7 +78,7 @@ class object_mapper
                 // fill up the object base on the cache
                 if ($dto != null) {
                     if (!$trm->has_id()) {
-                        $cac_trm = $dto?->get_term_by_name($trm->name());
+                        $cac_trm = $dto?->get_term_by_name($trm->name(), $msg);
                         if ($cac_trm != null) {
                             $trm->fill($cac_trm);
                         }
@@ -94,7 +94,7 @@ class object_mapper
                     */
                 }
             } else {
-                $trm = $dto?->get_term_by_name($trm_json);
+                $trm = $dto?->get_term_by_name($trm_json, $msg);
                 if ($trm == null) {
                     $msg->add(msg_id::TERM_MISSING_IMPORT, [
                         msg_id::VAR_TERM => $trm_json,
@@ -132,7 +132,7 @@ class object_mapper
                 // fill up the object base on the cache
                 if ($dto != null) {
                     if (!$msk->has_id()) {
-                        $cac_msk = $dto?->get_view_by_name($msk->name());
+                        $cac_msk = $dto?->get_view_by_name($msk->name(), $msg);
                         if ($cac_msk != null) {
                             $msk->fill($cac_msk, $msg->usr);
                         }
@@ -148,7 +148,7 @@ class object_mapper
                     */
                 }
             } else {
-                $msk = $dto?->get_view_by_name($msk_json);
+                $msk = $dto?->get_view_by_name($msk_json, $msg);
                 if ($msk == null) {
                     $msg->add(msg_id::VIEW_MISSING_IMPORT, [
                         msg_id::VAR_VIEW => $msk_json,
@@ -186,7 +186,7 @@ class object_mapper
                 // fill up the object base on the cache
                 if ($dto != null) {
                     if (!$src->has_id()) {
-                        $cac_src = $dto?->get_source_by_name($src->name());
+                        $cac_src = $dto?->get_source_by_name($src->name(), $msg);
                         if ($cac_src != null) {
                             $src->fill($cac_src, $msg->usr);
                         }
@@ -202,7 +202,7 @@ class object_mapper
                     */
                 }
             } else {
-                $src = $dto?->get_source_by_name($src_json);
+                $src = $dto?->get_source_by_name($src_json, $msg);
                 if ($src == null) {
                     $msg->add(msg_id::SOURCE_MISSING_IMPORT, [
                         msg_id::VAR_SOURCE => $src_json,

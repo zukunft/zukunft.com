@@ -166,7 +166,7 @@ class list_db_write extends list_db_read
             // add the remaining missing objects
             $step_time = $this->count() / $save_per_sec;
             $imp->step_start($msg_id, $class, $this->count(), $step_time);
-            $msg->merge($sql_lst->exe_direct());
+            $sql_lst->exe_direct($msg);
             $imp->step_end($sql_lst->count(), $save_per_sec);
 
         }
@@ -176,26 +176,27 @@ class list_db_write extends list_db_read
     /**
      * get a list of all sql function names that are needed to add all objects of this list to the database
      *
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @return sql_par_list with the sql function names
      */
-    function sql_insert_call_with_par(sql_creator $sc, user_message $usr_msg): sql_par_list
+    function sql_insert_call_with_par(sql_creator $sc, user_message $msg): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             // another validation check as a second line of defence
-            if ($sbx->db_ready($usr_msg)) {
+            if ($sbx->db_ready($msg)) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 $sc_par_lst->add(sql_type::LOG);
-                $ins_usr_msg = new user_message();
+                $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
                 $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
                 if ($ins_usr_msg->is_ok()) {
-                    $qp->obj_name = $sbx->name();
+                    // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                     $sql_list->add($qp);
                 } else {
-                    $usr_msg->merge($ins_usr_msg);
-                    log_err('Internal import error: ' . $usr_msg->all_message_text());
+                    $msg->merge($ins_usr_msg);
+                    log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
                 }
             }
         }
@@ -205,25 +206,26 @@ class list_db_write extends list_db_read
     /**
      * get a list of all sql function names that are needed to add all objects of this list to the database
      *
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @return sql_par_list with the sql function names
      */
-    function sql_insert_no_log(sql_creator $sc, user_message $usr_msg): sql_par_list
+    function sql_insert_no_log(sql_creator $sc, user_message $msg): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             // another validation check as a second line of defence
-            if ($sbx->db_ready($usr_msg)) {
+            if ($sbx->db_ready($msg)) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list();
-                $ins_usr_msg = new user_message();
+                $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
                 $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
                 if ($ins_usr_msg->is_ok()) {
-                    $qp->obj_name = $sbx->name();
+                    // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                     $sql_list->add($qp);
                 } else {
-                    $usr_msg->merge($ins_usr_msg);
-                    log_err('Internal import error: ' . $usr_msg->all_message_text());
+                    $msg->merge($ins_usr_msg);
+                    log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
                 }
             }
         }
@@ -234,13 +236,13 @@ class list_db_write extends list_db_read
      * get a list of all sql function names that are needed to delete all objects of this list from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @param list_db_write|null $db_lst the list of delete statements that are already in the database
      * @return sql_par_list with the sql function names
      */
     function sql_delete_call_with_par(
         sql_creator        $sc,
-        user_message       $usr_msg,
+        user_message       $msg,
         list_db_write|null $db_lst = null
     ): sql_par_list
     {
@@ -249,14 +251,15 @@ class list_db_write extends list_db_read
             // check always user sandbox and normal name, because reading from database for check would take longer
             $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
             $sc_par_lst->add(sql_type::LOG);
-            $ins_usr_msg = new user_message();
+            $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
             $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
             if ($ins_usr_msg->is_ok()) {
-                $qp->obj_name = $sbx->name();
+                // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                 $sql_list->add($qp);
             } else {
-                $usr_msg->merge($ins_usr_msg);
-                log_err('Internal import error: ' . $usr_msg->all_message_text());
+                $msg->merge($ins_usr_msg);
+                log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
             }
         }
         return $sql_list;
@@ -266,13 +269,13 @@ class list_db_write extends list_db_read
      * get a list of all sql function names that are needed to delete all objects of this list from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @param list_db_write|null $db_lst the list of delete statements that are already in the database
      * @return sql_par_list with the sql function names
      */
     function sql_delete_no_log(
         sql_creator        $sc,
-        user_message       $usr_msg,
+        user_message       $msg,
         list_db_write|null $db_lst = null
     ): sql_par_list
     {
@@ -280,14 +283,15 @@ class list_db_write extends list_db_read
         foreach ($this->lst() as $sbx) {
             // check always user sandbox and normal name, because reading from database for check would take longer
             $sc_par_lst = new sql_type_list();
-            $ins_usr_msg = new user_message();
+            $ins_usr_msg = new user_message(); // a per item buffer, merged into $msg on failure
             $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
             if ($ins_usr_msg->is_ok()) {
-                $qp->obj_name = $sbx->name();
+                // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                 $sql_list->add($qp);
             } else {
-                $usr_msg->merge($ins_usr_msg);
-                log_err('Internal import error: ' . $usr_msg->all_message_text());
+                $msg->merge($ins_usr_msg);
+                log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
             }
         }
         return $sql_list;
@@ -301,9 +305,10 @@ class list_db_write extends list_db_read
      * the result is "2016", "2017"
      *
      * @param array $names with the words that should be removed
+     * @param user_message $msg to report an object that is already in the selection
      * @returns list_db_read with only the remaining words
      */
-    function select_by_name(array $names): list_db_write
+    function select_by_name(array $names, user_message $msg): list_db_write
     {
         $result = $this->clone_reset();
 
@@ -316,11 +321,11 @@ class list_db_write extends list_db_read
             // for links the linked objects are the priority to detect duplicates
             if (in_array($obj::class, def::LINK_CLASSES)) {
                 if (in_array($obj->name(), $names)) {
-                    $result->add_by_link($obj);
+                    $result->add_by_link($obj, $msg);
                 }
             } elseif (in_array($obj::class, def::NAME_CLASSES)) {
                 if (in_array($obj->name(), $names)) {
-                    $result->add_by_key($obj);
+                    $result->add_by_key($obj, false, $msg);
                 }
             }
         }

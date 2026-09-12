@@ -92,9 +92,10 @@ class application
      * open the database connection to answer an api request
      *
      * @param string $code_name the name of the api request
+     * @param user_message $msg to collect and report also messages during api init
      * @return sql_db
      */
-    function start_api_core(string $code_name): sql_db
+    function start_api_core(string $code_name, user_message $msg): sql_db
     {
         global $sys;
         global $mtr;
@@ -138,13 +139,13 @@ class application
 
         // preload all types, with one database read from the cached types json when available
         // or with one select per type list if the cache is missing or outdated
-        $sys->typ_lst->load_cached($db_con);
+        $sys->typ_lst->load_cached($db_con, $msg);
 
-        $this->load_system_config();
+        $this->load_system_config($msg);
 
         // honor the pod switch for the types cache, which is only known once the config is loaded
         global $cfg;
-        $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
+        $sys->typ_lst->reload_if_cache_denied($db_con, $msg, $cfg->cache_allowed(db_cache_types::TYPES));
 
         return $db_con;
     }
@@ -153,9 +154,10 @@ class application
      * open the database connection to answer an api request
      *
      * @param string $code_name the name of the api request
+     * @param user_message $msg to collect the problem during start
      * @return sql_db
      */
-    function start_api(string $code_name): sql_db
+    function start_api(string $code_name, user_message $msg): sql_db
     {
         global $sys;
         // the config and db_cache loaded below read the db connection from the
@@ -199,13 +201,13 @@ class application
 
         // preload all types, with one database read from the cached types json when available
         // or with one select per type list if the cache is missing or outdated
-        $sys->load_type_lists_cached($db_con);
+        $sys->load_type_lists_cached($db_con, $msg);
 
-        $this->load_system_config();
+        $this->load_system_config($msg);
 
         // honor the pod switch for the types cache, which is only known once the config is loaded
         global $cfg;
-        $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
+        $sys->typ_lst->reload_if_cache_denied($db_con, $msg, $cfg->cache_allowed(db_cache_types::TYPES));
 
         return $db_con;
     }
@@ -216,9 +218,10 @@ class application
      * e.g. the permission check of a user without login (user->is_blocked) cannot be done
      * and would allow the database changes that this pod does not permit
      *
+     * @param user_message $msg to report why the system configuration could not be loaded
      * @return void
      */
-    private function load_system_config(): void
+    private function load_system_config(user_message $msg): void
     {
         global $cfg;
 
@@ -230,14 +233,20 @@ class application
         $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
 
         $cfg = new config_numbers($usr_sys);
-        $cfg->load_cfg(null, $usr_sys);
+        $cfg->load_cfg($msg, null, $usr_sys);
     }
 
-    function end_api($db_con): void
+    function end_api(sql_db $db_con, user_message $msg): void
     {
         global $sys;
 
-        $this->write_time($db_con);
+        // writing the end time is always done by a system user
+        $this->write_time($db_con, $msg);
+
+        // report even closing error to be on the save side
+        if (!$msg->is_ok()) {
+            log_err_msg('end_api error', $msg);
+        }
 
         // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
@@ -322,9 +331,9 @@ class application
     function open_db(string $code_name): sql_db
     {
 
-        global $sys;       // the global system time control including the preloaded types
+        global $sys;       // the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes
         global $db_con;    // the database connection
-        global $cac;       // the global user data cache including the system views
+        global $cac;       // the backend cache of user-specific data_object
         global $cfg;       // the user configuration values
         global $mtr;       // the translation object
 
@@ -349,7 +358,7 @@ class application
             // check the system setup as the virtual system user, because this is a system call
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
-            $msg = new user_message(user::system());
+            $msg = new user_message(user::system()); // the db check is a system call, see above
             if (!$db_chk->db_check($db_con, $msg)) {
                 echo '\n';
                 echo $msg->all_message_text();
@@ -368,25 +377,25 @@ class application
 
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                $sys->load_cache_type($db_con);
+                $sys->load_cache_type($db_con, $msg);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
-                $cfg->load_cfg(null, $usr_sys);
+                $cfg->load_cfg($msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
                 // preload all types from the database
                 $sys->times->switch(system_time_type::LOAD_TYPES);
                 // the types are general so the system user can be used to load the types
                 $cac = new data_object($usr_sys);
-                $sys->load_type_lists($db_con);
+                $sys->load_type_lists($db_con, $msg);
 
                 $log = new change_log($usr_sys);
-                $db_changed = $log->create_log_references($db_con);
+                $db_changed = $log->create_log_references($db_con, $msg);
 
                 // reload the type list if needed and trigger an update in the frontend
                 // even tough the update of the preloaded list should already be done by the single adds
                 if ($db_changed) {
-                    $sys->load_type_lists($db_con);
+                    $sys->load_type_lists($db_con, $msg);
                 }
             }
 
@@ -395,11 +404,11 @@ class application
         return $db_con;
     }
 
-    function end($db_con, $echo_header = true): void
+    function end(sql_db $db_con, user_message $msg, $echo_header = true): void
     {
         global $sys;
 
-        $this->write_time($db_con);
+        $this->write_time($db_con, $msg);
 
         // Free result test
         //mysqli_free_result($result);
@@ -413,7 +422,7 @@ class application
     /**
      * write the execution time to the database if it is long
      */
-    private function write_time($db_con): void
+    private function write_time(sql_db $db_con, user_message $msg): void
     {
         global $sys;
 
@@ -429,13 +438,14 @@ class application
                 $sys_script->name = $sys->script;
                 $sys_script->code_id = $sys->script;
                 $sys_usr = new user();
-                $sys_usr->load_by_id(users::SYSTEM_ID);
-                $msg = new user_message($sys_usr);
-                $sys_script->save($msg);
-                if ($msg->is_ok()) {
+                $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
+                $msg_sys = new user_message($sys_usr); // the system user saves the script type, merged below
+                $sys_script->save($msg_sys);
+                if ($msg_sys->is_ok()) {
                     $sys_script_id = $sys_script->id();
                     $sys->typ_lst->sys_log_fnc->add($sys_script);
                 }
+                $msg->merge($msg_sys);
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);

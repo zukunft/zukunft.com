@@ -1,0 +1,19 @@
+GET
+http://localhost/http/view.php?id=995&k=System+Test+Source&8id=995&8k=System+Test+Source&9m=93&9id=995&ur=https%3A%2F%2Fapi.zukunft.com%2F&m=13&z=1&submit=
+/http/view.php?id=995&k=System+Test+Source&8id=995&8k=System+Test+Source&9m=93&9id=995&ur=https%3A%2F%2Fapi.zukunft.com%2F&m=13&z=1&submit=
+/http/view.php?id=995&name=System+Test+Source&8id=995&8name=System+Test+Source&9mask_id=source_default&9id=995&url=https%3A%2F%2Fapi.zukunft.com%2F&mask_id=source_edit&step=confirm&
+{
+    "id": "995",
+    "name": "System Test Source",
+    "url": "https://api.zukunft.com/",
+    "mask_id": "source_edit",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "995",
+        "name": "System Test Source"
+    },
+    "url_part_back": {
+        "mask_id": "source_default",
+        "id": "995"
+    }
+}

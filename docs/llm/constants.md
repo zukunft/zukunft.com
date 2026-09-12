@@ -131,6 +131,36 @@ DIRECTORY_SEPARATOR`) so a moved folder is one edit and every path is greppable.
 Only a leaf file name or a folder segment built from a runtime value (e.g. a
 folder named after a test object) may stay inline at the call site.
 
+## Every resource file read or written has a const in a `files.php`
+
+The sibling rule to `paths.php`: every resource *file* the code reads or writes
+is a constant in the `files.php` of its layer, never an inline file name at the
+call site:
+
+- `src/main/php/cfg/const/files.php` — resource files used by the backend
+  (e.g. the import file lists `SYSTEM_DATA_FILES` → `BASE_DATA_FILES`)
+- `src/main/php/shared/const/files.php` — resource files used by backend and frontend
+- `src/test/php/const/files.php` — all test resource files (fixtures, snapshots,
+  import samples)
+
+The point is not only the single edit on a rename: the three `files.php` are the
+**complete, easy-to-check inventory of every resource file the system uses**. An
+inline file name at a call site is invisible in that overview, so a reviewer can
+no longer see from one place which files exist, which code layer owns them and
+which are orphaned.
+
+A file const is composed from a `paths.php` const plus the base name; a shared
+extension stays a const too, appended by the caller:
+
+- **Wrong**: `file_get_contents(test_paths::IMPORT_UNIT . 'offline_is_better_than_online1.json')`
+- **Right**: add `CONST string IMPORT_MERGE_1 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online1';`
+  then `file_get_contents(test_files::IMPORT_MERGE_1 . test_files::JSON)`
+
+The same applies to writing: a script that creates a file (e.g. a generated
+export or a merged import file) names its target via a const, so the overview
+also covers the files the system produces. Only a file name built from a runtime
+value (e.g. an output name given on the command line) stays at the call site.
+
 ## Link code to DB rows by `code_id` only — `*_NAME` / `*_ID` are test-only
 
 Every record in `src/main/php/shared/types/verbs.php` and
@@ -154,7 +184,7 @@ tests** asserting against seed data — never production code.
 
 - **Right** — look up by code_id, read the runtime id from the resolved object:
 ```php
-$symbol_vrb = $sys->typ_lst->vrb->get_verb(verbs::SYMBOL);
+$symbol_vrb = $sys->verb(verbs::SYMBOL);
 $trp_lst->load_by_phr($phr, $symbol_vrb, foaf_direction::BOTH);
 ```
 - **Wrong** — hardcoded numeric id couples to the seed, breaks on any re-seeded / imported pod:
@@ -201,6 +231,45 @@ defaults to `false` (e.g. `public bool $uses_sandbox = false`) instead of
 `?bool = null` (like `excluded`), the old value is **not null** even on an
 insert, so the generated insert-log SQL includes the old value
 (`_uses_sandbox_old`) — the insert-log test fixtures must match that.
+
+## Default values are resolved at the point of use, never fabricated in a mapper
+
+A nullable typed db field (e.g. `users.user_type_id`, `users.user_status_id`,
+the share and protection type of a sandbox object) stores **null** when the
+default applies; the default itself is defined in exactly one place, the
+`default_id()` function of the owning type list (e.g.
+`user_type_list::default_id()` = guest, `user_status_list::default_id()` =
+active, `share_type_list`, `protect_type_list`).
+
+Where the default **is** applied:
+
+- **At the point of use** — a display, a selector preselection or a behaviour
+  decision resolves a null id via `$typ_lst->...->default_id()` when it needs
+  an effective value (the share and protection selectors in
+  `web/sandbox/sandbox.php` are the pattern). The resolved default is never
+  written back to the object or the database.
+- **In `import_mapper`** — an import file is a self-contained declaration of
+  the target state, so a missing field there *means* the default and the
+  mapper fills it explicitly (e.g. user profile normal, type guest, status
+  active).
+- **In the database insert** — a new row simply keeps null and the nullable
+  column default, so no code sets it.
+
+Where the default is **never** fabricated:
+
+- **In `row_mapper`, `api_mapper` and `url_mapper`** — these carry partial
+  state, so a missing field maps to **null** meaning "not specified". A
+  fabricated default is indistinguishable from a real value and a later save
+  of the object writes it over the stored value (this reset user passwords,
+  types and statuum via json-born user objects before it was fixed).
+- **In the save path** — `db_fields_changed` treats a null in-memory value of
+  such a field as "not loaded / not specified" and skips the field, so a
+  partial object can be saved without destroying the fields it does not carry
+  (see the password, activation key, type and status guards in
+  `user::db_fields_changed`).
+- **In `export_json` / `api_json_array`** — a null field is omitted (not
+  exported as the default), so the export stays faithful and the import
+  default fills it on the other side.
 
 ## config.yaml keys are at most two space-separated words
 

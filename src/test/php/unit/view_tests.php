@@ -35,16 +35,23 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
-use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -53,8 +60,6 @@ class view_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -74,21 +79,25 @@ class view_tests
         $t->assert_sql_foreign_key_create($msk);
 
         $t->subheader($ts . 'sql read');
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $t->assert_sql_by_id($sc, $msk);
         $t->assert_sql_by_name($sc, $msk);
         $t->assert_sql_by_code_id($sc, $msk);
         $t->assert_sql_by_term($sc, $msk, $t_trm->term());
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $msk->id = 2;
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
+        // the same two queries for many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $msk);
+        $t->assert_sql_changing_users_by_ids($sc, $msk);
 
         $t->subheader($ts . 'sql read standard and user changes by name');
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $msk->set_name(views::START_NAME);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard_by_name($sc, $msk);
@@ -137,6 +146,44 @@ class view_tests
         $t->assert_api($msk);
         $t->assert_api_to_ui($msk, new view_ui());
 
+        // the view add and edit form has a code id field like the source and the component form,
+        // but a code id is only shown to an admin or a developer and only a developer gets the
+        // input field, because only a profile that passes the backend can_set_code_id may change it
+        global $ui_sys;
+        $form = new system_form();
+        $t_usr = new test_users($t);
+        // view_filled_included carries the code id, because a view without one renders an empty field
+        $msk_ui = new view_ui($t_msk->view_filled_included()->api_json());
+        // remember the session user so the changed global can be restored after the checks
+        $usr_keep = $ui_sys->usr ?? null;
+        $test_name = 'a developer sees the code id input field of a view';
+        $ui_sys->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_text_contains($test_name, $form->form_field_code_id($msk_ui),
+            'name="' . url_var::CODE_ID . '"');
+        $test_name = 'an admin sees the code id of a view as read only text';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $admin_html = $form->form_field_code_id($msk_ui);
+        $t->assert_text_contains($test_name, $admin_html, views::START_CODE);
+        $test_name = 'an admin gets no code id input field';
+        $t->assert_false($test_name, str_contains($admin_html, 'name="' . url_var::CODE_ID . '"'));
+        $test_name = 'a normal user does not see the code id of a view';
+        $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
+        $t->assert($test_name, $form->form_field_code_id($msk_ui), '');
+        $test_name = 'a test profile user does not see the code id, so the view snapshots stay clean';
+        $ui_sys->usr = new user_ui($t->usr1->api_json());
+        $t->assert($test_name, $form->form_field_code_id($msk_ui), '');
+        $ui_sys->usr = $usr_keep;
+
+        // the posted code id is mapped by web/sandbox/sandbox_code_id, so the view needs no
+        // mapper of its own, unlike the code id of the source and the component before
+        $test_name = 'the code id posted by the view form is mapped onto the view';
+        $msk_posted = new view_ui();
+        $msk_posted->url_mapper([url_var::CODE_ID => views::START_CODE], new user_message_ui());
+        $t->assert($test_name, $msk_posted->code_id, views::START_CODE);
+        $test_name = 'an emptied code id field of the view form clears the code id';
+        $msk_posted->url_mapper([url_var::CODE_ID => ''], new user_message_ui());
+        $t->assert_true($test_name, $msk_posted->code_id === null);
+
         $t->subheader($ts . 'with components api');
         $msk = $t_msk->view_with_components();
         $t->assert_api($msk, 'view_with_component_id');
@@ -146,11 +193,46 @@ class view_tests
         $t->assert_api($msk, 'view_with_component_details', [api_types::INCL_COMPONENTS, api_types::LINK_DETAILS]);
         $t->assert_api_to_ui($msk, new view_ui());
 
+        $t->subheader($ts . 'term assignment');
+
+        // a term that is assigned twice, e.g. by an import file, is reported to the caller,
+        // because the second assignment is dropped
+        $test_name = 'a term assigned twice to a view is reported';
+        $msg = new user_message($t->usr1);
+        $msk = $t_msk->view();
+        $trm = $t_trm->term();
+        $msk->add_term($trm, $msg);
+        $added = $msk->add_term($trm, $msg);
+        $t->assert_false($test_name, $added);
+
+        $test_name = 'the double assignment message names the term';
+        $t->assert_text_contains($test_name, $msg->text(), $trm->name());
+        $msg->reset();
+
+        // a view can be shown for more than one term, so a second, different term is assigned
+        $test_name = 'a second, different term is assigned to the view';
+        $added = $msk->add_term($t_trm->term_triple(), $msg);
+        $t->assert_true($test_name, $added);
+
+        // an import assigns terms that are not yet in the database, so they are told apart by
+        // their name; without that every unknown term of a view looks like the same term twice
+        $test_name = 'two terms without a db id are assigned to a view';
+        $msk = $t_msk->view();
+        $msk->add_term($t_trm->by_name(word_names::PI), $msg);
+        $added = $msk->add_term($t_trm->by_name(triple_names::EULER_NUMBER), $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'the same term without a db id is reported as double';
+        $added = $msk->add_term($t_trm->by_name(word_names::PI), $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t_msk->view(), $usr_sys);
-        $t->assert_ex_and_import($t_msk->view_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_msk->view(), $t->usr_system);
+        $t->assert_ex_and_import($t_msk->view_filled(), $t->usr_system);
         $json_file = 'unit/view/car_costs.json';
-        $t->assert_json_file(new view($usr), $json_file);
+        $t->assert_json_file(new view($t->usr1), $json_file);
 
 
         $test_name = 'view create from json string';
@@ -160,25 +242,23 @@ class view_tests
         $target = '<span title="the default view for words" data-toggle="tooltip">Word</span>';
         $t->assert($test_name, $dsp_text, $target);
 
-        // sql to load the view components
-        $msk = new view($usr);
+        // sql to load the view components; asserted via assert_qp like every other sql test, so
+        // that the fixture is named after the prepared statement and follows the component field
+        // list on its own - the hand-read file before did not and fell behind the field list
+        // it is kept next to the other component queries of a view
+        // (component_list_by_view_id, component_link_list_by_view_id)
+        $t->resource_path = 'db/component/';
+        $msk = new view($t->usr1);
         $msk->id = 2;
 
-        $lib = new library();
+        // assert_qp also checks that the prepared sql name is unique
         $db_con = new sql_db();
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $msk->load_components_sql($db_con)->sql;
-        $expected_sql = $t->file('db/component/components_by_view_id.sql');
-        $t->assert('view->load_components_sql by view id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($msk->load_components_sql($db_con)->name);
+        $t->assert_qp($msk->load_components_sql($db_con), $db_con->db_type);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $msk->load_components_sql($db_con)->sql;
-        $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
-        $t->assert('view->load_components_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $t->assert_qp($msk->load_components_sql($db_con), $db_con->db_type);
 
 
         /*
@@ -200,8 +280,12 @@ class view_tests
         $t->assert_sql_foreign_key_create($mrl);
 
         $t->subheader($ts . 'sql read');
-        $mrl = new view_relation($usr);
+        $mrl = new view_relation($t->usr1);
         $t->assert_sql_by_id($sc, $mrl);
+        // the two queries that read many objects at once, which the user page uses to read the
+        // standard values and the other users of all changed objects of one type with one query
+        $t->assert_sql_standard_by_ids($sc, $mrl);
+        $t->assert_sql_changing_users_by_ids($sc, $mrl);
 
         $t->subheader($ts . 'sql write insert');
         $mrl = $t_msk->view_relation_filled_add();
@@ -228,6 +312,12 @@ class view_tests
         $t->subheader($ts . 'sql');
         $mrl_lst = new view_relation_list($t->usr1);
         $this->assert_sql_by_view($t, $sc, $mrl_lst, $t_msk->view());
+        $this->assert_sql_by_ids($t, $sc, $mrl_lst);
+
+        // without an id the query has no name, so that the caller does not send it to the database
+        $test_name = 'the view relation list query of an empty id list is not prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert($test_name, $mrl_lst->load_sql_by_ids($sc, [])->name, '');
 
 
         /*
@@ -242,8 +332,8 @@ class view_tests
         $msk->id = 1;
         $msk->code_id = null;
         $msk->name = view::TEST_NAME_ADD;
-        $msk->usr = $usr;
-        $wrd = new word($usr);
+        $msk->usr = $t->usr1;
+        $wrd = new word($t->usr1);
         $wrd->set_name(word::TEST_NAME);
         $result = $msk->display($wrd, 1);
         $target = '';
@@ -278,6 +368,35 @@ class view_tests
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             $qp = $mrl->load_sql_by_view($sc, $msk);
+            $result = $t->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to load the view relations by their ids
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param view_relation_list $mrl the view relation list object
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_ids(
+        test_cleanup       $t,
+        sql_creator        $sc,
+        view_relation_list $mrl
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $mrl->load_sql_by_ids($sc, [1, 2]);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $mrl->load_sql_by_ids($sc, [1, 2]);
             $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;

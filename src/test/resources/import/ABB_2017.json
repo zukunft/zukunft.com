@@ -1,5 +1,6 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2020-03-09 22:51:23",
   "user": "timon",
   "selection": [
@@ -154,13 +155,11 @@
       "description": "sum of all revenue line items for the period"
     },
     {
-      "name": "cost of sales of products",
       "from": "cost",
       "verb": "of",
       "to": "sales of products"
     },
     {
-      "name": "cost of services and other",
       "from": "cost",
       "verb": "of",
       "to": "services and other"

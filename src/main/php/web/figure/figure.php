@@ -33,22 +33,22 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\figure;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::API_OBJECT . 'controller.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -58,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -71,28 +72,27 @@ class figure extends combine_named
     /**
      * set the vars of this figure html display object bases on the api message
      * @param array $json_array an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_RESULT) {
                 $res_ui = new result();
-                $res_ui->api_mapper($json_array, $usr_msg);
+                $res_ui->api_mapper($json_array, $msg);
                 $this->set_obj($res_ui);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VALUE) {
                 $val = new value();
-                $val->api_mapper($json_array, $usr_msg);
+                $val->api_mapper($json_array, $msg);
                 $this->set_obj($val);
             } else {
-                $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
+                $msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
             }
         } else {
-            $usr_msg->add_error_text('Json class missing, but expected for a figure');
+            $msg->add_error_text('Json class missing, but expected for a figure');
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -144,7 +144,7 @@ class figure extends combine_named
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string ) to enable combinations of api_message() calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $lib = new library();
         $vars = array();
@@ -156,7 +156,7 @@ class figure extends combine_named
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();
         if ($this->obj->grp->name() != '') {
-            $vars[json_fields::PHRASES] = $this->obj->api_array();
+            $vars[json_fields::PHRASES] = $this->obj->api_array($typ_lst, $msg);
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -188,9 +188,9 @@ class figure extends combine_named
      * base
      */
 
-    function val_formatted(): string
+    function val_formatted(user_message $msg): string
     {
-        return $this->obj()->val_formatted();
+        return $this->obj()->val_formatted($msg);
     }
 
     /**
@@ -215,16 +215,16 @@ class figure extends combine_named
     /**
      * html code to show the value with the possibility to click for the result explanation
      */
-    function display_linked(string $back = ''): string
+    function display_linked(user_message $msg, array $url_arr = []): string
     {
-        // TODO check if $result .= $this->obj->display_linked($back) can be used
+        // TODO check if $result .= $this->obj->display_linked($url_arr) can be used
         $html = new html_base();
         if ($this->is_result()) {
-            $url = $html->url_new(views::VALUE_EDIT_ID, $this->obj_id(), '', $back);
+            $url = $html->url_back(views::VALUE_EDIT_ID, $this->obj_id(), $url_arr);
         } else {
-            $url = $html->url_new(views::RESULT_EDIT_ID, $this->obj_id(), '', $back);
+            $url = $html->url_back(views::RESULT_EDIT_ID, $this->obj_id(), $url_arr);
         }
-        return $html->ref($url, $this->val_formatted());
+        return $html->ref($url, $this->val_formatted($msg));
     }
 
 }

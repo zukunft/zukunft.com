@@ -35,7 +35,9 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_list_tests
@@ -44,7 +46,6 @@ class user_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -62,15 +63,33 @@ class user_list_tests
 
         // sql to load a list of value by ids
         $test_name = 'load users by ids';
-        $usr_lst = new user_list($usr);
+        $usr_lst = new user_list($t->usr1);
         $t->assert_sql_by_ids($test_name, $sc, $usr_lst);
         $t->assert_sql_by_code_id($sc, $usr_lst);
         $this->assert_sql_by_profile_and_higher($t, $db_con, $usr_lst);
 
 
+        $t->subheader($ts . 'add to the list');
+
+        // a user is an entry of the list only once, and the second try says which user is double
+        $test_name = 'a user is added to the list';
+        $msg = new user_message($t->usr1);
+        $usr_lst = new user_list($t->usr1);
+        $msg->merge($usr_lst->add(test_users::user_sys_test()));
+        $t->assert_true($test_name, $msg->is_ok());
+
+        $test_name = 'the same user again is reported';
+        $msg->merge($usr_lst->add(test_users::user_sys_test()));
+        $t->assert_text_contains($test_name, $msg->text(), users::SYSTEM_TEST_NAME);
+
+        $test_name = 'and the double user is not in the list twice';
+        $t->assert($test_name, $usr_lst->count(), 1);
+        $msg->reset();
+
+
         $t->subheader($ts . 'im- and export');
 
-        // $t->assert_json_file(new value_list($usr), $json_file);
+        // $t->assert_json_file(new value_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');

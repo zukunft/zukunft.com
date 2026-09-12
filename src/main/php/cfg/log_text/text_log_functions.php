@@ -142,11 +142,33 @@ function log_php_error_timestamped(int $errno, string $errstr, string $errfile =
  */
 function log_php_exception_timestamped(Throwable $e): void
 {
-    $text = 'PHP Fatal error: Uncaught ' . $e::class . ': ' . $e->getMessage()
-        . ' in ' . $e->getFile() . ' on line ' . $e->getLine() . "\n";
-    $text .= 'PHP Stack trace:' . "\n";
-    $text .= $e->getTraceAsString();
+    $text = 'PHP Fatal error: Uncaught ' . $e::class . ': '
+        . $e->getMessage()
+        . ' in ' . $e->getFile()
+        . ' on line ' . $e->getLine() . "\n"
+        . 'PHP Stack trace:' . "\n"
+        . $e->getTraceAsString();
     echo_timestamped($text);
+    //log_fatal_db($text);
+}
+
+/**
+ * exception handler installed by the api entry point as the last safety net: a Throwable that
+ * reaches here has travelled instead of being caught at the statement that raised it, which is a
+ * defect of that layer (see docs/llm/structure.md), so it is written to the error log of the admin
+ * like a database error; without it the response of the request just ends and the reason is only
+ * in the web server log, which the admin of the pod cannot read
+ *
+ * @param Throwable $e the uncaught exception or error
+ * @return void
+ */
+function log_php_exception_to_error_log(Throwable $e): void
+{
+    log_fatal(
+        'Uncaught ' . $e::class . ': ' . $e->getMessage(),
+        'php',
+        'in ' . $e->getFile() . ' on line ' . $e->getLine(),
+        $e->getTraceAsString());
 }
 
 /**
@@ -261,18 +283,11 @@ function log_err(string $msg_text,
     }
     // TODO move the next lines to a class and a private function "get_function_name"
     $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 ');
-        $function_name = $lib->str_left_of($function_name, '): ');
-        $function_name = $lib->str_right_of($function_name, '/main/php/');
-        $function_name = $lib->str_left_of($function_name, '.php(');
-    }
-    if ($function_name == '' or $function_name == null) {
-        $function_name = 'no function name detected';
-    }
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = library::php_function_from_exception($trace);
     }
     return log_msg($msg_text,
         $msg_description,
@@ -311,6 +326,89 @@ function log_err_msg_ui(string $msg_txt, user_message_ui $msg): void
 }
 
 /**
+ * log a warning message and inform the user about it in one call (the warning parallel of log_err_msg)
+ * the user notice is added with ok=true, so it does not fail the operation - use it for a problem the
+ * user should see but that does not abort the request; for a specific user-facing warning prefer
+ * $msg->add_warning_with_vars(msg_id::X, ...) which also logs
+ * @param string $msg_txt the warning message text for the system log (admin)
+ * @param user_message $msg the user message object that collects the messages for the user
+ * @return void
+ */
+function log_warning_msg(string $msg_txt, user_message $msg): void
+{
+    $log_lnk = log_warning($msg_txt);
+    $msg->add(msg_id::INTERNAL_WARNING, [msg_id::VAR_LOG_LINK => $log_lnk], true);
+}
+
+/**
+ * report that a child class has not overwritten a function that its parent expects it to overwrite
+ *
+ * a missing overwrite is an internal inconsistency that the user cannot fix, so it goes to the
+ * admin log only (docs/llm/coding.md) - the returned text is the diagnostic that the dummy parent
+ * functions returning a string hand back to their caller
+ *
+ * the text is built without a user_message, because a request creates its message only at the
+ * entry point (docs/llm/state-and-messages.md) and a throwaway one here would be the same
+ * exception repeated in every dummy parent function; log_missing_overwrite_warning is the
+ * variant for a parent function whose missing overwrite must not count as an error
+ *
+ * @param string $fnc_name the name of the function that the child class should overwrite
+ * @param string $class the class that has been asked to do something it cannot do e.g. $this::class
+ * @return string the translated diagnostic text
+ */
+function log_missing_overwrite(string $fnc_name, string $class): string
+{
+    $msg_txt = missing_overwrite_text($fnc_name, $class);
+    log_err($msg_txt);
+    return $msg_txt;
+}
+
+/**
+ * the warning level twin of log_missing_overwrite for the dummy parent functions whose missing
+ * overwrite is expected often enough that it must not stop a test run (see ERROR_LIMIT)
+ *
+ * @param string $fnc_name the name of the function that the child class should overwrite
+ * @param string $class the class that has been asked to do something it cannot do e.g. $this::class
+ * @return string the translated diagnostic text
+ */
+function log_missing_overwrite_warning(string $fnc_name, string $class): string
+{
+    $msg_txt = missing_overwrite_text($fnc_name, $class);
+    log_warning($msg_txt);
+    return $msg_txt;
+}
+
+/**
+ * the shared text of the two log_missing_overwrite functions
+ *
+ * @param string $fnc_name the name of the function that the child class should overwrite
+ * @param string $class the class that has been asked to do something it cannot do e.g. $this::class
+ * @return string the translated diagnostic text
+ */
+function missing_overwrite_text(string $fnc_name, string $class): string
+{
+    global $mtr;
+    $lib = new library();
+    return $lib->msg_var_text([[msg_id::MISSING_FUNCTION_OVERWRITE, [
+        msg_id::VAR_FUNCTION_NAME => $fnc_name,
+        msg_id::VAR_CLASS_NAME => $class
+    ]]], $mtr);
+}
+
+/**
+ * log a warning message via api and inform the user about it in one call (the warning parallel of
+ * log_err_msg_ui); the user notice is added with ok=true, so it does not fail the request
+ * @param string $msg_txt the warning message text for the system log (admin)
+ * @param user_message_ui $msg the frontend user message object that collects the messages for the user
+ * @return void
+ */
+function log_warning_msg_ui(string $msg_txt, user_message_ui $msg): void
+{
+    $log_lnk = log_warning($msg_txt);
+    $msg->add(msg_id::INTERNAL_WARNING, [msg_id::VAR_LOG_LINK => $log_lnk], true);
+}
+
+/**
  * if still possible, write the fatal error message to the database and stop the execution
  * @param string $msg_text is a short description used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
@@ -321,21 +419,18 @@ function log_err_msg_ui(string $msg_txt, user_message_ui $msg): void
  */
 function log_fatal_db(
     string $msg_text,
-    string $function_name,
+    string $function_name = '',
     string $msg_description = '',
     string $trace = '',
     ?user  $calling_usr = null): string
 {
     // escape the (possibly request-derived) message before echoing it into the html response (xss)
     echo 'FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES);
-    $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
-    }
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = library::php_function_from_exception($trace);
     }
     return log_msg(
         'FATAL ERROR! ' . $msg_text,
@@ -386,15 +481,12 @@ function log_fatal(string $msg_text,
         fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text
             . '", by user "' . $usr_txt . "\n");
     }
-    $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
-        $write_with_more_info = true;
-    }
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
+        $write_with_more_info = true;
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = library::php_function_from_exception($trace);
         $write_with_more_info = true;
     }
     if ($write_with_more_info and $log_file !== false) {
@@ -516,6 +608,16 @@ function log_msg(string  $msg_text,
 
     $result = '';
 
+    // an error inside the log writer itself would call the log writer again: writing a sys_log row
+    // needs the log function name (which may be saved and permission checked) and a database insert,
+    // and each of these can fail with an own error text, which passes the message dedup below and
+    // starts the next round; so while a log entry is written, any further message is only counted
+    // and the loop stops after the first round (see system_object::log_writing)
+    if ($sys?->log_writing) {
+        $sys->log_dropped++;
+        return $result;
+    }
+
     // use an alternative database connection if requested
     $used_db_con = $db_con;
     if ($given_db_con != null) {
@@ -545,9 +647,7 @@ function log_msg(string  $msg_text,
             $msg_description = $msg_text;
         }
         if ($function_name == '' or $function_name == null) {
-            $function_name = (new Exception)->getTraceAsString();
-            $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-            $function_name = $lib->str_left_of($function_name, ': log_');
+            $function_name = library::php_function_from_exception(new Exception);
         }
         if ($trace == '') {
             $trace = (new Exception)->getTraceAsString();
@@ -563,7 +663,7 @@ function log_msg(string  $msg_text,
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
         if (!in_array($msg_type_text, $sys->log_msg_lst)) {
-            $msg = new user_message();
+            $msg = new user_message(); // not reported: the log writer itself, so it cannot report to a request message
             $sys_log = new sys_log();
 
             $sys->log_msg_lst[] = $msg_type_text;
@@ -573,22 +673,30 @@ function log_msg(string  $msg_text,
             if (($msg_log_level > text_log::LOG_LEVEL or $force_log)
                 and sys_log_insert_allowed(time())) {
 
-                $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($function_name);
-                if ($fnc == null) {
-                    $sys_log_fnc = new sys_log_function();
-                    $sys_log_fnc->name = $function_name;
-                    $sys_log_fnc->code_id = $function_name;
-                    $msg->usr = $sys->user_log();
-                    // for saving a new function name a system user is needed
-                    $sys_msg = clone $msg;
-                    $sys_msg->usr = $sys->system_user();
-                    $sys_log_fnc->save($sys_msg);
-                    $msg->merge($sys_msg);
-                    $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
-                }
+                // from here on the log writer uses the database and the permission check, which
+                // can fail and log themselves, so the guard at the top of this function drops
+                // these nested messages; the flag is reset in every case, because a log writer
+                // that stays switched off would hide all following errors of this request
+                $sys->log_writing = true;
+                try {
+                    $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($function_name);
+                    if ($fnc == null) {
+                        $sys_log_fnc = new sys_log_function();
+                        $sys_log_fnc->name = $function_name;
+                        $sys_log_fnc->code_id = $function_name;
+                        // saving a new function name is a system action, so use a local message
+                        // with the system user instead of touching the user of the log message
+                        $sys_msg = new user_message($sys->system_user());
+                        $sys_log_fnc->save($sys_msg);
+                        $msg->merge($sys_msg);
+                        $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
+                    }
 
-                $sys_log->set($user_id, $function_name, $trace, $msg_log_level, $msg_text, $msg_description, $msg);
-                $sys_log->insert($msg);
+                    $sys_log->set($user_id, $function_name, $trace, $msg_log_level, $msg_text, $msg_description, $msg);
+                    $sys_log->insert($msg);
+                } finally {
+                    $sys->log_writing = false;
+                }
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
@@ -604,9 +712,9 @@ function log_msg(string  $msg_text,
             } else {
                 if ($msg_log_level >= text_log::DSP_LEVEL) {
                     $usr = new user();
-                    $usr->load_by_id($user_id);
+                    $usr->load_by_id($user_id, $msg);
                     $msk = new view($usr);
-                    $msk_ui = new view_ui($msk->api_json());
+                    $msk_ui = new view_ui($msk->api_json([], $msg));
                     $result .= $msk_ui->dsp_navbar_simple();
                     // like the critical path: escape the message and do not disclose the function name
                     $result .= htmlspecialchars($msg_text, ENT_QUOTES) . ".<br><br>";

@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
 # clean up apt cache
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# mod_headers is needed by the root .htaccess to send the CORS header of the web fonts
+RUN a2enmod headers
     
 # Expose port 8080 and Start the Apache server
 EXPOSE 8080

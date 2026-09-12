@@ -37,7 +37,7 @@ PREPARE sys_log_level_insert_log_1111_call
 
 SELECT sys_log_level_insert_log_1111
     ('Info',
-     1,
+     3,
      1,
      839,
      840,

@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
@@ -75,6 +76,7 @@ include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -110,6 +112,7 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
@@ -152,6 +155,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -634,23 +638,24 @@ class test_types
     {
         global $sys;
 
+        $msg = new user_message();
         $typ_lst = new type_lists();
         $typ_lst->load_dummy();
 
         // read the corresponding names and description from the internal config csv files
         $vars = [];
         if ($this->read_all_names_from_config_csv($typ_lst->phr_typ)) {
-            $vars = $typ_lst->api_json_array();
+            $vars = $typ_lst->api_json_array([], $msg);
 
             // add verbs
             $sys->typ_lst->vrb = new verb_list();
             $sys->typ_lst->vrb->load_dummy();
-            $vars[json_fields::LIST_VERBS] = $sys->typ_lst->vrb->api_json_array();
+            $vars[json_fields::LIST_VERBS] = $sys->typ_lst->vrb->api_json_array([], $msg);
 
             // add views
             $t_msk = new test_views($this->env);
             $sys_msk_cac = $t_msk->view_list();
-            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([api_types::INCL_COMPONENTS]));
+            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array([api_types::INCL_COMPONENTS], $msg);
         }
 
         global $db_con;

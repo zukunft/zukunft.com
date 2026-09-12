@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -64,7 +65,6 @@ class word_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         global $sys;
         global $sys;
 
@@ -72,6 +72,7 @@ class word_list_tests
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_wrd = new test_words($t);
+        $msg = new user_message();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 
@@ -82,33 +83,33 @@ class word_list_tests
         $t->subheader($ts . 'database query creation');
 
         // load only the names
-        $wrd_lst = new word_list($usr);
-        $t->assert_sql_names($sc, $wrd_lst, new word($usr));
-        $t->assert_sql_names($sc, $wrd_lst, new word($usr), word_names::MATH);
+        $wrd_lst = new word_list($t->usr1);
+        $t->assert_sql_names($sc, $wrd_lst, new word($t->usr1));
+        $t->assert_sql_names($sc, $wrd_lst, new word($t->usr1), word_names::MATH);
 
         // load by word ids
         $test_name = 'load words by ids';
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $t->assert_sql_by_ids($test_name, $sc, $wrd_lst, array(3, 2, 4));
 
         // load by word names
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_names = array(word_names::MATH, word_names::TEST_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
         // load by type
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $type_id = 1;
         $this->assert_sql_by_type_id($t, $db_con, $wrd_lst, $type_id);
 
         // load by pattern
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $name_pattern = 'M';
         $this->assert_sql_by_pattern($t, $db_con, $wrd_lst, $name_pattern);
 
         // the parent words
-        $wrd_lst = new word_list($usr);
-        $wrd = new word($usr);
+        $wrd_lst = new word_list($t->usr1);
+        $wrd = new word($t->usr1);
         $wrd->id = 6;
         $wrd_lst->add($wrd);
         $vrb = null;
@@ -116,16 +117,16 @@ class word_list_tests
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the parent words filtered by verb
-        $wrd_lst = new word_list($usr);
-        $wrd = new word($usr);
+        $wrd_lst = new word_list($t->usr1);
+        $wrd = new word($t->usr1);
         $wrd->id = 7;
         $wrd_lst->add($wrd);
-        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
+        $vrb = $sys->verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
-        $wrd_lst = new word_list($usr);
-        $wrd = new word($usr);
+        $wrd_lst = new word_list($t->usr1);
+        $wrd = new word($t->usr1);
         $wrd->id = 8;
         $wrd_lst->add($wrd);
         $vrb = null;
@@ -133,52 +134,52 @@ class word_list_tests
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words filtered by verb
-        $wrd_lst = new word_list($usr);
-        $wrd = new word($usr);
+        $wrd_lst = new word_list($t->usr1);
+        $wrd = new word($t->usr1);
         $wrd->id = 9;
         $wrd_lst->add($wrd);
-        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
+        $vrb = $sys->verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader($ts . 'modify and filter word lists');
 
         // create words for unit testing
         // TODO used create dummy functions
-        $wrd1 = new word($usr);
+        $wrd1 = new word($t->usr1);
         $wrd1->id = 1;
         $wrd1->set_name('word1');
-        $wrd2 = new word($usr);
+        $wrd2 = new word($t->usr1);
         $wrd2->id = 2;
         $wrd2->set_name('word2');
-        $wrd3 = new word($usr);
+        $wrd3 = new word($t->usr1);
         $wrd3->id = 3;
         $wrd3->set_name('word3');
-        $wrd_time = new word($usr);
+        $wrd_time = new word($t->usr1);
         $wrd_time->id = 4;
         $wrd_time->set_name('time_word');
         $wrd_time->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
-        $wrd_time2 = new word($usr);
+        $wrd_time2 = new word($t->usr1);
         $wrd_time2->id = 5;
         $wrd_time2->set_name('time_word2');
         $wrd_time2->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
-        $wrd_scale = new word($usr);
+        $wrd_scale = new word($t->usr1);
         $wrd_scale->id = 6;
         $wrd_scale->set_name('scale_word');
         $wrd_scale->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
-        $wrd_percent = new word($usr);
+        $wrd_percent = new word($t->usr1);
         $wrd_percent->id = 7;
         $wrd_percent->set_name('percent_word');
         $wrd_percent->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT);
-        $wrd_measure = new word($usr);
+        $wrd_measure = new word($t->usr1);
         $wrd_measure->id = 8;
         $wrd_measure->set_name('measure_word');
         $wrd_measure->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
 
         // merge two lists
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd1);
         $wrd_lst->add($wrd3);
-        $wrd_lst2 = new word_list($usr);
+        $wrd_lst2 = new word_list($t->usr1);
         $wrd_lst2->add($wrd2);
         $wrd_lst2->add($wrd3);
         $wrd_lst->merge($wrd_lst2);
@@ -190,22 +191,22 @@ class word_list_tests
 
         // diff by ids
         $wrd_lst->merge($wrd_lst2);
-        $wrd_lst->diff_by_ids(array(2));
+        $wrd_lst->diff_by_ids(array(2), $msg);
         $t->assert($t->name . '->diff by id and check by ids', $wrd_lst->ids(), array(1, 3));
 
         // with time
-        $wrd_lst_time = new word_list($usr);
+        $wrd_lst_time = new word_list($t->usr1);
         $wrd_lst_time->add($wrd1);
         $wrd_lst_time->add($wrd3);
         $wrd_lst_time->add($wrd_time);
         $t->assert($t->name . '->with time by ids', $wrd_lst_time->ids(), array(1, 3, 4));
 
         // ex time
-        $wrd_lst_time->ex_time();
+        $wrd_lst_time->ex_time($msg);
         $t->assert($t->name . '->ex_time by ids', $wrd_lst_time->ids(), array(1, 3));
 
         // with scale
-        $wrd_lst_scale = new word_list($usr);
+        $wrd_lst_scale = new word_list($t->usr1);
         $wrd_lst_scale->add($wrd2);
         $wrd_lst_scale->add($wrd_scale);
         $wrd_lst_scale->add($wrd3);
@@ -216,7 +217,7 @@ class word_list_tests
         $t->assert($t->name . '->ex_time', $wrd_lst_scale->name(), '"word2","word3"');
 
         // with percent
-        $wrd_lst_percent = new word_list($usr);
+        $wrd_lst_percent = new word_list($t->usr1);
         $wrd_lst_percent->add($wrd1);
         $wrd_lst_percent->add($wrd2);
         $wrd_lst_percent->add($wrd_percent);
@@ -227,18 +228,18 @@ class word_list_tests
         $t->assert($t->name . '->ex_percent', $wrd_lst_percent->name(), '"word1","word2"');
 
         // unsorted
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd3);
         $wrd_lst->add($wrd1);
         $wrd_lst->add($wrd2);
         $t->assert($t->name . '->unsorted', $wrd_lst->name(), '"word3","word1","word2"');
 
         // sorted
-        $wrd_lst->wlsort();
+        $wrd_lst->wlsort($msg);
         $t->assert($t->name . '->sorted', $wrd_lst->name(), '"word1","word2","word3"');
 
         // unfiltered
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd3);
         $wrd_lst->add($wrd1);
         $wrd_lst->add($wrd2);
@@ -246,7 +247,7 @@ class word_list_tests
         $t->assert($t->name . '->unsorted', $wrd_lst->name(), '"word3","word1","word2","time_word"');
 
         // filtered
-        $wrd_lst_filter = new word_list($usr);
+        $wrd_lst_filter = new word_list($t->usr1);
         $wrd_lst_filter->add($wrd3);
         $wrd_lst_filter->add($wrd2);
         $wrd_lst_filter->add($wrd_percent);
@@ -262,15 +263,15 @@ class word_list_tests
         $t->assert_contains($test_name, $filtered->names(), word_names::PI_SYMBOL);
 
         // time list
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd2);
         $wrd_lst->add($wrd_time2);
-        $wrd_lst_time = $wrd_lst->time_lst();
+        $wrd_lst_time = $wrd_lst->time_lst($msg);
         $t->assert($t->name . '->time list', $wrd_lst_time->name(), '"time_word","time_word2"');
 
         // scaling list
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
@@ -278,24 +279,24 @@ class word_list_tests
         $t->assert($t->name . '->measure list', $wrd_lst_measure->name(), '"measure_word"');
 
         // measure list
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd_scale);
         $wrd_lst_scaling = $wrd_lst->scaling_lst();
         $t->assert($t->name . '->scaling list', $wrd_lst_scaling->name(), '"scale_word"');
 
         // percent list
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd_scale);
         $wrd_lst_percent = $wrd_lst->percent_lst();
         $t->assert($t->name . '->percent list', $wrd_lst_percent->name(), '""');
 
         // JSON export list
         $lib = new library();
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = $wrd_lst->export_json([]);
+        $json = $wrd_lst->export_json($msg, []);
         $json_expected = json_decode(file_get_contents(test_files::WORD_LIST));
         $result = $lib->json_is_similar($json, $json_expected);
         // TODO remove, for faster debugging only
@@ -304,9 +305,45 @@ class word_list_tests
         $t->assert('JSON export word list', $result, true);
 
 
+        $t->subheader($ts . 'add to the list');
+
+        // the key of a list entry is the id of the object if it has one
+        $test_name = 'a word with a db id is added';
+        $wrd_lst = new word_list($t->usr1);
+        $added = $wrd_lst->add_obj($t_wrd->word(), false, $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'the same word again is reported as double';
+        $added = $wrd_lst->add_obj($t_wrd->word(), false, $msg);
+        $t->assert_false($test_name, $added);
+
+        $test_name = 'the double entry message names the word';
+        $t->assert_text_contains($test_name, $msg->text(), word_names::MATH);
+        $msg->reset();
+
+        // an import adds the words before they have an id, so there the name is the key
+        $test_name = 'a word without a db id is added';
+        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::PI), false, $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'a second word without a db id is added';
+        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::E_SYMBOL), false, $msg);
+        $t->assert_true($test_name, $added);
+
+        $test_name = 'the same word without a db id is reported as double';
+        $added = $wrd_lst->add_obj($t_wrd->by_name(word_names::PI), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+        // an object with neither an id nor a name has no key, so it cannot be a list entry
+        $test_name = 'a word without a name is reported';
+        $added = $wrd_lst->add_obj($t_wrd->word_incomplete(), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/word/word_list.json';
-        $t->assert_json_file(new word_list($usr), $json_file);
+        $t->assert_json_file(new word_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');

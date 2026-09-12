@@ -50,7 +50,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
@@ -69,37 +68,40 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
 include_once html_paths::VIEW . 'view_list.php';
-include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_WORD . 'word_db.php';
+include_once html_paths::DB . 'sql_db.php';
+include_once html_paths::MODEL_WORD . 'word_db.php';
 // phrase.php is loaded elsewhere (kept as a commented placeholder like cfg word_db) to avoid
 // pulling the whole phrase class graph into the frontend just for the phrase_type_id field name
-//include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::SHARED_CONST . 'def.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'phrase_types.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+//include_once html_paths::MODEL_PHRASE . 'phrase.php';
+include_once html_paths::MODEL_SANDBOX . 'sandbox.php';
+include_once html_paths::API_OBJECT . 'api_message.php';
+include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -113,7 +115,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -123,19 +125,19 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
-use Zukunft\ZukunftCom\main\php\shared\types\verbs;
-use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class word extends sandbox_code_id
 {
@@ -148,7 +150,9 @@ class word extends sandbox_code_id
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_ADD_ID = views::WORD_ADD_ID;
     const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
+    const int VIEW_DEL_ID = views::WORD_DEL_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::WORD_ADD;
@@ -185,8 +189,6 @@ class word extends sandbox_code_id
     // each entry ['phrase' => phrase, 'formulas' => formula_list] to render 'assigned to <ancestor>'
     public ?array $parent_formulas = null;
     public ?ref_list $ref_lst = null;
-    public ?change_log_list $chg_log = null;
-    public ?view_list $view_lst = null;
 
 
     /*
@@ -197,14 +199,14 @@ class word extends sandbox_code_id
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             if (array_key_exists(url_var::PLURAL, $url_array)) {
                 $this->plural = $url_array[url_var::PLURAL];
             } else {
@@ -228,7 +230,7 @@ class word extends sandbox_code_id
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -236,17 +238,17 @@ class word extends sandbox_code_id
      * deleted; if the user confirms the deletion of an in-use word a warning is shown the usual way
      * and the deletion is not confirmed (mirrors the backend used_by_someone_else guard)
      *
-     * @param user_message $usr_msg with the requesting user and to enrich with a warning if in use
+     * @param user_message $msg with the requesting user and to enrich with a warning if in use
      * @param string $action the crud action of the change; the in-use check only applies to a delete
      * @param array $url_array the pending change url (unused here, kept for the common signature)
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action, $url_array);
+        $result = parent::input_valid($msg, $action, $url_array);
         if ($action == url_var::CRUD_DELETE) {
             if ($this->is_in_use()) {
-                $usr_msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
+                $msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
                     msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
                     msg_id::VAR_NAME => $this->name()
                 ]);
@@ -286,9 +288,9 @@ class word extends sandbox_code_id
      * TODO Prio 0 make sure that all fields are mapped to the url
      * @return array parent url array extended with the plural and view of this word, without empty strings
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_arr = parent::to_url_array();
+        $url_arr = parent::to_url_array($msg);
         $url_arr[url_var::PLURAL] = $this->plural;
         $url_arr[url_var::VIEW] = $this->view_id;
         if ($this->impact > 0) {
@@ -423,30 +425,6 @@ class word extends sandbox_code_id
         } else {
             $this->ref_lst = null;
         }
-        if (array_key_exists(json_fields::CHANGES, $json_array)) {
-            $change = $json_array[json_fields::CHANGES];
-            if (is_array($change)) {
-                $lst = new change_log_list();
-                $lst->api_mapper($change);
-                $this->chg_log = $lst;
-            } else {
-                $this->chg_log = null;
-            }
-        } else {
-            $this->chg_log = null;
-        }
-        if (array_key_exists(json_fields::VIEWS, $json_array)) {
-            $view = $json_array[json_fields::VIEWS];
-            if (is_array($view)) {
-                $lst = new view_list();
-                $lst->api_mapper($view);
-                $this->view_lst = $lst;
-            } else {
-                $this->view_lst = null;
-            }
-        } else {
-            $this->view_lst = null;
-        }
         return $msg->is_ok();
     }
 
@@ -458,23 +436,23 @@ class word extends sandbox_code_id
     /**
      * create an api json array for the backend based on this frontend object
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         // usage and impact are not included here because this system value is never updated by the frontend
         $vars[json_fields::PLURAL] = $this->plural;
         if ($this->has_parent()) {
-            $vars[json_fields::PARENT] = $this->parent->api_array();
+            $vars[json_fields::PARENT] = $this->parent->api_array($typ_lst, $msg);
         }
-        // usage is not included here because this system value is never updated by the frontend
+        // usage and impact are included here because to allow
+        // at least admin users to overwrite the impact and usage via GUI
         $vars[json_fields::IMPACT] = $this->impact;
-        // send the selected default view id so a view change is persisted (backend reads it as the id)
         $vars[json_fields::VIEW] = $this->view_id;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
-            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
+            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array($typ_lst, $msg);
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -500,9 +478,9 @@ class word extends sandbox_code_id
      * @param int $usr_id the id of the session user to load the word for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => url_var::TRUE], $usr_id);
     }
 
 
@@ -511,15 +489,19 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param string|null $code_id the code id of the phrase type
+     * @param string|null $code_id the code id of the phrase type, null to reset the type
+     * @param user_message $msg to report a missing type cache, without which the code id
+     *                          cannot be resolved to the type id
      */
-    function set_type(?string $code_id): void
+    function set_type(?string $code_id, user_message $msg): void
     {
-        global $ui_sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($ui_sys->typ_lst_cache->phr_typ->id($code_id));
+            $phr_typ = type_lists::phrase_types($msg);
+            if ($phr_typ != null) {
+                $this->set_type_id($phr_typ->id($code_id));
+            }
         }
     }
 
@@ -579,100 +561,36 @@ class word extends sandbox_code_id
      */
 
     /**
-     * get the parent phrases of the given phrase (foaf_direction::UP)
-     * if a phrase list is given get only the parent phrases within the list (no api call)
-     * if no phrase list is given get the phrases from the api
-     * e.g. for Zurich the list is city and canton based on a phrase list with city, canton and country
-     * but  for Zurich the list is city, canton and company based on a phrase list with company, city, canton and country
+     * get the parent phrases of this word e.g. for Zurich the city and the canton
      * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
      * @param int $levels the number of parent levels
      * @return phrase_list capped by the user-specific frontend config limit
      */
-    function parents(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    function parents(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
-        return $this->related($phr_lst, foaf_direction::UP);
+        return $this->phrase()->parents($msg, $phr_lst, $levels);
     }
 
     /**
-     * get all child phrases related to the given word (foaf_direction::DOWN)
-     * behaves like parents() but in the opposite direction
-     * e.g. for city at least Zurich, Bern and Geneva are returned
-     *
+     * get all child phrases of this word e.g. for city at least Zurich, Bern and Geneva
      * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
      * @param int $levels the number of child levels
      * @return phrase_list capped by the user-specific frontend config limit
      */
-    function children(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    function children(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
-        return $this->related($phr_lst, foaf_direction::DOWN);
+        return $this->phrase()->children($msg, $phr_lst, $levels);
     }
 
     /**
-     * get the similar objects of this word i.e. the other phrases that share a parent with this word
-     * via the 'is a' verb e.g. for 'Swiss franc' (which is a 'currency') the similar phrases are the
-     * other children of 'currency' such as 'Euro' and 'US Dollar' (this word itself is excluded)
-     *
+     * get the other phrases that share an "is a" parent with this word
+     * e.g. for "Euro" (which is a "currency") the Swiss franc and the US dollar
      * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
-     * @return phrase_list the sibling phrases without this word, capped by the user-specific frontend config limit
+     * @return phrase_list the sibling phrases without this word
      */
-    function similar(?phrase_list $phr_lst = null): phrase_list
+    function similar(user_message $msg, ?phrase_list $phr_lst = null): phrase_list
     {
-        if ($phr_lst === null) {
-            $phr_lst = new phrase_list();
-            $phr_lst->load_related($this->phrase(), foaf_direction::UP);
-        }
-        $result = new phrase_list();
-        // for each "this is a <parent>" relation collect the other phrases that are also "a <parent>"
-        // e.g. for "Swiss franc is a currency" collect all currencies: Swiss franc, Euro and US Dollar
-        foreach ($phr_lst->children($this->phrase())->lst() as $is_a_trp) {
-            $vrb = $is_a_trp->get_verb();
-            if ($vrb?->id() == verbs::IS_ID) {
-                foreach ($phr_lst->parents($is_a_trp->get_to(), $vrb)->lst() as $sibling) {
-                    $result->add_phrase($sibling);
-                }
-            }
-        }
-        // remove this word itself so that only the similar phrases remain
-        $self = new phrase_list();
-        $self->add_phrase($this->phrase());
-        return $result->remove($self);
-    }
-
-    /**
-     * get the related phrases of a phrase in the given direction (parents for UP, children for DOWN)
-     * if a phrase list is given filter the related phrases within it (no api call)
-     * otherwise load them from the api, and cap the result by the user-specific frontend config limit
-     *
-     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
-     * @param foaf_direction $direction foaf_direction::UP for parents, foaf_direction::DOWN for children
-     * @return phrase_list capped by the user-specific frontend config limit
-     */
-    private function related(?phrase_list $phr_lst, foaf_direction $direction): phrase_list
-    {
-        if ($phr_lst !== null) {
-            if ($direction == foaf_direction::UP) {
-                $lst = $phr_lst->parents($this->phrase());
-            } else {
-                $lst = $phr_lst->children($this->phrase());
-            }
-        } else {
-            $lst = new phrase_list();
-            $lst->load_related($this->phrase(), $direction);
-        }
-        // limit the number of related phrases shown to keep the page-title category subtitle readable
-        global $ui_sys;
-        if ($ui_sys?->cfg !== null) {
-            $limit = $ui_sys->cfg->get_by(
-                [words::RELATED, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                def::FALLBACK_PHRASES_RELATED
-            );
-        } else {
-            $limit = def::FALLBACK_PHRASES_RELATED;
-        }
-        if ($lst->count() > $limit) {
-            $lst->set_lst(array_slice($lst->lst(), 0, $limit));
-        }
-        return $lst;
+        return $this->phrase()->similar($msg, $phr_lst);
     }
 
 
@@ -682,14 +600,35 @@ class word extends sandbox_code_id
 
     /**
      * display a word with a link to the main page for the word
-     * @param string|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url parameters of the calling page, which become the back part of the link
      * @param string $style the CSS style that should be used
      * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::WORD_ID): string
+    function name_link(
+        array  $url_arr = [],
+        string $style = '',
+        int $msk_id = views::WORD_ID,
+        string $base_url = ''
+    ): string
     {
-        return parent::name_link($back, $style, $msk_id);
+        return parent::name_link($url_arr, $style, $msk_id, $base_url);
+    }
+
+    /**
+     * display a word in the plural with a link to the main page for the word
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @returns string the html code
+     */
+    function name_link_plural(
+        string  $lan = languages::DEFAULT,
+        array   $url_arr = [],
+        string  $style = '',
+        int     $msk_id = views::WORD_ID,
+        string  $base_url = ''
+    ): string
+    {
+        return parent::name_link_plural($lan, $url_arr, $style, $msk_id, $base_url);
     }
 
 
@@ -698,12 +637,16 @@ class word extends sandbox_code_id
      */
 
     /**
+     * @param int $link_id the id of the triple that should be removed
+     * @param array $url_arr the url vars of the calling page for the back link
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_unlink(int $link_id, string $back = ''): string
+    function btn_unlink(int $link_id, array $url_arr = []): string
     {
-        $url = new html_base()->url_new(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
-        return new button($url, $back)->del(msg_id::WORD_UNLINK);
+        // after the unlink the user returns to this word
+        $url = new html_base()->url_back(views::TRIPLE_DEL_ID, $link_id,
+            [url_var::MASK => views::PHRASE_ID, url_var::ID => $this->id()]);
+        return new button($url, $url_arr)->del(msg_id::WORD_UNLINK);
     }
 
 
@@ -720,14 +663,14 @@ class word extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function dsp_type_selector(string $form, string $style = '', ?type_lists $typ_lst = null): string
+    function dsp_type_selector(string $form, user_message $msg, string $style = '', ?type_lists $typ_lst = null): string
     {
-        global $ui_sys;
         $result = '';
-        if ($ui_sys->typ_lst_cache->phr_typ->get_code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
-            $result .= ' type: ' . $ui_sys->typ_lst_cache->phr_typ->name($this->type_id());
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($phr_typ?->get_code_id($this->type_id($msg)) == phrase_types::FORMULA_LINK) {
+            $result .= ' type: ' . $phr_typ->name($this->type_id($msg));
         } else {
-            $result .= $this->phrase_type_selector($form, $typ_lst);
+            $result .= $this->phrase_type_selector($form, $msg, $typ_lst);
         }
         return $result;
     }
@@ -739,7 +682,7 @@ class word extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
+    public function phrase_type_selector(string $form, user_message $msg, ?type_lists $typ_lst): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list,
@@ -748,7 +691,7 @@ class word extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_phrase_id = $this->type_id();
+        $used_phrase_id = $this->type_id($msg);
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
@@ -768,13 +711,13 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function th(string $back = '', string $style = ''): string
+    function th(array $url_arr = [], string $style = ''): string
     {
-        return (new html_base)->th($this->name_link($back, $style));
+        return (new html_base)->th($this->name_link($url_arr, $style));
     }
 
     /**
@@ -786,13 +729,13 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function td(string $back = '', string $style = '', int $intent = 0): string
+    function td(array $url_arr = [], string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->name_link($back, $style);
+        $cell_text = $this->name_link($url_arr, $style);
         return (new html_base)->td($cell_text, '', $intent);
     }
 
@@ -829,10 +772,10 @@ class word extends sandbox_code_id
      */
 
     /**
-     * @param back_trace $back the last changes to allow undo actions by the user
+     * @param array $url_arr the url vars of the calling page for the back link
      * @return string with the HTML code to show the last changes of the view of this word
      */
-    function log_view(back_trace $back): string
+    function log_view(array $url_arr = []): string
     {
         $log_ui = new change_log_named();
         return '';
@@ -852,12 +795,12 @@ class word extends sandbox_code_id
      * @returns bool true if the word has the given type
      * TODO Switch to php 8.1 and real ENUM
      */
-    function is_type(string $type): bool
+    function is_type(string $type, user_message $msg): bool
     {
-        global $ui_sys;
         $result = false;
-        if ($this->type_id() != Null) {
-            if ($this->type_id() == $ui_sys->typ_lst_cache->phr_typ->id($type)) {
+        $phr_typ = type_lists::phrase_types($msg);
+        if ($this->type_id($msg) != Null and $phr_typ != null) {
+            if ($this->type_id($msg) == $phr_typ->id($type)) {
                 $result = true;
             }
         }
@@ -867,17 +810,17 @@ class word extends sandbox_code_id
     /**
      * @return bool true if the word has the type "time" e.g. "2022 (year)"
      */
-    function is_time(): bool
+    function is_time(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::TIME);
+        return $this->is_type(phrase_types::TIME, $msg);
     }
 
     /**
      * @return bool true if the word has the type "time" e.g. "monthly"
      */
-    function is_time_jump(): bool
+    function is_time_jump(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::TIME_JUMP);
+        return $this->is_type(phrase_types::TIME_JUMP, $msg);
     }
 
     /**
@@ -885,28 +828,28 @@ class word extends sandbox_code_id
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
-    function is_measure(): bool
+    function is_measure(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::MEASURE);
+        return $this->is_type(phrase_types::MEASURE, $msg);
     }
 
     /**
      * @return bool true if the word has the type "information" (e.g. "1967 (year of definition)")
      * if used for a value these phrases are shown only as a tooltip
      */
-    function is_info(): bool
+    function is_info(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::INFO);
+        return $this->is_type(phrase_types::INFO, $msg);
     }
 
     /**
      * @return bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
      */
-    function is_scaling(): bool
+    function is_scaling(user_message $msg): bool
     {
         $result = false;
-        if ($this->is_type(phrase_types::SCALING)
-            or $this->is_type(phrase_types::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_types::SCALING, $msg)
+            or $this->is_type(phrase_types::SCALING_HIDDEN, $msg)) {
             $result = true;
         }
         return $result;
@@ -915,17 +858,17 @@ class word extends sandbox_code_id
     /**
      * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
      */
-    function is_percent(): bool
+    function is_percent(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::PERCENT);
+        return $this->is_type(phrase_types::PERCENT, $msg);
     }
 
     /**
      * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
      */
-    function is_hidden(): bool
+    function is_hidden(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::SCALING_HIDDEN);
+        return $this->is_type(phrase_types::SCALING_HIDDEN, $msg);
     }
 
     /*
@@ -944,7 +887,7 @@ class word extends sandbox_code_id
      *             that the Zurich (city) is the phrase to select
      * @returns string the HTML code to display a word
      */
-    function header(?phrase $is_part_of = null): string
+    function header(user_message $msg, ?phrase $is_part_of = null): string
     {
         $html = new html_base();
 
@@ -962,11 +905,11 @@ class word extends sandbox_code_id
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
+                    $url = $html->url_old(rest_ctrl::VIEW, $is_part_of->id(), [], url_var::WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
-            $url = $this->url_edit();
+            $url = $this->url_edit($msg);
             $title .= $html->ref($url, $html->span($html->esc($this->name()), styles::STYLE_GLYPH), 'Rename word', '', true);
             $result .= $html->dsp_text_h1($title);
         }
@@ -979,18 +922,23 @@ class word extends sandbox_code_id
      * of the current database field values so that on save only the fields the user
      * actually changed are written and a concurrent change by another user is not
      * overwritten. See docs/llm/state-and-messages.md.
+     * the '9'-prefixed back params point to the word default view so the edit mask
+     * can return to the word e.g. on cancel or if the pod blocks the change of an ip user
      *
-     * @return string the url to the change word view e.g. /http/view.php?m=3&id=1&...&8k=USD&8o=...
+     * @return string the url to the change word view e.g. /http/view.php?m=3&id=1&9m=90&9id=1&8k=USD&8o=...
      */
-    private function url_edit(): string
+    private function url_edit(user_message $msg): string
     {
         $html = new html_base();
-        $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', (string)$this->id());
+        $url = $html->url_with_back(
+            $html->url_back(views::WORD_EDIT_ID, $this->id()),
+            [url_var::MASK => views::WORD_ID, url_var::ID => $this->id()]
+        );
         $pre = $html->pre_url_part([
             url_var::NAME => $this->name(),
             url_var::PLURAL => $this->plural,
             url_var::DESCRIPTION => $this->get_description(),
-            url_var::PHRASE_TYPE => $this->type_id(),
+            url_var::PHRASE_TYPE => $this->type_id($msg),
         ]);
         if ($pre != '') {
             $url .= '&' . $pre;
@@ -998,211 +946,14 @@ class word extends sandbox_code_id
         return $url;
     }
 
-    /*
-     * TODO to be replaced by a system view
-     */
-
-    /**
-     * HTML code to edit all word fields
-     * @param string $dsp_graph the html code of the related phrases
-     * @param string $dsp_log the html code of the change log
-     * @param string $dsp_frm the html code of the linked formulas
-     * @param string $dsp_type the html code of the type selector formulas
-     * @param string $back the html code to be opened in case of a back action
-     * @return string the html code to display the edit page
-     */
-    function form_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
-    {
-        $html = new html_base();
-        $result = '';
-
-        if ($this->id() > 0) {
-            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id());
-            $hidden_fields .= $html->form_hidden("back", $back);
-            $hidden_fields .= $html->form_hidden("confirm", '1');
-            $detail_fields = $dsp_frm;
-            $detail_fields .= $html->form_text(url_var::PLURAL, $this->plural, msg_id::FORM_FIELD_PLURAL);
-            $detail_fields .= $html->form_text(url_var::DESCRIPTION, $this->get_description(), msg_id::FORM_FIELD_DESCRIPTION);
-            $detail_fields .= $dsp_type;
-            $detail_row = $html->fr($detail_fields) . '<br>';
-            $result = $header
-                . $html->form(views::WORD_EDIT, $hidden_fields . $detail_row)
-                . '<br>' . $dsp_graph;
-        }
-
-        $result .= $dsp_log;
-
-        return $result;
-    }
-
-
-    /**
-     * HTML code to edit all word fields
-     */
-    function dsp_edit(string $back = ''): string
-    {
-        global $ui_sys;
-        $row_limit = $ui_sys->cfg->get_by([words::ROW, words::LIMIT], def::FALLBACK_DB_PAGE_ROWS);
-        $html = new html_base();
-        $phr_lst_up = $this->parents();
-        $phr_lst_down = $this->children();
-        $dsp_graph = $phr_lst_up->dsp_graph($this->phrase(), $back);
-        $dsp_graph .= $phr_lst_down->dsp_graph($this->phrase(), $back);
-        $wrd_ui = $this;
-        // collect the display code for the user changes
-        $dsp_log = '';
-        $changes = $this->dsp_hist(1, $row_limit, '', $back);
-        if (trim($changes) <> "") {
-            $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
-            $dsp_log .= $changes;
-        }
-        $changes = $this->dsp_hist_links(0, $row_limit, '', $back);
-        if (trim($changes) <> "") {
-            $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
-            $dsp_log .= $changes;
-        }
-        return $wrd_ui->form_edit(
-            $dsp_graph,
-            $dsp_log,
-            //$this->dsp_formula($back),
-            $this->dsp_type_selector(views::WORD_EDIT),
-            $back);
-    }
 
     /*
      * to review
      */
 
-    function dsp_graph(foaf_direction $direction, verb_list $link_types, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, user_message $msg, verb_list $link_types, array $url_arr = []): string
     {
-        return $this->phrase()->dsp_graph($direction, $link_types, $back);
-    }
-
-    /**
-     * returns the html code to select a word link type
-     * database link must be open
-     * TODO: similar to verb->dsp_selector maybe combine???
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     */
-    function selector_link($id, $form, $back, ?type_lists $typ_lst): string
-    {
-        /*
-        log_debug('verb id ' . $id);
-
-        $result = '';
-
-        $sql_name = "";
-        if ($db_con->get_type() == sql_db::POSTGRES) {
-            $sql_name = "CASE WHEN (name_reverse  <> '' IS NOT TRUE AND name_reverse <> verb_name) THEN CONCAT(verb_name, ' (', name_reverse, ')') ELSE verb_name END AS name";
-        } elseif ($db_con->get_type() == sql_db::MYSQL) {
-            $sql_name = "IF (name_reverse <> '' AND name_reverse <> verb_name, CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name";
-        } else {
-            log_err('Unknown db type ' . $db_con->get_type());
-        }
-        $sql_avoid_code_check_prefix = "SELECT";
-        $sql = $sql_avoid_code_check_prefix . " * FROM (
-            SELECT verb_id AS id, 
-                   " . $sql_name . ",
-                   words
-              FROM verbs 
-      UNION SELECT verb_id * -1 AS id, 
-                   CONCAT(name_reverse, ' (', verb_name, ')') AS name,
-                   words
-              FROM verbs 
-             WHERE name_reverse <> '' 
-               AND name_reverse <> verb_name) AS links
-          ORDER BY words DESC, name;";
-        $sel = new html_selector;
-        $sel->form = $form;
-        $sel->name = 'verb';
-        $sel->sql = $sql;
-        $sel->selected = $id;
-        $sel->dummy_text = '';
-        */
-        global $ui_sys;
-        $usr = $ui_sys->usr;
-        // fall back to the frontend request cache if the caller has no type list
-        if ($typ_lst == null) {
-            log_err('type list cache missing, falling back to the request cache');
-            $typ_lst = $ui_sys->typ_lst_cache;
-        }
-        // TODO add $id to the parameters
-        $result = $typ_lst->vrb->selector($form);
-
-        if ($usr->is_admin()) {
-            // admin users should always have the possibility to create a new link type
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('add new link type',
-                new html_base()->url_new(views::VERB_ADD_ID, 0, '', $back));
-        }
-
-        return $result;
-    }
-
-    /**
-     * to select an existing word to be added
-     */
-    private function selector_add($id, $form): string
-    {
-        $pattern = '';
-        $phr_lst = new word_list();
-        $phr_lst->load_like($pattern);
-        //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($form, $id, url_var::WORD, msg_id::FORM_SELECT_WORD);
-    }
-
-
-    /*
-     * select
-     */
-
-    /**
-     * @returns string the html code to select a word
-     */
-    function selector_word(int $id, int $pos, string $form): string
-    {
-        $pattern = '';
-        $phr_lst = new word_list();
-        $phr_lst->load_like($pattern);
-
-        if ($pos > 0) {
-            $name = url_var::WORD_POS . $pos;
-        } else {
-            $name = url_var::WORD;
-        }
-        return $phr_lst->selector($form, $id, $name, msg_id::FORM_SELECT_WORD);
-    }
-
-    /**
-     * display the history of a word
-     * maybe move this to a new object user_log_display
-     * because this is very similar to a value linked function
-     */
-    function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
-    {
-        $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(word::class, $this->id(), $size, $page, '', null);
-    }
-
-    /**
-     * display the history of a word
-     */
-    function dsp_hist_links($page, $size, $call, $back): string
-    {
-        log_debug($this->id() . ",size" . $size . ",b" . $size);
-        $result = ''; // reset the html code var
-
-        $log_ui = new user_log_display();
-        $log_ui->id = $this->id();
-        $log_ui->type = word::class;
-        $log_ui->page = $page;
-        $log_ui->size = $size;
-        $log_ui->call = $call;
-        $log_ui->back = $back;
-        $result .= $log_ui->dsp_hist_links();
-
-        log_debug('done');
-        return $result;
+        return $this->phrase()->dsp_graph($direction, $msg, $link_types, $url_arr);
     }
 
 
@@ -1236,18 +987,19 @@ class word extends sandbox_code_id
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->ex_system();
-        $msk_lst = $msk_lst->ex_non_phrase();
+        $msk_lst = $msk_lst->ex_system($msg);
+        $msk_lst = $msk_lst->ex_non_phrase($msg);
         // also send the opening view id as the '8'-prefixed pre value so the confirm view can show the
         // existing view and detect whether the user actually changed it (see url_var::PRE);
         // a re-render after a save error keeps the original db snapshot via pre_value

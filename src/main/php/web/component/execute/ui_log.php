@@ -33,34 +33,57 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_CONST . 'def.php';
-include_once paths::SHARED_CONST . 'triples.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'change_log_actions.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
+include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 
 class ui_log
 {
+
+    // what the all user overwrites column of the user page adds beside when, who and what: the type
+    // of the changed object, the undo icon and the icon to the values of the other users; the values
+    // of the other users are not shown inline, because reading them costs a query per changed object
+    // and the rows are not grouped by type, because the grouping hides how recent a change is
+    // (see change_log_actions and docs/llm/pending.md)
+    const array USER_PAGE_TYPES_AND_ACTIONS = [
+        change_log_actions::OBJECT_TYPE,
+        change_log_actions::UNDO,
+        change_log_actions::OTHERS_LINK,
+    ];
+
 
     /*
      * display
@@ -69,12 +92,293 @@ class ui_log
     /**
      * @return string with the html code that shows the recent changes of this object
      */
-    function system_change_log(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
+    function system_change_log(
+        db_object $dbo,
+        change_log_list $log_lst,
+        user_message $msg,
+        array $url_arr,
+        bool $test_mode = false
+    ): string
     {
-        // a word or triple loaded for its page carries its recent changes directly (like the
-        // related values, formulas and references); otherwise use the given change log or, if
-        // that is empty, the global request cache
-        if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
+        // the pure change log table below uses the same prepared list, so both are sorted equally
+        return $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode)->dsp($url_arr, false, false, $test_mode);
+    }
+
+    /**
+     * the pure (borderless) change log table of the given object with the three columns
+     * when, who and what; the number of shown rows and the max chars of the what column both
+     * come from the frontend config (config.yaml, like system_change_log above)
+     *
+     * @param db_object $dbo the word, triple or formula whose change log is shown
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @return string the html code of the borderless when / who / what change log table
+     *                or an empty string for an object that is not yet in the database, so that
+     *                the tab box drops the tab (like user_overwrites_table_pure)
+     */
+    function change_log_table_pure(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode = false
+    ): string
+    {
+        $result = '';
+        // an object without a database id does not exist yet (e.g. the object of an add form), so it
+        // can never have a change log and the table would show nothing but the when / who / what
+        // header; an existing object keeps the tab even if the log is empty here, because the log of
+        // a rendered page can be empty just because it has not been loaded (e.g. in test mode)
+        if ($dbo->id() != 0) {
+            // use the same filtered, sorted and row-limited list as system_change_log, so the
+            // borderless table is sorted with the same parameters as the previously used change log
+            $log_lst = $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode);
+            $result = $this->table_pure($log_lst, $msg, $test_mode);
+        }
+        return $result;
+    }
+
+    /**
+     * the borderless when / who / what table of the session user's own overwrites of the given
+     * object - the changes the user has written to the user_ overlay tables (e.g. user_words for
+     * a word) - used by the 'my' tab of the view tab box; an empty string if the user is not
+     * logged in or has no overwrites of this object, so the tab is only shown when it has content
+     *
+     * @param db_object $dbo the word, triple or formula whose user overwrites are shown
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function user_overwrites_table_pure(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode = false
+    ): string
+    {
+        // the max number of chars of the what column and the max number of rows both come from the
+        // frontend config (config.yaml > ... > change log > what limit / row limit)
+        global $ui_sys;
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0) {
+            $my_lst = $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode, $usr);
+            if (!$my_lst->is_empty()) {
+                $result = $this->table_pure($my_lst, $msg, $test_mode);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the fixed column of the user page with all changes the shown user has written to the user
+     * sandbox (overlay) tables - the word and triple overwrites and every further object type
+     * listed in change_tables::USER_TABLES - reusing the filter, sort and table of the 'my'
+     * tab of the word page, but filtered by the shown user over all objects instead of by the
+     * session user for one object; unlike a tab the column is always shown, so an empty list
+     * renders the no-changes message instead of an empty string
+     *
+     * @param db_object $dbo the user shown on the page whose sandbox changes are listed
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param user_message $msg to collect the mapping errors
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param msg_id|null $ui_msg_code_id the message id of the headline shown in the user language
+     * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @param array|null $types_and_actions the change_log_actions that each row adds beside when,
+     *                                      who and what; null for the default columns of the user
+     *                                      page and an empty list for a plain when / who / what
+     *                                      table
+     * @return string the html code with the overwrite table or the no-changes message
+     */
+    function all_user_overwrites(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode = false,
+        ?msg_id         $ui_msg_code_id = null,
+        array           $url_array = [],
+        ?array          $types_and_actions = null
+    ): string
+    {
+        global $mtr;
+        global $ui_sys;
+
+        $html = new html_base();
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
+        }
+        $my_lst = new change_log_list();
+        if ($dbo instanceof user) {
+            // a user loaded for its page carries the changes of the user directly (see
+            // user::load_by_id_with_related); otherwise use the given change log or, if that
+            // is empty, the global request cache (like prepared_change_log, but without the
+            // object filter, because all sandbox changes of the shown user are listed)
+            if ($dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
+                $log_lst = $dbo->chg_log;
+            } elseif ($log_lst->is_empty() and $ui_sys != null) {
+                $log_lst = $ui_sys->chg_log;
+            }
+            // hide the changes of the admin-only fields from users without admin rights
+            $my_lst = $log_lst->filter_admin_fields($ui_sys->usr ?? null);
+            // keep only the sandbox (user_ table) changes of the shown user
+            $my_lst = $my_lst->filter_user_overwrites($dbo);
+            $my_lst->sort_by_time_and_what($test_mode);
+            // cut the list to the number of rows that can be shown plus one row to detect that
+            // more changes exist, so that the rows are prepared only for the changes that the
+            // user can see; the api is asked for the same number (see
+            // change_log_list::load_by_user), so this only limits a list from the request cache
+            $max_rows = $this->configured_row_limit($msg);
+            if ($max_rows > 0) {
+                $my_lst = $my_lst->head($max_rows + 1);
+            }
+        }
+        if ($my_lst->is_empty()) {
+            $result .= $mtr->txt(msg_id::ALL_USER_OVERWRITES_NONE);
+        } else {
+            // this column lists the changes of all objects of the user, so unlike the 'my' tab of
+            // an object page the what column must name the changed object, because 'added user
+            // description' alone does not tell the user which word or triple has been changed
+            // and each row gets the two action icons, so that the user can reset one overwrite and
+            // can see what the other users have set without opening the tabs of each object page
+            $lst_types_and_actions = $types_and_actions ?? self::USER_PAGE_TYPES_AND_ACTIONS;
+            if (in_array(change_log_actions::GROUP_BY_TYPE, $lst_types_and_actions, true)) {
+                $result .= $this->tables_by_type($my_lst, $msg, $test_mode, $lst_types_and_actions, $url_array);
+            } else {
+                $result .= $this->table_pure(
+                    $my_lst, $msg, $test_mode, true, $lst_types_and_actions, $url_array);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * one table per object type instead of one table for all changes, each table with the type as
+     * its header, like the retired user_display_old page showed the overwrites
+     *
+     * the type whose change is the newest comes first, so if the last thing the user did was a
+     * source update the sources are on top; the list is already sorted newest first, so the order
+     * in which the types first appear is the order of the tables
+     *
+     * @param change_log_list $log_lst the filtered, sorted and row-limited change log to render
+     * @param user_message $msg to collect the mapping errors
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param array $types_and_actions the change_log_actions of the tables
+     * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @return string the html code of one table per object type
+     */
+    private function tables_by_type(
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode,
+        array           $types_and_actions,
+        array           $url_array
+    ): string
+    {
+        $html = new html_base();
+        $result = '';
+        // the header of each table names the type, so a type column would only repeat it
+        $tbl_entries = array_filter(
+            $types_and_actions,
+            fn($entry) => $entry->is_action_column());
+        foreach ($log_lst->split_by_object_type() as $type_name => $type_lst) {
+            $result .= $html->text_h4($html->esc($type_name));
+            // the row limit is applied to the complete list before the split, so a group is never
+            // cut again and the paging footer of a group would repeat the one of the whole list
+            $result .= $this->table_pure(
+                $type_lst, $msg, $test_mode, true, $tbl_entries, $url_array, 0);
+        }
+        return $result;
+    }
+
+    /**
+     * render the prepared change log as the borderless when / who / what table with the char and
+     * row limits from the frontend config (config.yaml > ... > change log > what limit / row limit);
+     * the shared final step of change_log_table_pure, user_overwrites_table_pure and all_user_overwrites
+     *
+     * @param change_log_list $log_lst the filtered, sorted and row-limited change log to render
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @param bool $with_object true to name the changed object in the what column, which is needed
+     *                          if the table lists the changes of more than one object
+     * @param array $types_and_actions the change_log_actions that the table adds beside when, who
+     *                                 and what, which need the listed changes to be the user
+     *                                 overwrites of the session user
+     * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @param int|null $max_rows the row limit of this table, null for the configured limit and
+     *                           zero for a table whose list is already limited by the caller
+     * @return string the html code of the borderless when / who / what change log table
+     */
+    private function table_pure(
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode,
+        bool            $with_object = false,
+        array           $types_and_actions = [],
+        array           $url_array = [],
+        ?int            $max_rows = null
+    ): string
+    {
+        global $ui_sys;
+        $what_max_chars = 0;
+        if ($ui_sys?->cfg !== null) {
+            $what_max_chars = (int)$ui_sys->cfg->get_by(
+                [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg, 0);
+        }
+        $rows = $max_rows ?? $this->configured_row_limit($msg);
+        return $log_lst->tbl_when_who_what(
+            $what_max_chars, $rows, $test_mode, $with_object, $types_and_actions, $url_array);
+    }
+
+    /**
+     * the configured maximum number of change rows shown in a change log table
+     * (config.yaml "user > frontend > change log > row limit"); shared by the renderer and by
+     * all_user_overwrites, so that never more rows are prepared than the table shows
+     *
+     * the fallback is a real limit and not "no limit", because a page must never grow with the
+     * number of changes of a user (see docs/llm/frontend.md); it is the same const that
+     * change_log_list::load_by_user uses for this config key, so that the number of rows loaded
+     * from the api and the number of rows shown can never drift apart
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximum number of change rows to show
+     */
+    private function configured_row_limit(user_message $msg): int
+    {
+        global $ui_sys;
+        $result = config::ROW_LIMIT;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg, config::ROW_LIMIT);
+        }
+        return $result;
+    }
+
+    /**
+     * select the change log source for the given object (the object's own recent changes, else the
+     * given list, else the request cache), keep only its changes filtered to the object and sorted
+     * newest first (change_log_list::sort_by_time_and_what), and limit them to the configured number
+     * of rows; the shared preparation of system_change_log and change_log_table_pure so both use the
+     * exact same filter, sort and limit parameters
+     *
+     * @param db_object $dbo the word, triple or formula whose change log is shown
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param bool $test_mode true to sort the change time at whole-second resolution so the snapshot stays stable
+     * @param user|null $overwrites_of if set keep only the user sandbox changes of this user (the 'my' tab)
+     * @return change_log_list the filtered, sorted and row-limited change log ready to render
+     */
+    private function prepared_change_log(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode = false,
+        ?user           $overwrites_of = null
+    ): change_log_list
+    {
+        // an object loaded for its page carries its recent changes directly,
+        // else use the given change log or, if that is empty, the request cache
+        if ($dbo instanceof sandbox
+            and $dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
             $log_lst = $dbo->chg_log;
         } elseif ($log_lst->is_empty()) {
             global $ui_sys;
@@ -87,18 +391,28 @@ class ui_log
         }
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);
-        // newest change first; same-time changes are sorted descending by the entry text so the
-        // display order never depends on the api/db row order (see docs/llm/frontend.md)
-        $log_lst->sort_by_time_and_entry();
+        // hide the changes of the admin-only fields (the cached impact and usage numbers)
+        // from users without admin or system rights
+        global $ui_sys;
+        $log_lst = $log_lst->filter_admin_fields($ui_sys->usr ?? null);
+        // for the 'my' tab keep only the user sandbox (user_ table) changes of the session user;
+        // filtered before the row limit so older overwrites are never pushed out by other changes
+        if ($overwrites_of != null) {
+            $log_lst = $log_lst->filter_user_overwrites($overwrites_of);
+        }
+        // newest change first; same-time changes are sorted ascending by the what text so the
+        // display order never depends on the api/db row order (see docs/llm/frontend.md); in test
+        // mode the time is bucketed to the whole second so sub-second write jitter cannot reorder rows
+        $log_lst->sort_by_time_and_what($test_mode);
         // the number of change rows to show comes from the frontend config (like the values list)
         global $ui_sys;
         $limit = def::FALLBACK_DB_PAGE_ROWS;
         if ($ui_sys?->cfg !== null) {
             $limit = (int)$ui_sys->cfg->get_by(
                 [triples::WORD_CHANGES, triples::ROW_LIMIT, words::FRONTEND, words::USER],
-                def::FALLBACK_DB_PAGE_ROWS);
+                $msg, def::FALLBACK_DB_PAGE_ROWS);
         }
-        return $log_lst->head($limit)->dsp(null, false, false, $test_mode);
+        return $log_lst->head($limit);
     }
 
     /**
@@ -109,7 +423,11 @@ class ui_log
      * @param msg_id|null $ui_msg_code_id the message id of the headline shown in the user language
      * @return string the html code with the error list or the no-error message
      */
-    function user_system_errors(sys_log_list $err_lst, ?msg_id $ui_msg_code_id = null): string
+    function user_system_errors(
+        sys_log_list $err_lst,
+        user_message $msg,
+        ?msg_id      $ui_msg_code_id = null
+    ): string
     {
         global $mtr;
         global $ui_sys;
@@ -125,12 +443,12 @@ class ui_log
             if ($ui_sys?->cfg !== null) {
                 $limit = (int)$ui_sys->cfg->get_by(
                     [triples::SYSTEM_ERRORS, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                    def::FALLBACK_USER_ERRORS
+                    $msg, def::FALLBACK_USER_ERRORS
                 );
             } else {
                 $limit = def::FALLBACK_USER_ERRORS;
             }
-            $result .= $err_lst->head($limit)->get_html();
+            $result .= $err_lst->head($limit)->get_html($msg);
         }
         return $result;
     }

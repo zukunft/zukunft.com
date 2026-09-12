@@ -1,0 +1,1721 @@
+{
+  "version": "0.0.2",
+  "time": "2026-08-29 12:00:00",
+  "user": "Timon",
+  "selection": [
+    "AI compute demand versus capacity"
+  ],
+  "description": "Tests the question: if AI improves itself and becomes more efficient, will human demand still be large enough to keep the data centres busy - or will they be dismantled like the US railroad network? Three reference cases are encoded: the US rail network (peak 1916, ~45% of route miles removed while freight output grew), the 1990s fibre glut (only a small share of laid fibre was lit in 2002, yet the asset later carried the cloud), and the current AI build-out. The key modelled distinction is asset lifetime: long-lived shells, power hookups and land versus short-lived accelerators. Measured values carry a source; projections and structural estimates carry 'assumed value' with a numeric confidence (0-1) so weak assumptions surface first. All content in English per project convention. Patched to 0.0.2 with the competing scaffolding hypothesis: today's high token count per task is largely error-correction and missing memory rather than irreducible work, so per-task compute at fixed difficulty should fall as models and harnesses improve. The decisive quantity is therefore the ratio between the yearly fall in compute per task at fixed difficulty and the yearly rise in the difficulty of tasks delegated.",
+  "words": [
+    {
+      "name": "artificial intelligence",
+      "description": "the capability of computational systems to perform tasks typically associated with human intelligence.",
+      "refs": [
+        {
+          "name": "Artificial_intelligence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11660",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "compute",
+      "description": "computational capacity available for training and running machine-learning models.",
+      "refs": [
+        {
+          "name": "Computation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "demand",
+      "description": "the quantity of a good or service that buyers are willing and able to purchase at a given price.",
+      "refs": [
+        {
+          "name": "Demand",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q214255",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum output an installed facility can sustain.",
+      "refs": [
+        {
+          "name": "Capacity_utilization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "efficiency",
+      "description": "the ratio of useful output to total input; here the compute cost of a unit of model capability.",
+      "refs": [
+        {
+          "name": "Efficiency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q537963",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "utilization",
+      "type": "percent",
+      "description": "the share of installed capacity actually in productive use.",
+      "refs": [
+        {
+          "name": "Capacity_utilization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "data centre",
+      "description": "a building or group of buildings dedicated to housing computer systems and associated components.",
+      "refs": [
+        {
+          "name": "Data_center",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q182349",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "token",
+      "description": "the unit of text a language model reads or writes; the billing and throughput unit of inference.",
+      "refs": [
+        {
+          "name": "Large_language_model",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "inference",
+      "description": "running a trained model to produce output, as opposed to training it.",
+      "refs": [
+        {
+          "name": "Inference",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "price",
+      "description": "the amount of money expected or given in payment for something.",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "programming",
+      "description": "the process of designing and building executable computer programs; here the workload class driving agentic token volume.",
+      "refs": [
+        {
+          "name": "Computer_programming",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "agentic",
+      "description": "of a workload in which the model itself issues further calls in loops and tool chains, so that one human request generates many model requests."
+    },
+    {
+      "name": "verification",
+      "description": "the process of establishing that a claim or output is true; here the human- or system-side capacity to check AI output before acting on it.",
+      "refs": [
+        {
+          "name": "Verification_and_validation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Jevons",
+      "description": "William Stanley Jevons, who observed in 1865 that greater efficiency in coal use raised rather than lowered total coal consumption.",
+      "refs": [
+        {
+          "name": "William_Stanley_Jevons",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q317160",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "paradox",
+      "description": "a statement or situation that appears self-contradictory yet holds.",
+      "refs": [
+        {
+          "name": "Paradox",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "railroad",
+      "description": "a track-based land transport system; here the US freight rail network used as a historical build-out reference case.",
+      "refs": [
+        {
+          "name": "Rail_transport",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22667",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "network",
+      "description": "a set of connected links and nodes forming an infrastructure.",
+      "refs": [
+        {
+          "name": "Network_theory",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "route",
+      "description": "a path between places; here counted as route miles of line rather than total track laid.",
+      "refs": [
+        {
+          "name": "Rail_transport",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "mile",
+      "type": "measure",
+      "description": "a unit of length equal to 1.609344 kilometres.",
+      "refs": [
+        {
+          "name": "Mile",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q253276",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "freight",
+      "description": "goods transported in bulk; here measured in ton-miles.",
+      "refs": [
+        {
+          "name": "Cargo",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fibre",
+      "description": "optical fibre cable used for long-distance data transmission; here the 1990s telecom build-out reference case.",
+      "refs": [
+        {
+          "name": "Optical_fiber",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "lit",
+      "description": "of laid optical fibre, actually carrying traffic rather than sitting unused ('dark')."
+    },
+    {
+      "name": "accelerator",
+      "description": "specialised processing hardware for machine learning, such as a GPU; the short-lived part of a data centre investment.",
+      "refs": [
+        {
+          "name": "AI_accelerator",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "shell",
+      "description": "the long-lived physical part of a data centre: building, cooling, grid connection and land."
+    },
+    {
+      "name": "lifetime",
+      "description": "the period over which an asset remains economically useful.",
+      "refs": [
+        {
+          "name": "Depreciation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "capital expenditure",
+      "description": "funds used to acquire or upgrade physical assets.",
+      "refs": [
+        {
+          "name": "Capital_expenditure",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1194164",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "power",
+      "type": "measure",
+      "description": "the rate of energy transfer; here the connected electrical load of data centres.",
+      "refs": [
+        {
+          "name": "Power_(physics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gigawatt",
+      "type": "measure",
+      "description": "one billion watts.",
+      "refs": [
+        {
+          "name": "Watt",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "megawatt",
+      "type": "measure",
+      "description": "one million watts.",
+      "refs": [
+        {
+          "name": "Watt",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "dollar billion",
+      "type": "measure",
+      "description": "billions of US dollars.",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "trillion",
+      "type": "measure",
+      "description": "the natural number 10^12 in the short scale.",
+      "refs": [
+        {
+          "name": "1,000,000,000,000",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "month",
+      "type": "measure",
+      "description": "a unit of time of about 30 days.",
+      "refs": [
+        {
+          "name": "Month",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year",
+      "type": "measure",
+      "description": "the orbital period of Earth about the Sun.",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q577",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "type": "percent",
+      "description": "a number or ratio expressed as a fraction of 100.",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "factor",
+      "description": "a multiplicative ratio between two quantities.",
+      "refs": [
+        {
+          "name": "Ratio",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "probability",
+      "type": "percent",
+      "description": "the likelihood, 0 to 1, that a described event occurs.",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reduction",
+      "description": "the amount by which a quantity has been decreased from an earlier level.",
+      "refs": [
+        {
+          "name": "Subtraction",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "peak",
+      "description": "the highest level a quantity reached before declining.",
+      "refs": [
+        {
+          "name": "Maxima_and_minima",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "US",
+      "description": "the United States of America.",
+      "refs": [
+        {
+          "name": "United_States",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "North America",
+      "description": "the continent comprising Canada, the United States, Mexico and adjacent states.",
+      "refs": [
+        {
+          "name": "North_America",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q49",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Germany",
+      "description": "the Federal Republic of Germany.",
+      "refs": [
+        {
+          "name": "Germany",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "world",
+      "description": "the Earth and all its inhabitants; here the global aggregate.",
+      "refs": [
+        {
+          "name": "World",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q16502",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "1916",
+      "type": "time",
+      "description": "the year the US railroad network reached its all-time route-mile peak."
+    },
+    {
+      "name": "2002",
+      "type": "time",
+      "description": "the year after the telecom bust in which the share of lit fibre was measured."
+    },
+    {
+      "name": "2024",
+      "type": "time",
+      "description": "reference year for the earliest token-volume data point."
+    },
+    {
+      "name": "2025",
+      "type": "time",
+      "description": "reference year for installed capacity and workload-mix data."
+    },
+    {
+      "name": "2026",
+      "type": "time",
+      "description": "the current year."
+    },
+    {
+      "name": "2030",
+      "type": "time",
+      "description": "the projection horizon used for capacity forecasts."
+    },
+    {
+      "name": "minimum",
+      "description": "the least amount considered plausible.",
+      "refs": [
+        {
+          "name": "Maxima_and_minima",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "likely",
+      "description": "the outcome carrying the highest probability mass under the assumed scenario.",
+      "refs": [
+        {
+          "name": "Likelihood_function",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "maximum",
+      "description": "the greatest amount considered plausible.",
+      "refs": [
+        {
+          "name": "Maxima_and_minima",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "measured",
+      "description": "ascertained by an external source rather than assumed; provenance qualifier."
+    },
+    {
+      "name": "assumed",
+      "description": "estimated or projected rather than sourced; provenance qualifier carrying a confidence."
+    },
+    {
+      "name": "value",
+      "description": "a stored number in the graph; combined with 'measured' or 'assumed' to mark provenance.",
+      "refs": [
+        {
+          "name": "Value_(mathematics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "confidence",
+      "type": "percent",
+      "description": "degree of belief, 0 to 1, that an assumed value is correct; low confidence marks an assumption worth checking first.",
+      "refs": [
+        {
+          "name": "Confidence",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "task",
+      "description": "a unit of delegated work with a defined completion criterion; the natural denominator for agent compute cost.",
+      "refs": [
+        {
+          "name": "Task_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "difficulty",
+      "description": "how demanding a task is, held separate from how efficiently a given system solves it."
+    },
+    {
+      "name": "orchestration",
+      "description": "the harness layer that mediates control flow, loop budgets, retry policy and tool input/output around a model.",
+      "refs": [
+        {
+          "name": "Orchestration_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "overhead",
+      "description": "resource consumption that does not contribute to the result, here tokens spent on retries, replayed context and redundant reasoning.",
+      "refs": [
+        {
+          "name": "Overhead_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "saving",
+      "description": "the reduction in resource consumption achieved by a change, expressed as a share of the prior level."
+    },
+    {
+      "name": "repetition",
+      "description": "the property of a task recurring in near-identical form, which makes its solution path cacheable.",
+      "refs": [
+        {
+          "name": "Cache_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ingest",
+      "description": "the reading of external state, such as a codebase or document corpus, that a system must perform regardless of its own capability."
+    }
+  ],
+  "triples": [
+    {
+      "name": "measured value",
+      "from": "measured",
+      "verb": "of",
+      "to": "value",
+      "description": "provenance qualifier: the number comes from an external reference."
+    },
+    {
+      "name": "assumed value",
+      "from": "assumed",
+      "verb": "of",
+      "to": "value",
+      "description": "provenance qualifier: the number is an estimate carrying a confidence."
+    },
+    {
+      "name": "railroad network",
+      "from": "network",
+      "verb": "of",
+      "to": "railroad",
+      "description": "the US freight rail network, measured in route miles of line owned or operated."
+    },
+    {
+      "name": "route mile",
+      "from": "mile",
+      "verb": "of",
+      "to": "route",
+      "description": "one mile of line, counted once regardless of how many parallel tracks it carries."
+    },
+    {
+      "name": "network peak",
+      "from": "peak",
+      "verb": "of",
+      "to": "network",
+      "description": "the highest extent a network reached before contraction; for US rail this was 1916, decades before its traffic peak."
+    },
+    {
+      "name": "network reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "network",
+      "description": "the share of the peak network subsequently abandoned; the quantity the railroad analogy turns on."
+    },
+    {
+      "name": "freight share",
+      "from": "freight",
+      "verb": "of",
+      "to": "network",
+      "description": "the share of national long-distance ton-miles still carried by the reduced rail network - the evidence that contraction was concentration, not demand collapse."
+    },
+    {
+      "name": "lit fibre",
+      "from": "lit",
+      "verb": "of",
+      "to": "fibre",
+      "description": "the share of laid optical fibre actually carrying traffic; the 1990s glut's utilization measure."
+    },
+    {
+      "name": "token volume",
+      "from": "token",
+      "verb": "per",
+      "to": "month",
+      "description": "tokens processed per month, the throughput measure of inference demand."
+    },
+    {
+      "name": "inference price",
+      "from": "price",
+      "verb": "of",
+      "to": "inference",
+      "description": "the price of a unit of inference at fixed capability; falling fast, which is the efficiency term in the question."
+    },
+    {
+      "name": "programming share",
+      "from": "programming",
+      "verb": "of",
+      "to": "token volume",
+      "description": "the share of tokens generated by coding and agent workflows rather than by direct human questions."
+    },
+    {
+      "name": "agentic demand",
+      "from": "demand",
+      "verb": "kind of",
+      "to": "agentic",
+      "description": "demand in which the model's own loops, not the number of human questions, set the token volume; the reason 'enough questions' is the wrong demand unit."
+    },
+    {
+      "name": "verification limit",
+      "from": "verification",
+      "verb": "of",
+      "to": "demand",
+      "description": "thesis: once compute is near-free, the binding constraint on useful AI demand is the capacity to check outputs, not the supply of questions or of compute."
+    },
+    {
+      "name": "Jevons paradox",
+      "from": "Jevons",
+      "verb": "with",
+      "to": "paradox",
+      "description": "efficiency gains lowering unit cost raise rather than lower total consumption, as long as demand is sufficiently elastic."
+    },
+    {
+      "name": "data centre capacity",
+      "from": "capacity",
+      "verb": "of",
+      "to": "data centre",
+      "description": "installed data centre capacity, measured as connected electrical load."
+    },
+    {
+      "name": "data centre utilization",
+      "from": "utilization",
+      "verb": "of",
+      "to": "data centre",
+      "description": "the share of installed data centre capacity in productive use; the quantity the question asks about."
+    },
+    {
+      "name": "accelerator lifetime",
+      "from": "lifetime",
+      "verb": "of",
+      "to": "accelerator",
+      "description": "the economic life of AI accelerators; short, which is what breaks the railroad and fibre analogies."
+    },
+    {
+      "name": "shell lifetime",
+      "from": "lifetime",
+      "verb": "of",
+      "to": "shell",
+      "description": "the economic life of buildings, cooling and grid connections; long, like rail and fibre."
+    },
+    {
+      "name": "accelerator capex share",
+      "from": "capital expenditure",
+      "verb": "of",
+      "to": "accelerator",
+      "description": "the share of data centre capital expenditure sunk into short-lived silicon rather than long-lived shell."
+    },
+    {
+      "name": "gigawatt power",
+      "from": "power",
+      "verb": "scaled by",
+      "to": "gigawatt",
+      "description": "electrical load measured in gigawatts."
+    },
+    {
+      "name": "megawatt power",
+      "from": "power",
+      "verb": "scaled by",
+      "to": "megawatt",
+      "description": "electrical load measured in megawatts."
+    },
+    {
+      "name": "trillion token",
+      "from": "trillion",
+      "verb": "scaled by",
+      "to": "token",
+      "description": "token counts measured in trillions."
+    },
+    {
+      "name": "yearly factor",
+      "from": "factor",
+      "verb": "per",
+      "to": "year",
+      "description": "a multiplicative rate of change per year."
+    },
+    {
+      "name": "AI capacity",
+      "from": "capacity",
+      "verb": "of",
+      "to": "artificial intelligence",
+      "description": "the share of data centre capacity dedicated to AI training and inference."
+    },
+    {
+      "name": "compute per task",
+      "from": "compute",
+      "verb": "per",
+      "to": "task",
+      "description": "compute consumed to complete one task; falls with model and harness quality at fixed difficulty."
+    },
+    {
+      "name": "task difficulty",
+      "from": "difficulty",
+      "verb": "of",
+      "to": "task",
+      "description": "the demandingness of the tasks actually delegated; rises as per-task cost falls, which is the counter-term to the scaffolding hypothesis."
+    },
+    {
+      "name": "orchestration overhead",
+      "from": "overhead",
+      "verb": "of",
+      "to": "orchestration",
+      "description": "the share of tokens attributable to harness design rather than to the work itself; the quantity the scaffolding hypothesis says will shrink toward zero."
+    },
+    {
+      "name": "orchestration saving",
+      "from": "saving",
+      "verb": "of",
+      "to": "orchestration",
+      "description": "measured cost reduction from swapping only the orchestration layer, with tasks and models held constant."
+    },
+    {
+      "name": "model choice saving",
+      "from": "saving",
+      "verb": "of",
+      "to": "artificial intelligence",
+      "description": "cost reduction available from model choice alone on the same workload; the comparison baseline showing harness beats model as a cost lever."
+    },
+    {
+      "name": "repetition share",
+      "from": "repetition",
+      "verb": "of",
+      "to": "task",
+      "description": "the share of workload that recurs in cacheable form, and is therefore the part most exposed to near-total token elimination."
+    },
+    {
+      "name": "ingest share",
+      "from": "ingest",
+      "verb": "of",
+      "to": "token volume",
+      "description": "the share of tokens spent reading external state, which does not shrink with model capability and forms the floor under per-task compute."
+    }
+  ],
+  "sources": [
+    {
+      "name": "AAR short history freight railroads",
+      "description": "Association of American Railroads, A Short History of U.S. Freight Railroads: by 1917 about 1,500 US railroads operated around 254,000 miles; mileage had already peaked in 1916 and employment peaked in 1920.",
+      "url": "https://www.aar.org/wp-content/uploads/2018/05/AAR-Short-History-American-Freight-Railroads.pdf"
+    },
+    {
+      "name": "FRA freight rail overview",
+      "description": "US Federal Railroad Administration: the US freight rail network runs on almost 140,000 route miles; rail carries roughly 28 percent of US freight movement measured in ton-miles.",
+      "url": "https://railroads.dot.gov/rail-network-development/freight-rail-overview"
+    },
+    {
+      "name": "Fabricated Knowledge telecom bubble",
+      "description": "Fabricated Knowledge, Lessons from History: The Rise and Fall of the Telecom Bubble, citing the Wall Street Journal that only 2.7 percent of laid fibre was in use in 2002 after the overbuild.",
+      "url": "https://www.fabricatedknowledge.com/p/lessons-from-history-the-rise-and"
+    },
+    {
+      "name": "SGNL Jevons inference 2026",
+      "description": "SGNL Intelligence, 28 Mar 2026, on the OpenRouter State of AI study (over 100 trillion tokens analysed): programming rose from roughly 11 percent of token volume in early 2025 to over 50 percent by March 2026; agent-driven workflow tokens exceed half of platform output.",
+      "url": "https://sgnl.blog/2026-03-28-jevons-paradox-inference/"
+    },
+    {
+      "name": "arXiv inference economics 2026",
+      "description": "arXiv 2607.07207, Memory Scarcity, Open Models, and the Restructuring of the AI Industry 2026-2030: Google token volume from about 9.7 trillion per month in May 2024 to 480 trillion at I/O 2025, 1.3 quadrillion by October 2025 and 3.2 quadrillion by May 2026, a stated 7x year-over-year rate.",
+      "url": "https://arxiv.org/pdf/2607.07207"
+    },
+    {
+      "name": "SSRN Jevons AI infrastructure 2026",
+      "description": "Do, Tuan Anh, The Jevons Paradox in AI Infrastructure: Efficiency, Rebound, and the Limits of Cost Reduction, 15 June 2026, DOI 10.2139/ssrn.6775299; companion work reports inference prices falling roughly 40x per year at fixed capability while token volumes grew about sevenfold year over year.",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6775299"
+    },
+    {
+      "name": "Gartner JLL data centre 2026",
+      "description": "Market summary of Gartner and JLL figures: global data centre power about 132 GW in 2026, up roughly 27 percent; about 25 GW absorbed in North America in the first half of 2026, twice the prior-year period; the five largest hyperscalers announced roughly 710 billion US dollars of 2026 investment.",
+      "url": "https://gaminghardware-guide.de/data-center-boom-2026-ausbau-geschwindigkeit-und-globale-kapazitaeten-in-gigawatt/"
+    },
+    {
+      "name": "Bitkom data centres Germany 2025",
+      "description": "Bitkom, November 2025: German data centre connected load grew 9 percent in 2025 to 2,980 MW and should pass 5,000 MW by 2030; AI-specific capacity is 530 MW, forecast to quadruple to 2,020 MW by 2030; power use reached 21.3 billion kWh in 2025.",
+      "url": "https://www.bitkom.org/Presse/Presseinformation/Rechenzentren-Deutschland-KI-treibt-Wachstum"
+    },
+    {
+      "name": "KKR AI infrastructure 2026",
+      "description": "KKR, Beyond the Bubble, May 2026: fast accelerator refresh cycles mean temporary overbuilds behave like rolling upgrades rather than stranded assets, and power - grid queues, transformer lead times, permitting - rather than capital is the binding limit on overbuild.",
+      "url": "https://www.kkr.com/insights/ai-infrastructure"
+    },
+    {
+      "name": "IEEE ComSoc AI capex versus fibre",
+      "description": "IEEE ComSoc Technology Blog comparing AI capex to the 1990s fibre build-out: hyperscalers generate far more cash than the 1990s fibre builders, but big tech issued about 100 billion US dollars of bonds in 2026 to fund AI capex, with record credit-default-swap protection demanded against it.",
+      "url": "https://techblog.comsoc.org/2025/09/27/big-tech-spending-on-ai-data-centers-and-infrastructure-vs-the-fiber-optic-buildout-during-the-dot-com-boom-bust/"
+    },
+    {
+      "name": "arXiv harness effect 2026",
+      "description": "arXiv 2607.06906, The Harness Effect, July 2026: 22 locked enterprise tasks on six models under two orchestration layers with everything else held constant; blended cost per task falls 41 percent, up to 61 percent on one model, while moving from the most to the least expensive model saves only 36 percent; names the prevailing pattern token maxing, buying capability with tokens so that tokens per task grow faster than task value.",
+      "url": "https://arxiv.org/html/2607.06906v1"
+    },
+    {
+      "name": "Glean token efficiency 2026",
+      "description": "Glean, June 2026, summarising a 2026 Stevens Institute analysis and the LOOP Skill Engine paper: unconstrained agents spent 5 to 8 US dollars per task and dynamic turn limits cut that by 24 percent at comparable quality; prompt caching cuts input token cost by up to 90 percent; compiling successful traces into branch-free recipes achieved 93.3 percent token savings on daily repeated tasks and 99.98 percent on high-frequency operations.",
+      "url": "https://www.glean.com/perspectives/how-to-optimize-token-efficiency-in-agentic-systems"
+    },
+    {
+      "name": "arXiv token economics agents 2026",
+      "description": "arXiv 2605.09104, Token Economics for LLM Agents: formalises the harness layer as an economic design surface and finds that harness-level choices such as loop budgets, retry policies and observation truncation often dominate model-level differences in end-to-end token cost.",
+      "url": "https://arxiv.org/html/2605.09104v1"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "US",
+        "railroad network",
+        "route mile",
+        "1916",
+        "network peak",
+        "measured value"
+      ],
+      "number": "254000",
+      "source": "AAR short history freight railroads"
+    },
+    {
+      "words": [
+        "US",
+        "railroad network",
+        "route mile",
+        "2026",
+        "measured value"
+      ],
+      "number": "140000",
+      "source": "FRA freight rail overview"
+    },
+    {
+      "words": [
+        "US",
+        "railroad network",
+        "network reduction",
+        "percent",
+        "measured value"
+      ],
+      "number": "45",
+      "source": "FRA freight rail overview"
+    },
+    {
+      "words": [
+        "US",
+        "railroad network",
+        "freight share",
+        "percent",
+        "2026",
+        "measured value"
+      ],
+      "number": "28",
+      "source": "FRA freight rail overview"
+    },
+    {
+      "words": [
+        "US",
+        "lit fibre",
+        "percent",
+        "2002",
+        "measured value"
+      ],
+      "number": "2.7",
+      "source": "Fabricated Knowledge telecom bubble"
+    },
+    {
+      "words": [
+        "world",
+        "token volume",
+        "trillion token",
+        "2024",
+        "measured value"
+      ],
+      "number": "9.7",
+      "source": "arXiv inference economics 2026"
+    },
+    {
+      "words": [
+        "world",
+        "token volume",
+        "trillion token",
+        "2025",
+        "measured value"
+      ],
+      "number": "1300",
+      "source": "arXiv inference economics 2026"
+    },
+    {
+      "words": [
+        "world",
+        "token volume",
+        "trillion token",
+        "2026",
+        "measured value"
+      ],
+      "number": "3200",
+      "source": "arXiv inference economics 2026"
+    },
+    {
+      "words": [
+        "world",
+        "token volume",
+        "yearly factor",
+        "2026",
+        "measured value"
+      ],
+      "number": "7",
+      "source": "arXiv inference economics 2026"
+    },
+    {
+      "words": [
+        "world",
+        "inference price",
+        "yearly factor",
+        "reduction",
+        "2026",
+        "measured value"
+      ],
+      "number": "40",
+      "source": "SSRN Jevons AI infrastructure 2026"
+    },
+    {
+      "words": [
+        "world",
+        "programming share",
+        "percent",
+        "2025",
+        "measured value"
+      ],
+      "number": "11",
+      "source": "SGNL Jevons inference 2026"
+    },
+    {
+      "words": [
+        "world",
+        "programming share",
+        "percent",
+        "2026",
+        "measured value"
+      ],
+      "number": "50",
+      "source": "SGNL Jevons inference 2026"
+    },
+    {
+      "words": [
+        "world",
+        "data centre capacity",
+        "gigawatt power",
+        "2026",
+        "measured value"
+      ],
+      "number": "132",
+      "source": "Gartner JLL data centre 2026"
+    },
+    {
+      "words": [
+        "North America",
+        "data centre capacity",
+        "gigawatt power",
+        "2026",
+        "measured value"
+      ],
+      "number": "25",
+      "source": "Gartner JLL data centre 2026"
+    },
+    {
+      "words": [
+        "world",
+        "data centre capacity",
+        "capital expenditure",
+        "dollar billion",
+        "2026",
+        "measured value"
+      ],
+      "number": "710",
+      "source": "Gartner JLL data centre 2026"
+    },
+    {
+      "words": [
+        "world",
+        "data centre capacity",
+        "capital expenditure",
+        "dollar billion",
+        "2026",
+        "minimum",
+        "measured value"
+      ],
+      "number": "100",
+      "source": "IEEE ComSoc AI capex versus fibre"
+    },
+    {
+      "words": [
+        "Germany",
+        "data centre capacity",
+        "megawatt power",
+        "2025",
+        "measured value"
+      ],
+      "number": "2980",
+      "source": "Bitkom data centres Germany 2025"
+    },
+    {
+      "words": [
+        "Germany",
+        "data centre capacity",
+        "megawatt power",
+        "2030",
+        "assumed value"
+      ],
+      "number": "5000",
+      "source": "Bitkom data centres Germany 2025"
+    },
+    {
+      "words": [
+        "Germany",
+        "AI capacity",
+        "megawatt power",
+        "2025",
+        "measured value"
+      ],
+      "number": "530",
+      "source": "Bitkom data centres Germany 2025"
+    },
+    {
+      "words": [
+        "Germany",
+        "AI capacity",
+        "megawatt power",
+        "2030",
+        "assumed value"
+      ],
+      "number": "2020",
+      "source": "Bitkom data centres Germany 2025"
+    },
+    {
+      "words": [
+        "Germany",
+        "data centre capacity",
+        "megawatt power",
+        "2030",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator lifetime",
+        "year",
+        "likely",
+        "assumed value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator lifetime",
+        "year",
+        "minimum",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator lifetime",
+        "year",
+        "maximum",
+        "assumed value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator lifetime",
+        "year",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "world",
+        "shell lifetime",
+        "year",
+        "likely",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "world",
+        "shell lifetime",
+        "year",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.7"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator capex share",
+        "percent",
+        "likely",
+        "assumed value"
+      ],
+      "number": "60"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator capex share",
+        "percent",
+        "minimum",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator capex share",
+        "percent",
+        "maximum",
+        "assumed value"
+      ],
+      "number": "75"
+    },
+    {
+      "words": [
+        "world",
+        "accelerator capex share",
+        "percent",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.45"
+    },
+    {
+      "words": [
+        "world",
+        "data centre utilization",
+        "percent",
+        "2030",
+        "likely",
+        "assumed value"
+      ],
+      "number": "80"
+    },
+    {
+      "words": [
+        "world",
+        "data centre utilization",
+        "percent",
+        "2030",
+        "minimum",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "world",
+        "data centre utilization",
+        "percent",
+        "2030",
+        "maximum",
+        "assumed value"
+      ],
+      "number": "95"
+    },
+    {
+      "words": [
+        "world",
+        "data centre utilization",
+        "percent",
+        "2030",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.35"
+    },
+    {
+      "words": [
+        "world",
+        "Jevons paradox",
+        "probability",
+        "2030",
+        "assumed value"
+      ],
+      "number": "0.7"
+    },
+    {
+      "words": [
+        "world",
+        "Jevons paradox",
+        "probability",
+        "2030",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "world",
+        "data centre capacity",
+        "network peak",
+        "probability",
+        "2030",
+        "assumed value"
+      ],
+      "number": "0.45"
+    },
+    {
+      "words": [
+        "world",
+        "data centre capacity",
+        "network peak",
+        "probability",
+        "2030",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "world",
+        "network reduction",
+        "data centre capacity",
+        "percent",
+        "2030",
+        "maximum",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "world",
+        "network reduction",
+        "data centre capacity",
+        "percent",
+        "2030",
+        "maximum",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.25"
+    },
+    {
+      "words": [
+        "world",
+        "verification limit",
+        "probability",
+        "2030",
+        "assumed value"
+      ],
+      "number": "0.55"
+    },
+    {
+      "words": [
+        "world",
+        "verification limit",
+        "probability",
+        "2030",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "world",
+        "agentic demand",
+        "percent",
+        "2026",
+        "measured value"
+      ],
+      "number": "50",
+      "source": "SGNL Jevons inference 2026"
+    },
+    {
+      "words": [
+        "world",
+        "agentic demand",
+        "percent",
+        "2030",
+        "likely",
+        "assumed value"
+      ],
+      "number": "80"
+    },
+    {
+      "words": [
+        "world",
+        "agentic demand",
+        "percent",
+        "2030",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.4"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration saving",
+        "percent",
+        "2026",
+        "likely",
+        "measured value"
+      ],
+      "number": "41",
+      "source": "arXiv harness effect 2026"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration saving",
+        "percent",
+        "2026",
+        "maximum",
+        "measured value"
+      ],
+      "number": "61",
+      "source": "arXiv harness effect 2026"
+    },
+    {
+      "words": [
+        "world",
+        "model choice saving",
+        "percent",
+        "2026",
+        "measured value"
+      ],
+      "number": "36",
+      "source": "arXiv harness effect 2026"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration saving",
+        "repetition share",
+        "percent",
+        "2026",
+        "likely",
+        "measured value"
+      ],
+      "number": "93.3",
+      "source": "Glean token efficiency 2026"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration saving",
+        "repetition share",
+        "percent",
+        "2026",
+        "maximum",
+        "measured value"
+      ],
+      "number": "99.98",
+      "source": "Glean token efficiency 2026"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration saving",
+        "percent",
+        "2026",
+        "minimum",
+        "measured value"
+      ],
+      "number": "24",
+      "source": "Glean token efficiency 2026"
+    },
+    {
+      "words": [
+        "world",
+        "compute per task",
+        "yearly factor",
+        "reduction",
+        "2030",
+        "likely",
+        "assumed value"
+      ],
+      "number": "2.5"
+    },
+    {
+      "words": [
+        "world",
+        "compute per task",
+        "yearly factor",
+        "reduction",
+        "2030",
+        "minimum",
+        "assumed value"
+      ],
+      "number": "1.3"
+    },
+    {
+      "words": [
+        "world",
+        "compute per task",
+        "yearly factor",
+        "reduction",
+        "2030",
+        "maximum",
+        "assumed value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "world",
+        "compute per task",
+        "yearly factor",
+        "reduction",
+        "2030",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.35"
+    },
+    {
+      "words": [
+        "world",
+        "task difficulty",
+        "yearly factor",
+        "2030",
+        "likely",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "world",
+        "task difficulty",
+        "yearly factor",
+        "2030",
+        "minimum",
+        "assumed value"
+      ],
+      "number": "1.2"
+    },
+    {
+      "words": [
+        "world",
+        "task difficulty",
+        "yearly factor",
+        "2030",
+        "maximum",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "world",
+        "task difficulty",
+        "yearly factor",
+        "2030",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.25"
+    },
+    {
+      "words": [
+        "world",
+        "compute per task",
+        "task difficulty",
+        "probability",
+        "2030",
+        "assumed value"
+      ],
+      "number": "0.35"
+    },
+    {
+      "words": [
+        "world",
+        "compute per task",
+        "task difficulty",
+        "probability",
+        "2030",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration overhead",
+        "percent",
+        "2026",
+        "likely",
+        "assumed value"
+      ],
+      "number": "55"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration overhead",
+        "percent",
+        "2030",
+        "likely",
+        "assumed value"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "world",
+        "orchestration overhead",
+        "percent",
+        "2030",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.4"
+    },
+    {
+      "words": [
+        "world",
+        "repetition share",
+        "percent",
+        "2026",
+        "likely",
+        "assumed value"
+      ],
+      "number": "60"
+    },
+    {
+      "words": [
+        "world",
+        "repetition share",
+        "percent",
+        "2030",
+        "likely",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "world",
+        "repetition share",
+        "percent",
+        "2030",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "world",
+        "ingest share",
+        "percent",
+        "2030",
+        "likely",
+        "assumed value"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "world",
+        "ingest share",
+        "percent",
+        "2030",
+        "minimum",
+        "assumed value"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "world",
+        "ingest share",
+        "percent",
+        "2030",
+        "maximum",
+        "assumed value"
+      ],
+      "number": "55"
+    },
+    {
+      "words": [
+        "world",
+        "ingest share",
+        "percent",
+        "2030",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.25"
+    }
+  ]
+}

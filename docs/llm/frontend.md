@@ -239,6 +239,40 @@ The matching dropdowns/selectors (share `s`, protection `sp`, phrase type `py`,
 view `d`) already emit the url var as `name` directly — follow that when adding a
 new form element.
 
+## Behaviour shared by word and triple belongs on the phrase
+
+`web/word/word.php` and `web/word/triple.php` are siblings — both extend
+`sandbox_code_id` — so a method written on one is simply missing on the other.
+That is fine for what is genuinely word-specific (a plural, a type selector), but
+relations are not: "the parents of", "the children of", "the other phrases that
+share an `is a` parent with this one" describe a **phrase**, and a triple is as
+much a phrase as a word is.
+
+So the logic lives once on `web/phrase/phrase.php`, and `word` and `triple` each
+keep a thin delegate:
+
+```php
+// web/word/triple.php — same three lines in web/word/word.php
+function similar(user_message $msg, ?phrase_list $phr_lst = null): phrase_list
+{
+    return $this->phrase()->similar($msg, $phr_lst);
+}
+```
+
+The delegates matter: they keep every existing `$wrd->similar(…)` call site
+working and let a caller stay typed on the concrete class. Do **not** push the
+method up into `sandbox_code_id` instead — views, formulas, components and
+sources extend it too and have no `phrase()`. Do **not** reach for a trait
+either; the project uses none, and one file of shared methods would drift out of
+the class it belongs to.
+
+The practical trigger is a fixture that cannot change class: if a page-object
+factory is stuck returning a `word` because "the frontend triple has no
+`similar()`", the missing method is the bug, not the fixture. Renderers are
+already prepared for this — `ui_list::parents_of_word()` and friends take
+`word|db_object`, and `system_form::title_phrase()` dispatches on the class — so
+the only thing to add is the delegate.
+
 ## Always sort lists before rendering them
 
 Every list shown on a frontend page must be sorted by a **deterministic key**
@@ -275,3 +309,90 @@ list-rendering function, sort inside it (or require the caller to pass an
 already-sorted list and assert it) — do not rely on the upstream load order.
 A new `object_pages/<name>.html` fragment that reorders between runs is the
 signal that a sort is missing.
+
+## A page never fills the screen — the messages below it must stay visible
+
+The user messages are rendered **below the view** (`<!--usr_msg-->` in the page
+skeleton), so a page that fills the whole screen hides them: the user acts, the
+page reports the result, and the report is one scroll below the fold where
+nobody looks. A page must therefore stay short enough that the message area is
+visible without scrolling.
+
+The consequence for every list renderer: **each list is limited on its own**, not
+only the page as a whole.
+
+- A limit applies **per group**, not just to the ungrouped rest. A grouped list
+  (`value_list::list_most_relevant`: time groups, phrase groups, then the rest by
+  impact) shortens every single group with its own `… and n more`, because one
+  phrase with a hundred values would otherwise fill the screen even though the
+  final section is limited. `group_block()` is the pattern to copy.
+- The limit is the configured one (`config.yaml`, see the section above), never a
+  literal, so an admin can tune how much a page shows.
+- The same holds for a new list component: if it can grow with the data, it needs
+  a limit and a tail, even when it sits next to lists that already have one.
+
+When you add or change a page renderer, ask what the page looks like for the
+object with the *most* data, not for the test fixture.
+
+## Short, more and all — the three versions of a list
+
+Every list a page shows exists in three versions. Which one is rendered depends
+on how often the user has asked for more:
+
+| version | entries | tail |
+|---|---|---|
+| **short** (default) | 5 | `… and n more` → the more version |
+| **more** (after one click) | 20 | `… and n more` → the all version |
+| **all** (after the second click) | the whole list, paged | prev / next buttons |
+
+- `n` is the number of **extra** items, not the total.
+- Both counts are **configuration, never literals**: 5 is `select: initial:
+  entries` and 20 is `select: more: entries` in `config.yaml`. In `web/` they are
+  read through the request cache, `$ui_sys->cfg->get_by([...], $msg, <fallback
+  const>)` — never `new config()` and never an inline `5` / `20`.
+  `value_list::configured_limit()` is the pattern to copy: a named private helper
+  that asks the cache and falls back to a const when the config is not loaded.
+- The **all** version is paged (prev / next) and serves its rows from the screen
+  cache. It is offered only while the list stays below the *max frontend list
+  size* of 2'000; above that the user narrows the selection instead, because a
+  page with more rows than that is neither readable nor worth caching.
+  `change_log_list::tr_page_nav()` already builds that footer row from
+  `icons::PAGE_BACK` / `icons::PAGE_FORWARD` — the icons are there, the
+  navigation still has to be wired.
+- Which version is shown is url state like every other frontend state — no
+  JavaScript toggles it (see "Pure HTML, no JavaScript").
+- The version does not change the order: the same deterministic key sorts all
+  three, so the first 5 of the short list are the first 5 of the all list (see
+  "Always sort lists before rendering them").
+
+`config.yaml` carries `select: initial: entries` and `select: more: entries`
+today; the *max frontend list size* key for the 2'000 bound is still missing and
+has to be added together with the paged version.
+
+## "… more" is always a link that shows more
+
+When a list is truncated to its configured limit, the "… and n more" tail is a
+**link to the next version of the list** (short → more → all) — never dead text.
+A count that cannot be clicked tells the user something exists and gives no way
+to see it.
+
+- The values table tail calls the **same page** with the next list size
+  (`value_list::more_url`): the url var `url_var::DISPLAY_LIST_SIZE` (`dls`,
+  human `display_list_size`) names the rows shown, `url_var::DISPLAY_LIST_PAGE`
+  (`dlp`, `display_list_page`) the page of a list longer than that size, and the
+  tail raises the size to `select: more: entries` and then to all rows
+  (`value_list::next_row_limit`). Both vars are `url_var::PAGE_VARS`, so a back
+  link returns to the list as the user has expanded it. Only a table whose page is
+  not known falls back to the `phrase_values` view of the page phrase
+  (`value_list::more_tail`).
+- The related-phrases "…" in a page title links to the `word_related` view
+  (`phrase_list.php`, `views::WORD_RELATED_ID`) — the same pattern.
+- Build the tail text from the message ids (`msg_id::THREE_POINTS`,
+  `msg_id::AND_MORE_BEFORE`, `msg_id::MORE`), never from an inline
+  `' ... and ' . $n . ' more'` literal, so the text is translated.
+
+Only when no target object is known that could select the full list (e.g. the
+unit list, which does not know the page phrase) may the tail stay plain text —
+and that is a gap to close by threading the context, not a licence to skip the
+link. When adding a new truncated list, pick (or create) the "show all" view
+first, then wire the tail to it.

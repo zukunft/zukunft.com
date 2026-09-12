@@ -49,7 +49,10 @@ class view_styles
     const string COL_SM_6_COM = 'use half of the width (col-md-6)';
     const string COL_SM_6 = 'col-md-6';
     const string COL_SM_7 = 'col-md-7';
+    const string COL_SM_8_COM = 'use 2/3 of the width (col-md-8)';
     const string COL_SM_8 = 'col-md-8';
+    const string COL_SM_8_NAME = '2/3 width';
+    const int COL_SM_8_ID = 2;
     const string COL_SM_10 = 'col-md-10';
     const string COL_SM_12 = 'col-md-12';
     const string COL_SM_1 = 'col-md-1';
@@ -60,6 +63,11 @@ class view_styles
     const string TEXT_LEFT = 'text-left';
     const string TEXT_LEFT_NAME = 'left aligned';
     const int TEXT_LEFT_ID = 5;
+    // keep the short fields of a row on one centred line instead of one line per field
+    const string FIELDS_IN_LINE_COM = 'show the fields of the row on one centred line';
+    const string FIELDS_IN_LINE = 'fields-in-line';
+    const string FIELDS_IN_LINE_NAME = 'fields in one line';
+    const int FIELDS_IN_LINE_ID = 6;
 
 
     // list of the styles used for unit testing

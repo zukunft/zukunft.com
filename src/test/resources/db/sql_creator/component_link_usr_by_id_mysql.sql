@@ -1,0 +1,10 @@
+SELECT s.component_link_id,
+       u.component_link_id AS user_component_link_id,
+       s.user_id, s.view_id, s.component_id,
+       IF(u.order_nbr     IS NULL, s.order_nbr,     u.order_nbr)     AS order_nbr,
+       IF(u.position_type_id IS NULL, s.position_type_id, u.position_type_id) AS position_type_id,
+       IF(u.excluded      IS NULL, s.excluded,      u.excluded)      AS excluded
+  FROM component_links s
+  LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id
+                                  AND u.user_id = 3
+ WHERE s.component_link_id = ?;

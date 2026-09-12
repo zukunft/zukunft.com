@@ -35,6 +35,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 enum sql_field_type: string
 {
 
+    // the max number of chars of a name field, so that a caller can shorten a name before the
+    // write instead of letting the insert fail (see library::php_function_from_exception)
+    const int NAME_MAX_LEN = 255;
+
     // prime table index fields
     case KEY_INT = 'intKey'; // a 64-bit integer prime index with auto increase by 1
     case KEY_INT_SMALL = 'intKeySmall'; // a small integer prime index with auto increase by 1 for a very limited number of entries

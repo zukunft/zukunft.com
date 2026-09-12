@@ -1,22 +1,18 @@
 {
   "version": "0.0.3",
+  "data_version": "0.0.1",
   "time": "2026-06-13 12:00:00",
   "user": "timon",
   "selection": [
     "Fermi estimates for every pro/contra argument of the RSI / overstimulation / zukunft.com discussion, with reproducible calc-validation chains"
   ],
-  "description": "Encodes the pro and contra arguments of the thread into the zukunft.com graph. Each value carries a provenance qualifier triple - 'measured value' for figures taken from a source, 'assumed value' for set Fermi inputs - so that a set assumption can never be mistaken for a measurement. v0.0.4 additions: the dominant 'overstimulation gap' is now decomposed into 'intensity gap' x 'vulnerability gap'; the upper-bound (gap 10) sign-flip scenario is encoded as reproducible values and calc chains rather than prose; the previously dead 'confidence' inputs now feed a confidence-discounted RSI expected harm; the empirical/normative split is attached to the normative value entries; and an enforcement false-positive (over-blocking) cost is added to the contra side of the rollback balance. Every calc-validation entry is reproduced by check.py and is order-independent of the input values.",
+  "description": "Encodes the pro and contra arguments of the thread into the zukunft.com graph. A value taken from a source is marked only by that source, while a set Fermi input carries the 'assumed' qualifier, so that a set assumption can never be mistaken for a measurement. v0.0.4 additions: the dominant 'overstimulation gap' is now decomposed into 'intensity gap' x 'vulnerability gap'; the upper-bound (gap 10) sign-flip scenario is encoded as reproducible values and calc chains rather than prose; the previously dead 'confidence' inputs now feed a confidence-discounted RSI expected harm; the empirical/normative split is attached to the normative value entries; and an enforcement false-positive (over-blocking) cost is added to the contra side of the rollback balance. Every calc-validation entry is reproduced by check.py and is order-independent of the input values. DNR 2026 additions: source-derived measured values for global news-consumption patterns across 48 markets were added separately from the existing Fermi assumptions. The DNR measures news-source use, not the share of all internet information that complies with the Press Code; no such compliance rate is inferred.",
   "words": [
     {
       "name": "value"
     },
     {
-      "name": "measured",
-      "description": "provenance qualifier: the number is taken from a cited source and is in principle verifiable"
-    },
-    {
-      "name": "assumed",
-      "description": "provenance qualifier: the number is a set Fermi input, not a measurement; the conclusion may hinge on it"
+      "name": "assumed"
     },
     {
       "name": "harm"
@@ -37,7 +33,8 @@
       "name": "person"
     },
     {
-      "name": "population"
+      "name": "population",
+      "description": "number of people living in a place"
     },
     {
       "name": "exposure"
@@ -154,13 +151,11 @@
     },
     {
       "name": "DALY",
-      "type": "measure",
-      "description": "disability-adjusted life year (UN); one lost year of healthy life"
+      "type": "measure"
     },
     {
       "name": "HTP",
-      "type": "measure",
-      "description": "Happy Time Point; DALY extended to Maslow levels 1-2, impact-weighted reach"
+      "type": "measure"
     },
     {
       "name": "CHF",
@@ -184,8 +179,7 @@
       "description": "base modifier for directional properties"
     },
     {
-      "name": "reduction",
-      "description": "base concept for a decrease in a specific friction quantity"
+      "name": "reduction"
     },
     {
       "name": "runaway",
@@ -196,8 +190,7 @@
       "description": "actions taken to reduce the severity or probability of a negative event"
     },
     {
-      "name": "efficacy",
-      "description": "the performance metrics of a specific intervention framework"
+      "name": "efficacy"
     },
     {
       "name": "audio",
@@ -222,6 +215,9 @@
       "name": "dependency"
     },
     {
+      "name": "formula"
+    },
+    {
       "name": "assumption"
     },
     {
@@ -244,21 +240,63 @@
     {
       "name": "overblocking",
       "description": "enforcement false positive: legitimate content wrongly hidden by press-code / one-click-hide enforcement"
+    },
+    {
+      "name": "news"
+    },
+    {
+      "name": "weekly"
+    },
+    {
+      "name": "market"
+    },
+    {
+      "name": "respondent"
+    },
+    {
+      "name": "trust"
+    },
+    {
+      "name": "misinformation"
+    },
+    {
+      "name": "source"
+    },
+    {
+      "name": "main"
+    },
+    {
+      "name": "app"
+    },
+    {
+      "name": "video"
+    },
+    {
+      "name": "website"
+    },
+    {
+      "name": "AI"
+    },
+    {
+      "name": "chatbot"
+    },
+    {
+      "name": "media"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "platform"
+    },
+    {
+      "name": "third-party"
+    },
+    {
+      "name": "network"
     }
   ],
   "triples": [
-    {
-      "name": "measured value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "measured"
-    },
-    {
-      "name": "assumed value",
-      "from": "value",
-      "verb": "kind of",
-      "to": "assumed"
-    },
     {
       "name": "status quo",
       "from": "status",
@@ -366,7 +404,7 @@
     {
       "name": "financial study cost",
       "from": "study cost",
-      "verb": "measured in",
+      "verb": "in",
       "to": "CHF"
     },
     {
@@ -377,7 +415,6 @@
       "description": "WHO budget conversion factor to HTP"
     },
     {
-      "name": "value of information",
       "from": "value",
       "verb": "of",
       "to": "information"
@@ -435,7 +472,7 @@
     {
       "name": "audio level",
       "from": "audio",
-      "verb": "measured in",
+      "verb": "in",
       "to": "dB"
     },
     {
@@ -455,14 +492,14 @@
     {
       "name": "direct incentive",
       "from": "direct",
-      "verb": "modifier of",
+      "verb": "of",
       "to": "incentive",
       "description": "lever: ranking / reputation / money reward for rare-but-right"
     },
     {
       "name": "friction reduction",
       "from": "reduction",
-      "verb": "acting on",
+      "verb": "of",
       "to": "friction",
       "description": "lever: remove distraction; acts on opportunity not motivation - the petition's mechanism"
     },
@@ -512,7 +549,7 @@
     {
       "name": "RSI runaway",
       "from": "RSI",
-      "verb": "leads to",
+      "verb": "can cause",
       "to": "runaway"
     },
     {
@@ -627,13 +664,95 @@
       "from": "harm",
       "verb": "of",
       "to": "overblocking"
+    },
+    {
+      "name": "news source",
+      "from": "source",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "main source",
+      "from": "source",
+      "verb": "kind of",
+      "to": "main"
+    },
+    {
+      "name": "news app",
+      "from": "app",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "news video",
+      "from": "video",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "news website",
+      "from": "website",
+      "verb": "of",
+      "to": "news"
+    },
+    {
+      "name": "AI chatbot",
+      "from": "chatbot",
+      "verb": "kind of",
+      "to": "AI"
+    },
+    {
+      "name": "social media",
+      "from": "media",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "third-party platform",
+      "from": "platform",
+      "verb": "kind of",
+      "to": "third-party"
+    },
+    {
+      "name": "video network",
+      "from": "network",
+      "verb": "of",
+      "to": "video"
+    },
+    {
+      "name": "social video news source",
+      "from": "news source",
+      "verb": "kind of",
+      "to": "social media",
+      "description": "DNR 2026 groups social media and video networks as a source of news."
+    },
+    {
+      "name": "third-party news platform",
+      "from": "social media",
+      "verb": "is part of",
+      "to": "third-party platform",
+      "description": "DNR 2026 uses third-party platforms to describe social media, video networks and, more recently, AI chatbots."
+    },
+    {
+      "name": "news source decline",
+      "from": "news",
+      "verb": "influences",
+      "to": "news website",
+      "description": "Use of news organisations' websites and apps fell by 12 percentage points since 2020."
+    },
+    {
+      "name": "tv news decline",
+      "from": "third-party platform",
+      "verb": "influences",
+      "to": "news",
+      "description": "TV news use fell by 13 percentage points since 2020 while third-party platform use became more prominent."
     }
   ],
   "sources": [
     {
       "name": "Christakis 2012 mouse overstimulation",
       "description": "Christakis DA, Ramirez JSB, Ramirez JM (2012). Overstimulation of newborn mice leads to behavioral differences and deficits in cognitive performance. Scientific Reports 2:546. p10 mice, 70 dB audio + flashing lights, 6 h/day, 42 days; overstimulated mice performed significantly worse on Light-Dark Latency, Elevated Plus Maze, Novel Object Recognition and Barnes Maze.",
-      "url": "https://doi.org/10.1038/srep00546"
+      "doi": "10.1038/srep00546"
     },
     {
       "name": "Anthropic RSI warning (heise 2026)",
@@ -649,6 +768,11 @@
       "name": "Decision analysis convention",
       "description": "General decision-analysis practice: identify sign-determining assumptions and prioritise measuring them.",
       "url": "https://en.wikipedia.org/wiki/Decision_analysis"
+    },
+    {
+      "name": "Digital News Report 2026",
+      "description": "Reuters Institute for the Study of Journalism, Digital News Report 2026. Global survey of news consumption across 48 markets. The report measures self-reported weekly use of news sources and main source of news; it does not measure the number or journalistic quality of all information on the internet.",
+      "url": "https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2026/dnr-executive-summary"
     }
   ],
   "formulas": [
@@ -806,7 +930,7 @@
         "model harm weight",
         "DALY",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2",
       "source": "Christakis 2012 mouse overstimulation"
@@ -815,7 +939,7 @@
       "words": [
         "overstimulation gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "100"
     },
@@ -825,7 +949,7 @@
         "status quo",
         "year",
         "adult",
-        "assumed value"
+        "assumed"
       ],
       "number": "40"
     },
@@ -833,7 +957,7 @@
       "words": [
         "population",
         "adult",
-        "assumed value"
+        "assumed"
       ],
       "number": "80000000"
     },
@@ -844,15 +968,15 @@
         "DALY",
         "year",
         "normative",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.001",
-      "note": "Normative value: the disutility of lost autonomy is a value judgement, not a measured quantity."
+      "description": "Normative value: the disutility of lost autonomy is a value judgement, not a measured quantity."
     },
     {
       "words": [
         "misuse probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.1"
     },
@@ -861,16 +985,16 @@
         "misuse harm",
         "HTP",
         "normative",
-        "assumed value"
+        "assumed"
       ],
       "number": "10000000",
-      "note": "Normative value: the HTP cost assigned to misuse reflects a value judgement about its severity."
+      "description": "Normative value: the HTP cost assigned to misuse reflects a value judgement about its severity."
     },
     {
       "words": [
         "financial study cost",
         "CHF",
-        "assumed value"
+        "assumed"
       ],
       "number": "3500000"
     },
@@ -880,7 +1004,7 @@
         "factor",
         "CHF",
         "DALY",
-        "assumed value"
+        "assumed"
       ],
       "number": "50000",
       "source": "WHO cost-effectiveness threshold"
@@ -888,7 +1012,7 @@
     {
       "words": [
         "flip probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.5"
     },
@@ -896,7 +1020,7 @@
       "words": [
         "avoided wrong decision",
         "HTP",
-        "assumed value"
+        "assumed"
       ],
       "number": "5000000"
     },
@@ -904,8 +1028,7 @@
       "words": [
         "audio level",
         "overstimulated mouse",
-        "dB",
-        "measured value"
+        "dB"
       ],
       "number": "70",
       "source": "Christakis 2012 mouse overstimulation"
@@ -913,8 +1036,7 @@
     {
       "words": [
         "exposure hours",
-        "overstimulated mouse",
-        "measured value"
+        "overstimulated mouse"
       ],
       "number": "6",
       "source": "Christakis 2012 mouse overstimulation"
@@ -922,8 +1044,7 @@
     {
       "words": [
         "exposure days",
-        "overstimulated mouse",
-        "measured value"
+        "overstimulated mouse"
       ],
       "number": "42",
       "source": "Christakis 2012 mouse overstimulation"
@@ -933,7 +1054,7 @@
         "readiness effect",
         "coercion structure",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     },
@@ -942,7 +1063,7 @@
         "readiness reach",
         "coercion structure",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "3"
     },
@@ -951,7 +1072,7 @@
         "readiness effect",
         "identity group",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2.5"
     },
@@ -960,7 +1081,7 @@
         "readiness reach",
         "identity group",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -969,7 +1090,7 @@
         "readiness effect",
         "direct incentive",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -978,7 +1099,7 @@
         "readiness reach",
         "direct incentive",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "2"
     },
@@ -987,7 +1108,7 @@
         "readiness effect",
         "friction reduction",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     },
@@ -996,7 +1117,7 @@
         "readiness reach",
         "friction reduction",
         "score",
-        "assumed value"
+        "assumed"
       ],
       "number": "1"
     },
@@ -1004,7 +1125,7 @@
       "words": [
         "runaway probability",
         "RSI",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.05",
       "source": "Anthropic RSI warning (heise 2026)"
@@ -1013,7 +1134,7 @@
       "words": [
         "runaway harm",
         "HTP",
-        "assumed value"
+        "assumed"
       ],
       "number": "50000000"
     },
@@ -1021,7 +1142,7 @@
       "words": [
         "verification mitigation efficacy",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9"
     },
@@ -1029,7 +1150,7 @@
       "words": [
         "verification cost",
         "HTP",
-        "assumed value"
+        "assumed"
       ],
       "number": "200000"
     },
@@ -1037,62 +1158,64 @@
       "words": [
         "uncertainty",
         "overstimulation gap",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.9"
     },
     {
       "words": [
         "confidence",
-        "Christakis 2012 mouse overstimulation",
-        "assumed value"
+        "model harm weight",
+        "assumed"
       ],
-      "number": "0.7"
+      "number": "0.7",
+      "source": "Christakis 2012 mouse overstimulation"
     },
     {
       "words": [
         "confidence",
-        "Anthropic RSI warning (heise 2026)",
-        "assumed value"
+        "RSI runaway",
+        "assumed"
       ],
-      "number": "0.3"
+      "number": "0.3",
+      "source": "Anthropic RSI warning (heise 2026)"
     },
     {
       "words": [
         "intensity gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
-      "note": "Dose ratio component of the overstimulation gap."
+      "description": "Dose ratio component of the overstimulation gap."
     },
     {
       "words": [
         "vulnerability gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
-      "note": "Developmental-window component. Product with intensity gap = 100, the lower-bound overstimulation gap."
+      "description": "Developmental-window component. Product with intensity gap = 100, the lower-bound overstimulation gap."
     },
     {
       "words": [
         "overstimulation gap",
         "upper bound",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "number": "10",
-      "note": "Upper-bound scenario: status-quo harm is 10x larger than the lower-bound case."
+      "description": "Upper-bound scenario: status-quo harm is 10x larger than the lower-bound case."
     },
     {
       "words": [
         "overblocking",
         "probability",
-        "assumed value"
+        "assumed"
       ],
       "number": "0.2",
-      "note": "Assumed share of hide-actions that wrongly target legitimate content."
+      "description": "Assumed share of hide-actions that wrongly target legitimate content."
     },
     {
       "words": [
@@ -1100,10 +1223,110 @@
         "harm",
         "HTP",
         "normative",
-        "assumed value"
+        "assumed"
       ],
       "number": "5000000",
-      "note": "Normative value: HTP cost of the suppressed legitimate information if over-blocking were certain."
+      "description": "Normative value: HTP cost of the suppressed legitimate information if over-blocking were certain."
+    },
+    {
+      "words": [
+        "social media",
+        "video network",
+        "news",
+        "weekly",
+        "respondent"
+      ],
+      "number": "54%",
+      "source": "Digital News Report 2026",
+      "description": "Share of respondents across 48 markets who used social media and video networks for news in the last week."
+    },
+    {
+      "words": [
+        "news website",
+        "news app",
+        "news",
+        "weekly",
+        "respondent"
+      ],
+      "number": "51%",
+      "source": "Digital News Report 2026",
+      "description": "Share of respondents across 48 markets who used news organisations' own websites and apps for news in the last week."
+    },
+    {
+      "words": [
+        "social media",
+        "video network",
+        "main source",
+        "news",
+        "respondent"
+      ],
+      "number": "30%",
+      "source": "Digital News Report 2026",
+      "description": "Share of respondents globally identifying social media and video networks as their main source of news; 22% five years earlier."
+    },
+    {
+      "words": [
+        "social media",
+        "video network",
+        "news",
+        "weekly",
+        "main source"
+      ],
+      "number": "12%",
+      "source": "Digital News Report 2026",
+      "description": "Share of respondents who now use only social media and video networks for news; 6% in 2020."
+    },
+    {
+      "words": [
+        "AI chatbot",
+        "news",
+        "weekly",
+        "respondent"
+      ],
+      "number": "10%",
+      "source": "Digital News Report 2026",
+      "description": "Weekly use of AI chatbots for news, up from 7% the previous year."
+    },
+    {
+      "words": [
+        "AI chatbot",
+        "social media",
+        "video network",
+        "main source",
+        "news"
+      ],
+      "number": "52%",
+      "source": "Digital News Report 2026",
+      "description": "Share of respondents aged 18–24 whose main way of getting news is social media, video networks, or AI chatbots."
+    },
+    {
+      "words": [
+        "news video",
+        "weekly",
+        "respondent"
+      ],
+      "number": "77%",
+      "source": "Digital News Report 2026",
+      "description": "Share of respondents globally consuming online news video each week."
+    },
+    {
+      "words": [
+        "trust",
+        "news",
+        "respondent"
+      ],
+      "number": "37%",
+      "source": "Digital News Report 2026",
+      "description": "Overall global trust in news in 2026, the lowest level recorded by the report since it began measuring trust in 2015."
+    },
+    {
+      "words": [
+        "misinformation",
+        "respondent"
+      ],
+      "number": "62%",
+      "source": "Digital News Report 2026",
+      "description": "Share of respondents globally concerned about fake news online; up 4 percentage points in 2026."
     }
   ],
   "calc-validation": [
@@ -1113,7 +1336,7 @@
         "overstimulation gap",
         "DALY",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "formula": "status quo harm weight formula",
       "words": [
@@ -1372,7 +1595,7 @@
         "intensity gap",
         "vulnerability gap",
         "factor",
-        "assumed value"
+        "assumed"
       ],
       "formula": "overstimulation gap formula",
       "words": [
@@ -1389,7 +1612,7 @@
         "upper bound",
         "DALY",
         "year",
-        "assumed value"
+        "assumed"
       ],
       "formula": "status quo harm weight formula",
       "words": [
@@ -1439,7 +1662,7 @@
       "context": [
         "RSI expected harm",
         "confidence",
-        "Anthropic RSI warning (heise 2026)",
+        "RSI runaway",
         "HTP"
       ],
       "formula": "confidence discounted RSI harm formula",
@@ -1479,6 +1702,92 @@
       ],
       "number": "58800000",
       "note": "Upper-bound counterpart to the KEY RESULT, now reproducible rather than narrated in prose: gap 10 -> net 58.8M HTP, a clear rollback win. The lower- and upper-bound nets bracket the decision."
+    },
+    {
+      "context": [
+        "social media",
+        "video network",
+        "news",
+        "weekly",
+        "news website",
+        "news app"
+      ],
+      "formula": "DNR 2026 source comparison",
+      "words": [
+        "social media",
+        "video network",
+        "news website",
+        "news app",
+        "news"
+      ],
+      "number": "54% vs 51%",
+      "note": "Across 48 markets, social media and video networks were the most widely used source of news for the first time, at 54%, ahead of news organisations' own websites and apps at 51%. The 3pp gap should not be treated as a measure of journalistic quality."
+    },
+    {
+      "context": [
+        "social media",
+        "video network",
+        "main source",
+        "news"
+      ],
+      "formula": "DNR 2026 five-year change",
+      "words": [
+        "social media",
+        "video network",
+        "main source",
+        "news"
+      ],
+      "number": "30% vs 22%",
+      "note": "The share identifying social media and video networks as their main source of news rose from 22% five years earlier to 30% in 2026."
+    },
+    {
+      "context": [
+        "social media",
+        "video network",
+        "weekly",
+        "news"
+      ],
+      "formula": "DNR 2026 exclusive-use change",
+      "words": [
+        "social media",
+        "video network",
+        "weekly",
+        "news"
+      ],
+      "number": "12% vs 6%",
+      "note": "The share using only social media and video networks for news doubled from 6% in 2020 to 12% in 2026."
+    },
+    {
+      "context": [
+        "AI chatbot",
+        "news",
+        "weekly"
+      ],
+      "formula": "DNR 2026 year-on-year change",
+      "words": [
+        "AI chatbot",
+        "news",
+        "weekly"
+      ],
+      "number": "10% vs 7%",
+      "note": "Weekly use of AI chatbots for news rose from 7% to 10% year-on-year."
+    },
+    {
+      "context": [
+        "news website",
+        "news app",
+        "social media",
+        "video network"
+      ],
+      "formula": "DNR 2026 five-year change",
+      "words": [
+        "news website",
+        "news app",
+        "social media",
+        "video network"
+      ],
+      "number": "-12pp",
+      "note": "Use of news organisations' websites and apps as a source of news declined by 12 percentage points since 2020."
     }
   ]
 }

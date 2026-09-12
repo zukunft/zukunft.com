@@ -201,10 +201,11 @@ class change_link extends change_log
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a change log entry is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, self::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             $this->table_id = $db_row[self::FLD_TABLE_ID];
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_text_from = $db_row[self::FLD_OLD_FROM_TEXT];
@@ -228,7 +229,7 @@ class change_link extends change_log
             $usr->name = $db_row[user_db::FLD_NAME];
             $this->set_user($usr);
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -240,13 +241,17 @@ class change_link extends change_log
      * add the link change fields to the api json message of one change log entry
      * the relevant link side is sent as old/new value so the frontend can show it without the db ids
      *
-     * @param api_type_list $typ_lst configuration for the api message
+     * @param api_type_list|array $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created
      * @return array with the json fields of one link change
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::OLD_VALUE] = $this->old_text_to;
         $vars[json_fields::NEW_VALUE] = $this->new_text_to;
@@ -329,35 +334,48 @@ class change_link extends change_log
      * get the last link changed by a user
      * TODO check the permission of the view user
      * @param user $usr the user
+     * @param user_message $msg
      * @return int
      */
-    function load_last_by_user(user $usr): int
+    function load_last_by_user(user $usr, user_message $msg): int
     {
         global $db_con;
         $qp = $this->load_sql_by_user($db_con, $usr);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     // functions used utils each call is done with the object instead of the id
-    private function set_usr(): void
+
+    /**
+     * reload the full user object of this change log link from the database based on the user id
+     * @param user_message $msg to collect any problem that happens while loading the user
+     * @return void
+     */
+    private function set_usr(user_message $msg): void
     {
         log_debug('user_log_link->set_usr for ' . $this->get_user()->dsp_id());
         if ($this->get_user() != null) {
             $usr = new user;
-            $usr->load_by_id($this->get_user()->id);
+            $usr->load_by_id($this->get_user()->id, $msg);
             $this->set_user($usr);
             log_debug('user_log_link->set_usr got ' . $this->get_user()->name);
         }
     }
 
-    private function word_name($id): string
+    /**
+     * load the name of the changed word to show it in the change log
+     * @param int $id the database id of the word that has been changed
+     * @param user_message $msg to collect any problem while loading the user and the word
+     * @return string the name of the word or an empty string if the id is not set
+     */
+    private function word_name(int $id, user_message $msg): string
     {
         log_debug('user_log_link->word_name for ' . $id);
         $result = '';
         if ($id > 0) {
-            $this->set_usr();
+            $this->set_usr($msg);
             $wrd = new word($this->get_user());
-            $wrd->load_by_id($id);
+            $wrd->load_by_id($id, $msg);
             $result = $wrd->name();
             log_debug('user_log_link->word_name got ' . $result);
         }
@@ -366,17 +384,19 @@ class change_link extends change_log
 
 
     // TODO Prio 0 this should be dismissed
-    function add_link_ref(): bool
+    function add_link_ref(user_message $msg): bool
     {
-        $usr_msg = new user_message();
-        return $this->add($usr_msg);
+        return $this->add($msg);
     }
 
     /**
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing
+     * @param user_message $msg to collect any problem while loading and mapping the last change
+     * @param bool $ex_time true to exclude the change time from the returned text
+     * @return string the human-readable text of the last change
      */
-    function dsp_last($ex_time = false): string
+    function dsp_last(user_message $msg, bool $ex_time = false): string
     {
 
         global $db_con;
@@ -386,9 +406,10 @@ class change_link extends change_log
 
         $db_type = $db_con->get_class();
         $qp = $this->load_sql_by_table($db_con, $this->table_id);
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
-        if ($db_row != null) {
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper($db_row, $msg);
+            // TODO Prio 0 use db field const
             if (!$ex_time) {
                 $result .= $db_row['change_time'] . ' ';
             }
@@ -408,10 +429,10 @@ class change_link extends change_log
 
     /**
      * similar to add_link, but additional fix the references as a text for fast displaying
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * $link_text is used for fixed links such as the source for values
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug('do "' . $this->action() . '" of "' . $this->table() . '" for user ' . $this->get_user()->dsp_id());
 
@@ -431,7 +452,7 @@ class change_link extends change_log
                     $this->new_link_id = $this->new_link->id();
                     $this->new_to_id = $this->new_to->id();
                 } else {
-                    log_err('Object(s) missing when trying to log a triple add action');
+                    log_err_msg('Object(s) missing when trying to log a triple add action', $msg);
                 }
             }
             if ($this->action() == change_actions::DELETE or $this->action() == change_actions::UPDATE) {
@@ -443,7 +464,7 @@ class change_link extends change_log
                     $this->old_link_id = $this->old_link->id();
                     $this->old_to_id = $this->old_to->id();
                 } else {
-                    log_err('Object(s) missing when trying to log a triple del action');
+                    log_err_msg('Object(s) missing when trying to log a triple del action', $msg);
                 }
             }
         }
@@ -457,7 +478,7 @@ class change_link extends change_log
                     $this->new_link_id = $this->new_link->id();
                     $this->new_to_id = $this->new_to->id();
                 } else {
-                    log_err('Object(s) missing when trying to log a ref add action');
+                    log_err_msg('Object(s) missing when trying to log a ref add action', $msg);
                 }
             }
             if ($this->action() == change_actions::DELETE or $this->action() == change_actions::UPDATE) {
@@ -469,7 +490,7 @@ class change_link extends change_log
                     $this->old_link_id = $this->old_link->id();
                     $this->old_to_id = $this->old_to->id();
                 } else {
-                    log_err('Object(s) missing when trying to log a ref del action');
+                    log_err_msg('Object(s) missing when trying to log a ref del action', $msg);
                 }
             }
         }
@@ -482,7 +503,7 @@ class change_link extends change_log
                     $this->new_from_id = $this->new_from->id();
                     $this->new_to_id = $this->new_to->id();
                 } else {
-                    log_err('Object(s) missing when trying to log an add action');
+                    log_err_msg('Object(s) missing when trying to log an add action', $msg);
                 }
             }
             if ($this->action() == change_actions::DELETE or $this->action() == change_actions::UPDATE) {
@@ -492,7 +513,7 @@ class change_link extends change_log
                     $this->old_from_id = $this->old_from->id();
                     $this->old_to_id = $this->old_to->id();
                 } else {
-                    log_err('Object(s) missing when trying to log an del action');
+                    log_err_msg('Object(s) missing when trying to log an del action', $msg);
                 }
             }
         }
@@ -502,8 +523,8 @@ class change_link extends change_log
         $db_con->set_class(change_link::class);
         $db_con->set_usr($this->get_user()->id);
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert_log($sc);
-        $db_con->insert($qp, 'insert log link ' . $this->dsp_id(), $usr_msg);
+        $qp = $this->sql_insert_log($sc, $msg);
+        $db_con->insert($qp, 'insert log link ' . $this->dsp_id(), $msg);
         $log_id = $this->id();
 
         if ($log_id <= 0) {
@@ -581,15 +602,15 @@ class change_link extends change_log
     function sql_insert_link(
         sql_creator   $sc,
         sql_type_list $sc_par_lst,
+        user_message  $msg,
         ?sandbox_link $sbx = null
     ): sql_par
     {
         $lib = new library();
-        $usr_msg = new user_message();
 
         $fvt_lst = $this->db_field_values_link_types($sc, $sc_par_lst, $sbx);
         $fld_lst_all = $this->db_fields();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         $sc_par_lst->add(sql_type::INSERT);
         // do not use the user extension for the change table name

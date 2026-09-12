@@ -123,13 +123,13 @@ class sandbox_list extends list_db_write
     /**
      * dummy function to be overwritten by the child class
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'rows_mapper',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -141,10 +141,16 @@ class sandbox_list extends list_db_write
      *
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $db_obj the user sandbox object that should be added to the list
      * @param array|null $db_rows is an array of an array with the database values
+     * @param user_message $msg to collect the mapping errors
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function rows_mapper_obj(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $db_obj, ?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper_obj(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $db_obj,
+        ?array                                                       $db_rows,
+        user_message                                                 $msg,
+        bool                                                         $load_all = false
+    ): bool
     {
         $result = false;
         if ($db_rows != null) {
@@ -155,7 +161,7 @@ class sandbox_list extends list_db_write
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = $db_obj->clone_reset(true);
-                    $obj_to_add->row_mapper_sandbox($db_row);
+                    $obj_to_add->row_mapper_sandbox($db_row, $msg);
                     // TODO check if object direct should be used to save time
                     $this->add_obj($obj_to_add);
                     $result = true;
@@ -193,6 +199,19 @@ class sandbox_list extends list_db_write
     /*
      * load
      */
+
+    /**
+     * load whatever the name() of the loaded objects needs beyond the object row itself, so that
+     * a caller that only wants the names can load any list the same way (see
+     * change_log_list::load_changed_objects); a named object carries its name in its own row, so this
+     * is a no-op for every list except the values, which name themselves by their group phrases
+     *
+     * @param user_message $msg to collect any problem while loading
+     * @return void
+     */
+    function load_names_related(user_message $msg): void
+    {
+    }
 
     /**
      * set the SQL query parameters to load only the id and name to save time and memory
@@ -273,7 +292,8 @@ class sandbox_list extends list_db_write
      */
     function load_sbx_names(
         sandbox_named|sandbox_link_named|combine_named $sbx,
-        string                                         $pattern = '',
+        string                                         $pattern,
+        user_message                                   $msg,
         int                                            $limit = 0,
         int                                            $offset = 0
     ): bool
@@ -287,8 +307,8 @@ class sandbox_list extends list_db_write
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
-            $db_lst = $db_con->get($qp, 'sandbox list');
-            $result = $this->rows_mapper($db_lst);
+            $db_lst = $db_con->get($qp, $msg, 'sandbox list');
+            $result = $this->rows_mapper($db_lst, $msg);
         }
         return $result;
     }
@@ -305,7 +325,7 @@ class sandbox_list extends list_db_write
     function load_user_changes(
         sandbox_named|sandbox_link_named|combine_named $sbx,
         user                                           $usr,
-        user_message                                   $usr_msg,
+        user_message                                   $msg,
         int                                            $limit = 0,
         int                                            $offset = 0
     ): bool
@@ -317,18 +337,29 @@ class sandbox_list extends list_db_write
         if ($this->get_user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
-            $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $usr_msg, $limit, $offset);
-            $db_lst = $db_con->get($qp, 'sandbox list');
-            $result = $this->rows_mapper($db_lst);
+            $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $msg, $limit, $offset);
+            $db_lst = $db_con->get($qp, $msg, 'sandbox list');
+            $result = $this->rows_mapper($db_lst, $msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
+    /**
+     * create the sql to load the changes that the given user has done compared to the standard
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
+     * @param user $usr the user whose changes should be loaded (the subject of the load, not the requesting user)
+     * @param user_message $msg to report the problems of the sql creation
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the query parameters to load the user changes
+     */
     protected function load_sql_user_changes(
         sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         user                                           $usr,
-        user_message                                   $usr_msg,
+        user_message                                   $msg,
         int                                            $limit = 0,
         int                                            $offset = 0
     ): sql_par
@@ -353,19 +384,20 @@ class sandbox_list extends list_db_write
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function load(sql_par $qp, bool $load_all = false): bool
+    protected function load(sql_par $qp, user_message $msg, bool $load_all = false): bool
     {
-        return $this->load_sys($qp, $load_all);
+        return $this->load_sys($qp, $msg, $load_all);
     }
 
     /**
      * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if at least one object has been loaded
      */
-    protected function load_sys(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
+    protected function load_sys(sql_par $qp, user_message $msg, bool $load_all = false, ?sql_db $db_con_given = null): bool
     {
 
         global $db_con;
@@ -382,7 +414,7 @@ class sandbox_list extends list_db_write
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_lst = $db_con_used->get($qp);
+            $db_lst = $db_con_used->get($qp, $msg);
             // get() returns false only when the sql query itself failed (an empty
             // result is []), so guard it here: log the failed load and report
             // 'nothing loaded' instead of passing false into rows_mapper(?array),
@@ -390,7 +422,7 @@ class sandbox_list extends list_db_write
             if ($db_lst === false) {
                 log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
             } else {
-                $result = $this->rows_mapper($db_lst, $load_all);
+                $result = $this->rows_mapper($db_lst, $msg, $load_all);
             }
         }
         return $result;
@@ -403,15 +435,16 @@ class sandbox_list extends list_db_write
 
     /**
      * create an array with one export json array for each list item
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array of export json arrays
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $exp_lst = [];
         foreach ($this->lst() as $sbx) {
-            $exp_lst[] = $sbx->export_json($exp_typ, $do_load);
+            $exp_lst[] = $sbx->export_json($msg, $exp_typ, $do_load);
         }
         return $exp_lst;
     }
@@ -426,7 +459,7 @@ class sandbox_list extends list_db_write
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param user_message|Message $msg to report which entry is double
-     * @returns bool if adding failed or something is strange, the messages for the user with the suggested solutions
+     * @returns bool true if the object has been added to this list
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
@@ -434,31 +467,23 @@ class sandbox_list extends list_db_write
         user_message|Message                                         $msg = new Message()
     ): bool
     {
-        // add only objects that have all mandatory values
-        $obj_to_add->db_ready($msg);
+        $added = false;
 
         // add a missing user to the object
         // or check if the object user matches the list user
         // and allow exceptions only for admin users
         $msg->merge($this->add_user_check($obj_to_add));
 
-        if ($obj_to_add->id() <> 0) {
-            if ($allow_duplicates) {
-                parent::add_obj($obj_to_add, $allow_duplicates, $msg);
-            } else {
-                if ($obj_to_add->id() <> 0) {
-                    if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
-                        parent::add_obj($obj_to_add, $allow_duplicates, $msg);
-                    } else {
-                        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
-                            msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                            msg_id::VAR_CLASS_NAME => $obj_to_add::class
-                        ]);
-                    }
-                }
-            }
+        // the db readiness is not checked here, because a list is also the place where an object
+        // waits for its insert (docs/llm/architecture.md); the id is the key of this list, so an
+        // object without an id is added by the name in the named list resp. by the linked objects
+        // in the link list
+        // TODO Prio 2 report an object that has no key at all instead of ignoring it here
+        if ($obj_to_add->id() != 0) {
+            $added = parent::add_obj($obj_to_add, $allow_duplicates, $msg);
         }
-        return $msg->is_ok();
+
+        return $added;
     }
 
     /**
@@ -472,15 +497,15 @@ class sandbox_list extends list_db_write
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if ($obj_to_add->get_user() == null) {
             $obj_to_add->set_user($this->get_user());
-            $usr_msg->add(msg_id::USER_MISSING,
+            $msg->add(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }
         if ($obj_to_add->get_user() !== $this->get_user()) {
             if (!$this->get_user()->is_admin() and !$this->get_user()->is_system()) {
-                $usr_msg->add(msg_id::LIST_USER_NO_MATCH,
+                $msg->add(msg_id::LIST_USER_NO_MATCH,
                     [
                         msg_id::VAR_NAME => $obj_to_add->dsp_id(),
                         msg_id::VAR_USER_NAME => $obj_to_add->get_user()->name(),
@@ -488,7 +513,7 @@ class sandbox_list extends list_db_write
                     ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -498,18 +523,20 @@ class sandbox_list extends list_db_write
 
     /**
      * check if the user of the object to add matches the user of the list
+     * and take the list user for an object that has none
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
-     * @return user_message|Message the warning message if the user of the object does not match with the list user
+     * @return bool true if the object has the user of this list
      */
     function same_user(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
-    ): user_message|Message
+    ): bool
     {
-        $usr_msg = new Message();
+        $same = true;
         if ($obj_to_add->get_user() !== $this->get_user()) {
             if ($obj_to_add->get_user() == null) {
                 $obj_to_add->set_user($this->get_user());
             } else {
+                $same = false;
                 if (!$this->get_user()->is_admin() and !$this->get_user()->is_system()) {
                     log_warning('Trying to add ' . $obj_to_add->dsp_id()
                         . ' of user ' . $obj_to_add->get_user()->name()
@@ -518,7 +545,7 @@ class sandbox_list extends list_db_write
                 }
             }
         }
-        return $usr_msg;
+        return $same;
     }
 
 

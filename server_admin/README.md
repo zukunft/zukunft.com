@@ -35,15 +35,15 @@ php server_admin/hashpw.php      # prompts for the password, prints the hash
 
 | .env keys                                     | Factors             | Privileges                                  |
 |-----------------------------------------------|---------------------|---------------------------------------------|
-| `SERVER_ADMIN_USER` + `SERVER_ADMIN_PW`       | username + password | full access (may switch the IP whitelist off) |
-| `SERVER_ADMIN_2_USER` + `SERVER_ADMIN_2_PW`   | username + password | restricted: may **not** switch the IP whitelist off |
-| `SERVER_ADMIN_3_USER` + `SERVER_ADMIN_3_PW`   | username + password | restricted: may **not** switch the IP whitelist off |
+| `SERVER_ADMIN_USER` + `SERVER_ADMIN_PW`       | username + password | the primary admin (no login IP range)       |
+| `SERVER_ADMIN_2_USER` + `SERVER_ADMIN_2_PW`   | username + password | same rights; may be limited to a login IP range |
+| `SERVER_ADMIN_3_USER` + `SERVER_ADMIN_3_PW`   | username + password | same rights; may be limited to a login IP range |
 
-Each admin may optionally be restricted to a client IP range via
+Each admin may optionally be limited to a client IP range via
 `SERVER_ADMIN_x_IP_FROM` / `SERVER_ADMIN_x_IP_TO` (inclusive; leave empty to
-skip). A restricted admin can activate the IP whitelist (raise security) but
-cannot deactivate it (which would fall back to the database blacklist) — enforced
-server side, not just hidden in the UI.
+skip) — this limits *where they may log in from*, not what they can do. All
+authenticated admins have the same rights, including toggling **and** editing the
+IP whitelist (it is only a DDoS pre-filter, see below).
 
 ## Whitelist semantics
 
@@ -53,6 +53,30 @@ server side, not just hidden in the UI.
 
 Rejected users see `optional/user_reject.html`, rejected IPs see
 `optional/ip_reject.html` (served by PHP `readfile`, not from `/optional/`).
+
+### editing the IP whitelist from the admin page
+
+The IP whitelist can be edited directly on the admin page — a text area, one IP or
+CIDR per line, `#` for comments — and saved to `ip_whitelist.txt`. Any
+authenticated admin may edit and save it. Because the page runs as the
+web user, `script/install.sh` makes `state.json` **and** `ip_whitelist.txt` owned
+and writable by `WEB_USER` (mode 0644), while the `server_admin/` directory itself
+stays owned by the deploy user — so the web process can overwrite those two data
+files but cannot create a new `.php` next to the admin scripts, and both files stay
+denied web access by the docroot `.htaccess`.
+
+**Why letting the web page write the IP whitelist is not a security downgrade.**
+The IP whitelist is only a **pre-filter for DDoS protection**, not a hard security
+boundary. Even if the web process were compromised and rewrote the list, the worst
+case is that the pre-filter is bypassed and the pod again just faces too many
+requests — exactly the situation you are in with no whitelist at all. The recovery
+is unchanged: take the web server down and change the whitelist (or the guard) from
+the command line. So trading a little file isolation for the convenience of editing
+the list from the browser during an attack is worth it.
+
+The **user whitelist** (`user_whitelist.txt`) is a stronger control — it decides
+which *accounts* may use the pod — so it is deliberately **not** made web-writable
+and is edited over SSH only.
 
 ## Maintenance (program update / database upgrade)
 

@@ -65,9 +65,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api_core("config");
+$msg = new user_message(); // for api
+$db_con = $app->start_api_core("config", $msg);
 
 if ($db_con->is_open()) {
 
@@ -75,23 +76,25 @@ if ($db_con->is_open()) {
     $part = $_GET[url_var::CONFIG_PART] ?? '';
     $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
-    $msg = new user_message();
     $result = ''; // reset the html code var
 
     // load the session user parameters
     $usr = new user;
-    $msg->add_message_text($usr->get());
+    $msg->add_message_text($usr->get($msg));
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
         $cfg_lst = new config_numbers($usr);
-        $msg = new user_message();
         if ($part == api::CONFIG_ALL or $part == '') {
-            $msg = $cfg_lst->load_cfg(null, $usr);
+            $cfg_lst->load_cfg($msg, null, $usr);
         } elseif ($part == api::CONFIG_FRONTEND) {
-            $msg = $cfg_lst->load_frontend_cfg($usr);
+            $cfg_lst->load_frontend_cfg($usr, $msg);
         } elseif ($part == api::CONFIG_USER) {
-            $msg = $cfg_lst->load_usr_cfg($usr);
+            $cfg_lst->load_usr_cfg($usr, $msg);
         } else {
             $msg->add(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
         }
@@ -107,15 +110,15 @@ if ($db_con->is_open()) {
         }
         $sys->times->switch(system_time_type::MAP_JSON);
         if ($with_phr == url_var::TRUE) {
-            $result = $cfg_lst->api_json([api_types::INCL_PHRASES]);
+            $result = $cfg_lst->api_json([api_types::INCL_PHRASES], $msg);
         } else {
-            $result = $cfg_lst->api_json([api_types::NO_KEY_FILL]);
+            $result = $cfg_lst->api_json([api_types::NO_KEY_FILL], $msg);
         }
     }
 
     $sys->times->switch(system_time_type::API_CTRL);
     $ctrl = new controller();
-    $ctrl->get_json($result, $msg->get_last_message());
+    $ctrl->get_json($result, $msg);
 
     if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
         // TODO Prio 2 remove this speed testing code
@@ -125,5 +128,5 @@ if ($db_con->is_open()) {
         echo $report;
     }
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

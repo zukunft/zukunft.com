@@ -239,85 +239,85 @@ class db_cl
     function phrase_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->phr_typ->get_by_id($id);
+        return $sys->typ_lst->phr_typ->get($id);
     }
 
     function formula_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->frm_typ->get_by_id($id);
+        return $sys->typ_lst->frm_typ->get($id);
     }
 
     function formula_link_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->frm_lnk_typ->get_by_id($id);
+        return $sys->typ_lst->frm_lnk_typ->get($id);
     }
 
     function element_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->elm_typ->get_by_id($id);
+        return $sys->typ_lst->elm_typ->get($id);
     }
 
     function view_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->msk_typ->get_by_id($id);
+        return $sys->typ_lst->msk_typ->get($id);
     }
 
     function component_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->cmp_typ->get_by_id($id);
+        return $sys->typ_lst->cmp_typ->get($id);
     }
 
     function component_link_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->cmp_lnk_typ->get_by_id($id);
+        return $sys->typ_lst->cmp_lnk_typ->get($id);
     }
 
     function component_pos_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->pos_typ->get_by_id($id);
+        return $sys->typ_lst->pos_typ->get($id);
     }
 
     function share_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->shr_typ->get_by_id($id);
+        return $sys->typ_lst->shr_typ->get($id);
     }
 
     function protection_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->ptc_typ->get_by_id($id);
+        return $sys->typ_lst->ptc_typ->get($id);
     }
 
     function language(int $id)
     {
         global $sys;
-        return $sys->typ_lst->lan->get_by_id($id);
+        return $sys->typ_lst->lan->get($id);
     }
 
     function language_form(int $id)
     {
         global $sys;
-        return $sys->typ_lst->lan_for->get_by_id($id);
+        return $sys->typ_lst->lan_for->get($id);
     }
 
     function job_type(int $id)
     {
         global $sys;
-        return $sys->typ_lst->job_typ->get_by_id($id);
+        return $sys->typ_lst->job_typ->get($id);
     }
 
     function job_status(int $id)
     {
         global $sys;
-        return $sys->typ_lst->job_sta->get_by_id($id);
+        return $sys->typ_lst->job_sta->get($id);
     }
 
     function log_action(int $id)

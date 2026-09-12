@@ -21,6 +21,6 @@ END;
 SELECT word_delete_log_user
        (3,
         3,
-        10,
+        88,
         'mathematics',
         1);

@@ -40,7 +40,9 @@ enum change_fields: string
     // *_NAME is the name as used in the program or as it has been used in a previous program version
     // *_NAME_DSP is the description that should be shown to the user
     const string FLD_TABLE = 'table_id';
-    // TODO add the user_id to the field list because the owner can change and this should be included in the log
+    // the owner of a user sandbox object; a change of it is shown as 'set owner to' with the owner
+    // name instead of the raw user id (see web/log/change_log_named::what_text)
+    const string FLD_USER_ID = 'user_id';
     const string FLD_WORD_NAME = 'word_name';
     const int FLD_WORD_NAME_ID = 10;
     const string FLD_WORD_NAME_COM = '';
@@ -63,9 +65,26 @@ enum change_fields: string
     const string FLD_FORMULA_ALL = 'all_values_needed';
     const string FLD_SOURCE_NAME = 'source_name';
     const string FLD_SOURCE_URL = 'url';
+    const string FLD_SOURCE_DOI = 'doi';
     const string FLD_REF_KEY = 'external_key';
     const string FLD_VIEW_NAME = 'view_name';
     const string FLD_COMPONENT_NAME = 'component_name';
     const string FLD_COMPONENT_TYPE = 'component_type_id';
+
+    // the prime identity field of each user sandbox object (its name, numeric value or external key);
+    // a change of one of these is shown in the change log table pure without the field name prefix,
+    // because the log row already represents that object, whereas any other field is prefixed with its
+    // translated name (see web/log/change_log_named::what_text)
+    const array PRIME_FIELDS = [
+        self::FLD_WORD_NAME,
+        self::FLD_VERB_NAME,
+        self::FLD_TRIPLE_NAME,
+        self::FLD_FORMULA_NAME,
+        self::FLD_SOURCE_NAME,
+        self::FLD_VIEW_NAME,
+        self::FLD_COMPONENT_NAME,
+        self::FLD_NUMERIC_VALUE,
+        self::FLD_REF_KEY,
+    ];
 
 }

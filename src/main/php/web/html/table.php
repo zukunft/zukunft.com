@@ -37,9 +37,11 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class table
 {
@@ -57,9 +59,9 @@ class table
     }
 
 
-    function add_column(phrase $phr): void
+    function add_column(phrase $phr, user_message $msg): void
     {
-        $this->col_lst->add($phr);
+        $this->col_lst->add($phr, $msg);
     }
 
 }

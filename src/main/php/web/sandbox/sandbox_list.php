@@ -57,12 +57,12 @@ class sandbox_list extends ListBase
 
     function sort_by_relevance(): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message(); // the message IS the return value of this not yet implemented sort
         if ($this->count() > 0) {
             $lst = $this->lst();
             $sbx = $lst[0];
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

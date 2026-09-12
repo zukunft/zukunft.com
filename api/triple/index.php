@@ -33,28 +33,32 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_WORD . 'triple.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("triple", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("triple", $msg);
 
 if ($db_con->is_open()) {
 
-    $msg = '';
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
+    // load the session user parameters store the requesting user on the single message
     $usr = new user;
-    $msg .= $usr->get();
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -67,19 +71,22 @@ if ($db_con->is_open()) {
         $typ_lst = api_type_list::from_url_array($_GET);
 
         // the session user may differ from the data user e.g. an admin wants to see the data
-        // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($usr_id);
+        // of a user or the own html frontend requests the data for the browsing user whose
+        // session it has validated itself; the data user is included in the request in
+        // url_var::USER and honored for a server-to-server call of this pod, so that e.g.
+        // the 'my' tab of the triple page can show the overwrites of the browsing user
+        $load_usr = $usr->data_user($usr_id, $msg, server_guard::from_own_pod());
 
 
         $trp = new triple($load_usr);
         if ($trp_id > 0) {
-            $trp->load_by_id($trp_id);
-            $result = $trp->api_json($typ_lst, $load_usr);
+            $trp->load_by_id($trp_id, $msg);
+            $result = $trp->api_json($typ_lst, $msg, $load_usr);
         } elseif ($trp_name > 0) {
-            $trp->load_by_name($trp_name);
-            $result = $trp->api_json($typ_lst, $load_usr);
+            $trp->load_by_name($trp_name, $msg);
+            $result = $trp->api_json($typ_lst, $msg, $load_usr);
         } else {
-            $msg = 'triple id or name is missing';
+            $msg->add_message_text('triple id or name is missing');
         }
     }
 
@@ -87,11 +94,11 @@ if ($db_con->is_open()) {
     // message as a missing id so the response does not confirm the object exists
     if ($result != '' and !$trp->is_readable_by($usr)) {
         $result = '';
-        $msg = 'triple id or name is missing';
+        $msg->add_message_text('triple id or name is missing');
     }
 
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

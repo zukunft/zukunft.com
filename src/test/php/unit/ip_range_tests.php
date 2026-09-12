@@ -61,14 +61,12 @@ class ip_range_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
-
         // init
         $lib = new library();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_ip_range = new test_ip_ranges($t);
+        $msg = new user_message();
         $t->name = 'ip_range->';
         $t->resource_path = 'db/system/';
 
@@ -103,7 +101,7 @@ class ip_range_tests
         $ip_range = $t_ip_range->ip_range();
         $t->assert_api($ip_range);
 
-        $ip_range_lst = $t_ip_range->ip_range_list();
+        $ip_range_lst = $t_ip_range->ip_range_list($msg);
         $t->assert_api($ip_range_lst);
 
 
@@ -113,18 +111,14 @@ class ip_range_tests
 
         $t->subheader($ts . 'im- and export');
 
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
-        $ip_range->set_user($usr);
-        // switch to system user for import
-        $usr_tmp = $usr;
-        $usr = $usr_sys;
-        $ip_range->import_obj($json_in, $usr_msg, new data_object($usr), $t);
-        // switch back to original user
-        $usr = $usr_tmp;
-        $json_ex = $ip_range->export_json([]);
+        $ip_range->set_user($t->usr1);
+        // use the system user for the import
+        $ip_range->import_obj($json_in, $msg, new data_object($t->usr_system), $t);
+        $json_ex = $ip_range->export_json($msg);
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
 

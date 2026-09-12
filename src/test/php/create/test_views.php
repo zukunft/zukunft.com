@@ -38,8 +38,10 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -47,14 +49,19 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -62,7 +69,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_views extends test_objects
@@ -91,6 +101,17 @@ class test_views extends test_objects
         $msk = new view($this->env->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
+        return $msk;
+    }
+
+    /**
+     * @return view the default view for a word
+     */
+    function word(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::WORD_ID, views::WORD);
+        $msk->description = views::WORD_COM;
         return $msk;
     }
 
@@ -129,7 +150,7 @@ class test_views extends test_objects
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
-        $msk->set_type(view_types::ENTRY, $this->env->usr1);
+        $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
         $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $msk;
     }
@@ -171,6 +192,16 @@ class test_views extends test_objects
         $msk = new view($this->env->usr1);
         $msk->set(views::SCIENCE_ID, views::SCIENCE);
         $msk->description = views::SCIENCE_NAME;
+        return $msk;
+    }
+
+    /**
+     * @return view the default view of a source with the name, so that the export can name it
+     */
+    function view_source(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::SOURCE_ID, views::SOURCE_NAME);
         return $msk;
     }
 
@@ -271,12 +302,23 @@ class test_views extends test_objects
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
-        $msk->set_type(view_types::ENTRY, $this->env->usr1);
-        $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
+        $msk->set_style(view_styles::COL_SM_4, new user_message($this->env->usr1));
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
         $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $msk;
+    }
+
+    /**
+     * @return view with all fields set but not excluded, so that the api message carries all
+     *         fields e.g. to test the view default page title
+     */
+    function view_filled_included(): view
+    {
+        $msk = $this->view_filled();
+        $msk->include();
         return $msk;
     }
 
@@ -289,8 +331,8 @@ class test_views extends test_objects
         $msk = $this->view_add();
         $msk->set_code_id_db(views::TEST_ADD);
         $msk->description = views::START_COM;
-        $msk->set_type(view_types::ENTRY, $this->env->usr1);
-        $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
+        $msk->set_style(view_styles::COL_SM_4, new user_message($this->env->usr1));
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
         $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
@@ -325,6 +367,45 @@ class test_views extends test_objects
         $t_cmp = new test_components($this->env);
         $msk = $this->view();
         $msk->cmp_lnk_lst = $t_cmp->components_side_or_below($msk);
+        return $msk;
+    }
+
+    /**
+     * @return view with two text fields that share one line like the last update and the
+     *              source of the value default page
+     */
+    function view_same_line(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_same_line($msk);
+        return $msk;
+    }
+
+    /**
+     * @return view whose only component continues a line that no component has started
+     */
+    function view_same_line_alone(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_same_line_alone($msk);
+        return $msk;
+    }
+
+    /**
+     * @return view the start view with the terms that use it, set in memory like a page request
+     *              loads them (see view::load_terms_related), e.g. to test the used by column
+     *              of the view add and edit pages with a word and a triple term
+     */
+    function view_with_terms(): view
+    {
+        $t_trm = new test_terms($this->env);
+        $msk = $this->view();
+        $lnk_lst = new term_view_list($this->env->usr1);
+        $lnk_lst->add(0, $msk, $t_trm->term());
+        $lnk_lst->add(0, $msk, $t_trm->term_triple_pi());
+        $msk->trm_msk_lst = $lnk_lst;
         return $msk;
     }
 
@@ -423,6 +504,17 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view_relation with all fields set but not excluded, so that the api message carries
+     *         all fields e.g. to test the view relation default page title
+     */
+    function view_relation_filled_included(): view_relation
+    {
+        $mrl = $this->view_relation_filled();
+        $mrl->include();
+        return $mrl;
+    }
+
+    /**
      * @return view_relation with all fields set and a reserved test name for testing the db write function
      */
     function view_relation_filled_add(): view_relation
@@ -462,9 +554,22 @@ class test_views extends test_objects
         global $sys;
         $trm_msk = $this->term_view();
         $trm_msk->description = 'add usage and log of a word';
+        $trm_msk->order_nbr = test_const::TERM_VIEW_ORDER_NBR;
+        $trm_msk->set_style(view_styles::COL_SM_8, new user_message($this->env->usr1));
         $trm_msk->exclude();
         $trm_msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $trm_msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $trm_msk;
+    }
+
+    /**
+     * @return term_view with all fields set but not excluded, so that the api message carries
+     *         all fields e.g. to test the term view default page title
+     */
+    function term_view_filled_included(): term_view
+    {
+        $trm_msk = $this->term_view_filled();
+        $trm_msk->include();
         return $trm_msk;
     }
 
@@ -480,6 +585,79 @@ class test_views extends test_objects
         //$msk_lnk->set_parent($this->view_filled_add());
         //$msk_lnk->set_child($this->view_part_filled_add());
         return $msk_lnk;
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the url of an empty view as the add view form shows it, used by the add_view workflow test
+     * to open the form (mirrors test_sources::source_new_url)
+     *
+     * @return array the url parameters of a view that is not yet created
+     */
+    static function view_new_url(user_message_ui $msg): array
+    {
+        $msk_ui = new view_ui();
+        return $msk_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url of the added test view, used by the change_view workflow test to open the edit form
+     * (mirrors test_sources::source_add_url)
+     *
+     * @return array the view url parameters of the added test view
+     */
+    function view_add_url(user_message_ui $msg): array
+    {
+        $msk_ui = new view_ui($this->view_add()->api_json());
+        return $msk_ui->to_url_array($msg);
+    }
+
+    /**
+     * the url parameters posted by the 'Add new view' form on save, used by the add_view workflow
+     * test to show the new view in the confirm add view (docs/llm/testing.md); the type is the
+     * standard view type and the share and protection ids are the defaults of a newly added view,
+     * which the add form preselects; the object id and the back target are added by the workflow
+     * step, not here (mirrors test_sources::add_url_array)
+     *
+     * @return array the add form url parameters of the new view
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => views::TEST_ADD_NAME,
+            url_var::DESCRIPTION => views::TEST_ADD_COM,
+            url_var::VIEW_TYPE => view_types::DEFAULT_ID,
+            url_var::STYLE => view_styles::COL_SM_4_ID,
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
+    }
+
+    /**
+     * the filled view url posted by the edit form in the second change_view round, mirroring
+     * test_sources::fill_url_array: the first round only changed the style, so the fill round also
+     * changes the description; the '8'-prefixed opening values are the state the view has after the
+     * first round, so the confirm view shows only the description as changed
+     *
+     * @param int $id the database id of the view the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $msg = new user_message_ui();
+        $url_arr = $this->view_add_url($msg);
+        // the workflow step adds the current db id of the test view, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;
+        $url_arr[url_var::DESCRIPTION] = views::TEST_DESCRIPTION_CHANGED;
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::STYLE] = $url_arr[url_var::STYLE];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
     }
 
 }

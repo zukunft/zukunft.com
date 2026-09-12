@@ -43,7 +43,7 @@ PREPARE job_status_insert_log_11111_call
 
 SELECT job_status_insert_log_11111
     ('created',
-     1,
+     3,
      1,
      855,
      856,

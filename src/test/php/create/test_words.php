@@ -36,6 +36,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
@@ -46,13 +48,17 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
@@ -63,8 +69,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -96,7 +104,7 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::MATH_ID, word_names::MATH);
         $wrd->description = word_names::MATH_COM;
-        $wrd->set_type(phrase_types::NORMAL, $this->env->usr1);
+        $wrd->set_type(phrase_types::NORMAL, new user_message($this->env->usr1));
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
@@ -110,7 +118,7 @@ class test_words extends test_objects
         $wrd = new word(test_users::user_sys_test());
         $wrd->set(word_names::MATH_ID, word_names::MATH);
         $wrd->description = word_names::MATH_COM;
-        $wrd->set_type(phrase_types::NORMAL, test_users::user_sys_test());
+        $wrd->set_type(phrase_types::NORMAL, new user_message(test_users::user_sys_test()));
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
@@ -119,6 +127,17 @@ class test_words extends test_objects
     /**
      * @return word object where the most specific mandatory var is not set which is in case of a word the id and the name
      */
+    /**
+     * @param string $name the name of a word that is not yet in the database
+     * @return word as an import creates it before the words have been saved
+     */
+    function by_name(string $name): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name($name);
+        return $wrd;
+    }
+
     function word_incomplete(): word
     {
         $wrd = $this->word();
@@ -185,8 +204,8 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::MATH_ID, word_names::MATH);
         $wrd->description = word_names::MATH_COM;
-        $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
-        $wrd->set_code_id(word_names::MATH, $this->env->usr_system);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
+        $wrd->set_code_id_db(word_names::MATH);
         $wrd->plural = word_names::MATH_PLURAL;
         $wrd->view = $t_msk->view_math();
         $wrd->usage = test_const::DUMMY_USAGE_WORD;
@@ -220,6 +239,23 @@ class test_words extends test_objects
     }
 
     /**
+     * the reserved 'System Test Word' owned by the given user with the given description and without a
+     * fixed id, so save() creates a fresh standard row owned by that user; used by the change-by-other-
+     * user write workflow test to set up a base word with a known owner and original description
+     *
+     * @param user $usr the user who owns (creates) the word
+     * @param string $des the description of the word
+     * @return word the reserved test word for the given owner
+     */
+    static function add_owned(user $usr, string $des): word
+    {
+        $wrd = new word($usr);
+        $wrd->set_name(word_names::TEST_ADD);
+        $wrd->set_description($des);
+        return $wrd;
+    }
+
+    /**
      * the current database id of a reserved test word, or the fixed snapshot id if the word is not
      * (yet) in the database e.g. in a read-only workflow run where nothing is written
      *
@@ -229,8 +265,9 @@ class test_words extends test_objects
      */
     function word_id_or_fixed(string $name, int $fixed_id): int
     {
+        $msg = new user_message();
         $wrd = new word($this->env->usr1);
-        $id = $wrd->load_by_name($name);
+        $id = $wrd->load_by_name($name, $msg);
         if ($id == 0) {
             $id = $fixed_id;
         }
@@ -243,16 +280,16 @@ class test_words extends test_objects
         return new word_ui($wrd->api_json());
     }
 
-    static function word_new_url(): array
+    static function word_new_url(user_message_ui $msg): array
     {
         $wrd_ui = new word_ui();
-        return $wrd_ui->to_url_array();
+        return $wrd_ui->to_url_array($msg);
     }
 
-    static function word_add_url(): array
+    static function word_add_url(user_message_ui $msg): array
     {
         $wrd_ui = self::word_add_ui();
-        return $wrd_ui->to_url_array();
+        return $wrd_ui->to_url_array($msg);
     }
 
 
@@ -291,12 +328,12 @@ class test_words extends test_objects
      *
      * @return array the edit form url parameters with every field filled
      */
-    function fill_url_array(): array
+    function fill_url_array(user_message_ui $msg): array
     {
         // word_filled_add is filled() carrying the reserved 'System Test Word' name, so it gives the new
         // value of every editable url field without renaming the word the change_word workflow runs on
         $wrd = new word_ui($this->word_filled_add()->api_json());
-        $url_arr = $wrd->to_url_array();
+        $url_arr = $wrd->to_url_array($msg);
         // the workflow step adds the current db id of the test word, so drop the factory id
         unset($url_arr[url_var::ID]);
         return $url_arr;
@@ -327,11 +364,23 @@ class test_words extends test_objects
      */
     function word_filled_add(): word
     {
-        $wrd = $this->word_filled();
+        $t_msk = new test_views($this->env);
+        $wrd = $this->word_add();
+        $wrd->description = word_names::TEST_CHANGE_COM;
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
+        $wrd->set_code_id_db(word_names::TEST_ADD);
+        $wrd->plural = word_names::TEST_ADD_PLURAL;
+        $wrd->view = $t_msk->word();
+        $wrd->usage = test_const::DUMMY_USAGE_WORD;
+        $wrd->impact = test_const::DUMMY_IMPACT;
         $wrd->include();
         $wrd->id = 0;
         $wrd->set_name(word_names::TEST_ADD);
-        $wrd->set_code_id(word_names::TEST_ADD_CODE_ID, $this->env->usr_system);
+        $wrd->set_code_id_db(word_names::TEST_ADD_CODE_ID);
+        // give the reserved 'System Test Word' its own name-bearing fields instead of the math word's,
+        // so its change log does not read as the math word (plural "mathematics", math description)
+        $wrd->plural = word_names::TEST_ADD_PLURAL;
+        $wrd->description = word_names::TEST_ADD_COM;
         return $wrd;
     }
 
@@ -424,7 +473,7 @@ class test_words extends test_objects
         $t_phr = new test_phrases($this->env);
         $wrd = $this->zh_ui();
         $wrd->phr_lst = $t_phr->list_zh_ui();
-        $wrd->set_type(phrase_types::MEASURE);
+        $wrd->set_type(phrase_types::MEASURE, new user_message_ui());
         $wrd->share_id = $ui_sys?->typ_lst_cache?->shr_typ?->id(share_types::PERSONAL);
         $wrd->protection_id = $ui_sys?->typ_lst_cache?->ptc_typ?->id(protection_types::ADMIN);
         return $wrd;
@@ -438,7 +487,7 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::CONST_ID, word_names::CONST_NAME);
         $wrd->description = word_names::CONST_COM;
-        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
@@ -452,7 +501,7 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::PI_SYMBOL_ID, word_names::PI_SYMBOL);
         $wrd->description = word_names::PI_SYMBOL_COM;
-        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
@@ -466,7 +515,7 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::PI_ID, word_names::PI);
         $wrd->description = word_names::PI_COM;
-        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
@@ -499,18 +548,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::E_SYMBOL_ID, word_names::E_SYMBOL);
-        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
-        return $wrd;
-    }
-
-    /**
-     * @return word "Euler's number" to test the handling of >'<
-     */
-    function word_e(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::E_ID, word_names::E);
-        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -583,18 +621,11 @@ class test_words extends test_objects
         return $wrd;
     }
 
-    function cs_133(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::CS_133_ID, word_names::CS_133);
-        return $wrd;
-    }
-
     function hz(): word
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::HZ_ID, word_names::HZ);
-        $wrd->set_type(phrase_types::MEASURE, $this->env->usr1);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         $wrd->set_description(word_names::HZ_COM);
         return $wrd;
     }
@@ -603,7 +634,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::YEAR_1967_ID, word_names::YEAR_1967);
-        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -611,7 +642,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::YEAR_1983_ID, word_names::YEAR_1983);
-        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -622,7 +653,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::YEAR_CAP_ID, words::YEAR_CAP);
-        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -641,7 +672,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::YEAR_2020_ID, word_names::YEAR_2020);
-        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, new user_message($this->env->usr1));
         $wrd->set_description(word_names::YEAR_2020_COM);
         return $wrd;
     }
@@ -703,7 +734,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set($id, $name);
-        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -714,7 +745,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::PCT_ID, words::PCT);
-        $wrd->set_type(phrase_types::PERCENT, $this->env->usr1);
+        $wrd->set_type(phrase_types::PERCENT, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -802,7 +833,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::THIS_ID, word_names::THIS_NAME);
-        $wrd->set_type(phrase_types::THIS, $this->env->usr1);
+        $wrd->set_type(phrase_types::THIS, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -810,7 +841,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::PRIOR_ID, word_names::PRIOR_NAME);
-        $wrd->set_type(phrase_types::PRIOR, $this->env->usr1);
+        $wrd->set_type(phrase_types::PRIOR, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -818,7 +849,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::ONE_ID, word_names::ONE);
-        $wrd->set_type(phrase_types::SCALING_HIDDEN, $this->env->usr1);
+        $wrd->set_type(phrase_types::SCALING_HIDDEN, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -832,6 +863,18 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word the scaling symbol "mio" as its own database row, i.e. the from side of
+     *              the triple "mio is symbol for million"
+     */
+    function word_mio_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MIO_SHORT_ID, word_names::MIO_SHORT);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
     function word_math(): word
     {
         $wrd = new word($this->env->usr1);
@@ -839,11 +882,23 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "million" with the description used as the tooltip of its symbol "mio"
+     */
+    function word_million(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MIO_ID, word_names::MIO);
+        $wrd->description = word_names::MIO_COM;
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
     function word_mio(): word
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::MIO_ID, word_names::MIO_SHORT);
-        $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -926,6 +981,36 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "loss" of the solution_prio cost values e.g. "potential loss"
+     */
+    function word_loss(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LOSS_ID, word_names::LOSS);
+        return $wrd;
+    }
+
+    /**
+     * @return word "gain" of the solution_prio gain values e.g. "potential gain"
+     */
+    function word_gain(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GAIN_ID, word_names::GAIN);
+        return $wrd;
+    }
+
+    /**
+     * @return word "cost" used e.g. as a mayor table column of the global problems
+     */
+    function word_cost(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::COST_ID, word_names::COST);
+        return $wrd;
+    }
+
+    /**
      * @return word with id and name of Geneva
      */
     function word_ge(): word
@@ -978,6 +1063,13 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function solution(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SOLUTION_ID, word_names::SOLUTION);
+        return $wrd;
+    }
+
     function word_climate(): word
     {
         $wrd = new word($this->env->usr1);
@@ -1024,6 +1116,98 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "human" of the "global happy time points" formula of solution_prio.json
+     */
+    function word_human(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::HUMAN_ID, word_names::HUMAN);
+        return $wrd;
+    }
+
+    /**
+     * @return word "population" of the "global happy time points" formula of solution_prio.json
+     */
+    function word_population(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::POPULATION_ID, word_names::POPULATION);
+        return $wrd;
+    }
+
+    /**
+     * @return word the qualifier of a value that is estimated instead of taken from a source
+     */
+    function word_assumed(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::ASSUMED_ID, word_names::ASSUMED);
+        return $wrd;
+    }
+
+    /**
+     * @return word the tag of the lower bound of the probability range of a value
+     */
+    function word_low(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LOW_ID, word_names::LOW);
+        return $wrd;
+    }
+
+    /**
+     * @return word the tag of the upper bound of the probability range of a value
+     */
+    function word_high(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::HIGH_ID, word_names::HIGH);
+        return $wrd;
+    }
+
+    /**
+     * @return word the tag of the confidence that the range of a value contains the true value
+     */
+    function word_confidence(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::CONFIDENCE_ID, word_names::CONFIDENCE);
+        return $wrd;
+    }
+
+    /*
+     * the problems and solutions of solution_prio.json that are a word, not a triple
+     */
+
+    function word_disinformation(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::DISINFORMATION_ID, word_names::DISINFORMATION);
+        return $wrd;
+    }
+
+    function word_research(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::RESEARCH_ID, word_names::RESEARCH);
+        return $wrd;
+    }
+
+    function word_taxes(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::TAXES_ID, word_names::TAXES);
+        return $wrd;
+    }
+
+    function word_spending(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SPENDING_ID, word_names::SPENDING);
+        return $wrd;
+    }
+
     function word_happy(): word
     {
         $wrd = new word($this->env->usr1);
@@ -1049,6 +1233,29 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::TRILLION_ID, word_names::TRILLION);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
+     * @return word "gram", a measure word and the from of the unit triple "gram per kWh"
+     */
+    function word_gram(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GRAM_ID, word_names::GRAM);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
+     * @return word "kWh", a measure word and the to of the unit triple "gram per kWh"
+     */
+    function word_kwh(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::KWH_ID, word_names::KWH);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1056,6 +1263,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::BILLION_ID, word_names::BILLION);
+        $wrd->set_type(phrase_types::SCALING, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1063,43 +1271,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::CHF_ID, words::CHF);
-        return $wrd;
-    }
-
-    /**
-     * @return word the currency "Swiss franc" — the target of the "CHF is symbol for
-     *              Swiss franc" triple used as the canonical symbol example
-     */
-    function swiss_franc(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::SWISS_FRANC_ID, word_names::SWISS_FRANC);
-        $wrd->description = word_names::SWISS_FRANC_COM;
-        return $wrd;
-    }
-
-    /**
-     * @return word_ui the "Swiss franc" word for frontend unit testing (e.g. as the
-     *                 symbol target a CHF page-title category subtitle links to);
-     *                 the *_ui suffix marks this as a frontend/UI factory per the
-     *                 naming rule in docs/llm/coding.md
-     */
-    function swiss_franc_ui(): word_ui
-    {
-        $wrd = $this->swiss_franc();
-        return new word_ui($wrd->api_json());
-    }
-
-    /**
-     * @return word_ui "Swiss franc" with the related symbol and category phrases as loaded
-     *                 with the word from the backend e.g. to test the related phrases
-     *                 shown on the default word page
-     */
-    function swiss_franc_related_ui(): word_ui
-    {
-        $t_phr = new test_phrases($this->env);
-        $wrd = $this->swiss_franc_ui();
-        $wrd->phr_lst = $t_phr->list_swiss_franc_related_ui();
         return $wrd;
     }
 
@@ -1114,13 +1285,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::EUR_ID, word_names::EUR);
-        return $wrd;
-    }
-
-    function us_dollar(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::US_DOLLAR_ID, word_names::US_DOLLAR);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1138,29 +1303,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::DOLLAR_ID, word_names::DOLLAR);
-        return $wrd;
-    }
-
-    /**
-     * @return word the spelling variant "U.S. dollar" used as an alias of "US dollar"
-     */
-    function word_u_s_dollar(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::U_S_DOLLAR_ID, word_names::U_S_DOLLAR);
-        return $wrd;
-    }
-
-    /**
-     * @return word_ui "US dollar" with the related alias, symbol and category phrases as loaded
-     *                 with the word from the backend e.g. to test the alias and symbol lines
-     *                 shown on the default word page
-     */
-    function us_dollar_related_ui(): word_ui
-    {
-        $t_phr = new test_phrases($this->env);
-        $wrd = new word_ui($this->us_dollar()->api_json());
-        $wrd->phr_lst = $t_phr->list_us_dollar_related_ui();
         return $wrd;
     }
 
@@ -1227,6 +1369,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::HTP_ID, word_names::HTP);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1305,7 +1448,6 @@ class test_words extends test_objects
         $lst->add($this->word_cf());
         $lst->add($this->word_diameter());
         $lst->add($this->word_e_symbol());
-        $lst->add($this->word_e());
         $lst->add($this->word_year());
         $lst->add($this->word_2019());
         $lst->add($this->word_2020());
@@ -1378,7 +1520,7 @@ class test_words extends test_objects
         $wrd->set_name(word_names::TEST_SPEED_PREFIX . $id);
 
         $type_id = rand(1, $sys->typ_lst->phr_typ->count());
-        $wrd->set_type_id($type_id, $test_usr);
+        $wrd->set_type_id($type_id, new user_message($test_usr));
         return $wrd;
     }
 

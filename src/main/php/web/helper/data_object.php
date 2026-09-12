@@ -34,7 +34,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\helper;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 // including off child objects deactivated to avoid loops in including
@@ -54,8 +53,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::WORD . 'word_list.php';
 //include_once html_paths::WORD . 'triple_list.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
@@ -91,11 +90,14 @@ class data_object
     // the list of cached words
     // using more memory instead of recreating the list every time
     private bool $wrd_lst_dirty = false;
+
+    // TODO Prio 1 review the user_message as parameter
     public word_list $wrd_lst {
         get {
             if ($this->wrd_lst_dirty) {
                 if (!$this->phr_lst_dirty) {
-                    $this->wrd_lst->merge($this->phr_lst->word_list());
+                    $cache_msg = new user_message(); // not reported: a property hook takes no caller message
+                    $this->wrd_lst->merge($this->phr_lst->word_list($cache_msg), $cache_msg);
                 }
                 $this->wrd_lst_dirty = false;
             }
@@ -115,7 +117,8 @@ class data_object
         get {
             if ($this->trp_lst_dirty) {
                 if (!$this->phr_lst_dirty) {
-                    $this->trp_lst->merge($this->phr_lst->triple_list());
+                    $cache_msg = new user_message(); // not reported: a property hook takes no caller message
+                    $this->trp_lst->merge($this->phr_lst->triple_list($cache_msg), $cache_msg);
                 }
                 $this->trp_lst_dirty = false;
             }
@@ -135,11 +138,12 @@ class data_object
     public phrase_list $phr_lst {
         get {
             if ($this->phr_lst_dirty) {
+                $cache_msg = new user_message(); // not reported: a property hook takes no caller message
                 if (!$this->wrd_lst_dirty) {
-                    $this->phr_lst->merge($this->wrd_lst->phrase_list());
+                    $this->phr_lst->merge($this->wrd_lst->phrase_list($cache_msg), $cache_msg);
                 }
                 if (!$this->trp_lst_dirty) {
-                    $this->phr_lst->merge($this->trp_lst->phrase_list());
+                    $this->phr_lst->merge($this->trp_lst->phrase_list($cache_msg), $cache_msg);
                 }
                 $this->phr_lst_dirty = false;
             }
@@ -195,7 +199,7 @@ class data_object
     public sys_log_list $sys_log;
 
     // for warning and errors while filling the data_object
-    private user_message $usr_msg;
+    private user_message $msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
     public bool $online;
 
@@ -210,13 +214,13 @@ class data_object
      */
     function __construct(?string $api_json = null)
     {
-        $this->usr_msg = new user_message();
+        $this->msg = new user_message(); // an object field of this cache, not the message of a request
         if ($api_json != null) {
             $this->val_lst = new value_list();
             $this->res_lst = new result_list();
             $this->src_lst = new source_list();
             $this->ref_lst = new ref_list();
-            $this->set_from_json($api_json, $this->usr_msg);
+            $this->set_from_json($api_json, $this->msg);
             $this->usr = new user();
         } else {
             $this->reset();
@@ -254,7 +258,7 @@ class data_object
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the object is filled
      */
     function set_from_json(string $json_api_msg, user_message $usr_msg): bool
@@ -268,12 +272,12 @@ class data_object
         return $usr_msg->is_ok();
     }
 
-    function refresh_words_via_api(user_message $usr_msg): bool
+    function refresh_words_via_api(user_message $msg): bool
     {
         if ($this->online) {
-            $this->wrd_lst->reload($usr_msg);
+            $this->wrd_lst->reload($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -416,9 +420,9 @@ class data_object
      * set the view_list of this data object
      * @param view_list $msk_lst
      */
-    function merge_view_list(view_list $msk_lst): void
+    function merge_view_list(view_list $msk_lst, user_message $msg): void
     {
-        $this->msk_lst->merge($msk_lst);
+        $this->msk_lst->merge($msk_lst, $msg);
     }
 
     /**
@@ -488,10 +492,10 @@ class data_object
         }
     }
 
-    function add_phrases(phrase_list $phr_lst): void
+    function add_phrases(phrase_list $phr_lst, user_message $msg): void
     {
         foreach ($phr_lst->lst() as $phr) {
-            $this->phr_lst->add($phr);
+            $this->phr_lst->add($phr, $msg);
         }
         $this->wrd_lst_dirty = true;
         $this->trp_lst_dirty = true;
@@ -515,10 +519,10 @@ class data_object
         return !$this->chg_log->is_empty();
     }
 
-    function add_changes(change_log_list $chg_log): void
+    function add_changes(change_log_list $chg_log, user_message $msg): void
     {
         foreach ($chg_log->lst() as $log) {
-            $this->chg_log->add($log);
+            $this->chg_log->add($log, $msg);
         }
     }
 

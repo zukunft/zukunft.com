@@ -37,7 +37,7 @@ PREPARE source_type_insert_log_1111_call
 
 SELECT source_type_insert_log_1111
     ('XBRL',
-     1,
+     3,
      1,
      343,
      344,

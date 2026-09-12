@@ -117,6 +117,7 @@ class sql
     const string UNION_ALL = 'UNION ALL';
     const string IN = 'IN';
     const string ANY = '= ANY';
+    const string LIKE = 'LIKE';
     const string COALESCE = 'COALESCE';
 
     // to separate one SQL statement from the next

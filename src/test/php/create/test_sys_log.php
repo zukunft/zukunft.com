@@ -40,6 +40,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
@@ -147,11 +149,14 @@ class test_sys_log extends test_objects
     }
 
     /**
+     * @param user_message_ui $msg to report the api mapping problems of the frontend list
      * @return sys_log_list_ui a frontend list of the system errors related to the user
      */
-    function list_for_user_ui(): sys_log_list_ui
+    function list_for_user_ui(user_message_ui $msg): sys_log_list_ui
     {
-        return new sys_log_list_ui($this->sys_log_list()->api_json());
+        $lst_ui = new sys_log_list_ui();
+        $lst_ui->set_from_json($this->sys_log_list()->api_json(), $msg);
+        return $lst_ui;
     }
 
     /**

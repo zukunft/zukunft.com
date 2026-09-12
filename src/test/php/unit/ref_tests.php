@@ -34,18 +34,32 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'sources.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class ref_tests
 {
@@ -53,8 +67,6 @@ class ref_tests
     {
 
         // TODO Prio 1 use the users of $t->env->usr_... instead
-        global $usr;
-        global $usr_sys;
 
         // init for reference
         $sc = new sql_creator();
@@ -67,7 +79,7 @@ class ref_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $ref = new ref($usr);
+        $ref = new ref($t->usr1);
         $t->assert_sql_table_create($ref);
         $t->assert_sql_index_create($ref);
         $t->assert_sql_foreign_key_create($ref);
@@ -76,9 +88,10 @@ class ref_tests
         $t->assert_sql_by_id($sc, $ref);
         $t->assert_sql_by_link($sc, $ref);
         $this->assert_sql_link_ids($t, $sc, $ref);
+        $this->assert_sql_ex_key($t, $sc, $ref);
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $ref = new ref($usr);
+        $ref = new ref($t->usr1);
         $ref->id = 3;
         $t->assert_sql_standard($sc, $ref);
         $ref = $t_ref->reference();
@@ -87,6 +100,19 @@ class ref_tests
         $t->subheader($ts . 'sql read all type');
         $ref_type_list = new ref_type_list();
         $t->assert_sql_all($sc, $ref_type_list);
+
+        // a ref list is a sandbox list like the source list, so it builds its own list queries
+        // instead of loading a single ref per id (see change_log_list::load_changed_objects)
+        $t->subheader($ts . 'list sql read');
+        $ref_lst = new ref_list($t->usr1);
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($ref_lst->load_sql_by_ids($sc, [1, 2]), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($ref_lst->load_sql_by_ids($sc, [1, 2]), sql_db::MYSQL);
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::MYSQL);
 
         $t->subheader($ts . 'sql write insert');
         $ref = $t_ref->reference();
@@ -119,6 +145,36 @@ class ref_tests
         $ref = $t_ref->ref_filled();
         $t->assert_reset($ref);
 
+        $t->subheader($ts . 'read access (share)');
+        // a non-public reference must not be disclosed to another user via a related-reference list
+        // (idor); ref extends sandbox (is_readable_by) and ref_list has its own filter_readable_by
+        global $sys;
+        $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
+        $ref_priv = $t_ref->reference();
+        $ref_priv->set_owner_id($t->usr1->id);
+        $ref_priv->set_share_id($private_id);
+        $test_name = 'the owner may read their own private reference';
+        $t->assert_true($test_name, $ref_priv->is_readable_by($t->usr1));
+        $test_name = 'another user may not read a private reference';
+        $t->assert_false($test_name, $ref_priv->is_readable_by($t->usr2));
+        $ref_pub = $t_ref->reference();
+        $ref_pub->set_owner_id($t->usr1->id);
+        $ref_lst = new ref_list($t->usr2);
+        $ref_lst->set_lst([$ref_priv, $ref_pub]);
+        $ref_lst->filter_readable_by($t->usr2);
+        $test_name = 'the readable filter keeps only the public reference for another user';
+        $t->assert($test_name, count($ref_lst->lst()), 1);
+
+        $t->subheader($ts . 'save');
+        // the type is part of the prime index, so a reference without a type is refused before any
+        // database access with a message instead of failing in the duplicate check
+        $test_name = 'a reference without a type is not saved';
+        $msg = new user_message();
+        $ref_no_type = $t_ref->reference();
+        $ref_no_type->set_predicate_id(null);
+        $t->assert_false($test_name, $ref_no_type->save($msg));
+        $t->assert_false($test_name, $msg->is_ok());
+
         $t->subheader($ts . 'api');
         $ref = $t_ref->reference1();
         $t->assert_api_json($ref);
@@ -129,11 +185,43 @@ class ref_tests
         $ref = $t_ref->reference_plus();
         $t->assert_api_to_ui($ref, new ref_ui());
 
+        // the ref edit view shows the last update time and the system calculated impact as
+        // display only info, because the user can never change these two db fields
+        global $ui_sys;
+        $form = new system_form();
+        $ref_ui = $t_ref->ref_info_ui();
+        $test_name = 'the ref edit view shows the time of the last update';
+        $t->assert_text_contains($test_name, $form->show_last_update($ref_ui),
+            date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
+        $test_name = 'the ref edit view shows the impact as read only text';
+        $t->assert_text_contains($test_name, $form->show_impact($ref_ui), (string)impacts::MAX);
+        // the ref default page shows the linked phrase, the type, the external key, the url
+        // and the source, each behind the label of the matching form field
+        $test_name = 'the ref page links the phrase the reference belongs to';
+        $t->assert_text_contains($test_name, $form->show_ref_phrase($ref_ui), word_names::PI);
+        $test_name = 'the ref page shows the reference type behind its label';
+        $t->assert_text_contains($test_name, $form->show_ref_type($ref_ui), ref_types::WIKIDATA);
+        $test_name = 'the ref page shows the external key behind its label';
+        $t->assert_text_contains($test_name, $form->show_ref_key($ref_ui), refs::PI_KEY);
+        $test_name = 'the ref page shows the url as a link to the external page';
+        $t->assert_text_contains($test_name, $form->show_ref_url($ref_ui),
+            '<a href="' . refs::PI_URL . '">');
+        $test_name = 'the ref page links the source of the reference';
+        $t->assert_text_contains($test_name, $form->show_ref_source($ref_ui), sources::SIB);
+        // the last update and the impact are written by the system, so a reference that has
+        // never been updated or ranked shows no lonely labels; unlike a user-settable field
+        // there is nothing the user could fill in behind them
+        $ref_plain = new ref_ui($t_ref->reference()->api_json([api_types::TEST_MODE]));
+        $test_name = 'a never updated ref shows no last update line';
+        $t->assert($test_name, $form->show_last_update($ref_plain), '');
+        $test_name = 'a not yet ranked ref shows no impact line';
+        $t->assert($test_name, $form->show_impact($ref_plain), '');
+
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t_ref->reference(), $usr_sys);
-        $t->assert_ex_and_import($t_ref->ref_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_ref->reference(), $t->usr_system);
+        $t->assert_ex_and_import($t_ref->ref_filled(), $t->usr_system);
         $json_file = 'unit/ref/wikipedia.json';
-        $t->assert_json_file(new ref($usr), $json_file);
+        $t->assert_json_file(new ref($t->usr1), $json_file);
 
     }
 
@@ -159,6 +247,29 @@ class ref_tests
         // check the MySQL query syntax
         $sc->reset(sql_db::MYSQL);
         $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
+        $t->assert_qp($qp, $sc->db_type);
+    }
+
+    /**
+     * check the sql to load a reference by its external key for both database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc the sql creator that is reset for each dialect
+     * @param ref $ref the reference whose query is checked
+     */
+    private function assert_sql_ex_key(
+        test_cleanup $t,
+        sql_creator  $sc,
+        ref          $ref): void
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $ref->load_sql_by_ex_key($sc, refs::PI_KEY);
+        $t->assert_qp($qp, $sc->db_type);
+
+        // check the MySQL query syntax
+        $sc->reset(sql_db::MYSQL);
+        $qp = $ref->load_sql_by_ex_key($sc, refs::PI_KEY);
         $t->assert_qp($qp, $sc->db_type);
     }
 

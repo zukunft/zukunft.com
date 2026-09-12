@@ -107,9 +107,9 @@ class test_triples extends test_objects
         $msg = new user_message();
         foreach (verbs::TEST_VERBS as $name) {
             $vrb->reset();
-            $vrb->load_by_name($name);
+            $vrb->load_by_name($name, $msg);
             if ($vrb->has_id()) {
-                $trp_lst->load_by_verb($vrb, true);
+                $trp_lst->load_by_verb( $vrb, $msg, true );
                 $trp_lst->del($msg);
             }
         }
@@ -138,7 +138,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_const()->phrase());
         $trp->set_verb($t_vrb->verb_part());
         $trp->set_to($t_wrd->word()->phrase());
-        $trp->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $trp->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         global $sys;
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
@@ -151,7 +151,20 @@ class test_triples extends test_objects
     {
         $trp = $this->triple();
         $trp->impact = impacts::MAX;
+        // the same weight as units.json sets for the db row of this triple, because the term
+        // list unit test and the term list api read test share the fixture term_list.json,
+        // so the in-memory twin and the db row must create the same api json
+        $trp->weight = 0.5;
         return $trp;
+    }
+
+    /**
+     * @return triple_ui the triple with the fractional weight for frontend unit testing
+     *                   e.g. that the edit form shows the weight 0.5 and not an int-truncated 0
+     */
+    function triple_impact_ui(): triple_ui
+    {
+        return new triple_ui($this->triple_impact()->api_json());
     }
 
     /**
@@ -174,7 +187,7 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::MATH_CONST_ID, triple_names::MATH_CONST);
         $trp->description = triple_names::MATH_CONST_COM;
-        $trp->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $trp->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         global $sys;
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
@@ -230,7 +243,7 @@ class test_triples extends test_objects
         // overwrite the 'math const' given name of the filled base triple with the reserved test
         // given name so the workflow urls never carry seeded data
         $trp->name_given = triple_names::SYSTEM_TEST_ADD_GIVEN;
-        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($this->env->usr1));
         $trp->set_from($t_wrd->word_filled_add()->phrase());
         $trp->set_to($t_wrd->word_filled_add_to()->phrase());
         return $trp;
@@ -355,17 +368,17 @@ class test_triples extends test_objects
         return new triple_ui($trp->api_json());
     }
 
-    static function triple_new_url(): array
+    static function triple_new_url(user_message_ui $msg): array
     {
         $trp_ui = new triple_ui();
         $trp_ui->set_verb(test_verbs::verb_ui());
-        return $trp_ui->to_url_array();
+        return $trp_ui->to_url_array($msg);
     }
 
-    static function triple_add_url(): array
+    static function triple_add_url(user_message_ui $msg): array
     {
         $trp_ui = self::triple_add_ui();
-        return $trp_ui->to_url_array();
+        return $trp_ui->to_url_array($msg);
     }
 
     /**
@@ -375,10 +388,10 @@ class test_triples extends test_objects
      *
      * @return array the triple url parameters with the resolved from and to phrase ids
      */
-    function triple_add_url_resolved(): array
+    function triple_add_url_resolved(user_message_ui $msg): array
     {
         $t_wrd = new test_words($this->env);
-        $url_arr = self::triple_add_url();
+        $url_arr = self::triple_add_url($msg);
         $url_arr[url_var::PHRASE_FROM]
             = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
         $url_arr[url_var::PHRASE_TO]
@@ -396,7 +409,7 @@ class test_triples extends test_objects
         $trp->id = 0;
         $trp->include();
         $trp->set_name(triple_names::SYSTEM_TEST_ADD);
-        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($this->env->usr1));
         $trp->weight = 0.5;
         $trp->set_view_id(views::MATH_CONST_ID);
         $trp->usage = triple_names::SYSTEM_TEST_ADD_USAGE;
@@ -423,7 +436,7 @@ class test_triples extends test_objects
     /**
      * @return triple "pi (unit symbol)" used for unit testing
      */
-    function triple_pi_symbol(): triple
+    function triple_pi(): triple
     {
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -439,7 +452,7 @@ class test_triples extends test_objects
     /**
      * @return triple "pi (math)" used for unit testing
      */
-    function triple_pi(): triple
+    function triple_pi_name(): triple
     {
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -449,7 +462,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_pi()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_types::TRIPLE_HIDDEN, $this->env->usr1);
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -462,7 +475,7 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::PI_ID, triple_names::PI_NAME);
         $trp->description = triple_names::PI_COM;
-        $trp->set_type(phrase_types::TRIPLE_HIDDEN, $this->env->usr1);
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -490,7 +503,18 @@ class test_triples extends test_objects
         $trp->set(triple_names::TRANSITION_CS_ID, triple_names::TRANSITION_CS);
         $trp->set_from($t_trp->hyperfine_transition_frequency()->phrase());
         $trp->set_verb($t_vrb->verb_of());
-        $trp->set_to($t_wrd->cs_133()->phrase());
+        $trp->set_to($this->cs_133()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Caesium-133" (Caesium kind of 133) used for unit testing
+     */
+    function cs_133(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CS_133_ID, triple_names::CS_133);
+        $trp->description = triple_names::CS_133_COM;
         return $trp;
     }
 
@@ -545,7 +569,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->metre()->phrase());
         $trp->set_verb($t_vrb->verb_per());
         $trp->set_to($t_wrd->second()->phrase());
-        $trp->set_type(phrase_types::MEASURE, $this->env->usr1);
+        $trp->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -558,7 +582,7 @@ class test_triples extends test_objects
         $trp->set_from($t_trp->year_1983()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
-        $trp->set_type(phrase_types::INFO, $this->env->usr1);
+        $trp->set_type(phrase_types::INFO, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -571,7 +595,7 @@ class test_triples extends test_objects
         $trp->set_from($t_trp->year_1967()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
-        $trp->set_type(phrase_types::INFO, $this->env->usr1);
+        $trp->set_type(phrase_types::INFO, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -675,34 +699,62 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "Euler's number" (Euler name of number) used for unit testing
+     *         and to test the handling of >'< in a triple name
+     */
+    function triple_euler_number(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EULER_NUMBER_ID, triple_names::EULER_NUMBER);
+        $trp->description = triple_names::EULER_NUMBER_COM;
+        return $trp;
+    }
+
+    /**
      * @return triple "e (math const)" used for unit testing
      */
     function triple_e(): triple
     {
-        $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::E_ID, triple_names::E);
         $trp->description = triple_names::E_COM;
-        $trp->set_from($t_wrd->word_e()->phrase());
+        $trp->set_from($this->triple_euler_number()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_types::TRIPLE_HIDDEN, $this->env->usr1);
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
+     * @return triple "𝑒 (math)" that carries the e number value in the seeded database,
+     *                like "Pi (math)" carries the pi value (see triple_pi_name)
+     */
+    function triple_e_name(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::E_NUM_ID, triple_names::E_NUM);
+        $trp->description = triple_names::E_COM;
+        $trp->set_from($this->triple_euler_number()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->triple()->phrase());
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
         return $trp;
     }
 
     /**
      * @return triple to test the sql insert via function
      */
-    function triple_add_by_func(): triple
+    function triple_add_by_func(user_message $msg): triple
     {
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_db = new test_db_load($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set_name(triple_names::SYSTEM_TEST_ADD_VIA_FUNC);
-        $wrd_add_func = $t_db->load_word(word_names::TEST_ADD_VIA_FUNC);
-        $wrd_math = $t_db->load_word(word_names::MATH);
+        $wrd_add_func = $t_db->load_word($msg, word_names::TEST_ADD_VIA_FUNC);
+        $wrd_math = $t_db->load_word($msg, word_names::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($wrd_math->phrase());
@@ -832,6 +884,133 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "US dollar" (dollar kind of US) used for unit testing;
+     *         the currency is a triple since the split of the multi-word words
+     */
+    function us_dollar(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::US_DOLLAR_ID, triple_names::US_DOLLAR_NAME);
+        $trp->description = triple_names::US_DOLLAR_COM;
+        return $trp;
+    }
+
+    /**
+     * @return triple the spelling variant "U.S. dollar" used as an alias of "US dollar"
+     */
+    function u_s_dollar(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::U_S_DOLLAR_ID, triple_names::U_S_DOLLAR_NAME);
+        $trp->description = triple_names::US_DOLLAR_COM;
+        return $trp;
+    }
+
+    /**
+     * @return triple_ui the "Swiss franc" triple for frontend unit testing (e.g. as the
+     *                   symbol target a CHF page-title category subtitle links to);
+     *                   the *_ui suffix marks this as a frontend/UI factory per the
+     *                   naming rule in docs/llm/coding.md
+     */
+    function swiss_franc_ui(): triple_ui
+    {
+        return new triple_ui($this->swiss_franc()->api_json());
+    }
+
+    /**
+     * @return triple_ui "Swiss franc" with the related symbol and category phrases as loaded
+     *                   with the triple from the backend e.g. to test the related phrases
+     *                   shown on the default phrase page
+     */
+    function swiss_franc_related_ui(): triple_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $trp = $this->swiss_franc_ui();
+        $trp->phr_lst = $t_phr->list_swiss_franc_related_ui();
+        return $trp;
+    }
+
+    /**
+     * the frontend triple of a page request, which unlike a list entry carries the from, verb
+     * and to phrases with their names, because the page links each part; a bare api_json sends
+     * the from side as an id only, which arrives nameless at the frontend
+     * (see web/word/triple::load_by_id_with_related)
+     *
+     * @param triple $trp the backend triple that the page is about
+     * @return triple_ui the page object as the frontend receives it
+     */
+    private function page_ui(triple $trp): triple_ui
+    {
+        return new triple_ui($trp->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
+     * @return triple_ui the "global problem" page phrase of the global issues table, whose
+     *         from side "problem" heads the row column of that table
+     */
+    function global_problem_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_problem());
+    }
+
+    /**
+     * @return triple_ui the "city of Zurich" page phrase of the related values table
+     */
+    function zh_city_ui(): triple_ui
+    {
+        return $this->page_ui($this->zh_city());
+    }
+
+    /**
+     * @return triple_ui the "US dollar" triple for frontend unit testing
+     */
+    function us_dollar_ui(): triple_ui
+    {
+        return new triple_ui($this->us_dollar()->api_json());
+    }
+
+    /**
+     * @return triple_ui "US dollar" with the related alias, symbol and category phrases as loaded
+     *                   with the triple from the backend e.g. to test the alias and symbol lines
+     *                   shown on the default phrase page
+     */
+    function us_dollar_related_ui(): triple_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $trp = $this->us_dollar_ui();
+        $trp->phr_lst = $t_phr->list_us_dollar_related_ui();
+        return $trp;
+    }
+
+    /**
+     * @return triple "Swiss franc" (franc kind of Swiss) used for unit testing;
+     *         the currency is a triple since the split of the multi-word words
+     */
+    function swiss_franc(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SWISS_FRANC_ID, triple_names::SWISS_FRANC);
+        $trp->description = triple_names::SWISS_FRANC_COM;
+        return $trp;
+    }
+
+    /**
+     * @return triple "mio is symbol for million" used to test that a symbol shows the
+     *         description of the word it stands for as its tooltip
+     */
+    function mio_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::MIO_SYMBOL_ID, triple_names::MIO_SYMBOL);
+        $trp->set_from($t_wrd->word_mio_symbol()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->word_million()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "CHF is symbol for Swiss franc" used for unit testing the
      *         page-title category subtitle for SYMBOL-typed related entries
      */
@@ -843,7 +1022,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::CHF_SYMBOL_ID, triple_names::CHF_SYMBOL);
         $trp->set_from($t_wrd->word_chf()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
-        $trp->set_to($t_wrd->swiss_franc()->phrase());
+        $trp->set_to($this->swiss_franc()->phrase());
         $trp->set_impact(impacts::SYMBOL_CHF);
         return $trp;
     }
@@ -856,8 +1035,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(2398, word_names::SWISS_FRANC . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
-        $trp->set_from($t_wrd->swiss_franc()->phrase());
+        $trp->set(triple_names::SWISS_FRANC_CURRENCY_ID, triple_names::SWISS_FRANC_CURRENCY);
+        $trp->set_from($this->swiss_franc()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
         $trp->set_impact(impacts::CURRENCY_CHF);
@@ -872,7 +1051,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(2399, word_names::EURO . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
+        $trp->set(triple_names::EURO_CURRENCY_ID, triple_names::EURO_CURRENCY);
         $trp->set_from($t_wrd->euro()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
@@ -939,7 +1118,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::DOLLAR_ALIAS_ID, triple_names::DOLLAR_ALIAS);
         $trp->set_from($t_wrd->word_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_alias());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::ALIAS_DOLLAR);
         return $trp;
     }
@@ -953,9 +1132,9 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::U_S_DOLLAR_ALIAS_ID, triple_names::U_S_DOLLAR_ALIAS);
-        $trp->set_from($t_wrd->word_u_s_dollar()->phrase());
+        $trp->set_from($this->u_s_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_alias());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::ALIAS_U_S_DOLLAR);
         return $trp;
     }
@@ -971,7 +1150,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::USD_SYMBOL_ID, triple_names::USD_SYMBOL);
         $trp->set_from($t_wrd->word_usd()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::SYMBOL_USD);
         return $trp;
     }
@@ -987,7 +1166,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::IN_USD_ID, triple_names::IN_USD);
         $trp->set_from($t_wrd->word_usd()->phrase());
         $trp->set_verb($t_vrb->verb_in());
-        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_to($this->us_dollar()->phrase());
         $trp->set_impact(impacts::IN_USD);
         return $trp;
     }
@@ -1000,8 +1179,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triple_names::US_DOLLAR_ID, word_names::US_DOLLAR . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
-        $trp->set_from($t_wrd->us_dollar()->phrase());
+        $trp->set(triple_names::US_DOLLAR_CURRENCY_ID, triple_names::US_DOLLAR_CURRENCY);
+        $trp->set_from($this->us_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
         $trp->set_impact(impacts::CURRENCY_USD);
@@ -1129,6 +1308,433 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "mayor column (system)" - the tier of the columns shown on every screen
+     */
+    function column_mayor(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_MAYOR_ID, triple_names::SYSTEM_COLUMN_MAYOR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "main column (system)" - the tier of the columns hidden on a small screen
+     */
+    function column_main(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_MAIN_ID, triple_names::SYSTEM_COLUMN_MAIN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "column problem (high prio)" that defines "problem" as a mayor table column
+     */
+    function column_problem(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_PROBLEM_ID, triple_names::COLUMN_PROBLEM);
+        $trp->set_from($t_wrd->word_problem()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column solution (high prio) is next main column after column problem (high prio)"
+     */
+    function column_solution_after_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_SOLUTION_AFTER_PROBLEM_ID);
+        $trp->set_from($this->column_solution()->phrase());
+        $trp->set_verb($t_vrb->verb_before());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * the reverse of column_solution_after_problem, which no import file contains
+     *
+     * @return triple "column problem (high prio) is next main column after column solution (high prio)"
+     */
+    function column_problem_after_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_PROBLEM_AFTER_SOLUTION_ID);
+        $trp->set_from($this->column_problem()->phrase());
+        $trp->set_verb($t_vrb->verb_before());
+        $trp->set_to($this->column_solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column loss is explaining column for column problem (high prio)"
+     */
+    function column_loss_explains_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_LOSS_EXPLAINS_PROBLEM_ID);
+        $trp->set_from($this->column_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column cost is explaining column for column problem (high prio)"
+     */
+    function column_cost_explains_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_COST_EXPLAINS_PROBLEM_ID);
+        $trp->set_from($this->column_cost()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column gain is explaining column for column solution (high prio)"
+     */
+    function column_gain_explains_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_GAIN_EXPLAINS_SOLUTION_ID);
+        $trp->set_from($this->column_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column solution (high prio)" that defines "solution" as a mayor table column
+     */
+    function column_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_SOLUTION_ID, triple_names::COLUMN_SOLUTION);
+        $trp->set_from($t_wrd->solution()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * the cost column explains the loss column, so it is one tier below the columns it explains
+     *
+     * @return triple "column cost" that defines "cost" as a main table column
+     */
+    function column_cost(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_COST_ID, triple_names::COLUMN_COST);
+        $trp->set_from($t_wrd->word_cost()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_main()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column gain" that defines "gain" as a mayor table column
+     */
+    function column_gain(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_GAIN_ID, triple_names::COLUMN_GAIN);
+        $trp->set_from($t_wrd->word_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column loss" that defines "loss" as a mayor table column
+     */
+    function column_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_LOSS_ID, triple_names::COLUMN_LOSS);
+        $trp->set_from($t_wrd->word_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential loss" - the loss that a problem can cause, which the values name
+     *         with the two words "potential" and "loss"
+     */
+    function potential_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POTENTIAL_LOSS_ID, triple_names::POTENTIAL_LOSS);
+        $trp->set_from($t_wrd->word_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_kind_of());
+        $trp->set_to($t_wrd->word_potential()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "gram per kWh", a unit triple typed "measure" like its two words, so that
+     *                a table header shows it behind the "in" (see pv_switzerland_co2.json)
+     */
+    function gram_per_kwh(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GRAM_PER_KWH_ID, triple_names::GRAM_PER_KWH);
+        $trp->set_from($t_wrd->word_gram()->phrase());
+        $trp->set_verb($t_vrb->verb_per());
+        $trp->set_to($t_wrd->word_kwh()->phrase());
+        $trp->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential loss" that defines "potential loss" as a main table column
+     */
+    function column_potential_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_LOSS_ID, triple_names::COLUMN_POTENTIAL_LOSS);
+        $trp->set_from($this->potential_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_main()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "reduce climate gas emissions" - the solution of the global warming problem
+     */
+    function reduce_emissions(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REDUCE_EMISSIONS_ID, triple_names::REDUCE_EMISSIONS);
+        return $trp;
+    }
+
+    /**
+     * @return triple "avoid wrong decisions" - the solution of the populism problem
+     */
+    function avoid_wrong_decisions(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::AVOID_WRONG_DECISIONS_ID, triple_names::AVOID_WRONG_DECISIONS);
+        return $trp;
+    }
+
+    /*
+     * the triples that link a solution to "solution": the table asks which phrase of a row is a
+     * solution, so unlike the solutions themselves these triples need their from/verb/to link
+     */
+
+    /**
+     * @return triple that "reduce climate gas emissions" "is a" "solution"
+     */
+    function reduce_emissions_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REDUCE_EMISSIONS_SOLUTION_ID);
+        $trp->set_from($this->reduce_emissions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "avoid wrong decisions" "is a" "solution"
+     */
+    function avoid_wrong_decisions_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::AVOID_WRONG_DECISIONS_SOLUTION_ID);
+        $trp->set_from($this->avoid_wrong_decisions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "research" "is a" "solution"
+     */
+    function research_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::RESEARCH_SOLUTION_ID);
+        $trp->set_from($t_wrd->word_research()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "taxes" "is a" "solution"
+     */
+    function taxes_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::TAXES_SOLUTION_ID);
+        $trp->set_from($t_wrd->word_taxes()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "spending" "is a" "solution"
+     */
+    function spending_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SPENDING_SOLUTION_ID);
+        $trp->set_from($t_wrd->word_spending()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /*
+     * the problems of solution_prio.json that are a triple and the solution of each; the phrases
+     * are named by id and name only, because the start page table uses them as the phrase of a
+     * value and never follows the from/verb/to link (see docs/llm/testing.md)
+     */
+
+    function wealth_concentration(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::WEALTH_CONCENTRATION_ID, triple_names::WEALTH_CONCENTRATION);
+        return $trp;
+    }
+
+    function basic_income(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::BASIC_INCOME_ID, triple_names::BASIC_INCOME);
+        return $trp;
+    }
+
+    function platform_regulation(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PLATFORM_REGULATION_ID, triple_names::PLATFORM_REGULATION);
+        return $trp;
+    }
+
+    function market_power(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::MARKET_POWER_ID, triple_names::MARKET_POWER);
+        return $trp;
+    }
+
+    function market_share_tax(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::MARKET_SHARE_TAX_ID, triple_names::MARKET_SHARE_TAX);
+        return $trp;
+    }
+
+    function biased_information(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::BIASED_INFORMATION_ID, triple_names::BIASED_INFORMATION);
+        return $trp;
+    }
+
+    function delphi_method(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::DELPHI_METHOD_ID, triple_names::DELPHI_METHOD);
+        return $trp;
+    }
+
+    function black_box_ai(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::BLACK_BOX_AI_ID, triple_names::BLACK_BOX_AI);
+        return $trp;
+    }
+
+    function public_ai(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PUBLIC_AI_ID, triple_names::PUBLIC_AI);
+        return $trp;
+    }
+
+    function citizen_participation(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CITIZEN_PARTICIPATION_ID, triple_names::CITIZEN_PARTICIPATION);
+        return $trp;
+    }
+
+    function fluid_democracy(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FLUID_DEMOCRACY_ID, triple_names::FLUID_DEMOCRACY);
+        return $trp;
+    }
+
+    function gdp_mismeasurement(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GDP_MISMEASUREMENT_ID, triple_names::GDP_MISMEASUREMENT);
+        return $trp;
+    }
+
+    function gross_domestic_usage(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GROSS_DOMESTIC_USAGE_ID, triple_names::GROSS_DOMESTIC_USAGE);
+        return $trp;
+    }
+
+    function proprietary_software(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PROPRIETARY_SOFTWARE_ID, triple_names::PROPRIETARY_SOFTWARE);
+        return $trp;
+    }
+
+    function free_software(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FREE_SOFTWARE_ID, triple_names::FREE_SOFTWARE);
+        return $trp;
+    }
+
+    /**
      * @return triple that defines that "health" "can be a" "global problem" used for start view unit testing
      */
     function potential_health_problem(): triple
@@ -1217,7 +1823,7 @@ class test_triples extends test_objects
     {
         $lst = new triple_list($this->env->usr1);
         $lst->add($this->triple_filled_included());
-        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_pi());
         $lst->add($this->zh_city());
         $lst->add($this->zh_canton());
         return $lst;
@@ -1230,8 +1836,8 @@ class test_triples extends test_objects
     {
         $lst = new triple_list($this->env->usr1);
         $lst->add($this->triple_filled_included());
-        $lst->add($this->triple_pi_symbol());
         $lst->add($this->triple_pi());
+        $lst->add($this->triple_pi_name());
         $lst->add($this->triple_e());
         $lst->add($this->global_problem());
         $lst->add($this->triple_global_warming());
@@ -1388,7 +1994,7 @@ class test_triples extends test_objects
         $trp->set_name(word_names::TEST_SPEED_PREFIX . $id);
 
         $type_id = rand(1, $sys->typ_lst->phr_typ->count());
-        $trp->set_type_id($type_id, $this->env->usr1);
+        $trp->set_type_id($type_id, new user_message($this->env->usr1));
         return $trp;
     }
 

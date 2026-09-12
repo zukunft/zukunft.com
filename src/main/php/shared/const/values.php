@@ -48,13 +48,26 @@ class values
     CONST float PI_LONG = 3.14159265358979323846264338327950288419716939937510; // pi
     CONST float PI = 3.1415926535898; // pi
     CONST float PI_SHORT = 3.1415927; // pi
-    const int PI_ID = 32770;
-    const int PI_SYMBOL_ID = 32770;
+    // the group id of the pi value keyed by the "π (unit symbol)" triple as used by the unit test fixtures
+    const int PI_ID = 32773;
+    // the group id of the pi number value in the seeded database,
+    // keyed by the "Pi (math)" triple (see triple_names::PI_ID and the pi value in units.json)
+    const int PI_MATH_ID = 32824;
+    const int PI_SYMBOL_ID = 5;
     CONST float SAMPLE_ZERO = 0.0;
     CONST float E = 2.718281828459045235360; // Euler number
-    const int E_ID = 32771;
+    // the group id of the e value in the seeded database, keyed by the "𝑒 (math)" triple like the
+    // pi value is keyed by "Pi (math)", because the number is the value of the constant and not of
+    // its symbol, which is what makes 𝑒 a related value of pi (see value::load_values_similar)
+    const int E_ID = 32825;
     CONST float E_CONST = 0.57721566490153; // Euler const
+    // the group id of the Euler's constant value in the seeded database, keyed by the
+    // "Euler's constant" triple (Euler 'name of' constant, see the value in units.json)
     const int E_CONST_ID = 32771;
+    // the group id of the target price earning ratio of companies.json, which is the only seeded
+    // value with a share and a protection type that are not the default, so it is the example for
+    // the share and protection subtitle of the value default view
+    const int TARGET_PE_RATIO_ID = 33393;
     const int TRANSITION_OF_CS = 9192631770;
     const int SPEED_OF_LIGHT = 299792458;
     const string SPEED_OF_LIGHT_TXT = "299'792'458";
@@ -85,8 +98,13 @@ class values
 
     // list of values that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
+    // the two inhabitants values are written by value_write_tests; without them here only the
+    // in-memory test_cleanup::$test_val_ids removes them, so an aborted run leaves them in the
+    // database and the next read test finds them on the word default page of 'inhabitants'
     const array TEST_VALUES = array(
         [word_names::TEST_ADD_GROUP_PRIME],
+        [word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020],
+        [word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019],
     );
 
 }

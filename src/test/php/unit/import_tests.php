@@ -39,32 +39,44 @@ include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'word_names.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $sc = new sql_creator();
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
-        $imp->usr = $usr;
-        $usr_msg = new user_message($usr);
+        // use the dev user, because the import files set code ids (e.g. of the sources) and
+        // the virtual dev user is allowed to set a code_id whereas the unit test usr1
+        // acts like a normal user (see docs/llm/testing.md)
+        $imp->usr = $t->usr_dev;
+        $msg = new user_message($t->usr_dev);
 
         // start the test section (ts)
         $ts = 'unit import ';
@@ -73,7 +85,7 @@ class import_tests
         $test_name = 'YAML import word count';
         $yaml_str = file_get_contents(test_files::SYSTEM_CONFIG_SAMPLE);
         $json_array = yaml_parse($yaml_str);
-        $dto = $imp->get_data_object_yaml($json_array);
+        $dto = $imp->get_data_object_yaml($json_array, $msg);
         // reading and mapping the yaml sample file takes longer than a normal unit function, so a file timeout is used
         $t->assert($test_name, $dto->word_list()->count(), 79, $t::TIMEOUT_LIMIT_FILE);
         $test_name = 'YAML import triple count';
@@ -82,36 +94,74 @@ class import_tests
         $t->assert($test_name, $dto->value_list()->count(), 47);
         $test_name = 'YAML import sql function count';
         // building the sql insert calls from the imported data takes longer than a normal unit function
-        $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc, $usr_msg)->count(), 1, $t::TIMEOUT_LIMIT_FILE);
+        $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc, $msg)->count(), 1, $t::TIMEOUT_LIMIT_FILE);
 
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->word_list()->count(), 4);
+
+        // beside the "words" with the parameters a file can name the words in a "word-list",
+        // which is the compact format that convert_wikipedia_table creates for the countries
+        // TODO Prio 3 use a word name list from a test/create class
+        $test_name = 'JSON import word-list count';
+        $msg = new user_message($t->usr_dev);
+        $wrd_lst_json = [json_fields::WORD_LIST => [words::MIO, word_names::YEAR_2019, word_names::YEAR_2020]];
+        $dto = $imp->get_data_object($wrd_lst_json, $msg);
+        $t->assert($test_name, $dto->word_list()->count(), 3);
+        $test_name = '... and the word-list words have the expected name';
+        $t->assert($test_name, $dto->word_list()->names(), [words::MIO, word_names::YEAR_2019, word_names::YEAR_2020]);
+
+        // a word named in the word-list must be usable by a value of the same file, so that
+        // e.g. the countries of the democracy index table get a phrase group (see the
+        // self-consistency rule in docs/llm/json_structure.md)
+        $test_name = 'JSON import value with a word-list phrase';
+        $msg = new user_message($t->usr_dev);
+        $wrd_lst_val_json = [
+            json_fields::WORD_LIST => [words::MIO, word_names::YEAR_2019],
+            json_fields::VALUES => [[
+                json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+                json_fields::NUMBER => 8.88
+            ]]
+        ];
+        $dto = $imp->get_data_object($wrd_lst_val_json, $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 1);
+        $test_name = '... and the value has all its phrases';
+        $val = $dto->value_list()->lst()[0] ?? null;
+        $t->assert($test_name, $val?->phrase_list()->count(), 2);
 
         $test_name = 'JSON import verbs count';
         $json_str = file_get_contents(test_files::IMPORT_VERBS . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->verb_list()->count(), 1);
 
         $test_name = 'JSON import triple count';
         $json_str = file_get_contents(test_files::IMPORT_TRIPLES . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->triple_list()->count(), 6);
+        // a triple can carry a phrase type like a word, e.g. the unit triple "hertz per second"
+        // is a measure, so that a table header shows it behind the "in" (see value_list::is_unit)
+        $test_name = 'JSON import keeps the measure type of a triple';
+        $trp = $dto->triple_list()->get_by_name('hertz per second', $msg);
+        $t->assert_true($test_name, $trp?->is_measure() ?? false);
+        // negative: a triple without a type in the json stays a normal phrase
+        $test_name = '... and a triple without a type is no measure';
+        $trp = $dto->triple_list()->get_by_name('global warming', $msg);
+        $t->assert_false($test_name, $trp?->is_measure() ?? true);
 
         $test_name = 'JSON import source count';
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->source_list()->count(), 3);
 
         $test_name = 'JSON import value count';
         $json_str = file_get_contents(test_files::IMPORT_VALUES . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         // reading and mapping the json value file takes longer than a normal unit function, so a file timeout is used
         $t->assert($test_name, $dto->value_list()->count(), 4, $t::TIMEOUT_LIMIT_FILE);
 
@@ -119,37 +169,98 @@ class import_tests
         // differ only by one phrase and the number; each of the 1653 "values" entries (across
         // 10 lists) is expanded to one value and added to the 7 plain values of the same file
         $test_name = 'JSON import value-list count';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_TRAVEL_SCORING_VALUE_LIST);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         // expanding the 1653 compact value-list entries to single values is import-heavy, so an import timeout is used
         $t->assert($test_name, $dto->value_list()->count(), 1660, $t::TIMEOUT_LIMIT_IMPORT);
+
+        // beside the list of single entry objects a value-list may give its values as one map of
+        // the entity to the number, which is the format that convert_wikipedia_table creates
+        // (e.g. democracy_index_table.json), so both formats must add the same values
+        // TODO Prio 3 use a value map list from a test/create class
+        $test_name = 'JSON import value-list given as a map';
+        $msg = new user_message($t->usr_dev);
+        $val_lst_map = [json_fields::VALUE_LIST => [[
+            json_fields::CONTEXT => [words::MIO],
+            json_fields::VALUES => [word_names::YEAR_2019 => '8.88', word_names::YEAR_2020 => '8.87']
+        ]]];
+        $dto = $imp->get_data_object($val_lst_map, $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 2);
+        $test_name = '... and the map format reports no error';
+        $t->assert_true($test_name, $msg->is_ok());
+
+        $test_name = 'JSON import value-list given as a list of one entry objects';
+        $msg = new user_message($t->usr_dev);
+        $val_lst_obj = [json_fields::VALUE_LIST => [[
+            json_fields::CONTEXT => [words::MIO],
+            json_fields::VALUES => [[word_names::YEAR_2019 => '8.88'], [word_names::YEAR_2020 => '8.87']]
+        ]]];
+        $dto = $imp->get_data_object($val_lst_obj, $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 2);
+
+        // a value-list entry that is neither a map nor a one entry object must be reported
+        // instead of causing a php error (see docs/llm/structure.md)
+        $test_name = 'JSON import reports an unexpected value-list entry';
+        $msg = new user_message($t->usr_dev);
+        $val_lst_bad = [json_fields::VALUE_LIST => [[
+            json_fields::CONTEXT => [words::MIO],
+            json_fields::VALUES => [['too', 'many', 'entries']]
+        ]]];
+        $imp->get_data_object($val_lst_bad, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'unexpected json value name');
+
+        // the description of a value is kept in its phrase group (see
+        // sandbox_value::set_description), so the import must map it like any other field
+        $test_name = 'JSON import value description';
+        $test_desc = 'the number of the unit test value';
+        $msg = new user_message($t->usr_dev);
+        $val_with_desc = [json_fields::VALUES => [[
+            json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+            json_fields::NUMBER => 8.88,
+            json_fields::DESCRIPTION => $test_desc
+        ]]];
+        $dto = $imp->get_data_object($val_with_desc, $msg);
+        $val = $dto->value_list()->lst()[0] ?? null;
+        $t->assert($test_name, $val?->get_description(), $test_desc);
+
+        // negative: a value without a description must not get one, because a partial object
+        // must never overwrite a field that it does not carry
+        $test_name = '... and a value without a description has none';
+        $msg = new user_message($t->usr_dev);
+        $val_no_desc = [json_fields::VALUES => [[
+            json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+            json_fields::NUMBER => 8.88
+        ]]];
+        $dto = $imp->get_data_object($val_no_desc, $msg);
+        $val = $dto->value_list()->lst()[0] ?? null;
+        $t->assert_null($test_name, $val?->get_description());
 
         // the compact "phrase-values" map assigns a number directly to a single phrase
         // (here three "<city> inhabitants" triples), expanded to one value per entry
         $test_name = 'JSON import phrase-values count';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_PHRASE_VALUES . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->value_list()->count(), 3);
 
         $test_name = 'JSON import formula count';
         $json_str = file_get_contents(test_files::IMPORT_FORMULAS . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->formula_list()->count(), 4);
 
         // the main stock triples have a distinct impact (the market capitalisation)
         // so that the related phrases of e.g. CHF are always shown in the same order
         $json_str = file_get_contents(test_files::IMPORT_PORTFOLIO_INSTRUMENTS);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $impacts = [];
         foreach (['ROG main trading currency', 'UBSG main trading currency', 'ABBN main trading currency',
                      'CFR main trading currency', 'ZURN main trading currency'] as $trp_name) {
-            $impacts[] = $dto->triple_list()->get_by_name($trp_name)?->get_impact();
+            $impacts[] = $dto->triple_list()->get_by_name($trp_name, $msg)?->get_impact();
         }
         $test_name = 'JSON import sets a distinct impact for each main stock triple';
         // reading and mapping the portfolio json file takes longer than a normal unit function, so a file timeout is used
@@ -161,7 +272,7 @@ class import_tests
         // the importer must populate values, the formula and the pre-calculated result
         $json_str = file_get_contents(test_files::IMPORT_RESULT_CALC . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $test_name = 'JSON import result_calc word count';
         $t->assert($test_name, $dto->word_list()->count(), 5);
         $test_name = 'JSON import result_calc value count';
@@ -175,143 +286,219 @@ class import_tests
         // the result of "total = price * quantity" must be reproducible
         // based on the values and formulas of the import file
         $test_name = 'JSON import calc validation confirms a consistent import file';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->result_check_list()->count(), 1);
         $test_name = '... and reports no problem';
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $t->assert_true($test_name, $msg->is_ok());
 
         $test_name = 'JSON import calc validation reports a result mismatch';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_MISMATCH . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $target = 'the imported result 11 of ' . $dto->result_check_list()->lst()[0]->grp()->phrase_list()->dsp_name()
             . ' does not match the result 10 calculated based on the imported values';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
 
         $test_name = 'JSON import calc validation reports a missing value';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_VALUE_MISSING . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $dto = $imp->get_data_object($json_array, $msg);
         $target = 'the value for "quantity" to validate the result of '
             . $dto->result_check_list()->lst()[0]->grp()->phrase_list()->dsp_name()
             . ' is missing in the import message';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
+
+        // the use case file states the avoided emission of PV in Switzerland as values and as
+        // formulas with the same result, so the calc validation of the file must reproduce the
+        // two values from the reference mixes and the PV emission of the same file
+        // the messages are checked first, so that a failure shows what the import reports
+        // a use case is user data, so its file carries no code id and must import for a normal
+        // user (docs/llm/json_structure.md "Use case files"); usr1 is that normal user here
+        $test_name = 'the import of the PV in Switzerland use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PV_SWITZERLAND_CO2_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces both results';
+        $t->assert($test_name, $dto->result_check_list()->count(), 2);
+        // negative: a changed reference mix breaks the pre-calculated result
+        $test_name = '... and a changed reference mix is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array('consumption mix', $val[json_fields::WORDS])
+                and in_array('electricity', $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '130';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
 
         $test_name = 'JSON import warning creation';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_WARNING);
         $imp = new import(test_paths::IMPORT . 'warning_and_error_test.json');
-        $imp->put_json_direct($json_str, $usr_msg);
+        $imp->put_json_direct($json_str, $msg);
         $target = 'Unknown element "test"';
-        $t->assert($test_name, $usr_msg->get_last_message_translated(), $target);
+        $t->assert($test_name, $msg->get_last_message_translated(), $target);
 
         $test_name = 'JSON import newer version detection';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_VERSION_NEWER_TEST);
         $imp = new import(test_files::IMPORT_VERSION_NEWER_TEST);
-        $imp->put_json_direct($json_str, $usr_msg);
+        $imp->put_json_direct($json_str, $msg);
         $target = 'Import file has been created with version "9.9.9"';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
 
         $t->subheader($ts . 'duplicate component check');
+        // the import user must be the same as the user of the message, because a component link
+        // is created with the message user and added to a list of the import user, so a mismatch
+        // silently drops every component link (see docs/llm/testing.md);
+        // the dev user is used because the view fixtures below set component code ids
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
-        $imp->usr = $usr;
+        $imp->usr = $t->usr_dev;
 
         // a component name is the key the views use, so the same name twice in one import is reported
         $test_name = 'JSON import reports a component defined twice';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_array = [json_fields::COMPONENTS => [
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::PHRASES_RELATED]
         ]];
-        $imp->get_data_object($json_array, $usr_msg);
+        $imp->get_data_object($json_array, $msg);
         $target = 'The view component with the name "' . components::TEST_VALUES_NAME
             . '" is defined more than once in the same import.';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
 
         // two components with different names are a valid import
         $test_name = 'JSON import accepts components with unique names';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_array = [json_fields::COMPONENTS => [
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
             [json_fields::NAME => components::TEST_RESULTS_NAME, json_fields::TYPE_NAME => component_types::RESULTS_RELATED]
         ]];
-        $imp->get_data_object($json_array, $usr_msg);
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
+        $t->subheader($ts . 'view term assignment check');
+
+        // the terms of the "assigned" list are added to the database by their own import step, so
+        // at this point they usually have no id yet and are told apart by their name
+        $test_name = 'JSON import accepts a view with two terms that are not yet in the database';
+        $msg = new user_message($t->usr1);
+        $json_array = [json_fields::VIEWS => [[
+            json_fields::NAME => views::TEST_ADD_NAME,
+            json_fields::ASSIGNED => [word_names::PI, triple_names::EULER_NUMBER]
+        ]]];
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_not_contains($test_name, $msg->all_message_text(), 'more than once');
+
+        // the same term twice in the "assigned" list of one view is a real double
+        $test_name = 'JSON import reports a term assigned twice to the same view';
+        $msg = new user_message($t->usr1);
+        $json_array[json_fields::VIEWS][0][json_fields::ASSIGNED] = [word_names::PI, word_names::PI];
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'more than once');
 
         $t->subheader($ts . 'view row balance check');
 
-        // a view that opens a row with row_right but never closes it with row_end is reported
+        // a view that opens a row with row_right but never closes it with row_end is reported;
+        // the fixture uses system components with a code id, so the import needs the dev user
+        // that is allowed to set a code_id (see docs/llm/testing.md)
         $test_name = 'JSON import reports a view with an unclosed row';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_VIEW_ROW_NOT_CLOSED . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $imp->get_data_object($json_array, $usr_msg);
+        $imp->get_data_object($json_array, $msg);
         $target = 'are not balanced';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
 
         // the same view is a valid import once the row is closed with a row_end component
         $test_name = 'JSON import accepts a view with a closed row';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][] = [
             json_fields::POSITION => 3,
             json_fields::NAME => 'system formatter row end'
         ];
-        $imp->get_data_object($json_array, $usr_msg);
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
 
         $t->subheader($ts . 'view component position check');
 
-        // a view that uses the same component position twice (and so misses one) is reported as an error
+        // a view that uses the same component position twice (and so misses one) is reported as an
+        // error; this fixture also sets component code ids, so the dev user is used again
         $test_name = 'JSON import reports a double component position';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_VIEW_COMPONENT_POS_DOUBLE . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $imp->get_data_object($json_array, $usr_msg);
+        $imp->get_data_object($json_array, $msg);
         $target = 'is used more than once';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
 
         // the same view is a valid import once every component has a unique position from 1 to n
         $test_name = 'JSON import accepts a view with complete component positions';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 2;
-        $imp->get_data_object($json_array, $usr_msg);
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
 
         // json has no order, so a position that differs from the json order is only a warning
         // that does not block the import but is reported because it could confuse the user
         $test_name = 'JSON import reports a position differing from the json order as a warning only';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][0][json_fields::POSITION] = 2;
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 1;
-        $imp->get_data_object($json_array, $usr_msg);
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
         $test_name = 'the json order warning names the unexpected position';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), 'Unexpected position');
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'Unexpected position');
 
         $t->subheader($ts . 'triple link uniqueness check');
 
         // two triples that share the same from/verb/to link but carry different names give an
         // ambiguous link id, so the import reports it (see docs/llm/json_structure.md)
         $test_name = 'JSON import reports two triples with the same link but different names';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_TRIPLE_LINK_AMBIGUOUS . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $imp->get_data_object($json_array, $usr_msg);
+        $imp->get_data_object($json_array, $msg);
         $target = 'the from/verb/to link "elevation kind of rank" is used by two triples with different names';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
 
         // the same two names are a valid import once their links differ (here the second uses "of")
         $test_name = 'JSON import accepts two triples with different names and different links';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($t->usr_dev);
         $json_array[json_fields::TRIPLES][1][json_fields::EX_VERB] = 'of';
-        $imp->get_data_object($json_array, $usr_msg);
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
+
+        $t->subheader($ts . 'value source check');
+
+        // the source of a value is the name of a source declared in the "sources" section, so a
+        // source given as a json object is reported instead of ending the import with a fatal
+        // (see value_base::import_mapper)
+        $test_name = 'JSON import reports a value source that is no name';
+        $msg = new user_message($t->usr_dev);
+        $json_str = file_get_contents(test_files::IMPORT_VALUE_SOURCE_NOT_A_NAME . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $target = 'the source of a value must be the name of a source';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
+        $test_name = '... and names the json of the source that is no name';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'The World Factbook');
+
+        // the same value is a valid import once its source is the name of a declared source
+        $test_name = 'JSON import accepts a value that names its source';
+        $msg = new user_message($t->usr_dev);
+        $json_array[json_fields::VALUES][1][json_fields::SOURCE_NAME] = 'The World Factbook';
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
 
         $t->subheader($ts . 'convert');
 
@@ -319,7 +506,7 @@ class import_tests
         $in_table = file_get_contents(test_files::IMPORT_DEMOCRACY_INDEX_TXT);
         $json_str = file_get_contents(test_files::IMPORT_DEMOCRACY_INDEX);
         $conv_wiki = new convert_wikipedia_table;
-        $conv_str = $conv_wiki->convert($in_table, $usr, test_base::TEST_TIMESTAMP,
+        $conv_str = $conv_wiki->convert($in_table, $t->usr1, test_base::TEST_TIMESTAMP,
             ['Democracy Index'],
             'country', 1,
             'year', 'time', 3);
@@ -333,7 +520,8 @@ class import_tests
         $context_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         // TODO review the parameter context
-        $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP, $context_str,
+        $msg->usr = $t->usr1;
+        $conv_str = $conv_wiki->convert_wiki_json($in_table, $msg, test_base::TEST_TIMESTAMP, $context_str,
             ['country', 'ISO 3166'], [], 1,
             'English short name  (using title case)','country',
             'Alpha-3 code',      '');
@@ -347,7 +535,7 @@ class import_tests
         $context_str = file_get_contents(test_files::IMPORT_CURRENCY_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         $conv_str = $conv_wiki->convert_wiki_json(
-            $in_table, $usr, test_base::TEST_TIMESTAMP, $context_str);
+            $in_table, $msg, test_base::TEST_TIMESTAMP, $context_str);
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);
@@ -436,6 +624,136 @@ class import_tests
         $est = $imp->calc_total_time($base + $elapsed, 100);
         $test_name = 'import time estimate handles a zero original estimate';
         $t->assert_true($test_name, $est > 0);
+
+
+        $t->subheader($ts . 'merge two import json');
+
+        // merging two import files must not lose data: the objects of the second file are
+        // added to the first, and a matching object (same name resp. same value phrase group)
+        // only fills the vars that the first file has left unset, so like on import the first
+        // file wins on a conflict (see the import order rule in docs/llm/json_structure.md)
+        // use an own import object, because the time estimate tests above have replaced $imp
+        // with an import object without a user
+        $imp = new import();
+        $imp->usr = $t->usr_dev;
+        $msg = new user_message($t->usr_dev);
+        $json1 = [
+            json_fields::WORDS => [
+                [json_fields::NAME => words::MIO],
+                [json_fields::NAME => word_names::YEAR_2019, json_fields::DESCRIPTION => 'first file description']
+            ],
+            json_fields::VALUES => [[
+                json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+                json_fields::NUMBER => 1.1
+            ]]
+        ];
+        $json2 = [
+            json_fields::WORDS => [
+                [json_fields::NAME => words::MIO, json_fields::DESCRIPTION => 'second file description'],
+                [json_fields::NAME => word_names::YEAR_2019, json_fields::DESCRIPTION => 'conflicting description'],
+                [json_fields::NAME => word_names::YEAR_2020, json_fields::DESCRIPTION => 'added description']
+            ],
+            json_fields::VALUES => [
+                [
+                    json_fields::WORDS => [words::MIO, word_names::YEAR_2019],
+                    json_fields::NUMBER => 2.2
+                ],
+                [
+                    json_fields::WORDS => [words::MIO, word_names::YEAR_2020],
+                    json_fields::NUMBER => 3.3
+                ]
+            ]
+        ];
+        $dto1 = $imp->get_data_object($json1, $msg);
+        $dto2 = $imp->get_data_object($json2, $msg);
+        $msg->merge($dto1->fill($dto2, $t->usr_dev));
+
+        $test_name = 'merge adds the words missing in the first file without duplicating the common ones';
+        $t->assert($test_name, $dto1->word_list()->count(), 3);
+        $test_name = 'merge fills a description gap of the first file from the second file';
+        $wrd_mio = $dto1->word_list()->get_by_name(words::MIO, $msg);
+        $t->assert($test_name, $wrd_mio?->description, 'second file description');
+        $test_name = 'on a description conflict the first file wins';
+        $wrd_2019 = $dto1->word_list()->get_by_name(word_names::YEAR_2019, $msg);
+        $t->assert($test_name, $wrd_2019?->description, 'first file description');
+        $test_name = 'merge adds the values missing in the first file without duplicating the common ones';
+        $t->assert($test_name, $dto1->value_list()->count(), 2);
+        $test_name = 'on a number conflict the value of the first file wins';
+        $val = $dto1->value_list()->get_by_names([words::MIO, word_names::YEAR_2019]);
+        $t->assert($test_name, $val?->number(), 1.1);
+
+        // the merged data object must round-trip through the export json without losing objects
+        $test_name = 'the export json of the merged data object has the merged words';
+        $export_json = $dto1->export_json($msg);
+        $t->assert($test_name, count($export_json[json_fields::WORDS] ?? []), 3);
+        $test_name = 'reading the export json back returns the merged object counts';
+        $dto3 = $imp->get_data_object($export_json, $msg);
+        $t->assert($test_name, $dto3->word_list()->count(), 3);
+        $test_name = '... and the merged value counts';
+        $t->assert($test_name, $dto3->value_list()->count(), 2);
+        $test_name = '... and keeps the filled description';
+        $t->assert($test_name, $dto3->word_list()->get_by_name(words::MIO, $msg)?->description, 'second file description');
+
+        // negative: an empty data object exports only the version header
+        $test_name = 'an empty data object exports only the version header';
+        $dto_empty = new data_object($t->usr_dev);
+        $t->assert($test_name, $dto_empty->export_json($msg), [json_fields::VERSION => def::PRG_VERSION]);
+
+        // merge the three offline_is_better_than_online sample files and compare the result
+        // with the committed merged file (same folder, no number suffix); the comparison is
+        // done data object to data object via diff_msg, so the json formatting, the header
+        // and the section order do not matter, only the merged content does
+        $test_name = 'merging the three offline_is_better_than_online files matches the merged file';
+        $msg = new user_message($t->usr_dev);
+        $dto_merged = null;
+        foreach ([test_files::IMPORT_MERGE_1, test_files::IMPORT_MERGE_2, test_files::IMPORT_MERGE_3] as $part_file) {
+            $json_array = json_decode(file_get_contents($part_file . test_files::JSON), true);
+            $dto_part = $imp->get_data_object($json_array, $msg);
+            if ($dto_merged == null) {
+                $dto_merged = $dto_part;
+            } else {
+                $msg->merge($dto_merged->fill($dto_part, $t->usr_dev));
+            }
+        }
+        $json_array = json_decode(file_get_contents(
+            test_files::IMPORT_MERGE_RESULT . test_files::JSON), true);
+        $dto_expected = $imp->get_data_object($json_array, $msg);
+        // compare by the sorted name lists, because for in-memory data objects all ids are
+        // zero, so the id based diff_msg would match any object to any other object
+        $names_merged = $dto_merged->word_list()->names();
+        $names_expected = $dto_expected->word_list()->names();
+        sort($names_merged);
+        sort($names_expected);
+        $t->assert($test_name, $names_merged, $names_expected);
+        $test_name = '... and the merged triples match the merged file';
+        $names_merged = $dto_merged->triple_list()->names();
+        $names_expected = $dto_expected->triple_list()->names();
+        sort($names_merged);
+        sort($names_expected);
+        $t->assert($test_name, $names_merged, $names_expected);
+        $test_name = '... and the duplicated triples of the three files are merged';
+        $t->assert($test_name, $dto_merged->triple_list()->count(), 62);
+        $test_name = '... and the merged values match the merged file';
+        $t->assert($test_name, $dto_merged->value_list()->count(), $dto_expected->value_list()->count());
+        // one value per input file to prove that no file is lost in the merge
+        $test_name = '... incl. the canvassing effect size of the first file';
+        $val = $dto_merged->value_list()->get_by_names(
+            ['narrative exchange canvassing', 'effect size on exclusionary attitude']);
+        $t->assert($test_name, $val?->number(), 0.08);
+        $test_name = '... incl. the smartphone inflection point of the second file';
+        $val = $dto_merged->value_list()->get_by_names(
+            ['weekday smartphone use', 'inflection point', 'minute']);
+        $t->assert($test_name, $val?->number(), 117.0);
+        $test_name = '... incl. the consumer surplus of the third file';
+        $val = $dto_merged->value_list()->get_by_names(
+            ['Facebook', 'consumer surplus', 'US dollar']);
+        $t->assert($test_name, $val?->number(), 31000000000.0);
+        $test_name = '... and the merged sources match the merged file';
+        $t->assert($test_name, $dto_merged->source_list()->count(), $dto_expected->source_list()->count());
+        $test_name = '... and the merged formulas match the merged file';
+        $t->assert($test_name, $dto_merged->formula_list()->count(), $dto_expected->formula_list()->count());
+        $test_name = '... and the merged calc validations match the merged file';
+        $t->assert($test_name, $dto_merged->result_check_list()->count(), $dto_expected->result_check_list()->count());
 
     }
 

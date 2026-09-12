@@ -1,0 +1,403 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-08-27 12:30:00",
+  "user": "timon",
+  "selection": [
+    "PV in Switzerland"
+  ],
+  "description": "Use case: the climate benefit of one kWh of photovoltaic electricity in Switzerland compared with two reference mixes. Without the displacement concept the benefit is the difference to the average Swiss consumption mix; with the FfE displacement concept the benefit is the difference to the marginal EU displacement mix, the fossil generation that an additional kWh pushes out of the European market. All figures are in gram CO2-eq per kWh over the life cycle: the Swiss mixes and the PV emission of 2018 are the KBOB/treeze figures per MJ converted to kWh, the EU displacement mix is the FfE key finding for the generation shares of 2015, and the two avoided emission values are derived by subtraction (see the note of each value).",
+  "words": [
+    {
+      "name": "photovoltaic"
+    },
+    {
+      "name": "PV",
+      "description": "the usual acronym for photovoltaic"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "electricity",
+      "description": "energy from the flow of electric charge"
+    },
+    {
+      "name": "mix",
+      "description": "the combination of generation technologies behind one kWh of electricity, weighted by their share"
+    },
+    {
+      "name": "consumption",
+      "description": "the use of a good or an energy, here the electricity taken from the grid by the consumers of a country"
+    },
+    {
+      "name": "production",
+      "description": "the making of a good or an energy, here the electricity generated within a country"
+    },
+    {
+      "name": "displacement",
+      "description": "the pushing out of one thing by another; for electricity the generation that an additional kWh of a new source removes from the market"
+    },
+    {
+      "name": "emission",
+      "description": "the release of a substance into the environment"
+    },
+    {
+      "name": "avoided",
+      "description": "not caused, because something else has taken its place"
+    },
+    {
+      "name": "CO2-eq",
+      "description": "carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released",
+      "refs": [
+        {
+          "name": "Global warming potential",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "life cycle",
+      "description": "the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment",
+      "refs": [
+        {
+          "name": "Life-cycle assessment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gram"
+    },
+    {
+      "name": "kWh"
+    },
+    {
+      "name": "2018"
+    },
+    {
+      "name": "2015"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "mayor"
+    }
+  ],
+  "triples": [
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system"
+    },
+    {
+      "name": "column (system)",
+      "description": "keyword for columns used by the system components",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system"
+    },
+    {
+      "name": "mayor column (system)",
+      "description": "keyword for columns that should be shown in a table even if the screen is small",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "mayor"
+    },
+    {
+      "from": "PV",
+      "verb": "is an acronym for",
+      "to": "photovoltaic"
+    },
+    {
+      "from": "PV",
+      "verb": "in",
+      "to": "Switzerland",
+      "description": "photovoltaic electricity generated in Switzerland, the subject of this use case; the table of this phrase compares its climate benefit with and without the displacement concept"
+    },
+    {
+      "name": "consumption mix",
+      "from": "mix",
+      "verb": "of",
+      "to": "consumption",
+      "description": "the average mix of the electricity consumed in a country including the imports; the reference of the classic comparison without the displacement concept"
+    },
+    {
+      "name": "production mix",
+      "from": "mix",
+      "verb": "of",
+      "to": "production",
+      "description": "the average mix of the electricity generated within a country, without imports and exports"
+    },
+    {
+      "name": "displacement mix",
+      "from": "mix",
+      "verb": "of",
+      "to": "displacement",
+      "description": "the FfE concept 'EU-Verdrängungsmix': a simplified marginal approach that takes the generation an additional kWh displaces in the coupled European market, mostly fossil plants, as the reference for the environmental effect of a new source instead of the average mix"
+    },
+    {
+      "name": "avoided emission",
+      "from": "emission",
+      "verb": "can be",
+      "to": "avoided",
+      "description": "the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source"
+    },
+    {
+      "from": "gram",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure",
+      "description": "the unit of the emission intensity of electricity"
+    },
+    {
+      "name": "column consumption mix",
+      "description": "the table column 'consumption mix' with the figures of the comparison without the displacement concept, shown on every screen",
+      "from": "consumption mix",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column displacement mix",
+      "description": "the table column 'displacement mix' with the figures of the comparison with the displacement concept, shown on every screen",
+      "from": "displacement mix",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "from": "column displacement mix",
+      "verb": "is next main column after",
+      "to": "column consumption mix"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "avoided emission by consumption mix",
+      "description": "the climate benefit of one kWh of a new source without the displacement concept: the emission of the average consumption mix minus the life cycle emission of the new source; one formula per reference mix, because the mix is the operand and no phrase is shared by both mixes and the source",
+      "expression": "\"avoided emission\" = \"consumption mix\" - \"PV in Switzerland\"",
+      "assigned": [
+        "consumption mix",
+        "PV in Switzerland"
+      ]
+    },
+    {
+      "name": "avoided emission by displacement mix",
+      "description": "the climate benefit of one kWh of a new source with the FfE displacement concept: the emission of the marginal displacement mix minus the life cycle emission of the new source",
+      "expression": "\"avoided emission\" = \"displacement mix\" - \"PV in Switzerland\"",
+      "assigned": [
+        "displacement mix",
+        "PV in Switzerland"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "FfE EU displacement mix",
+      "description": "Kleinertz B., Pellinger C., von Roon S., Hübner T. (FfE Research Center for Energy Economics), Kaestle G.: EU Displacement Mix - A Simplified Marginal Method to Determine Environmental Factors for Technologies Coupling Heat and Power in the European Union. Final report for COGEN Europe, Munich, May 2018, ISBN 978-3-941802-39-1. Key finding (executive summary): the marginal CO2 equivalent emission factor of the EU-28 displacement mix incl. the upstream chain and 5 percent grid losses is 986 g CO2/kWh excluding nuclear power plants and 446 g CO2/kWh if nuclear power plants are included as must-run; generation shares from the Eurostat data of 2015.",
+      "url": "https://www.ffe.de/wp-content/uploads/2020/04/EU-Displacement-Mix.pdf"
+    },
+    {
+      "name": "KBOB energy systems 2022",
+      "description": "Ramseier L., Frischknecht R. (treeze Ltd.): Umweltkennwerte und Primärenergiefaktoren von Energiesystemen, UVEK Ökobilanzdatenbestand DQRv2:2022, for KBOB, BAFU and AHB, Uster, 9 March 2022. Table 'Elektrizität, Bezug via Netz' gives the greenhouse gas emissions per MJ of electricity for the Swiss mixes of 2018 (CH-Verbrauchermix 0.035, CH-Produktionsmix 0.009, CH-Lieferantenmix HKN 0.015 kg CO2-eq/MJ) and for photovoltaic electricity (Fotovoltaik 0.013 kg CO2-eq/MJ); the mixes are documented in Krebs & Frischknecht (2020) and Frischknecht et al. (2020), Umweltbilanz Strommixe Schweiz 2018, BAFU.",
+      "url": "https://www.ecobau.ch/resources/uploads/Oekobilanzdaten/Hintergrundberichte/KBOB_BAFU_AHB_2022_Energiesysteme_v1_0.pdf"
+    },
+    {
+      "name": "BAFU Swiss electricity mixes 2018",
+      "description": "Krebs L., Frischknecht R. (treeze Ltd.): Umweltbilanz Strommixe Schweiz 2018, v2.01, for the Federal Office for the Environment (FOEN/BAFU), Uster, 27 April 2021. The life cycle inventories of the Swiss production mix, the supplier mix based on guarantees of origin (HKN, 54.7 g CO2-eq/kWh) and the consumption mix of 2018.",
+      "url": "https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf.download.pdf/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "PV in Switzerland",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2018"
+      ],
+      "number": "46.8",
+      "source": "KBOB energy systems 2022",
+      "note": "0.013 kg CO2-eq per MJ * 3.6",
+      "description": "life cycle emission of one kWh of photovoltaic electricity taken from the grid in Switzerland (table Elektrizität, Bezug via Netz, Fotovoltaik: 0.013 kg CO2-eq/MJ), mostly from the production of the modules; the source rounds to three decimals per MJ, so the figure per kWh is exact to about 2 g"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2018"
+      ],
+      "number": "126",
+      "source": "KBOB energy systems 2022",
+      "note": "0.035 kg CO2-eq per MJ * 3.6",
+      "description": "the average Swiss consumption mix of 2018 incl. the imports per hour (table Elektrizität, Bezug via Netz, CH-Verbrauchermix: 0.035 kg CO2-eq/MJ); exact to about 2 g per kWh"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "production mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2018"
+      ],
+      "number": "32.4",
+      "source": "KBOB energy systems 2022",
+      "note": "0.009 kg CO2-eq per MJ * 3.6",
+      "description": "the average Swiss production mix of 2018, mostly hydro and nuclear (table Elektrizität, Bezug via Netz, CH-Produktionsmix: 0.009 kg CO2-eq/MJ); exact to about 2 g per kWh"
+    },
+    {
+      "words": [
+        "European Union",
+        "electricity",
+        "displacement mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2015"
+      ],
+      "number": "986",
+      "source": "FfE EU displacement mix",
+      "description": "the marginal CO2 equivalent emission factor of the EU-28 displacement mix, mostly gas and coal plants, incl. the upstream chain and 5 percent grid losses and excluding nuclear power plants (executive summary, key findings); generation shares of 2015"
+    },
+    {
+      "words": [
+        "European Union",
+        "electricity",
+        "displacement mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2015",
+        "low"
+      ],
+      "number": "446",
+      "source": "FfE EU displacement mix",
+      "description": "the lower bound of the displacement mix emission factor: the FfE sensitivity that includes nuclear power plants as must-run, so that they are part of the displaced generation (executive summary, key findings)"
+    },
+    {
+      "words": [
+        "PV in Switzerland",
+        "avoided emission",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "79.2",
+      "note": "126 - 46.8",
+      "description": "the climate benefit of one kWh of Swiss PV without the displacement concept: the Swiss consumption mix minus the PV life cycle emission"
+    },
+    {
+      "words": [
+        "PV in Switzerland",
+        "avoided emission",
+        "displacement mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "939.2",
+      "note": "986 - 46.8",
+      "description": "the climate benefit of one kWh of Swiss PV with the displacement concept: the EU displacement mix minus the PV life cycle emission, about twelve times the benefit of the classic comparison"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "PV in Switzerland",
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2018"
+      ],
+      "formula": "avoided emission by consumption mix",
+      "words": [
+        "PV in Switzerland",
+        "avoided emission",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "79.2"
+    },
+    {
+      "context": [
+        "PV in Switzerland",
+        "European Union",
+        "electricity",
+        "displacement mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2018",
+        "2015"
+      ],
+      "formula": "avoided emission by displacement mix",
+      "words": [
+        "PV in Switzerland",
+        "avoided emission",
+        "displacement mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "939.2"
+    }
+  ],
+  "components": [
+    {
+      "name": "Title PV in Switzerland",
+      "type": "phrase_title",
+      "description": "page title: the phrase PV in Switzerland with its from, verb and to"
+    },
+    {
+      "name": "table PV in Switzerland emission comparison",
+      "type": "table_with_related_columns",
+      "description": "the values of PV in Switzerland as a table with the column 'consumption mix' for the comparison without and the column 'displacement mix' for the comparison with the FfE displacement concept; one row per remaining phrase combination, e.g. the avoided emission"
+    }
+  ],
+  "views": [
+    {
+      "name": "PV in Switzerland emission comparison",
+      "description": "the climate benefit of photovoltaic electricity in Switzerland with and without the displacement concept",
+      "type": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Title PV in Switzerland"
+        },
+        {
+          "position": "2",
+          "name": "table PV in Switzerland emission comparison"
+        }
+      ]
+    }
+  ],
+  "view-validation": [
+    {
+      "url": "mask=PV in Switzerland emission comparison&words=PV in Switzerland",
+      "result": "# PV in Switzerland\n \n| | consumption mix | displacement mix |\n| --- | ---: | ---: |\n| avoided emission in CO2-eq gram per kWh | 79.2 | 939.2 |\n \nThe row is the avoided emission of one kWh of Swiss photovoltaic electricity. The\nconsumption mix column is the classic comparison with the average Swiss consumption\nmix of 2018 (126 - 46.8), the displacement mix column the comparison with the marginal\nEU-28 displacement mix of the FfE concept (986 - 46.8). The PV life cycle emission of\n46.8 gram CO2-eq per kWh is the same in both columns; the two reference mixes are the\nonly difference, so the concept alone changes the benefit by a factor of about twelve.\nWith nuclear power plants as must-run the displacement mix drops to 446, which is\nstill five times the consumption mix.\n"
+    }
+  ]
+}

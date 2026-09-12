@@ -1,0 +1,16 @@
+PREPARE source_norm_by_ids (bigint[]) AS
+    SELECT     source_id,
+               source_name,
+               code_id,
+               usage,
+               url,
+               doi,
+               description,
+               source_type_id,
+               view_id,
+               excluded,
+               share_type_id,
+               protect_id,
+               user_id
+          FROM sources
+         WHERE source_id = ANY ($1);

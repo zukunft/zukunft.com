@@ -50,24 +50,30 @@ include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
@@ -85,9 +91,14 @@ class component_link_list extends sandbox_link_list
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if the view component link is loaded and valid
      */
-    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(
+        ?array       $db_rows,
+        user_message $msg,
+        bool         $load_all = false
+    ): bool
     {
-        return parent::rows_mapper_obj(new component_link($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(
+            new component_link($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -102,7 +113,7 @@ class component_link_list extends sandbox_link_list
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view(view $msk, ?sql_db $db_con_given = null): bool
+    function load_by_view(view $msk, user_message $msg, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
@@ -112,7 +123,7 @@ class component_link_list extends sandbox_link_list
         }
 
         $qp = $this->load_sql_by_view($db_con_used->sql_creator(), $msk);
-        return $this->load_sys($qp, false, $db_con_given);
+        return $this->load_sys($qp, $msg, false, $db_con_given);
     }
 
     /**
@@ -123,10 +134,10 @@ class component_link_list extends sandbox_link_list
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view_with_components(view $msk, ?sql_db $db_con_given = null): bool
+    function load_by_view_with_components(view $msk, user_message $msg, ?sql_db $db_con_given = null): bool
     {
-        if ($this->load_by_view($msk, $db_con_given)) {
-            return $this->load_components($db_con_given);
+        if ($this->load_by_view($msk, $msg, $db_con_given)) {
+            return $this->load_components($msg, $db_con_given);
         } else {
             return false;
         }
@@ -138,11 +149,11 @@ class component_link_list extends sandbox_link_list
      * @param component $cmp if set to get all links for this view
      * @return bool true if phrases are found
      */
-    function load_by_component(component $cmp): bool
+    function load_by_component(component $cmp, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_component($db_con->sql_creator(), $cmp);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -150,11 +161,11 @@ class component_link_list extends sandbox_link_list
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if the loading of the component has been successful
      */
-    function load_components(?sql_db $db_con_given = null): bool
+    function load_components(user_message $msg, ?sql_db $db_con_given = null): bool
     {
         $ids = $this->cmp_ids();
         $cmp_lst = new component_list($this->get_user());
-        $result = $cmp_lst->load_by_ids($ids, $db_con_given);
+        $result = $cmp_lst->load_by_ids($ids, $msg, $db_con_given);
         if ($result) {
             foreach ($this->lst() as $lnk) {
                 $cmp = $cmp_lst->get($lnk->get_component()->id());
@@ -213,6 +224,40 @@ class component_link_list extends sandbox_link_list
     }
 
     /**
+     * set the SQL query parameters to load a list of component links by the component link ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of component link ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        if (count($ids) > 0) {
+            $sc->add_where(component_link::FLD_ID, $ids, sql_par_type::INT_LIST);
+            // also load the names of both linked objects, so that the link can name them
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_fields::FLD_ID, '', true);
+            $sc->set_join_usr_fields(component_db::FLD_NAMES_USR_ALL, component::class, component_fields::FLD_ID, '', true);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * load a list of component links by the given component link ids
+     * @param array $ids an array of component link ids which should be loaded
+     * @return bool true if at least one component link found
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp, $msg);
+    }
+
+    /**
      * set the common part of the SQL query component links
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
@@ -238,15 +283,16 @@ class component_link_list extends sandbox_link_list
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
         foreach ($this->lst() as $lnk) {
-            $vars[] = $lnk->export_json($exp_typ, $do_load);
+            $vars[] = $lnk->export_json($msg, $exp_typ, $do_load);
         }
         return $vars;
     }
@@ -271,8 +317,7 @@ class component_link_list extends sandbox_link_list
     {
         $added = false;
         if ($this->can_add($to_add)) {
-            $this->add_link_by_key($to_add);
-            $added = true;
+            $added = $this->add_link_by_key($to_add, $msg, $allow_duplicates);
         }
         return $added;
     }
@@ -284,17 +329,17 @@ class component_link_list extends sandbox_link_list
 
     /**
      * delete all loaded view component links e.g. to delete all the links assigned to a view
-     * @param user_message $usr_msg the message for the user why deleting this component links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting this component links has failed and a suggested solution
      * @return bool true if the component links has been deleted
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         if (!$this->is_empty()) {
             foreach ($this->lst() as $dsp_cmp_lnk) {
-                $dsp_cmp_lnk->del($usr_msg);
+                $dsp_cmp_lnk->del($msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -365,20 +410,20 @@ class component_link_list extends sandbox_link_list
      * TODO Prio 0 apply the user_message reset to all lists
      * TODO faster mass db update
      *
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(user_message $msg): bool
     {
         foreach ($this->lst() as $sbx) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $lnk_usr_msg = $usr_msg->clone_reset();
+            $lnk_usr_msg = $msg->clone_reset();
             // save upfront and missing components
             $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
                 if ($cmp->db_ready($lnk_usr_msg)) {
-                    $cmp->save($usr_msg);
+                    $cmp->save($msg);
                 }
             }
             // save the link of the view to the component
@@ -386,9 +431,9 @@ class component_link_list extends sandbox_link_list
                 $sbx->save($lnk_usr_msg);
             }
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($lnk_usr_msg);
+            $msg->merge($lnk_usr_msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -397,33 +442,20 @@ class component_link_list extends sandbox_link_list
       */
 
     /**
-     * test if the link at the same position already exists and if yes return false to prevent duplicates
-     * overwrites the parent because the same component can be used in a view at different positions
-     * but not at the same position
+     * the same component can be used in a view at different positions, but not twice at the
+     * same position, so the position is part of the duplicate check of a component link
+     *
+     * @param component_link|sandbox_link $lnk a link that is already in this list
      * @param component_link|sandbox_link $lnk_to_add the link that should be added to the list
-     * @return bool true if the link can be added
+     * @return bool true if both links place the same component at the same position
      */
-    protected function can_add(component_link|sandbox_link $lnk_to_add): bool
+    protected function is_same_link(
+        component_link|sandbox_link $lnk,
+        component_link|sandbox_link $lnk_to_add
+    ): bool
     {
-        $can_add = true;
-
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $lnk) {
-                if ($can_add) {
-                    if ($lnk->from_id() == $lnk_to_add->from_id()
-                        and $lnk->to_id() == $lnk_to_add->to_id()
-                        and $lnk->get_pos() == $lnk_to_add->get_pos()) {
-                        $can_add = false;
-                    }
-                    if ($lnk->id() == $lnk_to_add->id()
-                        and $lnk->id() != 0 and $lnk_to_add->id() != 0
-                        and $lnk->id() !== null and $lnk_to_add->id() !== null) {
-                        $can_add = false;
-                    }
-                }
-            }
-        }
-        return $can_add;
+        return parent::is_same_link($lnk, $lnk_to_add)
+            and $lnk->get_pos() == $lnk_to_add->get_pos();
     }
 
 }

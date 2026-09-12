@@ -38,43 +38,45 @@ include_once paths::MODEL_COMPONENT . 'component_list.php';
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("componentList");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("componentList", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $msk_id = $_GET[url_var::VIEW] ?? '';
     $pattern = $_GET[url_var::PATTERN] ?? '';
-
-    $msg = '';
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($msk_id != '') {
             $lst = new component_list($usr);
-            $lst->load_by_view_id($msk_id);
-            // drop the components the requester may not read (idor); see sandbox::is_readable_by
+            $lst->load_by_view_id($msk_id, $msg);
+            // drop the components the requester may not read (Insecure direct object references); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } elseif ($pattern != '') {
             $lst = new component_list($usr);
-            $lst->load_names(($pattern));
-            // drop the components the requester may not read (idor); see sandbox::is_readable_by
+            $lst->load_names($pattern, $msg);
+            // drop the components the requester may not read (Insecure direct object references); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
-            $msg = 'view id and pattern missing';
+            $msg->add_message_text('view id and pattern missing');
         }
     }
 
@@ -82,5 +84,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

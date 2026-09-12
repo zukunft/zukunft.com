@@ -10,9 +10,10 @@ CREATE TABLE IF NOT EXISTS formula_links
     user_id              bigint   DEFAULT NULL COMMENT 'the owner / creator of the formula_link',
     formula_link_type_id smallint DEFAULT NULL,
     order_nbr            bigint   DEFAULT NULL,
+    description          text     DEFAULT NULL,
     formula_id           bigint       NOT NULL,
     phrase_id            bigint       NOT NULL,
-    excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    excluded             smallint DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id        smallint DEFAULT NULL COMMENT 'to restrict the access',
     protect_id           smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (formula_link_id)
@@ -37,10 +38,11 @@ CREATE TABLE IF NOT EXISTS user_formula_links
     user_id              bigint       NOT NULL COMMENT 'the changer of the formula_link',
     formula_link_type_id smallint DEFAULT NULL,
     order_nbr            bigint   DEFAULT NULL,
-    excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    description          text     DEFAULT NULL,
+    excluded             smallint DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id        smallint DEFAULT NULL COMMENT 'to restrict the access',
     protect_id           smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
-    PRIMARY KEY (formula_link_id,user_id)
+    PRIMARY KEY (formula_link_id, user_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

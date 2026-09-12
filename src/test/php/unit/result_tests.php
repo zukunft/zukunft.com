@@ -41,13 +41,21 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 class result_tests
 {
@@ -55,10 +63,9 @@ class result_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
+        $msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_res = new test_results($t);
@@ -157,32 +164,53 @@ class result_tests
         // test phrase based default formatter
         // ... for big values
         $wrd_const = $t_wrd->word_math();
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->add($wrd_const->phrase());
         $res->grp()->set_phrase_list($phr_lst);
         $res->set_number(results::TV_INT);
-        $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
+        $t->assert('result->val_formatted test big numbers', $res->val_formatted($msg), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
         $res->set_number(results::TV_FLOAT);
-        $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
+        $t->assert('result->val_formatted test small numbers', $res->val_formatted($msg), "12.35");
 
         // ... for percent values
         $res = $t_res->result_pct();
-        $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
+        $t->assert('result->val_formatted test percent formatting', $res->val_formatted($msg), '1.23 %');
 
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t_res->result(), $usr_sys);
-        $t->assert_ex_and_import($t_res->result_main_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_res->result(), $t->usr_system);
+        $t->assert_ex_and_import($t_res->result_main_filled(), $t->usr_system);
         $json_file = 'unit/result/result_import_part.json';
-        $t->assert_json_file(new result($usr), $json_file);
+        $t->assert_json_file(new result($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');
 
         $res = $t_res->result_simple_1();
         $t->assert_api_to_ui($res, new result_ui());
+
+        // the result default page shows the calculated number with its phrase group, a link
+        // to the formula that calculated it and the time of the last calculation
+        global $ui_sys;
+        $form = new system_form();
+        $res_page = $t_res->result_page_ui();
+        $test_name = 'the result page shows the number behind the linked result phrases';
+        $t->assert_text_contains($test_name, $form->show_result_value($res_page), ' = ');
+        $test_name = 'the result page links the formula that calculated the result';
+        $t->assert_text_contains($test_name, $form->show_result_formula($res_page), formula_names::SCALE_TO_SEC);
+        $test_name = 'the result page shows the time of the last calculation';
+        $t->assert_text_contains($test_name, $form->show_last_update($res_page),
+            date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
+        // a result that is not yet calculated shows the labels of the empty fields
+        $res_plain = new result_ui($t_res->result_incomplete()->api_json([api_types::TEST_MODE]));
+        $test_name = 'a result without a formula shows only the formula label';
+        $t->assert($test_name, $form->show_result_formula($res_plain),
+            $t->labeled(msg_id::FORM_SELECT_FORMULA, ''));
+        // the last update is written by the system, so it shows no lonely label
+        $test_name = 'a never calculated result shows no last update line';
+        $t->assert($test_name, $form->show_last_update($res_plain), '');
 
     }
 

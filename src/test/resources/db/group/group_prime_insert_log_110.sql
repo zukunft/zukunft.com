@@ -26,9 +26,9 @@ SELECT group_prime_insert_log_110
     ($1, $2, $3, $4, $5, $6);
 
 SELECT group_prime_insert_log_110
-        (3::bigint,
-         1::smallint,
-         320::smallint,
-         'Pi (math)'::text,
-         319::smallint,
-         32770::bigint);
+       (3::bigint,
+        1::smallint,
+        320::smallint,
+        'π (unit symbol)'::text,
+        319::smallint,
+        5::bigint);

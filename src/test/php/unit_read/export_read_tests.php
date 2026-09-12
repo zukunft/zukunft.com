@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::EXPORT . 'xml.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\export\xml;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -45,10 +46,10 @@ class export_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_phr = new test_phrases($t);
+        $msg = new user_message();
         $t->name = 'export->';
 
         // start the test section (ts)
@@ -59,7 +60,7 @@ class export_read_tests
 
         $phr_lst = $t_phr->phrase_list();
         $xml_exp = new xml($t->usr1);
-        $result = $xml_exp->export_by_phrase_list($phr_lst);
+        $result = $xml_exp->export_by_phrase_list($phr_lst, $msg);
         $target = 'Mathematics';
         // the xml export reads the phrases from the database, so a semi page timeout is used to avoid a false timeout
         $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
@@ -67,7 +68,7 @@ class export_read_tests
         $t->subheader($ts . 'json');
 
         // TODO Prio 2 activate
-        //$json_export = new json_io($usr, $phr_lst);
+        //$json_export = new json_io($t->usr1, $phr_lst);
         //$result = $json_export->export();
         //$target = 'Mathematics';
         //$t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);

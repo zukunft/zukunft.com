@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -54,6 +55,7 @@ class verb_read_tests
 
         global $db_con;
         global $sys;
+        $msg = new user_message();
 
         // init
         $t->name = 'verb read db->';
@@ -66,19 +68,19 @@ class verb_read_tests
 
         // test if loading by code id and id result in the same name
         $vrb = new verb();
-        $vrb->load_by_code_id(verbs::IS);
+        $vrb->load_by_code_id(verbs::IS, $msg);
         $vrb_id = new verb();
-        $vrb_id->load_by_id($vrb->id());
+        $vrb_id->load_by_id($vrb->id(), $msg);
         $t->assert('load' . verbs::IS, $vrb->name(), $vrb_id->name());
 
         // prepare the words for testing
         $country = new word($t->usr1);
-        $country->load_by_name(words::COUNTRY);
+        $country->load_by_name(words::COUNTRY, $msg);
         $switzerland = new word($t->usr1);
-        $switzerland->load_by_name(words::CH);
+        $switzerland->load_by_name(words::CH, $msg);
 
         // 'is a' - test the selection of the members via 'is a' verb
-        $countries = $country->children();
+        $countries = $country->children($msg);
         $t->assert_contains('is a based on ' . words::COUNTRY,
             $countries->names(),
             array(words::CH, word_names::GERMANY)
@@ -86,7 +88,7 @@ class verb_read_tests
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (canton)' but not 'Zurich (city)'
-        $parts = $switzerland->direct_parts();
+        $parts = $switzerland->direct_parts($msg);
         $t->assert_contains('direct parts of ' . words::CH,
             $parts->names(),
             array(triple_names::CANTON_ZURICH)
@@ -98,7 +100,7 @@ class verb_read_tests
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (canton)' and 'Zurich (city)'
-        $parts = $switzerland->parts();
+        $parts = $switzerland->parts($msg);
         $t->assert_contains('parts of ' . words::CH . ' and parts of the parts',
             $parts->names(),
             array(triple_names::CANTON_ZURICH, triple_names::CITY_ZH)
@@ -115,7 +117,7 @@ class verb_read_tests
 
         // load the verbs
         $lst = new verb_list($t->usr1);
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         // the first verb list load also warms up the type list cache, so a multi db timeout is used
         $t->assert('load', $result, true, $t::TIMEOUT_LIMIT_DB_MULTI);
 

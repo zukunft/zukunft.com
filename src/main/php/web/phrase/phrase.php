@@ -33,7 +33,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
@@ -41,7 +40,7 @@ include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
@@ -49,13 +48,17 @@ include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::WORD . 'word.php';
 //include_once html_paths::WORD . 'word_list.php';
 include_once html_paths::WORD . 'triple.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -67,8 +70,12 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -86,11 +93,11 @@ class phrase extends combine_named
      * dispatches to word::url_mapper or triple::url_mapper depending on the
      * PHRASE_CLASS url field; falls back to a currently set obj if no class is provided
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         // PHRASE_CLASS encodes word vs triple; mirrors the OBJECT_CLASS dispatch in api_mapper
         $class = $url_array[url_var::PHRASE_CLASS] ?? null;
@@ -101,42 +108,42 @@ class phrase extends combine_named
         }
         $obj = $this->obj();
         if ($obj instanceof triple) {
-            $obj->url_mapper($url_array, $usr_msg, $dto);
+            $obj->url_mapper($url_array, $msg, $dto);
             $this->set_id($obj->id());
         } elseif ($obj instanceof word) {
-            $obj->url_mapper($url_array, $usr_msg, $dto);
+            $obj->url_mapper($url_array, $msg, $dto);
         } else {
-            $usr_msg->add_error_text('Phrase class missing in url ' . json_encode($url_array));
+            $msg->add_error_text('Phrase class missing in url ' . json_encode($url_array));
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
      * set the vars of this phrase frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd_ui = new word();
-                $wrd_ui->api_mapper($json_array, $usr_msg);
+                $wrd_ui->api_mapper($json_array, $msg);
                 $this->set_obj($wrd_ui);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp_ui = new triple();
-                $trp_ui->api_mapper($json_array, $usr_msg);
+                $trp_ui->api_mapper($json_array, $msg);
                 $this->set_obj($trp_ui);
                 // switch the phrase id to the object id
                 $this->set_id($trp_ui->id());
             } else {
-                $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
+                $msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
             }
         } else {
-            $usr_msg->add_error_text('Json class missing, but expected for a phrase');
+            $msg->add_error_text('Json class missing, but expected for a phrase');
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -147,7 +154,7 @@ class phrase extends combine_named
     /**
      * @return array the json message array to send the updated data to the backend
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         if ($this->is_word()) {
@@ -164,7 +171,7 @@ class phrase extends combine_named
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::DESCRIPTION] = $this->get_description();
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
         $vars[json_fields::PLURAL] = $this->get_plural();
         // TODO add exclude field and move to a parent object?
         if ($this->obj()?->share_id() != null) {
@@ -179,12 +186,12 @@ class phrase extends combine_named
     /**
      * set the vars of this phrase html display object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($json_api_msg, true), $usr_msg);
+        return $this->api_mapper(json_decode($json_api_msg, true), $msg);
     }
 
 
@@ -314,16 +321,16 @@ class phrase extends combine_named
         return $result;
     }
 
-    function is_type_phrase(phrase $phr): bool
+    function is_type_phrase(phrase $phr, user_message $msg): bool
     {
         global $ui_sys;
 
         $result = false;
-        $typ_id = $this->type_id();
+        $typ_id = $this->type_id($msg);
         if ($typ_id != null) {
-            $typ = $ui_sys?->typ_lst_cache?->phr_typ?->get($this->type_id());
+            $typ = $ui_sys?->typ_lst_cache?->phr_typ?->get($this->type_id($msg));
             if ($typ != null) {
-                $typ_phr_lst = $typ->type_phrases();
+                $typ_phr_lst = $typ->type_phrases($msg);
                 foreach ($typ_phr_lst->lst() as $typ_phr) {
                     if ($phr->is_same($typ_phr)) {
                         $result = true;
@@ -339,27 +346,35 @@ class phrase extends combine_named
     /**
      * @return bool true if this phrase is of type percent
      */
-    function is_percent(): bool
+    function is_percent(user_message $msg): bool
     {
-        return $this->obj()->is_percent();
+        return $this->obj()->is_percent($msg);
     }
 
-    function is_measure(): bool
+    function is_measure(user_message $msg): bool
     {
-        return $this->obj()->is_measure();
+        return $this->obj()->is_measure($msg);
+    }
+
+    /**
+     * @return bool true if the wrapped word or triple is a scaling phrase e.g. "billion"
+     */
+    function is_scaling(user_message $msg): bool
+    {
+        return $this->obj()->is_scaling($msg);
     }
 
     /**
      * @return bool true if the wrapped word or triple has the type "time" e.g. "2022 (year)"
      */
-    function is_time(): bool
+    function is_time(user_message $msg): bool
     {
-        return $this->obj()->is_time();
+        return $this->obj()->is_time($msg);
     }
 
-    function is_info(): bool
+    function is_info(user_message $msg): bool
     {
-        return $this->obj()->is_info();
+        return $this->obj()->is_info($msg);
     }
 
     /**
@@ -369,6 +384,108 @@ class phrase extends combine_named
     function impact(): float
     {
         return $this->obj()->impact();
+    }
+
+
+    /*
+     * related
+     */
+
+    /**
+     * get the parent phrases of the given phrase (foaf_direction::UP)
+     * if a phrase list is given get only the parent phrases within the list (no api call)
+     * if no phrase list is given get the phrases from the api
+     * e.g. for Zurich the list is city and canton based on a phrase list with city, canton and country
+     * but  for Zurich the list is city, canton and company based on a phrase list with company, city, canton and country
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @param int $levels the number of parent levels
+     * @return phrase_list capped by the user-specific frontend config limit
+     */
+    function parents(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    {
+        return $this->related($msg, $phr_lst, foaf_direction::UP);
+    }
+
+    /**
+     * get all child phrases related to the given phrase (foaf_direction::DOWN)
+     * behaves like parents() but in the opposite direction
+     * e.g. for city at least Zurich, Bern and Geneva are returned
+     *
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @param int $levels the number of child levels
+     * @return phrase_list capped by the user-specific frontend config limit
+     */
+    function children(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    {
+        return $this->related($msg, $phr_lst, foaf_direction::DOWN);
+    }
+
+    /**
+     * get the similar objects of this phrase i.e. the other phrases that share a parent with this word
+     * via the 'is a' verb e.g. for 'Swiss franc' (which is a 'currency') the similar phrases are the
+     * other children of 'currency' such as 'Euro' and 'US Dollar' (this phrase itself is excluded)
+     *
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @return phrase_list the sibling phrases without this phrase, capped by the user-specific frontend config limit
+     */
+    function similar(user_message $msg, ?phrase_list $phr_lst = null): phrase_list
+    {
+        if ($phr_lst === null) {
+            $phr_lst = new phrase_list();
+            $phr_lst->load_related($this, foaf_direction::UP);
+        }
+        $result = new phrase_list();
+        // for each "this is a <parent>" relation collect the other phrases that are also "a <parent>"
+        // e.g. for "Swiss franc is a currency" collect all currencies: Swiss franc, Euro and US Dollar
+        foreach ($phr_lst->children($this, $msg)->lst() as $is_a_trp) {
+            $vrb = $is_a_trp->get_verb();
+            if ($vrb?->id() == verbs::IS_ID) {
+                foreach ($phr_lst->parents($is_a_trp->get_to(), $msg, $vrb)->lst() as $sibling) {
+                    $result->add_phrase($sibling);
+                }
+            }
+        }
+        // remove this phrase itself so that only the similar phrases remain
+        $self = new phrase_list();
+        $self->add_phrase($this);
+        return $result->remove($self);
+    }
+
+    /**
+     * get the related phrases of a phrase in the given direction (parents for UP, children for DOWN)
+     * if a phrase list is given filter the related phrases within it (no api call)
+     * otherwise load them from the api, and cap the result by the user-specific frontend config limit
+     *
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @param foaf_direction $direction foaf_direction::UP for parents, foaf_direction::DOWN for children
+     * @return phrase_list capped by the user-specific frontend config limit
+     */
+    private function related(user_message $msg, ?phrase_list $phr_lst, foaf_direction $direction): phrase_list
+    {
+        if ($phr_lst !== null) {
+            if ($direction == foaf_direction::UP) {
+                $lst = $phr_lst->parents($this, $msg);
+            } else {
+                $lst = $phr_lst->children($this, $msg);
+            }
+        } else {
+            $lst = new phrase_list();
+            $lst->load_related($this, $direction);
+        }
+        // limit the number of related phrases shown to keep the page-title category subtitle readable
+        global $ui_sys;
+        if ($ui_sys?->cfg !== null) {
+            $limit = $ui_sys->cfg->get_by(
+                [words::RELATED, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                $msg, def::FALLBACK_PHRASES_RELATED
+            );
+        } else {
+            $limit = def::FALLBACK_PHRASES_RELATED;
+        }
+        if ($lst->count() > $limit) {
+            $lst->set_lst(array_slice($lst->lst(), 0, $limit));
+        }
+        return $lst;
     }
 
 
@@ -393,6 +510,45 @@ class phrase extends combine_named
     }
 
     /**
+     * @param string $lan the code of the user interface language e.g. "en"
+     * @returns string the html code to display the plural of the phrase with reference links
+     */
+    function name_link_plural(string $lan = languages::DEFAULT): string
+    {
+        return $this->obj()->name_link_plural($lan);
+    }
+
+    /**
+     * like name_link, but with the tooltip given by the caller, e.g. taken from the frontend
+     * cache, so that a symbol like "mio" can show the description of "million"
+     *
+     * @param string $tip the tooltip text; if empty the description of the phrase is used
+     * @returns string the html code of the phrase link with the given tooltip
+     */
+    function name_link_with_tip(string $tip): string
+    {
+        $result = $this->name_link();
+        if ($tip != '' and ($this->get_description() ?? '') == '') {
+            $html = new html_base();
+            $url = $html->url_back($this->view_id(), $this->id());
+            $result = $html->ref($url, $this->name(), $tip);
+        }
+        return $result;
+    }
+
+    /**
+     * @return int the view id that name_link uses for this phrase class
+     */
+    private function view_id(): int
+    {
+        if ($this->is_triple()) {
+            return views::TRIPLE_ID;
+        } else {
+            return views::WORD_ID;
+        }
+    }
+
+    /**
      * simply to display a single word in a table cell
      */
     function dsp_tbl_cell(int $intent): string
@@ -400,7 +556,8 @@ class phrase extends combine_named
         $result = '';
         if ($this->is_word()) {
             $wrd = $this->obj();
-            $result .= $wrd->td('', '', $intent);
+            // the cell is rendered without a calling page, so its link carries no back part
+            $result .= $wrd->td([], '', $intent);
         }
         return $result;
     }
@@ -417,7 +574,7 @@ class phrase extends combine_named
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return phrase_list
      */
-    function is_or_can_be(?phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
+    function is_or_can_be(user_message $msg, ?phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -427,8 +584,8 @@ class phrase extends combine_named
         }
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::IS)));
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::CAN_BE)));
+            $result->merge($phr_lst_cac->parents($this, $msg, $typ_lst->vrb->get_by_code_id(verbs::IS)), $msg);
+            $result->merge($phr_lst_cac->parents($this, $msg, $typ_lst->vrb->get_by_code_id(verbs::CAN_BE)), $msg);
         }
         return $result;
     }
@@ -438,11 +595,11 @@ class phrase extends combine_named
      * to review
      */
 
-    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, user_message $msg, ?verb_list $link_types = null, array $url_arr = []): string
     {
         $phr_lst = new phrase_list();
         if ($phr_lst->load_related($this, $direction, $link_types)) {
-            return $phr_lst->dsp_graph($this, $back);
+            return $phr_lst->dsp_graph($this, $msg, $url_arr);
         } else {
             return '';
         }
@@ -451,12 +608,12 @@ class phrase extends combine_named
     /**
      * @return word the most relevant
      */
-    function main_word(): word
+    function main_word(user_message $msg): word
     {
         if ($this->is_word()) {
             return $this->obj()->word();
         } else {
-            return $this->obj()->main_word();
+            return $this->obj()->main_word($msg);
         }
     }
 
@@ -501,10 +658,10 @@ class phrase extends combine_named
     /**
      * html code for a button to add a new phrase similar to this phrase
      **/
-    function btn_add($back): string
+    function btn_add(user_message $msg, array $url_arr = [], string $base_url = ''): string
     {
-        $wrd = $this->main_word();
-        return $wrd->btn_add($back);
+        $wrd = $this->main_word($msg);
+        return $wrd->btn_add($url_arr, $base_url);
     }
 
     /**
@@ -512,28 +669,28 @@ class phrase extends combine_named
      * html code for a button to add a new phrase similar to this phrase
      * @return string the html to add the word or triple
      **/
-    function button_add_triple($back): string
+    function button_add_triple(array $url_arr = [], string $base_url = ''): string
     {
         $wrd = new word();
-        return $wrd->btn_add($back);
+        return $wrd->btn_add($url_arr, $base_url);
     }
 
     /**
      * to enable the recursive function in work_link
      * TODO add a list of triple already split to detect endless loops
      */
-    function wrd_lst(): word_list
+    function wrd_lst(user_message $msg): word_list
     {
         $wrd_lst = new word_list();
         if (!$this->is_word()) {
             $trp = $this->obj();
-            $sub_wrd_lst = $trp->wrd_lst();
+            $sub_wrd_lst = $trp->wrd_lst($msg);
             foreach ($sub_wrd_lst->lst() as $wrd) {
-                $wrd_lst->add($wrd);
+                $wrd_lst->add($wrd, $msg);
             }
         } else {
             $wrd = $this->obj();
-            $wrd_lst->add($wrd);
+            $wrd_lst->add($wrd, $msg);
         }
         return $wrd_lst;
     }
@@ -543,12 +700,13 @@ class phrase extends combine_named
         $result = '';
         if ($this != null) {
             if ($this->obj != null) {
-                // the function dsp_tbl should exist for words and triples
+                // the cell is rendered without a calling page, so its link carries no back part
                 $dsp_obj = $this->obj();
-                if ($this->is_word() == word::class) {
-                    $result = $dsp_obj->td('', '', $intent);
+                if ($this->is_word()) {
+                    $result = $dsp_obj->td([], '', $intent);
                 } else {
-                    $result = $dsp_obj->tr('', '', $intent);
+                    // a triple is shown as a complete table row, which uses no intent
+                    $result = $dsp_obj->tr();
                 }
             }
         }

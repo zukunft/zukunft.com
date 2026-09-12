@@ -75,10 +75,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_GROUP . 'id.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class result_id extends id
@@ -114,19 +116,19 @@ class result_id extends id
      * @return int|string the group id based on the given phrase list
      *                    as 64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
      */
-    function get_id(phrase_list $phr_lst, phrase_list $src_phr_lst, formula $frm): int|string
+    function get_id(phrase_list $phr_lst, phrase_list $src_phr_lst, formula $frm, user_message $msg): int|string
     {
         // get the phrases used only for the result
         $res_only = $phr_lst->get_diff($src_phr_lst);
-        $res_only = $res_only->sort_by_id();
+        $res_only = $res_only->sort_by_id($msg);
         // get the phrases used only for the source
         $src_only = $src_phr_lst->get_diff($phr_lst);
-        $src_only = $src_only->sort_by_id();
+        $src_only = $src_only->sort_by_id($msg);
         // get the phrases used for source and result
         $all_lst = $phr_lst->merge($src_phr_lst);
         $only_lst = $res_only->merge($src_only);
         $both_lst = $all_lst->get_diff($only_lst);
-        $both_lst = $both_lst->sort_by_id();
+        $both_lst = $both_lst->sort_by_id($msg);
 
         if ($both_lst->count() <= self::PRIME_PHRASES_STD
             and $src_only->count() <= self::PRIME_SOURCE_PHRASES

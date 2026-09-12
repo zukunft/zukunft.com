@@ -34,16 +34,21 @@ namespace Zukunft\ZukunftCom\main\php\web\hist;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 
 class hist_log
 {
 
-    // show the changes of the view
-    function dsp_log_view(word $wrd, string $back = ''): string
+    /**
+     * show the changes of the view
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
+     */
+    function dsp_log_view(word $wrd, user_message $msg, array $url_arr = []): string
     {
         $html = new html_base();
         log_debug($wrd->id());
@@ -55,11 +60,11 @@ class hist_log
         } else {
             // load the word parameters if not yet done
             if ($wrd->name() == "") {
-                $wrd->load_by_id($wrd->id());
+                $wrd->load_by_id($wrd->id(), $msg);
             }
 
-            $wrd_ui = new word($wrd->api_json());
-            $changes = $wrd_ui->dsp_hist(1, 20, '', $back);
+            $wrd_ui = new word();
+            $changes = $wrd_ui->dsp_hist($msg, 1, 20, '', $url_arr);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest view changes related to this word", "change_hist");
                 $result .= $changes;

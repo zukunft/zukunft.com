@@ -1,0 +1,12 @@
+GET
+http://localhost/http/view.php?id=0&9m=1&m=15&z=0
+/http/view.php?id=0&9m=1&m=15&z=0
+/http/view.php?id=0&9mask_id=entry_view&mask_id=ref_add&step=no&
+{
+    "id": "0",
+    "mask_id": "ref_add",
+    "step": "no",
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
+}

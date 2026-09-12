@@ -34,7 +34,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\log;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
@@ -42,18 +41,16 @@ include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'change_log_link.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -90,12 +87,11 @@ class change_log_link_list extends ListBase
      * @param user|null $usr the user who wants to see the changes
      * @return user_message to report any problems to the user
      */
-    function load_by_object(string $class, int|string $id = 1, user|null $usr = null): user_message
+    function load_by_object(string $class, user_message $msg, int|string $id = 1, user|null $usr = null): user_message
     {
-        $usr_msg = new user_message();
         $json = $this->load_api_by_object($class, $id, $usr);
         $this->set_from_json(json_decode($json, true));
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -125,17 +121,17 @@ class change_log_link_list extends ListBase
 
     /**
      * show all link changes of an object e.g. a word as a table
-     * @param back_trace|null $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      * @return string the html code with all link changes of the list
      */
-    function tbl(?back_trace $back = null): string
+    function tbl(array $url_arr = []): string
     {
         $html = new html_base();
         $html_text = '';
         if (!$this->is_empty()) {
             $html_text .= new change_log_link()->th();
             foreach ($this->lst() as $chg) {
-                $html_text .= $chg->tr($back);
+                $html_text .= $chg->tr($url_arr);
             }
         }
         return $html->tbl($html_text, styles::STYLE_BORDERLESS);

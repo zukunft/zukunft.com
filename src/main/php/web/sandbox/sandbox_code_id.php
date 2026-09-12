@@ -32,17 +32,20 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -58,6 +61,29 @@ class sandbox_code_id extends sandbox_typed
     /*
      * construct and map
      */
+
+    /**
+     * set the vars of this object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $msg, $dto);
+        // only set when posted, because the code id field is only shown to a user whose
+        // profile may change it, so a form without the field must keep the loaded code id;
+        // an empty submitted field clears it (a not permitted change is refused by input_valid)
+        if (array_key_exists(url_var::CODE_ID, $url_array)) {
+            if ($url_array[url_var::CODE_ID] != '') {
+                $this->code_id = $url_array[url_var::CODE_ID];
+            } else {
+                $this->code_id = null;
+            }
+        }
+        return $msg;
+    }
 
     /**
      * set the vars of this object bases on the api json array
@@ -82,21 +108,34 @@ class sandbox_code_id extends sandbox_typed
      * the type; if an ip-only or name-only user actually changes it a warning is shown the usual way
      * and the change is not confirmed (mirrors the backend can_set_type_id permission)
      *
-     * @param user_message $usr_msg with the requesting user and to enrich with a warning per invalid field
+     * @param user_message $msg with the requesting user and to enrich with a warning per invalid field
      * @param string $action the crud action of the change; a delete needs no type
      * @param array $url_array the pending change url with the new phrase type and its '8'-prefixed old value
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action, $url_array);
+        $result = parent::input_valid($msg, $action, $url_array);
         if ($action != url_var::CRUD_DELETE) {
             $old = $url_array[url_var::PRE . url_var::PHRASE_TYPE] ?? null;
             $new = $url_array[url_var::PHRASE_TYPE] ?? null;
             if ($new != $old) {
-                $usr = $usr_msg->usr;
+                $usr = $msg->usr;
                 if ($usr == null or !$usr->can_set_type_id()) {
-                    $usr_msg->add_warning_with_vars(msg_id::TYPE_CHANGE_NOT_ALLOWED, [
+                    $msg->add_warning_with_vars(msg_id::TYPE_CHANGE_NOT_ALLOWED, [
+                        msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+                    ]);
+                    $result = false;
+                }
+            }
+            // the code id links a database row to program code, so a change is only permitted
+            // for a system, test or developer user (mirrors the backend can_set_code_id check)
+            $old = $url_array[url_var::PRE . url_var::CODE_ID] ?? null;
+            $new = $url_array[url_var::CODE_ID] ?? null;
+            if ($new != $old) {
+                $usr = $msg->usr;
+                if ($usr == null or !$usr->can_set_code_id()) {
+                    $msg->add_warning_with_vars(msg_id::CODE_ID_CHANGE_NOT_ALLOWED, [
                         msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
                     ]);
                     $result = false;
@@ -113,11 +152,13 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * the code id is included in the message only to fill up backend object but never to change the code_id via ui
+     * the code id is included in the message to fill up the backend object; a code id *change*
+     * is only written for a user whose profile passes can_set_code_id, which the backend
+     * api_mapper enforces via the privilege-checked set_code_id
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::CODE_ID] = $this->code_id;
         return $vars;
     }

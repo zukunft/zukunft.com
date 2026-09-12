@@ -64,6 +64,22 @@ class Message
         $this->msg_var_lst = [];
     }
 
+    /**
+     * clear the collected messages and the status
+     *
+     * only a test may call this on the message it owns, to start the next test from a clean
+     * message (testing.md "created once and reset after each checked test"); a function that
+     * has received a message never resets it (state-and-messages.md)
+     *
+     * @return void
+     */
+    function reset(): void
+    {
+        $this->msg_status = msg_id::OK;
+        $this->msg_id_lst = [];
+        $this->msg_var_lst = [];
+    }
+
     /*
      * set
      */
@@ -263,12 +279,30 @@ class Message
     }
 
     /**
-     * TODO should pick the last either from msg_var_lst or msg_id_lst
      * @return string with the latest added message translated to the user language
+     *         or an empty string if this message has nothing to say
      */
     function get_last_message_translated(): string
     {
-        return $this->get_message_translated(count($this->msg_var_lst));
+        global $mtr;
+
+        $result = '';
+        if ($this->msg_var_lst != []) {
+            $result = $this->get_message_translated(count($this->msg_var_lst));
+        } elseif ($this->msg_id_lst != []) {
+            // a message added with add_id has no vars, so the message id is translated directly
+            $last_id = $this->msg_id_lst[array_key_last($this->msg_id_lst)];
+            if (!$last_id instanceof msg_id) {
+                // the api mapper fills the list with the already translated texts
+                $result = $last_id;
+            } elseif ($mtr == null) {
+                // without a translator e.g. in a setup script the enum value is the english text
+                $result = $last_id->value;
+            } else {
+                $result = $mtr->txt($last_id);
+            }
+        }
+        return $result;
     }
 
     /**

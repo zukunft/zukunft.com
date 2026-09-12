@@ -40,8 +40,10 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -54,9 +56,10 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 function run_word_display_test(all_tests $t): void
 {
 
-    global $usr;
 
     // init
+    $msg = new user_message();
+    $msg_ui = new user_message_ui();
     $lib = new library();
     $t_db = new test_db_load($t);
 
@@ -68,42 +71,45 @@ function run_word_display_test(all_tests $t): void
     // check the upward graph display
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
-    $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(word_names::ZH);
+    $wrd_ZH = new word($t->usr1);
+    $wrd_ZH->load_by_name(word_names::ZH, $msg);
     $direction = foaf_direction::UP;
     $target = word_names::COMPANY;
     // get the link types related to the word
-    $link_types = $wrd_ZH->link_types($direction);
-    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $link_types = $wrd_ZH->link_types($direction, $msg);
+    $link_types_ui = new verb_list_ui();
+    $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
     $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
-    $result = $wrd_ZH_ui->dsp_graph($direction, $link_types_ui, 0);
+    $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     // TODO Prio 1 activate
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the other side
-    $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(word_names::ZH);
+    $wrd_ZH = new word($t->usr1);
+    $wrd_ZH->load_by_name(word_names::ZH, $msg);
     $direction = foaf_direction::DOWN;
     $target = 'ZU';
-    $link_types = $wrd_ZH->link_types($direction);
+    $link_types = $wrd_ZH->link_types($direction, $msg);
     $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
-    $link_types_ui = new verb_list_ui($link_types->api_json());
-    $result = $wrd_ZH_ui->dsp_graph($direction, $link_types_ui, 0);
+    $link_types_ui = new verb_list_ui();
+    $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
+    $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     // loading the link types and rendering the graph reads from the database, so a semi page timeout is used
     $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... and the graph display for 2019
-    $wrd_2020 = new word($usr);
-    $wrd_2020->load_by_name(word_names::YEAR_2020);
+    $wrd_2020 = new word($t->usr1);
+    $wrd_2020->load_by_name(word_names::YEAR_2020, $msg);
     $direction = foaf_direction::DOWN;
-    $wrd_2021 = new word($usr);
-    $wrd_2021->load_by_name(word_names::TEST_2021);
-    $lnk_20_to_21 = $t_db->load_triple(word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
+    $wrd_2021 = new word($t->usr1);
+    $wrd_2021->load_by_name(word_names::TEST_2021, $msg);
+    $lnk_20_to_21 = $t_db->load_triple($msg, word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
     $target_part_is_followed = verbs::FOLLOWER_OF;
-    $link_types = $wrd_2020->link_types($direction);
+    $link_types = $wrd_2020->link_types($direction, $msg);
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
-    $link_types_ui = new verb_list_ui($link_types->api_json());
-    $result = $wrd_2020_ui->dsp_graph($direction, $link_types_ui, 0);
+    $link_types_ui = new verb_list_ui();
+    $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
+    $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
     // TODO Prio 2 activate
@@ -118,14 +124,15 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the other side
     $direction = foaf_direction::UP;
-    $wrd_2019 = $t_db->load_word(word_names::YEAR_2019);
-    $wrd_year = $t_db->load_word(words::YEAR_CAP);
-    $lnk_20_is_year = $t_db->load_triple(word_names::YEAR_2020, verbs::IS, words::YEAR_CAP);
-    $lnk_19_to_20 = $t_db->load_triple(word_names::YEAR_2020, verbs::FOLLOW, word_names::YEAR_2019);
-    $link_types = $wrd_2020->link_types($direction);
+    $wrd_2019 = $t_db->load_word($msg, word_names::YEAR_2019);
+    $wrd_year = $t_db->load_word($msg, words::YEAR_CAP);
+    $lnk_20_is_year = $t_db->load_triple($msg, word_names::YEAR_2020, verbs::IS, words::YEAR_CAP);
+    $lnk_19_to_20 = $t_db->load_triple($msg, word_names::YEAR_2020, verbs::FOLLOW, word_names::YEAR_2019);
+    $link_types = $wrd_2020->link_types($direction, $msg);
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
-    $link_types_ui = new verb_list_ui($link_types->api_json());
-    $result = $wrd_2020_ui->dsp_graph($direction, $link_types_ui, 0);
+    $link_types_ui = new verb_list_ui();
+    $link_types_ui->set_from_json($link_types->api_json(), $msg_ui);
+    $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui);
     $result = $lib->trim_html($result);
     // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has year id', $result, $wrd_year->id());
@@ -137,12 +144,12 @@ function run_word_display_test(all_tests $t): void
     //$t->assert_text_contains($t->name . ' has 2019 to 2020 link', $result, $lnk_19_to_20->id());
 
     // the value table for ABB
-    $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(word_names::ZH, word::class);
-    $wrd_year = new word($usr);
-    $wrd_year->load_by_name(words::YEAR_CAP, word::class);
+    $wrd_ZH = new word($t->usr1);
+    $wrd_ZH->load_by_name(word_names::ZH, $msg, word::class);
+    $wrd_year = new word($t->usr1);
+    $wrd_year->load_by_name(words::YEAR_CAP, $msg, word::class);
     /*
-    $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id());
+    $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $t->usr1->id());
     $target = substr($target,0,208);
     */
     $target = word_names::YEAR_2020;
@@ -156,13 +163,13 @@ function run_word_display_test(all_tests $t): void
     /*
     $wrd_company = New word_ui;
     $wrd_company->name = "TEST_WORD";
-    $wrd_company->set_user($usr);
+    $wrd_company->set_user($t->usr1);
     $wrd_company->load();
     $wrd_ratios = New word_ui;
     $wrd_ratios->name = "company main ratio";
-    $wrd_ratios->set_user($usr);
+    $wrd_ratios->set_user($t->usr1);
     $wrd_ratios->load();
-    $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id());
+    $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $t->usr1->id());
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);
@@ -174,13 +181,13 @@ function run_word_display_test(all_tests $t): void
 
     // for testing the selector display a company selector and select ABB
     // TODO fix second run
-    $phr_corp = $t_db->load_phrase(word_names::COMPANY);
-    $phr_ZH_INS = $t_db->load_phrase(triple_names::COMPANY_ZURICH);
+    $phr_corp = $t_db->load_phrase(word_names::COMPANY, $msg);
+    $phr_ZH_INS = $t_db->load_phrase(triple_names::COMPANY_ZURICH, $msg);
     /* TODO base it on the api
     $sel = new html_selector;
     $sel->form = 'test_form';
     $sel->name = 'select_company';
-    $phr_lst = $phr_corp->phrases(foaf_direction::DOWN);
+    $phr_lst = $phr_corp->phrases(foaf_direction::DOWN, $msg);
     $sel->lst = $phr_lst->lst_key();
     $sel->selected = $phr_ZH_INS->id();
     $sel->dummy_text = '... please select';

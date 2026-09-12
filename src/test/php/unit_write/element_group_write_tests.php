@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
@@ -61,14 +62,13 @@ class element_group_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
         $tl = new test_lib();
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula element group ';
@@ -89,11 +89,11 @@ class element_group_write_tests
         //$t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_increase(), $usr_msg));
 
         // load the terms needed for the formula expression
-        $trm_lst = $frm->load_exp_terms($usr_msg);
+        $trm_lst = $frm->load_exp_terms($msg);
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
-        $exp = $frm->expression($trm_lst);
+        $exp = $frm->expression($msg, $trm_lst);
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
 
         $result = $elm_grp_lst->dsp_id();
         $target = '"' . formula_names::THIS_NAME . '" (' . $frm_this->id() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id() . ')';
@@ -107,8 +107,8 @@ class element_group_write_tests
 
             // prepare the phrase list for the formula element selection
             // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
-            $phr_lst = new phrase_list($usr);
-            $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO));
+            $phr_lst = new phrase_list($t->usr1);
+            $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO), $msg);
 
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
@@ -205,7 +205,7 @@ class element_group_write_tests
 
         // test if there are any test leftovers in the database and report which
         // TODO Prio 2 add this test to all db write test blocks (or at least to those that are causing issues)
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg, library::class_to_name(element_group::class));
 
     }
 

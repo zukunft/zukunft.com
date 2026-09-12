@@ -81,18 +81,21 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
@@ -123,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -135,6 +139,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -171,8 +176,10 @@ class view extends sandbox_code_id
     // in memory only fields
     // all links to the component objects in correct order
     public ?component_link_list $cmp_lnk_lst;
-    // list of terms that use this view / mask
-    private ?term_view_list $trm_msk_lst;
+    // list of terms that use this view / mask; collected while importing and loaded lazily by
+    // load_terms_related() for a page request, so that the used by column of the view pages
+    // can list the terms (emitted by api_json_array like the components)
+    public ?term_view_list $trm_msk_lst;
 
     // the default display style for this component which can be overwritten by the link
     // TODO Prio 1 change to style_id because the style objects are part of the $sys object
@@ -224,33 +231,34 @@ class view extends sandbox_code_id
      * @return bool true if the view is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = view_fields::FLD_ID,
-        string $name_fld = view_fields::FLD_NAME,
-        string $type_fld = view_fields::FLD_TYPE
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = view_fields::FLD_ID,
+        string       $name_fld = view_fields::FLD_NAME,
+        string       $type_fld = view_fields::FLD_TYPE
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(fields::FLD_STYLE, $db_row)) {
                 $this->set_style_by_id($db_row[fields::FLD_STYLE]);
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * map a view api json to this model view object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         // it is expected that the code id is set via import by an admin not via api
 
@@ -258,7 +266,7 @@ class view extends sandbox_code_id
             $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -288,10 +296,10 @@ class view extends sandbox_code_id
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
         if (key_exists(json_fields::STYLE, $in_ex_json)) {
-            $msg->merge($this->set_style($in_ex_json[json_fields::STYLE]));
+            $this->set_style($in_ex_json[json_fields::STYLE], $msg);
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $msg->merge($this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg->usr));
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg);
         }
 
         // TODO get component from the dto object
@@ -317,13 +325,17 @@ class view extends sandbox_code_id
             $value = $in_ex_json[json_fields::ASSIGNED];
             foreach ($value as $trm_name) {
                 $trm = new term($this->get_user());
-                $trm->load_by_name($trm_name);
+                $trm->load_by_name($trm_name, $msg);
                 if ($trm->id() == 0) {
+                    // keep the name, because it identifies the link until the ids are known
+                    // (docs/llm/architecture.md); without it every term that a view assigns
+                    // before it exists would look like the same term assigned twice
+                    $trm->set_name($trm_name);
                     log_warning('word "' . $trm_name .
                         '" created to link it to view "' . $this->name() .
                         '" as requested by the import of ');
                 }
-                $this->add_term($trm, json_encode($in_ex_json));
+                $this->add_term($trm, $msg, json_encode($in_ex_json));
             }
         }
 
@@ -442,20 +454,57 @@ class view extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             if ($this->get_style_id() != null) {
                 $vars[json_fields::STYLE] = $this->get_style_id();
             }
             if ($this->cmp_lnk_lst != null) {
-                $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
+                // the component links of a view are not the requested main object, so the page
+                // request flag is removed for them: without it a component link emits only its
+                // own fields and not additionally the two linked objects that only the component
+                // link default page needs (see sandbox_link::api_json_array_linked)
+                $cmp_typ_lst = clone $typ_lst;
+                $cmp_typ_lst->remove(api_types::INCL_RELATED);
+                $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($cmp_typ_lst, $msg);
+            }
+            // a page request carries the owner, the changes and the overwrites, so that the
+            // view default page can show them (see base_views.json)
+            if ($typ_lst->incl_related()) {
+                // the owner load is skipped in the test mode
+                if (!$typ_lst->test_mode()) {
+                    $owner_name = $this->owner_api_name($msg);
+                    if ($owner_name != null) {
+                        $vars[json_fields::OWNER] = $owner_name;
+                    }
+                }
+                // the terms that use this view for the used by column of the view pages; a view
+                // that is not yet written cannot be used by a term, so nothing is loaded for it
+                if ($this->trm_msk_lst == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                    $this->load_terms_related($msg);
+                }
+                // drop the terms the requester may not read (idor) before the empty check, else a
+                // list of only unreadable terms is emitted as an empty json list
+                $trm_lst = $this->trm_msk_lst?->term_list();
+                $trm_lst?->filter_readable_by($usr);
+                if ($trm_lst != null and !$trm_lst->is_empty()) {
+                    $vars[json_fields::TERMS] = $trm_lst->api_json_array(new api_type_list(), $msg, $usr);
+                }
+                $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+                $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -511,7 +560,7 @@ class view extends sandbox_code_id
             if ($key == json_fields::ASSIGNED) {
                 foreach ($value as $trm_name) {
                     $trm = new term($this->get_user());
-                    $trm->load_by_name($trm_name);
+                    $trm->load_by_name($trm_name, $msg);
                     if ($trm->id() == 0) {
                         log_warning('word "' . $trm_name .
                             '" created to link it to view "' . $this->name() .
@@ -536,13 +585,14 @@ class view extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         global $sys;
 
@@ -564,14 +614,14 @@ class view extends sandbox_code_id
 
         // add the view components used
         if ($do_load) {
-            $this->load_components();
+            $this->load_components($msg);
         }
         if ($this->cmp_lnk_lst != null) {
             if (is_array($exp_typ)) {
                 $exp_typ = new export_type_list($exp_typ);
             }
             $exp_typ->add(export_type::IGNORE_FROM);
-            $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->export_json($exp_typ, $do_load);
+            $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->export_json($msg, $exp_typ, $do_load);
         }
         return $vars;
     }
@@ -585,18 +635,18 @@ class view extends sandbox_code_id
      * set the view type by the given code id or name
      *
      * @param string|null $code_id_or_name the code id or name that should be added to this view
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the view type has been set, false if unknown or not permitted
      */
-    function set_type(?string $code_id_or_name, user $usr_req = new user()): user_message
+    function set_type(?string $code_id_or_name, user_message $msg): bool
     {
         global $sys;
         if ($sys->typ_lst->msk_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $msg);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $msg);
         }
     }
 
@@ -604,12 +654,12 @@ class view extends sandbox_code_id
      * set the default style for this view by the code id
      *
      * @param string|null $code_id the code id of the display style use for im and export
-     * @return user_message a warning if the style code id is not found
+     * @param user_message $msg to report a style code id that is not found
+     * @return void
      */
-    function set_style(?string $code_id): user_message
+    function set_style(?string $code_id, user_message $msg): void
     {
         global $sys;
-        $msg = new user_message();
         if ($code_id == null) {
             $this->style = null;
         } else {
@@ -622,7 +672,6 @@ class view extends sandbox_code_id
                 $this->style = null;
             }
         }
-        return $msg;
     }
 
     /**
@@ -660,11 +709,11 @@ class view extends sandbox_code_id
     /**
      * @return component_list the list of the linked components of this view
      */
-    function components(): component_list
+    function components(user_message $msg): component_list
     {
         $ids = $this->cmp_lnk_lst->cmp_ids();
         $cmp_lst = new component_list($this->get_user());
-        $cmp_lst->load_by_ids($ids);
+        $cmp_lst->load_by_ids($ids, $msg);
         return $cmp_lst;
     }
 
@@ -726,14 +775,18 @@ class view extends sandbox_code_id
      * @param phrase $phr the phrase for which the most often used view should be loaded
      * @return bool true if at least one view is found
      */
-    function load_by_phrase(phrase $phr): bool
+    function load_by_phrase(phrase $phr, user_message $msg): bool
     {
         global $db_con;
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_term($sc, $phr->term());
-        $db_view = $db_con->get1($qp);
-        return $this->row_mapper_sandbox($db_view);
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            return $this->row_mapper_sandbox($db_row, $msg);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -741,14 +794,18 @@ class view extends sandbox_code_id
      * @param term $trm the word, triple, verb or formula for which the most often used view should be loaded
      * @return bool true if at least one view is found
      */
-    function load_by_term(term $trm): bool
+    function load_by_term(term $trm, user_message $msg): bool
     {
         global $db_con;
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_term($sc, $trm);
-        $db_view = $db_con->get1($qp);
-        return $this->row_mapper_sandbox($db_view);
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            return $this->row_mapper_sandbox($db_row, $msg);
+        } else {
+            return false;
+        }
     }
 
 
@@ -810,7 +867,7 @@ class view extends sandbox_code_id
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
      */
-    function load_components(?sql_db $db_con_given = null): bool
+    function load_components(user_message $msg, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
@@ -821,10 +878,25 @@ class view extends sandbox_code_id
         }
 
         $this->cmp_lnk_lst = new component_link_list($this->get_user());
-        $result = $this->cmp_lnk_lst->load_by_view_with_components($this, $db_con_used);
+        $result = $this->cmp_lnk_lst->load_by_view_with_components($this, $msg, $db_con_used);
         log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
 
         return $result;
+    }
+
+    /**
+     * load the terms that use this view into the in-memory trm_msk_lst so that api_json_array()
+     * can emit them under the INCL_RELATED flag, which the 'view terms' component of the view
+     * add and edit pages shows as the used by column
+     *
+     * @param user_message $msg to collect any problem while loading the term views
+     * @return void
+     */
+    function load_terms_related(user_message $msg): void
+    {
+        $lst = new term_view_list($this->get_user());
+        $lst->load_by_view($this, $msg);
+        $this->trm_msk_lst = $lst;
     }
 
     /**
@@ -911,7 +983,7 @@ class view extends sandbox_code_id
      */
     function add_component(component_link $lnk, ?int $pos = null): user_message
     {
-        $result = new user_message();
+        $result = new user_message(); // the message IS the return value, so the caller merges it
 
         // if no position is requested add the component at the end
         if ($lnk->get_pos() == null) {
@@ -928,7 +1000,7 @@ class view extends sandbox_code_id
             $this->cmp_lnk_lst = new component_link_list($this->get_user());
         }
         $lnk->set_view($this);
-        $this->cmp_lnk_lst->add_link_by_key($lnk);
+        $this->cmp_lnk_lst->add_link_by_key($lnk, $result);
 
         return $result;
     }
@@ -938,7 +1010,7 @@ class view extends sandbox_code_id
      * in case of an error the error message is returned
      * if everything is fine an empty string is returned
      */
-    function entry_up($component_id): string
+    function entry_up(int $component_id, user_message $msg): string
     {
         $result = '';
         // check the all minimal input parameters
@@ -946,10 +1018,10 @@ class view extends sandbox_code_id
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
             $cmp = new component($this->get_user());
-            $cmp->load_by_id($component_id);
+            $cmp->load_by_id($component_id, $msg);
             $cmp_lnk = new component_link($this->get_user());
-            $cmp_lnk->load_by_link($this, $cmp);
-            $result .= $cmp_lnk->move_up();
+            $cmp_lnk->load_by_link($this, $cmp, $msg);
+            $result .= $cmp_lnk->move_up($msg);
         }
         return $result;
     }
@@ -957,7 +1029,7 @@ class view extends sandbox_code_id
     /**
      * move one view component one place down
      */
-    function entry_down($component_id): string
+    function entry_down(int $component_id, user_message $msg): string
     {
         $result = '';
         // check the all minimal input parameters
@@ -965,10 +1037,10 @@ class view extends sandbox_code_id
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
             $cmp = new component($this->get_user());
-            $cmp->load_by_id($component_id);
+            $cmp->load_by_id($component_id, $msg);
             $cmp_lnk = new component_link($this->get_user());
-            $cmp_lnk->load_by_link($this, $cmp);
-            $result .= $cmp_lnk->move_down();
+            $cmp_lnk->load_by_link($this, $cmp, $msg);
+            $result .= $cmp_lnk->move_down($msg);
         }
         return $result;
     }
@@ -981,29 +1053,31 @@ class view extends sandbox_code_id
     /**
      * link this view to the given term and save to the database
      * @param term $trm the term that should be linked
-     * @param user_message $usr_msg with the message to the user if something has gone wrong and the suggested solutions
+     * @param user_message $msg with the message to the user if something has gone wrong and the suggested solutions
      * @return bool true if the term has been added
      */
-    function add_term_db(term $trm, user_message $usr_msg): bool
+    function add_term_db(term $trm, user_message $msg): bool
     {
         $lnk = new term_view($this->get_user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
-        return $lnk->save($usr_msg);
+        return $lnk->save($msg);
     }
 
     /**
      * add the term link to this view object
      * @param term $trm the term that should be linked
+     * @param user_message $msg to report a term that is assigned more than once to this view
      * @param string $json_part the part of a json message which has cause the adding
-     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     * @return bool true if the term has been added to the assigned terms of this view
      */
-    function add_term(term $trm, string $json_part = ''): user_message
+    function add_term(term $trm, user_message $msg, string $json_part = ''): bool
     {
-        $msg = new user_message();
         if ($this->trm_msk_lst == null) {
             $this->trm_msk_lst = new term_view_list($this->get_user());
         }
+        // the list rejects a term that is already assigned by the name of the linked objects,
+        // so the rejection is also a real double while the ids are still missing (an import)
         $added = $this->trm_msk_lst->add(0, $this, $trm);
         if (!$added) {
             $msg->add(msg_id::IMPORT_TERM_VIEW_DOUBLE, [
@@ -1012,7 +1086,7 @@ class view extends sandbox_code_id
                 msg_id::VAR_JSON_PART => $json_part,
             ]);
         }
-        return $msg;
+        return $added;
     }
 
     /**
@@ -1022,10 +1096,10 @@ class view extends sandbox_code_id
      */
     function del_term(term $trm): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message(); // the not yet implemented message IS the return value of this stub
         // TODO implement
-        $usr_msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
-        return $usr_msg;
+        $msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
+        return $msg;
     }
 
 
@@ -1069,11 +1143,11 @@ class view extends sandbox_code_id
      */
     function fill(view|sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_style_id() === null and $obj->get_style_id() != null) {
             $this->set_style_by_id($obj->get_style_id());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1082,7 +1156,7 @@ class view extends sandbox_code_id
      */
 
     /**
-     * true if the view is part of the view element list
+     * true if the view is part of the given view list
      */
     function is_in_list($msk_lst): bool
     {
@@ -1131,11 +1205,12 @@ class view extends sandbox_code_id
      * e.g. for import if this view has only the name set, the protection should not be updated in the database
      *
      * @param view|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(view|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(view|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->get_style() != null) {
             if ($this->get_style_id() != $db_obj->get_style_id()) {
                 $result = true;
@@ -1172,12 +1247,12 @@ class view extends sandbox_code_id
 
     /**
      * add or update the component links of this view in the database or create a user view
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save_component_links(user_message $usr_msg): bool
+    function save_component_links(user_message $msg): bool
     {
-        return $this->cmp_lnk_lst->save($usr_msg);
+        return $this->cmp_lnk_lst->save($msg);
     }
 
     /**
@@ -1224,31 +1299,31 @@ class view extends sandbox_code_id
     /**
      * delete the view component links of linked to this view
      *
-     * @param user_message $usr_msg the message for the user why deleting the view links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the view links has failed and a suggested solution
      * @return bool true if the view links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         // collect all component links where this view is used
         $lnk_lst = new component_link_list($this->get_user());
-        $lnk_lst->load_by_view($this);
+        $lnk_lst->load_by_view($this, $msg);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $lnk_lst->del($usr_msg);
+            $lnk_lst->del($msg);
         }
 
         // collect all view relations where this view is used
         $mrl_lst = new view_relation_list($this->get_user());
-        $mrl_lst->load_by_view($this);
+        $mrl_lst->load_by_view($this, $msg);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$mrl_lst->is_empty()) {
-            $mrl_lst->del($usr_msg);
+            $mrl_lst->del($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1294,10 +1369,10 @@ class view extends sandbox_code_id
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->type_id($msg) !== $this->type_id($msg)) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_fields::FLD_TYPE,
@@ -1306,17 +1381,17 @@ class view extends sandbox_code_id
                 );
             }
             global $sys;
-            if ($this->type_id() < 0) {
+            if ($this->type_id($msg) < 0) {
                 $msg->add(msg_id::VIEW_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_TYPE => $this->type_id($msg),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
             $lst->add_type_field(
                 view_fields::FLD_TYPE,
                 type_object::FLD_NAME,
-                $this->type_id(),
-                $obj->type_id(),
+                $this->type_id($msg),
+                $obj->type_id($msg),
                 $sys->typ_lst->msk_typ
             );
         }

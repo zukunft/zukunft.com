@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            System Test Source - Change source - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="67">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=31&amp;id=13&amp;9id=995&amp;9m=13">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=30&amp;9id=995&amp;9m=13">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    system test zukunft.com system test
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=64&amp;9id=995&amp;9m=13&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9id=995&amp;9m=13">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Change source
+            </h4>
+            <form action="http://localhost/http/view.php" id="source_edit">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input class="form-control" type="hidden" name="m" id="mask" value="13">
+                <input class="form-control" type="hidden" name="id" id="id" value="995">
+                <input type="hidden" name="9id" value="995">
+                <input type="hidden" name="9m" value="93">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="name">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="k" id="name" value="System Test Source">
+                    </div>
+                    <input type="hidden" name="8k" value="System Test Source">
+                    <div class="form-group col-md-4">
+                        <label for="st_form_select_source_type">
+                            Source type
+                        </label>
+                        <select class="form-control" name="st" form="source_edit" id="st_form_select_source_type" >
+                            <option value="1"  >
+                                XML
+                            </option>
+                            <option value="2"  >
+                                XBRL
+                            </option>
+                            <option value="3"  selected >
+                                CSV
+                            </option>
+                            <option value="4"  >
+                                PDF
+                            </option>
+                            <option value="5"  >
+                                API
+                            </option>
+                            <option value="6"  >
+                                JSON
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="url">
+                            URL
+                        </label>
+                        <input class="form-control" type="text" name="ur" id="url" value="https://api.zukunft.com/">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="doi">
+                            DOI
+                        </label>
+                        <input class="form-control" type="text" name="do" id="doi">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="description">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="o" id="description" value="System Test Source Description Changed">
+                    </div>
+                    <input type="hidden" name="8o" value="System Test Source Description Changed">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="d_form_select_view">
+                            View
+                        </label>
+                        <select class="form-control" name="d" form="source_edit" id="d_form_select_view" >
+                            <option value="93"  selected >
+                                Source
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8d" value="93">
+                    <div class="form-group col-md-4">
+                        <label for="s_form_select_share_type">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="source_edit" id="s_form_select_share_type" >
+                            <option value="1"  selected >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8s" value="1">
+                    <div class="form-group col-md-4">
+                        <label for="sp_form_select_protection_type">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="source_edit" id="sp_form_select_protection_type" >
+                            <option value="1"  selected >
+                                no protection
+                            </option>
+                            <option value="2"  >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8sp" value="1">
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="http://localhost/http/view.php?m=93&amp;id=995" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Not yet used
+                    </h5>
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="col-md-4">
+                    <h5>
+                        Values
+                    </h5>
+                    <div>
+                        not used for values
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        References
+                    </h5>
+                </div>
+            </div>
+            <br>
+            <div class="row col-md-12 justify-content-end">
+                <div class="col-md-4">
+                    <div class="css-tabs">
+                        <div class="css-tab" id="changes">
+                            <a href="#changes" class="css-tab-label">
+                                Changes
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                when
+                                            </th>
+                                            <th>
+                                                who
+                                            </th>
+                                            <th>
+                                                what
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

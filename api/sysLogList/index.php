@@ -41,6 +41,7 @@ include_once paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -51,15 +52,17 @@ $dsp_type = $_GET[url_var::LOG_STATUS] ?? sys_log_list::DSP_ALL;
 $page = (int)($_GET[url_var::LOG_PAGE] ?? 0);
 $size = (int)($_GET[url_var::LOG_SIZE] ?? shared_config::ROW_LIMIT);
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("log", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("log", $msg);
 
 if ($db_con->is_open()) {
 
-    // load the session user parameters
+    // load the session user parameters store the requesting user on the single message
     $usr = new user;
-    $msg = $usr->get();
+    $usr->get($msg);
+    $msg->usr = $usr;
 
     $result = ''; // reset the json message string
 
@@ -74,15 +77,15 @@ if ($db_con->is_open()) {
         $lst->dsp_type = $dsp_type;
         $lst->page = $page;
         $lst->size = $size;
-        $lst->load_all();
-        $result = $lst->api_json([api_types::HEADER], $usr);
+        $lst->load_all($msg);
+        $result = $lst->api_json([api_types::HEADER], $msg, $usr);
     } else {
-        $msg = 'not permitted';
+        $msg->add_message_text('not permitted');
     }
 
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 
 
-    $app->end_api($db_con);
+    $app->end_api($db_con, $msg);
 }

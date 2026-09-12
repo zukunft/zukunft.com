@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_link.php';
@@ -62,7 +63,6 @@ class group_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -72,6 +72,7 @@ class group_tests
         $t_phr = new test_phrases($t);
         $t_grp = new test_groups($t);
         $t_frm = new test_formulas($t);
+        $msg = new user_message();
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
 
@@ -145,15 +146,15 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t_trp->triple_list_one()->phrase_list()),values::PI_SYMBOL_ID);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), $t_trp->triple_list_one()->phrase_list()->ids());
-        $phr_lst = new phrase_list($usr);
+        $t->assert('group_id triple list', $grp_id->get_id($t_trp->triple_list_one()->phrase_list()),values::PI_ID);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), [values::PI_SYMBOL_ID]);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->merge($t_wrd->word_list()->phrase_list());
         $phr_lst->merge($t_trp->triple_list_short()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '..../d-.....0-...../-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+');
+            '..../j-.....3-...../-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t_phr->phrase_list()),
-            '.....0-...../-...../+.....0+.....F+......+......+......+......+......+......+......+......+......+......+......+');
+            '.....3-...../-...../+.....0+.....F+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_16()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_17_plus()),
@@ -172,24 +173,45 @@ class group_tests
         $res_id = new result_id();
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (city) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase()),
-            6052132915249350);
+            $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase(), $msg),
+            6052158684790981);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (city), Geneva (city) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase()),
-            '9234844886612976128');
+            $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase(), $msg),
+            '9234884208812910592');
         // building the 512 bit result id from long phrase lists takes longer than a normal unit function
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase()),
+            $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase(), $msg),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)',
             $t::TIMEOUT_LIMIT_PAGE);
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t_phr->phrase_list_17_plus(), $t_phr->phrase_list_17_plus(), $t_frm->formula_increase()),
+            $res_id->get_id($t_phr->phrase_list_17_plus(), $t_phr->phrase_list_17_plus(), $t_frm->formula_increase(), $msg),
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+',
             $t::TIMEOUT_LIMIT_PAGE);
 
+        $t->subheader($ts . 'similar');
+        $test_name = 'a group with the same phrase list is the same group';
+        $grp = $t_grp->group();
+        $grp_zh = $t_grp->group_zh();
+        $t->assert_true($test_name, $grp->is_same_std($grp->renamed(groups::TN_RENAMED)));
+        $test_name = 'a group with another phrase list is not the same group';
+        $t->assert_false($test_name, $grp->is_same_std($grp_zh));
+        $test_name = 'a group with the same phrase list but another name is similar';
+        $t->assert_true($test_name, $grp->is_similar($grp->renamed(groups::TN_RENAMED)));
+        $test_name = 'a group with the same name for another phrase list is similar';
+        $t->assert_true($test_name, $grp->is_similar($grp_zh->renamed($grp->name())));
+        $test_name = 'a group with another phrase list and name is not similar';
+        $t->assert_false($test_name, $grp->is_similar($grp_zh));
+        $test_name = 'a missing group is not similar';
+        $t->assert_false($test_name, $grp->is_similar(null));
+        $test_name = 'a new group needs the check for a similar group';
+        $t->assert_true($test_name, $grp->needs_similar_check());
+        $test_name = 'a group matching the database row does not need the check for a similar group';
+        $grp->set_saved();
+        $t->assert_false($test_name, $grp->needs_similar_check());
+
         $t->subheader($ts . 'sql statements - setup');
-        $grp = new group($usr);
+        $grp = new group($t->usr1);
         $t->assert_sql_table_create($grp);
         $t->assert_sql_index_create($grp);
         $t->assert_sql_foreign_key_create($grp);
@@ -200,11 +222,14 @@ class group_tests
         $t->assert_sql_by_name($sc, $grp); // by name is always for all tables: prime, most and big
         $t->assert_sql_standard($sc, $grp);
         $t->assert_sql_standard_by_name($sc, $grp);
+        $t->assert_sql_user_changes($sc, $grp);
+        $t->assert_sql_user_changes($sc, $t_grp->group_16());
+        $t->assert_sql_user_changes($sc, $t_grp->group_17_plus());
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql statements - write');
-        $grp = new group($usr);
+        $grp = new group($t->usr1);
         $grp->set_phrase_list($t_phr->phrase_list_prime());
         $t->assert_sql_insert($sc, $grp);
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
@@ -263,15 +288,16 @@ class group_tests
         group_link   $phr_grp_lnk,
         group        $grp): void
     {
+        $msg = new user_message();
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp);
+        $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp, $msg);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp);
+            $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp, $msg);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -290,9 +316,8 @@ class group_tests
         test_cleanup $t,
         sql_db       $db_con): void
     {
-        global $usr;
 
-        $grp = new group($usr);
+        $grp = new group($t->usr1);
         $t_phr = new test_phrases($t);
 
         // check the Postgres query syntax for a list of up to four prime phrases

@@ -41,7 +41,7 @@ SELECT formula_type_insert_log_1111
 
 SELECT formula_type_insert_log_1111
     ('calc'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      691::smallint,
      692::smallint,

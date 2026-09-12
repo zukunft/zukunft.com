@@ -1679,7 +1679,9 @@ CREATE TABLE IF NOT EXISTS sources (
     source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
     description    text         DEFAULT NULL COMMENT 'the user-specific description of the source for mouse over helps',
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
+    view_id        bigint       DEFAULT NULL COMMENT 'the default mask for this source',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
+    doi            text         DEFAULT NULL COMMENT 'the digital object identifier of the source used to create the url to doi.org',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
     `usage`        bigint       DEFAULT NULL COMMENT 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting',
     excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
@@ -1707,7 +1709,9 @@ CREATE TABLE IF NOT EXISTS user_sources (
     source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
     description    text         DEFAULT NULL COMMENT 'the user-specific description of the source for mouse over helps',
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
+    view_id        bigint       DEFAULT NULL COMMENT 'the default mask for this source',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
+    doi            text         DEFAULT NULL COMMENT 'the digital object identifier of the source used to create the url to doi.org',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
     `usage`        bigint       DEFAULT NULL COMMENT 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting',
     excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
@@ -2694,6 +2698,7 @@ CREATE TABLE IF NOT EXISTS formula_links
     user_id              bigint   DEFAULT NULL COMMENT 'the owner / creator of the formula_link',
     formula_link_type_id smallint DEFAULT NULL,
     order_nbr            bigint   DEFAULT NULL,
+    description          text     DEFAULT NULL,
     formula_id           bigint       NOT NULL,
     phrase_id            bigint       NOT NULL,
     excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
@@ -2721,6 +2726,7 @@ CREATE TABLE IF NOT EXISTS user_formula_links
     user_id              bigint       NOT NULL COMMENT 'the changer of the formula_link',
     formula_link_type_id smallint DEFAULT NULL,
     order_nbr            bigint   DEFAULT NULL,
+    description          text     DEFAULT NULL,
     excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id        smallint DEFAULT NULL COMMENT 'to restrict the access',
     protect_id           smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
@@ -3875,6 +3881,8 @@ CREATE TABLE IF NOT EXISTS term_views
     view_id           bigint       NOT NULL,
     view_link_type_id smallint     NOT NULL DEFAULT 1 COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
     user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the term_view',
+    order_nbr         bigint   DEFAULT NULL COMMENT 'to set the priority of the views linked to one term',
+    view_style_id     smallint DEFAULT NULL COMMENT 'the display style of the view if it is shown for this term',
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -3900,6 +3908,8 @@ CREATE TABLE IF NOT EXISTS user_term_views
     term_view_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
     user_id           bigint       NOT NULL COMMENT 'the changer of the term_view',
     view_link_type_id smallint DEFAULT NULL,
+    order_nbr         bigint   DEFAULT NULL COMMENT 'to set the priority of the views linked to one term',
+    view_style_id     smallint DEFAULT NULL COMMENT 'the display style of the view if it is shown for this term',
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -5277,7 +5287,8 @@ ALTER TABLE source_types
 ALTER TABLE sources
     ADD KEY sources_user_idx (user_id),
     ADD KEY sources_source_name_idx (source_name),
-    ADD KEY sources_source_type_idx (source_type_id);
+    ADD KEY sources_source_type_idx (source_type_id),
+    ADD KEY sources_view_idx (view_id);
 
 --
 -- indexes for table user_sources
@@ -5286,7 +5297,8 @@ ALTER TABLE user_sources
     ADD KEY user_sources_source_idx (source_id),
     ADD KEY user_sources_user_idx (user_id),
     ADD KEY user_sources_source_name_idx (source_name),
-    ADD KEY user_sources_source_type_idx (source_type_id);
+    ADD KEY user_sources_source_type_idx (source_type_id),
+    ADD KEY user_sources_view_idx (view_id);
 
 -- --------------------------------------------------------
 
@@ -6329,7 +6341,8 @@ ALTER TABLE term_views
     ADD KEY term_views_term_idx (term_id),
     ADD KEY term_views_view_idx (view_id),
     ADD KEY term_views_view_link_type_idx (view_link_type_id),
-    ADD KEY term_views_user_idx (user_id);
+    ADD KEY term_views_user_idx (user_id),
+    ADD KEY term_views_view_style_idx (view_style_id);
 
 --
 -- indexes for table user_term_views
@@ -6338,7 +6351,8 @@ ALTER TABLE term_views
 ALTER TABLE user_term_views
     ADD KEY user_term_views_term_view_idx (term_view_id),
     ADD KEY user_term_views_user_idx (user_id),
-    ADD KEY user_term_views_view_link_type_idx (view_link_type_id);
+    ADD KEY user_term_views_view_link_type_idx (view_link_type_id),
+    ADD KEY user_term_views_view_style_idx (view_style_id);
 
 -- --------------------------------------------------------
 
@@ -6825,7 +6839,8 @@ ALTER TABLE user_groups_big
 ALTER TABLE sources
     ADD CONSTRAINT sources_source_name_uk UNIQUE (source_name),
     ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id),
+    ADD CONSTRAINT sources_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- constraints for table user_sources
@@ -6833,7 +6848,8 @@ ALTER TABLE sources
 ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id),
+    ADD CONSTRAINT user_sources_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 -- --------------------------------------------------------
 
@@ -7485,7 +7501,8 @@ ALTER TABLE user_views
 ALTER TABLE term_views
     ADD CONSTRAINT term_views_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
-    ADD CONSTRAINT term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT term_views_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);
 
 --
 -- constraints for table user_term_views
@@ -7494,7 +7511,8 @@ ALTER TABLE term_views
 ALTER TABLE user_term_views
     ADD CONSTRAINT user_term_views_term_view_fk FOREIGN KEY (term_view_id) REFERENCES term_views (term_view_id),
     ADD CONSTRAINT user_term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+    ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
+    ADD CONSTRAINT user_term_views_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);
 
 -- --------------------------------------------------------
 

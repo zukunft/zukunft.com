@@ -38,6 +38,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -52,6 +53,7 @@ class triple_list_ui_tests
 
         $html = new html_base();
         $t_trp = new test_triples($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html triple list ';
@@ -68,8 +70,8 @@ class triple_list_ui_tests
         $phr_canton = $t_trp->zh_canton();
         $phr_city_ui = new triple($phr_city->api_json());
         $phr_canton_ui = new triple($phr_canton->api_json());
-        $lst->add($phr_city_ui);
-        $lst->add($phr_canton_ui);
+        $lst->add($phr_city_ui, $msg);
+        $lst->add($phr_canton_ui, $msg);
 
         // test the triple list display functions
         $form = 'formula_list_ui_test';
@@ -77,14 +79,14 @@ class triple_list_ui_tests
         /*
         $test_page .= 'names with links: ' . $lst->display() . '<br>';
         $test_page .= 'table cells<br>';
-        $test_page .= $lst->tbl();
+        $test_page .= $lst->tbl($msg);
         */
 
         $from_rows = 'selector: ' . '<br>';
         $from_rows .= $lst->selector($form, 0, url_var::TRIPLE, msg_id::FORM_SELECT_FORMULA) . '<br>';
         $test_page .= $html->form($form, $from_rows);
 
-        $t->html_page_test($test_page, 'triple_list', 'triple_list', $t);
+        $t->html_page_test($test_page, 'triple_list', 'triple_list', $msg);
     }
 
 }

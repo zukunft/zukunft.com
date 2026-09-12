@@ -65,6 +65,7 @@ class system_time_type extends type_object
     const string SCRIPT_LOADING = "script loading";
     const string URL_TO_ACTION = "url to action";
     const string URL_TO_HTML = "url to html";
+    const string TEST_DIFF = "test diff";
     const string CLOSE = "close";
 
     // time unit the db connection is open e.g. reading the scripts

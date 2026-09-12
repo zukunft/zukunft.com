@@ -41,7 +41,7 @@ SELECT phrase_type_insert_log_111100
 
 SELECT phrase_type_insert_log_111100
     ('standard'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      835::smallint,
      836::smallint,

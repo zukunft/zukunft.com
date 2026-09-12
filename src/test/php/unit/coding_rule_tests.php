@@ -32,14 +32,20 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::UTILS . 'code_test_coverage.php';
+include_once test_paths::UTILS . 'code_user_message_exceptions.php';
+include_once test_paths::UTILS . 'json_validation.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
@@ -47,13 +53,32 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
+use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
+use Zukunft\ZukunftCom\test\php\utils\json_validation;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use ReflectionClass;
 
 class coding_rule_tests
 {
+
+    // the app areas that can use a global var (shown in docs/code_object_name_exceptions.md)
+    private const string AREA_BACKEND = 'backend';
+    private const string AREA_FRONTEND = 'frontend';
+    private const string AREA_BOTH = 'both';
+
+    // the max number of chars of a line of docs/code_functions_all.md; a longer line is wrapped,
+    // never cut, because the file is the complete list of the function order errors and a cut line
+    // would hide the function that has to be moved (see md_wrap)
+    const int MD_MAX_LINE_LEN = 120;
+
+    // the continuation lines of a wrapped md line start with this marker plus the indent of the
+    // line that is continued, so that a wrapped line is not read as an own entry of the tree
+    const string MD_WRAP_MARKER = '    ';
 
     // use path that does not need to be included
     const array PATH_NO_INCLUDE = [
@@ -93,6 +118,10 @@ class coding_rule_tests
         $md_txt = $this->php_function_tree();
         $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
 
+        $test_name = 'check that the docs with the unit test coverage is updated';
+        $md_txt = new code_test_coverage()->md();
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_TEST_COVERAGE, '', '', $t::TIMEOUT_LIMIT_LONG);
+
         $this->php_class_name_check($t);
 
         $this->php_include_tests($t, paths::MODEL);
@@ -109,11 +138,29 @@ class coding_rule_tests
         $t->subheader($ts . 'frontend config cache');
         $this->php_web_config_from_cache_tests($t);
 
+        $t->subheader($ts . 'frontend back url');
+        $this->php_web_no_back_param_tests($t);
+
+        $t->subheader($ts . 'requesting user on the message');
+        $this->php_user_message_param_shadow_tests($t);
+        $this->php_user_message_user_write_tests($t);
+        $this->php_user_message_creation_tests($t);
+
         $t->subheader($ts . 'backend globals');
         $this->php_cfg_only_allowed_globals_tests($t);
 
         $t->subheader($ts . 'config.yaml consistency');
         $this->config_yaml_word_triple_tests($t);
+
+        $t->subheader($ts . 'import json consistency');
+        // TODO Prio 3 maybe switch it on as a warning
+        //$this->json_no_measured_value_tests($t);
+        $this->json_view_component_defined_tests($t);
+        $this->json_section_covered_tests($t);
+
+        $t->subheader($ts . 'verb consistency');
+        $this->verb_group_tests($t);
+        $this->json_verb_defined_tests($t);
 
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
@@ -165,6 +212,164 @@ class coding_rule_tests
 
         $test_name = 'every config.yaml key has a const in words.php or triples.php';
         $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * verify that no import json of src/main/resources/messages adds a "measured value" qualifier:
+     * every value is assumed to be measured, so the qualifier only repeats the default while it
+     * lengthens the phrase group and needs a word or triple in every file that borrows it;
+     * only the deviation, the word "assumed", is worth recording (see docs/llm/json_structure.md)
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_no_measured_value_tests(test_cleanup $t): void
+    {
+        // the hit detection is shared with test/json_validation.php, which lists the findings
+        // of the test imports too, while this rule check judges only the import data
+        $chk = new json_validation();
+        $names = [];
+        foreach ($chk->json_file_list(files::MESSAGE_PATH) as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (is_array($json_array)) {
+                // only the keys, because the assertion names the file and not the sample entry
+                foreach (array_keys($chk->measured_value_hits($json_array)) as $hit) {
+                    $names[] = basename($path) . ' (' . $hit . ')';
+                }
+            }
+        }
+        sort($names);
+
+        $test_name = 'no import json adds a "' . json_validation::MEASURED_VALUE . '" qualifier';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that every verb a group array of verbs.php names is defined in verbs.json: the groups
+     * (CATEGORY_VERBS, PROPERTY_VERBS, SYNONYM_VERBS, ARGUMENT_VERBS) are the coded functionality of
+     * a verb, so a group entry without a verb row is a predicate that silently never matches
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function verb_group_tests(test_cleanup $t): void
+    {
+        $known = [];
+        foreach ($this->verbs_json()[json_fields::VERBS] ?? [] as $vrb) {
+            $known[$vrb[json_fields::CODE_ID]] = true;
+        }
+        $groups = [
+            'CATEGORY_VERBS' => verbs::CATEGORY_VERBS,
+            'PROPERTY_VERBS' => verbs::PROPERTY_VERBS,
+            'SYNONYM_VERBS' => verbs::SYNONYM_VERBS,
+            'ARGUMENT_VERBS' => verbs::ARGUMENT_VERBS,
+        ];
+        $missing = [];
+        foreach ($groups as $name => $group) {
+            foreach ($group as [$code_id, $direction]) {
+                if (!array_key_exists($code_id, $known)) {
+                    $missing[] = $name . ': ' . $code_id;
+                }
+            }
+        }
+        sort($missing);
+
+        $test_name = 'every verb of a verbs.php group is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * verify that every verb used by an import json is defined in verbs.json or proposed by the file
+     * itself: the import resolves a verb by an exact name match and creates the verb when the name is
+     * unknown (see triple::import_mapper), so a typo silently grows the shared verb vocabulary
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_verb_defined_tests(test_cleanup $t): void
+    {
+        // the hit detection is shared with test/json_validation.php, see the measured value check
+        $chk = new json_validation();
+        $names = [];
+        foreach ($chk->json_file_list(files::MESSAGE_PATH) as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (is_array($json_array)) {
+                // only the keys, see the measured value check
+                foreach (array_keys($chk->verb_undefined_hits($json_array)) as $hit) {
+                    $names[] = basename($path) . ': ' . $hit;
+                }
+            }
+        }
+        sort($names);
+
+        $test_name = 'every verb used by an import json is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that the field check of json_validation covers every top level section of the import:
+     * the check reads the allowed fields out of the php source of the mapper of the section, so it
+     * needs to know the mapper class of each section, and a section that the import has added
+     * without an entry here would be checked against no field at all
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_section_covered_tests(test_cleanup $t): void
+    {
+        // the difference detection is shared with test/json_validation.php, which lists it as a
+        // finding, while this rule check lets the test run fail as soon as the two drift apart
+        $chk = new json_validation();
+        $names = $chk->section_check_list();
+        sort($names);
+
+        $test_name = 'every import section has a mapper class in ' . json_validation::class;
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that every component used by a view of a view import json is defined in the components
+     * block of the same file, because the import resolves a component of a view by its name within
+     * the file: a view that uses a component defined only in another file stops the import of the
+     * complete file with 'component with name ... missing', so e.g. base_views.json repeats the
+     * definition of the system components that its views use (see docs/llm/json_views.md)
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_view_component_defined_tests(test_cleanup $t): void
+    {
+        $names = [];
+        foreach ([files::SYSTEM_VIEWS, files::BASE_VIEWS] as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (is_array($json_array)) {
+                $defined = [];
+                foreach ($json_array[json_fields::COMPONENTS] ?? [] as $cmp) {
+                    $defined[] = $cmp[json_fields::NAME] ?? '';
+                }
+                foreach ($json_array[json_fields::VIEWS] ?? [] as $msk) {
+                    foreach ($msk[json_fields::COMPONENTS] ?? [] as $cmp) {
+                        $name = $cmp[json_fields::NAME] ?? '';
+                        if ($name != '' and !in_array($name, $defined, true)) {
+                            $names[] = basename($path) . ': ' . $name
+                                . ' used by ' . ($msk[json_fields::CODE_ID] ?? '');
+                        }
+                    }
+                }
+            }
+        }
+        sort($names);
+
+        $test_name = 'every component used by a view is defined in the same import json';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * @return array the decoded src/main/resources/verbs.json
+     */
+    private function verbs_json(): array
+    {
+        return json_decode(file_get_contents(files::VERBS), true) ?? [];
     }
 
     /**
@@ -227,6 +432,16 @@ class coding_rule_tests
      */
     private function php_class_name_exceptions(): string
     {
+        $glb_lst = [];
+        $glb_area_lst = [];
+        $glb_add_lst = [];
+        $this->php_global_vars(paths::PHP_LIB, $glb_lst, $glb_area_lst, $glb_add_lst);
+        $this->php_global_vars(TEST_PHP_PATH, $glb_lst, $glb_area_lst, $glb_add_lst);
+        $this->php_global_vars(paths::API, $glb_lst, $glb_area_lst, $glb_add_lst);
+        $this->php_global_vars(html_paths::HTTP, $glb_lst, $glb_area_lst, $glb_add_lst);
+        $this->php_global_vars(html_paths::HTTP_OLD, $glb_lst, $glb_area_lst, $glb_add_lst);
+        ksort($glb_lst, SORT_STRING);
+
         $suggested = $this->php_suggested_var_names(paths::PHP_LIB);
         $usage = [];
         $this->php_collect_new_usage(paths::PHP_LIB, $usage);
@@ -261,6 +476,31 @@ class coding_rule_tests
         $lines[] = '';
         $lines[] = 'generated by coding_rule_tests::php_class_name_check - do not edit manually';
         $lines[] = '';
+        $lines[] = '## global vars';
+        foreach ([self::AREA_BACKEND, self::AREA_FRONTEND, self::AREA_BOTH] as $area) {
+            $area_lines = [];
+            foreach ($glb_lst as $var => $des_lst) {
+                if ($this->php_global_var_area_group($glb_area_lst[$var]) == $area) {
+                    $des_txt = $des_lst == [] ? 'description missing' : implode(' or ', $des_lst);
+                    // for a var that is not clearly frontend or backend show the classes
+                    // resp. scripts of the shared code that also declare it
+                    $add_lst = $glb_add_lst[$var] ?? [];
+                    if ($area == self::AREA_BOTH and $add_lst != []) {
+                        sort($add_lst, SORT_STRING);
+                        $des_txt .= ' (additional in ' . implode(', ', $add_lst) . ')';
+                    }
+                    $area_lines[] = '$' . $var . ': ' . $des_txt;
+                }
+            }
+            if ($area_lines != []) {
+                $lines[] = '';
+                $lines[] = '### ' . $area;
+                $lines[] = '';
+                $lines = array_merge($lines, $area_lines);
+            }
+        }
+        $lines[] = '';
+        $lines[] = '';
         $lines[] = '## Classes with a suggested var name created with a different name';
         $lines[] = '';
         $lines = array_merge($lines, $exceptions);
@@ -269,6 +509,109 @@ class coding_rule_tests
         $lines[] = '';
         $lines = array_merge($lines, $no_suggestion);
         return implode("\n", $lines) . "\n";
+    }
+
+    /**
+     * collect all global vars declared in the code with the description from the comment behind
+     * the declaration e.g. 'global $sys; // the preloaded types'; a var declared with different
+     * descriptions collects all distinct descriptions; additionally the app areas that declare
+     * the var are collected to show if a var is only used by the backend or the frontend
+     *
+     * @param string $root the directory to scan recursively for php files
+     * @param array $glb_lst (in/out) map of the var name to the list of distinct descriptions
+     * @param array $glb_area_lst (in/out) map of the var name to the list of app areas using it
+     * @param array $glb_add_lst (in/out) map of the var name to the declaring classes resp.
+     *                           scripts that are not clearly frontend or backend
+     * @return void
+     */
+    private function php_global_vars(
+        string $root,
+        array  &$glb_lst,
+        array  &$glb_area_lst,
+        array  &$glb_add_lst
+    ): void
+    {
+        $lib = new library();
+        foreach ($this->php_file_list($root) as $file) {
+            $area = $this->php_global_var_area(str_replace('//', '/', $file));
+            $file_lines = explode("\n", file_get_contents($file));
+            // the class name resp. the script name of a shared code file that declares the var
+            $src = '';
+            if ($area == self::AREA_BOTH) {
+                $src = $lib->php_class_from_code($file_lines);
+                if ($src == '') {
+                    $src = basename($file);
+                }
+            }
+            foreach ($file_lines as $line) {
+                $found = [];
+                if (preg_match('/^\s*global\s+([^;\/]+);\s*(?:\/\/\s*(.*))?$/', rtrim($line), $found)) {
+                    $des = trim($found[2] ?? '');
+                    $vars = array_map('trim', explode(',', $found[1]));
+                    // a description behind a line that declares several vars would be ambiguous,
+                    // so it is only collected if the line declares a single var
+                    if (count($vars) > 1) {
+                        $des = '';
+                    }
+                    foreach ($vars as $var_txt) {
+                        if (str_starts_with($var_txt, '$')) {
+                            $var = substr($var_txt, 1);
+                            if (!array_key_exists($var, $glb_lst)) {
+                                $glb_lst[$var] = [];
+                                $glb_area_lst[$var] = [];
+                            }
+                            if ($des != '' and !in_array($des, $glb_lst[$var])) {
+                                $glb_lst[$var][] = $des;
+                            }
+                            if ($area != '' and !in_array($area, $glb_area_lst[$var])) {
+                                $glb_area_lst[$var][] = $area;
+                            }
+                            if ($src != '' and !in_array($src, $glb_add_lst[$var] ?? [])) {
+                                $glb_add_lst[$var][] = $src;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $area_lst the list of app areas that declare a global var
+     * @return string backend or frontend if only that area declares the var, else both
+     */
+    private function php_global_var_area_group(array $area_lst): string
+    {
+        $result = self::AREA_BOTH;
+        if ($area_lst == [self::AREA_BACKEND]) {
+            $result = self::AREA_BACKEND;
+        } elseif ($area_lst == [self::AREA_FRONTEND]) {
+            $result = self::AREA_FRONTEND;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $path the path of the php file with the global var declaration
+     * @return string the app area of the file: backend (model and api), frontend (web and http)
+     *                or both for the code shared by the areas e.g. init.php; empty for the test
+     *                code, because the tests simulate both areas and would turn every var to both
+     */
+    private function php_global_var_area(string $path): string
+    {
+        $result = self::AREA_BOTH;
+        if (str_starts_with($path, paths::MODEL)
+            or str_starts_with($path, paths::API)
+            or str_starts_with($path, paths::API_OBJECT)) {
+            $result = self::AREA_BACKEND;
+        } elseif (str_starts_with($path, html_paths::WEB)
+            or str_starts_with($path, html_paths::HTTP)
+            or str_starts_with($path, html_paths::HTTP_OLD)) {
+            $result = self::AREA_FRONTEND;
+        } elseif (str_starts_with($path, TEST_PHP_PATH)) {
+            $result = '';
+        }
+        return $result;
     }
 
     /**
@@ -431,12 +774,46 @@ class coding_rule_tests
         return $md_txt;
     }
 
+    /**
+     * split one line of docs/code_functions_all.md into lines of at most MD_MAX_LINE_LEN chars,
+     * because a function order error names every function of the section, which for a big class
+     * is a line of thousands of chars that no editor and no diff shows in a readable way
+     *
+     * the line is split after a comma of the function lists whenever one is within the limit and
+     * only otherwise at the limit itself, so that a function name is never torn apart; the
+     * continuation lines keep the indent of the first line plus MD_WRAP_MARKER
+     *
+     * @param string $line the complete line including the tree indent and the trailing line break
+     * @param string $intent the tree indent of the line, repeated on each continuation line
+     * @return string the line or the wrapped lines, each closed with a line break
+     */
+    private function md_wrap(string $line, string $intent): string
+    {
+        $result = '';
+        $rest = $line;
+        // the continuation lines repeat the indent as spaces, so they have less room for the text
+        $next_indent = str_repeat(' ', strlen($intent)) . self::MD_WRAP_MARKER;
+        while (strlen($rest) > self::MD_MAX_LINE_LEN) {
+            $cut = strrpos(substr($rest, 0, self::MD_MAX_LINE_LEN), ',');
+            if ($cut === false or $cut < strlen($next_indent)) {
+                // no comma within the limit, so split at the limit
+                $cut = self::MD_MAX_LINE_LEN;
+            } else {
+                // keep the comma at the end of the line, so that the list stays readable
+                $cut = $cut + 1;
+            }
+            $result .= substr($rest, 0, $cut) . "\n";
+            $rest = $next_indent . substr($rest, $cut);
+        }
+        return $result . $rest . "\n";
+    }
+
     function php_function_list_to_md_row(array $fnc_lst, string $intent = '### ', string $code_maker = ''): string
     {
         $md_txt = '';
         foreach ($fnc_lst as $child => $info_lst) {
             if (is_string($info_lst)) {
-                $md_txt .= $intent . $child . ' - ' . $info_lst . "\n";
+                $md_txt .= $this->md_wrap($intent . $child . ' - ' . $info_lst, $intent);
             } else {
                 $before = '';
                 $after = '';
@@ -511,7 +888,8 @@ class coding_rule_tests
                         . ' in ' . $sub_path . $code_file
                         . ' (' . $pos . ' of ' . count($code_files) . ')';
                     // TODO Prio 2 remove exception
-                    if ($code_file != '/log_text/text_log_functions.php') {
+                    if ($code_file != '/log_text/text_log_functions.php'
+                        and $code_file != '/helper/db_cache_page.php') {
                         $t->assert($test_name, '', $class);
                     }
 
@@ -539,6 +917,10 @@ class coding_rule_tests
      * bootstrap (start/open_db/end/load_cache) still needs the backend globals
      * $sys/$cac/$cfg; see the TODO below
      *
+     * web/init_ui.php is excluded because it is the frontend bootstrap that
+     * creates the shared globals ($debug, $sys and $log_txt) for the ui scripts,
+     * like init.php does for the backend scripts
+     *
      * @param test_cleanup $t the test harness used for the assertion
      * @return void
      */
@@ -553,7 +935,7 @@ class coding_rule_tests
             paths::WEB,
             ['ui_sys', 'mtr'],
             'web/ must declare only $ui_sys and $mtr as globals',
-            ['frontend.php']
+            ['frontend.php', 'init_ui.php']
         );
     }
 
@@ -598,6 +980,554 @@ class coding_rule_tests
         // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
         $test_name = 'web/ config from cache checked in ' . $files_checked . ' files';
         $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no file in src/main/php/web/** names the calling page '$back' and that no url
+     * is built with the literal '&back=': the page a link should return to travels as the url
+     * parameters of the calling page (array $url_arr) and is added to a url by
+     * html_base::url_back / url_with_back, which prefix the parameters with url_var::BACK ('9')
+     * so that frontend::url_par_from_back_part can read them back
+     *
+     * the old string form was never read by the frontend (the key 'back' has no url var), so a
+     * hand-built '&back=' url or a $back parameter is a link that cannot return to its page
+     *
+     * each violation produces one failing assertion identifying the file and line; a clean tree
+     * produces the summary assertion only, which checks that at least one file has been scanned
+     *
+     * positive (test fires when it should): a line like "function td(string $back = '')" or
+     *     "'view.php?id=' . $id . '&back=' . $back" inside web/ flags the rule violation
+     * negative (test tolerates good code): "function td(array $url_arr = [])" and
+     *     "$html->url_back(views::WORD_ID, $id, $url_arr)" pass without an assertion;
+     *     the names $back_url, $back_arr, $back_part and $back_icon are not the page parameter
+     *     and are therefore not flagged
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_no_back_param_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array(paths::WEB);
+        $code_files = $lib->array_to_path($file_array);
+        $files_checked = 0;
+        foreach ($code_files as $code_file) {
+            $files_checked++;
+            $ctrl_code = file(paths::WEB . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                // '$back' as a word, so that $back_url, $back_arr, $back_part and $back_icon,
+                // which name a url or an icon instead of the calling page, are not flagged
+                if (preg_match('/\$back\b/', $line)) {
+                    $test_name = 'web/ must name the calling page $url_arr'
+                        . ' but found $back in ' . $code_file . ':' . ($line_idx + 1);
+                    // the offending line is the actual result and no hit is the target
+                    $t->assert($test_name, trim($line));
+                }
+                if (str_contains($line, '&back=')) {
+                    $test_name = 'web/ must add the calling page with url_back or url_with_back'
+                        . ' but found the literal &back= in ' . $code_file . ':' . ($line_idx + 1);
+                    $t->assert($test_name, trim($line));
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass (see
+        // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
+        $test_name = 'web/ back url checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no function overwrites its own user_message parameter with a fresh new user_message():
+     * the message is append-only, so resetting a $msg parameter silently drops every error collected so
+     * far and the requesting user that lives on it (docs/llm/state-and-messages.md); 11 such shadows
+     * (word/triple/source del_links, figure/group api_mapper, db_object url_mapper, sandbox save_id
+     * stubs, formula_map unlink_phrase, sandbox_multi import_obj, sql_db delete) each dropped errors
+     * until they were fixed
+     *
+     * a token parser (not a line grep) is required because a grep cannot tell a parameter shadow
+     * ($msg is a user_message parameter) from a legitimate local buffer ($msg is a fresh local);
+     * the guarded null-init of a *nullable* parameter is still tolerated, but no code relies on it
+     * any more - a message parameter is required now (docs/llm/state-and-messages.md, "$msg is
+     * never null"), and the last such init, import_convert_xbrl::build_data, became dead code when
+     * its parameter stopped being nullable, so the tolerance can go with the last nullable parameter
+     * listed in docs/code_user_message_exceptions.md
+     *
+     * each violation produces one failing assertion identifying the file and line;
+     * a clean tree produces the summary assertion only
+     *
+     * positive (test fires when it should): "$msg = new user_message();" in a function with a
+     *     "user_message $msg" parameter flags the rule violation
+     * negative (test tolerates good code): a local buffer "$msg = new user_message();" (not a
+     *     parameter), a default value "user_message $msg = new user_message()" in the signature, and
+     *     the guarded null-init of a nullable "?user_message $msg = null" parameter all pass;
+     *     a nullable parameter that needs a fallback uses a local ("$map_msg = $msg ?? new
+     *     user_message();") instead of reassigning the parameter, as the three web list
+     *     constructors do
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_user_message_param_shadow_tests(test_cleanup $t): void
+    {
+        // the library code below the entry points: backend model, api objects, frontend and shared
+        foreach ([paths::MODEL, paths::API_OBJECT, html_paths::WEB, paths::SHARED] as $base_path) {
+            $this->php_msg_shadow_scan($t, $base_path);
+        }
+    }
+
+    /**
+     * scan every php file under $base_path and assert one failure per user_message parameter shadow
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @param string $base_path the source dir to scan e.g. paths::MODEL
+     * @return void
+     */
+    private function php_msg_shadow_scan(test_cleanup $t, string $base_path): void
+    {
+        $lib = new library();
+        $code_files = $lib->array_to_path($lib->dir_to_array($base_path));
+        $files_checked = 0;
+        foreach ($code_files as $code_file) {
+            $files_checked++;
+            $lines = file($base_path . $code_file);
+            $shadows = $this->msg_param_shadows(implode('', $lines), $code_file);
+            foreach ($shadows as $shadow) {
+                $test_name = 'a function must not overwrite its user_message parameter'
+                    . ' with a fresh new user_message() (append-only), but $' . $shadow['var']
+                    . ' is reset in ' . $shadow['code_file'] . ':' . $shadow['line'];
+                // the offending line is the actual result and no hit is the target
+                $t->assert($test_name, trim($lines[$shadow['line'] - 1]));
+            }
+        }
+        // one summary assertion per scanned tree so that a clean tree also produces a visible pass;
+        // scanning and tokenising the whole source tree takes clearly longer than a normal unit
+        // function, so a generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = 'user_message param shadows checked in ' . $files_checked . ' files of ' . $base_path;
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
+    }
+
+    /**
+     * find every function in the php source that overwrites its own user_message parameter with a
+     * fresh new user_message(); every top-level and nested function is walked, a nested closure body
+     * is attributed to its own scope so its parameters do not leak into the enclosing function
+     *
+     * @param string $src the full php source of the file
+     * @param string $code_file the file path used in the violation message
+     * @return array<int,array{code_file:string,line:int,var:string}> one entry per shadow found
+     */
+    private function msg_param_shadows(string $src, string $code_file): array
+    {
+        $tokens = token_get_all($src);
+        $n = count($tokens);
+        $out = [];
+        $i = 0;
+        while ($i < $n) {
+            if (is_array($tokens[$i]) and $tokens[$i][0] == T_FUNCTION) {
+                $open = $i + 1;
+                while ($open < $n and $tokens[$open] !== '(') {
+                    $open++;
+                }
+                $close = $open;
+                $params = $this->msg_params_of($tokens, $open, $close);
+                $body = $close + 1;
+                while ($body < $n and $tokens[$body] !== '{' and $tokens[$body] !== ';') {
+                    $body++;
+                }
+                if ($body < $n and $tokens[$body] === '{') {
+                    $body_end = $this->brace_end($tokens, $body);
+                    $this->scan_msg_shadow($tokens, $body + 1, $body_end - 1, $params, $code_file, $out);
+                }
+            }
+            $i++;
+        }
+        return $out;
+    }
+
+    /**
+     * parse the parameter list of a function from the '(' at $open to its matching ')'
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $open the index of the opening '(' of the parameter list
+     * @param int $close set by reference to the index of the matching ')'
+     * @return array<string,array{is_msg:bool,nullable:bool}> the params keyed by variable name (no $),
+     *         each flagged whether its type is user_message and whether it is nullable
+     */
+    private function msg_params_of(array $tokens, int $open, int &$close): array
+    {
+        $n = count($tokens);
+        $name_tokens = [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED];
+        $params = [];
+        $depth = 0;
+        $type = '';        // accumulated type text before the variable of the current segment
+        $var = '';         // the parameter variable name of the current segment
+        $nullable = false; // a '?' prefix or a '= null' default makes the parameter nullable
+        $done = false;
+        $i = $open;
+        while ($i < $n and !$done) {
+            $tok = $tokens[$i];
+            if ($tok === '(') {
+                $depth++;
+            } elseif ($tok === ')') {
+                $depth--;
+                if ($depth == 0) {
+                    $close = $i;
+                    $done = true;
+                }
+            } elseif ($depth == 1 and $tok === ',') {
+                $this->add_msg_param($params, $type, $var, $nullable);
+                $type = '';
+                $var = '';
+                $nullable = false;
+            } elseif ($depth >= 1 and is_array($tok) and $tok[0] == T_VARIABLE and $var === '') {
+                $var = ltrim($tok[1], '$');
+            } elseif ($depth >= 1 and is_array($tok) and in_array($tok[0], $name_tokens)) {
+                if ($var === '') {
+                    $type .= $tok[1];
+                } elseif (strtolower($tok[1]) == 'null') {
+                    $nullable = true;
+                }
+            } elseif ($depth >= 1 and $tok === '?' and $var === '') {
+                $nullable = true;
+            }
+            $i++;
+        }
+        // add the last segment, which has no trailing comma to close it
+        $this->add_msg_param($params, $type, $var, $nullable);
+        return $params;
+    }
+
+    /**
+     * append one parsed parameter to the param map, skipping an empty segment (e.g. a trailing comma)
+     *
+     * @param array $params the param map being built, keyed by variable name
+     * @param string $type the accumulated type text of the segment
+     * @param string $var the variable name of the segment (empty for no parameter)
+     * @param bool $nullable true if the parameter is nullable
+     * @return void
+     */
+    private function add_msg_param(array &$params, string $type, string $var, bool $nullable): void
+    {
+        if ($var !== '') {
+            $params[$var] = [
+                'is_msg' => str_contains($type, 'user_message'),
+                'nullable' => $nullable
+            ];
+        }
+    }
+
+    /**
+     * return the index of the '}' that matches the '{' at $open
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $open the index of the opening '{'
+     * @return int the index of the matching '}' (or the last token if unbalanced)
+     */
+    private function brace_end(array $tokens, int $open): int
+    {
+        $n = count($tokens);
+        $depth = 0;
+        $end = $n - 1;
+        $found = false;
+        $i = $open;
+        while ($i < $n and !$found) {
+            if ($tokens[$i] === '{') {
+                $depth++;
+            } elseif ($tokens[$i] === '}') {
+                $depth--;
+                if ($depth == 0) {
+                    $end = $i;
+                    $found = true;
+                }
+            }
+            $i++;
+        }
+        return $end;
+    }
+
+    /**
+     * return the index of the next code token at or after $i, skipping whitespace and comments
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $i the start index
+     * @return int the index of the next code token
+     */
+    private function next_code_idx(array $tokens, int $i): int
+    {
+        $n = count($tokens);
+        $skip = [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT];
+        while ($i < $n and is_array($tokens[$i]) and in_array($tokens[$i][0], $skip)) {
+            $i++;
+        }
+        return $i;
+    }
+
+    /**
+     * scan a function body (tokens $start..$end) for a "$p = new user_message(...)" assignment to one
+     * of the function's user_message parameters; a nested closure body is skipped so its assignments
+     * are attributed to its own scope by the outer walk in msg_param_shadows
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $start the first body token index (after the opening '{')
+     * @param int $end the last body token index (before the closing '}')
+     * @param array $params the parameter map of the enclosing function
+     * @param string $code_file the file path used in the violation entry
+     * @param array $out the violation list being collected
+     * @return void
+     */
+    private function scan_msg_shadow(
+        array  $tokens,
+        int    $start,
+        int    $end,
+        array  $params,
+        string $code_file,
+        array  &$out
+    ): void
+    {
+        $i = $start;
+        while ($i <= $end) {
+            $tok = $tokens[$i];
+            if (is_array($tok) and $tok[0] == T_FUNCTION) {
+                // skip the nested closure; the outer walk visits it later with its own parameters
+                $i = $this->skip_function($tokens, $i, $end);
+            } else {
+                if ($this->is_msg_shadow($tokens, $i, $end, $params)) {
+                    $var = ltrim($tok[1], '$');
+                    // the guarded null-init of a nullable parameter is the one sanctioned reset
+                    $guarded = ($params[$var]['nullable']
+                        && $this->has_null_guard($tokens, $start, $end, $var));
+                    if (!$guarded) {
+                        $out[] = ['code_file' => $code_file, 'line' => $tok[2], 'var' => $var];
+                    }
+                }
+                $i++;
+            }
+        }
+    }
+
+    /**
+     * return the token index just past a nested function/closure: its body if it has one, else the
+     * token after its ';' (an abstract or interface method stub)
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $i the index of the nested T_FUNCTION token
+     * @param int $end the last token index that may be inspected
+     * @return int the index just past the nested function
+     */
+    private function skip_function(array $tokens, int $i, int $end): int
+    {
+        $open = $i + 1;
+        while ($open <= $end and $tokens[$open] !== '(') {
+            $open++;
+        }
+        $close = $open;
+        $this->msg_params_of($tokens, $open, $close);
+        $body = $close + 1;
+        while ($body <= $end and $tokens[$body] !== '{' and $tokens[$body] !== ';') {
+            $body++;
+        }
+        $next = $body + 1;
+        if ($body <= $end and $tokens[$body] === '{') {
+            $next = $this->brace_end($tokens, $body) + 1;
+        }
+        return $next;
+    }
+
+    /**
+     * true if the token at $i is a user_message parameter variable immediately assigned a
+     * new user_message(...) — the shadow pattern "$p = new user_message"
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $i the candidate T_VARIABLE index
+     * @param int $end the last body token index
+     * @param array $params the parameter map of the enclosing function
+     * @return bool true if the assignment shadows a user_message parameter
+     */
+    private function is_msg_shadow(array $tokens, int $i, int $end, array $params): bool
+    {
+        $hit = false;
+        $tok = $tokens[$i];
+        if (is_array($tok) and $tok[0] == T_VARIABLE) {
+            $var = ltrim($tok[1], '$');
+            if (isset($params[$var]) and $params[$var]['is_msg']) {
+                $eq = $this->next_code_idx($tokens, $i + 1);
+                if ($eq <= $end and $tokens[$eq] === '=') {
+                    $new = $this->next_code_idx($tokens, $eq + 1);
+                    if ($new <= $end and is_array($tokens[$new]) and $tokens[$new][0] == T_NEW) {
+                        $cls = $this->next_code_idx($tokens, $new + 1);
+                        $name = is_array($tokens[$cls] ?? '') ? $tokens[$cls][1] : '';
+                        // strip any namespace qualifier and compare the short class name
+                        $short = strtolower(substr(strrchr('\\' . $name, '\\'), 1));
+                        $hit = ($short == 'user_message');
+                    }
+                }
+            }
+        }
+        return $hit;
+    }
+
+    /**
+     * true if the function body between $start and $end guards $var against null before use
+     * (a "$var == null" / "$var === null" comparison or a "$var ??" coalesce), which marks the
+     * sanctioned null-init of a nullable parameter (import_convert_xbrl::build_data)
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $start the first body token index
+     * @param int $end the last body token index
+     * @param string $var the parameter variable name to check (no $)
+     * @return bool true if a null guard on $var is present
+     */
+    private function has_null_guard(array $tokens, int $start, int $end, string $var): bool
+    {
+        $guarded = false;
+        $i = $start;
+        while ($i <= $end) {
+            $tok = $tokens[$i];
+            if (is_array($tok) and $tok[0] == T_VARIABLE and ltrim($tok[1], '$') == $var) {
+                $op = $this->next_code_idx($tokens, $i + 1);
+                $nxt = $tokens[$op] ?? '';
+                if (is_array($nxt) and in_array($nxt[0], [T_COALESCE, T_COALESCE_EQUAL])) {
+                    $guarded = true;
+                } elseif (is_array($nxt) and in_array($nxt[0], [T_IS_EQUAL, T_IS_IDENTICAL])) {
+                    $val = $this->next_code_idx($tokens, $op + 1);
+                    $null_tok = $tokens[$val] ?? '';
+                    if (is_array($null_tok) and strtolower($null_tok[1]) == 'null') {
+                        $guarded = true;
+                    }
+                }
+            }
+            $i++;
+        }
+        return $guarded;
+    }
+
+    /**
+     * check that no php file below the entry points writes the requesting user onto a user_message
+     * with a post-hoc $msg->usr assignment: the requesting user is set once by the entry point
+     * (the http scripts and the api index.php scripts) and every function below reads it from
+     * $msg->usr, never re-sets it
+     * (docs/llm/state-and-messages.md, the "requesting user lives on $msg" migration); the only
+     * sanctioned writers are the user_message classes themselves (skipped as a whole) and the
+     * exact file and line pairs listed in MSG_USR_WRITE_SANCTIONED (the frontend login user
+     * switch and the signup fallback of user::db_insert) — those exact lines are tolerated
+     * while the rest of the listed files stays under the rule
+     *
+     * user_message variables follow the $..msg.. / $..message.. naming convention, so a
+     * "$<msg>->usr =" write is the machine-detectable violation; a comment line is skipped
+     *
+     * each violation produces one failing assertion identifying the file and line;
+     * a clean tree produces the summary assertion only
+     *
+     * positive (test fires when it should): "$msg->usr = $sys_usr;" below the entry points flags the
+     *     rule violation
+     * negative (test tolerates good code): setting the user through the constructor
+     *     "$msg = new user_message($sys_usr);" passes, and a comparison "$msg->usr == ..." is not a write
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_user_message_user_write_tests(test_cleanup $t): void
+    {
+        // the library code below the entry points: backend model, api objects, frontend and shared
+        foreach ([paths::MODEL, paths::API_OBJECT, html_paths::WEB, paths::SHARED] as $base_path) {
+            $this->php_msg_user_write_scan($t, $base_path);
+        }
+    }
+
+    /**
+     * scan every php file under $base_path and assert one failure per post-hoc user_message->usr write;
+     * the user_message class files are skipped and the exact sanctioned lines of
+     * MSG_USR_WRITE_SANCTIONED are tolerated
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @param string $base_path the source dir to scan e.g. paths::MODEL
+     * @return void
+     */
+    // the sanctioned post-hoc writers of the requesting user, as exact file to line pairs:
+    // - the frontend login user switch (frontend::url_to_action) is the one allowed change of
+    //   the requesting user after the entry point assignment
+    // - the signup fallback (user::db_insert) sets the signup system user as the requester
+    //   when a guest user is created based on the ip address and no requesting user is given
+    // exactly these lines are tolerated while the rest of the files stays under the rule
+    private const array MSG_USR_WRITE_SANCTIONED = [
+        DIRECTORY_SEPARATOR . 'frontend.php' => '$msg_ui->usr = $usr_ui;',
+        DIRECTORY_SEPARATOR . 'user' . DIRECTORY_SEPARATOR . 'user.php' => '$msg->usr = $usr_req;',
+    ];
+
+    private function php_msg_user_write_scan(test_cleanup $t, string $base_path): void
+    {
+        $lib = new library();
+        $code_files = $lib->array_to_path($lib->dir_to_array($base_path));
+        // a "$<var>->usr =" write where the var name carries the message convention (msg / message);
+        // the negative lookahead excludes the == / === comparisons and the => arrow
+        $pattern = '#\$[a-z0-9_]*(msg|message)[a-z0-9_]*->usr\s*=(?![=>])#i';
+        $files_checked = 0;
+        foreach ($code_files as $code_file) {
+            $full = str_replace('\\', '/', $base_path . $code_file);
+            // the user_message classes are the sanctioned home of the ->usr assignment
+            if (str_ends_with($full, '/user_message.php') or str_ends_with($full, '/sql_message.php')) {
+                continue;
+            }
+            $files_checked++;
+            $ctrl_code = file($base_path . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                // skip comment lines so a docblock that cites the anti-pattern is not flagged
+                $head = ltrim($line);
+                if ($head === '' or $head[0] === '*'
+                    or str_starts_with($head, '//') or str_starts_with($head, '/*')) {
+                    continue;
+                }
+                // tolerate only the exact sanctioned requesting user switches, nothing else
+                if (array_key_exists($code_file, self::MSG_USR_WRITE_SANCTIONED)
+                    and trim($line) == self::MSG_USR_WRITE_SANCTIONED[$code_file]) {
+                    continue;
+                }
+                if (preg_match($pattern, $line)) {
+                    $test_name = 'the requesting user lives on $msg from the entry point;'
+                        . ' a function below must not write $msg->usr, but found one in '
+                        . $code_file . ':' . ($line_idx + 1);
+                    // the offending line is the actual result and no hit is the target
+                    $t->assert($test_name, trim($line));
+                }
+            }
+        }
+        // one summary assertion per scanned tree so that a clean tree also produces a visible pass;
+        // scanning the whole source tree takes clearly longer than a normal unit function, so a
+        // generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = 'user_message->usr writes checked in ' . $files_checked . ' files of ' . $base_path;
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
+    }
+
+    /**
+     * check that the user_message of a request is created only by the http resp. api entry point:
+     * every 'new user_message(' below the entry points is an exception that needs a comment
+     * explaining why a local message is needed (docs/llm/state-and-messages.md), and the still
+     * unexplained ones are listed in docs/code_user_message_exceptions.md as the remaining rule
+     * breaks, so a new one changes the generated doc and fails this test
+     *
+     * and check that a created message never gets lost: what it collects must reach the caller
+     * (merged, returned, read or kept in an object field), so a message that is only filled and
+     * then goes out of scope - an inline 'new user_message()' handed to a called function above all
+     * - is listed as well, unless the comment behind it says that the drop is on purpose
+     *
+     * a list instead of one assertion per hit, because the tree still has ~180 open creations:
+     * a per-hit assertion would drown the test output, while the doc keeps the work list reviewable
+     * and shrinks with every threading pass (same pattern as docs/code_object_name_exceptions.md)
+     *
+     * positive (test fires when it should): a new unexplained '$msg = new user_message()' in cfg/
+     *     adds a line to the report, so the generated markdown no longer matches the committed doc
+     * negative (test tolerates good code): a creation with a comment above it counts as explained,
+     *     and the entry points (http/, api/) are outside the scanned trees
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_user_message_creation_tests(test_cleanup $t): void
+    {
+        // scanning the whole source tree takes clearly longer than a normal unit function,
+        // so a generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = 'check that the docs with the user_message creations is updated';
+        $md_txt = new code_user_message_exceptions()->md();
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_MSG_EXCEPTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**
@@ -795,7 +1725,15 @@ class coding_rule_tests
                         $path_incl = $include[1];
                         if ($class == $class_incl) {
                             $path_conv = $lib->php_path_convert($path);
-                            if ($path_conv == $path_incl or $path_conv == '') {
+                            // a frontend file may include a backend class via the html_paths
+                            // copy of the backend path const, which has the same const name
+                            // (e.g. html_paths::MODEL_HELPER for paths::MODEL_HELPER)
+                            $path_alias = str_starts_with($path_conv, 'paths::')
+                                ? 'html_' . $path_conv
+                                : '';
+                            if ($path_conv == $path_incl
+                                or $path_alias == $path_incl
+                                or $path_conv == '') {
                                 $found = true;
                             }
                         }
@@ -1124,8 +2062,14 @@ class coding_rule_tests
                         $all_fnc_lst[$sec] = $sec_all_fnc_lst;
                     } else {
                         $diff_txt = $lib->arrayOrderDiff($sec_fnc_lst_keys, $sec_all_fnc_lst_keys);
-                        $msg_lst[] = 'order of section ' . $sec . ' has difference at ' . $diff_txt . ' of ' . implode(",", $sec_fnc_lst_keys)
-                            . ' does not match ' . implode(",", $sec_all_fnc_lst_keys);
+                        // the two compared function lists are not named, because the developer
+                        // reads them in the class itself and they would flood the md report
+                        $order_msg = 'order of section ' . $sec . ' has difference at ' . $diff_txt;
+                        // the order of a section is checked once per function of the section,
+                        // so the same message is expected several times but reported only once
+                        if (!in_array($order_msg, $msg_lst)) {
+                            $msg_lst[] = $order_msg;
+                        }
                     }
                 } else {
                     $class_row = [];

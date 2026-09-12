@@ -83,6 +83,40 @@ future run.
   row a cleanup missed, or a `/tmp/probe.php` that opens the DB to inspect a
   table.
 
+## A deleted test object takes its change log entries with it
+
+Every write test changes rows through the model, so every change is recorded in
+the change log. When a cleanup deletes a test row, the change log entries of
+that row are deleted too — otherwise they keep pointing to a row that no longer
+exists and stay as noise in the change log of every database a test has run on.
+
+The helpers live in `test_base` and load the entries via the model
+(`change_log_list`), so each entry is removed from its correct `change*` table
+(the shared core is `test_base::delete_change_log_of_obj`):
+
+- `cleanup_change_log($sbx, $names)` for named objects (word, triple, ...) and
+  type rows (e.g. a sys log function)
+- `cleanup_change_log_value(...)` / `cleanup_change_log_ref(...)` /
+  `cleanup_change_log_group(...)` for the id-based objects; they only act if a
+  related phrase is a reserved test row, so real data is never touched
+- `cleanup_change_log_deleted()` for entries whose row is already gone
+
+The generic `test_objects::cleanup_objects()` already calls them; a new cleanup
+path does the same **before** the `del()` of the row, because after the delete
+the row can no longer be loaded to confirm by its reserved name that it was a
+test row.
+
+As the overall safety net `test_cleanup::check_cleanup` verifies at the end of a
+test run via `resources/db/cleanup/test_changes.sql` that no change log entry
+with the reserved test name pattern is left — after purging the entries that the
+cleanup `del()` calls themselves have written about the test rows.
+
+- **Right**: the cleanup first calls `$t->cleanup_change_log($wrd, $names)` and
+  then deletes the test words via `del()`.
+- **Wrong**: the cleanup only deletes the rows and leaves `changes` entries
+  pointing to the deleted test words — or removes the entries with a manual
+  `DELETE`.
+
 ## An LLM never runs the `/test/*` scripts — the developer does
 
 The predefined test scripts in `/test/*` — `test.php`, `test_unit.php`,
@@ -124,6 +158,106 @@ factory method waiting to be named — e.g. a Zurich word with related phrases, 
 non-default type, share and protection is `test_words::zh_full_ui()`, not five
 set-up lines in the test.
 
+### The user of a test comes from the test environment — never `global $usr`
+
+Nearly every test object needs a `user`, and it always comes from the test
+environment `$t` (`utils/test_base.php`), never from a global:
+
+| test user           | purpose                                                          |
+|---------------------|------------------------------------------------------------------|
+| `$t->usr1`          | the main test user                                                |
+| `$t->usr2`          | the second user, to test the user sandbox (overlay, exclude)      |
+| `$t->usr_normal`    | standard profile, to test that a privileged function denies       |
+| `$t->usr_admin`     | admin profile, to test that an admin function allows              |
+| `$t->usr_system`    | system profile, for the system-level functions                    |
+| `$t->usr_dev`       | the virtual dev user allowed to set a `code_id`                   |
+| `$t->usr_test_admin`| the admin used by the write tests                                 |
+| `$t->usr_signup`    | the system user that adds new users                               |
+
+Inside a `create/test_*.php` factory the same environment is reached through the
+injected `$this->env` (`new word($this->env->usr1)`). A `static` factory has no
+environment, so it takes the user from `test_users`
+(`new word(test_users::user_sys_test())`) — not from a global either.
+
+When a test needs a *user object itself* as the fixture (a specific profile,
+code id or filled fields), that user also comes from a `test_users` factory
+method (`$t_usr->user_sys_test()`, `$t_usr->user_ip()`, …) — never from an
+inline `new user(); $usr->set(...); $usr->code_id = ...;` block in the test;
+the general test-object-creation rule above applies to users too.
+
+**An import test uses one user for the import object *and* its message.** An
+`import` carries its own `$imp->usr` (the objects it builds get that user) while
+the privilege checks read `$msg->usr`. When the two differ, the import fails in
+two ways that are easy to misread:
+
+- a *privilege* check denies (e.g. `set_code_id` for a fixture with a `code_id`,
+  which needs `$t->usr_dev`), and because `import_mapper` returns
+  `$msg->is_ok()` on the shared append-only message, **every later object of the
+  same import is dropped too**;
+- a *user mismatch* between an object and the list it is added to makes
+  `sandbox_link_list::add_link_by_key` skip the entry **without any message
+  reaching the caller** — e.g. every component link of a view silently
+  disappears, so a view consistency check (row balance, positions) finds an
+  empty list and reports nothing at all.
+
+```php
+// right: the same user drives the import and the permission checks
+$imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
+$imp->usr = $t->usr_dev;
+$msg = new user_message($t->usr_dev);
+```
+
+So when an import assert suddenly sees an *empty* message where it expects a
+consistency warning, suspect the user pairing before the check itself.
+
+- **Right**: `$wrd = new word($t->usr1);` / `$wrd = new word($this->env->usr1);`
+- **Wrong**: `global $usr; $wrd = new word($usr);`
+
+`$usr` is not in the allowed global set (see
+[state-and-messages.md](state-and-messages.md#allowed-global-variables)) — the
+requesting user is always an explicit parameter. In a test it additionally makes
+the result depend on whichever session happens to run the test, so the same test
+can pass locally and fail in a clean run, and a sandbox test cannot tell the two
+users apart.
+
+### Never create a test object as the system user — use `$t->usr1`
+
+A test object (a word, triple, value, source, view, …) is **created by the
+normal user `$t->usr1`** — that is the standard owner for all test data. Reach
+for a different user only for a specific reason:
+
+- `$t->usr2` — to test a second user's sandbox (overlay, exclude, the change is
+  private to one user).
+- `$t->usr_admin` — only when the create genuinely needs a privilege a normal
+  user lacks (e.g. an admin-only function under test). Note this is *not* the
+  case for `set_code_id`: `user::can_set_code_id()` allows the system, test, log
+  and dev profiles but **not** admin, and `$t->usr1` carries the test profile, so
+  the normal user already sets a `code_id` — pass `$t->usr1` there too.
+
+Never create a test object as **`$t->usr_system`**. The system user (id 1) is for
+exercising *system-level functions*, not for owning ordinary test data. A word
+owned by the system user cannot be removed by the normal-user fallback cleanup
+(a non-owner delete only writes a private exclusion, leaving the base row), so it
+surfaces as a `check_cleanup` leftover; and because the system user is a
+bootstrap identity, an aliasing bug that resets `$t->usr_system` to id 0 turns
+every such create into a `changes.user_id` foreign-key failure deep in the run.
+
+- **Right**: `$wrd = $t_db->test_word(word_names::TEST_EARNING);` (defaults to `$t->usr1`)
+- **Wrong**: `$wrd = $t_db->test_word(word_names::TEST_EARNING, null, $t->usr_system);`
+
+The rule targets *ephemeral* test objects — the ones a test creates and the
+cleanup removes afterwards. **Permanent fixture data** that is deliberately never
+cleaned up (the years `2013`…, alongside the imported fundamental words like
+`mathematics`) may be system-owned, exactly like those fundamentals: there is no
+per-test cleanup to block, so the reason for the rule does not apply. Keep that a
+narrow, commented exception (see `zu_test_time_setup`), not a habit — if the
+object is ever deleted by a cleanup, it is ephemeral and belongs to `$t->usr1`.
+
+Two related uses are also *not* covered by this rule, because the system user is
+not the owner of a sandbox object there: the actor/author field of a `change` or
+`sys_log` fixture (a fixed system actor for a log-rendering test), and the
+requesting user of a delete of a protected class a normal user may not remove.
+
 ### Populated list / collection fixtures come from a factory too
 
 A test that builds a populated list inline —
@@ -143,6 +277,35 @@ $chf->phrases_related = $sym_lst;
   `words::SWISS_FRANC` + `verbs::SYMBOL`):
 ```php
 $chf->phrases_related = $t_phr->list_chf_symbol_ui();
+```
+
+### Test url arrays come from a factory object via to_url_array($msg)
+
+A url test (e.g. `unit_workflow/*_url_tests.php`) never hand-builds the object
+fields of a `$url_arr`: it starts from a factory object's `to_url_array($msg)`
+(`$t_wrd->word_dsp()->to_url_array($msg)`) or a factory url helper
+(`test_words::word_new_url()`, `word_add_url()`, `change_url_array()`, ...) and
+adds only the request context — mask, action, step, back, user. A hand-built key
+list duplicates the object's field mapping in the test body, and the factory
+would no longer show centrally which test objects each test uses; keeping the
+build in the factory also means a field added to the object reaches every url
+test through one change. To vary a field, change it on the factory object
+(`$wrd->set_description(...)`) before calling `to_url_array($msg)`, never by
+patching the array. The only urls built without a factory object are those that
+carry no object at all (e.g. a search pattern url).
+
+- **Wrong**:
+```php
+$url_arr = [];
+$url_arr[url_var::MASK] = views::WORD_EDIT_ID;
+$url_arr[url_var::ID] = word_names::MATH_ID;
+$url_arr[url_var::NAME] = word_names::MATH;
+```
+- **Right** — the object fields come from the factory, the test adds the context:
+
+```php
+$url_arr = $t_wrd->word_dsp()->to_url_array($msg_ui);
+$url_arr[url_var::MASK] = views::WORD_EDIT_ID;
 ```
 
 ### Factory names don't repeat the object word
@@ -249,6 +412,33 @@ $t->assert_text_contains($test_name, $login_html, '<div class="alert alert-warni
 $t->assert_text_contains('login page with failed login shows notification bar', $login_html, '<div ...>');
 ```
 
+### A test block runs name → prepare → call → assert
+
+Every single test reads the same way top to bottom, in four parts and in this
+order:
+
+1. **name** — `$test_name = '…';` is the **first** line of the block.
+2. **prepare** — build the fixtures / input the call needs (from the
+   `create/test_*.php` factories, never inline construction).
+3. **call** — invoke the function under test, capturing its result.
+4. **assert** — an `assert*()` is the **last** line of the block; every block
+   ends on its assertion, and nothing follows it except the next block's
+   `$test_name`.
+
+```php
+// Right — name, then prepare, then call, then assert
+$test_name = 'category subtitle uses the SYMBOL verb name verbatim';   // 1. name first
+$chf_sym = $t_wrd->word_chf_dsp();                                     // 2. prepare
+$title_sym = $form->title_of_named_with_edit_link($chf_sym);          // 3. call under test
+$t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME); // 4. assert last
+```
+
+Keep the four parts in this order so a reader sees the input, the action and the
+expected outcome in one glance. A block that prepares or computes *after* the
+assertion, or asserts *before* the call, hides what it is proving — split it into
+ordered blocks instead, each with its own `$test_name` first and its `assert*()`
+last.
+
 The `$test_name` is declared **first — at the top of the test setup, before any
 test variables are built** — not just before the assertion line. Reassign it
 again right before each later assertion in the same block.
@@ -262,6 +452,83 @@ $chf_sym->phrases_related = $t_phr->list_chf_symbol_ui();
 $title_sym = $form->title_of_named_with_edit_link($chf_sym);
 $t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME);
 ```
+
+### The test `$msg` is created once and reset after each checked test
+
+Like `$test_name`, the `user_message $msg` a test threads into the functions
+under test is created **once**, at the block's init, and **reused** for every
+call in the block:
+
+```php
+// init
+$t_db = new test_db_load($this);
+$msg = new user_message();
+// ...
+$usr->load_by_profile_code(user_profiles::TEST, $msg);   // same $msg
+// ...
+$t->cleanup($msg);                                        // still the same $msg
+```
+
+`$msg` is append-only in production — `http/view.php` creates the one request
+`user_message` and nothing below it ever resets or re-creates it (see
+`state-and-messages.md`). Tests are the **only** place `$msg->reset()` is
+allowed, and there it is not the exception but the rule: **reset the message
+after every test whose result has been checked with an assert**, so the next
+test starts from a clean, `is_ok()` message.
+
+```php
+// negative test — the call is supposed to report an error
+$test_name = 'adding a triple with the name of a word is rejected';
+$t->assert_false($test_name, $trp->save($msg_ui)->is_ok());
+$msg_ui->reset();   // the assert has read it, so clear it for the next test
+
+// the next test starts from a clean $msg
+$test_name = 'a valid triple is saved';
+$t->assert_true($test_name, $trp_ok->save($msg_ui)->is_ok());
+$msg_ui->reset();
+```
+
+**Why**: a test run should surface as many **independent** issues as possible.
+A message that still carries the reports of the previous test makes the next
+failure unreadable (the assert prints the whole accumulated text) and, worse,
+can suppress the next test entirely: functions that gate their work on the
+message they were given — `if ($msg->is_ok())` in the expression parser, the
+`db_ready()` / `can_be_ready()` loops (`state-and-messages.md`, "The
+`return $msg->is_ok()` trap") — do nothing when handed a message that failed
+earlier. The result is an empty list and an assert that fails for a reason that
+has nothing to do with what it tests.
+
+The reset belongs **after the assert**, never before it: the assert is the
+reader of the message (see the next section), so clearing it earlier throws away
+what the test is supposed to check. Keep the reset out of a test that
+deliberately continues to work on the collected state (a workflow snapshot
+building one message over several steps) — there the accumulation *is* the
+subject of the test.
+
+Never spin up a fresh `new user_message()` mid-block just to "start clean" —
+reset the one block `$msg` so a single object carries the block's history.
+`reset()` keeps the user (`reset(keep_usr = true)`), so re-setting `$msg->usr`
+after it is unnecessary.
+
+### In a test the assert is the reader — an asserted `$msg` is fully handled
+
+The "a message must reach the caller" rule of `state-and-messages.md` asks that
+somebody *reads* what a message collects. In a test that reader is the
+assertion: `$t->assert_msg($test_name, $msg)` reads the state (`is_ok()`) and,
+on failure, the text — and failing the run **is** the report. There is no
+request user above a test, so nothing more has to happen with the buffer:
+
+```php
+$cac_msg = new user_message();
+$tl->ui_test_cache($t->usr1, $t, $cac_msg);   // asserts $cac_msg internally
+// done - no merge, no return, no further read needed
+```
+
+This also holds when the assert sits inside the called helper (as in
+`test_lib::ui_test_cache`): the caller creates the buffer, the helper fills and
+asserts it, and neither side needs to hand the content anywhere else. Judge a
+test-side message by whether an assert consumes it, not by whether the
+immediate caller merges its return.
 
 ### Keep `$test_name` short but unique — don't repeat the subheader
 
@@ -318,6 +585,37 @@ Two follow-ons:
   acceptable. Reach for it last. (Still feed it named consts:
   `strpos($html, icons::EDIT)`, not `'fas fa-edit'`.)
 
+### Read a `user_message` result with `$msg->text()`, not `all_message_text()`
+
+A `user_message` is append-only and threaded across a whole request, so by the
+time a test inspects it, it can carry messages from **several** operations. Assert
+on **`$msg->text()`** — the single most-useful (last, translated) message — which
+is what the user actually sees. Avoid **`all_message_text()`** (the concatenation
+of every accumulated message) and the raw `get_last_message*()` getters as the
+assertion target: concatenation makes the test brittle, and it couples the test to
+code paths it does not exercise.
+
+This is not hypothetical: an import test asserting the whole message text broke the
+moment an unrelated "not yet supported" notice was added on the same `$msg` — the
+notice shifted the last message and buried the genuine `"Unknown element test"` the
+test was checking. `$msg->text()` would have stayed pinned to the message that
+matters.
+
+```php
+// Right — the one message the user sees; robust to unrelated messages on the same $msg
+$test_name = 'import of an unknown element is reported';
+$imp->put_json_direct($json_str, $msg_ui);
+$t->assert($test_name, $msg_ui->text(), 'Unknown element "test"');
+
+// Wrong — asserts the concatenation of every message, so any unrelated add elsewhere breaks it
+$t->assert($test_name, $msg_ui->all_message_text(), 'Unknown element "test"');
+```
+
+Assert `all_message_text()` only when the test genuinely verifies that a **set** of
+messages is present (e.g. a batch that must report each of several failures), and
+even then prefer `assert_text_contains` on the specific expected fragment over an
+equality on the whole blob.
+
 ### Test subheaders are short but unique
 
 A `$t->subheader(...)` label names the test section in the run output — keep it
@@ -329,6 +627,26 @@ behaviour belongs in the per-assertion `$test_name` strings.
 
 Don't collapse two sibling sections to the same label; keep just enough of the
 distinguishing word (`'category subtitle'` vs `'category subtitle (multi)'`).
+
+## Generated files are rewritten by the run, never by hand and never by the LLM
+
+Every file that says `do not edit manually` — `docs/code_object_name_exceptions.md`,
+`docs/code_user_message_exceptions.md`, `docs/code_test_coverage.md`,
+`docs/json_findings.md`, `docs/code_functions_all.md` — and every regenerated
+baseline (the `list.csv` of `src/test/resources/unit/<class>/`, the html snapshots,
+the api fixtures) is written by `test/test.php` with `AUTO_UPDATE_TEST_FILES` set to
+`true` and compared with the flag set to `false`. A test that reports such a file as
+outdated says that the code or the data behind it changed; it is never a request to
+edit the file:
+
+- if the change is unwanted (e.g. a `user_message` created under a name other than
+  `$msg` without a strong reason), fix the cause in the code or the data
+- if the change is intended (a new buffer with a documented reason, a new phrase,
+  a new view), leave the file alone: the next run with the flag regenerates it and
+  the diff of that run shows the change for review
+
+An LLM patching the generated line by hand masks the signal, and the next run
+overwrites the edit anyway.
 
 ## Tests that depend on data files must be reproducible from a single point of change
 
@@ -352,6 +670,163 @@ test constant** — for words, a reserved test word in
 When adding such a test: (1) add a reserved test entry to `words.php` (or the
 matching `*_const` file) if none fits, (2) build the import file's name from that
 const, and (3) use the same const for cleanup and for any regeneration script.
+
+## The full load never contains data that needs a system user
+
+`test/test_full_load.php` imports with the normal test user (`import_base_data($t->usr1)`
+and `import_test_data($t->usr1)`), so **no file of `files::BASE_DATA_FILES`,
+`BASE_DATA_PATH_FILES`, `SAMPLE_VIEW_DATA_FILES` or of the `test_files::TEST_DATA_*`
+lists may contain data that only a system user may write.** That is `code_id` and
+`ui_msg_code_id`: `sandbox_code_id::set_code_id()` and the component setters check
+`user::can_set_code_id()` / `can_set_ui_msg_id()`, which pass only for the system, the
+system-test and the developer profile. A `protection` needs no privilege and is fine.
+
+The refusal is not a single message: the import stops at the object whose code id it
+cannot write, so every later object of that file is reported as missing
+("component with name … missing when importing json part …") and the real cause sits
+in the first line of a very long error.
+
+Data that needs a code id belongs in `files::SYSTEM_DATA_FILES`, which
+`import_file::import_system_data()` imports as the system user. Keep it out of the full
+load, and if a sample file mixes both, split the code-id part into the system data.
+
+## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
+
+`src/test/php/const/{word,triple,verb}_names.php` pin the **seed database ids**
+of the test phrases. Those ids come from the insert order of the import files, so
+**adding or removing a phrase in a seed import shifts every id after it** — a new
+word in `base_phrases.json`, a split of one multi-word word into a triple, an
+extra file in `files::BASE_DATA_PATH_FILES`, all of them.
+
+The cheapest re-baseline is the one that is not needed: a change to a seed
+import stays as small as the task asks for, so that the object count of every
+class stays the same. Never reformat a seed file and never add or remove a
+word, triple or other object on the side — see *Change as little as the task
+asks for* in `docs/llm/json_structure.md`.
+
+The authority for the new ids is `src/test/resources/unit/<class>/list.csv`. That
+file is not hand-maintained: `test_db_load::csv_recreate()` dumps the whole table
+with `sql_db::csv_from_class()` after a database reset. So the sequence is
+**reset → regenerate the csv → read the new ids out of it → update the consts**.
+Never derive an id by counting entries in the JSON or by assuming a shift of one.
+
+Two traps that make the drift look smaller than it is:
+
+- `library::diff_msg` compares the **keys** of two arrays; a const id that still
+  exists in the database under a *different* name is therefore not reported. A
+  reported "5 missing / 5 unexpected" can be seven real drifts — always
+  recompute the full name→id mapping instead of patching only what the message
+  lists.
+- The csv holds only rows created by the seed. A phrase created later by a test
+  write (ids well above the seed range) is legitimately absent, so "not in the
+  csv" does not mean "wrong const".
+
+Appending to `verbs.json` is the one id-safe case: verbs are their own table and
+their id is the insert position of each **distinct** `code_id`, so a new verb at
+the end takes the next free id and moves nothing. (A repeated `code_id` merges
+instead of inserting, which is why the const ids can sit one below their line
+position in the file.)
+
+## A fixture phrase carries the real id, the real class and the real name
+
+Re-baselining the id const is only half of it: the **factory** has to match the
+database row as well, in three more ways. All three fail silently — the test
+renders *something*, just not the right thing.
+
+**The id must be set, not only the name.** `combine_object::api_json_array()`
+writes the `OBJECT_CLASS` field only `if ($obj->id() != 0)`, and the frontend
+`phrase::api_mapper()` needs exactly that field to decide between a word and a
+triple. So a fixture built with `set_name()` alone survives as a top-level
+object but collapses to an empty phrase as soon as it is nested — as a triple's
+`from`/`to`, or in a phrase list. The symptom is an anchor with no text and the
+wrong tooltip (`<a href="…"></a>` instead of `<a … title="…">Swiss franc</a>`),
+because `triple::get_link_by_verb()` falls through to its last-resort title.
+Every phrase used as a side of another phrase therefore needs `set(<id>, <name>)`.
+
+**The class must match the database.** When a multi-word word is split, the
+phrase changes class: `Swiss franc` stops being a word and becomes the triple
+`franc kind of Swiss`. The const then moves from `word_names` to `triple_names`
+and the factory from `test_words` to `test_triples` — a word-typed stand-in that
+merely carries the right *name* re-introduces the id-0 bug above. If the frontend
+class lacks a method the test needs, add the method (see
+"Behaviour shared by word and triple belongs on the phrase" in
+`docs/llm/frontend.md`); do not keep the fixture in the wrong class.
+
+**An unnamed triple's name is the generated one.** Most import triples carry no
+`name`, so the database stores what `triple::generate_name()` produces, and that
+is **not** `<from> <verb> <to>` for the `is` verb — it is `<from> (<to>)`:
+
+```php
+// the import file only has {"from": "Swiss franc", "verb": "is a", "to": "currency"}
+$trp->set(triple_names::SWISS_FRANC_CURRENCY_ID, triple_names::SWISS_FRANC_CURRENCY);
+//                                               // = 'Swiss franc (currency)'
+// not: triple_names::SWISS_FRANC . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY
+```
+
+Only the other verbs use the `<from> <verb> <to>` form. Read the name out of
+`list.csv` together with the id rather than composing it.
+
+**The description is copied verbatim from the owning import file.** A `*_COM`
+const is not a place to write a shorter or nicer text: the same description ends
+up in a rendered tooltip and in a database read, so a hand-written summary makes
+the unit test and the read test disagree. Take the string from the file that owns
+the phrase (the first one importing it) and paste it unchanged.
+
+## A html snapshot page needs the local pod for its styles and fonts
+
+A page under `src/test/resources/web/html/` loads its stylesheets from
+`http://localhost/` (the `THIS_URL` fallback), so the rsync copy in `/var/www/html`
+must be served there. The icons additionally need the font CORS header of
+`external_lib/.htaccess`, because a `@font-face` request is always CORS-gated and a
+snapshot is often opened from another origin (file system or ide preview server) —
+without the header the icon glyphs stay invisible while everything else looks fine.
+The one-time apache setup (AllowOverride, mod_headers): `docs/deployment.md`,
+section *local web server for the api tests and the html snapshots*.
+
+## A fixture mismatch is fixed at its producers, never at the reported side
+
+One expected-json fixture can be produced by **several tests that must agree**:
+`api/term_list/term_list.json` is written and checked by the unit test on the
+in-memory factory list (`assert_api($trm_lst)`), by the REST GET test that reads
+the imported database row (`assert_api_get_list(term_list::class, …)`), and its
+content must also survive the ui round trip (`assert_api_to_ui`). Fixing only the
+side the current error report shows moves the disagreement to the next consumer —
+and with the auto-update mechanism each failing run rewrites the fixture to its
+own truth, so successive runs flip the same field back and forth forever.
+
+**The signature of such a loop**: the *same* test fails in two runs with the diff
+direction inverted — `weight//+0.5//` in one report, `weight//-0.5//` in the next.
+That is never a half-applied fix; it is two producers of the same fixture that
+disagree. Stop patching and find the other producer.
+
+Before fixing any fixture mismatch, list **all** of its producers and make them
+agree at the source (the fixture then follows from any of them):
+
+1. **The in-memory factory object** (`src/test/php/create/test_*.php`) used by the
+   unit test. Grep for the fixture *filename* misses this consumer, because
+   `assert_api($obj)` derives the filename from the class name — search for
+   `assert_api` calls on the class instead.
+2. **The database row**, filled by the import files
+   (`src/main/resources/messages/*`). Mind *which* file the standard setup
+   actually loads: the same object can be defined in a `SYSTEM_DATA_FILES` file
+   (imported by every db reset) *and* in a `BASE_DATA_FILES` file (imported only
+   by `test_full_load.php`) — a sample value added to the wrong twin never
+   reaches the test database. And the api-get tests run **before**
+   `run_db_recreate()`, so they read the *previous* run's database: a data change
+   shows up one run late, and its first failure can be the lag, not a bug.
+3. **The ui round trip**: a field emitted by the backend must be mapped by the
+   frontend `api_mapper` *and* re-emitted by the frontend `api_array`, or
+   `assert_api_to_ui` drops it. A hand-built emit branch (like the term ui
+   `api_array`) does not inherit a new field from the object it wraps.
+4. **The fixture file** itself — updated last, once the producers agree, or left
+   to the regeneration mechanism.
+
+The general prevention: a new object field is only *done* when it is wired
+through the whole chain — db `row_mapper`, backend api emit and `api_mapper`,
+frontend `api_mapper` and `api_array`, im-/export and the save diff
+(`db_fields_changed`, `needs_db_update`, `fill`) — plus the matching sample in
+the import data the tests load. Every gap in that chain surfaces later as
+exactly this kind of fixture disagreement, one consumer at a time.
 
 ## Never edit an existing test resource — only add
 
@@ -408,6 +883,30 @@ instead of the micro version `0.0.3.0`. Never remove that flag and never write a
 into a snapshot by hand. A **minor** release does change the snapshots on purpose - the
 version of the json format and of the database has changed - and then the developer
 regenerates them. → `docs/llm/versions.md`
+
+## Horizontal round-trip tests refill a not-transported field only when it is null
+
+The horizontal ui tests (`unit_ui/horizontal_ui_tests.php`) round-trip a filled
+backend object through the form url, the frontend mappers and the api json back
+into a backend object and diff it against the original. A field that no form
+transports (e.g. the user ip address, login times, type and status) is
+backfilled from the original before the diff — but **only if the refilled value
+is null**, meaning "not transported". An unconditional backfill would overwrite
+a wrongly mapped real value with the expected one, so the diff could never
+catch a mapper that fabricates or distorts the field (this is how the guest and
+active default fabrication in `user::api_mapper` stayed unnoticed; see
+docs/llm/constants.md "Default values are resolved at the point of use").
+
+- **Right**:
+```php
+if ($refilled_obj->type_id === null) {
+    $refilled_obj->type_id = $filled_obj->type_id;
+}
+```
+- **Wrong** — masks a mapper that sets a wrong non-null value:
+```php
+$refilled_obj->type_id = $filled_obj->type_id;
+```
 
 ## Page-based UI tests for component-type renderers
 

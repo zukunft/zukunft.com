@@ -89,6 +89,11 @@ class group_db
     const array FLD_NAMES = array(
         fields::FLD_DESCRIPTION
     );
+    // all database sandbox field names used to identify if there are some user-specific changes
+    const array ALL_SANDBOX_FLD_NAMES = array(
+        group_fields::FLD_NAME,
+        fields::FLD_DESCRIPTION
+    );
     // list of fixed tables where a group name overwrite might be stored
     // TODO check if this can be used somewhere else means if there are unwanted repeating
     const array TBL_LIST = array(

@@ -1,0 +1,72 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-08-14 12:00:00",
+  "user": "zukunft",
+  "description": "Effect sizes for interpersonal persuasion and a test of the online-offline mismatch hypothesis",
+  "words": [
+    {"name": "argument", "refs": [{"name": "Argument", "type": "wikipedia"}]},
+    {"name": "assumed"},
+    {"name": "attitude", "refs": [{"name": "Attitude_(psychology)", "type": "wikipedia"}]},
+    {"name": "Bor"},
+    {"name": "Broockman"},
+    {
+      "name": "canvassing",
+      "description": "systematic contacting of people to gauge or influence their opinions",
+      "refs": [{"name": "Canvassing", "type": "wikipedia"}]
+    },
+    {"name": "confidence"},
+    {"name": "count"},
+    {"name": "effect"},
+    {"name": "exchange"},
+    {"name": "exclusionary"},
+    {"name": "format"},
+    {"name": "Kalla"},
+    {"name": "narrative", "refs": [{"name": "Narrative", "type": "wikipedia"}]},
+    {"name": "participant"},
+    {"name": "persuasion", "refs": [{"name": "Persuasion", "type": "wikipedia"}]},
+    {"name": "Petersen"},
+    {"name": "probability", "refs": [{"name": "Probability", "type": "wikipedia"}]},
+    {"name": "size"},
+    {"name": "study"}
+  ],
+  "triples": [
+    {"name": "effect size", "from": "size", "verb": "of", "to": "effect"},
+    {"name": "exclusionary attitude", "from": "attitude", "verb": "kind of", "to": "exclusionary"},
+    {"from": "effect size", "verb": "on", "to": "exclusionary attitude"},
+    {"name": "narrative exchange", "from": "exchange", "verb": "of", "to": "narrative"},
+    {"name": "narrative exchange canvassing", "from": "canvassing", "verb": "uses", "to": "narrative exchange"},
+    {"name": "argument canvassing", "from": "canvassing", "verb": "uses", "to": "argument"},
+    {"name": "participant count", "from": "count", "verb": "of", "to": "participant"},
+    {"from": "Kalla", "verb": "and", "to": "Broockman"},
+    {"from": "Bor", "verb": "and", "to": "Petersen"},
+    {"name": "Kalla and Broockman study", "from": "Kalla and Broockman", "verb": "name of", "to": "study"},
+    {"name": "Bor and Petersen study", "from": "Bor and Petersen", "verb": "name of", "to": "study"},
+    {"name": "format influence on persuasion", "from": "format", "verb": "influences", "to": "persuasion"}
+  ],
+  "sources": [
+    {
+      "name": "Kalla Broockman 2020",
+      "description": "Kalla JL, Broockman DE (2020). Reducing Exclusionary Attitudes through Interpersonal Conversation. American Political Science Review 114(2):410-425",
+      "doi": "10.1017/S0003055419000923"
+    },
+    {
+      "name": "Broockman Kalla 2016",
+      "description": "Broockman DE, Kalla JL (2016). Durably reducing transphobia: a field experiment on door-to-door canvassing. Science 352:220-224",
+      "doi": "10.1126/science.aad9713"
+    },
+    {
+      "name": "Bor Petersen 2022",
+      "description": "Bor A, Petersen MB (2022). The Psychology of Online Political Hostility. American Political Science Review 116(1):1-18",
+      "doi": "10.1017/S0003055421000885"
+    }
+  ],
+  "values": [
+    {"words": ["narrative exchange canvassing", "effect size on exclusionary attitude"], "number": "0.08", "source": "Kalla Broockman 2020"},
+    {"words": ["argument canvassing", "effect size on exclusionary attitude"], "number": "0", "source": "Kalla Broockman 2020"},
+    {"words": ["Kalla and Broockman study", "participant count"], "number": "6869", "source": "Kalla Broockman 2020"},
+    {"words": ["Bor and Petersen study", "participant count"], "number": "8434", "source": "Bor Petersen 2022"},
+    {"words": ["format influence on persuasion", "probability", "assumed"], "number": "0.8"},
+    {"words": ["format influence on persuasion", "probability", "confidence", "assumed"], "number": "0.6"}
+  ]
+}

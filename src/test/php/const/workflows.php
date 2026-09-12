@@ -57,8 +57,10 @@ class workflows
     // separator between the name parts of a workflow snapshot file name e.g. 'wf2_show_edit'
     const string NAME_SEP = '_';
 
-    // fixed text that replaces the volatile change log entry (add time + add user) in the snapshots
-    const string WF_CHANGE_LOG = 'system test change log entry';
+    // the dummy start time that replaces the volatile change log time in the snapshots; the change log
+    // rows keep a deterministic time sequence by increasing this by one second per shown entry (see
+    // url_test_base::normalize_change_log_time)
+    const string WF_CHANGE_LOG_START = '1997-06-07 16:01:00';
 
     // the snapshot file name prefix that is followed by the workflow id e.g. 'wf2'
     const string WF_PREFIX = 'wf';
@@ -127,6 +129,10 @@ class workflows
     // 'in_use' in 'wf10_show_edit_in_use_save' where delete is pressed on an in-use word
     const string STEP_IN_USE = 'in_use';
 
+    // snapshot file name marker for the steps after the real login of the workflow user, e.g. the
+    // 'login' in 'wf18_show_login_show' where the same page is shown again as a logged in user
+    const string STEP_LOGIN = 'login';
+
     // the add_triple_fail workflow name used for the snapshot folder and the test subheader:
     // the negative twin of add_triple where a save without a from and a to phrase keeps the add form
     // with a warning instead of confirming the invalid triple
@@ -168,6 +174,111 @@ class workflows
     // a formula field is changed in the edit form and written after the user has confirmed the change
     const string WF_DEL_FORMULA = 'del_formula';
     const int WF_DEL_FORMULA_NBR = 16;
+
+    // the change_word_all_sandbox_fields workflow name used for the snapshot folder and the test
+    // subheader: a user that does not own the word (usr2) fills almost all sandbox fields of the
+    // word in one edit round, so the confirmed change lands in a usr2 user sandbox overlay row
+    const string WF_CHANGE_WORD_ALL_SANDBOX_FIELDS = 'change_word_all_sandbox_fields';
+    // the id of the current change_word_all_sandbox_fields workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_WORD_ALL_SANDBOX_FIELDS_NBR = 17;
+
+    // the word_login workflow name used for the snapshot folder and the test subheader:
+    // a user with word overwrites logs in for real and views the word page, so the snapshot
+    // shows the page as a logged in user sees it (e.g. the dark blue person icon and the my
+    // tab) and reproduces a page that is (almost) empty after a login
+    const string WF_WORD_LOGIN = 'word_login';
+    // the id of the current word_login workflow; increase it to add the next snapshot set
+    const int WF_WORD_LOGIN_NBR = 18;
+
+    // the add_source workflow name used for the snapshot folder and the test subheader:
+    // a new source is entered in the add form and written after the user has confirmed the add;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_ADD_SOURCE = 'add_source';
+    // the id of the current add_source workflow; increase it to add the next snapshot set
+    const int WF_ADD_SOURCE_NBR = 19;
+
+    // the change_source workflow name used for the snapshot folder and the test subheader:
+    // the url of the added source is changed in the edit form and written after the user has
+    // confirmed the change, then a second round fills the still-missing default view;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_SOURCE = 'change_source';
+    // the id of the current change_source workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_SOURCE_NBR = 20;
+
+    // the del_source workflow name used for the snapshot folder and the test subheader:
+    // the added source is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_word)
+    const string WF_DEL_SOURCE = 'del_source';
+    // the id of the current del_source workflow; increase it to add the next snapshot set
+    const int WF_DEL_SOURCE_NBR = 21;
+    // the add_view workflow name used for the snapshot folder and the test subheader:
+    // a new view is entered in the add form and written after the user has confirmed the add;
+    // like add_source it only tests the back excursion, because the word workflows already
+    // cover the cancel excursion of an add
+    const string WF_ADD_VIEW = 'add_view';
+    // the id of the current add_view workflow; increase it to add the next snapshot set
+    const int WF_ADD_VIEW_NBR = 22;
+
+    // the change_view workflow name used for the snapshot folder and the test subheader:
+    // the style of the added view is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_VIEW = 'change_view';
+    // the id of the current change_view workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_VIEW_NBR = 23;
+
+    // the del_view workflow name used for the snapshot folder and the test subheader:
+    // the added view is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_source)
+    const string WF_DEL_VIEW = 'del_view';
+    // the id of the current del_view workflow; increase it to add the next snapshot set
+    const int WF_DEL_VIEW_NBR = 24;
+
+    // the add_component workflow name used for the snapshot folder and the test subheader:
+    // a new component is entered in the add form and written after the user has confirmed the add;
+    // like add_source it only tests the back excursion, because the word workflows already
+    // cover the cancel excursion of an add
+    const string WF_ADD_COMPONENT = 'add_component';
+    // the id of the current add_component workflow; increase it to add the next snapshot set
+    const int WF_ADD_COMPONENT_NBR = 25;
+
+    // the change_component workflow name used for the snapshot folder and the test subheader:
+    // the style of the added component is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_COMPONENT = 'change_component';
+    // the id of the current change_component workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_COMPONENT_NBR = 26;
+
+    // the del_component workflow name used for the snapshot folder and the test subheader:
+    // the added component is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_view)
+    const string WF_DEL_COMPONENT = 'del_component';
+    // the id of the current del_component workflow; increase it to add the next snapshot set
+    const int WF_DEL_COMPONENT_NBR = 27;
+
+    // the add_ref workflow name used for the snapshot folder and the test subheader:
+    // a new reference is entered in the add form and written after the user has confirmed the add;
+    // like add_source it only tests the back excursion, because the word workflows already
+    // cover the cancel excursion of an add
+    const string WF_ADD_REF = 'add_ref';
+    // the id of the current add_ref workflow; increase it to add the next snapshot set
+    const int WF_ADD_REF_NBR = 28;
+
+    // the change_ref workflow name used for the snapshot folder and the test subheader:
+    // the url of the added reference is changed in the edit form and written after the user has
+    // confirmed the change, then a second round also changes the description;
+    // the word workflows already cover the cancel excursion, so this one only tests the back step
+    const string WF_CHANGE_REF = 'change_ref';
+    // the id of the current change_ref workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_REF_NBR = 29;
+
+    // the del_ref workflow name used for the snapshot folder and the test subheader:
+    // the added reference is removed after the user has confirmed the deletion, with a back and a
+    // cancel excursion that abort the deletion without writing (like del_source)
+    const string WF_DEL_REF = 'del_ref';
+    // the id of the current del_ref workflow; increase it to add the next snapshot set
+    const int WF_DEL_REF_NBR = 30;
 
     /**
      * the user process step that a user reaction action triggers

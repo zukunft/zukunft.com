@@ -157,12 +157,12 @@ class combine_named extends combine_object
 
     /**
      * @param int|null $type_id the type id of the word, triple, formula or verb
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the type has been set, false if the requesting user is not permitted or no object
      */
-    function set_type_id(?int $type_id, user $usr_req = new user()): user_message
+    function set_type_id(?int $type_id, user_message $msg): bool
     {
-        return $this->obj()?->set_type_id($type_id, $usr_req);
+        return $this->obj()?->set_type_id($type_id, $msg) ?? false;
     }
 
     /**
@@ -189,9 +189,9 @@ class combine_named extends combine_object
      * e.g. if the type of the triple "Pi (math)" is not set
      * but the triple is "Pi is a math const" and the type for "math const" is set it is used
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
-        return $this->obj()?->type_id();
+        return $this->obj()?->type_id($msg);
     }
 
     /**

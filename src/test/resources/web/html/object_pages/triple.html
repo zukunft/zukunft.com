@@ -6,9 +6,9 @@
         <title>
             test triple - zukunft.com
         </title>
-        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -152,19 +152,19 @@
                 buttons
             </h4>
             add button:
-            <a href="/http/view.php?m=triple_add&amp;id=1" title="add new word">
+            <a href="http://localhost/http/view.php?m=9&amp;id=1&amp;9m=90&amp;9id=105" title="add new word">
                 <i class="far fa-plus-square">
                 </i>
             </a>
             <br>
             edit button:
-            <a href="/http/view.php?m=triple_edit&amp;id=1" title="rename word">
+            <a href="http://localhost/http/view.php?m=10&amp;id=1&amp;9m=90&amp;9id=105" title="rename word">
                 <i class="far fa-edit">
                 </i>
             </a>
             <br>
             del button:
-            <a href="/http/view.php?m=triple_del&amp;id=1" title="delete word">
+            <a href="http://localhost/http/view.php?m=11&amp;id=1&amp;9m=90&amp;9id=105" title="delete word">
                 <i class="far fa-times-circle">
                 </i>
             </a>
@@ -275,6 +275,12 @@
                         Verb
                     </label>
                     <select class="form-control" name="b" form="triple_edit" id="b_form_select_verb" >
+                        <option value="54"  >
+                            adds to
+                        </option>
+                        <option value="56"  >
+                            aims to trigger
+                        </option>
                         <option value="30"  >
                             and
                         </option>
@@ -314,6 +320,18 @@
                         <option value="24"  >
                             can use
                         </option>
+                        <option value="55"  >
+                            competes with
+                        </option>
+                        <option value="52"  >
+                            enables
+                        </option>
+                        <option value="59"  >
+                            expected from
+                        </option>
+                        <option value="47"  >
+                            explains
+                        </option>
                         <option value="7"  >
                             has a
                         </option>
@@ -332,11 +350,23 @@
                         <option value="15"  >
                             is an acronym for
                         </option>
+                        <option value="50"  >
+                            is analogous to
+                        </option>
+                        <option value="49"  >
+                            is evidence for
+                        </option>
+                        <option value="45"  >
+                            is explaining column for
+                        </option>
                         <option value="11"  >
                             is follower of
                         </option>
                         <option value="14"  >
                             is measure type for
+                        </option>
+                        <option value="44"  >
+                            is next main column after
                         </option>
                         <option value="3"  selected >
                             is part of
@@ -346,6 +376,9 @@
                         </option>
                         <option value="28"  >
                             is selector for
+                        </option>
+                        <option value="58"  >
+                            is single attempt in
                         </option>
                         <option value="13"  >
                             issue
@@ -365,6 +398,12 @@
                         <option value="36"  >
                             kind of
                         </option>
+                        <option value="51"  >
+                            limits
+                        </option>
+                        <option value="57"  >
+                            lowers barrier for
+                        </option>
                         <option value="39"  >
                             must be one of
                         </option>
@@ -383,8 +422,17 @@
                         <option value="26"  >
                             per
                         </option>
+                        <option value="53"  >
+                            reduces
+                        </option>
+                        <option value="48"  >
+                            refines
+                        </option>
                         <option value="25"  >
                             scaled by
+                        </option>
+                        <option value="46"  >
+                            supports
                         </option>
                         <option value="10"  >
                             term type needed
@@ -401,6 +449,9 @@
                         <option value="12"  >
                             uses
                         </option>
+                        <option value="60"  >
+                            weighted by
+                        </option>
                         <option value="6"  >
                             with
                         </option>
@@ -415,13 +466,13 @@
                     <datalist id="pf_form_select_phrase_list">
                         <option value="Pi" data-value="17">
                         </option>
-                        <option value="Pi (math)" data-value="-2">
-                        </option>
                         <option value="constant" data-value="2">
                         </option>
                         <option value="mathematical constant" data-value="-1">
                         </option>
                         <option value="mathematics" data-value="1">
+                        </option>
+                        <option value="π (unit symbol)" data-value="-5">
                         </option>
                     </datalist>
                 </div>
@@ -434,13 +485,13 @@
                     <datalist id="pt_form_select_phrase_list">
                         <option value="Pi" data-value="17">
                         </option>
-                        <option value="Pi (math)" data-value="-2">
-                        </option>
                         <option value="constant" data-value="2">
                         </option>
                         <option value="mathematical constant" data-value="-1">
                         </option>
                         <option value="mathematics" data-value="1">
+                        </option>
+                        <option value="π (unit symbol)" data-value="-5">
                         </option>
                     </datalist>
                 </div>
@@ -478,12 +529,49 @@
                 </div>
                 <div class="subtitle">
                     (
+                    <a href="/http/view.php?m=22&amp;id=17" title="A mathematical constant is a key number whose value is fixed by an unambiguous definition">
+                        math constant
+                    </a>
+                    /
                     <a href="/http/view.php?m=22&amp;id=3" title="only user with admin permission can take the ownership">
                         admin
                     </a>
                     )
                 </div>
             </div>
+            <h4>
+                phrase title of mathematical constant
+            </h4>
+            <div class="row col-md-12">
+                <div class="heading-line">
+                    <h4 class="heading-inline">
+                        mathematical constant
+                    </h4>
+                    <a href="/http/view.php?m=10&amp;id=1" title="rename word" class="heading-icon-inline">
+                        <i class="fas fa-edit">
+                        </i>
+                    </a>
+                </div>
+                <div class="subtitle">
+                    (
+                    <a href="/http/view.php?m=90&amp;id=2">
+                    </a>
+                    <a href="/http/view.php?m=91&amp;id=3">
+                    </a>
+                    <a href="/http/view.php?m=90&amp;id=1">
+                    </a>
+                    /
+                    <a href="/http/view.php?m=22&amp;id=17" title="A mathematical constant is a key number whose value is fixed by an unambiguous definition">
+                        math constant
+                    </a>
+                    /
+                    <a href="/http/view.php?m=22&amp;id=3" title="only user with admin permission can take the ownership">
+                        admin
+                    </a>
+                    )
+                </div>
+            </div>
+            <br>
             <h4>
                 related phrases without subtitles of global problem
             </h4>
@@ -492,11 +580,11 @@
                     can be
                 </a>
             </h6>
-            <a href="/http/view.php?m=90&amp;id=247" title="process of teaching and learning">
+            <a href="/http/view.php?m=90&amp;id=253" title="process of teaching and learning">
                 education
             </a>
             ,
-            <a href="/http/view.php?m=90&amp;id=243" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
+            <a href="/http/view.php?m=90&amp;id=249" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
                 health
             </a>
             <br>

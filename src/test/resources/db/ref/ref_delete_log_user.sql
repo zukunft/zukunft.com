@@ -23,10 +23,10 @@ END $$ LANGUAGE plpgsql;
 SELECT ref_delete_log_user
     (3::bigint,
      3::smallint,
-     22::smallint,
+     24::smallint,
      'global warming potential'::text,
      null::text,
      'Q999999999'::text,
-     -105::bigint,
+     -111::bigint,
      null::smallint,
      12::bigint);

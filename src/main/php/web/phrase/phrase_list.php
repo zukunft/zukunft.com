@@ -34,16 +34,16 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -56,17 +56,18 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
-include_once paths::SHARED_CONST . 'triples.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\group\group;
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -95,6 +97,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase_list extends sandbox_list_named
 {
+
+    // the link levels from "column (system)": the column tiers, their column definitions and
+    // the order triples that chain the definitions
+    const int COLUMN_LEVELS = 3;
 
     /*
      * set and get
@@ -105,11 +111,11 @@ class phrase_list extends sandbox_list_named
      * the comma-separated phrase ids are read from the CONTEXT field;
      * the sign of each id encodes the class (positive = word, negative = triple)
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         if (array_key_exists(url_var::CONTEXT, $url_array)) {
             $id_csv = $url_array[url_var::CONTEXT];
@@ -124,11 +130,11 @@ class phrase_list extends sandbox_list_named
                         $phr->set_obj(new triple());
                     }
                     $phr->set_id($id_int);
-                    $this->add($phr);
+                    $this->add($phr, $msg);
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -172,11 +178,91 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * add the phrases related to the phrase with the given name to the list
+     *
+     * by name and not by id, because the frontend knows a system phrase from a shared const with
+     * its name, but never its database id (see docs/llm/constants.md)
+     *
+     * @param string $name the name of the phrase whose related phrases should be added
+     * @param foaf_direction $direction up for the parents, down for the children
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param int $levels the number of link levels to follow, one for the direct links only
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_related_by_name(
+        string         $name,
+        foaf_direction $direction,
+        user_message   $msg,
+        int            $levels = 1
+    ): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
+        $data = array();
+        $data[url_var::NAME] = $name;
+        $data[url_var::DIRECTION] = $direction->value;
+        $data[url_var::LEVELS] = $levels;
+        $json_body = $api->api_get(self::class, $data);
+        $msg->merge($this->api_mapper($json_body));
+        return $this->count() > $count;
+    }
+
+    /**
+     * add the phrases linked to any of the given phrases to this list
+     *
+     * one call for the whole list, because a page normally needs the links of many phrases at
+     * once, e.g. of every phrase that the values of a table carry
+     *
+     * @param phrase_list $phr_lst the phrases whose linked phrases should be added
+     * @param foaf_direction $direction up for the parents, down for the children
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_related_by_ids(
+        phrase_list    $phr_lst,
+        foaf_direction $direction,
+        user_message   $msg
+    ): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
+        $data = array();
+        $data[url_var::ID_LST] = implode(',', $phr_lst->ids());
+        $data[url_var::DIRECTION] = $direction->value;
+        $json_body = $api->api_get(self::class, $data);
+        $msg->merge($this->api_mapper($json_body));
+        return $this->count() > $count;
+    }
+
+    /**
+     * add the triples that define the table columns to this list
+     *
+     * a column is defined by a triple that links a phrase to a system column tier, e.g. the
+     * triple "column loss" links "loss" to "mayor column (system)", so the definitions of one
+     * tier are the triples that point to the tier phrase; without them a value table falls back
+     * to the impact ranking instead of the column order the tiers and the order triples give
+     *
+     * a tier is what "column (system)" can be, so "column (system)" is the from side of the tier
+     * triple, while a definition points to its tier with the to side and the order triples that
+     * chain the definitions link a definition to a definition; the walk therefore follows both
+     * directions, and three levels from "column (system)" are the tiers, their definitions and
+     * the order triples, which is why one api call fills the cache
+     *
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one column definition has been added to this list
+     */
+    function load_column_definitions(user_message $msg): bool
+    {
+        return $this->load_related_by_name(
+            triples::SYSTEM_COLUMN, foaf_direction::BOTH, $msg, self::COLUMN_LEVELS);
+    }
+
+    /**
      * add the phrases related to the given formula to the list
      * @param formula $frm
      * @return bool
      */
-    function load_by_formula(formula $frm): bool
+    function load_by_formula(formula $frm, user_message $msg): bool
     {
         $result = false;
 
@@ -197,12 +283,12 @@ class phrase_list extends sandbox_list_named
      * to offer to the user at least a basic selection even if the backend connection is temporary lost
      * @return bool
      */
-    function load_fallback(): bool
+    function load_fallback(user_message $msg): bool
     {
         $result = false;
         if ($this->is_empty()) {
             // TODO Prio 3 replace with an frequently generated preloaded list
-            $this->set_lst($this->phrases_often_used()->lst());
+            $this->set_lst($this->phrases_often_used($msg)->lst());
             $result = true;
         }
         return $result;
@@ -211,20 +297,20 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list with the most often used phrases as a frontend fallback list
      */
-    private function phrases_often_used(): phrase_list
+    private function phrases_often_used(user_message $msg): phrase_list
     {
         $lst = new phrase_list();
         foreach (words::BASE_WORDS as $wrd_array) {
             $wrd = new word();
             $wrd->set_name($wrd_array[0]);
             $wrd->set_id($wrd_array[1]);
-            $lst->add($wrd->phrase());
+            $lst->add($wrd->phrase(), $msg);
         }
         foreach (triples::BASE_TRIPLES as $trp_array) {
             $trp = new triple();
             $trp->set_name($trp_array[0]);
             $trp->set_id($trp_array[1]);
-            $lst->add($trp->phrase());
+            $lst->add($trp->phrase(), $msg);
         }
         return $lst;
     }
@@ -245,6 +331,264 @@ class phrase_list extends sandbox_list_named
         // TODO review temp solution
         //$phr->load_by_name();
         return $phr;
+    }
+
+    /**
+     * get the names of the phrases that this list links to the given phrase by a triple
+     * e.g. for "global problem" the names "global warming" and "populism", because the list
+     * contains the triples "global warming (global problem)" and "populism (global problem)"
+     * the verb does not matter, because e.g. "is a" and "can be" both classify the from side
+     *
+     * @param phrase $phr the phrase whose children should be returned
+     * @return array the names of the phrases that link to the given phrase
+     */
+    function child_names(phrase $phr): array
+    {
+        $result = [];
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple()) {
+                $trp = $lst_phr->obj();
+                if ($trp->get_to()?->name() == $phr->name()) {
+                    $name = $trp->get_from()?->name();
+                    if ($name != null and !in_array($name, $result)) {
+                        $result[] = $name;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that this list links to the given phrase by a triple
+     *
+     * the phrase counterpart of child_names, used where the id is needed and not only the name,
+     * e.g. to load the values of the global problems from the api; unlike children() this
+     * matches the "to" side and returns the linked phrases instead of the linking triples
+     *
+     * @param phrase $phr the phrase whose children should be returned
+     * @return phrase_list the phrases that link to the given phrase
+     */
+    function child_phrases(phrase $phr): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple()) {
+                $trp = $lst_phr->obj();
+                if ($trp->get_to()?->name() == $phr->name()) {
+                    $from = $trp->get_from();
+                    if ($from != null and !$result->has_id($from->id())) {
+                        $result->add_phrase($from);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the names of the phrases that this list defines as table columns, in the order that the
+     * column order triples of solution_prio.json give: the "is next main column after" triples
+     * chain the main columns and the "is explaining column for" triples place a column behind
+     * the main column it explains, e.g. "column loss" explains "column problem (high prio)",
+     * so the loss column is right of the problem column and left of the next main column
+     *
+     * a column is defined by a triple "<phrase> can be <tier>", so this list must carry those
+     * triples; a phrase without such a triple is not returned and the caller falls back to its
+     * own ranking (see value_list::table_by_related_columns); a definition that the chain does
+     * not place is appended, ordered by its tier: a prime column first (shown on every screen),
+     * then a second column (hidden on a small screen), then a third column (only on a wide one)
+     *
+     * @return array the column phrase names, the leftmost column first
+     */
+    function column_names(): array
+    {
+        $col_by_def = $this->column_definitions();
+        $result = [];
+        foreach ($this->definition_order(array_keys($col_by_def)) as $def_name) {
+            // a phrase defined as a column twice keeps its first position
+            if (!in_array($col_by_def[$def_name], $result)) {
+                $result[] = $col_by_def[$def_name];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the tier of the table column of the given phrase name
+     *
+     * the tier says on which screens the column is shown: a mayor column on every screen, a main
+     * column not on a small one and a minor column on a wide one only
+     *
+     * @param string $name the name of the column phrase e.g. "loss"
+     * @return string the tier name e.g. "mayor column (system)" or '' if the column is not defined
+     */
+    function column_tier(string $name): string
+    {
+        $result = '';
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $result == '') {
+                $trp = $phr->obj();
+                $to_name = $trp->get_to()?->name() ?? '';
+                if (in_array($to_name, triples::SYSTEM_COLUMN_TIERS) and $trp->get_from()?->name() == $name) {
+                    $result = $to_name;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the column definitions of this list, keyed by the name of the defining triple
+     *
+     * @return array per definition triple name e.g. "column loss" the column phrase name "loss",
+     *               ordered by the tier, which orders the definitions the chain does not place
+     */
+    private function column_definitions(): array
+    {
+        $result = [];
+        foreach (triples::SYSTEM_COLUMN_TIERS as $tier) {
+            foreach ($this->lst() as $phr) {
+                if ($phr->is_triple()) {
+                    $trp = $phr->obj();
+                    // the tier is the "to" side, so the column phrase is the "from" side
+                    if ($trp->get_to()?->name() == $tier) {
+                        $name = $trp->get_from()?->name();
+                        // a phrase assigned to two tiers keeps the more important one
+                        if ($name != null and !in_array($name, $result)) {
+                            $result[$phr->name()] = $name;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * order the given column definitions by the main column chain of this list
+     *
+     * each main column is directly followed by the columns that explain it, so the next main
+     * column starts only once the explaining columns of the previous one are placed
+     *
+     * @param array $def_names the names of the column definition triples e.g. "column loss"
+     * @return array the definition names, the leftmost column first
+     */
+    private function definition_order(array $def_names): array
+    {
+        $explains = $this->explaining_map();
+        $mains = $this->main_column_chain();
+        foreach (array_keys($explains) as $main) {
+            // a main column that no chain places still keeps its explaining columns
+            if (!in_array($main, $mains)) {
+                $mains[] = $main;
+            }
+        }
+        $result = [];
+        foreach ($mains as $main) {
+            $group = array_merge([$main], $explains[$main] ?? []);
+            foreach ($group as $name) {
+                // only a definition of this list can be a column, and only one column
+                if (in_array($name, $def_names) and !in_array($name, $result)) {
+                    $result[] = $name;
+                }
+            }
+        }
+        // a definition that the chain does not place keeps the order of the definitions
+        foreach ($def_names as $name) {
+            if (!in_array($name, $result)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * walk the "is next main column after" triples of this list from the leftmost main column
+     *
+     * @return array the names of the main column definitions, the leftmost main column first
+     */
+    private function main_column_chain(): array
+    {
+        $next = $this->main_column_map();
+        $result = [];
+        // a main column that follows no other main column starts a chain, so the walk begins there
+        foreach (array_keys($next) as $head) {
+            if (!in_array($head, $next)) {
+                $name = $head;
+                $steps = 0;
+                // the step limit stops a circular chain, which the data should not contain
+                while ($name != '' and !in_array($name, $result) and $steps <= count($next)) {
+                    $result[] = $name;
+                    $name = $next[$name] ?? '';
+                    $steps++;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array per main column definition name the main column that this list places behind it
+     */
+    private function main_column_map(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                $trp = $phr->obj();
+                // the "to" side is the main column before, so the "from" side follows it
+                if ($trp->get_verb()?->name() == verbs::BEFORE_NAME) {
+                    $result[$trp->get_to()?->name()] = $trp->get_from()?->name();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array per main column definition name the names of the columns that explain it,
+     *               in the order of the "is explaining column for" triples of this list
+     */
+    private function explaining_map(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                $trp = $phr->obj();
+                // the "to" side is the explained main column, so the "from" side explains it
+                if ($trp->get_verb()?->name() == verbs::AFTER_NAME) {
+                    $result[$trp->get_to()?->name()][] = $trp->get_from()?->name();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrase that this list defines as the table column of the given name
+     *
+     * the caller has the column name from column_names() and needs the phrase itself to head the
+     * column with a link and to ask child_names() which phrases belong into that column
+     *
+     * @param string $name the name of a column phrase e.g. "solution"
+     * @return phrase|null the column phrase or null if this list defines no column of that name
+     */
+    function column_phrase(string $name): ?phrase
+    {
+        $result = null;
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $result == null) {
+                $trp = $phr->obj();
+                // the tier is the "to" side, so the column phrase is the "from" side
+                if (in_array($trp->get_to()?->name(), triples::SYSTEM_COLUMN_TIERS)) {
+                    if ($trp->get_from()?->name() == $name) {
+                        $result = $trp->get_from();
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -346,7 +690,7 @@ class phrase_list extends sandbox_list_named
     ): ?string
     {
         $html = new html_base();
-        $url = $html->url_new(views::WORD_RELATED_ID, $parent_id);
+        $url = $html->url_back(views::WORD_RELATED_ID, $parent_id);
         return $html->ref($url, '...');
     }
 
@@ -362,14 +706,66 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb the verb to filter the child phrases
      * @return phrase_list the filtered children
      */
-    function children(phrase $phr, verb|null $vrb = null): phrase_list
+    function children(phrase $phr, user_message $msg, verb|null $vrb = null): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->get_from()->id() == $phr->id()) {
-                        $result->add($trp);
+                        $result->add($trp, $msg);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the phrase of this cache that matches the given phrase, so that a phrase which
+     * carries only the id and the name (e.g. a phrase of a value group) can be enriched
+     * with the vars that only the fully loaded phrase has, like the description
+     *
+     * @param phrase $phr the phrase to look up, e.g. a phrase of a value group
+     * @return phrase the phrase of this cache or the given phrase if this cache has none
+     */
+    function cached_phrase(phrase $phr): phrase
+    {
+        $result = $phr;
+        foreach ($this->lst() as $cac_phr) {
+            if ($cac_phr->id() == $phr->id() and $result === $phr) {
+                $result = $cac_phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the tooltip text for the given phrase based on this cache:
+     * the description of the phrase itself, or - if the phrase has none - the description of
+     * the phrase it is a symbol for, e.g. the description of "million" is used for "mio",
+     * because a symbol is only useful if the reader knows what it stands for
+     *
+     * @param phrase $phr the phrase that should get a tooltip, e.g. "mio"
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return string the tooltip text or '' if this cache knows no description
+     */
+    function tooltip(phrase $phr, user_message $msg): string
+    {
+        global $ui_sys;
+
+        $result = $this->cached_phrase($phr)->get_description() ?? '';
+        if ($result == '') {
+            $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
+            if ($vrb != null) {
+                // the symbol is the from side, so the described phrase is the to side
+                foreach ($this->lst() as $cac_phr) {
+                    if ($cac_phr->is_triple() and $result == '') {
+                        $trp = $cac_phr->obj();
+                        if ($trp->get_verb()?->id() == $vrb->id()
+                            and $trp->get_from()?->id() == $phr->id()) {
+                            $result = $this->cached_phrase($trp->get_to())->get_description() ?? '';
+                        }
                     }
                 }
             }
@@ -384,14 +780,14 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb the verb to filter the child phrases
      * @return phrase_list the filtered parents
      */
-    function parents(phrase $phr, verb|null $vrb = null): phrase_list
+    function parents(phrase $phr, user_message $msg, verb|null $vrb = null): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->get_to()->id() == $phr->id()) {
-                        $result->add($trp->get_from());
+                        $result->add($trp->get_from(), $msg);
                     }
                 }
             }
@@ -406,14 +802,14 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb the verb to filter the child phrases
      * @return phrase_list the filtered parents
      */
-    function parent_triples(phrase $phr, verb|null $vrb = null): phrase_list
+    function parent_triples(phrase $phr, user_message $msg, verb|null $vrb = null): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->get_to()->id() == $phr->id()) {
-                        $result->add($trp);
+                        $result->add($trp, $msg);
                     }
                 }
             }
@@ -428,14 +824,14 @@ class phrase_list extends sandbox_list_named
      * @param array $vrb_ids the database ids of the verbs to exclude
      * @return phrase_list the triples to the given phrase without the excluded verbs
      */
-    function parent_triples_ex_verbs(phrase $phr, array $vrb_ids): phrase_list
+    function parent_triples_ex_verbs(phrase $phr, array $vrb_ids, user_message $msg): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if (!in_array($trp->get_verb()?->id(), $vrb_ids)) {
                     if ($trp->get_to()->id() == $phr->id()) {
-                        $result->add($trp);
+                        $result->add($trp, $msg);
                     }
                 }
             }
@@ -475,13 +871,14 @@ class phrase_list extends sandbox_list_named
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
-        $msk_lst = $msk_lst->ex_system();
+        $msk_lst = $msk_lst->ex_system($msg);
         return $msk_lst->selector($form, views::PHRASE_ID, $name, $msg_id);
     }
 
@@ -511,11 +908,11 @@ class phrase_list extends sandbox_list_named
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null with the most useful time phrase
      */
-    function assume_time(?term_list $trm_lst = null): ?phrase
+    function assume_time(user_message $msg, ?term_list $trm_lst = null): ?phrase
     {
         $time_phr = null;
-        $wrd_lst = $this->wrd_lst_all();
-        $time_wrd = $wrd_lst->assume_time($trm_lst);
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $time_wrd = $wrd_lst->assume_time($msg, $trm_lst);
         if (isset($time_wrd)) {
             $time_phr = $time_wrd;
         }
@@ -526,7 +923,7 @@ class phrase_list extends sandbox_list_named
      * build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
      * @return word_list with all words of the phrases split into single words
      */
-    function wrd_lst_all(): word_list
+    function wrd_lst_all(user_message $msg): word_list
     {
         log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
 
@@ -541,21 +938,21 @@ class phrase_list extends sandbox_list_named
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
                     if ($phr->name() == '') {
-                        $phr->load();
+                        $phr->load($msg);
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
                     // TODO check if old can ge removed: if ($phr->id() > 0) {
                     if (get_class($phr->obj()) == word::class) {
-                        $wrd_lst->add($phr->obj());
+                        $wrd_lst->add($phr->obj(), $msg);
                     } elseif (get_class($phr->obj()) == triple::class) {
                         // use the recursive triple function to include the foaf words
-                        $sub_wrd_lst = $phr->obj()->wrd_lst();
+                        $sub_wrd_lst = $phr->obj()->wrd_lst($msg);
                         foreach ($sub_wrd_lst->lst() as $wrd) {
                             if ($wrd->name() == '') {
-                                $wrd->load_by_id($wrd->id());
+                                $wrd->load_by_id($wrd->id(), $msg);
                                 log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                             }
-                            $wrd_lst->add($wrd);
+                            $wrd_lst->add($wrd, $msg);
                         }
                     } else {
                         log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj()->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
@@ -572,7 +969,7 @@ class phrase_list extends sandbox_list_named
      * get the words from the phrase list
      * @return word_list with the direct words of the phrase list
      */
-    function word_list(): word_list
+    function word_list(user_message $msg): word_list
     {
         $wrd_lst = new word_list();
 
@@ -586,7 +983,7 @@ class phrase_list extends sandbox_list_named
             } elseif ($wrd->name() == '') {
                 log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
             } elseif ($wrd::class == word::class) {
-                $wrd_lst->add($wrd);
+                $wrd_lst->add($wrd, $msg);
             }
         }
 
@@ -597,7 +994,7 @@ class phrase_list extends sandbox_list_named
      * get the triples from the phrase list
      * @return triple_list with the direct triples of the phrase list
      */
-    function triple_list(): triple_list
+    function triple_list(user_message $msg): triple_list
     {
         $trp_lst = new triple_list();
 
@@ -611,7 +1008,7 @@ class phrase_list extends sandbox_list_named
             } elseif ($trp->name() == '') {
                 log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
             } elseif ($trp::class == triple::class) {
-                $trp_lst->add($trp);
+                $trp_lst->add($trp, $msg);
             }
         }
 
@@ -637,7 +1034,7 @@ class phrase_list extends sandbox_list_named
         usort($lst, function (phrase $a, phrase $b) {
             return $b->impact() <=> $a->impact()
                 ?: strcmp($a->name() ?? '', $b->name() ?? '')
-                ?: $a->id() <=> $b->id();
+                    ?: $a->id() <=> $b->id();
         });
         $this->set_lst($lst);
     }
@@ -683,14 +1080,14 @@ class phrase_list extends sandbox_list_named
      * @param array $vrb_ids the database ids of the verbs to exclude (e.g. symbol, alias, is a)
      * @return string the html code of the grouped related phrases
      */
-    function name_link_grouped_by_verb(phrase $phr, array $vrb_ids): string
+    function name_link_grouped_by_verb(phrase $phr, array $vrb_ids, user_message $msg): string
     {
         $html = new html_base();
         $result = '';
 
         // collect the linked (from) phrases per verb of the parent triples
         $grp_lst = [];
-        foreach ($this->parent_triples_ex_verbs($phr, $vrb_ids)->lst() as $trp) {
+        foreach ($this->parent_triples_ex_verbs($phr, $vrb_ids, $msg)->lst() as $trp) {
             $vrb = $trp->get_verb();
             $from = $trp->get_from();
             if ($vrb != null and $from != null) {
@@ -698,7 +1095,7 @@ class phrase_list extends sandbox_list_named
                 if (!array_key_exists($vrb_id, $grp_lst)) {
                     $grp_lst[$vrb_id] = ['verb' => $vrb, 'phrases' => new phrase_list()];
                 }
-                $grp_lst[$vrb_id]['phrases']->add($from);
+                $grp_lst[$vrb_id]['phrases']->add($from, $msg);
             }
         }
 
@@ -733,12 +1130,23 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the plural of each phrase is its own user data, so the list asks every phrase instead of
+     * adding an "s" to the list text, which would pluralise only the last phrase of the list
+     *
+     * @param string $lan the code of the user interface language e.g. "en"
      * @returns string the html code to display the plural of the phrases with the most useful link
-     * TODO replace adding the s with a language specific functions that can include exceptions
      */
-    private function plural(): string
+    function plural(string $lan = languages::DEFAULT): string
     {
-        return $this->name_link() . 's';
+        $result = '';
+        $this->sort_by_impact();
+        foreach ($this->lst() as $phr) {
+            if ($result <> '') {
+                $result .= ', ';
+            }
+            $result .= $phr->name_link_plural($lan);
+        }
+        return $result;
     }
 
     /**
@@ -776,12 +1184,12 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list of the measure / unit phrases e.g. m/s
      */
-    function measure_list(): phrase_list
+    function measure_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if ($phr->is_measure()) {
-                $result->add($phr);
+            if ($phr->is_measure($msg)) {
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -790,12 +1198,54 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list without the measure / unit phrases e.g. speed of light
      */
-    function ex_measure_list(): phrase_list
+    function ex_measure_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if (!$phr->is_measure()) {
-                $result->add($phr);
+            if (!$phr->is_measure($msg)) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list of the scaling phrases e.g. billion
+     */
+    function scaling_list(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_scaling($msg)) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list without the scaling phrases e.g. without billion
+     */
+    function ex_scaling_list(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_scaling($msg)) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list without the time phrases e.g. second
+     */
+    function ex_time(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_time($msg)) {
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -804,12 +1254,12 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list of information only phrases
      */
-    function info_list(): phrase_list
+    function info_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if ($phr->is_info()) {
-                $result->add($phr);
+            if ($phr->is_info($msg)) {
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -818,12 +1268,12 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list of phrases without the info phrases e.g. without 1967 (year of definition)
      */
-    function ex_info_list(): phrase_list
+    function ex_info_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if (!$phr->is_info()) {
-                $result->add($phr);
+            if (!$phr->is_info($msg)) {
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -837,11 +1287,11 @@ class phrase_list extends sandbox_list_named
     /**
      * @return bool true if one of the phrases is of type percent
      */
-    function has_percent(): bool
+    function has_percent(user_message $msg): bool
     {
         $result = false;
         foreach ($this->lst() as $phr) {
-            if ($phr->is_percent()) {
+            if ($phr->is_percent($msg)) {
                 $result = true;
             }
         }
@@ -1002,6 +1452,7 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
+     * TODO Prio 1 review
      * @return group|null the group with only the id set based to this list or null if no group matches
      */
     function get_grp_id(bool $do_save = true): ?group
@@ -1012,9 +1463,11 @@ class phrase_list extends sandbox_list_named
             log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
             $grp = new group();
+            /*
             $grp_id = new group_id();
             $grp->set_id($grp_id->get_id($this));
             $grp->set_phrase_list(clone $this);
+            */
         }
         return $grp;
     }
@@ -1027,10 +1480,11 @@ class phrase_list extends sandbox_list_named
      * TODO review
      * offer the user to add a new value for these phrases
      * similar to value.php/btn_add
+     * @param array $url_arr the url vars of the calling page for the back link
      */
-    function btn_add_value($back): string
+    function btn_add_value(array $url_arr = []): string
     {
-        $result = \Zukunft\ZukunftCom\main\php\web\btn_add_value($this, Null, $back);
+        $result = \Zukunft\ZukunftCom\main\php\web\html\btn_add_value($this, Null, $url_arr);
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';
@@ -1042,7 +1496,7 @@ class phrase_list extends sandbox_list_named
         }
         $url_phr = $this->id_url_long();
 
-        $val_btn_call  = rest_ctrl::PATH_FIXED .'value_add.php?back='.$back.$url_phr;
+        $val_btn_call  = new html_base()->url_with_back(rest_ctrl::PATH_FIXED . 'value_add.php', $url_arr) . $url_phr;
         $result .= \html\btn_add ($val_btn_title, $val_btn_call);
         zu_debug('phrase_list->btn_add_value -> done');
         */
@@ -1053,9 +1507,10 @@ class phrase_list extends sandbox_list_named
      * TODO review
      * shows all phrases that are part of a list
      * e.g. used to display all phrases linked to a word
+     * @param array $url_arr the url vars of the calling page for the back link
      * @returns string the html code to edit a linked word
      */
-    function dsp_graph(phrase $root_phr, string $back = ''): string
+    function dsp_graph(phrase $root_phr, user_message $msg, array $url_arr = []): string
     {
         log_debug();
         $result = '';
@@ -1065,9 +1520,9 @@ class phrase_list extends sandbox_list_named
             $result .= 'Nothing linked to ' . $root_phr->name() . ' until now. Click here to link it.';
         } else {
             $phr_lst = new phrase_list();
-            $phr_lst->set_from_json($this->api_json());
-            $wrd_lst = $phr_lst->wrd_lst_all();
-            $result .= $wrd_lst->tbl($back);
+            $phr_lst->set_from_json($this->api_json([], $msg));
+            $wrd_lst = $phr_lst->wrd_lst_all($msg);
+            $result .= $wrd_lst->tbl($url_arr);
             foreach ($this->lst() as $phr) {
                 // show the RDF graph for this verb
                 $phr->name();

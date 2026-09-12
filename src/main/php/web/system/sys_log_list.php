@@ -32,21 +32,20 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\system;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::API_OBJECT . 'api_message.php';
+include_once html_paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
@@ -74,12 +73,9 @@ class sys_log_list
      * construct and map
      */
 
-    function __construct(?string $api_json = null)
-    {
-        if ($api_json != null) {
-            $this->set_from_json($api_json);
-        }
-    }
+    // an empty list needs no message, so this class has no constructor;
+    // a caller with an api json message fills the list with set_from_json($api_json, $msg),
+    // which reports the mapping problems
 
 
     /*
@@ -89,30 +85,31 @@ class sys_log_list
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if there are no errors
      */
-    function set_from_json(string $json_api_msg): user_message
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true), $msg);
     }
 
     /**
      * set the vars of these list display objects bases on the api json array
      * TODO can be moved to list_dsp as soon as all list api message include the header
      * @param array $json_array an api list json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if there are no errors
      */
-    function set_from_json_array(array $json_array): user_message
+    function set_from_json_array(array $json_array, user_message $msg): bool
     {
         $ctrl = new controller();
         $json_array = $ctrl->check_api_msg($json_array, api::JSON_BODY_SYS_LOG);
-        $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = new sys_log();
-            $new->api_mapper($value, $usr_msg);
+            $new->api_mapper($value, $msg);
             $this->add($new);
         }
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
 
@@ -123,11 +120,12 @@ class sys_log_list
     /**
      * request the system log entries related to the session user from the backend
      * @param string $dsp_type which log entries should be loaded e.g. 'all' or only the entries relevant for the user
+     * @param user_message $msg the reasons why loading has failed
      * @param int $size the maximal number of log entries to load
      * @param int $page the offset in pages of the given size to load additional entries
-     * @return user_message ok or the reason why loading has failed
+     * @return bool true if all fine
      */
-    function load_by_user(string $dsp_type, int $size, int $page = 0): user_message
+    function load_by_user(string $dsp_type, user_message $msg, int $size, int $page = 0): bool
     {
         $data = [];
         $data[url_var::LOG_STATUS] = $dsp_type;
@@ -135,7 +133,7 @@ class sys_log_list
         $data[url_var::LOG_PAGE] = $page;
         $rest = new rest_call();
         $json_body = $rest->api_get($this::class, $data);
-        return $this->set_from_json_array($json_body);
+        return $this->set_from_json_array($json_body, $msg);
     }
 
 
@@ -149,27 +147,27 @@ class sys_log_list
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return string with the api json string that should be sent to the backend
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name();
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_array($typ_lst);
+        $vars = $this->api_array($typ_lst, $msg);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $result = array();
         foreach ($this->lst as $obj) {
             if ($obj != null) {
-                $result[] = $obj->api_array($typ_lst);
+                $result[] = $obj->api_array($typ_lst, $msg);
             }
         }
         return $result;
@@ -233,11 +231,11 @@ class sys_log_list
     }
 
     /**
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_arr the url vars of the calling page for the back link of the close links
      * @return string with a list of the sys_log names with html links
      * ex. names_linked
      */
-    function display_admin(user $usr, string $back = '', string $style = ''): string
+    function display_admin(user $usr, array $url_arr = [], string $style = ''): string
     {
         $html = new html_base();
         $result = '';
@@ -245,7 +243,7 @@ class sys_log_list
             if ($result == '') {
                 $result .= $sys_log->header_admin();
             }
-            $result .= $sys_log->display_admin($usr, $back, $style);
+            $result .= $sys_log->display_admin($usr, $url_arr, $style);
         }
         return $html->tbl($result);
     }
@@ -253,12 +251,12 @@ class sys_log_list
     /**
      * display the error that are related to the user, so that he can track when they are closed
      * or display the error that are related to the user, so that he can track when they are closed
-     * called also from user_display.php/dsp_errors
+     * @param user_message $msg to collect error message during the html creation
      * @param user|null $usr e.g. an admin user to allow updating the system errors
-     * @param string $back
+     * @param array $url_arr the url vars of the calling page for the back link of the close links
      * @return string the html code of the system log
      */
-    function get_html(?user $usr = null, string $back = ''): string
+    function get_html(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
         $html = new html_base();
         $result = ''; // reset the html code var
@@ -272,7 +270,7 @@ class sys_log_list
                 if ($row_nbr == 1) {
                     $rows .= $this->headline_html();
                 }
-                $rows .= $log_ui->get_html($usr, $back);
+                $rows .= $log_ui->get_html($msg, $usr, $url_arr);
             }
             $result = $html->tbl($rows);
         }
@@ -298,11 +296,11 @@ class sys_log_list
         return $result;
     }
 
-    function get_html_page(?user $usr = null, string $back = ''): string
+    function get_html_page(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
-        return $this->get_html_header('System log')
+        return $this->get_html_header('System log', $msg)
             . $this->get_html_navbar()
-            . $this->get_html($usr, $back)
+            . $this->get_html($msg, $usr, $url_arr)
             . $this->get_html_footer();
     }
 
@@ -310,7 +308,7 @@ class sys_log_list
      * to review
      */
 
-    function get_html_header(string $title): string
+    function get_html_header(string $title, user_message $msg): string
     {
         if ($title == null) {
             $title = 'api message';
@@ -318,7 +316,7 @@ class sys_log_list
             $title = 'api message';
         }
         $html = new html_base();
-        return $html->header($title);
+        return $html->header($title, $msg);
     }
 
     function get_html_navbar(): string

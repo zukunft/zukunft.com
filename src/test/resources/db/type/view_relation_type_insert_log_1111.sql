@@ -41,7 +41,7 @@ SELECT view_relation_type_insert_log_1111
 
 SELECT view_relation_type_insert_log_1111
     ('add components'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      823::smallint,
      824::smallint,

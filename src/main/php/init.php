@@ -8,7 +8,8 @@
     the target start process has these steps
     1. set the start time in the script called by the user
        1.1 set the const path and code files with const.php in the same folder
-       1.2 set the basis system vars with this init.php in the main backend, frontend or test folder
+       1.2 set the basis system vars with this init.php in the main backend or test folder
+           (the frontend scripts use web/init_ui.php instead)
     2. load the environment that can only be changed by the server admin and a change requires a restart
        2.1 done by application.php, frontend.php or test_app.php
        2.2 these script open the database connection, the api connection or both for testing
@@ -42,7 +43,7 @@
 */
 
 // add as first step a global debug level var to allow also interactive debugging
-global $debug;
+global $debug; // to activate additional logging levels
 
 // check php version
 $version = explode('.', PHP_VERSION);
@@ -58,12 +59,6 @@ include_once CONST_PATH . 'paths.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-// set all path for the frontend program code here at once
-// TODO Prio 1 move to init_ui.php
-const WEB_CONST_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
-include_once WEB_CONST_PATH . 'paths.php';
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-
 // global vars for system control
 include_once paths::MODEL_HELPER . 'system_object.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
@@ -74,14 +69,9 @@ $sys = new system_object('init');
 include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
-include_once html_paths::LOG_TEXT . 'text_log.php';
-use Zukunft\ZukunftCom\main\php\web\log_text\text_log;
-global $log_txt; // the frontend log object for standard io logging (incl. the html header display)
-$log_txt = new text_log();
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_con; // the database connection
-global $usr;    // the session user
 
 // TODO check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();
@@ -92,7 +82,7 @@ include_once paths::DB . 'db_check.php';
 
 
 // include all other libraries that are usually needed
-include_once paths::MODEL_CONST . 'env.php';
+include_once paths::SHARED_CONST . 'env.php';
 include_once paths::SERVICE . 'db_cl.php';
 include_once paths::SERVICE . 'config.php';
 

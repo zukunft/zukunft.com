@@ -87,15 +87,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * fill the vars with this db id object based on the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -117,12 +117,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_api(string $api_json, user_message $usr_msg): bool
+    function set_from_api(string $api_json, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
+        return $this->api_mapper(json_decode($api_json, true), $msg);
     }
 
 
@@ -151,15 +151,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param string $key_name the name of the key as defined by object const
      * @return bool true if the object has been loaded
      */
-    function load_by_key(string $key, string $key_name): bool
+    function load_by_key(string $key, string $key_name, user_message $msg): bool
     {
         if ($this:: class == user::class) {
             if ($key_name == user::KEY_IP) {
-                return $this->load_by_ip($key);
+                return $this->load_by_ip($key, $msg);
             } elseif ($key_name == user::KEY_NAME) {
-                return $this->load_by_name($key);
+                return $this->load_by_name($key, $msg);
             } elseif ($key_name == user::KEY_EMAIL) {
-                return $this->load_by_email($key);
+                return $this->load_by_email($key, $msg);
             } else {
                 return false;
             }
@@ -181,8 +181,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
      */
     function del(user_message $msg): bool
     {
-        global $sys;
-        $usr = $sys?->usr_req;
+        $usr = $msg->usr;
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {
@@ -193,7 +192,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         } else {
             // refresh the object with the database to include all updates utils now
             $reloaded = false;
-            $reloaded_id = $this->load_by_id($this->id());
+            $reloaded_id = $this->load_by_id($this->id(), $msg);
             if ($reloaded_id != 0) {
                 $reloaded = true;
             }
@@ -213,7 +212,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                         . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
                     // TODO check if there are related log entries and if yes exclude it instead of delete
-                    $msg->merge($this->del_exe($usr));
+                    $this->del_exe($msg);
                 }
             }
         }
@@ -222,24 +221,20 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
     /**
      * delete the complete object (the calling function del must have checked that no one uses this object)
-     * @param user $usr_req the user who has requested the deletion
-     * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $msg with the user who has requested the deletion and for the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @returns bool true if everything is fine
      */
-    protected function del_exe(user $usr_req): user_message
+    protected function del_exe(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr_req;
-
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
-        $usr_msg->merge($del_msg);
+        $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
 
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
 
@@ -251,17 +246,17 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user with the user set who has requested the deletion
+     * @param user_message $msg collect the messages for the user with the user set who has requested the deletion
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
-        if ($this->can_delete($usr_msg)) {
+        if ($this->can_delete($msg)) {
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
             // set the sql query type
@@ -279,7 +274,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
             if ($sc_par_lst_used->incl_log()) {
                 // log functions must always use named parameters
                 $sc_par_lst_used->add(sql_type::NAMED_PAR);
-                $qp = $this->sql_delete_and_log($sc, $qp, $usr_msg->usr, $sc_par_lst_used);
+                $qp = $this->sql_delete_and_log($sc, $qp, $msg->usr, $msg, $sc_par_lst_used);
             } else {
                 $par_lst = [$this->id()];
                 $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
@@ -296,12 +291,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param sql_par $qp the query parameter with the name already set
      * @param user $usr_req the user who has requested the deletion
      * @param sql_type_list $sc_par_lst
+     * @param user_message $msg to report a change log entry that cannot be written
      * @return sql_par
      */
     private function sql_delete_and_log(
         sql_creator   $sc,
         sql_par       $qp,
         user          $usr_req,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -362,12 +359,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $sc_log = clone $sc;
         if ($key_fld != '') {
             $log = new change($usr_req);
-            $log->set_class($this::class);
-            $log->set_field($key_fld);
+            $log->set_class($this::class, $msg);
+            $log->set_field($key_fld, $msg);
             $log->old_value = $this->unique_value();
             $log->new_value = null;
             $qp_log = $log->sql_insert_log(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $key_fld, '', $key_fld, $id_val);
+                $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $key_fld, '', $key_fld, $id_val);
         } else {
             $qp_log = new sql_par($this::class, $sc_par_lst);
             log_warning('No key found for the logging in db_id_object_non_sandbox::sql_delete_and_log');
@@ -457,15 +454,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * overwrite
      */
 
-    function load_by_ip(string $ip): bool
+    function load_by_ip(string $ip, user_message $msg): bool
     {
-        log_err('load_by_ip used but not overwritten in ' . $this::class);
+        log_err_msg('load_by_ip used but not overwritten in ' . $this::class, $msg);
         return false;
     }
 
-    function load_by_email(string $email): bool
+    function load_by_email(string $email, user_message $msg): bool
     {
-        log_err('load_by_email used but not overwritten in ' . $this::class);
+        log_err_msg('load_by_email used but not overwritten in ' . $this::class, $msg);
         return false;
     }
 
@@ -483,7 +480,6 @@ class db_id_object_non_sandbox extends db_object_seq_id
     {
         $msg_txt = 'import_mapper used but not overwritten in ' . $this::class;
         log_err($msg_txt);
-        $msg = new user_message();
         $msg->add_message_text($msg_txt);
         return $msg->is_ok();
     }

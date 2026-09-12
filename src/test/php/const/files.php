@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -64,6 +64,13 @@ class files
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
 
+    // the snapshots that no test of a run writes, but that must never be removed by the
+    // cleanup of the unused test files e.g. the initial test page created before the
+    // snapshots have been named by the object id
+    CONST array SNAPSHOT_KEEP = [
+        'word_add' . self::HTML,
+    ];
+
 
     /*
      * docs
@@ -72,6 +79,9 @@ class files
     CONST string DOCS_OBJECTS = test_paths::DOCS . 'code_objects_all' . self::MD;
     CONST string DOCS_FUNCTIONS = test_paths::DOCS . 'code_functions_all' . self::MD;
     CONST string DOCS_NAME_EXCEPTIONS = test_paths::DOCS . 'code_object_name_exceptions' . self::MD;
+    CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
+    CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
+    CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;
 
 
     /*
@@ -121,11 +131,18 @@ class files
     CONST string IMPORT_COMPONENTS = test_paths::IMPORT_UNIT . 'components';
     CONST string IMPORT_RESULT_CALC = test_paths::IMPORT_UNIT . 'result_calc_simple';
     CONST string IMPORT_CALC_VALIDATION = test_paths::IMPORT_UNIT . 'calc_validation';
+    // the three sample files for the data object merge test and the expected merge result
+    CONST string IMPORT_MERGE_1 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online1';
+    CONST string IMPORT_MERGE_2 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online2';
+    CONST string IMPORT_MERGE_3 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online3';
+    CONST string IMPORT_MERGE_RESULT = test_paths::IMPORT_UNIT . 'offline_is_better_than_online';
     CONST string IMPORT_CALC_VALIDATION_MISMATCH = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_mismatch';
     CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
     CONST string IMPORT_VIEW_ROW_NOT_CLOSED = test_paths::IMPORT_INCONSISTENCY . 'view_row_not_closed';
     CONST string IMPORT_VIEW_COMPONENT_POS_DOUBLE = test_paths::IMPORT_INCONSISTENCY . 'view_component_pos_double';
     CONST string IMPORT_TRIPLE_LINK_AMBIGUOUS = test_paths::IMPORT_INCONSISTENCY . 'triple_link_ambiguous';
+    CONST string IMPORT_VALUE_SOURCE_NOT_A_NAME = test_paths::IMPORT_INCONSISTENCY . 'value_source_not_a_name';
+    CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT_INCONSISTENCY . 'version_newer_test' . self::JSON;
     CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
     CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
     CONST string IMPORT_NO_UPDATE = test_paths::IMPORT . 'no_update';
@@ -134,7 +151,6 @@ class files
     CONST string IMPORT_UNDO_EXT = '_undo';
 
     CONST string IMPORT_WARNING = test_paths::IMPORT . 'warning_and_error_test' . self::JSON;
-    CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT . 'version_newer_test' . self::JSON;
 
     CONST string IMPORT_COMPANIES = test_paths::IMPORT . 'companies' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166' . self::JSON;
@@ -179,6 +195,44 @@ class files
     CONST string IMPORT_ULTIMATUM_GAME = test_paths::IMPORT . 'Ultimatum_game' . self::JSON;
     CONST string IMPORT_WORK = test_paths::IMPORT . 'work' . self::JSON;
 
+    // json files with sample data that only the full load of test/test_full_load.php imports
+    CONST string IMPORT_AI_MEDIATED_COMMUNICATION = test_paths::IMPORT . 'ai_mediated_communication' . self::JSON;
+    CONST string IMPORT_ALMENDE = test_paths::IMPORT . 'almende' . self::JSON;
+    CONST string IMPORT_ANSER_TRUST_VS_FEAR = test_paths::IMPORT . 'anser_trush_vs_fear' . self::JSON;
+    CONST string IMPORT_CARBON_LEAKAGE_EFFECT = test_paths::IMPORT . 'carbon_leakage_effect' . self::JSON;
+    CONST string IMPORT_CBAM_ALU = test_paths::IMPORT . 'CBAM_alu' . self::JSON;
+    CONST string IMPORT_CBAM_COSTS = test_paths::IMPORT . 'CBAM_costs' . self::JSON;
+    CONST string IMPORT_CBAM_PREREQUISITE = test_paths::IMPORT . 'CBAM_ prerequisite' . self::JSON;
+    CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
+    CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
+    CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
+    CONST string IMPORT_EU_BANKING = test_paths::IMPORT . 'eu_banking' . self::JSON;
+    CONST string IMPORT_EU_SOFTWARE_SOVEREIGNTY = test_paths::IMPORT . 'eu_software_sovereignty' . self::JSON;
+    CONST string IMPORT_GDU_SAMPLE = test_paths::IMPORT . 'GDU_sample' . self::JSON;
+    CONST string IMPORT_HEAT_AND_CLIMATE_POLITICS = test_paths::IMPORT . 'heat_and_climate_politics' . self::JSON;
+    CONST string IMPORT_INCENTIVE_AND_TRUST = test_paths::IMPORT . 'incentive_and_trust' . self::JSON;
+    CONST string IMPORT_INTERNET_SOLUTION_PROBLEM_MATRIX = test_paths::IMPORT . 'internet_solution_problem_matrix' . self::JSON;
+    CONST string IMPORT_METHANE_CLIMATE_METRICS = test_paths::IMPORT . 'methane_climate_metrics' . self::JSON;
+    CONST string IMPORT_NPP_CH_COST_CALC = test_paths::IMPORT . 'npp_ch_cost_calc' . self::JSON;
+    CONST string IMPORT_POWER_DEVOLUTION_PARADOX = test_paths::IMPORT . 'power_devolution_paradox' . self::JSON;
+    CONST string IMPORT_TRUE_COSTS_CLIMATE_CHANGE = test_paths::IMPORT . 'true_costs_climate_change' . self::JSON;
+    CONST string IMPORT_EDGE_FIXED_GENERATED_NAME = test_paths::IMPORT_EDGE_CASES . 'fixed_generated_name' . self::JSON;
+    CONST string IMPORT_EDGE_FIXED_NAME = test_paths::IMPORT_EDGE_CASES . 'fixed_name' . self::JSON;
+    CONST string IMPORT_EDGE_GENERATED_NAME = test_paths::IMPORT_EDGE_CASES . 'generated_name' . self::JSON;
+    CONST string IMPORT_REPUBLIK_TEST_INIT_DE = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_de' . self::JSON;
+    CONST string IMPORT_REPUBLIK_TEST_INIT_EN = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_en' . self::JSON;
+    CONST string IMPORT_V_DEM_SAMPLE = test_paths::IMPORT_V_DEM . 'v_dem_sample' . self::JSON;
+    CONST string IMPORT_WTW_SAMPLE = test_paths::IMPORT_V_DEM . 'wtw_sample' . self::JSON;
+    CONST string IMPORT_CURRENCY_WIKIPEDIA = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
+    // the json converted from the wikidata cache that can be imported into the database
+    CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
+
+    // the raw wikidata api responses used by the wikidata converter tests, so not import json
+    CONST string IMPORT_WIKIDATA_P2284 = test_paths::IMPORT_WIKIDATA_CACHE . 'P2284' . self::JSON;
+    CONST string IMPORT_WIKIDATA_Q167 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q167' . self::JSON;
+    CONST string IMPORT_WIKIDATA_Q4916 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q4916' . self::JSON;
+    CONST string IMPORT_WIKIDATA_Q4917 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q4917' . self::JSON;
+
     // XBRL filesets (zipped instance + taxonomy delivered by an issuer)
     CONST string IMPORT_XBRL_ABB_2013_ZIP = test_paths::IMPORT_XBRL_ZIP . 'abb-2013-xbrl_fileset-20131231' . self::ZIP;
     CONST string IMPORT_XBRL_ABB_2013_DIR = test_paths::IMPORT_XBRL . 'abb-2013-xbrl_fileset-20131231' . DIRECTORY_SEPARATOR;
@@ -200,16 +254,34 @@ class files
     CONST string SQL_FORMAT_TEST_MYSQL = 'word_update_log_0022004000002_user_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_INSERT = 'word_insert_log_0111005000001' . self::SQL;
     CONST string SQL_FORMAT_TEST_INSERT_MYSQL = 'word_insert_log_0111005000001_mysql' . self::SQL;
+    // the prepared insert statement without the change log function
+    CONST string SQL_FORMAT_TEST_INSERT_PREPARED = 'source_insert_01110011000' . self::SQL;
+    CONST string SQL_FORMAT_TEST_INSERT_PREPARED_MYSQL = 'source_insert_01110011000_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_UPDATE = 'word_update_0022004000002' . self::SQL;
     CONST string SQL_FORMAT_TEST_UPDATE_MYSQL = 'word_update_0022004000002_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_MYSQL = 'word_by_id_mysql' . self::SQL;
+    // a select that joins a second object, so that its user table alias (ul2) is longer than the
+    // standard table alias (l2) and each of the two is padded with the width of its own column
+    CONST string SQL_FORMAT_TEST_SELECT_JOINED = 'component_link_by_view_id' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SELECT_JOINED_MYSQL = 'component_link_by_view_id_mysql' . self::SQL;
+    // a select that is a union of selects, because a prime value is selected by its phrase ids
+    // and therefore one sub select per value is needed (see sandbox_multi::load_sql_by_ids_union)
+    CONST string SQL_FORMAT_TEST_UNION = 'value_prime_p3_by_user_list_by_ids_2' . self::SQL;
+    CONST string SQL_FORMAT_TEST_UNION_MYSQL = 'value_prime_p3_by_user_list_by_ids_2_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT = 'user_list_by_count_changes' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER_MYSQL = 'user_list_by_count_user_rows_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE = 'db_cache_page_create' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE_MYSQL = 'db_cache_page_create_mysql' . self::SQL;
+    // the create of a table with its user sandbox table and the column comments
+    CONST string SQL_FORMAT_TEST_CREATE_USER = 'source_create' . self::SQL;
+
+    // for the JSON formatter
+    CONST string JSON_FORMAT_TEST_WORDS = 'words_compact' . self::JSON;
+    CONST string JSON_FORMAT_TEST_VALUE_LIST = 'value_list_compact' . self::JSON;
+    CONST string JSON_FORMAT_TEST_LONG_LINE = 'long_line_expanded' . self::JSON;
 
     const array TEST_DATA_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,
@@ -248,6 +320,37 @@ class files
         self::IMPORT_FERMI_POLARISATION_US,
         self::IMPORT_REFERENCES,
         self::IMPORT_WORK,
+        // added at the end, so that the id of the objects used by the system tests does not change
+        self::IMPORT_AI_MEDIATED_COMMUNICATION,
+        self::IMPORT_ALMENDE,
+        self::IMPORT_ANSER_TRUST_VS_FEAR,
+        self::IMPORT_CARBON_LEAKAGE_EFFECT,
+        self::IMPORT_CBAM_SETUP,
+        self::IMPORT_CBAM_PREREQUISITE,
+        self::IMPORT_CBAM_ALU,
+        self::IMPORT_CBAM_COSTS,
+        self::IMPORT_CO2_WASTE_KEZO,
+        self::IMPORT_EU_BANKING,
+        self::IMPORT_EU_SOFTWARE_SOVEREIGNTY,
+        self::IMPORT_GDU_SAMPLE,
+        self::IMPORT_HEAT_AND_CLIMATE_POLITICS,
+        self::IMPORT_INCENTIVE_AND_TRUST,
+        self::IMPORT_INTERNET_SOLUTION_PROBLEM_MATRIX,
+        self::IMPORT_METHANE_CLIMATE_METRICS,
+        self::IMPORT_NPP_CH_COST_CALC,
+        self::IMPORT_POWER_DEVOLUTION_PARADOX,
+        self::IMPORT_TRUE_COSTS_CLIMATE_CHANGE,
+        self::IMPORT_EDGE_FIXED_GENERATED_NAME,
+        self::IMPORT_EDGE_FIXED_NAME,
+        self::IMPORT_EDGE_GENERATED_NAME,
+        self::IMPORT_REPUBLIK_TEST_INIT_DE,
+        self::IMPORT_REPUBLIK_TEST_INIT_EN,
+        self::IMPORT_V_DEM_SAMPLE,
+        self::IMPORT_WTW_SAMPLE,
+        self::IMPORT_CURRENCY_WIKIPEDIA,
+        self::IMPORT_WIKIDATA_TO_IMPORT_Q4917,
+        self::IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS,
+        self::IMPORT_XBRL_SAMPLE_JSON,
     ];
 
 
@@ -265,6 +368,7 @@ class files
     const string CLEAN_CHECK_FORMULAS = test_paths::DB_CLEANUP . 'test_formulas.sql';
     const string CLEAN_CHECK_VIEWS = test_paths::DB_CLEANUP . 'test_views.sql';
     const string CLEAN_CHECK_COMPONENTS = test_paths::DB_CLEANUP . 'test_components.sql';
+    const string CLEAN_CHECK_CHANGES = test_paths::DB_CLEANUP . 'test_changes.sql';
     const array CLEAN_CHECKS = array(
         self::CLEAN_CHECK_WORDS,
         self::CLEAN_CHECK_VERBS,
@@ -275,5 +379,6 @@ class files
         self::CLEAN_CHECK_FORMULAS,
         self::CLEAN_CHECK_VIEWS,
         self::CLEAN_CHECK_COMPONENTS,
+        self::CLEAN_CHECK_CHANGES,
     );
 }
