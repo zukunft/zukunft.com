@@ -33,6 +33,7 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -59,6 +60,7 @@ include_once html_paths::SHARED_TYPES . 'view_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -149,6 +151,25 @@ class view_list extends ListBase
             $result = true;
         }
         return $result;
+    }
+
+
+    /**
+     * the components used by the views of this list, each one only once, e.g. to offer every
+     * component that the frontend cache knows in a selector (see ui_list::component_add_row);
+     * a component used by several views is refused by add_obj and so added only once
+     *
+     * @return component_list the components of the views of this list
+     */
+    function component_list(): component_list
+    {
+        $cmp_lst = new component_list();
+        foreach ($this->lst() as $msk) {
+            foreach ($msk->get_component_list()->lst() as $cmp) {
+                $cmp_lst->add_obj($cmp);
+            }
+        }
+        return $cmp_lst;
     }
 
 

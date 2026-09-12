@@ -257,6 +257,17 @@ body {
     vertical-align: middle;
 }
 
+/* a submit button shown like the plain text around it, e.g. the 'add' of the component list of */
+/* a view, which must be a submit to send the selected component but should read like a link */
+.text-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
 /* grouped value list (value_list::list_most_relevant): a container of value groups, each with a */
 /* title and an item list; per value the phrase name on the left and the number on the right */
 .value-group {

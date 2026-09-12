@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-444 of 5717 public functions have at least 2 unit test calls; the 5273 functions below do not
+446 of 5721 public functions have at least 2 unit test calls; the 5275 functions below do not
 
 ## main backend
 
@@ -350,7 +350,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- add_verb - 0 unit test calls shared by 3 classes
     \-- add_word - 0 unit test calls shared by 2 classes
     \-- api_array - 3 unit test calls shared by 37 classes
-    \-- component_list - 0 unit test calls shared by 2 classes
+    \-- component_list - 2 unit test calls shared by 3 classes
     \-- diff_msg - 31 unit test calls shared by 28 classes
     \-- expected_total_import_time - 0 unit test calls
     \-- expected_triple_import_time - 0 unit test calls
@@ -4043,6 +4043,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- name_text - 0 unit test calls
     \-- reload - 0 unit test calls
     \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector_ui - 0 unit test calls
     \-- set_from_json - 8 unit test calls shared by 9 classes
 \-- button
     \-- add - 21 unit test calls shared by 44 classes
@@ -4191,7 +4192,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- add_id_to_views - 0 unit test calls
     \-- add_phrases - 1 unit test calls
     \-- change_log - 0 unit test calls
-    \-- component_list - 0 unit test calls shared by 2 classes
+    \-- component_list - 2 unit test calls shared by 3 classes
     \-- file_list - 0 unit test calls
     \-- formula_link_list - 0 unit test calls shared by 2 classes
     \-- formula_list - 4 unit test calls shared by 4 classes
@@ -4487,7 +4488,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_end - 0 unit test calls shared by 2 classes
     \-- form_end_with_submit - 0 unit test calls
     \-- form_field_id - 0 unit test calls
-    \-- form_hidden - 0 unit test calls
     \-- form_input - 0 unit test calls
     \-- form_input_password - 0 unit test calls
     \-- form_session_token - 0 unit test calls
@@ -4504,6 +4504,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- header - 0 unit test calls shared by 5 classes
     \-- header_html - 0 unit test calls
     \-- icon - 0 unit test calls
+    \-- icon_link - 0 unit test calls
     \-- icon_with_title - 0 unit test calls
     \-- img - 0 unit test calls
     \-- input_password - 0 unit test calls
@@ -5534,6 +5535,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- selector - 2 unit test calls shared by 23 classes
 \-- view_list
     \-- api_mapper - 16 unit test calls shared by 100 classes
+    \-- component_list - 2 unit test calls shared by 3 classes
     \-- default_id - 0 unit test calls shared by 44 classes
     \-- ex_non_phrase - 0 unit test calls
     \-- ex_system - 0 unit test calls

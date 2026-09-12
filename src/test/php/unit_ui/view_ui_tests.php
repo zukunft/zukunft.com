@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -190,6 +191,60 @@ class view_ui_tests
         $msk_empty = new view($t_msk->view_add()->api_json());
         $t->assert($test_name, $list->view_components($msk_empty, $msg),
             $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS));
+
+        // beside the position, the name and the position type each row offers the icons to change
+        // or to remove the component link; the add row has no link yet, so it shows no icons
+        $test_name = 'each component link offers the edit icon';
+        $t->assert($test_name, substr_count($cmp_html, icons::EDIT), count($sorted));
+        $test_name = 'the edit icon opens the component link edit view';
+        $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_LINK_EDIT_ID);
+        $test_name = 'each component link offers the delete icon';
+        $t->assert($test_name, substr_count($cmp_html, icons::DEL), count($sorted));
+        $test_name = 'the delete icon opens the component link delete view';
+        $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_LINK_DEL_ID);
+
+        // the last row offers every component of the frontend cache and the add action that opens
+        // the confirm page which links the selected component to the shown view
+        $test_name = 'the component list offers a component to select';
+        $t->assert_text_contains($test_name, $cmp_html, url_var::COMPONENT);
+        $test_name = 'more than one component can be selected';
+        $all_cmp_lst = $ui_sys->typ_lst_cache->msk_sys->component_list();
+        $t->assert_true($test_name, $all_cmp_lst->count() > 1);
+        $test_name = 'a view list without views offers no component to select';
+        $t->assert_true($test_name, new view_list()->component_list()->is_empty());
+        $test_name = 'the add row of the component list posts the component link add mask';
+        $t->assert_text_contains($test_name, $cmp_html,
+            $html->form_hidden(url_var::MASK, (string)views::COMPONENT_LINK_ADD_ID));
+        $test_name = 'the add row of the component list asks to confirm the link';
+        $t->assert_text_contains($test_name, $cmp_html,
+            $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM));
+        $test_name = 'the component list links the new component to the shown view';
+        $t->assert_text_contains($test_name, $cmp_html,
+            $html->form_hidden(url_var::VIEW, (string)$msk->id()));
+        $test_name = 'the new component is linked behind the last component of the view';
+        $t->assert_text_contains($test_name, $cmp_html,
+            $html->form_hidden(url_var::POSITION, (string)($sorted[count($sorted) - 1]->position + 1)));
+
+        // the add row has no position number yet, so the position column offers the add action as
+        // a plain text like the position numbers above; the column and the add text say what is
+        // selected, so the field shows no label but the short empty entry with the tooltip
+        $test_name = 'the add row offers the add action instead of a position number';
+        $add_html = $html->button_submit_text($mtr->txt(msg_id::ADD), views::COMPONENT_LINK_ADD);
+        $t->assert_text_contains($test_name, $cmp_html, $add_html);
+        $test_name = 'the add action is shown like the text around it';
+        $t->assert_text_contains($test_name, $add_html, styles::TEXT_BUTTON);
+        // only a button outside its form names the form it submits
+        $test_name = 'an add button inside its form has no form attribute';
+        $add_inline_html = $html->button_submit_text($mtr->txt(msg_id::ADD));
+        $t->assert_text_not_contains($test_name, $add_inline_html, html_base::FORM . '="');
+        $test_name = 'the add field shows the short empty entry';
+        $t->assert_text_contains($test_name, $cmp_html, $mtr->txt(msg_id::PLEASE_SELECT_SHORT));
+        $test_name = 'the add field does not show the long empty entry';
+        $t->assert_text_not_contains($test_name, $cmp_html, $mtr->txt(msg_id::PLEASE_SELECT));
+        $test_name = 'the add field explains what it selects';
+        $t->assert_text_contains($test_name, $cmp_html, $mtr->txt(msg_id::SELECT_TO_ADD));
+        $test_name = 'the add field shows no label';
+        $t->assert_text_not_contains($test_name, $cmp_html, '<' . html_base::LABEL);
 
 
         $t->subheader($ts . 'view terms');

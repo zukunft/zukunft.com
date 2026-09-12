@@ -334,6 +334,8 @@ messages:
   view_relation_edit: "change view relation"
   user_edit: "change user"
   please_select: "please select ..."
+  please_select_short: "..."
+  select_to_add: "select to add"
   form_field_plural: "Plural"
   form_field_reverse: "Reverse"
   form_field_plural_reverse: "Plural reverse"

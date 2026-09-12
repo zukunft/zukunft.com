@@ -53,6 +53,8 @@ class html_selector
     public msg_id $label_id = msg_id::FORM_SELECT;  // the message of for label of the HTML form that is translated to the frontend language
     public string $style = '';      // to add addition class information for the bootstrap version
     public string $attribute = '';  // to add addition attribute information for the bootstrap version e.g. display an disabled selector
+    public string $tooltip = '';    // the hover text of the field, e.g. to say what a selector without a label selects
+    public bool $with_label = true; // false to omit the label, e.g. for a selector inside a list row where the column says what is selected
     public string $sql = '';        // to deprecate: the list should be filled by the calling object with min objects: query to select the items
     public int|string|null $selected = null;  // id of the selected object
     public string $dummy_text = ''; // text for the NULL result if allowed
@@ -125,9 +127,10 @@ class html_selector
         // keeps multiple selectors of the same form field name on one page from colliding on id / list attributes
         $dom_id = $this->name . '_' . strtolower($this->label_id->name);
 
+        $tip = $this->tooltip_attribute();
         if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $this->style . '">';
-            if ($label != "") {
+            if ($label != "" and $this->with_label) {
                 $result .= $html->label($label, $dom_id);
             }
             $bs_class = 'form-control';
@@ -137,7 +140,7 @@ class html_selector
             }
             */
             if ($this->type == self::TYPE_DATALIST) {
-                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $dom_id . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $dom_id . '" ' . $this->attribute;
+                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $dom_id . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $dom_id . '" ' . $this->attribute . $tip;
                 if (array_key_exists($this->selected, $this->lst)) {
                     // the pre-filled value is the submitted field value (e.g. a phrase name)
                     // so escape it like every other form field value (see html_base::input)
@@ -147,13 +150,28 @@ class html_selector
                 $result .= '<datalist id="' . $dom_id . '_list">';
             } else {
                 if ($this->form != "") {
-                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $dom_id . '" ' . $this->attribute . '>';
+                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $dom_id . '" ' . $this->attribute . $tip . '>';
                 } else {
-                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" id="' . $dom_id . '" ' . $this->attribute . '>';
+                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" id="' . $dom_id . '" ' . $this->attribute . $tip . '>';
                 }
             }
         } else {
-            $result .= $label . ' <select name="' . $this->name . '" form="' . $this->form . '">';
+            if (!$this->with_label) {
+                $label = '';
+            }
+            $result .= $label . ' <select name="' . $this->name . '" form="' . $this->form . '"' . $tip . '>';
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the title attribute with the hover text of the field, empty if it has none
+     */
+    private function tooltip_attribute(): string
+    {
+        $result = '';
+        if ($this->tooltip != '') {
+            $result = ' ' . html_base::TITLE_HTML . '="' . htmlspecialchars($this->tooltip, ENT_QUOTES) . '"';
         }
         return $result;
     }

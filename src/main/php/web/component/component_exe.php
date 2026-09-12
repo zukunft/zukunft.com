@@ -429,7 +429,7 @@ class component_exe extends component
             component_types::SHOW_PLURAL_REVERSE => $form->show_plural_reverse($dbo),
             component_types::SHOW_STYLE => $form->show_style($dbo),
             component_types::SHOW_OWNER => $form->show_owner($dbo),
-            component_types::VIEW_COMPONENTS => $list->view_components($dbo, $msg),
+            component_types::VIEW_COMPONENTS => $list->view_components($dbo, $msg, $url_arr),
             component_types::VIEW_TERMS => $list->view_terms($dbo, $msg),
             component_types::SHOW_FORMULA => $form->show_formula($dbo),
             component_types::SHOW_LINKED_COMPONENT => $form->show_linked_component($dbo),

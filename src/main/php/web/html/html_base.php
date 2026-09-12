@@ -662,6 +662,23 @@ class html_base
     }
 
     /**
+     * an icon that links to a view of an object, e.g. the edit and the delete icon of a component
+     * link shown in the component list of a view
+     *
+     * @param int $msk_id the database id of the view to open e.g. views::COMPONENT_LINK_EDIT_ID
+     * @param int|string $id the database id of the object to show in that view
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::EDIT
+     * @param string $title the hover tooltip of the icon
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html code of the icon link
+     */
+    function icon_link(int $msk_id, int|string $id, string $icon, string $title, array $url_arr = []): string
+    {
+        $url = $this->url_back($msk_id, $id, $url_arr);
+        return $this->ref($url, $this->icon($icon), $title, styles::HEADING_ICON_INLINE, true);
+    }
+
+    /**
      * the html of a font awesome icon
      * @param string $icon the icon css class from web/const/icons.php e.g. icons::PASSWORD_SHOW
      * @param string $class_add an additional css class e.g. to toggle the icon visibility via css
@@ -2156,15 +2173,56 @@ class html_base
         global $mtr;
         $result = '';
         if ($refresh != '') {
-            $result = '<' . self::BUTTON
-                . ' ' . self::CLASS_HTML . '="' . self::BS_BTN_ICON . '"'
-                . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '"'
-                . ' ' . self::NAME . '="' . url_var::REFRESH . '"'
-                . ' ' . self::VALUE . '="' . $refresh . '">'
-                . $this->icon_with_title(icons::REFRESH, '', $mtr->txt(msg_id::FORM_BUTTON_REFRESH))
-                . '</' . self::BUTTON . '>';
+            $result = $this->button_link(
+                $this->icon_with_title(icons::REFRESH, '', $mtr->txt(msg_id::FORM_BUTTON_REFRESH)),
+                url_var::REFRESH, $refresh);
         }
         return $result;
+    }
+
+    /**
+     * a submit button that looks like a link, e.g. the 'add' of the component list of a view; it is
+     * a submit and not a link, because only a submit sends the value that the user has selected in
+     * the form (see docs/llm/frontend.md: no javascript)
+     *
+     * @param string $text the text shown to the user
+     * @param string $form_name the form that the button submits, needed if the button is not inside it
+     * @return string the html code of the submit button that looks like a link
+     */
+    function button_submit_text(string $text, string $form_name = ''): string
+    {
+        return $this->button_link(htmlspecialchars($text, ENT_QUOTES),
+            url_var::POST_SUBMIT, '', $form_name, styles::TEXT_BUTTON);
+    }
+
+    /**
+     * @param string $inner the html code shown inside the button e.g. an icon or an escaped text
+     * @param string $name the url var that the button posts e.g. url_var::REFRESH
+     * @param string $value the value posted for the url var, empty for a plain submit
+     * @param string $form_name the form that the button submits, empty if the button is inside it
+     * @param string $style the css class of the button e.g. styles::TEXT_BUTTON for a plain text
+     * @return string the html code of a submit button that is styled like a link
+     */
+    private function button_link(
+        string $inner,
+        string $name,
+        string $value,
+        string $form_name = '',
+        string $style = self::BS_BTN_ICON
+    ): string
+    {
+        $form_attribute = '';
+        if ($form_name != '') {
+            $form_attribute = ' ' . self::FORM . '="' . $form_name . '"';
+        }
+        return '<' . self::BUTTON
+            . ' ' . self::CLASS_HTML . '="' . $style . '"'
+            . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '"'
+            . ' ' . self::NAME . '="' . $name . '"'
+            . ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"'
+            . $form_attribute . '>'
+            . $inner
+            . '</' . self::BUTTON . '>';
     }
 
     /**

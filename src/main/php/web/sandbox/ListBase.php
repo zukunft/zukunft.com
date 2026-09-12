@@ -480,6 +480,30 @@ class ListBase extends ListOfIdObjects
         string          $type = html_selector::TYPE_SELECT
     ): string
     {
+        return $this->selector_ui($form, $selected, $name, $label_id, $style, $type)->display();
+    }
+
+    /**
+     * the same as selector, but as the frontend object, so that a caller can adjust what the
+     * selector shows before it is rendered, e.g. the empty entry and the tooltip of a selector
+     * that has no label (see ui_list::component_add_row)
+     *
+     * @param string $form the html form name which must be unique within the html page
+     * @param int|string|null $selected the unique database id of the object that has been selected
+     * @param string $name the name of this selector which must be unique within the form
+     * @param msg_id $label_id the text show to the user
+     * @param string $style the formatting code to adjust the formatting
+     * @returns html_selector the selector of this list filled with the given parameters
+     */
+    function selector_ui(
+        string          $form = '',
+        int|string|null $selected = null,
+        string          $name = '',
+        msg_id          $label_id = msg_id::FORM_SELECT,
+        string          $style = view_styles::COL_SM_4,
+        string          $type = html_selector::TYPE_SELECT
+    ): html_selector
+    {
         $sel = new html_selector();
         if (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT)) {
             // get the default selection entry
@@ -532,7 +556,7 @@ class ListBase extends ListOfIdObjects
         $sel->label_id = $label_id;
         $sel->style = $style;
         $sel->type = $type;
-        return $sel->display();
+        return $sel;
     }
 
     /**

@@ -726,6 +726,8 @@ messages:
   view_relation_edit: "Ansichtsbeziehung ändern"
   user_edit: "Benutzer ändern"
   please_select: "bitte auswählen ..."
+  please_select_short: "..."
+  select_to_add: "zum Hinzufügen auswählen"
   form_field_plural: "Plural"
   form_field_reverse: "Umgekehrt"
   form_field_plural_reverse: "Plural umgekehrt"

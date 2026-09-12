@@ -77,6 +77,10 @@ class styles
     // centred, so the heading stays prominent while the inline action stays unobtrusive
     const string HEADING_ICON_INLINE = 'heading-icon-inline';
 
+    // css class for a submit button that is shown like the plain text around it, e.g. the 'add'
+    // of the component list of a view, which must be a submit to send the selected component
+    const string TEXT_BUTTON = 'text-button';
+
     // css class for the small category line under a page-title heading
     const string SUBTITLE = 'subtitle';
 

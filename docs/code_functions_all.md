@@ -6837,6 +6837,8 @@
             html/html_base.php
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
+    \-- icon_link - section for function icon_link not yet defined that it should be wrapper for the basic html elements
+             used in /html/html_base.php
     \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic h
             tml elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /ht
@@ -6980,6 +6982,8 @@
             ents used in zukunft.com in /html/html_base.php
     \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
              for all html elements used in zukunft.com in /html/html_base.php
+    \-- button_submit_text - section for function button_submit_text not yet defined that it should be base elements - f
+            unctions for all html elements used in zukunft.com in /html/html_base.php
     \-- label_lan - section for function label_lan not yet defined that it should be base elements - functions for all h
             tml elements used in zukunft.com in /html/html_base.php
     \-- form_field_id - section for function form_field_id not yet defined that it should be base elements - functions f
@@ -7357,6 +7361,7 @@
     \-- id - section for function id not yet defined that it should be html in /sandbox/ListBase.php
     \-- get_by_code_id - section for function get_by_code_id is expected to be set and get in /sandbox/ListBase.php
     \-- selector - section for function selector not yet defined that it should be select in /sandbox/ListBase.php
+    \-- selector_ui - section for function selector_ui not yet defined that it should be select in /sandbox/ListBase.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- combine_named
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /sandbox/combine_named.php
@@ -7868,6 +7873,8 @@
             .php
 \-- view_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
+    \-- component_list - section for function component_list not yet defined that it should be load in /view/view_list.p
+            hp
     \-- name_tip - section for function name_tip not yet defined that it should be base in /view/view_list.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_list.php
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
@@ -9430,6 +9437,8 @@
         \-- html_base - @param string $text the text that should be formatted
     \-- icon
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
+    \-- icon_link
+        \-- html_base - an icon that links to a view of an object, e.g. the edit and the delete icon of a component
     \-- icon_with_title
         \-- html_base - the html of a font awesome icon
     \-- sup
@@ -9589,6 +9598,8 @@
         \-- html_base - create the html code for a label
     \-- button_refresh
         \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
+    \-- button_submit_text
+        \-- html_base - a submit button that looks like a link, e.g. the 'add' of the component list of a view; it is
     \-- label_lan
         \-- html_base - translate and create the html code for a label
     \-- form_field_id

@@ -39,6 +39,7 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
@@ -72,12 +73,14 @@ include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 
 //include_once test_paths::CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
@@ -110,6 +113,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -456,9 +460,10 @@ class ui_list extends ui_base
      *
      * @param db_object|null $dbo the view whose components should be listed
      * @param user_message $msg to report a missing cache or an unexpected selection object
+     * @param array $url_arr the url vars of the calling page for the back link of the action icons
      * @return string the component table or the message that the view has no components
      */
-    function view_components(?db_object $dbo, user_message $msg): string
+    function view_components(?db_object $dbo, user_message $msg, array $url_arr = []): string
     {
         global $mtr;
         global $ui_sys;
@@ -473,25 +478,101 @@ class ui_list extends ui_base
             // the request cache that also provides the views for the page rendering itself
             $msk = $ui_sys->typ_lst_cache->get_view_by_id($dbo->id());
             $cmp_lst = $msk?->get_component_list();
+            $html = new html_base();
+            $rows = '';
+            $last_pos = 0;
             if ($cmp_lst == null or $cmp_lst->is_empty()) {
                 $result = $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS);
             } else {
                 // the table is not cut by the configured name list limit, because the position
                 // numbers are only useful if complete and the number of components of one view
                 // is bounded by its layout; the position type name comes from the type cache
-                $html = new html_base();
                 $pos_typ_lst = $ui_sys->typ_lst_cache->pos_typ;
-                $rows = '';
                 foreach ($cmp_lst->sorted_by_position() as $cmp) {
                     $rows .= $html->tr(
                         $html->td((string)$cmp->position)
                         . $html->td($cmp->name_link([], '', views::COMPONENT_DEFAULT_ID))
-                        . $html->td($pos_typ_lst?->name($cmp->pos_type_id) ?? ''));
+                        . $html->td($pos_typ_lst?->name($cmp->pos_type_id) ?? '')
+                        . $html->td($this->component_link_icons($cmp, $url_arr)));
+                    // a component without a position does not move the end of the list
+                    $last_pos = $cmp->position ?? $last_pos;
                 }
-                $result = $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
+            }
+            // the add row follows the listed components, so the new component is linked at the end
+            $rows .= $this->component_add_row($dbo, $last_pos + 1);
+            if ($rows != '') {
+                $result .= $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for components', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the edit and the delete icon of one component link of a view, so that the user can change
+     * e.g. the position type of the link or remove the component from the view
+     *
+     * @param component $cmp the component whose link to the shown view can be changed
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html code of the two action icons, empty if the link id is not known
+     */
+    private function component_link_icons(component $cmp, array $url_arr = []): string
+    {
+        global $mtr;
+
+        $result = '';
+        // a component of a view that the api sends without the link id cannot be changed by id
+        if ($cmp->link_id != 0) {
+            $html = new html_base();
+            $result = $html->icon_link(views::COMPONENT_LINK_EDIT_ID, $cmp->link_id,
+                    icons::EDIT, $mtr->txt(msg_id::COMPONENT_LINK_EDIT), $url_arr)
+                . $html->icon_link(views::COMPONENT_LINK_DEL_ID, $cmp->link_id,
+                    icons::DEL, $mtr->txt(msg_id::COMPONENT_UNLINK), $url_arr);
+        }
+        return $result;
+    }
+
+    /**
+     * the last row of the component list of a view: a component selector and the add action that
+     * opens the confirm page which links the selected component to the view, so that the user can
+     * extend a view from the view page instead of opening the component link add form
+     *
+     * the back target is not set, because the confirm step replaces it by the default page of the
+     * created object (see frontend::url_to_action)
+     *
+     * @param view|db_object $msk the view the selected component should be linked to
+     * @param int $pos the position of the new component, which is the end of the view
+     * @return string the html code of the add row, empty if no component can be selected
+     */
+    private function component_add_row(view|db_object $msk, int $pos): string
+    {
+        global $mtr;
+        global $ui_sys;
+
+        $result = '';
+        // every component that the frontend cache knows can be added to the view
+        $cmp_lst = $ui_sys?->typ_lst_cache?->msk_sys?->component_list();
+        // a view that is not yet saved cannot be linked and an empty cache has nothing to select
+        if ($msk->id() != 0 and $cmp_lst != null and !$cmp_lst->is_empty()) {
+            $html = new html_base();
+            $form_name = views::COMPONENT_LINK_ADD;
+            $fields = $html->form_hidden(url_var::MASK, (string)views::COMPONENT_LINK_ADD_ID)
+                . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
+                . $html->form_hidden(url_var::VIEW, (string)$msk->id())
+                . $html->form_hidden(url_var::POSITION, (string)$pos);
+            // the selector fills the table cell, which the table already sizes for the column;
+            // the column and the add text say what is selected, so the field needs no label and
+            // shows the short empty entry with the tooltip instead
+            $sel = $cmp_lst->selector_ui($form_name, 0, url_var::COMPONENT,
+                msg_id::FORM_SELECT_COMPONENT, view_styles::COL_SM_12);
+            $sel->with_label = false;
+            $sel->dummy_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+            $sel->tooltip = $mtr->txt(msg_id::SELECT_TO_ADD);
+            // the add text is in the position column and so outside the form of the next column
+            $add_text = $html->button_submit_text($mtr->txt(msg_id::ADD), $form_name);
+            $form = $html->form_start($form_name) . $fields . $sel->display() . $html->form_end();
+            $result = $html->tr($html->td($add_text) . $html->td($form) . $html->td('') . $html->td(''));
         }
         return $result;
     }

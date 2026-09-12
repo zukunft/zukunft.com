@@ -1801,6 +1801,10 @@ enum messages: string
     case USER_EDIT = 'user_edit';
     case USER_DEL = 'user_del';
     case PLEASE_SELECT = 'please_select';
+    // the empty entry of a selector that has no label to explain it, e.g. the component selector
+    // at the end of the component list of a view, plus the tooltip that says what it selects
+    case PLEASE_SELECT_SHORT = 'please_select_short';
+    case SELECT_TO_ADD = 'select_to_add';
 
     /*
      * view
