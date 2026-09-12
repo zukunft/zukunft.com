@@ -208,10 +208,13 @@ class view_ui_tests
         $test_name = 'the component list offers a component to select';
         $t->assert_text_contains($test_name, $cmp_html, url_var::COMPONENT);
         $test_name = 'more than one component can be selected';
-        $all_cmp_lst = $ui_sys->typ_lst_cache->msk_sys->component_list();
-        $t->assert_true($test_name, $all_cmp_lst->count() > 1);
+        $cmp_names = $ui_sys->typ_lst_cache->msk_sys->component_names();
+        $t->assert_true($test_name, count($cmp_names) > 1);
+        $test_name = 'the components to select are sorted by name';
+        $names = array_values($cmp_names);
+        $t->assert_true($test_name, strnatcmp($names[0], $names[count($names) - 1]) <= 0);
         $test_name = 'a view list without views offers no component to select';
-        $t->assert_true($test_name, new view_list()->component_list()->is_empty());
+        $t->assert($test_name, new view_list()->component_names(), []);
         $test_name = 'the add row of the component list posts the component link add mask';
         $t->assert_text_contains($test_name, $cmp_html,
             $html->form_hidden(url_var::MASK, (string)views::COMPONENT_LINK_ADD_ID));

@@ -47,6 +47,7 @@ include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'styles.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
@@ -552,29 +554,53 @@ class ui_list extends ui_base
 
         $result = '';
         // every component that the frontend cache knows can be added to the view
-        $cmp_lst = $ui_sys?->typ_lst_cache?->msk_sys?->component_list();
+        $cmp_names = $ui_sys?->typ_lst_cache?->msk_sys?->component_names() ?? [];
         // a view that is not yet saved cannot be linked and an empty cache has nothing to select
-        if ($msk->id() != 0 and $cmp_lst != null and !$cmp_lst->is_empty()) {
+        if ($msk->id() != 0 and $cmp_names != []) {
             $html = new html_base();
             $form_name = views::COMPONENT_LINK_ADD;
             $fields = $html->form_hidden(url_var::MASK, (string)views::COMPONENT_LINK_ADD_ID)
                 . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
                 . $html->form_hidden(url_var::VIEW, (string)$msk->id())
                 . $html->form_hidden(url_var::POSITION, (string)$pos);
-            // the selector fills the table cell, which the table already sizes for the column;
-            // the column and the add text say what is selected, so the field needs no label and
-            // shows the short empty entry with the tooltip instead
-            $sel = $cmp_lst->selector_ui($form_name, 0, url_var::COMPONENT,
-                msg_id::FORM_SELECT_COMPONENT, view_styles::COL_SM_12);
-            $sel->with_label = false;
-            $sel->dummy_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
-            $sel->tooltip = $mtr->txt(msg_id::SELECT_TO_ADD);
+            $selector = $this->component_add_selector($form_name, $cmp_names);
             // the add text is in the position column and so outside the form of the next column
             $add_text = $html->button_submit_text($mtr->txt(msg_id::ADD), $form_name);
-            $form = $html->form_start($form_name) . $fields . $sel->display() . $html->form_end();
+            $form = $html->form_start($form_name) . $fields . $selector . $html->form_end();
             $result = $html->tr($html->td($add_text) . $html->td($form) . $html->td('') . $html->td(''));
         }
         return $result;
+    }
+
+    /**
+     * the selector of the components that can be added to the shown view; it is filled here and
+     * not by ListBase::selector, because the components come from the view cache as a name list:
+     * a component_list in the view list would include the component renderer and with it the
+     * view list into itself (see the include block of component_list)
+     *
+     * the selector fills the table cell, which the table already sizes for the column, and the
+     * column and the add text say what is selected, so the field needs no label and shows the
+     * short empty entry with the tooltip instead
+     *
+     * @param string $form_name the form that posts the selected component
+     * @param array $cmp_names the name of every selectable component keyed by its database id
+     * @return string the html code of the component selector
+     */
+    private function component_add_selector(string $form_name, array $cmp_names): string
+    {
+        global $mtr;
+
+        $sel = new html_selector();
+        $sel->lst = $cmp_names;
+        $sel->name = url_var::COMPONENT;
+        $sel->form = $form_name;
+        $sel->selected = 0;
+        $sel->label_id = msg_id::FORM_SELECT_COMPONENT;
+        $sel->style = view_styles::COL_SM_12;
+        $sel->with_label = false;
+        $sel->dummy_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+        $sel->tooltip = $mtr->txt(msg_id::SELECT_TO_ADD);
+        return $sel->display();
     }
 
     /**

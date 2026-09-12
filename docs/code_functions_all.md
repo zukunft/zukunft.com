@@ -7361,7 +7361,6 @@
     \-- id - section for function id not yet defined that it should be html in /sandbox/ListBase.php
     \-- get_by_code_id - section for function get_by_code_id is expected to be set and get in /sandbox/ListBase.php
     \-- selector - section for function selector not yet defined that it should be select in /sandbox/ListBase.php
-    \-- selector_ui - section for function selector_ui not yet defined that it should be select in /sandbox/ListBase.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- combine_named
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /sandbox/combine_named.php
@@ -7873,8 +7872,8 @@
             .php
 \-- view_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
-    \-- component_list - section for function component_list not yet defined that it should be load in /view/view_list.p
-            hp
+    \-- component_names - section for function component_names not yet defined that it should be base in /view/view_list
+            .php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /view/view_list.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_list.php
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
@@ -9348,7 +9347,7 @@
     \-- add_id_to_views
         \-- data_object - add the database id of the known test views to view list
     \-- add_components_to_views
-        \-- data_object - add the database id of the known test views to view list
+        \-- data_object - add the database id to the components that the views of this cache know only by name,
 \-- construct and capsule
     \-- __construct
         \-- button - @param string $url the url that is called if the button is pressed
