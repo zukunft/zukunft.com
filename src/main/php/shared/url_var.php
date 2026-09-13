@@ -267,6 +267,8 @@ class url_var
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string TRUE = '1';
+    // the switched off value of a url flag e.g. DISPLAY_LIST_RANGE for a table without the ranges
+    const string FALSE = '0';
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE = '0'; // no action process has been started

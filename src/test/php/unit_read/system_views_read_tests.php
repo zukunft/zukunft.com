@@ -122,6 +122,19 @@ class system_views_read_tests
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+        // the full table with the short list, and the two switches on their own: the mayor
+        // columns with the ranges, and the mayor columns explicitly without the ranges
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
+                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_RANGE => url_var::FALSE]);
 
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         // Zurich and CHF is the example for the page-title symbol-line layout
