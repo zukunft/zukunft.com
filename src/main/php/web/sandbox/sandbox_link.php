@@ -223,6 +223,11 @@ class sandbox_link extends sandbox
      * "link formula 'increase' to phrase 'GDP'", so that the user reads what is linked instead
      * of the ids of the two objects; the children overwrite this with the wording of their link
      *
+     * a link type without an own wording shows no line at all instead of a generic one, because
+     * "x extends y" says nothing useful for e.g. a component link; the two parameters are for the
+     * children: a wording that names the linked objects may have to read them by id, which a
+     * test render must not do (see formula_link::link_preview)
+     *
      * @param user_message $msg to report a problem while reading the names of the linked objects
      * @param bool $test_mode true to name the link without a backend call
      * @return string the text of the pending link, empty for a link that has no wording yet

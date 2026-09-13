@@ -460,7 +460,9 @@ class ref extends sandbox
         $url_array = parent::to_url_array($msg);
         $url_array[url_var::PHRASE] = $this->phr?->id();
         $url_array[url_var::EXTERNAL_KEY] = $this->external_key();
-        $url_array[url_var::TYPE] = $this->predicate_id();
+        // the reference type url var, because that is what the ref form posts and what
+        // db_fld_to_url names, so a page url and a form submit carry the type under one key
+        $url_array[url_var::REF_TYPE] = $this->predicate_id();
         $url_array[url_var::SOURCE] = $this->source?->id();
         $url_array[url_var::URL] = $this->url();
         $url_array[url_var::DESCRIPTION] = $this->get_description();
