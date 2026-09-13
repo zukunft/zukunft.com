@@ -113,6 +113,7 @@ messages:
   info_not_used_in_views: "in keiner Ansicht verwendet"
   info_not_used_by_terms: "von keinem Wort, Tripel, Verb oder keiner Formel verwendet"
   info_no_search_result: "kein Ergebnis für 'z$VarPattern$z' gefunden"
+  info_no_formula_to_link: "keine Formel zum Verknüpfen"
   system_sub_title_components: "Komponenten"
   system_sub_title_related_values: "Verwandte Werte"
   system_sub_title_no_usage: "Noch nicht verwendet"

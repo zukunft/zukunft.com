@@ -4493,7 +4493,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_session_token - 0 unit test calls
     \-- form_simple - 0 unit test calls
     \-- form_start - 0 unit test calls
-    \-- form_submit - 0 unit test calls
+    \-- form_submit - 1 unit test calls
     \-- form_text - 0 unit test calls
     \-- fr - 0 unit test calls
     \-- get_style_code - 0 unit test calls

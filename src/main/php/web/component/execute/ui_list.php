@@ -737,26 +737,32 @@ class ui_list extends ui_base
         }
 
         $result = '';
-        // a phrase that is not yet saved cannot be linked; the icon and the form are shown even if
-        // no formula can be offered, so that the page looks the same with and without the cache
+        // a phrase that is not yet saved cannot be linked; the icon is shown even if no formula
+        // can be offered, so that the page looks the same with and without the cache
         if ($phr->id() != 0) {
             $html = new html_base();
-            $form_name = views::FORMULA_LINK_ADD;
-            $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
-                . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
-                . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
-            $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
-                msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
-            if ($frm_lst->count() >= $size) {
-                $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+            // an empty selector would post a link without a formula, which can only fail, so the
+            // pane says why nothing can be selected instead of offering a form that never saves
+            if ($frm_lst->is_empty()) {
+                $pane = $mtr->txt(msg_id::INFO_NO_FORMULA_TO_LINK);
+            } else {
+                $form_name = views::FORMULA_LINK_ADD;
+                $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
+                    . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
+                    . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
+                $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
+                    msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
+                if ($frm_lst->count() >= $size) {
+                    $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+                }
+                $button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
+                $pane = $html->form_start($form_name) . $fields . $sel->display()
+                    . $button . $html->form_end();
             }
-            $selector = $sel->display();
-            $button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
-            $form = $html->form_start($form_name) . $fields . $selector . $button . $html->form_end();
             $icon = $html->ref('#' . styles::FORMULA_LINK_PANE, $html->icon(icons::LINK),
                 $mtr->txt(msg_id::FORMULA_LINK), styles::HEADING_ICON_INLINE, true);
             $result = $html->div($icon)
-                . $html->div($form, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
+                . $html->div($pane, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
         }
         return $result;
     }

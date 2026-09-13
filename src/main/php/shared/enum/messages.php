@@ -1717,6 +1717,8 @@ enum messages: string
     case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';
     // shown on the search page if no word, triple, verb or formula matches the search pattern
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
+    // shown instead of the formula selector of a phrase page if no formula can be offered
+    case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';

@@ -337,13 +337,19 @@ class word_ui_tests
         // the word without an assigned formula shows the name only in the selector of the form
         $test_name = 'the formula link form offers a formula to select';
         $t->assert_text_contains($test_name, $zh_html, formula_names::INCREASE);
-        $test_name = 'the formula link form offers the link button';
-        $t->assert_text_contains($test_name, $frm_html, $mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
         // the icon does not depend on the cache, so that a page looks the same whether the
-        // formulas come from the request cache or from the backend
+        // formulas come from the request cache or from the backend; with nothing to select the
+        // pane says so instead of offering a form that can only fail on save
         $test_name = 'a page without cached formulas still shows the link icon';
-        $t->assert_text_contains($test_name,
-            $list->formulas($wrd, $msg, new data_object(), true), icons::LINK);
+        $empty_html = $list->formulas($wrd, $msg, new data_object(), true);
+        $t->assert_text_contains($test_name, $empty_html, icons::LINK);
+        $test_name = 'a page without a formula to link says so';
+        $t->assert_text_contains($test_name, $empty_html, $mtr->txt(msg_id::INFO_NO_FORMULA_TO_LINK));
+        $test_name = 'a page without a formula to link offers no link button';
+        $link_button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
+        $t->assert_text_not_contains($test_name, $empty_html, $link_button);
+        $test_name = 'a page with a formula to link offers the link button';
+        $t->assert_text_contains($test_name, $frm_html, $link_button);
 
         // a selector that offers only one selection list ends with the more entry, so that the
         // user knows that a formula outside of it needs the add form

@@ -3,6 +3,8 @@
 
 ## word default view
 
+the confirm add formula link view e.g. http://localhost/http/view.php?token=8xxx1&m=45&z=1&p=274&f=39&submit=link should not show the phrase_id and the formula_id in the change table. Instead above the table should be shown a text line with in bold with something like 'link formula xxx to phrase yyy'. In the table with the changed fields instead of the type id or any other id the type name or any other name should be shown. 
+
 if the user has no permission to save changes to the database and in the formula column 'link formula' icon should be grey and the tooltip message should be something like a translatable 'please log in to link formulas'. if the icon is pressed that normal message 'This pod does not allow changes without a login. Please log in to add or change data.' should be shown
 
 in the word and triple default view add a boxed fa-plus icon to the 'Formulas' column title similar to the edit icon at the page title so a little bis smaller than the title font size. The icon should link to the add_formula view, but the url should contain the word or triple id. For this use a new url var prefix to include the link parameters in the url e.g. "CONST LINK = '7';"
