@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value_list.php';
+//include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::WORD . 'word_list.php';
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
@@ -431,6 +433,27 @@ class data_object
     function view_list(): view_list
     {
         return $this->msk_lst;
+    }
+
+    /**
+     * the view with its name from the request cache, asked in both view caches, because the
+     * system views are in the type list cache that is filled for every page rendering and the
+     * user views are in the view list of this request cache
+     *
+     * @param int|null $id the database id of the wanted view or null if the field is not set
+     * @return view|null the cached view with its name or null if it is not cached
+     */
+    function get_view_by_id(?int $id): ?view
+    {
+        $result = null;
+        if ($id != null and $id != 0) {
+            $result = $this->typ_lst_cache?->get_view_by_id($id);
+            // asked with has_id, because a get of a missing id writes a log entry
+            if ($result == null and $this->msk_lst->has_id($id)) {
+                $result = $this->msk_lst->get($id);
+            }
+        }
+        return $result;
     }
 
     /**

@@ -1780,6 +1780,8 @@ enum messages: string
     case FORMULA_EDIT = 'formula_edit';
     case FORMULA_DEL = 'formula_del';
     case FORMULA_LINK = 'formula_link';
+    // the tooltip of the greyed out formula link icon of a user who cannot save a change
+    case FORMULA_LINK_BLOCKED = 'formula_link_blocked';
     case FORMULA_UNLINK = 'formula_unlink';
     case RESULT_EDIT = 'result_edit';
     case RESULT_DEL = 'result_del';

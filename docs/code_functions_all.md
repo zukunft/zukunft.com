@@ -7649,6 +7649,7 @@
     \-- url_key_to_type_list - section for function url_key_to_type_list not yet defined that it should be type list by 
             class in /types/type_lists.php
     \-- log_err - section for function log_err is expected to be log in /types/type_lists.php
+    \-- order error - order of section set and get has difference at get_view_by_id should be before set_from_json_array
 \-- type_object
     \-- id - section for function id not yet defined that it should be set and get in /types/type_object.php
     \-- name - section for function name is expected to be debug in /types/type_object.php
@@ -8361,7 +8362,6 @@
     \-- set_from_json
         \-- data_object - set the vars of these list display objects bases on the api message
         \-- sys_log_list - set the vars of these list display objects bases on the api message
-        \-- type_lists - set the vars of this frontend object bases on the api message
         \-- verb_list - set the vars of these list display objects bases on the api message
     \-- refresh_words_via_api
         \-- data_object - set the vars of these list display objects bases on the api message
@@ -8401,6 +8401,8 @@
         \-- data_object - set the view_list of this data object
     \-- view_list
         \-- data_object - @return view_list with the views of this data object
+    \-- get_view_by_id
+        \-- data_object - the view with its name from the request cache, asked in both view caches, because the
     \-- has_view_list
         \-- data_object - @return bool true if this context object contains a view list
     \-- file_list
@@ -8494,7 +8496,6 @@
         \-- sandbox - @return array the json message array to send the updated data to the backend
     \-- set_from_json_array
         \-- sys_log_list - set the vars of these list display objects bases on the api json array
-        \-- type_lists - set the vars of this log html object bases on the api json array
         \-- verb_list - set the vars of a term object based on the given json
     \-- default_id
         \-- component_type_list - create the HTML code to select a component type
@@ -8509,66 +8510,6 @@
         \-- view_type_list - create the HTML code to select a view type
     \-- url
         \-- ref_type_list - a null id means the reference type is not (yet) set, e.g. for a new reference of an add
-    \-- set_user_profiles
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_phrase_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_formula_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_formula_link_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_styles
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_link_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_relation_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_component_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_component_link_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_position_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_source_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_ref_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_share_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_protection_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_languages
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_language_forms
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_verbs
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_sys_log_statuum
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_job_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_change_action_list
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_change_table_list
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_change_field_list
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_system_views
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- get_html_by_id
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- get_view_by_id
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
-    \-- get_view
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
-    \-- get_component_by_id
-        \-- type_lists - the components are cached as part of the system views, so a component is found by the
-    \-- get_html
-        \-- type_lists - the components are cached as part of the system views, so a component is found by the
-    \-- log_err
-        \-- type_lists - the components are cached as part of the system views, so a component is found by the
 \-- load
     \-- load_by_view_id
         \-- component_list - the components sorted by the position in the view and by the name for the components
@@ -9766,13 +9707,5 @@
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
     \-- names
         \-- sandbox_list - @param ?int $limit the max number of ids to show
-\-- type list by class
-    \-- class_to_type_list
-        \-- type_lists - get the type list related to a given object class
-    \-- field_to_type_list
-        \-- type_lists - map a type-id db field name to its preloaded type list so a caller can show the type name inste
-                ad of the id
-    \-- url_key_to_type_list
-        \-- type_lists - map a type-id url var key to its preloaded type list, used by the change preview of an object
 ```
 

@@ -1937,7 +1937,8 @@ class test_mappers
         $url_array = [];
         $url_array[] = [url_var::PHRASE, $ref->from_id()];
         $url_array[] = [url_var::EXTERNAL_KEY, $ref->get_external_key()];
-        $url_array[] = [url_var::TYPE, $ref->predicate_id()];
+        // the reference type has an own url var (see ref::db_fld_to_url)
+        $url_array[] = [url_var::REF_TYPE, $ref->predicate_id()];
         $url_array[] = [url_var::URL, $ref->get_url()];
         $url_array[] = [url_var::SOURCE, $ref->source_id()];
         $url_array[] = [url_var::DESCRIPTION, $ref->get_description()];
