@@ -193,18 +193,17 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * get the view with its name from the request cache based on the id of the given view;
-     * the system views are in the type list cache that is filled for every page rendering
-     * and the user views are in the view list of the request cache, so check both
+     * get the view with its name from the request cache based on the id of the given view
+     * (see data_object::get_view_by_id, which knows where the views are cached)
      * @param object|null $msk the id only view created from the url or the api message
      * @param data_object|null $dto the request cache
      * @return object|null the cached view with its name or the given id only view
      */
     protected function view_named_from_cache(?object $msk, ?data_object $dto): ?object
     {
-        $result = $this->named_from_cache($msk, $dto?->typ_lst_cache?->msk_sys);
-        if ($result === $msk) {
-            $result = $this->named_from_cache($msk, $dto?->view_list());
+        $result = $msk;
+        if ($msk != null) {
+            $result = $dto?->get_view_by_id($msk->id()) ?? $msk;
         }
         return $result;
     }

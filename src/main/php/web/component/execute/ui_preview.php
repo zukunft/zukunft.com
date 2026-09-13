@@ -459,10 +459,10 @@ class ui_preview extends ui_base
         global $mtr, $ui_sys;
         $result = $mtr->txt(msg_id::NOT_SET);
         if ($value != '' and $value != '0') {
-            // the request cache knows every system view, so the name is normally found without
-            // a backend call; a user view is not cached and is read by id, which a test render
-            // never does, because a snapshot must be reproducible without a backend
-            $msk = $ui_sys?->typ_lst_cache?->get_view_by_id((int)$value);
+            // the request cache knows the system and the user views, so the name is normally
+            // found without a backend call; a view that is in neither cache is read by id, which
+            // a test render never does, because a snapshot must be reproducible without a backend
+            $msk = $ui_sys?->get_view_by_id((int)$value);
             if ($msk == null and !$test_mode) {
                 $msk = new view();
                 $msk->load_by_id((int)$value, $msg);
@@ -504,8 +504,8 @@ class ui_preview extends ui_base
             foreach ($dbo->user_overwrites as $ovr) {
                 $fld = $ovr[json_fields::FIELD] ?? '';
                 if ($this->shows_field($usr, $fld)) {
-                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg, '', $test_mode);
-                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg, '', $test_mode);
+                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg, test_mode: $test_mode);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg, test_mode: $test_mode);
                     // e.g. a null and a zero view id both resolve to 'not set', so a row that
                     // would show the same text on both sides tells the user nothing and is skipped
                     if ($your != $instead) {
@@ -561,8 +561,8 @@ class ui_preview extends ui_base
             foreach ($dbo->other_overwrites as $ovr) {
                 $fld = $ovr[json_fields::FIELD] ?? '';
                 if ($this->shows_field($usr, $fld)) {
-                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg, '', $test_mode);
-                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg, '', $test_mode);
+                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg, test_mode: $test_mode);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg, test_mode: $test_mode);
                     // like in the my tab a row with the same text on both sides is skipped
                     if ($val != $instead) {
                         // escape the values and the user name (user input rendered raw; stored xss)

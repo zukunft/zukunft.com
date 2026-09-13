@@ -182,18 +182,12 @@ class ref extends sandbox
             } else {
                 $this->url = null;
             }
-            if (array_key_exists(url_var::TYPE, $url_array)) {
-                $this->set_predicate_id($url_array[url_var::TYPE]);
+            // the reference type has an own url var, because the generic url_var::TYPE cannot
+            // be told apart from the type of the other objects (see type_lists::url_key_to_type_list)
+            if (array_key_exists(url_var::REF_TYPE, $url_array)) {
+                $this->set_predicate_id($url_array[url_var::REF_TYPE]);
             } else {
                 $this->set_predicate_id();
-            }
-            // the reference type field is posted as url_var::REF_TYPE ('lt'), not the generic
-            // url_var::TYPE read above, so capture it here to persist the type of the add form
-            // (like the phrase type of a word)
-            if (array_key_exists(url_var::REF_TYPE, $url_array)) {
-                if ($url_array[url_var::REF_TYPE] != null) {
-                    $this->set_predicate_id($url_array[url_var::REF_TYPE]);
-                }
             }
             if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
                 $this->description = $url_array[url_var::DESCRIPTION];
@@ -206,7 +200,7 @@ class ref extends sandbox
 
     /**
      * the url vars that url_mapper reads back for the user-editable fields of a reference;
-     * the reference type is the predicate, which the parent reads from url_var::TYPE
+     * the reference type is the predicate of this link, which has its own url var
      *
      * @return array db field name => url var key
      */
