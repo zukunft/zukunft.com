@@ -1206,6 +1206,8 @@ class ui_list extends ui_base
      *                         call the same page with the next list size
      * @param bool $col_values_only true to leave out the values that share no column phrase, so
      *                              that the table stays a grid of its columns (see value_list)
+     * @param int $col_tiers the number of column tiers to show by default (see value_list)
+     * @param bool $with_range true to show the probability ranges by default (see value_list)
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
@@ -1215,7 +1217,9 @@ class ui_list extends ui_base
         bool                                  $with_header = false,
         bool                                  $with_border = true,
         array                                 $url_array = [],
-        bool                                  $col_values_only = false
+        bool                                  $col_values_only = false,
+        int                                   $col_tiers = value_list::COLUMN_TIERS_ALL,
+        bool                                  $with_range = true
     ): string
     {
         $result = '';
@@ -1245,7 +1249,7 @@ class ui_list extends ui_base
                 // same page with the next list size
                 $result = $val_lst->table_by_related_columns(
                     $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
-                    null, $url_array, $col_values_only);
+                    null, $url_array, $col_values_only, $col_tiers, $with_range);
             }
         }
         return $result;
@@ -1661,8 +1665,11 @@ class ui_list extends ui_base
         $this->add_start_page_cache($dto, $phr, $msg);
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
-        // no column stays on the page of the problem instead of adding a row here
-        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array, true);
+        // no column stays on the page of the problem instead of adding a row here; by default
+        // only the mayor columns with the numbers are shown and the "..." header leads to the
+        // full table with every column and the range of each number
+        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array,
+            true, value_list::COLUMN_TIERS_MAYOR, false);
     }
 
     /**

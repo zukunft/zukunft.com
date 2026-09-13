@@ -1280,6 +1280,8 @@ class frontend
         // the all version of a list, see docs/llm/frontend.md), so each version is cached on its own
         $list_size = $url_array[url_var::DISPLAY_LIST_SIZE] ?? '';
         $list_page = $url_array[url_var::DISPLAY_LIST_PAGE] ?? '';
+        $list_cols = $url_array[url_var::DISPLAY_LIST_COLUMNS] ?? '';
+        $list_range = $url_array[url_var::DISPLAY_LIST_RANGE] ?? '';
         // a request without a view and without an object shows the default start view, so cache it
         // under the start view key so the bare landing page (view.php with no mask) and an explicit
         // start request (view.php?m=1) share the same cached start page
@@ -1294,6 +1296,7 @@ class frontend
         foreach ($url_array as $url_key => $url_val) {
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE,
                 url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
+                url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_RANGE,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
@@ -1335,6 +1338,12 @@ class frontend
             }
             if ($list_page != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_PAGE . url_var::EQ . $list_page;
+            }
+            if ($list_cols != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_COLUMNS . url_var::EQ . $list_cols;
+            }
+            if ($list_range != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_RANGE . url_var::EQ . $list_range;
             }
         }
         return $result;

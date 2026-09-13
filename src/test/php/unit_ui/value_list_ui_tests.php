@@ -280,6 +280,21 @@ class value_list_ui_tests
         $t->assert($test_name, substr_count($tbl_range, '<' . html_base::TR . '>'), 3);
         $test_name = '... and a value without bounds is shown without brackets';
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range), '35.2 (');
+        // a simple table shows the numbers only and the "..." header links to the same page with
+        // the ranges switched on, which wins over the default of the caller
+        $tbl_plain = $t_val->value_list_range_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), [], false, true, null, null,
+            [url_var::MASK => views::START_ID], false, value_list_ui::COLUMN_TIERS_ALL, false);
+        $test_name = 'without the range the centre value is shown alone';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_plain), '2.2');
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), '2.2 (');
+        $test_name = '... and the "..." header links to the page with the ranges';
+        $t->assert_text_contains($test_name, $tbl_plain, url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+        $tbl_url = $t_val->value_list_range_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), [], false, true, null, null,
+            [url_var::DISPLAY_LIST_RANGE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
+        $test_name = 'the url switches the range on although the caller has switched it off';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_url), '2.2 (0.88 – 5.5)');
         $test_name = 'the estimate qualifier of a value is the tooltip of its cell';
         $t->assert_text_contains($test_name, $tbl_range, 'title="' . word_names::ASSUMED . ', ');
         // a value tagged "confidence" says how sure the value with the same subject is, so it is
@@ -363,17 +378,6 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $hdr_one, word_names::LOSS . $unit_sep);
         $t->assert_text_not_contains($test_name, $hdr_one, word_names::POTENTIAL . ' ' . word_names::LOSS);
 
-        // the tier of a defined column says on which screens it is shown: a main column carries
-        // the class that hides it on a small screen, a mayor column has no class and is shown on
-        // every screen; "potential loss" is a main and "loss" a mayor column
-        $test_name = 'a main column is hidden on a small screen';
-        $t->assert_text_contains($test_name, $tbl_parts, '<th class="' . styles::COL_MAIN . '">');
-        $test_name = 'a mayor column is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MAIN);
-        // negative: a column that the data suggests has no tier and therefore no class
-        $test_name = 'a column without a definition is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MAIN);
-
         // every defined column is shown, because the tiers hide the columns per screen size, so
         // the number of columns that fit on the widest screen limits only the columns that the
         // data suggests; five defined columns give five column headers plus the row name header
@@ -382,6 +386,34 @@ class value_list_ui_tests
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
         $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 1);
+
+        // the tier of a defined column says on which screens it is shown: a main column carries
+        // the class that hides it on a small screen, a mayor column has no class and is shown on
+        // every screen; "cost" is a main and "loss" a mayor column
+        $test_name = 'a main column is hidden on a small screen';
+        $t->assert_text_contains($test_name, $tbl_def, '<th class="' . styles::COL_MAIN . '">');
+        $test_name = 'a mayor column is shown on every screen';
+        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MAIN);
+        // negative: a column that the data suggests has no tier and therefore no class
+        $test_name = 'a column without a definition is shown on every screen';
+        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MAIN);
+
+        // a simple table shows the mayor columns only, so the main column "cost" is left to the
+        // full table and the "..." header says that more columns exist
+        $tbl_mayor = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_MAYOR);
+        $hdr_mayor = $lib->html_to_text($lib->str_left_of($tbl_mayor, '</tr>'));
+        $hdr_def = $lib->html_to_text($lib->str_left_of($tbl_def, '</tr>'));
+        $test_name = 'a simple table leaves out the main column';
+        $t->assert_text_not_contains($test_name, $hdr_mayor, word_names::COST);
+        $test_name = '... but keeps the mayor columns';
+        $t->assert_text_contains($test_name, $hdr_mayor, word_names::LOSS);
+        $test_name = '... and ends with the "..." header';
+        $t->assert_text_contains($test_name, $hdr_mayor, msg_id::THREE_POINTS->text());
+        $test_name = 'the full table shows the main column and has no "..." header';
+        $t->assert_text_contains($test_name, $hdr_def, word_names::COST);
+        $t->assert_text_not_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
 
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');

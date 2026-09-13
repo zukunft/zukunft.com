@@ -256,14 +256,17 @@ class phrase_list_tests
         $t->assert($test_name, $phr_lst_ui->column_names(), []);
 
         // the tier of a column says on which screens it is shown, so the table can hide a column
-        // per screen size instead of dropping it; the "loss" column is defined as a mayor column
-        // and the "potential loss" column as a main column
+        // per screen size instead of dropping it; the "loss" and the "potential loss" column are
+        // defined as mayor columns and the "cost" column as a main column
         $phr_lst_ui = $t_phr->list_columns_potential_loss_ui();
         $test_name = 'the tier of a mayor column is returned';
         $t->assert($test_name, $phr_lst_ui->column_tier(word_names::LOSS),
             triple_names::SYSTEM_COLUMN_MAYOR);
-        $test_name = 'the tier of a main column is returned';
+        $test_name = '... also for a column built from a triple';
         $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_LOSS),
+            triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = 'the tier of a main column is returned';
+        $t->assert($test_name, $t_phr->list_columns_ordered_ui()->column_tier(word_names::COST),
             triple_names::SYSTEM_COLUMN_MAIN);
         // negative: a phrase that no triple of the list links to a tier is no column, so it has
         // no tier and the caller shows it on every screen
