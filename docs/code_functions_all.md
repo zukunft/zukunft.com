@@ -8312,7 +8312,7 @@
     \-- link_type
         \-- sandbox_link - the children overwrite this with the type list of their own link type
     \-- link_preview
-        \-- sandbox_link - the pending link in one line, shown above the change table of a confirm page, e.g.
+        \-- sandbox_link - the pending link in one line, shown as the title of a confirm page, e.g.
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
     \-- display_admin
@@ -9411,13 +9411,13 @@
     \-- text_h1
         \-- html_base - build a url for an external webside
     \-- bold
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h2
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h3
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h4
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page

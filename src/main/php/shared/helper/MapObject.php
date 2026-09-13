@@ -55,11 +55,14 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -71,9 +74,12 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
+use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 
 class MapObject
@@ -113,6 +119,12 @@ class MapObject
             return new component($usr);
         } elseif ($ui_obj::class == view_relation_ui::class) {
             return new view_relation($usr);
+        } elseif ($ui_obj::class == formula_link_ui::class) {
+            return new formula_link($usr);
+        } elseif ($ui_obj::class == component_link_ui::class) {
+            return new component_link($usr);
+        } elseif ($ui_obj::class == term_view_ui::class) {
+            return new term_view($usr);
         } else {
             // a base object has no name field, so the following save would fatal without a hint
             log_err('no backend class mapped for the frontend class ' . $ui_obj::class);
@@ -152,6 +164,12 @@ class MapObject
             return new component_ui();
         } elseif ($obj::class == view_relation::class) {
             return new view_relation_ui();
+        } elseif ($obj::class == formula_link::class) {
+            return new formula_link_ui();
+        } elseif ($obj::class == component_link::class) {
+            return new component_link_ui();
+        } elseif ($obj::class == term_view::class) {
+            return new term_view_ui();
         } else {
             return new db_object_ui();
         }

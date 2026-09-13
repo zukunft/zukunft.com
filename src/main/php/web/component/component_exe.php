@@ -341,7 +341,8 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_arr),
+            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title(
+                $form_name, $this->ui_msg_code_id, $dbo, $url_arr, $msg, $test_mode),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
             component_types::FORM_CHANGES => $preview->popup_changes($msg, $url_arr, $dbo, $test_mode),
             component_types::FORM_IMPACT => $preview->popup_impact($url_arr),

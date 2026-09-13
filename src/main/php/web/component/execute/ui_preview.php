@@ -143,17 +143,25 @@ class ui_preview extends ui_base
      * this is the confirm-view analog of form_tile: it shows the heading and then opens the form, so
      * the component must be the first one of the confirm view (ahead of the hidden fields)
      *
+     * a link is titled by the pending link itself, e.g. "Link formula 'PE Ratio' to phrase 'EUR'",
+     * because the two linked objects are the link and a link has no name of its own
+     * (see sandbox_link::link_preview)
+     *
      * @param string $form_name the name of the confirm view used as the html form name
      * @param msg_id|null $ui_msg_code_id the message code id of the component using this component type
      * @param db_object|null $dbo the object that is being changed, used for the object class name
      * @param array $url_array the pending change url used for the name of the changed object
+     * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to build the title without a backend call
      * @return string the html heading followed by the opening form tag
      */
     function popup_title(
         string                                                $form_name = '',
         ?msg_id                                               $ui_msg_code_id = null,
         db_object|type_object|combine_named|sandbox_list|null $dbo = null,
-        array                                                 $url_array = []
+        array                                                 $url_array = [],
+        user_message                                          $msg = new user_message(),
+        bool                                                  $test_mode = false
     ): string
     {
         global $mtr;
@@ -168,6 +176,13 @@ class ui_preview extends ui_base
             $name = $url_array[url_var::NAME] ?? '';
             if ($name != '') {
                 $title .= ' "' . $name . '"';
+            }
+            if ($dbo instanceof sandbox_link) {
+                $link_text = $dbo->link_preview($msg, $test_mode);
+                if ($link_text != '') {
+                    // the names of the linked objects are user input and text_h2 does not escape
+                    $title = $html->esc($link_text);
+                }
             }
             $result = $html->text_h2($title);
         }
@@ -260,14 +275,6 @@ class ui_preview extends ui_base
         $ex_from = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
         $rows = $this->change_rows($url_array, $dbo, $msg, $ex_from, $test_mode);
         $result = $hidden;
-        // a link is named above the table, because the two linked objects are the link itself and
-        // not a changed field, so the table would else show only their ids (see sandbox_link)
-        if ($dbo instanceof sandbox_link) {
-            $link_text = $dbo->link_preview($msg, $test_mode);
-            if ($link_text != '') {
-                $result .= $html->div($html->bold($link_text));
-            }
-        }
         if ($rows != '') {
             $head_row = $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD));
             if (!$ex_from) {

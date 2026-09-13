@@ -1063,6 +1063,7 @@ class html_base
     }
 
     /**
+     * TODO Prio 3 kept for future use, check if it actually has been used
      * @param string $text the text to show bold, e.g. the pending link of a confirm page
      * @return string the html code of the bold text
      */

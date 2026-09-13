@@ -74,6 +74,7 @@ class formula_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $mtr;
         $html = new html_base();
         $t_frm = new test_formulas($t);
         $msg = new user_message();
@@ -372,8 +373,14 @@ class formula_ui_tests
         $t->assert_text_not_contains($test_name, $lnk_chg_html, url_var::std_to_human(url_var::PHRASE));
         $test_name = 'the confirm preview of a formula link lists the changed description';
         $t->assert_text_contains($test_name, $lnk_chg_html, test_const::FORMULA_LINK_COM);
-        $test_name = 'the confirm preview of a formula link names the link in bold';
-        $t->assert_text_contains($test_name, $lnk_chg_html, $html->bold($lnk_txt));
+        $test_name = 'the confirm title of a formula link is the link itself';
+        $lnk_title = $preview->popup_title(views::FORMULA_LINK_ADD, msg_id::FORM_TITLE_CONFIRM_ADD,
+            $lnk_url, $lnk_chg_url, $msg, true);
+        $t->assert_text_contains($test_name, $lnk_title, $html->text_h2($html->esc($lnk_txt)));
+        $test_name = 'the confirm title of a formula link does not name the class';
+        $t->assert_text_not_contains($test_name, $lnk_title, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD));
+        $test_name = 'the change table of a formula link does not repeat the link';
+        $t->assert_text_not_contains($test_name, $lnk_chg_html, $lnk_txt);
 
         $t->subheader($ts . 'link tabs');
 

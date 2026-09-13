@@ -3841,7 +3841,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- convertMsgToUi - 0 unit test calls
     \-- convertToDb - 0 unit test calls
     \-- convertToUi - 0 unit test calls
-    \-- uiObject - 0 unit test calls
+    \-- uiObject - 1 unit test calls
 \-- Message
     \-- add - 21 unit test calls shared by 44 classes
     \-- add_err - 0 unit test calls
@@ -4440,7 +4440,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- about_page - 0 unit test calls
     \-- add_style - 0 unit test calls
     \-- back_url_array - 1 unit test calls
-    \-- bold - 1 unit test calls
+    \-- bold - 0 unit test calls
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
     \-- button_bs - 0 unit test calls
@@ -4485,7 +4485,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- echo - 0 unit test calls shared by 2 classes
     \-- echo_html - 0 unit test calls
     \-- edit_url - 0 unit test calls
-    \-- esc - 0 unit test calls
+    \-- esc - 1 unit test calls
     \-- footer_html - 0 unit test calls
     \-- form - 0 unit test calls
     \-- form_end - 0 unit test calls shared by 2 classes
@@ -4548,7 +4548,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- tbody - 0 unit test calls
     \-- td - 2 unit test calls shared by 4 classes
     \-- text_h1 - 0 unit test calls
-    \-- text_h2 - 0 unit test calls
+    \-- text_h2 - 1 unit test calls
     \-- text_h3 - 0 unit test calls
     \-- th - 0 unit test calls shared by 4 classes
     \-- th_row - 0 unit test calls
@@ -5330,7 +5330,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- ui_preview
     \-- other_overwrites_table - 0 unit test calls
     \-- paste_table - 0 unit test calls
-    \-- popup_title - 0 unit test calls
+    \-- popup_title - 1 unit test calls
     \-- selection_text - 0 unit test calls
     \-- table_body - 0 unit test calls
     \-- user_overwrites_table - 0 unit test calls

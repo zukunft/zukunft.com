@@ -253,7 +253,7 @@ class formula_link extends sandbox_link
 
     /**
      * the pending formula link in one line for the confirm page, e.g.
-     * "link formula 'increase' to phrase 'GDP'"
+     * "Link formula 'increase' to phrase 'GDP'"
      *
      * the confirm page builds the link from the url, so the names are missing if the request
      * cache has neither formula nor phrase (see sandbox_link::named_from_cache) and are read
