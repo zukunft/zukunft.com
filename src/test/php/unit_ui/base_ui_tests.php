@@ -36,12 +36,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'button.php';
@@ -223,6 +225,17 @@ class base_ui_tests
         $test_name = 'the bare landing page is cached under the start view key';
         $url_array = [];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0');
+
+        // the more version of a list is a view-only state of the same page, so it is cached under
+        // its own key (e.g. view.php?m=1&dls=20) instead of being rendered live on every request
+        $test_name = 'the more list of the start page is cached under its own key';
+        $url_array = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST];
+        $t->assert($test_name, $ui->url_cache_key($url_array),
+            'm=' . views::START_ID . '&id=0&' . url_var::DISPLAY_LIST_SIZE . '=' . Config::LIMIT_MORE_LIST);
+        $test_name = 'a page of the all list is cached under its own key';
+        $url_array = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_PAGE => 1];
+        $t->assert($test_name, $ui->url_cache_key($url_array),
+            'm=' . views::START_ID . '&id=0&' . url_var::DISPLAY_LIST_PAGE . '=1');
 
         $t->subheader($ts . 'tab box');
 

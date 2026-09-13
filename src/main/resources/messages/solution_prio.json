@@ -1555,6 +1555,86 @@
       "from": "probability range",
       "verb": "can be",
       "to": "main column (system)"
+    },
+    {
+      "from": "wealth concentration",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "disinformation",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "market power",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "biased information",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "black-box AI",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "citizen participation",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "GDP mismeasurement",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "proprietary software",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "basic income",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "platform regulation",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "market share tax",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "Delphi method",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "public AI",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "fluid democracy",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "gross domestic usage",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "from": "free software",
+      "verb": "is a",
+      "to": "solution"
     }
   ],
   "sources": [
@@ -4256,6 +4336,614 @@
         "high"
       ],
       "number": "2.5",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.1",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.15",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.25",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.04",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.375",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.06",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.05",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.08",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.125",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.02",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.032",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.08",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.05",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.2",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.032",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.125",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "market power",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.02",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.04",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.05",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.1",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.016",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.125",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.02",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.03",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.04",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.075",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.012",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.1",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.016",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.02",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.04",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.05",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.008",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.1",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "citizen participation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.016",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.03",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.03",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.075",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.012",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.075",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "GDP mismeasurement",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.012",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.02",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.02",
+      "description": "own order of magnitude estimate of the long run loss share, not contained in any source"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.05",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.008",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.05",
+      "description": "80 percent probability range, factor 2.5 on the centre"
+    },
+    {
+      "words": [
+        "proprietary software",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.008",
       "description": "80 percent probability range, factor 2.5 on the centre"
     }
   ],

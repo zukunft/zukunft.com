@@ -1202,6 +1202,10 @@ class ui_list extends ui_base
      *                          where the page already says which phrase the table is about
      * @param bool $with_border true for the bordered standard table, false for a table without
      *                          the lines between the cells e.g. below a title that groups tables
+     * @param array $url_array the url parameters of the page, so that the "... more" tail can
+     *                         call the same page with the next list size
+     * @param bool $col_values_only true to leave out the values that share no column phrase, so
+     *                              that the table stays a grid of its columns (see value_list)
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
@@ -1210,7 +1214,8 @@ class ui_list extends ui_base
         ?data_object                          $dto = null,
         bool                                  $with_header = false,
         bool                                  $with_border = true,
-        array                                 $url_array = []
+        array                                 $url_array = [],
+        bool                                  $col_values_only = false
     ): string
     {
         $result = '';
@@ -1240,7 +1245,7 @@ class ui_list extends ui_base
                 // same page with the next list size
                 $result = $val_lst->table_by_related_columns(
                     $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
-                    null, $url_array);
+                    null, $url_array, $col_values_only);
             }
         }
         return $result;
@@ -1654,8 +1659,10 @@ class ui_list extends ui_base
     {
         $phr = $this->start_page_phrase($dto, $msg);
         $this->add_start_page_cache($dto, $phr, $msg);
-        // the page already says what the table is about, so it is shown without the border
-        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array);
+        // the page already says what the table is about, so it is shown without the border; the
+        // ranking is a grid of the defined columns, so a measured figure of a problem that fits
+        // no column stays on the page of the problem instead of adding a row here
+        return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array, true);
     }
 
     /**

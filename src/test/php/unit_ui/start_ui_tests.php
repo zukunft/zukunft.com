@@ -94,6 +94,13 @@ class start_ui_tests
         $t->assert_text_contains($test_name, $start_html,
             '>' . triple_names::REDUCE_EMISSIONS . '</a>');
 
+        // a measured figure of a problem that fits no column of the ranking, e.g. the global
+        // temperature of a year, stays on the page of the problem instead of adding a row
+        $test_name = 'a measured value of a problem without a ranking column adds no row';
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_measured_ui();
+        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg),
+            '>' . word_names::YEAR_2024 . '</a>');
+
         // negative: without the values of the global issues the start page shows no table at all
         // instead of an empty header row
         $test_name = 'without values the start page shows no table';

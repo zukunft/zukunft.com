@@ -587,6 +587,9 @@ class value_list extends ListBase
      *                         the url can name the list size and the list page and the value
      *                         links can return to the page; an empty array if the page is not
      *                         known, e.g. for a table taken out of its page
+     * @param bool $col_values_only true to leave out the values that share no column phrase, so
+     *                              that the table stays a grid of its columns e.g. the ranking of
+     *                              the start page; false to show them in a last "Values" column
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
@@ -597,7 +600,8 @@ class value_list extends ListBase
         bool         $with_border = true,
         ?phrase_list $rel_lst = null,
         ?int         $limit = null,
-        array        $url_array = []
+        array        $url_array = [],
+        bool         $col_values_only = false
     ): string
     {
         $result = '';
@@ -667,11 +671,18 @@ class value_list extends ListBase
                 $phr_col_names[$phr_col_id] = $rel_lst->child_names($phr);
             }
 
+            // a table that is a grid of its columns leaves out the values that fit no column, e.g.
+            // the measured figures of a problem that are no part of the ranking of the start page
+            $vals = $this->lst();
+            if ($col_values_only) {
+                $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
+            }
+
             // per row the label and per row and column the value html
             $row_label = [];
             $cells = [];
             $phr_cells = [];
-            foreach ($this->lst() as $val) {
+            foreach ($vals as $val) {
                 $col_id = $val_col[$val->id()] ?? '';
                 $ctx = clone $grp_ctx;
                 if ($col_id !== '') {
