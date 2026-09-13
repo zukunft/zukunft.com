@@ -50,6 +50,8 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
@@ -59,6 +61,7 @@ class formula_link_tests
 {
     function run(test_cleanup $t): void
     {
+        global $sys;
 
         // init
         $db_con = new sql_db();
@@ -170,6 +173,20 @@ class formula_link_tests
         $t->assert($test_name, $lnk_id_only->formula()->name() ?? '', '');
         $test_name = 'a row without a description leaves the description empty';
         $t->assert($test_name, $lnk_id_only->description ?? '', '');
+
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend sends no type for a simple link, but the similar link check of a save needs
+        // one, so the api mapper keeps the default type of a new link instead of the reset null
+        $test_name = 'an api message without a type maps to the default formula link type';
+        $lnk_new = new formula_link($t->usr1);
+        $lnk_new->api_mapper([json_fields::ID => 0], $msg);
+        $t->assert($test_name, $lnk_new->predicate_id(),
+            $sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
+        $test_name = 'an api message with a type keeps that type';
+        $time_id = $sys->typ_lst->frm_lnk_typ->id(formula_link_types::TIME_PERIOD);
+        $lnk_new->api_mapper([json_fields::ID => 0, json_fields::PREDICATE_ID => $time_id], $msg);
+        $t->assert($test_name, $lnk_new->predicate_id(), $time_id);
 
         /*
         $t->subheader($ts . 'im- and export');

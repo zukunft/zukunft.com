@@ -305,8 +305,15 @@ class formula_link extends sandbox_link
         ?data_object $dto = null
     ): bool
     {
+        global $sys;
+
         parent::api_mapper($api_json, $msg);
 
+        // the parent mapper resets the default type set by the constructor and the frontend sends
+        // no type for a simple link, so a link without a type is the default link like a new one
+        if ($this->predicate_id() == null) {
+            $this->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
+        }
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
             $this->set_formula_from_id($api_json[json_fields::FORMULA_ID], $msg, $dto);
         }

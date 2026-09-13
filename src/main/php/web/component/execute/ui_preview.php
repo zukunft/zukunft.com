@@ -156,12 +156,12 @@ class ui_preview extends ui_base
      * @return string the html heading followed by the opening form tag
      */
     function popup_title(
-        string                                                $form_name = '',
-        ?msg_id                                               $ui_msg_code_id = null,
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
-        array                                                 $url_array = [],
-        user_message                                          $msg = new user_message(),
-        bool                                                  $test_mode = false
+        string                                                $form_name,
+        ?msg_id                                               $ui_msg_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        array                                                 $url_array,
+        user_message                                          $msg,
+        bool                                                  $test_mode
     ): string
     {
         global $mtr;
@@ -175,7 +175,8 @@ class ui_preview extends ui_base
             // the confirm view object is not loaded from the db, so the name comes from the posted url
             $name = $url_array[url_var::NAME] ?? '';
             if ($name != '') {
-                $title .= ' "' . $name . '"';
+                // the name is user input from the url and text_h2 does not escape
+                $title .= ' "' . $html->esc($name) . '"';
             }
             if ($dbo instanceof sandbox_link) {
                 $link_text = $dbo->link_preview($msg, $test_mode);

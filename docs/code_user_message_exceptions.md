@@ -9,7 +9,7 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-199 creations below the entry points: 177 explained, 20 parameter defaults and 2 still unexplained
+198 creations below the entry points: 177 explained, 19 parameter defaults and 2 still unexplained
 and 0 nullable message parameters and 4 messages that never reach the caller
 
 ## parameter defaults
@@ -17,7 +17,6 @@ and 0 nullable message parameters and 4 messages that never reach the caller
 a default value drops the message of a caller that passes none, so each of these is a silent message loss waiting for a threading pass
 
 ```
-frontend: /component/execute/ui_preview.php:163 - user_message                                          $msg = new user_message(),
 frontend: /sandbox/ListBase.php:243 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 frontend: /sandbox/sandbox_list_named.php:261 - Message                                        $msg = new Message()
 frontend: /system/sys_log_list.php:150 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
