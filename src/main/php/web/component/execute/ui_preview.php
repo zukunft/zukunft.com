@@ -220,12 +220,14 @@ class ui_preview extends ui_base
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being changed; the
      *        same union that dsp_entries passes, because any view object can be shown in a popup form
+     * @param bool $test_mode true to build the preview without a backend call
      * @return string the html code of the centered change table, or an empty string if nothing changed
      */
     function popup_changes(
         user_message                                          $msg,
         array                                                 $url_array = [],
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        bool                                                  $test_mode = false
     ): string
     {
         global $mtr;
@@ -261,7 +263,7 @@ class ui_preview extends ui_base
         // a link is named above the table, because the two linked objects are the link itself and
         // not a changed field, so the table would else show only their ids (see sandbox_link)
         if ($dbo instanceof sandbox_link) {
-            $link_text = $dbo->link_preview($msg);
+            $link_text = $dbo->link_preview($msg, $test_mode);
             if ($link_text != '') {
                 $result .= $html->div($html->bold($link_text));
             }

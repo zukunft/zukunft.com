@@ -224,9 +224,10 @@ class sandbox_link extends sandbox
      * of the ids of the two objects; the children overwrite this with the wording of their link
      *
      * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to name the link without a backend call
      * @return string the text of the pending link, empty for a link that has no wording yet
      */
-    function link_preview(user_message $msg): string
+    function link_preview(user_message $msg, bool $test_mode = false): string
     {
         return '';
     }

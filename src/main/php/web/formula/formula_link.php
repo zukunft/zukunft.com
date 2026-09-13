@@ -260,37 +260,44 @@ class formula_link extends sandbox_link
      * by id in that case, like the view name of the change preview
      *
      * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to name the link without a backend call
      * @return string the text of the pending link, empty if one of the two names is missing
      */
-    function link_preview(user_message $msg): string
+    function link_preview(user_message $msg, bool $test_mode = false): string
     {
         global $mtr;
         $lib = new library();
 
-        $this->load_name($this->formula(), $msg);
-        $this->load_name($this->phrase(), $msg);
+        $this->load_linked($this->formula(), $msg, $test_mode);
+        $this->load_linked($this->phrase(), $msg, $test_mode);
+        $frm_name = $this->formula_name() ?? '';
+        $phr_name = $this->phrase_name() ?? '';
         $result = '';
-        if ($this->formula_name() != '' and $this->phrase_name() != '') {
+        if ($frm_name != '' and $phr_name != '') {
             $text = $lib->msg_var_replace(
                 $mtr->txt(msg_id::INFO_LINK_FORMULA_TO_PHRASE),
-                msg_id::VAR_FORMULA_NAME, $this->formula_name());
-            $result = $lib->msg_var_replace($text, msg_id::VAR_PHRASE_NAME, $this->phrase_name());
+                msg_id::VAR_FORMULA_NAME, $frm_name);
+            $result = $lib->msg_var_replace($text, msg_id::VAR_PHRASE_NAME, $phr_name);
         }
         return $result;
     }
 
     /**
-     * read the name of a linked object that the url carries only by id, so that the link can be
-     * named even if the request cache does not know the formula or the phrase
+     * read a linked object that the url carries only by id, so that the link can be named even if
+     * the request cache does not know the formula or the phrase; this fills the complete object
+     * and not only its name, like reload_objects of the backend
      *
-     * @param formula|phrase|null $obj the linked object whose name is needed
+     * @param formula|phrase|null $obj the linked object that may be known by its id only
      * @param user_message $msg to report a problem while reading the object
+     * @param bool $test_mode true to keep a reproducible render, which never calls the backend
      * @return void
      */
-    private function load_name(formula|phrase|null $obj, user_message $msg): void
+    private function load_linked(formula|phrase|null $obj, user_message $msg, bool $test_mode): void
     {
-        if ($obj != null and $obj->name() == '' and $obj->id() != 0) {
-            $obj->load_by_id($obj->id(), $msg);
+        if ($obj != null and !$test_mode) {
+            if ($obj->name() == '' and $obj->id() != 0) {
+                $obj->load_by_id($obj->id(), $msg);
+            }
         }
     }
 
