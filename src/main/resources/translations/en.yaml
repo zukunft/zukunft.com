@@ -315,6 +315,7 @@ messages:
   formula_edit: "change formula"
   formula_del: "delete this formula"
   formula_link: "assign a formula"
+  formula_link_blocked: "please log in to link formulas"
   formula_unlink: "unassigned formula from"
   unlink_word: "Unlink word"
   view_list: "Views"

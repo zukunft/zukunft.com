@@ -710,6 +710,7 @@ messages:
   formula_edit: "Formel ändern"
   formula_del: "diese Formel löschen"
   formula_link: "Formel zuweisen"
+  formula_link_blocked: "bitte melden Sie sich an, um Formeln zuzuweisen"
   formula_unlink: "Formelzuweisung aufheben von"
   unlink_word: "Wort trennen"
   view_list: "Ansichten"

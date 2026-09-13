@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
@@ -350,6 +351,30 @@ class word_ui_tests
         $t->assert_text_not_contains($test_name, $empty_html, $link_button);
         $test_name = 'a page with a formula to link offers the link button';
         $t->assert_text_contains($test_name, $frm_html, $link_button);
+
+        // a user without login cannot save the link, so the icon is greyed out and the pane
+        // names the reason instead of a form that the backend would only reject
+        global $ui_sys;
+        $usr_known = $ui_sys->usr;
+        $usr_ip = new user_ui();
+        $ip_id = $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY);
+        $usr_ip->api_mapper([
+            json_fields::ID => users::TEST_USER_ID,
+            json_fields::PROFILE_ID => $ip_id], $msg);
+        $ui_sys->usr = $usr_ip;
+        $icon_grey = styles::HEADING_ICON_INLINE . ' ' . styles::STYLE_GREY;
+        $test_name = 'the formula link icon of a user without login is grey';
+        $ip_html = $list->formulas($wrd, $msg, $dto);
+        $t->assert_text_contains($test_name, $ip_html, $icon_grey);
+        $test_name = 'the formula link icon of a user without login asks for a login';
+        $t->assert_text_contains($test_name, $ip_html, $mtr->txt(msg_id::FORMULA_LINK_BLOCKED));
+        $test_name = 'the formula link pane of a user without login says why nothing is linked';
+        $t->assert_text_contains($test_name, $ip_html, $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
+        $test_name = 'the formula link pane of a user without login offers no link button';
+        $t->assert_text_not_contains($test_name, $ip_html, $link_button);
+        $ui_sys->usr = $usr_known;
+        $test_name = 'the formula link icon of a known user is not grey';
+        $t->assert_text_not_contains($test_name, $list->formulas($wrd, $msg, $dto), $icon_grey);
 
         // a selector that offers only one selection list ends with the more entry, so that the
         // user knows that a formula outside of it needs the add form

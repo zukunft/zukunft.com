@@ -710,6 +710,10 @@ class ui_list extends ui_base
      * and no javascript is needed (see docs/llm/frontend.md); the confirm step sets the back
      * target itself (see frontend::url_to_action)
      *
+     * a user who cannot save a change (see user::is_blocked) gets the icon greyed out and with
+     * a tooltip that asks for a login; the icon still opens the pane, which then shows the same
+     * reason that the backend would give if the link were sent anyway
+     *
      * @param phrase $phr the word or triple the selected formula should be assigned to
      * @param user_message $msg to report a problem of the formula load
      * @param data_object|null $cfg the request cache with the formulas that can be selected
@@ -723,7 +727,12 @@ class ui_list extends ui_base
         bool         $test_mode
     ): string
     {
-        global $mtr;
+        global $mtr, $ui_sys;
+
+        // a user without login cannot save the link, so the form is replaced by the reason and
+        // the formulas are not even read; without a request cache the user is unknown and the
+        // form is offered like for any user whose profile is not known (see user::is_blocked)
+        $blocked = $ui_sys?->usr?->is_blocked() ?? false;
 
         // the selector offers one selection list of formulas, not the few names that the list
         // above shows; if that list is full more formulas may exist, which the more entry says,
@@ -732,7 +741,7 @@ class ui_list extends ui_base
         $frm_lst = $cfg?->formula_list() ?? new formula_list();
         // the request cache is filled by the unit tests only, so outside of them the formulas
         // that can be assigned are requested from the backend (like the assigned formulas above)
-        if ($frm_lst->is_empty() and !$test_mode) {
+        if ($frm_lst->is_empty() and !$test_mode and !$blocked) {
             $frm_lst->load_selectable($size, $msg);
         }
 
@@ -741,9 +750,17 @@ class ui_list extends ui_base
         // can be offered, so that the page looks the same with and without the cache
         if ($phr->id() != 0) {
             $html = new html_base();
-            // an empty selector would post a link without a formula, which can only fail, so the
-            // pane says why nothing can be selected instead of offering a form that never saves
-            if ($frm_lst->is_empty()) {
+            $icon_style = styles::HEADING_ICON_INLINE;
+            $tooltip = $mtr->txt(msg_id::FORMULA_LINK);
+            // the icon stays a link, so that the user who presses the greyed out icon gets the
+            // same reason that the backend would give after the link has been sent
+            if ($blocked) {
+                $icon_style .= ' ' . styles::STYLE_GREY;
+                $tooltip = $mtr->txt(msg_id::FORMULA_LINK_BLOCKED);
+                $pane = $html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
+            } elseif ($frm_lst->is_empty()) {
+                // an empty selector would post a link without a formula, which can only fail, so
+                // the pane says why nothing can be selected instead of a form that never saves
                 $pane = $mtr->txt(msg_id::INFO_NO_FORMULA_TO_LINK);
             } else {
                 $form_name = views::FORMULA_LINK_ADD;
@@ -760,7 +777,7 @@ class ui_list extends ui_base
                     . $button . $html->form_end();
             }
             $icon = $html->ref('#' . styles::FORMULA_LINK_PANE, $html->icon(icons::LINK),
-                $mtr->txt(msg_id::FORMULA_LINK), styles::HEADING_ICON_INLINE, true);
+                $tooltip, $icon_style, true);
             $result = $html->div($icon)
                 . $html->div($pane, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
         }
