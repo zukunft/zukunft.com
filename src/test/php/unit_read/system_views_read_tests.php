@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -106,6 +108,13 @@ class system_views_read_tests
         $cfg->set_view_list($t_msk->view_list_ui());
         $cfg->set_component_list($t_cmp->component_list_ui());
         // create the test pages
+
+        // START: the entry view shows the global problems as a table with the short list, and
+        // with the more list that a "... more" click requests with the next list size
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
+
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         // Zurich and CHF is the example for the page-title symbol-line layout
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::ZH_ID, $cfg);

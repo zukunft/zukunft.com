@@ -1,5 +1,13 @@
 # pending prio 2
 
+## data cleanup for final database setup
+
+sort the views and components so that the most often used are in groups on the to
+
+assign all values assigned to a symbol to the main word or triple but in the default view of the symbol show tha values and formula of the linked main word. E.g. move all values from EUR to Euro but still show the Euro values in the EUR page
+
+if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
+
 ## use case
 
 PV in Switzerland
