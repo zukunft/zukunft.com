@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-448 of 5727 public functions have at least 2 unit test calls; the 5279 functions below do not
+450 of 5727 public functions have at least 2 unit test calls; the 5277 functions below do not
 
 ## main backend
 
@@ -3149,7 +3149,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- ip_check - 0 unit test calls
     \-- is_admin - 0 unit test calls shared by 2 classes
     \-- is_admin_local - 0 unit test calls
-    \-- is_blocked - 3 unit test calls shared by 2 classes
     \-- is_developer - 2 unit test calls shared by 2 classes
     \-- is_excluded - 1 unit test calls shared by 7 classes
     \-- is_normal - 0 unit test calls
@@ -5368,7 +5367,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_signup - 0 unit test calls
     \-- get_description - 11 unit test calls shared by 21 classes
     \-- is_admin - 0 unit test calls shared by 2 classes
-    \-- is_blocked - 3 unit test calls shared by 2 classes
     \-- is_developer - 2 unit test calls shared by 2 classes
     \-- is_ip_only - 1 unit test calls
     \-- is_system - 2 unit test calls shared by 3 classes

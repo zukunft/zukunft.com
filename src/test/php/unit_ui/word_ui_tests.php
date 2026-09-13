@@ -356,12 +356,17 @@ class word_ui_tests
         // names the reason instead of a form that the backend would only reject
         global $ui_sys;
         $usr_known = $ui_sys->usr;
-        $usr_ip = new user_ui();
+        $ip_ui = new user_ui();
         $ip_id = $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY);
-        $usr_ip->api_mapper([
+        $ip_ui->api_mapper([
             json_fields::ID => users::TEST_USER_ID,
             json_fields::PROFILE_ID => $ip_id], $msg);
-        $ui_sys->usr = $usr_ip;
+        $test_name = 'a user with the ip only profile cannot save a change';
+        $t->assert_true($test_name, $ip_ui->is_blocked());
+        // unlike is_ip_only an unknown profile is not blocked (see user::is_blocked)
+        $test_name = 'a user whose profile is not known can save a change';
+        $t->assert_false($test_name, $usr_known->is_blocked());
+        $ui_sys->usr = $ip_ui;
         $icon_grey = styles::HEADING_ICON_INLINE . ' ' . styles::STYLE_GREY;
         $test_name = 'the formula link icon of a user without login is grey';
         $ip_html = $list->formulas($wrd, $msg, $dto);
