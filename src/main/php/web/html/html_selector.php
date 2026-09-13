@@ -55,6 +55,7 @@ class html_selector
     public string $attribute = '';  // to add addition attribute information for the bootstrap version e.g. display an disabled selector
     public string $tooltip = '';    // the hover text of the field, e.g. to say what a selector without a label selects
     public bool $with_label = true; // false to omit the label, e.g. for a selector inside a list row where the column says what is selected
+    public string $more_text = '';  // shown as a disabled last entry if the list is cut by a limit, so that the user knows that more entries exist
     public string $sql = '';        // to deprecate: the list should be filled by the calling object with min objects: query to select the items
     public int|string|null $selected = null;  // id of the selected object
     public string $dummy_text = ''; // text for the NULL result if allowed
@@ -98,6 +99,13 @@ class html_selector
                     $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $option_text . '</option>';
                 }
             }
+        }
+
+        // a cut list ends with a hint that more entries exist; it is disabled, because it is not
+        // a value the user can select (a datalist suggests values, so it gets no hint entry)
+        if ($this->more_text != '' and $this->type != self::TYPE_DATALIST) {
+            $result .= '<option value="0" disabled>'
+                . htmlspecialchars($this->more_text, ENT_QUOTES) . '</option>';
         }
 
         $result .= $this->end_selector();

@@ -339,10 +339,21 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $zh_html, formula_names::INCREASE);
         $test_name = 'the formula link form offers the link button';
         $t->assert_text_contains($test_name, $frm_html, $mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
-        // without the formulas in the request cache there is nothing to select, so no form is shown
-        $test_name = 'a page without cached formulas shows no link icon';
-        $t->assert_text_not_contains($test_name,
+        // the icon does not depend on the cache, so that a page looks the same whether the
+        // formulas come from the request cache or from the backend
+        $test_name = 'a page without cached formulas still shows the link icon';
+        $t->assert_text_contains($test_name,
             $list->formulas($wrd, $msg, new data_object(), true), icons::LINK);
+
+        // a selector that offers only one selection list ends with the more entry, so that the
+        // user knows that a formula outside of it needs the add form
+        $more_html = '<option value="0" disabled>' . $mtr->txt(msg_id::PLEASE_SELECT_SHORT) . '</option>';
+        $test_name = 'a formula selector that is not cut has no more entry';
+        $t->assert_text_not_contains($test_name, $frm_html, $more_html);
+        $test_name = 'a cut formula selector ends with the more entry';
+        $sel = $dto->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
+        $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+        $t->assert_text_contains($test_name, $sel->display(), $more_html);
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related($msg, $wrd_company_rel);

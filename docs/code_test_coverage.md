@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-449 of 5721 public functions have at least 2 unit test calls; the 5272 functions below do not
+449 of 5722 public functions have at least 2 unit test calls; the 5273 functions below do not
 
 ## main backend
 
@@ -359,7 +359,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- export_json - 9 unit test calls shared by 49 classes
     \-- fill - 10 unit test calls shared by 36 classes
     \-- formula_link_list - 0 unit test calls shared by 2 classes
-    \-- formula_list - 4 unit test calls shared by 4 classes
+    \-- formula_list - 5 unit test calls shared by 4 classes
     \-- get_component_by_name - 0 unit test calls
     \-- get_first_verb - 0 unit test calls
     \-- get_first_word - 0 unit test calls
@@ -2813,7 +2813,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- dsp_name - 7 unit test calls shared by 4 classes
     \-- filter_valid - 0 unit test calls shared by 2 classes
     \-- formula_by_id - 0 unit test calls shared by 2 classes
-    \-- formula_list - 4 unit test calls shared by 4 classes
+    \-- formula_list - 5 unit test calls shared by 4 classes
     \-- get_by_ids - 0 unit test calls shared by 2 classes
     \-- id_lst - 3 unit test calls shared by 8 classes
     \-- ids_txt - 0 unit test calls shared by 2 classes
@@ -4042,6 +4042,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- name_text - 0 unit test calls
     \-- reload - 0 unit test calls
     \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector_ui - 1 unit test calls
     \-- set_from_json - 8 unit test calls shared by 9 classes
 \-- button
     \-- add - 21 unit test calls shared by 44 classes
@@ -4193,7 +4194,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- component_list - 0 unit test calls shared by 2 classes
     \-- file_list - 0 unit test calls
     \-- formula_link_list - 0 unit test calls shared by 2 classes
-    \-- formula_list - 4 unit test calls shared by 4 classes
+    \-- formula_list - 5 unit test calls shared by 4 classes
     \-- has_changes - 0 unit test calls
     \-- has_file_list - 0 unit test calls
     \-- has_phrases - 0 unit test calls
@@ -4291,7 +4292,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- view_selector - 1 unit test calls shared by 9 classes
     \-- view_type_selector - 0 unit test calls shared by 2 classes
 \-- display_list
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
 \-- element
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
@@ -4309,7 +4310,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- figure
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- grp - 1 unit test calls shared by 4 classes
     \-- is_result - 0 unit test calls shared by 2 classes
@@ -4320,7 +4321,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- figure_list
     \-- add - 21 unit test calls shared by 44 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- names_linked - 0 unit test calls shared by 3 classes
 \-- formula
@@ -4359,7 +4360,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- db_fld_to_url - 5 unit test calls shared by 13 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- formula_link_type_selector - 0 unit test calls shared by 2 classes
     \-- formula_name - 0 unit test calls shared by 3 classes
     \-- formula_selector - 2 unit test calls shared by 4 classes
@@ -4558,12 +4559,12 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- url_old - 1 unit test calls
     \-- url_with_token - 0 unit test calls
 \-- html_selector
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- end_selector - 0 unit test calls
 \-- job
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- end_time - 0 unit test calls
     \-- header - 0 unit test calls shared by 5 classes
@@ -4585,7 +4586,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- user_id - 0 unit test calls shared by 2 classes
 \-- job_list
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- tbl - 3 unit test calls shared by 7 classes
 \-- job_type_list
     \-- selector - 2 unit test calls shared by 23 classes
@@ -4623,7 +4624,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- btn_add - 2 unit test calls shared by 5 classes
     \-- button_add_triple - 0 unit test calls
     \-- children - 0 unit test calls shared by 6 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- dsp_graph - 0 unit test calls shared by 3 classes
     \-- dsp_link_style - 0 unit test calls
@@ -4718,7 +4719,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- db_fld_to_url - 5 unit test calls shared by 13 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- external_key - 1 unit test calls
     \-- get_description - 11 unit test calls shared by 21 classes
     \-- has_phrase - 0 unit test calls shared by 2 classes
@@ -4766,7 +4767,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- btn_add - 2 unit test calls shared by 5 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- explain - 0 unit test calls
     \-- figure - 0 unit test calls shared by 4 classes
@@ -4778,7 +4779,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- result_list
     \-- add_result - 0 unit test calls shared by 2 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- display_old - 0 unit test calls shared by 2 classes
     \-- filter - 1 unit test calls shared by 4 classes
@@ -4812,7 +4813,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- sandbox_link
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- link_type - 0 unit test calls shared by 5 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- name_linked - 0 unit test calls shared by 10 classes
@@ -4836,7 +4837,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- calc_view_id - 1 unit test calls shared by 2 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- dsp_id - 43 unit test calls shared by 46 classes
     \-- get_description - 11 unit test calls shared by 21 classes
     \-- get_usage - 0 unit test calls shared by 6 classes
@@ -4897,7 +4898,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- sys_log
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_admin - 0 unit test calls shared by 2 classes
     \-- get_html - 1 unit test calls shared by 3 classes
     \-- header - 0 unit test calls shared by 5 classes
@@ -4916,7 +4917,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- sys_log_list
     \-- add - 21 unit test calls shared by 44 classes
     \-- api_array - 3 unit test calls shared by 37 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_admin - 0 unit test calls shared by 2 classes
     \-- get_html - 1 unit test calls shared by 3 classes
     \-- get_html_footer - 0 unit test calls
@@ -5069,7 +5070,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- term
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- dsp_id - 43 unit test calls shared by 46 classes
     \-- dsp_selector - 0 unit test calls
     \-- dsp_tbl_cell - 0 unit test calls shared by 2 classes
@@ -5129,7 +5130,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- children - 0 unit test calls shared by 6 classes
     \-- db_fld_to_url - 5 unit test calls shared by 13 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- dsp_del - 0 unit test calls shared by 2 classes
     \-- dsp_r - 0 unit test calls
@@ -5175,7 +5176,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- wrd_lst - 0 unit test calls shared by 6 classes
 \-- triple_list
     \-- api_mapper - 16 unit test calls shared by 100 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- ex_measure - 0 unit test calls shared by 4 classes
     \-- ex_measure_and_time_lst - 0 unit test calls shared by 2 classes
     \-- ex_percent - 0 unit test calls shared by 3 classes
@@ -5292,7 +5293,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- phrase_link - 0 unit test calls
 \-- ui_list
     \-- component_views - 1 unit test calls
-    \-- formula_list - 4 unit test calls shared by 4 classes
+    \-- formula_list - 5 unit test calls shared by 4 classes
     \-- formulas_of_parents - 0 unit test calls
     \-- link_list_word - 0 unit test calls
     \-- list_sort - 0 unit test calls shared by 3 classes
@@ -5352,7 +5353,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- can_see_code_id - 0 unit test calls
     \-- can_set_code_id - 2 unit test calls shared by 2 classes
     \-- can_set_type_id - 0 unit test calls shared by 2 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- dsp_changes - 0 unit test calls
     \-- dsp_errors - 0 unit test calls
     \-- form_activate - 0 unit test calls
@@ -5414,7 +5415,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- btn_edit - 2 unit test calls shared by 3 classes
     \-- btn_undo_add_value - 0 unit test calls
     \-- db_fld_to_url - 5 unit test calls shared by 13 classes
-    \-- display - 2 unit test calls shared by 20 classes
+    \-- display - 3 unit test calls shared by 20 classes
     \-- dsp_add_fast - 0 unit test calls
     \-- dsp_edit - 0 unit test calls shared by 4 classes
     \-- dsp_hist - 0 unit test calls shared by 5 classes

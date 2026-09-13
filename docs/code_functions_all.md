@@ -7361,6 +7361,7 @@
     \-- id - section for function id not yet defined that it should be html in /sandbox/ListBase.php
     \-- get_by_code_id - section for function get_by_code_id is expected to be set and get in /sandbox/ListBase.php
     \-- selector - section for function selector not yet defined that it should be select in /sandbox/ListBase.php
+    \-- selector_ui - section for function selector_ui not yet defined that it should be select in /sandbox/ListBase.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- combine_named
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /sandbox/combine_named.php

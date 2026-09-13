@@ -62,7 +62,10 @@ if ($db_con->is_open()) {
     // get the parameters
     $frm_ids = $_GET[url_var::ID_LST] ?? '';
     $phr_id = $_GET[url_var::PHRASE] ?? 0;
+    // the size is user input, so it is capped to one selection list: without the cap a single
+    // request could ask for the complete formula table (see the crawler note below)
     $size = (int)($_GET[url_var::DISPLAY_LIST_SIZE] ?? shared_config::ROW_LIMIT);
+    $size = max(1, min($size, shared_config::LIMIT_SEARCH_LIST));
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {

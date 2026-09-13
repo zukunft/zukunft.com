@@ -713,38 +713,44 @@ class ui_list extends ui_base
      * @param phrase $phr the word or triple the selected formula should be assigned to
      * @param user_message $msg to report a problem of the formula load
      * @param data_object|null $cfg the request cache with the formulas that can be selected
-     * @param int $row_limit the max number of formulas offered if they are loaded via the api
      * @param bool $test_mode true to build the form without a backend call
-     * @return string the html code of the link icon and the hidden form, empty if nothing can be selected
+     * @return string the html code of the link icon and the hidden form, empty for an unsaved phrase
      */
     private function formula_link_form(
         phrase       $phr,
         user_message $msg,
         ?data_object $cfg,
-        int          $row_limit,
         bool         $test_mode
     ): string
     {
         global $mtr;
 
-        $frm_lst = $cfg?->formula_list();
+        // the selector offers one selection list of formulas, not the few names that the list
+        // above shows; if that list is full more formulas may exist, which the more entry says,
+        // because the user would else silently never see them
+        $size = config::LIMIT_SEARCH_LIST;
+        $frm_lst = $cfg?->formula_list() ?? new formula_list();
         // the request cache is filled by the unit tests only, so outside of them the formulas
         // that can be assigned are requested from the backend (like the assigned formulas above)
-        if (($frm_lst == null or $frm_lst->is_empty()) and !$test_mode) {
-            $frm_lst = new formula_list();
-            $frm_lst->load_selectable($row_limit, $msg);
+        if ($frm_lst->is_empty() and !$test_mode) {
+            $frm_lst->load_selectable($size, $msg);
         }
 
         $result = '';
-        // a phrase that is not yet saved cannot be linked and an empty list has nothing to select
-        if ($phr->id() != 0 and $frm_lst != null and !$frm_lst->is_empty()) {
+        // a phrase that is not yet saved cannot be linked; the icon and the form are shown even if
+        // no formula can be offered, so that the page looks the same with and without the cache
+        if ($phr->id() != 0) {
             $html = new html_base();
             $form_name = views::FORMULA_LINK_ADD;
             $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
                 . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
                 . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
-            $selector = $frm_lst->selector($form_name, 0, url_var::FORMULA,
+            $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
                 msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
+            if ($frm_lst->count() >= $size) {
+                $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+            }
+            $selector = $sel->display();
             $button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
             $form = $html->form_start($form_name) . $fields . $selector . $button . $html->form_end();
             $icon = $html->ref('#' . styles::FORMULA_LINK_PANE, $html->icon(icons::LINK),
@@ -1057,7 +1063,7 @@ class ui_list extends ui_base
         $result = $frm_lst->name_link([], $row_limit);
         // the link icon below the list is the only way to assign a formula to the phrase,
         // so it is also shown if the phrase has no formula yet (like the reference list)
-        $result .= $this->formula_link_form($phr, $msg, $cac, $row_limit, $test_mode);
+        $result .= $this->formula_link_form($phr, $msg, $cac, $test_mode);
         return $result;
     }
 
