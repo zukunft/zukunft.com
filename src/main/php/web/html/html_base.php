@@ -183,6 +183,7 @@ class html_base
     const string DETAILS = 'details';
     const string SUMMARY = 'summary';
     const string I = 'i';
+    const string B = 'b';
     const string H1 = 'h1';
     const string H2 = 'h2';
     const string H3 = 'h3';
@@ -1059,6 +1060,15 @@ class html_base
     function text_h1(string $title, string $style = ''): string
     {
         return $this->text_h($title, self::H2, self::H1, $style);
+    }
+
+    /**
+     * @param string $text the text to show bold, e.g. the pending link of a confirm page
+     * @return string the html code of the bold text
+     */
+    function bold(string $text): string
+    {
+        return '<' . self::B . '>' . $this->esc($text) . '</' . self::B . '>';
     }
 
     function text_h2(string $title, string $style = ''): string

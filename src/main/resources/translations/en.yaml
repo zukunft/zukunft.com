@@ -354,6 +354,7 @@ messages:
   info_not_used_by_terms: "not used by any word, triple, verb or formula"
   info_no_search_result: "no result for 'z$VarPattern$z' found"
   info_no_formula_to_link: "no formula to link"
+  info_link_formula_to_phrase: "link formula 'z$VarFormulaName$z' to phrase 'z$VarPhraseName$z'"
   undo: "undo"
   undo_add: "delete added"
   undo_edit: "undo edit"

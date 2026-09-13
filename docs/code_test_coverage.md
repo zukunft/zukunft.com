@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-449 of 5722 public functions have at least 2 unit test calls; the 5273 functions below do not
+449 of 5725 public functions have at least 2 unit test calls; the 5276 functions below do not
 
 ## main backend
 
@@ -4006,7 +4006,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- get - 9 unit test calls shared by 14 classes
 \-- url_var
     \-- back_par - 0 unit test calls
-    \-- std_to_human - 0 unit test calls
+    \-- std_to_human - 1 unit test calls
     \-- without_secrets - 0 unit test calls
 \-- users
     \-- mail_header - 0 unit test calls
@@ -4365,6 +4365,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- formula_name - 0 unit test calls shared by 3 classes
     \-- formula_selector - 2 unit test calls shared by 4 classes
     \-- get_description - 11 unit test calls shared by 21 classes
+    \-- link_preview - 2 unit test calls shared by 2 classes
     \-- link_type - 0 unit test calls shared by 5 classes
     \-- name - 107 unit test calls shared by 56 classes
     \-- name_linked - 0 unit test calls shared by 10 classes
@@ -4438,6 +4439,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- about_page - 0 unit test calls
     \-- add_style - 0 unit test calls
     \-- back_url_array - 1 unit test calls
+    \-- bold - 1 unit test calls
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
     \-- button_bs - 0 unit test calls
@@ -4814,6 +4816,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- api_array - 3 unit test calls shared by 37 classes
     \-- api_mapper - 16 unit test calls shared by 100 classes
     \-- display - 3 unit test calls shared by 20 classes
+    \-- link_preview - 2 unit test calls shared by 2 classes
     \-- link_type - 0 unit test calls shared by 5 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- name_linked - 0 unit test calls shared by 10 classes

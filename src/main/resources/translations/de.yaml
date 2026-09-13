@@ -114,6 +114,7 @@ messages:
   info_not_used_by_terms: "von keinem Wort, Tripel, Verb oder keiner Formel verwendet"
   info_no_search_result: "kein Ergebnis für 'z$VarPattern$z' gefunden"
   info_no_formula_to_link: "keine Formel zum Verknüpfen"
+  info_link_formula_to_phrase: "Formel 'z$VarFormulaName$z' mit 'z$VarPhraseName$z' verknüpfen"
   system_sub_title_components: "Komponenten"
   system_sub_title_related_values: "Verwandte Werte"
   system_sub_title_no_usage: "Noch nicht verwendet"

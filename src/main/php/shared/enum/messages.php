@@ -1719,6 +1719,8 @@ enum messages: string
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
     // shown instead of the formula selector of a phrase page if no formula can be offered
     case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
+    // the one line summary above the change table of the formula link confirm page
+    case INFO_LINK_FORMULA_TO_PHRASE = 'info_link_formula_to_phrase';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';

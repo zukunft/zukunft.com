@@ -6625,6 +6625,7 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /formula/formula_link.php
     \-- to_url_array - section for function to_url_array not yet defined that it should be url in /formula/formula_link.
             php
+    \-- link_preview - section for function link_preview is expected to be link in /formula/formula_link.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be url in /formula/formula_lin
             k.php
     \-- set_formula - section for function set_formula is expected to be set and get in /formula/formula_link.php
@@ -6860,6 +6861,7 @@
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in t
             he html code in /html/html_base.php
     \-- text_h1 - section for function text_h1 not yet defined that it should be text formatting in /html/html_base.php
+    \-- bold - section for function bold not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h2 - section for function text_h2 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h3 - section for function text_h3 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h4 - section for function text_h4 not yet defined that it should be text formatting in /html/html_base.php
@@ -7483,6 +7485,7 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /sandbox/sandbo
             x_link.php
     \-- link_type - section for function link_type is expected to be link in /sandbox/sandbox_link.php
+    \-- link_preview - section for function link_preview is expected to be link in /sandbox/sandbox_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /sandbox/sandbox_lin
             k.php
 \-- sandbox_list
@@ -8307,6 +8310,8 @@
         \-- sandbox_link - load the link incl. its two linked objects by adding the ?incl_related=1 url flag, so that
     \-- link_type
         \-- sandbox_link - the children overwrite this with the type list of their own link type
+    \-- link_preview
+        \-- sandbox_link - the pending link in one line, shown above the change table of a confirm page, e.g.
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
     \-- display_admin
@@ -9215,8 +9220,7 @@
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s
     \-- phrase
-        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
-                s
+        \-- formula_link - @return phrase the linked phrase, or an empty phrase if it is not yet set e.g. for a new
     \-- link_type
         \-- formula_link - @return type_object|null the formula link type object from the preloaded cache
     \-- get_description
@@ -9271,6 +9275,8 @@
     \-- to_url_array
         \-- formula_link - @return array parent url array extended with the order number and the description,
                  without empty strings
+    \-- link_preview
+        \-- formula_link - the pending formula link in one line for the confirm page, e.g.
     \-- db_fld_to_url
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s
@@ -9463,12 +9469,14 @@
 \-- text formatting
     \-- text_h1
         \-- html_base - build a url for an external webside
+    \-- bold
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
     \-- text_h2
-        \-- html_base - build a url for an external webside
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
     \-- text_h3
-        \-- html_base - build a url for an external webside
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
     \-- text_h4
-        \-- html_base - build a url for an external webside
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page
